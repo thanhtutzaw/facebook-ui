@@ -1,3 +1,6 @@
+:root {
+  --blue-origin: #0070f3;
+}
 html,
 body {
   padding: 0;
@@ -30,4 +33,17 @@ a {
     color: white;
     background: black;
   } */
+}
+
+::-webkit-scrollbar {
+  width      : 0;
+  /* Remove scrollbar space */
+  background : transparent;
+  /* Optional: just make scrollbar invisible */
+}
+
+/* Optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+  scrollbar-width: thin;
+  background: #a0a0a0;
 }

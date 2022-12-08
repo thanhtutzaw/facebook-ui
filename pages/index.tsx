@@ -83,8 +83,17 @@ export default function Home() {
         </header>
 
         <div className={styles.content}>
-          <Story />
-          <Posts />
+          <div className={styles.home}>
+            <Story />
+            <Posts />
+          </div>
+          <div className={styles.add}>
+            add
+          </div>
+          <div className={styles.profile}>
+            profile
+          </div>
+          
         </div>
       </main>
     </>

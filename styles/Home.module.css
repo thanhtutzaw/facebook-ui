@@ -1,12 +1,17 @@
+
 .container {
   border:3px solid red;
   
 }
 
 .main {
-  scroll-snap-type: y mandatory;
+  /* scroll-snap-type: y mandatory; */
   width:100vw;
   max-width:480px;
+  overflow: hidden;
+  overflow-x: auto;
+  overflow: auto;
+  height:100vh;
   /* height:100vh; */
   /* padding: 4rem 0; */
   /* flex: 1;
@@ -30,8 +35,9 @@
   scroll-snap-align: start;
 }
 .logo{
-  color:#0070f3;
+  color:var(--blue-origin);
 font-weight: bold;
+font-size: 1.7em;
 }
 .nav{
   position: fixed;
@@ -53,8 +59,8 @@ font-weight: bold;
   
 }
 .nav .active{
-  color: #0070f3;
-  border-bottom: 2px solid #0070f3;
+  color: var(--blue-origin);
+  border-bottom: 2px solid var(--blue-origin);
 }
 .nav > .navItems  {
   background-color: rgb(255, 255, 255);
@@ -93,6 +99,43 @@ font-weight: bold;
 .header + .content {
   padding-top: 60px;
 }
+.content{
+  /* display: flex; */
+  /* border: 3px solid rgb(65, 8, 221); */
+  /* width:100vw; */
+  display: flex;
+  scroll-snap-type: x mandatory;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+  
+  /* display: inline-flex; */
+}
+.content *{
+  /* width: 100vw; */
+  /* flex:1;
+  display: flex;
+  flex-direction: column; */
+  overflow-y: auto;
+  /* height: 80vh; */
+  /* width:100vw; */
+  scroll-snap-align: center;
+  height:84vh;
+  max-width:480px;
+  min-width:100%;
+}
+.home{
+  /* max-width:480px; */
+  /* max-width:480px;
+  width:100vw; */
+}
+.add , .profile{
+  background-color: rebeccapurple;
+  padding: 2rem;
+  /* display: none; */
+}
+.profile{
+  background-color: orangered;
+}
 .storyContainer{
   background-color: rgb(111, 209, 204);
   height:20vh;  
@@ -101,6 +144,7 @@ font-weight: bold;
   align-items: center;
 }
 .postContainer{
+  background-color: orangered;
   height:100vh;
 }
 .footer {
@@ -120,7 +164,7 @@ font-weight: bold;
 }
 
 .title a {
-  color: #0070f3;
+  color: var(--blue-origin);
   text-decoration: none;
 }
 
@@ -179,8 +223,8 @@ font-weight: bold;
 .card:hover,
 .card:focus,
 .card:active {
-  color: #0070f3;
-  border-color: #0070f3;
+  color: var(--blue-origin);
+  border-color: var(--blue-origin);
 }
 
 .card h2 {
