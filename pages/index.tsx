@@ -74,7 +74,8 @@ export default function Home() {
           <nav className={styles.nav}>
             {pages.map((page) => (
               <Navitems
-              name={page.name}
+                key={page.name}
+                name={page.name}
                 icon={page.icon}
               ></Navitems>
             ))}
