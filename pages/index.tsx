@@ -66,9 +66,9 @@ export default function Home() {
       <main className={styles.main}>
         <header className={styles.header}>
           <div className={styles.logoContainer}>
-            <a href="/" className={styles.logo}>
+            <Link href="/" className={styles.logo}>
               facebook
-            </a>
+            </Link>
           </div>
 
           <nav className={styles.nav}>
