@@ -1,17 +1,108 @@
 .container {
-  padding: 0 2rem;
+  border:3px solid red;
+  
 }
 
 .main {
-  min-height: 100vh;
-  padding: 4rem 0;
-  flex: 1;
+  scroll-snap-type: y mandatory;
+  width:100vw;
+  max-width:480px;
+  /* height:100vh; */
+  /* padding: 4rem 0; */
+  /* flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center; */
+  background-color: #e0e0e0;
+}
+.header{
+  /* display: flex;
+  flex-direction: row; */
+  /* height:60px; */
+  background-color: white;
+  /* border:4px solid black; */
+}
+.logoContainer{
+  display: flex;
   align-items: center;
+  height: 60px;
+  scroll-snap-align: start;
+}
+.logo{
+  color:#0070f3;
+font-weight: bold;
+}
+.nav{
+  position: fixed;
+  width:100%;
+/* top:0; */
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+  /* gap:10px; */
+  /* flex-wrap: wrap; */
+  /* width:500px;   */
+  max-width:480px;  
+  
+  height:60px;
+  background-color: rgb(241, 30, 30);
+  /* border:3px solid red; */
+  /* background-color: rgb(241, 4, 4); */
+  
+}
+.nav .active{
+  color: #0070f3;
+  border-bottom: 2px solid #0070f3;
+}
+.nav > .navItems  {
+  background-color: rgb(255, 255, 255);
+  /* display: inline-block; */
+  /* height: 100%; */
+  height:60px;
+  /* width:auto; */
+  /* width:83px; */
+  flex:1;
+  /* width:5.2vw;  */
+  /* width:83px; */
+  /* width: 100px; */
+  /* color:white; */
+  font-size: 24px;
+  /* text-align: center; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* border-right: 2px solid rgba(192, 192, 192, 0.336); */
+}
+.nav > .navItems > svg {
+  /* width:30px; */
 }
 
+/* .nav *:last-child{
+  border:none;
+} */
+.nav .navItems:hover{
+  background-color: rgb(199, 199, 199);
+  
+}
+.nav *:hover svg{
+  /* background-color: rgb(199, 199, 199); */
+  
+}
+.header + .content {
+  padding-top: 60px;
+}
+.storyContainer{
+  background-color: rgb(111, 209, 204);
+  height:20vh;  
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+}
+.postContainer{
+  height:100vh;
+}
 .footer {
   display: flex;
   flex: 1;
