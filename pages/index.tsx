@@ -44,7 +44,6 @@ function Navitems(props: any) {
     <>
       <Link
         href={navName}
-        key={navName}
         className={`${styles.navItems} ${currentRoute === navName ? styles.active : ""}`}
       >
         {icon}
@@ -75,6 +74,7 @@ export default function Home() {
           <nav className={styles.nav}>
             {pages.map((page) => (
               <Navitems
+                key={page.name}
                 name={page.name}
                 icon={page.icon}
               ></Navitems>
