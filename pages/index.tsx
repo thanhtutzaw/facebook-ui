@@ -5,6 +5,7 @@ import { AiFillHome } from "react-icons/ai";
 import { AiOutlineGroup } from "react-icons/ai";
 import { AiOutlineProfile } from "react-icons/ai";
 import { Router, useRouter } from "next/router";
+import Draggable from "react-draggable";
 import Link from "next/link";
 const pages = [
   { name: "/", icon: <AiFillHome /> },
@@ -82,19 +83,14 @@ export default function Home() {
           </nav>
         </header>
 
-        <div className={styles.content}>
-          <div className={styles.home}>
-            <Story />
-            <Posts />
+          <div className={styles.content}>
+            <div className={styles.home}>
+              <Story />
+              <Posts />
+            </div>
+            <div className={styles.add}>add</div>
+            <div className={styles.profile}>profile</div>
           </div>
-          <div className={styles.add}>
-            add
-          </div>
-          <div className={styles.profile}>
-            profile
-          </div>
-          
-        </div>
       </main>
     </>
   );

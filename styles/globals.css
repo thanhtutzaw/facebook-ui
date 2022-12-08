@@ -37,6 +37,7 @@ a {
 
 ::-webkit-scrollbar {
   width      : 0;
+  display: none;
   /* Remove scrollbar space */
   background : transparent;
   /* Optional: just make scrollbar invisible */
@@ -44,6 +45,6 @@ a {
 
 /* Optional: show position indicator in red */
 ::-webkit-scrollbar-thumb {
-  scrollbar-width: thin;
+  /* scrollbar-width: thin; */
   background: #a0a0a0;
 }
