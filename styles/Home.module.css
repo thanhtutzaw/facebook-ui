@@ -124,6 +124,7 @@ font-size: 1.7em;
   /* height: 80vh; */
   /* width:100vw; */
   scroll-snap-align: center;
+  scroll-snap-stop: always;
   /* height:84vh;
   height:86.4vh; */
   max-width:480px;
