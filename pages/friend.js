@@ -3,7 +3,7 @@ import styles from "../styles/Home.module.css";
 
 function Friend() {
   return (
-      <div className={styles.add}>add</div>
+      <div id="friend" className={styles.add}>add</div>
 
   )
 }

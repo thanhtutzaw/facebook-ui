@@ -25,8 +25,9 @@ export function Header() {
       <Logo />
 
       <nav className={styles.nav}>
-        {pages.map((page) => (
+        {pages.map((page , index) => (
           <Navitems
+            index ={index}
             key={page.name}
             name={page.name}
             icon={page.icon}

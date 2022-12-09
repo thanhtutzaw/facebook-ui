@@ -91,13 +91,20 @@ font-size: 1.7em;
 /* .nav *:last-child{
   border:none;
 } */
-.nav .navItems:hover{
-  background-color: rgb(199, 199, 199);
-  
-}
+
 .nav *:hover svg{
   /* background-color: rgb(199, 199, 199); */
   
+}
+@media only screen and (min-width: 500px) {
+  .nav .navItems:hover {
+  background-color: rgb(199, 199, 199);
+  
+}
+}
+
+.nav .navItems:active {
+   background-color: rgb(199, 199, 199);
 }
 .header + .content {
   /* padding-top: 60px; */

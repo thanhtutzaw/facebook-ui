@@ -1,9 +1,15 @@
-import React from 'react'
+import React from "react";
+import styles from "../styles/Home.module.css";
 
-function menu() {
+function Menu() {
   return (
-    <div>menu</div>
-  )
+    <div
+      style={{ backgroundColor: "purple !important" }}
+      className={styles.profile}
+    >
+      Menu
+    </div>
+  );
 }
 
-export default menu
+export default Menu;

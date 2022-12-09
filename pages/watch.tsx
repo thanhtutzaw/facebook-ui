@@ -1,9 +1,15 @@
-import React from 'react'
+import React from "react";
+import styles from "../styles/Home.module.css";
 
-function watch() {
+function Watch() {
   return (
-    <div>watch</div>
-  )
+    <div
+      style={{ backgroundColor: "grey !important" }}
+      className={styles.profile}
+    >
+      watch
+    </div>
+  );
 }
 
-export default watch
+export default Watch;

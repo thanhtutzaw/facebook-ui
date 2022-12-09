@@ -1,9 +1,8 @@
-import React from 'react'
+import React from "react";
+import styles from "../styles/Home.module.css";
 
-function noti() {
-  return (
-    <div>noti</div>
-  )
+function Noti() {
+  return <div style={{backgroundColor:'blue !important'}} className={styles.profile}>Notifications</div>;
 }
 
-export default noti
+export default Noti;
