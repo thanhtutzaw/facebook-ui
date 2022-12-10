@@ -14,12 +14,25 @@ export function Navitems(props: any) {
   return (
     <>
        <div
-       
-       
+       id={name}
           // href={name.toLowerCase()}
           onClick={(e)=>{
             // router.replace(name.toLowerCase())
             const target = e.target as HTMLDivElement;
+            // target.classList.toggle('active')
+            // console.log(target.style.contain="border-bottom");
+
+            // target.classList.remove(styles.active)
+            // if(target.id.toLowerCase() == name.toLowerCase()){
+            //   target.classList.toggle(styles.active);
+            // }
+            
+            // if (target.id.toLowerCase() === name.toLowerCase()){
+             
+            //   target.classList.add(styles.active);
+            // }else{
+            //   target.classList.remove(styles.active);
+            // }
             const content = document.getElementById('content')
             content?.scrollTo({
               left: index * content.clientWidth,
@@ -32,10 +45,7 @@ export function Navitems(props: any) {
             // console.log(name);
           }}
 
-            className={`${styles.navItems} 
-            ${
-              !navName ? styles.active : ""
-           }`
+            className={`${styles.navItems} `
           }
           >
            {icon}

@@ -16,6 +16,7 @@ export function Header() {
     { name: "Watch", icon: <AiOutlineProfile /> },
     { name: "Menu", icon: <AiOutlineProfile /> },
   ];
+
   // const router = useRouter()
   // const currentRoute = router.pathname
   // const navName = pages.name
