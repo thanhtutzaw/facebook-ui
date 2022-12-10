@@ -11,6 +11,9 @@ export function Content() {
   const [canDrag, setcanDrag] = useState(false)
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 })
   useEffect(() => {
+    window.addEventListener('mouseup', ()=>{
+      setcanDrag(false)
+    })
     // document.body.addEventListener('mousemove',(e)=>{
     //   setcanDrag(false)
     // })
@@ -80,7 +83,7 @@ export function Content() {
     });
     setcanDrag(true)
     // console.log(pos.x);
-    currentTarget.style.cursor = 'grabbing'
+      currentTarget.style.cursor = "grabbing";
     // document.body.style.userSelect = 'none'
   }
   function dragStop(e:any){
@@ -88,7 +91,9 @@ export function Content() {
     e.stopPropagation();
     // console.log(e.currentTarget);
     const currentTarget = e.currentTarget
-    currentTarget.style.cursor = 'grab'
+    if(canDrag){
+      currentTarget.style.cursor = "grab";
+    }
     setcanDrag(false)
   }
   function dragging(e: any) {
@@ -102,6 +107,7 @@ export function Content() {
       const dx = e.clientX - pos.x;
       const dy = e.clientY - pos.y;
       currentTarget.scrollLeft = pos.left - dx;
+      // currentTarget.scrollTop = pos.top - dx;
     }else{
       setcanDrag(false)
     }
