@@ -5,7 +5,7 @@
 }
 
 .main {
-  /* scroll-snap-type: y mandatory; */
+  scroll-snap-type: y mandatory;
   width:100vw;
   max-width:480px;
   overflow: hidden;
@@ -20,6 +20,9 @@
   justify-content: center;
   align-items: center; */
   background-color: #e0e0e0;
+}
+.logoContainer , .content{
+  scroll-snap-align: center;
 }
 .header{
   /* position: fixed;
