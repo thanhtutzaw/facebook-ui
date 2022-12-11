@@ -22,13 +22,15 @@ export function Header() {
   // const navName = pages.name
   
   return (
-    <header className={styles.header}>
-      <Logo />
+    <>
+      <header className={styles.header}>
+        <Logo />
+      </header>
 
       <nav className={styles.nav}>
-        {pages.map((page , index) => (
+        {pages.map((page, index) => (
           <Navitems
-            index ={index}
+            index={index}
             key={page.name}
             name={page.name}
             icon={page.icon}
@@ -43,6 +45,6 @@ export function Header() {
           // </Link>
         ))}
       </nav>
-    </header>
+    </>
   );
 }
