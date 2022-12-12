@@ -63,16 +63,17 @@ font-size: 1.7em;
 } */
 .active{
   color: var(--blue-origin);
-  border-bottom: 2px solid var(--blue-origin);
+  border-bottom: 3px solid var(--blue-origin);
 }
 .nav > .navItems  {
   background-color: rgba(255, 255, 255);
   height:60px;
   flex:1;
-  font-size: 24px;
+  font-size: 21px;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all .1s ease-in;
   /* border-right: 2px solid rgba(192, 192, 192, 0.336); */
 }
 .nav > .navItems > svg {
