@@ -4,6 +4,7 @@ import styles from "../styles/Home.module.css";
 function Menu() {
   return (
     <div
+    id="menu"
       style={{ backgroundColor: "purple !important" }}
       className={styles.profile}
     >

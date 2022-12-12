@@ -5,20 +5,16 @@ import Profile from "../pages/profile";
 import Watch from "../pages/watch";
 import Menu from "../pages/menu";
 import Noti from "../pages/noti";
-import { MouseEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export function Content() {
-  const [canDrag, setcanDrag] = useState(false)
-  const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 })
+  const [canDrag, setcanDrag] = useState(false);
+  const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   useEffect(() => {
-    window.addEventListener('mouseup', ()=>{
-      setcanDrag(false)
-    })
-    // document.body.addEventListener('mousemove',(e)=>{
-    //   setcanDrag(false)
-    // })
-  }, [])
-  
+    window.addEventListener("mouseup", () => {
+      setcanDrag(false);
+    });
+  }, []);
 
   // function handleClick(e: MouseEvent<HTMLDivElement, MouseEvent>) {
   //   e.stopPropagation();
@@ -47,7 +43,7 @@ export function Content() {
   //   e.preventDefault()
   //   if(e.type === "mousedown"){
   //     console.log("mouse down");
-      
+
   //     e.currentTarget.style.cursor = "grabbing";
   //     currentTarget.style.userSelect = "none";
   //     pos = {
@@ -68,12 +64,11 @@ export function Content() {
   //   }
   // }
 
-  function dragStart(e:any){
-    
-    e.preventDefault()
+  function dragStart(e: any) {
+    e.preventDefault();
     e.stopPropagation();
     // console.log(e.currentTarget);
-    const currentTarget = e.currentTarget
+    const currentTarget = e.currentTarget;
     console.log(currentTarget);
     setpos({
       left: currentTarget.scrollLeft,
@@ -81,35 +76,33 @@ export function Content() {
       x: e.clientX,
       y: e.clientY,
     });
-    setcanDrag(true)
-    // console.log(pos.x);
-      currentTarget.style.cursor = "grabbing";
-    // document.body.style.userSelect = 'none'
+    setcanDrag(true);
+    currentTarget.style.cursor = "grabbing";
   }
-  function dragStop(e:any){
-    e.preventDefault()
+  function dragStop(e: any) {
+    e.preventDefault();
     e.stopPropagation();
     // console.log(e.currentTarget);
-    const currentTarget = e.currentTarget
-    if(canDrag){
+    const currentTarget = e.currentTarget;
+    if (canDrag) {
       currentTarget.style.cursor = "grab";
     }
-    setcanDrag(false)
+    setcanDrag(false);
   }
   function dragging(e: any) {
-    if(canDrag === true){
-    e.stopPropagation();
-      e.preventDefault()
+    if (canDrag === true) {
+      e.stopPropagation();
+      e.preventDefault();
       const currentTarget = e.currentTarget as HTMLDivElement;
-      console.log("moving")
+      console.log("moving");
       // console.log(pos.x)
-      
+
       const dx = e.clientX - pos.x;
       const dy = e.clientY - pos.y;
       currentTarget.scrollLeft = pos.left - dx;
       // currentTarget.scrollTop = pos.top - dx;
-    }else{
-      setcanDrag(false)
+    } else {
+      setcanDrag(false);
     }
   }
 
@@ -140,11 +133,8 @@ export function Content() {
       onMouseDown={dragStart}
       onMouseUp={dragStop}
       onMouseMove={dragging}
-
-      // onMouseUp={(e)=>{e.currentTarget.scrollLeft=3000}}
-      // onMouseUp={(e)=>{e.currentTarget.scrollLeft=3000}}
     >
-      <div className={styles.home}>
+      <div id="/" className={styles.home}>
         <Story />
         <Posts />
       </div>
@@ -155,6 +145,4 @@ export function Content() {
       <Menu />
     </div>
   );
-
-  
 }
