@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import useActive from "../hooks/useActive";
 import { useRouter } from "next/router";
 
-export default function index() {
+export default function Home() {
   
   useEffect(() => {
     
@@ -34,7 +34,7 @@ export default function index() {
     }
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [active]);
+  }, []);
 
   return (
     <>
