@@ -5,6 +5,8 @@ import Watch from "../pages/watch";
 import Menu from "../pages/menu";
 import Noti from "../pages/noti";
 import { useEffect, useState } from "react";
+import useActive from "../hooks/useActive";
+import { useRouter } from "next/router";
 
 function Story() {
   return <div className={styles.storyContainer}>Story</div>;
@@ -16,16 +18,26 @@ function Posts() {
 export function Content() {
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
+  const [active] = useActive();
+  const router = useRouter();
 
   useEffect(() => {
+    const content = document.getElementById('content')
+    // content?.addEventListener('click' , ()=>{
+    //   console.log(content)
+    //   router.push(`${active === "/" ? active : "#" + active}`);
+    // })
     window.addEventListener("mouseup", () => {
       setcanDrag(false);
     });
-  }, []);
+  }, [active,canDrag]);
 
   function dragStart(e: any) {
+
     e.preventDefault();
     e.stopPropagation();
+    
+
     const currentTarget = e.currentTarget;
     setpos({
       left: currentTarget.scrollLeft,
@@ -37,6 +49,9 @@ export function Content() {
     currentTarget.style.cursor = "grabbing";
   }
   function dragStop(e: any) {
+    // if (active) {
+    //   router.push(`${active === "/" ? active : "#" + active}`);
+    // }
     e.preventDefault();
     e.stopPropagation();
     const currentTarget = e.currentTarget;
