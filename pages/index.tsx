@@ -5,8 +5,7 @@ import useActive from "../hooks/useActive";
 import { useRouter } from "next/router";
 
 export default function index() {
-  const [active] = useActive()
-  const router = useRouter();
+  
   useEffect(() => {
     
     window.onhashchange = () => {
