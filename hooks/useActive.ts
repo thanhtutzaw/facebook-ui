@@ -15,7 +15,7 @@ function useActive() {
     let options = {
       root: document.querySelector("#content"),
       rootMargin: "0px",
-      threshold: .5,
+      threshold: .8,
     };
     function handleObserver(entries: any) {
       entries.map((entry: any) => {
