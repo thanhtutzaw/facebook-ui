@@ -134,14 +134,14 @@ font-size: 1.7em;
 }
 .storyContainer{
   background-color: rgb(111, 209, 204);
-  height:20vh;  
+  /* height:20vh;   */
   display: flex;
   /* justify-content: center; */
   align-items: center;
 }
 .postContainer{
   background-color: orangered;
-  height:200vh;
+  /* height:200vh; */
 }
 
 

@@ -37,7 +37,7 @@ a {
   } */
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width      : 0;
   display: none;
   background : transparent;
@@ -45,4 +45,4 @@ a {
 
 ::-webkit-scrollbar-thumb {
   background: #a0a0a0;
-}
+} */

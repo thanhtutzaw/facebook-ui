@@ -18,11 +18,23 @@ function Posts() {
 export function Content() {
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
-  const [active] = useActive();
+  const {active} = useActive();
   const router = useRouter();
+
+  // useEffect(() => {
+  //   console.log(canDrag)
+  //   console.log(router.asPath);
+  //   if(canDrag){
+
+  //   }
+  // }, [canDrag ,router])
+  
 
   useEffect(() => {
     const content = document.getElementById('content')
+    // content?.addEventListener('dragleave' , ()=>{
+    //   console.log(active);
+    // })
     // content?.addEventListener('click' , ()=>{
     //   console.log(content)
     //   router.push(`${active === "/" ? active : "#" + active}`);
@@ -81,6 +93,16 @@ export function Content() {
       onMouseDown={dragStart}
       onMouseUp={dragStop}
       onMouseMove={dragging}
+      onScroll={()=>{
+        // console.log(active);
+        // const target = e.target as HTMLDivElement
+        // router.push(`#${active}`)
+        // router.replace(`#${active}`);
+        // if(active !== window.location.hash) return;
+        
+        // router.push()
+        // setcanDrag(true)
+      }}
     >
       <div id="/" className={styles.home}>
         <Story />
