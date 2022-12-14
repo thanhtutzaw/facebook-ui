@@ -5,16 +5,18 @@ import useActive from "../hooks/useActive";
 import { useRouter } from "next/router";
 
 export default function Home() {
-  const {active} = useActive()
-  const router = useRouter()
+  const { active } = useActive();
+  const router = useRouter();
   // const path = active === '/' ? '#home' : '#'+active
   // console.table("path= " + path);
   // useEffect(() => {
-    // router.push(path)
+  // router.push(path)
   // }, [])
-  
+
   useEffect(() => {
-    // console.log(active);
+    if (active) {
+      window.location.hash = active === "/" ? "#home" : "#" + active;
+    }
 
     // router.push('/')
     // router.push()
@@ -27,7 +29,7 @@ export default function Home() {
     // console.log(active);
     // router.push("#"+active)
     const main = document.getElementsByTagName("main")[0];
-    if(router.asPath === "/"){
+    if (router.asPath === "/") {
       main.scrollTo({
         top: 60,
         behavior: "smooth",
@@ -37,11 +39,11 @@ export default function Home() {
     window.onhashchange = (e) => {
       // e.preventDefault()
       if (window.location.hash === "" || window.location.hash === "#home") {
-        const content = document.getElementById("content");        
+        const content = document.getElementById("content");
         main.scrollTo({
-          top:60,
-          behavior:'smooth'
-        })
+          top: 60,
+          behavior: "smooth",
+        });
         content?.scrollTo({
           left: 0,
           behavior: "smooth",
@@ -62,7 +64,7 @@ export default function Home() {
       }
     }
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [router , active]);
+  }, [router, active]);
 
   return (
     <>

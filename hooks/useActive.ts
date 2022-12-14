@@ -10,6 +10,7 @@ function useActive() {
 
   const router = useRouter();
   useEffect(() => {
+
     const content = document.querySelectorAll("#content > div");
     let options = {
       root: document.querySelector("#content"),
@@ -26,7 +27,7 @@ function useActive() {
           // })
 
           setActive(targetID);
-          window.location.hash = active === "/" ? "#home" : "#" + active;
+          // window.location.hash = active === "/" ? "#home" : "#" + active;
 
           // router.push(active)
           // console.log(router);
