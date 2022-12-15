@@ -101,10 +101,12 @@
 }
 
 .indicator {
+  /* width:50%; */
+  /* min-width:calc(500px/6); */
   height                : 6px;
   background-color      : var(--blue-origin);
   display               : block;
-  width                 : 60px;
+  /* width                 : 60px; */
   /* transition            : all .1s ease-in-out; */
   /* position           : relative; */
   /* top                :115px; */
@@ -123,7 +125,7 @@
   display         : flex;
   justify-content : center;
   align-items     : center;
-  transition      : all .1s ease-in;
+  /* transition      : all .1s ease-in; */
   /* border-right : 2px solid rgba(192, 192, 192, 0.336); */
 }
 
