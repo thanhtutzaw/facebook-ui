@@ -26,9 +26,9 @@ export function Header() {
   const [width, setwidth] = useState<number>()
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];
+    setwidth(Math.floor(nav.clientWidth / 6));
     if(window.innerWidth < 500){
       console.log(window.innerWidth)
-      setwidth(Math.floor(nav.clientWidth / 6));
       // console.log(window.innerWidth);
     }
     window.onresize = ()=>{
