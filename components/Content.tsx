@@ -18,7 +18,7 @@ function Posts() {
 export function Content() {
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
-  const {active} = useActive();
+  const { active } = useActive();
   const router = useRouter();
 
   // useEffect(() => {
@@ -28,10 +28,13 @@ export function Content() {
 
   //   }
   // }, [canDrag ,router])
-  
 
   useEffect(() => {
-    const content = document.getElementById('content')
+    // console.log(active);
+    if (active) {
+      window.location.hash = active === "/" ? "#home" : "#" + active;
+    }
+    const content = document.getElementById("content");
     // content?.addEventListener('dragleave' , ()=>{
     //   console.log(active);
     // })
@@ -42,13 +45,11 @@ export function Content() {
     window.addEventListener("mouseup", () => {
       setcanDrag(false);
     });
-  }, [active,canDrag]);
+  }, [active, canDrag]);
 
   function dragStart(e: any) {
-
     e.preventDefault();
     e.stopPropagation();
-    
 
     const currentTarget = e.currentTarget;
     setpos({
@@ -93,15 +94,13 @@ export function Content() {
       onMouseDown={dragStart}
       onMouseUp={dragStop}
       onMouseMove={dragging}
-      onScroll={()=>{
-        // console.log(active);
-        // const target = e.target as HTMLDivElement
-        // router.push(`#${active}`)
-        // router.replace(`#${active}`);
-        // if(active !== window.location.hash) return;
-        
-        // router.push()
-        // setcanDrag(true)
+      onScroll={(e)=>{
+        const target = e.target as HTMLDivElement
+        const scroll = target.scrollLeft
+        const indicator = document.getElementsByClassName(
+          "Home_indicator__htkkp"
+        )[0] as HTMLDivElement
+        indicator.style.transform = `translateX(${scroll/6}px)`
       }}
     >
       <div id="/" className={styles.home}>

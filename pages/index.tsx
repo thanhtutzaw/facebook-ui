@@ -9,14 +9,15 @@ export default function Home() {
   const router = useRouter();
   // const path = active === '/' ? '#home' : '#'+active
   // console.table("path= " + path);
-  // useEffect(() => {
-  // router.push(path)
-  // }, [])
 
+  
   useEffect(() => {
-    if (active) {
-      window.location.hash = active === "/" ? "#home" : "#" + active;
-    }
+    const content = document.getElementById("content");
+
+// console.log(active)
+    // if (active) {
+    //   window.location.hash = active === "/" ? "#home" : "#" + active;
+    // }
 
     // router.push('/')
     // router.push()
@@ -35,11 +36,20 @@ export default function Home() {
         behavior: "smooth",
       });
     }
+    // console.log(window.location.hash === "")
+    if (window.location.hash === "") {
+      content?.scrollTo({
+        left: 0,
+        behavior: "smooth",
+      });
+      // window.location.hash = "#home"
+    }
     // console.log(router.asPath)
     window.onhashchange = (e) => {
+      // console.log(window.location.lasthash);
       // e.preventDefault()
       if (window.location.hash === "" || window.location.hash === "#home") {
-        const content = document.getElementById("content");
+        // window.location.hash = "#home";
         main.scrollTo({
           top: 60,
           behavior: "smooth",
