@@ -13,18 +13,37 @@ export default function Home() {
   useEffect(() => {
     const content = document.getElementById("content");
     const main = document.getElementsByTagName("main")[0];
+    const header = document.getElementsByTagName("header")[0];
 
     if (window.location.hash === "#home" || window.location.hash === "") {
+      header.style.transform = "translateY(0px)";
+      // header.style.opacity = "1";
+      header.style.display = "block";
       main.scrollTo({
         top: 0,
         behavior: "smooth",
       });
     } else {
+      header.style.transform = "translateY(-50px)";
+      header.ontransitionend = () => {
+        header.style.display = "none";
+      };
+      // header.style.opacity = '0'
+      // header.style.display = 'none'
+      // header.style.visibility = 'hidden'
       main.scrollTo({
-        top: 60,
+        top: 0,
         behavior: "smooth",
       });
+
+      console.log(header);
+      // main.scrollTo({
+      //   top: 60,
+      //   behavior: "smooth",
+      // });
     }
+    //hereeee
+
     // console.log(active)
     // if (active) {
     //   window.location.hash = active === "/" ? "#home" : "#" + active;
@@ -58,13 +77,12 @@ export default function Home() {
     window.onhashchange = (e) => {
       // console.log(window.location.lasthash);
       // e.preventDefault()
-      console.log(window.location.hash === "#home");
+      // console.log(window.location.hash === "#home");
       if (window.location.hash === "" || window.location.hash === "#home") {
-        // window.location.hash = "#home";
-        main.scrollTo({
-          top: 0,
-          behavior: "smooth",
-        });
+        // main.scrollTo({
+        //   top: 0,
+        //   behavior: "smooth",
+        // });
         content?.scrollTo({
           left: 0,
           behavior: "smooth",
@@ -76,13 +94,13 @@ export default function Home() {
 
     main.addEventListener("scroll", handleScroll);
     function handleScroll() {
-      if (main.scrollTop > 60) {
-        nav.classList.add(styles.sticky);
-        main.style.scrollSnapType = "";
-      } else {
-        nav.classList.remove(styles.sticky);
-        main.style.scrollSnapType = "y mandatory";
-      }
+      // if (main.scrollTop > 60) {
+      //   nav.classList.add(styles.sticky);
+      //   main.style.scrollSnapType = "";
+      // } else {
+      //   nav.classList.remove(styles.sticky);
+      //   main.style.scrollSnapType = "y mandatory";
+      // }
     }
     return () => window.removeEventListener("scroll", handleScroll);
   }, [router, active]);

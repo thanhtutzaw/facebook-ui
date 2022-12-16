@@ -26,6 +26,9 @@
   max-width        : var(--main-width);
   background-color : white;
   scroll-snap-align: start;
+  transition: all .3s ease-in-out ;
+  /* display: block;
+  visibility: visible; */
   /* border        :4px solid black; */
 }
 
@@ -51,6 +54,7 @@
   justify-content  : center;
   max-width        : var(--main-width);
   height           : 60px;
+    /* border: 5px solid rgb(0, 4, 255); */
   /* height        :9vh; */
 }
 
@@ -144,6 +148,7 @@
   overflow-x      : scroll;
   /* border       :3px solid red; */
   scroll-behavior : smooth;
+  /* border: 5px solid rgb(0, 4, 255); */
   /* height       : 853px; */
   /* border       :3px solid blue; */
   /* height       :82vh; */
@@ -196,7 +201,7 @@
   /* overflow-x        : scroll; */
   background-color  : rgb(111, 209, 204);
   background-color  : rgb(255, 255, 255);
-  height            : 26vh;
+  /* height            : 26vh; */
   /* width          :100%; */
   display           : flex;
   /* justify-content: center; */
@@ -206,16 +211,18 @@
 .storyCards {
   overflow-x: scroll; 
   display  : flex;
-  flex     : 1;
-  flex-wrap: nowrap;
+  /* flex     : 1; */
+  /* flex-wrap: nowrap; */
   gap      : 10px;
   padding:1rem .8rem;
   /* margin:130px 0; */
-
 }
-
+.storyCard:first-child{
+  border:1px solid #e0e0e0;
+}
 .storyCard {
-  height          : 22vh;
+  /* height          : 22vh; */
+height:170px;
   background-color: greenyellow;
   background-color: rgb(224, 224, 224);
   border          : none;
@@ -224,9 +231,24 @@
   border-radius   : 10px;
   text-align      : left;
   overflow        : hidden;
-  box-shadow: 0 0 3px rgb(155, 155, 155);
+  /* box-shadow: 0 0 3px rgb(155, 155, 155); */
 }
+.storyCard:active{
+  /* background-color: red; */
+  animation: card .3s ease-in-out;
+}
+@keyframes card {
+  0%{
+    scale: 1;
+  }
+  50%{
+    scale: .9;
 
+  }
+  100%{
+    scale: 1;
+  }
+}
 .storyCards .addStory {
   text-align     : center;
   display        : flex;
@@ -240,18 +262,32 @@
   /* color:red; */
   /* border:none; */
   position        : relative;
-  /* bottom          : -27%; */
+  bottom          : -27%;
+  z-index: 100;
   /*  */
    margin: auto;
   border-radius: 50%;
-  width:40px;
-  height:40px;
+  width:35px;
+  height:35px;
   display         : flex;
   justify-content : center;
   align-items     : center;
-  border: 2px solid black;
-}
+  /* border: 2px solid black; */
 
+  outline: 4px solid rgb(255, 255, 255);
+  background-color: var(--blue-origin);
+  border:none;
+  color:white;
+}
+/* .addStory>button::after{
+  content: '';
+  width: 52px;
+  height:52px;
+  background-color: rgb(102, 102, 102);
+  position: absolute;
+  border-radius: 50%;
+  z-index: -100;
+} */
 .addStory>p {
   width:100%;
   position        : relative;
@@ -259,11 +295,12 @@
   margin          : 0;
   display         : flex;
   justify-content : center;
-  align-items     : center;
+  align-items     : flex-end;
+  padding:.5rem 0;
   background-color: rgb(207, 124, 124);
   background-color: rgb(255, 255, 255);
   color:rgb(44, 44, 44);
-  height          : 40px;
+  height          : 70px;
   font-weight: 500;
 }
 

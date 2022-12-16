@@ -16,17 +16,18 @@ function Story() {
   return (
     <div className={styles.storyContainer}>
       <div className={styles.storyCards}>
-        <div className={[styles.storyCard, styles.addStory].join(" ")}>
+        <div
+          onClick={() => {
+            fileInput.current?.click();
+          }}
+          className={[styles.storyCard, styles.addStory].join(" ")}
+        >
           <input
             style={{ display: "none", visibility: "hidden" }}
             ref={fileInput}
             type="file"
           />
-          <button
-            onClick={() => {
-              fileInput.current?.click();
-            }}
-          >
+          <button>
             <FontAwesomeIcon icon={faAdd} />
           </button>
           <p>Create Story</p>
