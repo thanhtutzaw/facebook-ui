@@ -26,7 +26,8 @@
   max-width        : var(--main-width);
   background-color : white;
   scroll-snap-align: start;
-  transition: all .3s ease-in-out ;
+  transition: all .1s ease-in;
+  /* background-color: white; */
   /* display: block;
   visibility: visible; */
   /* border        :4px solid black; */
@@ -37,6 +38,7 @@
   display          : flex;
   align-items      : center;
   height           : 60px;
+  background-color: white;
   /* height        :9vh; */
 }
 

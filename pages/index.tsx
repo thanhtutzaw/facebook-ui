@@ -14,34 +14,46 @@ export default function Home() {
     const content = document.getElementById("content");
     const main = document.getElementsByTagName("main")[0];
     const header = document.getElementsByTagName("header")[0];
-
-    if (window.location.hash === "#home" || window.location.hash === "") {
-      header.style.transform = "translateY(0px)";
-      // header.style.opacity = "1";
-      header.style.display = "block";
-      main.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+    main.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    if (window.location.hash !== "#home") {
     } else {
-      header.style.transform = "translateY(-50px)";
-      header.ontransitionend = () => {
-        header.style.display = "none";
-      };
-      // header.style.opacity = '0'
-      // header.style.display = 'none'
-      // header.style.visibility = 'hidden'
+      header.style.transform = "translateY(0px)";
+      // header.style.display = "block";
+      header.style.height = "auto";
       main.scrollTo({
         top: 0,
         behavior: "smooth",
       });
-
-      console.log(header);
-      // main.scrollTo({
-      //   top: 60,
-      //   behavior: "smooth",
-      // });
     }
+
+    // main.scrollTo({
+    //   top: 0,
+    //   behavior: "smooth",
+    // });
+
+    // header.style.display = 'block'
+
+    // if (window.location.hash === "#home" || window.location.hash === "") {
+    //   header.style.transform = "translateY(0px)";
+    //   header.style.display = "block";
+    //   main.scrollTo({
+    //     top: 0,
+    //     behavior: "smooth",
+    //   });
+    // }
+    // else {
+    //   header.style.transform = "translateY(-20px)";
+    //   header.ontransitionend = () => {
+    //     header.style.display = "none";
+    //   };
+    //   main.scrollTo({
+    //     top: 0,
+    //     behavior: "smooth",
+    //   });
+    // }
     //hereeee
 
     // console.log(active)
@@ -75,6 +87,9 @@ export default function Home() {
     }
     // console.log(router.asPath)
     window.onhashchange = (e) => {
+      // if (window.location.hash !== "#home") {
+
+      // }
       // console.log(window.location.lasthash);
       // e.preventDefault()
       // console.log(window.location.hash === "#home");
@@ -87,6 +102,18 @@ export default function Home() {
           left: 0,
           behavior: "smooth",
         });
+      } else {
+        main.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+
+        header.style.transform = "translateY(-60px)";
+        header.style.height = "0px";
+        header.ontransitionend = () => {
+          // header.style.height = "0px";
+          // header.style.display = "none";
+        };
       }
     };
 
@@ -94,13 +121,30 @@ export default function Home() {
 
     main.addEventListener("scroll", handleScroll);
     function handleScroll() {
-      // if (main.scrollTop > 60) {
-      //   nav.classList.add(styles.sticky);
-      //   main.style.scrollSnapType = "";
-      // } else {
-      //   nav.classList.remove(styles.sticky);
-      //   main.style.scrollSnapType = "y mandatory";
-      // }
+      // header.style.height = '0px'
+      // header.style.opacity = '0'
+      // header.style.display = 'none'
+      if (main.scrollTop > 60) {
+        nav.classList.add(styles.sticky);
+        main.style.scrollSnapType = "";
+        // header.style.height = '0px'
+        // header.style.opacity = '0'
+        // header.style.display = 'none'
+        
+        // header.style.height = '60px'
+      } else {
+        nav.classList.remove(styles.sticky);
+        main.style.scrollSnapType = "y mandatory";
+        // header.style.height = '60px'
+        // header.style.opacity = '1'
+        // header.style.display = 'block'
+      }
+
+      if (window.location.hash === "#home" || main.scrollTop > 60) {
+        // header.style.display = "block";
+        // header.style.opacity = "1";
+        // header.style.transform = "translateY(0px)";
+      }
     }
     return () => window.removeEventListener("scroll", handleScroll);
   }, [router, active]);
