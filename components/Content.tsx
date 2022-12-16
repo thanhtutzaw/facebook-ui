@@ -4,12 +4,41 @@ import Profile from "../pages/profile";
 import Watch from "../pages/watch";
 import Menu from "../pages/menu";
 import Noti from "../pages/noti";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useActive from "../hooks/useActive";
 import { useRouter } from "next/router";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faAdd
+} from "@fortawesome/free-solid-svg-icons";
 function Story() {
-  return <div className={styles.storyContainer}>Story</div>;
+  const fileInput = useRef<HTMLInputElement>(null)
+  return (
+    <div className={styles.storyContainer}>
+      <div className={styles.storyCards}>
+        <div className={[styles.storyCard, styles.addStory].join(" ")}>
+          <input
+            style={{ display: "none", visibility: "hidden" }}
+            ref={fileInput}
+            type="file"
+          />
+          <button
+            onClick={() => {
+              fileInput.current?.click();
+            }}
+          >
+            <FontAwesomeIcon icon={faAdd} />
+          </button>
+          <p>Create Story</p>
+        </div>
+        <div className={styles.storyCard}></div>
+        <div className={styles.storyCard}></div>
+        <div className={styles.storyCard}></div>
+        <div className={styles.storyCard}></div>
+        <div className={styles.storyCard}></div>
+      </div>
+    </div>
+  );
 }
 function Posts() {
   return <div className={styles.postContainer}>Posts</div>;
@@ -52,12 +81,15 @@ export function Content() {
     e.stopPropagation();
 
     const currentTarget = e.currentTarget;
-    setpos({
-      left: currentTarget.scrollLeft,
-      top: currentTarget.scrollTop,
-      x: e.clientX,
-      y: e.clientY,
-    });
+    // if(e.target.class)
+    console.log()
+    if (e.target.className == "Home_storyCard__3_T_R")return ;
+      setpos({
+        left: currentTarget.scrollLeft,
+        top: currentTarget.scrollTop,
+        x: e.clientX,
+        y: e.clientY,
+      });
     setcanDrag(true);
     currentTarget.style.cursor = "grabbing";
   }

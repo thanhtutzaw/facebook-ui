@@ -10,11 +10,22 @@ export default function Home() {
   // const path = active === '/' ? '#home' : '#'+active
   // console.table("path= " + path);
 
-  
   useEffect(() => {
     const content = document.getElementById("content");
+    const main = document.getElementsByTagName("main")[0];
 
-// console.log(active)
+    if (window.location.hash === "#home" || window.location.hash === "") {
+      main.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } else {
+      main.scrollTo({
+        top: 60,
+        behavior: "smooth",
+      });
+    }
+    // console.log(active)
     // if (active) {
     //   window.location.hash = active === "/" ? "#home" : "#" + active;
     // }
@@ -29,15 +40,14 @@ export default function Home() {
     // })
     // console.log(active);
     // router.push("#"+active)
-    const main = document.getElementsByTagName("main")[0];
     if (router.asPath === "/") {
-      main.scrollTo({
-        top: 60,
-        behavior: "smooth",
-      });
+      // main.scrollTo({
+      //   top: 60,
+      //   behavior: "smooth",
+      // });
     }
     // console.log(window.location.hash === "")
-    if (window.location.hash === "") {
+    if (window.location.hash === "" || window.location.hash === "#home") {
       content?.scrollTo({
         left: 0,
         behavior: "smooth",
@@ -48,10 +58,11 @@ export default function Home() {
     window.onhashchange = (e) => {
       // console.log(window.location.lasthash);
       // e.preventDefault()
+      console.log(window.location.hash === "#home");
       if (window.location.hash === "" || window.location.hash === "#home") {
         // window.location.hash = "#home";
         main.scrollTo({
-          top: 60,
+          top: 0,
           behavior: "smooth",
         });
         content?.scrollTo({

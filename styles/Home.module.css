@@ -1,9 +1,9 @@
 .main {
-
-  width    : 100vw;
-  max-width: var(--main-width);
-  overflow : auto;
-  height   : 100vh;
+  background-color: white;
+  width           : 100vw;
+  max-width       : var(--main-width);
+  overflow        : auto;
+  height          : 100vh;
 
   scroll-behavior     : smooth;
   /* padding          : 4rem 0; */
@@ -61,20 +61,17 @@
 
 .indicatorContainer {
   /* background-color: rgb(32, 32, 32); */
-  height          : 6px;
-  width           : 100%;
-  max-width       : var(--main-width);
-  position        : absolute;
-  top             : 115px;
-  /* left         : 169px; */
-  /* top          : 0px;
-  left            : 70px; */
-  /* transition      : all .1s forwards; */
+  height                : 6px;
+  /* width              : 100%; */
+  max-width             : var(--main-width);
+  position              : relative;
+  /* top                : 115px; */
+  /* left               : 169px; */
+  /* top                : 0px;
+  left                  : 70px; */
+  /* transition         : all .1s forwards; */
 }
 
-/* .navItems:nth-child(1).active ~ .indicator{
-  transform: translateX(0px);
-} */
 .nav .navItems:nth-child(1).active~.indicatorContainer .indicator {
   /* transform: translateX(0px); */
 }
@@ -84,49 +81,35 @@
   /* transform: translateX(83px); */
 }
 
-.nav .navItems:nth-child(3).active~.indicatorContainer .indicator {
-  /* transform: translateX(calc(84px*2)); */
-}
-
-.nav .navItems:nth-child(4).active~.indicatorContainer .indicator {
-  /* transform: translateX(calc(84px*3)); */
-}
-
-.nav .navItems:nth-child(5).active~.indicatorContainer .indicator {
-  /* transform: translateX(calc(84px*4)); */
-}
-
-.nav .navItems:nth-child(6).active~.indicatorContainer .indicator {
-  /* transform: translateX(calc(83.33px*5)); */
-}
-
 .indicator {
   /* width:50%; */
   /* min-width:calc(500px/6); */
-  height                : 4px;
-  background-color      : var(--blue-origin);
-  display               : block;
-  /* width                 : 60px; */
-  /* transition            : all .1s ease-in-out; */
-  /* position           : relative; */
-  /* top                :115px; */
-  border-radius         : 10px;
-  position              : absolute;
-  bottom                : 0;
-  /* left               : 30px; */
-  transform             : translateX(0px);
+  height                      : 4px;
+  background-color            : var(--blue-origin);
+  display                     : block;
+  /* width                    : 60px; */
+  /* transition               : all .1s ease-in-out; */
+  /* position                 : relative; */
+  /* top                      :115px; */
+  border-radius               : 10px;
+  position                    : absolute;
+  top                         : 29px;
+  left                        : -500px;
+  /* bottom                   : 0; */
+  /* left                     : 30px; */
+  transform                   : translateX(0px);
 }
 
 .nav>.navItems {
-  background-color: rgba(255, 255, 255);
-  height          : 60px;
-  flex            : 1;
-  font-size       : 21px;
-  display         : flex;
-  justify-content : center;
-  align-items     : center;
+  background-color   : rgba(255, 255, 255);
+  height             : 60px;
+  flex               : 1;
+  font-size          : 21px;
+  display            : flex;
+  justify-content    : center;
+  align-items        : center;
   /* transition      : all .1s ease-in; */
-  /* border-right : 2px solid rgba(192, 192, 192, 0.336); */
+  /* border-right    : 2px solid rgba(192, 192, 192, 0.336); */
 }
 
 .nav>.navItems>svg {
@@ -152,10 +135,10 @@
 /* .header>.nav:where(.sticky) .content{*/
 
 .content {
-  /* height: 100vh; */
-  /* display: flex; */
-  /* border: 3px solid rgb(65, 8, 221); */
-  /* width:100vw; */
+  height          : 100vh;
+  /* display      : flex; */
+  /* border       : 3px solid rgb(65, 8, 221); */
+  /* width        :100vw; */
   display         : flex;
   scroll-snap-type: x mandatory;
   overflow-x      : scroll;
@@ -169,7 +152,7 @@
   /* display      : inline-flex; */
 }
 
-.content * {
+.content>div {
   overflow-y       : auto;
   scroll-snap-align: center;
   scroll-snap-stop : always;
@@ -193,13 +176,6 @@
   background-color: orangered;
 }
 
-.storyContainer {
-  background-color  : rgb(111, 209, 204);
-  /* height         :20vh;   */
-  display           : flex;
-  /* justify-content: center; */
-  align-items       : center;
-}
 
 .postContainer {
   background-color: orangered;
@@ -215,6 +191,86 @@
   flex-wrap      : wrap;
   max-width      : 800px;
 }
+
+.storyContainer {
+  /* overflow-x        : scroll; */
+  background-color  : rgb(111, 209, 204);
+  background-color  : rgb(255, 255, 255);
+  height            : 26vh;
+  /* width          :100%; */
+  display           : flex;
+  /* justify-content: center; */
+  align-items       : center;
+}
+
+.storyCards {
+  overflow-x: scroll; 
+  display  : flex;
+  flex     : 1;
+  flex-wrap: nowrap;
+  gap      : 10px;
+  padding:1rem .8rem;
+  /* margin:130px 0; */
+
+}
+
+.storyCard {
+  height          : 22vh;
+  background-color: greenyellow;
+  background-color: rgb(224, 224, 224);
+  border          : none;
+  /* width        :18vw; */
+  min-width       : 95px;
+  border-radius   : 10px;
+  text-align      : left;
+  overflow        : hidden;
+  box-shadow: 0 0 3px rgb(155, 155, 155);
+}
+
+.storyCards .addStory {
+  text-align     : center;
+  display        : flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction : column;
+  font-size      : 15px;
+}
+
+.addStory>button {
+  /* color:red; */
+  /* border:none; */
+  position        : relative;
+  /* bottom          : -27%; */
+  /*  */
+   margin: auto;
+  border-radius: 50%;
+  width:40px;
+  height:40px;
+  display         : flex;
+  justify-content : center;
+  align-items     : center;
+  border: 2px solid black;
+}
+
+.addStory>p {
+  width:100%;
+  position        : relative;
+  /* bottom          : -27%; */
+  margin          : 0;
+  display         : flex;
+  justify-content : center;
+  align-items     : center;
+  background-color: rgb(207, 124, 124);
+  background-color: rgb(255, 255, 255);
+  color:rgb(44, 44, 44);
+  height          : 40px;
+  font-weight: 500;
+}
+
+/* .storyCards:first-child,
+.storyCards:last-child {
+  padding: 0 .8rem;
+} */
 
 .card {
   margin         : 1rem;
@@ -248,7 +304,7 @@
 
 .logo {
   /* height: 1em; */
-  margin-left: 0.5rem;
+  margin-left: 0.7rem;
 }
 
 @media (max-width: 600px) {
