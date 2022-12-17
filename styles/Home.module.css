@@ -26,7 +26,7 @@
   max-width        : var(--main-width);
   background-color : white;
   scroll-snap-align: start;
-  transition: all .3s ease-in-out;
+  transition: all .5s ease-in-out;
   /* background-color: white; */
   /* display: block;
   visibility: visible; */
@@ -58,6 +58,7 @@
   height           : 60px;
     /* border: 5px solid rgb(0, 4, 255); */
   /* height        :9vh; */
+transition: all .5s ease-in-out;
 }
 
 .active {
