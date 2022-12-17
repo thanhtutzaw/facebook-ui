@@ -1,7 +1,10 @@
 import styles from "../styles/Home.module.css";
 import Post from "./Post";
+function fetchPosts() {
 
-export function Newfeed() {
+}
+export  function Newfeed() {
+  const posts = fetchPosts()
   return (
     <div className={styles.postContainer}>  
       <Post text="lorem lorem fdsfsdfdf"/>
@@ -15,3 +18,5 @@ export function Newfeed() {
     </div>
   );
 }
+
+

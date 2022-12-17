@@ -3,10 +3,26 @@ import { Content } from "../components/Content";
 import { useEffect } from "react";
 import useActive from "../hooks/useActive";
 import { useRouter } from "next/router";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { app } from "../lib/firebase";
+import { useUser } from "../hooks/useUser";
 
 export default function Home() {
   const { active } = useActive();
   const router = useRouter();
+  const auth = getAuth(app);
+  const user = useUser();
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/");
+      } else {
+        console.log("no user in index");
+        router.push("/login");
+      }
+    });
+  }, []);
+
   // const path = active === '/' ? '#home' : '#'+active
   // console.table("path= " + path);
 
@@ -146,12 +162,10 @@ export default function Home() {
       } else if (window.location.hash !== "#home") {
         // headerContainer.style.height = "60px";
         // headerContainer.style.transform = "translateY(0px)";
-
-        
         // nav.classList.add(styles.sticky);
         // nav.classList.remove(styles.sticky);
         // main.style.scrollSnapType = "y mandatory";
-      }else{
+      } else {
         nav.classList.remove(styles.sticky);
         // headerContainer.style.height = "120px";
       }

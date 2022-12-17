@@ -30,16 +30,20 @@
 padding:15px 1rem;
 margin:0;
 }
-.postHeader:hover , .post>p:hover   {
+.postHeader:active , .post>p:active   {
     background-color: rgb(207, 207, 207);
-
 }
 
 .postHeader p {
     margin   : 0;
     padding  : 0;
+    font-size: 20px;
+    line-height: 20px;
+    
+}
+.postHeader >div >p:last-child{
+    color: #4e4e4e;
     font-size: 15px;
-
 }
 
 .postContainer>p {
