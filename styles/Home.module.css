@@ -21,18 +21,20 @@
 .sticky+.content {
   padding-top: 60px;
 }
-.headerContainer{
+
+.headerContainer {
   transition: all .2s ease;
 }
+
 .header {
-  max-width        : var(--main-width);
-  background-color : white;
-  scroll-snap-align: start;
-  transition: all .2s ease-in-out;
+  max-width          : var(--main-width);
+  background-color   : white;
+  scroll-snap-align  : start;
+  transition         : all .2s ease-in-out;
   /* background-color: white; */
-  /* display: block;
-  visibility: visible; */
-  /* border        :4px solid black; */
+  /* display         : block;
+  visibility         : visible; */
+  /* border          :4px solid black; */
 }
 
 .logoContainer {
@@ -40,7 +42,7 @@
   display          : flex;
   align-items      : center;
   height           : 60px;
-  background-color: white;
+  background-color : white;
   /* height        :9vh; */
 }
 
@@ -58,9 +60,9 @@
   justify-content  : center;
   max-width        : var(--main-width);
   height           : 60px;
-    /* border: 5px solid rgb(0, 4, 255); */
+  /* border        : 5px solid rgb(0, 4, 255); */
   /* height        :9vh; */
-transition: all .5s ease-in-out;
+  transition       : all .5s ease-in-out;
 }
 
 .active {
@@ -69,16 +71,20 @@ transition: all .5s ease-in-out;
 }
 
 .indicatorContainer {
-  /* background-color: rgb(32, 32, 32); */
-  height                : 6px;
-  /* width              : 100%; */
-  max-width             : var(--main-width);
-  position              : relative;
-  /* top                : 115px; */
-  /* left               : 169px; */
-  /* top                : 0px;
-  left                  : 70px; */
-  /* transition         : all .1s forwards; */
+  /* background-color         : rgb(32, 32, 32); */
+  height                      : 6px;
+  width                       : 100%;
+  max-width                   : var(--main-width);
+  position                    : absolute;
+  top                         : calc(120px - 4px);
+  /* top                      : 116px; */
+  /* max-width                : var(--main-width); */
+  /* width                    : var(--main-width); */
+  /* position                 : relative; */
+  /* left                     : 169px; */
+  /* top                      : 0px;
+  left                        : 70px; */
+  /* transition               : all .1s forwards; */
 }
 
 .nav .navItems:nth-child(1).active~.indicatorContainer .indicator {
@@ -93,20 +99,21 @@ transition: all .5s ease-in-out;
 .indicator {
   /* width:50%; */
   /* min-width:calc(500px/6); */
-  height                      : 4px;
-  background-color            : var(--blue-origin);
-  display                     : block;
-  /* width                    : 60px; */
-  /* transition               : all .1s ease-in-out; */
-  /* position                 : relative; */
-  /* top                      :115px; */
-  border-radius               : 10px;
-  position                    : absolute;
-  top                         : 29px;
-  left                        : -500px;
+  height                         : 4px;
+  background-color               : var(--blue-origin);
+  /* width                       : 60px; */
+  /* transition                  : all .1s ease-in-out; */
+  /* position                    : relative; */
+  /* top                         :115px; */
+  border-radius                  : 10px;
+  position                       : absolute;
+  /* position                    : absolute; */
+  /* top                         : 29px;
+  left                           : -500px; */
+
   /* bottom                   : 0; */
   /* left                     : 30px; */
-  transform                   : translateX(0px);
+  transform: translateX(0px);
 }
 
 .nav>.navItems {
@@ -153,7 +160,7 @@ transition: all .5s ease-in-out;
   overflow-x      : scroll;
   /* border       :3px solid red; */
   scroll-behavior : smooth;
-  /* border: 5px solid rgb(0, 4, 255); */
+  /* border       : 5px solid rgb(0, 4, 255); */
   /* height       : 853px; */
   /* border       :3px solid blue; */
   /* height       :82vh; */
@@ -204,30 +211,32 @@ transition: all .5s ease-in-out;
 
 .storyContainer {
   /* overflow-x        : scroll; */
-  background-color  : rgb(111, 209, 204);
-  background-color  : rgb(255, 255, 255);
+  background-color     : rgb(111, 209, 204);
+  background-color     : rgb(255, 255, 255);
   /* height            : 26vh; */
-  /* width          :100%; */
-  display           : flex;
-  /* justify-content: center; */
-  align-items       : center;
+  /* width             :100%; */
+  display              : flex;
+  /* justify-content   : center; */
+  align-items          : center;
 }
 
 .storyCards {
-  overflow-x: scroll; 
-  display  : flex;
+  overflow-x  : scroll;
+  display     : flex;
   /* flex     : 1; */
   /* flex-wrap: nowrap; */
-  gap      : 10px;
-  padding:1rem .8rem;
-  /* margin:130px 0; */
+  gap         : 10px;
+  padding     : 1rem .8rem;
+  /* margin   :130px 0; */
 }
-.storyCard:first-child{
-  border:1px solid #e0e0e0;
+
+.storyCard:first-child {
+  border: 1px solid #e0e0e0;
 }
+
 .storyCard {
   /* height          : 22vh; */
-height:170px;
+  height          : 170px;
   background-color: greenyellow;
   background-color: rgb(224, 224, 224);
   border          : none;
@@ -236,29 +245,34 @@ height:170px;
   border-radius   : 10px;
   text-align      : left;
   overflow        : hidden;
-  /* box-shadow: 0 0 3px rgb(155, 155, 155); */
+  /* box-shadow   : 0 0 3px rgb(155, 155, 155); */
 }
-.storyCard:active{
+
+.storyCard:active {
   /* background-color: red; */
   animation: card .3s ease-in-out;
 }
+
 @keyframes card {
-  0%{
+  0% {
     scale: 1;
   }
-  50%{
+
+  50% {
     scale: .9;
 
   }
-  100%{
+
+  100% {
     scale: 1;
   }
 }
+
 .storyCards .addStory {
   text-align     : center;
   display        : flex;
   justify-content: center;
-  align-items: center;
+  align-items    : center;
   flex-direction : column;
   font-size      : 15px;
 }
@@ -266,24 +280,25 @@ height:170px;
 .addStory>button {
   /* color:red; */
   /* border:none; */
-  position        : relative;
-  bottom          : -27%;
-  z-index: 100;
+  position       : relative;
+  bottom         : -27%;
+  z-index        : 100;
   /*  */
-   margin: auto;
-  border-radius: 50%;
-  width:35px;
-  height:35px;
-  display         : flex;
-  justify-content : center;
-  align-items     : center;
-  /* border: 2px solid black; */
+  margin         : auto;
+  border-radius  : 50%;
+  width          : 35px;
+  height         : 35px;
+  display        : flex;
+  justify-content: center;
+  align-items    : center;
+  /* border      : 2px solid black; */
 
-  outline: 4px solid rgb(255, 255, 255);
+  outline         : 4px solid rgb(255, 255, 255);
   background-color: var(--blue-origin);
-  border:none;
-  color:white;
+  border          : none;
+  color           : white;
 }
+
 /* .addStory>button::after{
   content: '';
   width: 52px;
@@ -294,19 +309,19 @@ height:170px;
   z-index: -100;
 } */
 .addStory>p {
-  width:100%;
-  position        : relative;
+  width              : 100%;
+  position           : relative;
   /* bottom          : -27%; */
-  margin          : 0;
-  display         : flex;
-  justify-content : center;
-  align-items     : flex-end;
-  padding:.5rem 0;
-  background-color: rgb(207, 124, 124);
-  background-color: rgb(255, 255, 255);
-  color:rgb(44, 44, 44);
-  height          : 70px;
-  font-weight: 500;
+  margin             : 0;
+  display            : flex;
+  justify-content    : center;
+  align-items        : flex-end;
+  padding            : .5rem 0;
+  background-color   : rgb(207, 124, 124);
+  background-color   : rgb(255, 255, 255);
+  color              : rgb(44, 44, 44);
+  height             : 70px;
+  font-weight        : 500;
 }
 
 /* .storyCards:first-child,

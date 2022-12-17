@@ -67,10 +67,7 @@ export function Header() {
         <div className={styles.indicatorContainer}>
           <div
             style={{
-              // transform: `translateX(${Math.floor(0)}px)`,
-              // transform: `translate(${Math.floor(width / 6)}px,0px)`,
-              width: width+"px",
-              // transform: `translateX(${(width*0)}px)`,
+              width: `${width}px`,
             }}
             className={styles.indicator}
           ></div>

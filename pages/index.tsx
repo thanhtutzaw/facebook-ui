@@ -15,21 +15,22 @@ export default function Home() {
     const main = document.getElementsByTagName("main")[0];
     const nav = document.getElementsByTagName("nav")[0];
     const header = document.getElementsByTagName("header")[0];
-    const headerContainer = document.getElementsByClassName("Home_headerContainer__dbWZE")[0] as HTMLDivElement;
-    // console.log()
-    main.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    const headerContainer = document.getElementsByClassName(
+      "Home_headerContainer__dbWZE"
+    )[0] as HTMLDivElement;
+
+    // main.scrollTo({
+    //   top: 0,
+    //   behavior: "smooth",
+    // });
     if (window.location.hash !== "#home") {
     } else {
-      
       // header.style.transform = "translateY(0px)";
       // header.style.height = "auto";
       // nav.style.transform = "translateY(0px)";
       headerContainer.style.transform = "translateY(0px)";
       headerContainer.style.height = "120px";
-        // main.style.scrollSnapType = "none";
+      // main.style.scrollSnapType = "none";
 
       main.scrollTo({
         top: 0,
@@ -115,12 +116,13 @@ export default function Home() {
           top: 0,
           behavior: "smooth",
         });
-main.style.scrollSnapType = "none";
+        main.style.scrollSnapType = "none";
         // header.style.transform = "translateY(-60px)";
         // header.style.height = "0px";
         // nav.style.transform = "translateY(0px)";
+        // headerContainer.style.transform = "translateY(-60px)";
         headerContainer.style.transform = "translateY(-60px)";
-        headerContainer.style.height = '60px'
+        headerContainer.style.height = "60px";
         // header.style.display = "block";
         // nav.style.height = "auto";
         header.ontransitionend = () => {
@@ -138,20 +140,20 @@ main.style.scrollSnapType = "none";
       // header.style.opacity = '0'
       // header.style.display = 'none'
       if (main.scrollTop > 60) {
-        nav.classList.add(styles.sticky);
-        main.style.scrollSnapType = "none";
-        headerContainer.style.transform = 'translateY(0px)'
-        // header.style.height = '0px'
-        // header.style.opacity = '0'
-        // header.style.display = 'none'
+        // nav.classList.add(styles.sticky);
+        // main.style.scrollSnapType = "none";
+        // headerContainer.style.height = "60px";
+      } else if (window.location.hash !== "#home") {
+        // headerContainer.style.height = "60px";
+        // headerContainer.style.transform = "translateY(0px)";
 
-        // header.style.height = '60px'
-      } else if(window.location.hash === "#home"){
+        
+        // nav.classList.add(styles.sticky);
+        // nav.classList.remove(styles.sticky);
+        // main.style.scrollSnapType = "y mandatory";
+      }else{
         nav.classList.remove(styles.sticky);
-        main.style.scrollSnapType = "y mandatory";
-        // header.style.height = '60px'
-        // header.style.opacity = '1'
-        // header.style.display = 'block'
+        // headerContainer.style.height = "120px";
       }
 
       if (window.location.hash === "#home" || main.scrollTop > 60) {
