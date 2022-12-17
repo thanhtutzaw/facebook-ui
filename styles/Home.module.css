@@ -26,7 +26,7 @@
   max-width        : var(--main-width);
   background-color : white;
   scroll-snap-align: start;
-  transition: all .1s ease-in;
+  transition: all .3s ease-in-out;
   /* background-color: white; */
   /* display: block;
   visibility: visible; */
