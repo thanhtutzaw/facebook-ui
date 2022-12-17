@@ -178,6 +178,7 @@
 }
 
 .home {
+  background-color: rgb(218, 218, 218);
   /* max-width:var(--main-width); */
   /* max-width:var(--main-width);
   width:100vw; */
@@ -322,6 +323,7 @@
   color              : rgb(44, 44, 44);
   height             : 70px;
   font-weight        : 500;
+  line-height: 30px;
 }
 
 /* .storyCards:first-child,

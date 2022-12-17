@@ -1,7 +1,7 @@
 import styles from "./Post.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faThumbsUp,
+  faThumbsUp, 
   faComment,
   faShare,
 } from "@fortawesome/free-solid-svg-icons";
@@ -11,7 +11,7 @@ export default function Post(props: any) {
   return (
     <>
       <div className={styles.post}>
-        <div className={styles.postContainer}>
+        {/* <div className={styles.postContainer}> */}
           <div className={styles.postHeader}>
             <img className={styles.profile}></img>
             <div>
@@ -20,19 +20,22 @@ export default function Post(props: any) {
             </div>
           </div>
           <p>{text}</p>
-        </div>
         <div className={styles.postAction}>
           <button>
             <FontAwesomeIcon icon={faThumbsUp} />
+            <p>Like</p>
           </button>
           <button>
             <FontAwesomeIcon icon={faComment} />
+            <p>Comment</p>
           </button>
           <button>
             <FontAwesomeIcon icon={faShare} />
+            <p>Share</p>
           </button>
         </div>
-      </div>
+        </div>
+      {/* </div> */}
     </>
   );
 }
