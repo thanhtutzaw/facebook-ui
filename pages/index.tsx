@@ -13,16 +13,24 @@ export default function Home() {
   useEffect(() => {
     const content = document.getElementById("content");
     const main = document.getElementsByTagName("main")[0];
+    const nav = document.getElementsByTagName("nav")[0];
     const header = document.getElementsByTagName("header")[0];
+    const headerContainer = document.getElementsByClassName("Home_headerContainer__dbWZE")[0] as HTMLDivElement;
+    // console.log()
     main.scrollTo({
       top: 0,
       behavior: "smooth",
     });
     if (window.location.hash !== "#home") {
     } else {
-      header.style.transform = "translateY(0px)";
-      // header.style.display = "block";
-      header.style.height = "auto";
+      
+      // header.style.transform = "translateY(0px)";
+      // header.style.height = "auto";
+      // nav.style.transform = "translateY(0px)";
+      headerContainer.style.transform = "translateY(0px)";
+      headerContainer.style.height = "120px";
+        // main.style.scrollSnapType = "none";
+
       main.scrollTo({
         top: 0,
         behavior: "smooth",
@@ -107,9 +115,14 @@ export default function Home() {
           top: 0,
           behavior: "smooth",
         });
-
-        header.style.transform = "translateY(-60px)";
-        header.style.height = "0px";
+main.style.scrollSnapType = "none";
+        // header.style.transform = "translateY(-60px)";
+        // header.style.height = "0px";
+        // nav.style.transform = "translateY(0px)";
+        headerContainer.style.transform = "translateY(-60px)";
+        headerContainer.style.height = '60px'
+        // header.style.display = "block";
+        // nav.style.height = "auto";
         header.ontransitionend = () => {
           // header.style.height = "0px";
           // header.style.display = "none";
@@ -117,7 +130,7 @@ export default function Home() {
       }
     };
 
-    const nav = document.getElementsByTagName("nav")[0];
+    // const nav = document.getElementsByTagName("nav")[0];
 
     main.addEventListener("scroll", handleScroll);
     function handleScroll() {
@@ -126,13 +139,14 @@ export default function Home() {
       // header.style.display = 'none'
       if (main.scrollTop > 60) {
         nav.classList.add(styles.sticky);
-        main.style.scrollSnapType = "";
+        main.style.scrollSnapType = "none";
+        headerContainer.style.transform = 'translateY(0px)'
         // header.style.height = '0px'
         // header.style.opacity = '0'
         // header.style.display = 'none'
-        
+
         // header.style.height = '60px'
-      } else {
+      } else if(window.location.hash === "#home"){
         nav.classList.remove(styles.sticky);
         main.style.scrollSnapType = "y mandatory";
         // header.style.height = '60px'

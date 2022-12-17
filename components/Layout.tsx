@@ -6,7 +6,9 @@ export default function Layout({children}:PropsWithChildren) {
   return (
     <>
       <main className={styles.main}>
-        <Header />
+        <div className={styles.headerContainer}>
+          <Header />
+        </div>
         {children}
       </main>
     </>

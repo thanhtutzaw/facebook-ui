@@ -21,12 +21,14 @@
 .sticky+.content {
   padding-top: 60px;
 }
-
+.headerContainer{
+  transition: all .2s ease;
+}
 .header {
   max-width        : var(--main-width);
   background-color : white;
   scroll-snap-align: start;
-  transition: all .5s ease-in-out;
+  transition: all .2s ease-in-out;
   /* background-color: white; */
   /* display: block;
   visibility: visible; */
