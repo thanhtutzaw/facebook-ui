@@ -28,7 +28,7 @@ export function Header() {
   const [width, setwidth] = useState<number>()
   const auth = getAuth(app);
   // const user = useUser();
-  const [email, setemail] = useState(null)
+  const [email, setemail] = useState<String | null>(null)
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {

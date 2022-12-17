@@ -3,11 +3,11 @@ import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { app } from "../lib/firebase";
 import { signin } from "../lib/signin";
-import { useUser } from "../hooks/useUser";
-function login() {
+// import { useUser } from "../hooks/useUser";
+export default function Login() {
   const router = useRouter();
   const auth = getAuth(app);
-  const user = useUser();
+//   const user = useUser();
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -45,5 +45,3 @@ function login() {
     </>
   );
 }
-
-export default login;
