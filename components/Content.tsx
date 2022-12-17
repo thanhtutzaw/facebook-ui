@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAdd
 } from "@fortawesome/free-solid-svg-icons";
+import { Newfeed } from "./Newfeed";
 function Story() {
   const fileInput = useRef<HTMLInputElement>(null)
   return (
@@ -40,9 +41,6 @@ function Story() {
       </div>
     </div>
   );
-}
-function Posts() {
-  return <div className={styles.postContainer}>Posts</div>;
 }
 
 export function Content() {
@@ -127,18 +125,18 @@ export function Content() {
       onMouseDown={dragStart}
       onMouseUp={dragStop}
       onMouseMove={dragging}
-      onScroll={(e)=>{
-        const target = e.target as HTMLDivElement
-        const scroll = target.scrollLeft
+      onScroll={(e) => {
+        const target = e.target as HTMLDivElement;
+        const scroll = target.scrollLeft;
         const indicator = document.getElementsByClassName(
           "Home_indicator__htkkp"
-        )[0] as HTMLDivElement
-        indicator.style.transform = `translateX(${scroll/6}px)`
+        )[0] as HTMLDivElement;
+        indicator.style.transform = `translateX(${scroll / 6}px)`;
       }}
     >
       <div id="/" className={styles.home}>
         <Story />
-        <Posts />
+        <Newfeed />
       </div>
       <Friend />
       <Watch />
