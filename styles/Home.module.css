@@ -1,5 +1,5 @@
 .main {
-  background-color: white;
+  /* background-color: white; */
   width           : 100vw;
   max-width       : var(--main-width);
   overflow        : auto;
@@ -158,7 +158,8 @@
 /* .header>.nav:where(.sticky) .content{*/
 
 .content {
-  height          : 100vh;
+  /* height          : 100vh; */
+
   /* display      : flex; */
   /* border       : 3px solid rgb(65, 8, 221); */
   /* width        :100vw; */
@@ -182,6 +183,7 @@
   scroll-snap-stop : always;
   max-width        : var(--main-width);
   min-width        : 100%;
+  height:fit-content;
 }
 
 .home {

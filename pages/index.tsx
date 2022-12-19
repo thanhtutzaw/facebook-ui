@@ -24,7 +24,7 @@ export const getServerSideProps:GetServerSideProps = async(context)=> {
     const token = await verifyIdToken(cookies.token)
     // console.log(cookies.token);
     console.log(token)
-    const {uid} = token;
+    // const {uid} = token;
 
 
 

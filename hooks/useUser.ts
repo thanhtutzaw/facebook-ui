@@ -9,13 +9,13 @@ export function useUser() {
   const auth = getAuth(app);
   const [user, setuser] = useState<User | null>(null);
   useEffect(() => {
-    onIdTokenChanged(auth, async (user) => {
-      if (!user) {
-        nookies.destroy(undefined, "token");
-      }
-      const token = await user?.getIdToken();
-      nookies.set(undefined, "token", token as string, {});
-    });
+    // onIdTokenChanged(auth, async (user) => {
+    //   if (!user) {
+    //     nookies.destroy(undefined, "token");
+    //   }
+    //   const token = await user?.getIdToken();
+    //   nookies.set(undefined, "token", token , {});
+    // });
     onAuthStateChanged(auth, (user) => {
       if (user) {
         // router.push("/");
