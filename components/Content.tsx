@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAdd
 } from "@fortawesome/free-solid-svg-icons";
-import { Newfeed } from "./Newfeed";
+import Newfeed from "./Newfeed";
 function Story() {
   const fileInput = useRef<HTMLInputElement>(null)
   return (

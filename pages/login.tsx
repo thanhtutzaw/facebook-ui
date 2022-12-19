@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { app } from "../lib/firebase";
 import { signin } from "../lib/signin";
+import styles from  '../styles/Home.module.css'
 // import { useUser } from "../hooks/useUser";
 export default function Login() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function Login() {
   const password = "111111";
   return (
     <>
-      <input
+      {/* <input
         style={{ cursor: "not-allowed" }}
         type="email"
         value={email}
@@ -34,8 +35,9 @@ export default function Login() {
         type="text"
         value={password}
         readOnly
-      />
+      /> */}
       <button
+      className={styles.loginBtn}
         onClick={() => {
           signin(email, password);
         }}

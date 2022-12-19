@@ -142,6 +142,13 @@
     background-color: rgb(199, 199, 199);
 
   }
+  .loginBtn:hover {
+    background-color: #1c7ff3;
+}
+
+.logoutBtn:hover {
+  background-color: rgb(240, 34, 34);
+}
 }
 
 .nav .navItems:active {
@@ -179,9 +186,9 @@
 
 .home {
   background-color: rgb(218, 218, 218);
-  /* max-width:var(--main-width); */
-  /* max-width:var(--main-width);
-  width:100vw; */
+  /* max-width    :var(--main-width); */
+  /* max-width    :var(--main-width);
+  width           :100vw; */
 }
 
 .add,
@@ -200,7 +207,39 @@
   /* height       :200vh; */
 }
 
+.loginBtn {
+  width        : 200px;
+  height       : 100px;
+  padding      : 1rem;
+  border       : 0;
+  background   : var(--blue-origin);
+  color        : white;
+  font-size    : 1.1em;
+  border-radius: 20px;
+  display      : flex;
+  align-items  : center;
+  margin       : auto;
+  line-height  : 33px;
+  position     : absolute;
+  inset        : 0;
+}
 
+.logoutBtn {
+  cursor          : pointer;
+  /* border       : 2px solid red; */
+  color           : red;
+  border-radius   : 10px;
+  /* width        : 40%; */
+  width           : 320px;
+  max-width       : 100px;
+  overflow        : auto;
+  border          : none;
+  text-align      : left;
+  height          : 50px;
+  color           : rgb(245, 223, 223);
+  background      : rgb(238, 51, 51);
+  margin          : 0 1rem;
+}
 
 .grid {
   display        : flex;
@@ -250,9 +289,15 @@
 }
 
 .storyCard:active {
-  /* background-color: red; */
   animation: card .3s ease-in-out;
 }
+.loginBtn:active {
+  animation: card .3s ease-in-out;
+}
+.logoutBtn:active {
+  animation: card .3s ease-in-out;
+}
+
 
 @keyframes card {
   0% {
@@ -323,7 +368,7 @@
   color              : rgb(44, 44, 44);
   height             : 70px;
   font-weight        : 500;
-  line-height: 30px;
+  line-height        : 30px;
 }
 
 /* .storyCards:first-child,
