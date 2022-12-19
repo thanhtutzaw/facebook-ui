@@ -4,17 +4,51 @@ import { useEffect } from "react";
 import useActive from "../hooks/useActive";
 import { useRouter } from "next/router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../lib/firebase";
+import { app, db } from "../lib/firebase";
 import { useUser } from "../hooks/useUser";
+import { collection, collectionGroup, doc, getDoc, getDocs } from "firebase/firestore";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import nookies from 'nookies'
+import {verifyIdToken} from '../lib/firebaseAdmin'
+// async function fetchUser() {
+//   const res = await fetch("https://jsonplaceholder.typicode.com/users");
+//   const data = await res.json();
+//   return data;
+// }
+export const getServerSideProps:GetServerSideProps = async(context)=> {
+  // console.log(context)
+    // const { user } = useUser();
+    let posts = null;
+    const cookies = nookies.get(context)
+    // console.log(cookies)
+    const token = await verifyIdToken(cookies.token)
+    // console.log(cookies.token);
+    console.log(token)
+    const {uid} = token;
 
-async function fetchUser() {
-  const res = await fetch("https://jsonplaceholder.typicode.com/users");
-  const data = await res.json();
-  return data;
+
+
+    const docRef = collectionGroup(db, `posts`);
+    // const docRef = collection(db, `/users/${uid}/posts`);
+    // const docRef = doc(db, `/users/${uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
+    // const docRef = doc(db, `/users/${user?.uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
+    const docSnap = await getDocs(docRef);
+    posts = docSnap.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+  return {
+    props: {
+      // posts: docSnap.data(),
+      posts
+    },
+  };
 }
-export default function Home() {
-  // const userTest = await fetchUser()
-  // console.log(userTest)
+export default function Home(props:InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const {posts} = props
+  console.log(posts);
+
   const { active } = useActive();
   const router = useRouter();
   const auth = getAuth(app);
@@ -128,7 +162,7 @@ export default function Home() {
 
   return (
     <>
-      <Content />
+      <Content posts={posts}/>
     </>
   );
 }

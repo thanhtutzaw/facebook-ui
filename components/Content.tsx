@@ -43,7 +43,8 @@ function Story() {
   );
 }
 
-export function Content() {
+export function Content(props:any) {
+  const {posts} = props;
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { active } = useActive();
@@ -136,7 +137,7 @@ export function Content() {
     >
       <div id="/" className={styles.home}>
         <Story />
-        <Newfeed />
+        <Newfeed posts={posts}/>
       </div>
       <Friend />
       <Watch />

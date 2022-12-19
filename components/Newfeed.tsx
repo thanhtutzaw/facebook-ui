@@ -23,14 +23,18 @@ import { useState } from "react";
 //   };
 // }
 // async function fetchPosts() {
-//   const { user } = useUser();
-//   const docRef = doc(db, `/users/${user?.uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
+  //   const { user } = useUser();
+  //   const docRef = doc(db, `/users/${user?.uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
+  
 //   // const docRef = doc(db, `/users/${user?.uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
 //   const docSnap = await getDoc(docRef);
 //   return [docSnap.data()];
 // }
 
+
+
 export default function Newfeed(props:any) {
+  const {posts} = props;
     // const { user } = useUser();
     // console.log(user?.uid);
   // const [post, setpost] = useState([])
@@ -59,11 +63,16 @@ export default function Newfeed(props:any) {
   return (
     <div className={styles.postContainer}>
       {/* {JSON.stringify(posts?.text)} */}
-      {/* {posts?.map((post: any) => (
-        <p>{post.text}</p>
-      ))} */}
+      {posts?.map((post: any) => (
+        // <p>{post.text}</p>  
+        <Post key={posts.id} text={post.text}/>
+      ))}
       {/* {post.map(p=>(
         <p>{p?.text}</p>
+      ))} */}
+
+      {/* {posts.map(p=>(
+        <p>{p.post}</p>
       ))} */}
 
       {/* <Post text="lorem lorem fdsfsdfdf" />
