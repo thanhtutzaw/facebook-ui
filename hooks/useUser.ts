@@ -14,7 +14,9 @@ export function useUser() {
     //     nookies.destroy(undefined, "token");
     //   }
     //   const token = await user?.getIdToken();
-    //   nookies.set(undefined, "token", token , {});
+    //   if(token){
+    //     nookies.set(undefined, "token", token, {});
+    //   }
     // });
     onAuthStateChanged(auth, (user) => {
       if (user) {

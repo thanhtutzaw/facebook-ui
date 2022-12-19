@@ -16,15 +16,13 @@ import {verifyIdToken} from '../lib/firebaseAdmin'
 //   return data;
 // }
 export const getServerSideProps:GetServerSideProps = async(context)=> {
-  // console.log(context)
-    // const { user } = useUser();
-    let posts = null;
-    const cookies = nookies.get(context)
-    // console.log(cookies)
-    const token = await verifyIdToken(cookies.token)
-    // console.log(cookies.token);
-    console.log(token)
+  // const { user } = useUser();
+  let posts = null;
+  // const cookies = nookies.get(context)
+  // console.log(cookies)
+  //   const token = await verifyIdToken(cookies.token)
     // const {uid} = token;
+    const uid = null;
 
 
 
@@ -41,13 +39,12 @@ export const getServerSideProps:GetServerSideProps = async(context)=> {
   return {
     props: {
       // posts: docSnap.data(),
-      posts
+      posts , uid
     },
   };
 }
 export default function Home(props:InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const {posts} = props
-  console.log(posts);
+  const {posts , uid} = props
 
   const { active } = useActive();
   const router = useRouter();
@@ -162,7 +159,7 @@ export default function Home(props:InferGetServerSidePropsType<typeof getServerS
 
   return (
     <>
-      <Content posts={posts}/>
+      <Content uid={uid} posts={posts}/>
     </>
   );
 }

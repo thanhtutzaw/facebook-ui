@@ -1,26 +1,17 @@
 .post {
     background-color: rgb(253, 253, 253);
     margin          : .5rem 0;
-    /* padding         : 0 1rem; */
-    /* padding-top     : 1rem; */
 }
 
 .post>p {
-    /* word-break: break-all; */
-        word-break: break-word;
-    white-space: break-spaces;
+
+    word-break    : break-word;
+    white-space   : break-spaces;
     padding-bottom: 0.7rem !important;
 }
-.post > * {
-    padding:0 1rem;
-}
-/* .post:is(.postHeader){
-    display: none;
-} */
 
-.postContainer:first-child {
-    /* background-color: red !important; */
-    /* border-bottom: 2px solid #dbdbdb; */
+.post>* {
+    padding: 0 1rem;
 }
 
 .postHeader {
@@ -28,23 +19,43 @@
     align-items: center;
     gap        : .5rem;
 }
-.postHeader, .post>p   {
-padding:15px 1rem;
-margin:0;
+
+.postHeader,
+.post>p {
+    padding: 15px 1rem;
+    margin : 0;
+    transition: all .3s ease-in;
 }
-.postHeader:active , .post>p:active   {
+
+.postHeader:active,
+.post>p:active {
     background-color: rgb(207, 207, 207);
+    /* background-color: rgb(240, 57, 57); */
+    /* animation:fadeout .3s ease-in-out 1s; */
+    
+    
+}
+@keyframes fadeout {
+    0%{
+        
+        background-color: rgb(207, 207, 207);
+    }
+    100%{
+        background-color: rgba(207, 207, 207, 0);
+
+    }
 }
 
 .postHeader p {
-    margin   : 0;
-    padding  : 0;
-    font-size: 20px;
+    margin     : 0;
+    padding    : 0;
+    font-size  : 20px;
     line-height: 20px;
-    
+
 }
-.postHeader >div >p:last-child{
-    color: #4e4e4e;
+
+.postHeader>div>p:last-child {
+    color    : #4e4e4e;
     font-size: 15px;
 }
 
@@ -55,19 +66,17 @@ margin:0;
 }
 
 .profile {
-    /* border:3px solid black; */
     width           : 50px;
     height          : 50px;
     border-radius   : 50%;
     border          : 0;
-    background-color: thistle;
+    background-color: thistle;  
     background-color: rgb(221, 221, 221);
 }
 
 .postAction {
-    display           : flex;
-    /* justify-content: space-between; */
-    align-items       : center;
+    display    : flex;
+    align-items: center;
 }
 
 .postAction>button {
@@ -79,6 +88,7 @@ margin:0;
     border          : none;
     background-color: white;
     border-top      : 1px solid #dbdbdb;
+    transition: all .2s ease-in;
     /* border-right : 2px solid #dbdbdb;     */
 }
 
