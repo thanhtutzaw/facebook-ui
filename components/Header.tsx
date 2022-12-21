@@ -2,6 +2,7 @@ import styles from "../styles/Home.module.css";
 import { AiFillHome } from "react-icons/ai";
 import { Navitems } from "./Navitems";
 import { Logo } from "./Logo";
+import {useContext} from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
@@ -15,7 +16,11 @@ import { useEffect, useState } from "react";
 import { signout } from "../lib/signout";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from "../lib/firebase";
+import AuthContext from "../context/AuthContext";
+
+// import user from '../hooks/useAuth'
 export function Header() {
+const {user} = useContext(AuthContext);
   // { name: "/", icon: <AiFillHome /> },
   const pages = [
     { name: "/", icon: <FontAwesomeIcon icon={faHome} /> },
@@ -30,6 +35,7 @@ export function Header() {
   // const user = useUser();
   const [email, setemail] = useState<String | null>(null);
   useEffect(() => {
+    console.log(user?.email)
     onAuthStateChanged(auth, (user) => {
       if (user) {
         // console.log(user.email);

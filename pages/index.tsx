@@ -6,25 +6,32 @@ import { useRouter } from "next/router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app, db } from "../lib/firebase";
 import { useUser } from "../hooks/useUser";
-import { collection, collectionGroup, doc, getDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  collectionGroup,
+  doc,
+  getDoc,
+  getDocs,
+} from "firebase/firestore";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import nookies from 'nookies'
-import {verifyIdToken} from '../lib/firebaseAdmin'
+import nookies from "nookies";
+import { verifyIdToken } from "../lib/firebaseAdmin";
 // async function fetchUser() {
 //   const res = await fetch("https://jsonplaceholder.typicode.com/users");
 //   const data = await res.json();
 //   return data;
 // }
-export const getServerSideProps:GetServerSideProps = async(context)=> {
-  // const { user } = useUser();
+export const getServerSideProps: GetServerSideProps = async (context) => {
   let posts = null;
-  // const cookies = nookies.get(context)
-  // console.log(cookies)
-  //   const token = await verifyIdToken(cookies.token)
-    // const {uid} = token;
-    const uid = null;
+  try {
+    const cookies = nookies.get(context);
+    console.log(cookies.token);
 
+    const token = await verifyIdToken(cookies.token);
+    const { uid } = token;
 
+    // console.log(token);
+    // const uid = null;
 
     const docRef = collectionGroup(db, `posts`);
     // const docRef = collection(db, `/users/${uid}/posts`);
@@ -36,16 +43,26 @@ export const getServerSideProps:GetServerSideProps = async(context)=> {
       ...doc.data(),
     }));
 
-  return {
-    props: {
-      // posts: docSnap.data(),
-      posts , uid
-    },
-  };
-}
-export default function Home(props:InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const {posts , uid} = props
-
+    return {
+      props: {
+        // posts: docSnap.data(),
+        posts,
+        uid,
+      },
+    };
+  } catch {
+    context.res.writeHead(302, { Location: "/login" });
+    context.res.end();
+    return {
+      props: {} as never,
+    };
+  }
+};
+export default function Home(
+  props: InferGetServerSidePropsType<typeof getServerSideProps>
+) {
+  const { posts, uid } = props;
+  // console.log({ uid });
   const { active } = useActive();
   const router = useRouter();
   const auth = getAuth(app);
@@ -146,20 +163,19 @@ export default function Home(props:InferGetServerSidePropsType<typeof getServerS
     //     // main.style.scrollSnapType = "y mandatory";
     //   } else {
     //     // nav.classList.remove(styles.sticky);
-    //     //here 
+    //     //here
     //   }
 
     //   // if (window.location.hash === "#home" || main.scrollTop > 60) {
     //   // }
     // }
 
-
     // return () => window.removeEventListener("scroll", handleScroll);
   }, [router, active]);
 
   return (
     <>
-      <Content uid={uid} posts={posts}/>
+      <Content uid={uid} posts={posts} />
     </>
   );
 }

@@ -4,7 +4,6 @@ import { Header } from './Header';
 
 export default function Layout({children}:PropsWithChildren) {
   // const {test} = props;
-  // console.log(test);
   return (
     <>
     {/* {props.uid} */}

@@ -1,11 +1,12 @@
-import { getAuth, onAuthStateChanged, onIdTokenChanged } from "firebase/auth";
+import { getAuth, onIdTokenChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { app } from "../lib/firebase";
+import { User } from "firebase/auth";
 import nookies from "nookies";
-export interface User {
-  uid: string;
-}
-export function useUser() {
+
+import AuthContext from "./AuthContext";
+
+export function AuthProvider({ children }: any) {
   const auth = getAuth(app);
   const [user, setuser] = useState<User | null>(null);
   useEffect(() => {
@@ -32,7 +33,7 @@ export function useUser() {
 
     // });
   }, [user]);
-  return {
-    user,
-  };
+  return (
+    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
+  );
 }

@@ -64,9 +64,10 @@ export default function Newfeed(props:any) {
     <div className={styles.postContainer}>
       {/* {JSON.stringify(posts?.text)} */}
       {posts?.map((post: any) => (
-        // <p>{post.text}</p>  
-        <Post key={posts.id} text={post.text}/>
+        // <p>{post.text}</p>
+        <Post key={posts.id} text={post.text} />
       ))}
+      <p style={{textAlign:'center'}}>No more posts</p>
       {/* {post.map(p=>(
         <p>{p?.text}</p>
       ))} */}
