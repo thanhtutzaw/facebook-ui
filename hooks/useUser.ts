@@ -14,11 +14,13 @@ export function useUser() {
       if (!user) {
         nookies.destroy(undefined, "token");
         setuser(null);
+        // window.location.href="/login"
         return;
       }
       const token = await user?.getIdToken();
       if (token) {
         setuser(user);
+        window.location.href="/#home"
         nookies.set(undefined, "token", token, {});
       }
     });
