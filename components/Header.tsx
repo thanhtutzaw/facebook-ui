@@ -1,8 +1,7 @@
 import styles from "../styles/Home.module.css";
 import { AiFillHome } from "react-icons/ai";
 import { Navitems } from "./Navitems";
-import { Logo } from "./Logo";
-import {useContext} from 'react'
+import { useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
@@ -17,10 +16,21 @@ import { signout } from "../lib/signout";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from "../lib/firebase";
 import AuthContext from "../context/AuthContext";
+import Link from "next/link";
 
 // import user from '../hooks/useAuth'
+const Logo = () => {
+  return (
+    <div className={styles.logoContainer}>
+      <Link href="/" className={styles.logo}>
+        facebook
+      </Link>
+    </div>
+  );
+};
+
 export function Header() {
-const {user} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   // { name: "/", icon: <AiFillHome /> },
   const pages = [
     { name: "/", icon: <FontAwesomeIcon icon={faHome} /> },
@@ -35,7 +45,7 @@ const {user} = useContext(AuthContext);
   // const user = useUser();
   const [email, setemail] = useState<String | null>(null);
   useEffect(() => {
-    console.log(user?.email)
+    console.log(user?.email);
     onAuthStateChanged(auth, (user) => {
       if (user) {
         // console.log(user.email);
@@ -83,7 +93,7 @@ const {user} = useContext(AuthContext);
         <Logo />
         {email && (
           <button className={styles.logoutBtn} onClick={() => signout()}>
-            <span style={{color:'white',   fontWeight: "bold" }}>Logout😡</span>
+            <span style={{ color: "white", fontWeight: "bold" }}>Logout😡</span>
             {email}
           </button>
         )}

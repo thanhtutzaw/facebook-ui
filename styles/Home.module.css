@@ -222,10 +222,11 @@
   border       : 0;
   background   : var(--blue-origin);
   color        : white;
-  font-size    : 1.1em;
+  font-size    : 1.5em;
   border-radius: 20px;
   display      : flex;
   align-items  : center;
+  justify-content: center;
   margin       : auto;
   line-height  : 33px;
   position     : absolute;
