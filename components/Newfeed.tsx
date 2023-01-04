@@ -7,7 +7,7 @@ import { json } from "stream/consumers";
 import { useState } from "react";
 // export async function getServerSideProps() {
 //   const { user } = useUser();
-//   // let posts = null;  
+//   // let posts = null;
 //   const docRef = doc(db, `/users/${user?.uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
 //   // const docRef = doc(db, `/users/${user?.uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
 //   const docSnap = await getDoc(docRef);
@@ -23,25 +23,22 @@ import { useState } from "react";
 //   };
 // }
 // async function fetchPosts() {
-  //   const { user } = useUser();
-  //   const docRef = doc(db, `/users/${user?.uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
-  
+//   const { user } = useUser();
+//   const docRef = doc(db, `/users/${user?.uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
+
 //   // const docRef = doc(db, `/users/${user?.uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
 //   const docSnap = await getDoc(docRef);
 //   return [docSnap.data()];
 // }
 
-
-
-export default function Newfeed(props:any) {
-  const {posts} = props;
-    // const { user } = useUser();
-    // console.log(user?.uid);
+export default function Newfeed(props: any) {
+  const { posts } = props;
+  // const { user } = useUser();
+  // console.log(user?.uid);
   // const [post, setpost] = useState([])
 
   // const {posts} = props;
   // posts?.map(post=>{console.log(post)})
-
 
   // const userTest = await fetchUser()
   // console.log(userTest);
@@ -63,11 +60,11 @@ export default function Newfeed(props:any) {
   return (
     <div className={styles.postContainer}>
       {/* {JSON.stringify(posts?.text)} */}
-      {posts?.map((post: any) => (
+      {posts?.map((post: any, index: Number) => (
         // <p>{post.text}</p>
-        <Post key={posts.id} text={post.text} />
+        <Post key={index} id={posts.id} text={post.text} />
       ))}
-      <p style={{textAlign:'center'}}>No more posts</p>
+      <p style={{ textAlign: "center" }}>No more posts</p>
       {/* {post.map(p=>(
         <p>{p?.text}</p>
       ))} */}

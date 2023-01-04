@@ -49,8 +49,12 @@
 .logo {
   color      : var(--blue-origin);
   font-weight: bold;
-  /* font-size  : 1.7em; */
-  font-size  : 2em;
+  /* font-size  : 2em; */
+
+  
+  /* font-size  : 1.6em; */
+    font-size: clamp(1.8em, 2vw, 2em);
+    /* font-size:calc(10px + 2vmin) */
 }
 
 .nav {

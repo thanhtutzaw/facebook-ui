@@ -8,9 +8,9 @@ export default function Layout({children}:PropsWithChildren) {
     <>
     {/* {props.uid} */}
       <main className={styles.main}>
-        <div className={styles.headerContainer}>
+        {/* <div className={styles.headerContainer}>
           <Header />
-        </div>
+        </div> */}
         {children}
         {/* {children.props.uid} */}
       </main>

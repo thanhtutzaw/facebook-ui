@@ -29,8 +29,11 @@ const Logo = () => {
   );
 };
 
-export function Header() {
+export function Header(props : any) {
+  const {email} = props;
   const { user } = useContext(AuthContext);
+  // console.log(user);
+  // const {email} = user;
   // { name: "/", icon: <AiFillHome /> },
   const pages = [
     { name: "/", icon: <FontAwesomeIcon icon={faHome} /> },
@@ -43,19 +46,17 @@ export function Header() {
   const [width, setwidth] = useState<number>();
   const auth = getAuth(app);
   // const user = useUser();
-  const [email, setemail] = useState<String | null>(null);
-  useEffect(() => {
-    console.log(user?.email);
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // console.log(user.email);
-        setemail(user.email);
-      } else {
-        setemail(null);
-        // console.log(user);
-      }
-    });
-  }, [email]);
+  // const [email, setemail] = useState<String | null>(null);
+
+  // useEffect(() => {
+  //   onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       setemail(user.email);
+  //     } else {
+  //       setemail(null);
+  //     }
+  //   });
+  // }, [email]);
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];
     if (email) {
@@ -78,7 +79,8 @@ export function Header() {
     //   setwidth(Math.floor(nav.clientWidth / 6));
     //   console.log("onload")
     // }
-  }, [width, email]);
+  }, [width]);
+  // }, [width, email]);
 
   return (
     <>

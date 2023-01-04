@@ -10,16 +10,16 @@ export default function Post(props: any) {
   const { text } = props;
   return (
     <>
-      <div className={styles.post}>
+      <div className={styles.post} key={props.id} >
         {/* <div className={styles.postContainer}> */}
-          <div className={styles.postHeader}>
-            <img className={styles.profile}></img>
-            <div>
-              <p>Name</p>
-              <p>Time</p>
-            </div>
+        <div className={styles.postHeader}>
+          <img className={styles.profile}></img>
+          <div>
+            <p>Name</p>
+            <p>Time</p>
           </div>
-          <p>{text}</p>
+        </div>
+        <p>{text}</p>
         <div className={styles.postAction}>
           <button>
             <FontAwesomeIcon icon={faThumbsUp} />
@@ -34,7 +34,7 @@ export default function Post(props: any) {
             <p>Share</p>
           </button>
         </div>
-        </div>
+      </div>
       {/* </div> */}
     </>
   );
