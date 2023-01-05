@@ -453,10 +453,14 @@
     flex-direction: column;
   }
   .storyCards {
-    scroll-snap-type: x mandatory;
-    scroll-padding-left: 35px;
+    /* scroll-snap-type: x mandatory;
+    scroll-padding-left: 35px; */
+
+    /* border: 3px solid red; */
   }
+
   .storyCard > div {
-    scroll-snap-align: center;
+    /* scroll-snap-align: center;
+    border: 3px solid blue; */
   }
 }

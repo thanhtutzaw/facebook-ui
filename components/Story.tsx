@@ -152,13 +152,14 @@ doScrollSnap(target)
         onMouseUp={drageStop}
         
         onMouseMove={dragging}
-        // onTouchMove={(e)=>{ 
-        //   const target = e.currentTarget; 
-        //   const scroll = target.scrollLeft;
-        //   target.style.scrollBehavior = 'smooth'
-        //   doScrollSnap(target)
-        //   console.log(scroll);
-        // }}
+        onTouchMove={(e)=>{ 
+          const target = e.currentTarget; 
+          const scroll = target.scrollLeft;
+          target.style.scrollBehavior = 'smooth'
+          target.style.scrollSnapStop = 'always'
+          doScrollSnap(target)
+          console.log(scroll);
+        }}
         onScroll={(e) => {
           const target = e.currentTarget;
           const scroll = target.scrollLeft;
