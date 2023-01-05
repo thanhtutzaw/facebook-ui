@@ -263,7 +263,8 @@
 }
 
 .storyContainer {
-  /* overflow-x        : scroll; */
+  overflow-x        : scroll;
+  /* scroll-snap-type: x mandatory; */
   background-color     : rgb(111, 209, 204);
   background-color     : rgb(255, 255, 255);
   /* height            : 26vh; */
@@ -275,18 +276,30 @@
 
 .storyCards {
   overflow-x  : scroll;
+  /* scroll-snap-type: x mandatory; */
+  /* scroll-behavior: smooth; */
+  /* scroll-snap-stop: always; */
+  /* scroll-padding-left:90px; */
+
+  /* scroll-padding-left:.3vw; */
   display     : flex;
   /* flex     : 1; */
   /* flex-wrap: nowrap; */
   gap         : 10px;
   padding     : 1rem .8rem;
+  
   /* margin   :130px 0; */
 }
 
-.storyCard:first-child {
+/* .storyCard:first-child {
   border: 1px solid #e0e0e0;
-}
+  border: 3px solid #aa1f1f;
+  scroll-snap-align: center;
+} */
 
+.storyCards > div{
+  scroll-snap-align: center;
+}
 .storyCard {
   /* height          : 22vh; */
   height          : 170px;
@@ -299,6 +312,44 @@
   text-align      : left;
   overflow        : hidden;
   /* box-shadow   : 0 0 3px rgb(155, 155, 155); */
+}
+.cardContainer{
+  gap : 10px;
+  /* scroll-snap-align: center; */
+  display: flex;
+
+}
+.storyCards .addStory {
+  display        : flex;
+  text-align     : center;
+  justify-content: center;
+  align-items    : center;
+  flex-direction : column;
+  font-size      : 15px;
+   border: 1px solid #e0e0e0;
+ /* border: 3px solid #aa1f1f; */
+ /* scroll-snap-align: center; */
+}
+
+.addStory>button {
+  /* color:red; */
+  /* border:none; */
+  position       : relative;
+  bottom         : -27%;
+  z-index        : 100;
+  margin         : auto;
+  border-radius  : 50%;
+  width          : 35px;
+  height         : 35px;
+  display        : flex;
+  justify-content: center;
+  align-items    : center;
+  /* border      : 2px solid black; */
+
+  outline         : 4px solid rgb(255, 255, 255);
+  background-color: var(--blue-origin);
+  border          : none;
+  color           : white;
 }
 
 .storyCard:active {
@@ -327,36 +378,7 @@
   }
 }
 
-.storyCards .addStory {
-  text-align     : center;
-  display        : flex;
-  justify-content: center;
-  align-items    : center;
-  flex-direction : column;
-  font-size      : 15px;
-}
 
-.addStory>button {
-  /* color:red; */
-  /* border:none; */
-  position       : relative;
-  bottom         : -27%;
-  z-index        : 100;
-  /*  */
-  margin         : auto;
-  border-radius  : 50%;
-  width          : 35px;
-  height         : 35px;
-  display        : flex;
-  justify-content: center;
-  align-items    : center;
-  /* border      : 2px solid black; */
-
-  outline         : 4px solid rgb(255, 255, 255);
-  background-color: var(--blue-origin);
-  border          : none;
-  color           : white;
-}
 
 /* .addStory>button::after{
   content: '';
@@ -382,6 +404,7 @@
   height             : 70px;
   font-weight        : 500;
   line-height        : 30px;
+  user-select: none;
 }
 
 /* .storyCards:first-child,

@@ -1,50 +1,18 @@
 import Friend from "../pages/friend";
-import styles from "../styles/Home.module.css";
 import Profile from "../pages/profile";
 import Watch from "../pages/watch";
-import Menu from "../pages/menu";
+import Menu from "../pages/menu"; 
 import Noti from "../pages/noti";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import useActive from "../hooks/useActive";
 import { useRouter } from "next/router";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faAdd
-} from "@fortawesome/free-solid-svg-icons";
-import Newfeed from "./Newfeed";
-function Story() {
-  const fileInput = useRef<HTMLInputElement>(null)
-  return (
-    <div className={styles.storyContainer}>
-      <div className={styles.storyCards}>
-        <div
-          onClick={() => {
-            fileInput.current?.click();
-          }}
-          className={[styles.storyCard, styles.addStory].join(" ")}
-        >
-          <input
-            style={{ display: "none", visibility: "hidden" }}
-            ref={fileInput}
-            type="file"
-          />
-          <button>
-            <FontAwesomeIcon icon={faAdd} />
-          </button>
-          <p>Create Story</p>
-        </div>
-        <div className={styles.storyCard}></div>
-        <div className={styles.storyCard}></div>
-        <div className={styles.storyCard}></div>
-        <div className={styles.storyCard}></div>
-        <div className={styles.storyCard}></div>
-      </div>
-    </div>
-  );
-}
+import styles from "../styles/Home.module.css";    
 
-export function Content(props:any) {
-  const {posts , uid} = props;
+import Story from "./Story";
+import Newfeed from "./Newfeed";
+
+export function Content(props: any) {
+  const { posts, uid } = props;
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { active } = useActive();
@@ -81,15 +49,13 @@ export function Content(props:any) {
     e.stopPropagation();
 
     const currentTarget = e.currentTarget;
-    // if(e.target.class)
-    console.log()
-    if (e.target.className == "Home_storyCard__3_T_R")return ;
-      setpos({
-        left: currentTarget.scrollLeft,
-        top: currentTarget.scrollTop,
-        x: e.clientX,
-        y: e.clientY,
-      });
+    if (e.target.className == "Home_storyCard__3_T_R") return;
+    setpos({
+      left: currentTarget.scrollLeft,
+      top: currentTarget.scrollTop,
+      x: e.clientX,
+      y: e.clientY,
+    });
     setcanDrag(true);
     currentTarget.style.cursor = "grabbing";
   }
@@ -112,7 +78,9 @@ export function Content(props:any) {
       const currentTarget = e.currentTarget as HTMLDivElement;
       const dx = e.clientX - pos.x;
       const dy = e.clientY - pos.y;
+      // currentTarget.scrollLeft = dx;
       currentTarget.scrollLeft = pos.left - dx;
+
       // currentTarget.scrollTop = pos.top - dx;
     } else {
       setcanDrag(false);
@@ -137,7 +105,7 @@ export function Content(props:any) {
     >
       <div id="/" className={styles.home}>
         <Story />
-        <Newfeed posts={posts}/>
+        <Newfeed posts={posts} />
       </div>
       <Friend />
       <Watch />
