@@ -298,7 +298,7 @@
 } */
 
 .storyCards > div{
-  scroll-snap-align: center;
+  scroll-snap-align: start;
 }
 .storyCard {
   /* height          : 22vh; */
@@ -451,5 +451,12 @@
   .grid {
     width         : 100%;
     flex-direction: column;
+  }
+  .storyCards {
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 35px;
+  }
+  .storyCard > div {
+    scroll-snap-align: center;
   }
 }
