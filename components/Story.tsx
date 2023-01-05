@@ -156,7 +156,7 @@ doScrollSnap(target)
           const target = e.currentTarget; 
           const scroll = target.scrollLeft;
           target.style.scrollBehavior = 'smooth'
-          target.style.scrollSnapStop = 'always'
+          // target.style.scrollSnapStop = 'always'
           doScrollSnap(target)
           console.log(scroll);
         }}
