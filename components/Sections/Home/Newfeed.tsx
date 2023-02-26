@@ -1,5 +1,5 @@
-import styles from "../styles/Home.module.css";
-import Post from "./Post";
+import styles from "../../../styles/Home.module.css";
+import Post from "../../Post";
 
 export default function Newfeed(props: any) {
   const { posts } = props;

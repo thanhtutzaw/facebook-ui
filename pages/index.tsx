@@ -16,7 +16,7 @@ import {
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import nookies from "nookies";
 import { verifyIdToken } from "../lib/firebaseAdmin";
-import { Header } from "../components/Header";
+import { Header } from "../components/Header/Header";
 // async function fetchUser() {
 //   const res = await fetch("https://jsonplaceholder.typicode.com/users");
 //   const data = await res.json();
@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     console.log(cookies.token);
 
     const token = await verifyIdToken(cookies.token);
-    const { uid , email} = token;
+    const { uid, email } = token;
 
     // console.log(token);
     // const uid = null;
@@ -63,7 +63,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 export default function Home(
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
-  const { posts, uid ,email,} = props;
+  const { posts, uid, email } = props;
   // console.log({ uid });
   const { active } = useActive();
   const router = useRouter();
@@ -75,7 +75,7 @@ export default function Home(
         router.push("/login");
       }
     });
-  }, []);
+  }, [auth, router]);
 
   // const path = active === '/' ? '#home' : '#'+active
   useEffect(() => {
@@ -178,7 +178,7 @@ export default function Home(
   return (
     <>
       <div className={styles.headerContainer}>
-        <Header email ={email}/>
+        <Header email={email} />
       </div>
       {/* <p>
         from ssr - cookie <mark>{email}</mark>

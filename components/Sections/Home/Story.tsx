@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
-import styles from "../styles/Home.module.css";
+import styles from "../../../styles/Home.module.css";
 
 export default function Story() {
   const fileInput = useRef<HTMLInputElement>(null);
@@ -52,8 +52,6 @@ export default function Story() {
     // e.preventDefault();
     const target = e.currentTarget as HTMLDivElement;
 
-    
-
     // target.style.cursor = "grabbing !important";
     target.style.scrollBehavior = "initial";
     target.style.cursor = "grabbing";
@@ -75,7 +73,7 @@ export default function Story() {
     e.stopPropagation();
     e.preventDefault();
     const target = e.currentTarget as HTMLDivElement;
-    
+
     target.style.cursor = "grab";
     target.style.scrollBehavior = "smooth";
     setprevPoint(Percentage!);
@@ -103,14 +101,13 @@ export default function Story() {
     } else if (scroll! > 0 && scroll! < 80) {
       target.scrollLeft = 80;
     }
-
   }
   function dragging(e: React.MouseEvent) {
     e.stopPropagation();
     e.preventDefault();
 
     const target = e.currentTarget as HTMLDivElement;
-doScrollSnap(target)
+    doScrollSnap(target);
     // if (e.pageX > 300 || e.pageX < 500) {
     //   target.style.transform = `translateX(0px)`;
     // }
@@ -150,14 +147,13 @@ doScrollSnap(target)
         // style={{ scrollSnapType: "x mandatory", transform: "translateX(0px)" }}
         onMouseDown={dragStart}
         onMouseUp={drageStop}
-        
         onMouseMove={dragging}
-        onTouchMove={(e)=>{ 
-          const target = e.currentTarget; 
+        onTouchMove={(e) => {
+          const target = e.currentTarget;
           const scroll = target.scrollLeft;
-          target.style.scrollBehavior = 'smooth'
+          target.style.scrollBehavior = "smooth";
           // target.style.scrollSnapStop = 'always'
-          doScrollSnap(target)
+          doScrollSnap(target);
           console.log(scroll);
         }}
         onScroll={(e) => {

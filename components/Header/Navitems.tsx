@@ -1,7 +1,7 @@
-import styles from "../styles/Home.module.css";
-import useActive from "../hooks/useActive";
+import styles from "../../styles/Home.module.css";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import useActive from "../../hooks/useActive";
 
 export function Navitems(props: any) {
   const { icon, name, index } = props;

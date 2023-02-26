@@ -1,22 +1,20 @@
-import styles from "../styles/Home.module.css";
-import { AiFillHome } from "react-icons/ai";
-import { Navitems } from "./Navitems";
-import { useContext } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faHome,
-  faUserGroup,
   faBars,
-  faTv,
   faBell,
+  faHome,
+  faTv,
   faUser,
+  faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
-import { signout } from "../lib/signout";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../lib/firebase";
-import AuthContext from "../context/AuthContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getAuth } from "firebase/auth";
 import Link from "next/link";
+import { useContext, useEffect, useState } from "react";
+import AuthContext from "../../context/AuthContext";
+import { app } from "../../lib/firebase";
+import { signout } from "../../lib/signout";
+import styles from "../../styles/Home.module.css";
+import { Navitems } from "./Navitems";
 
 // import user from '../hooks/useAuth'
 const Logo = () => {
@@ -29,8 +27,8 @@ const Logo = () => {
   );
 };
 
-export function Header(props : any) {
-  const {email} = props;
+export function Header(props: any) {
+  const { email } = props;
   const { user } = useContext(AuthContext);
   // console.log(user);
   // const {email} = user;

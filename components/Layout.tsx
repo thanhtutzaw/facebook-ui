@@ -1,12 +1,12 @@
-import React, { PropsWithChildren } from 'react'
+import React, { PropsWithChildren } from "react";
 import styles from "../styles/Home.module.css";
-import { Header } from './Header';
+// import { Header } from './Header';
 
-export default function Layout({children}:PropsWithChildren) {
+export default function Layout({ children }: PropsWithChildren) {
   // const {test} = props;
   return (
     <>
-    {/* {props.uid} */}
+      {/* {props.uid} */}
       <main className={styles.main}>
         {/* <div className={styles.headerContainer}>
           <Header />
@@ -17,4 +17,3 @@ export default function Layout({children}:PropsWithChildren) {
     </>
   );
 }
-

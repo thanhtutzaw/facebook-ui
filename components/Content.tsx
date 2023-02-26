@@ -1,15 +1,14 @@
-import Friend from "../pages/friend";
-import Profile from "../pages/profile";
-import Watch from "../pages/watch";
-import Menu from "../pages/menu"; 
-import Noti from "../pages/noti";
+import Friend from "./Sections/friend";
+import Menu from "./Sections/menu";
+import Noti from "./Sections/noti";
 import { useEffect, useState } from "react";
 import useActive from "../hooks/useActive";
 import { useRouter } from "next/router";
-import styles from "../styles/Home.module.css";    
+import styles from "../styles/Home.module.css";
 
-import Story from "./Story";
-import Newfeed from "./Newfeed";
+import Profile from "./Sections/profile";
+import { Home } from "./Sections/Home/Home";
+import Watch from "./Sections/watch";
 
 export function Content(props: any) {
   const { posts, uid } = props;
@@ -103,10 +102,7 @@ export function Content(props: any) {
         indicator.style.transform = `translateX(${scroll / 6}px)`;
       }}
     >
-      <div id="/" className={styles.home}>
-        <Story />
-        <Newfeed posts={posts} />
-      </div>
+      <Home posts={posts} />
       <Friend />
       <Watch />
       <Profile />
