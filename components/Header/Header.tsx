@@ -2,6 +2,8 @@ import {
   faBars,
   faBell,
   faHome,
+  faSignOut,
+  faThumbsUp,
   faTv,
   faUser,
   faUserGroup,
@@ -93,8 +95,12 @@ export function Header(props: any) {
         <Logo />
         {email && (
           <button className={styles.logoutBtn} onClick={() => signout()}>
-            <span style={{ color: "white", fontWeight: "bold" }}>Logout😡</span>
-            {email}
+            {/* <span style={{ color: "white", fontWeight: "bold" }}>Logout😡</span> */}
+            {/* {email} */}
+            <FontAwesomeIcon
+              style={{ color: "#0070f3", fontWeight: "bold" }}
+              icon={faSignOut}
+            />
           </button>
         )}
       </header>

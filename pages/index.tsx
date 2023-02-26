@@ -1,54 +1,56 @@
-import styles from "../styles/Home.module.css";
-import { Content } from "../components/Content";
-import { useEffect } from "react";
-import useActive from "../hooks/useActive";
-import { useRouter } from "next/router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app, db } from "../lib/firebase";
-import { useUser } from "../hooks/useUser";
-import {
-  collection,
-  collectionGroup,
-  doc,
-  getDoc,
-  getDocs,
-} from "firebase/firestore";
+import { collectionGroup, getDocs } from "firebase/firestore";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { useRouter } from "next/router";
 import nookies from "nookies";
-import { verifyIdToken } from "../lib/firebaseAdmin";
+import { useEffect } from "react";
+import { Content } from "../components/Content";
 import { Header } from "../components/Header/Header";
+import { useActive } from "../hooks/useActive";
+import { useUser } from "../hooks/useUser";
+import { app, db } from "../lib/firebase";
+import { verifyIdToken } from "../lib/firebaseAdmin";
+import styles from "../styles/Home.module.css";
+import { Post } from "../types/interfaces";
 // async function fetchUser() {
 //   const res = await fetch("https://jsonplaceholder.typicode.com/users");
 //   const data = await res.json();
 //   return data;
 // }
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  let posts = null;
+export interface Props {
+  posts: Post[];
+  email: string | undefined;
+}
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
   try {
     const cookies = nookies.get(context);
     console.log(cookies.token);
 
     const token = await verifyIdToken(cookies.token);
-    const { uid, email } = token;
+    const { email } = token;
+    // const email = "null email";
 
     // console.log(token);
     // const uid = null;
 
-    const docRef = collectionGroup(db, `posts`);
+    const query = collectionGroup(db, `posts`);
     // const docRef = collection(db, `/users/${uid}/posts`);
     // const docRef = doc(db, `/users/${uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
     // const docRef = doc(db, `/users/${user?.uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
-    const docSnap = await getDocs(docRef);
-    posts = docSnap.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const docSnap = await getDocs(query);
+    const posts = docSnap.docs.map((doc) => {
+      const data = doc.data() as Post;
+      return {
+        // id: doc.id,
+        ...data,
+      };
+    });
 
     return {
       props: {
-        // posts: docSnap.data(),
         posts,
-        uid,
         email,
       },
     };
@@ -56,14 +58,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     context.res.writeHead(302, { Location: "/login" });
     context.res.end();
     return {
-      props: {} as never,
+      props: {
+        posts: [],
+        email: "",
+      },
     };
   }
 };
 export default function Home(
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
-  const { posts, uid, email } = props;
+  const { posts, email } = props;
+  // const email = "null email";
   // console.log({ uid });
   const { active } = useActive();
   const router = useRouter();
@@ -180,10 +186,7 @@ export default function Home(
       <div className={styles.headerContainer}>
         <Header email={email} />
       </div>
-      {/* <p>
-        from ssr - cookie <mark>{email}</mark>
-      </p> */}
-      <Content uid={uid} posts={posts} />
+      <Content email={email} posts={posts} />
     </>
   );
 }

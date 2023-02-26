@@ -1,4 +1,4 @@
-import { getAuth, onAuthStateChanged, onIdTokenChanged } from "firebase/auth";
+import { getAuth, onIdTokenChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { app } from "../lib/firebase";
 import nookies from "nookies";

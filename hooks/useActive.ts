@@ -1,14 +1,13 @@
-import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-export interface IMovieProviderProps {
-  active?: string;
-  setActive: () => void;
-}
-function useActive() {
+// export interface IMovieProviderProps {
+//   active?: string;
+//   setActive: () => void;
+// }
+export function useActive() {
   const [active, setActive] = useState("");
   // const [active, setActive] = useState<IMovieProviderProps | string>("");
 
-  const router = useRouter();
+  // const router = useRouter();
   // const [threshold, setthreshold] = useState(.6)
   useEffect(() => {
     const content = document.querySelectorAll("#content > div");
@@ -29,7 +28,6 @@ function useActive() {
 
           setActive(targetID);
 
-          
           // setthreshold(1)
           // window.location.hash = active === "/" ? "#home" : "#" + active;
 
@@ -94,4 +92,4 @@ function useActive() {
   return { active, setActive };
 }
 
-export default useActive;
+

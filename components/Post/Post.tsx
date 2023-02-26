@@ -1,19 +1,29 @@
 import styles from "./Post.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faThumbsUp, 
+  faThumbsUp,
   faComment,
   faShare,
 } from "@fortawesome/free-solid-svg-icons";
-
-export default function Post(props: any) {
-  const { text } = props;
+import Image from "next/image";
+import { Post as PostType } from "../../types/interfaces";
+// import { Post } from "../../types/interfaces";
+// type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
+// interface Props {
+//   post: Post;
+// }
+interface Props {
+  post: PostType;
+}
+export default function Post({ post }: Props) {
+  const { id, text } = post;
   return (
     <>
-      <div className={styles.post} key={props.id} >
+      <div className={styles.post} key={id}>
         {/* <div className={styles.postContainer}> */}
         <div className={styles.postHeader}>
-          <img className={styles.profile}></img>
+          {/* <img className={styles.profile}></img> */}
+          <Image className={styles.profile} alt={text} src={""} />
           <div>
             <p>Name</p>
             <p>Time</p>

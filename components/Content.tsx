@@ -1,21 +1,26 @@
+import { useEffect, useState } from "react";
+import { useActive } from "../hooks/useActive";
 import Friend from "./Sections/friend";
 import Menu from "./Sections/menu";
 import Noti from "./Sections/noti";
-import { useEffect, useState } from "react";
-import useActive from "../hooks/useActive";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 import styles from "../styles/Home.module.css";
-
-import Profile from "./Sections/profile";
 import { Home } from "./Sections/Home/Home";
+import Profile from "./Sections/profile";
 import Watch from "./Sections/watch";
-
-export function Content(props: any) {
-  const { posts, uid } = props;
+import { InferGetServerSidePropsType } from "next";
+import { getServerSideProps } from "../pages";
+type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
+// export function Content({ posts }: { posts: Post[] }) {
+export function Content(props: Props) {
+  // export function Content(
+  //   props: InferGetServerSidePropsType<typeof getServerSideProps>
+  // )
+  const { posts, email } = props;
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { active } = useActive();
-  const router = useRouter();
+  // const router = useRouter();
 
   // useEffect(() => {
   //   console.log(canDrag)
@@ -102,7 +107,7 @@ export function Content(props: any) {
         indicator.style.transform = `translateX(${scroll / 6}px)`;
       }}
     >
-      <Home posts={posts} />
+      <Home email={email} posts={posts} />
       <Friend />
       <Watch />
       <Profile />

@@ -1,12 +1,15 @@
+import { InferGetServerSidePropsType } from "next";
 import styles from "../../../styles/Home.module.css";
+import { Post as PostType } from "../../../types/interfaces";
 import Post from "../../Post";
-
-export default function Newfeed(props: any) {
+import { getServerSideProps } from "../../../pages";
+type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
+export default function Newfeed(props: Props) {
   const { posts } = props;
   return (
     <div className={styles.postContainer}>
-      {posts?.map((post: any, index: Number) => (
-        <Post key={index} id={posts.id} text={post.text} />
+      {posts?.map((post: PostType, index: number) => (
+        <Post key={index} post={post} />
       ))}
       <p style={{ textAlign: "center" }}>No more posts</p>
 

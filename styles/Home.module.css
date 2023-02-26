@@ -23,6 +23,7 @@
 }
 
 .headerContainer {
+  /* border:3px solid red; */
   transition: all .2s ease;
 }
 
@@ -30,7 +31,7 @@
   max-width          : var(--main-width);
   background-color   : white;
   scroll-snap-align  : start;
-  transition         : all .2s ease-in-out;
+  transition         : background-color .2s ease-in-out;
   /* background-color: white; */
   /* display         : block;
   visibility         : visible; */
@@ -153,6 +154,8 @@
 
 .logoutBtn:hover {
   background-color: rgb(240, 34, 34);
+  background-color: rgb(226, 165, 165);
+  background-color: rgb(230, 230, 230);
 }
 }
 
@@ -241,17 +244,25 @@
   cursor          : pointer;
   /* border       : 2px solid red; */
   color           : red;
-  border-radius   : 10px;
+  border-radius   : 50px;
   /* width        : 40%; */
-  width           : 320px;
-  max-width       : 100px;
+  /* width           : 320px; */
+  /* max-width       : 100px; */
   overflow        : auto;
   border          : none;
   text-align      : left;
   height          : 50px;
+  width          : 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color           : rgb(245, 223, 223);
   background      : rgb(238, 51, 51);
+  background      : rgb(235, 68, 68);
+  background-color: transparent;
   margin          : 0 1rem;
+  padding:0 .5rem;
+  border:0;
 }
 
 .grid {
