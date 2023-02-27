@@ -31,6 +31,7 @@ export default function Login() {
   return (
     <>
       <button
+        disabled={loading}
         className={styles.loginBtn}
         onClick={() => {
           setLoading(true);
@@ -38,7 +39,7 @@ export default function Login() {
             setTimeout(() => {
               console.log("signin");
               signin(email, password);
-            }, 100);
+            }, 700);
           } catch (error) {
             setLoading(false);
             console.error(error);

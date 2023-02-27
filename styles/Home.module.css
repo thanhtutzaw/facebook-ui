@@ -146,7 +146,13 @@
   margin-bottom: 2rem;
 }
 
+.loginBtn:disabled {
+  pointer-events: none;
+
+}
+
 .loginBtn {
+  cursor         : pointer;
   width          : 200px;
   height         : 100px;
   padding        : 1rem;
