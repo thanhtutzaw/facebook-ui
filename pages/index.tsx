@@ -4,13 +4,14 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useEffect } from "react";
-import { Content } from "../Components/Content";
+// import { Content } from "../Components/Content";
 import Header from "../Components/Header/Header";
 import { useActive } from "../hooks/useActive";
 import { app, db } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import styles from "../styles/Home.module.css";
 import { Post } from "../types/interfaces";
+import { Content } from "../Components/Content";
 // async function fetchUser() {
 //   const res = await fetch("https://jsonplaceholder.typicode.com/users");
 //   const data = await res.json();
