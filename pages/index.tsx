@@ -11,8 +11,10 @@ import { app, db } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import styles from "../styles/Home.module.css";
 import { Post } from "../types/interfaces";
-import { Content } from "../Components/Content";
-import Header from "../Components/Header/Header";
+import { Content } from "../components/Content";
+import Header from "../components/Header/Header";
+// import { Content } from "../Components/Content";
+// import Header from "../Components/Header/Header";
 // async function fetchUser() {
 //   const res = await fetch("https://jsonplaceholder.typicode.com/users");
 //   const data = await res.json();
