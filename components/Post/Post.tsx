@@ -35,6 +35,7 @@ export default function Post({ post }: Props) {
             }
           />
           <div>
+            {/* <p>{email}</p> */}
             <p>Name</p>
             <p>Time</p>
           </div>
@@ -42,8 +43,8 @@ export default function Post({ post }: Props) {
         <p>{text}</p>
         <div
           className={styles.postAction}
-          onMouseEnter={() => setBounce(true)}
-          onMouseLeave={() => setBounce(false)}
+          onPointerEnter={() => setBounce(true)}
+          onPointerLeave={() => setBounce(false)}
         >
           <button>
             <FontAwesomeIcon bounce={Bounce} icon={faThumbsUp} />

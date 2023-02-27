@@ -21,8 +21,8 @@
 
 .postHeader,
 .post>p {
-    padding   : 15px 1rem;
-    margin    : 0;
+    padding      : 15px 1rem;
+    margin       : 0;
     /* transition: all .3s ease-in; */
 }
 
@@ -83,7 +83,6 @@
     background-color: white;
     border-top      : 1px solid #dbdbdb;
     transition      : background-color .2s ease;
-    /* border-right : 2px solid #dbdbdb;     */
 }
 
 .postAction p {

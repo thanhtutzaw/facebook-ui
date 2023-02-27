@@ -5,10 +5,10 @@ import Layout from "../Components/Layout";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 config.autoAddCss = false;
-// import { AuthProvider } from "../context/auth";
+import { AuthProvider } from "../context/auth";
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <>
+    <AuthProvider>
       <Head>
         <title>Facebook Next</title>
         <meta name="description" content="Facebook-Mobile-UI with Next.js" />
@@ -18,6 +18,6 @@ export default function App({ Component, pageProps }: AppProps) {
       <Layout>
         <Component {...pageProps} />
       </Layout>
-    </>
+    </AuthProvider>
   );
 }
