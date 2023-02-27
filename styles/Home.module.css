@@ -87,9 +87,7 @@
   align-items     : center;
 }
 
-.nav>.navItems>svg {}
 
-.nav *:hover svg {}
 
 @media only screen and (min-width: 500px) {
   .nav .navItems:hover {
@@ -128,7 +126,6 @@
   height           : fit-content;
 }
 
-.home {}
 
 .add,
 .profile {
@@ -140,8 +137,6 @@
   background-color: orangered;
 }
 
-.postContainer {}
-
 .postContainer>div:last-child {
   margin-bottom: 2rem;
 }
@@ -152,22 +147,24 @@
 }
 
 .loginBtn {
-  cursor         : pointer;
-  width          : 200px;
-  height         : 100px;
-  padding        : 1rem;
-  border         : 0;
-  background     : var(--blue-origin);
-  color          : white;
-  font-size      : 1.5em;
-  border-radius  : 20px;
-  display        : flex;
-  align-items    : center;
-  justify-content: center;
-  margin         : auto;
-  line-height    : 33px;
-  position       : absolute;
-  inset          : 0;
+  cursor            : pointer;
+  width             : 200px;
+  height            : 85px;
+  /* padding        : 1rem; */
+  border            : 0;
+  background        : var(--blue-origin);
+  color             : white;
+  font-size         : 1.5em;
+  font-size         : 1rem;
+  border-radius     : 20px;
+  display           : flex;
+  align-items       : center;
+  justify-content   : center;
+  margin            : auto;
+  line-height       : 33px;
+  position          : absolute;
+  inset             : 0;
+  font-family       : system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 .logoutBtn {
@@ -261,19 +258,11 @@
   border          : none;
   color           : white;
 }
-
-.storyCard:active {
-  animation: card .3s ease-in-out;
-}
-
-.loginBtn:active {
-  animation: card .3s ease-in-out;
-}
-
+.loginBtn:active,
+.storyCard:active,
 .logoutBtn:active {
   animation: card .3s ease-in-out;
 }
-
 @keyframes card {
   0% {
     scale: 1;

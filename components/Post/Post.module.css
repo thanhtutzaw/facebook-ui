@@ -44,7 +44,7 @@
 .postHeader p {
     margin     : 0;
     padding    : 0;
-    font-size  : 20px;
+    font-size  : 17px;
     line-height: 20px;
 }
 
@@ -60,8 +60,8 @@
 }
 
 .profile {
-    width           : 50px;
-    height          : 50px;
+    width           : 35px;
+    height          : 35px;
     border-radius   : 50%;
     border          : 0;
     background-color: thistle;

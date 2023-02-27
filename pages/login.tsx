@@ -18,14 +18,6 @@ export default function Login() {
     });
     return () => unsub();
   }, [auth]);
-  // onAuthStateChanged(auth, (user) => {
-  //   if (user) {
-  //     router.push("/");
-  //   } else {
-  //     router.push("/login");
-  //   }
-  // });
-
   const email = "testuser@gmail.com";
   const password = "111111";
   return (
@@ -37,7 +29,6 @@ export default function Login() {
           setLoading(true);
           try {
             setTimeout(() => {
-              console.log("signin");
               signin(email, password);
             }, 700);
           } catch (error) {

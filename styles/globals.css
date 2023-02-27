@@ -1,34 +1,41 @@
 :root {
   --blue-origin: #0070f3;
-  --main-width:500px;
+  --main-width : 500px;
 }
+
 html,
 body {
   padding: 0;
-  margin: 0;
+  margin : 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-    font-size: 18px;
-    font-size: 20px;
+  font-size: 18px;
+  font-size: 20px;
 }
-body{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height:100%;
-  background-color:rgb(214, 214, 214);
+
+body {
+  display         : flex;
+  justify-content : center;
+  align-items     : center;
+  height          : 100%;
+  background-color: rgb(214, 214, 214);
   background-color: #005cc5c0;
   background-color: rgb(184, 184, 184);
 
 }
 
 a {
-  color: inherit;
+  color          : inherit;
   text-decoration: none;
 }
 
 * {
   box-sizing: border-box;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+  cursor                     : pointer;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -41,12 +48,12 @@ a {
   } */
 }
 
-  ::-webkit-scrollbar {
-    width      : 0;
-    display: none;
-    background : transparent;
-  }
+::-webkit-scrollbar {
+  width     : 0;
+  display   : none;
+  background: transparent;
+}
 
-  ::-webkit-scrollbar-thumb {
-    background: #a0a0a0;
-  }
+::-webkit-scrollbar-thumb {
+  background: #a0a0a0;
+}

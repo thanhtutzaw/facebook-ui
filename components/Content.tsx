@@ -2,6 +2,10 @@ import { lazy, useEffect, useState } from "react";
 import { useActive } from "../hooks/useActive";
 import Friend from "./Sections/friend";
 // const Friend = lazy(() => import("./Sections/friend"));
+// const Friend = dynamic(() => import("./Sections/friend"), {
+//   loading: () => "Loading...",
+// });
+
 import Menu from "./Sections/menu";
 import Noti from "./Sections/noti";
 import styles from "../styles/Home.module.css";
@@ -10,6 +14,7 @@ import Profile from "./Sections/profile";
 import Watch from "./Sections/watch";
 import { InferGetServerSidePropsType } from "next";
 import { getServerSideProps } from "../pages";
+import dynamic from "next/dynamic";
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 // export function Content({ posts }: { posts: Post[] }) {
 export function Content(props: Props) {
@@ -108,6 +113,7 @@ export function Content(props: Props) {
       }}
     >
       <Home email={email} posts={posts} />
+      {/* {active === "friend" && <Friend />} */}
       <Friend />
       <Watch />
       <Profile />
