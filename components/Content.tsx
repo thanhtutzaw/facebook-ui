@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { lazy, useEffect, useState } from "react";
 import { useActive } from "../hooks/useActive";
 import Friend from "./Sections/friend";
+// const Friend = lazy(() => import("./Sections/friend"));
 import Menu from "./Sections/menu";
 import Noti from "./Sections/noti";
-// import { useRouter } from "next/router";
 import styles from "../styles/Home.module.css";
 import { Home } from "./Sections/Home/Home";
 import Profile from "./Sections/profile";
@@ -35,7 +35,7 @@ export function Content(props: Props) {
     if (active) {
       window.location.hash = active === "/" ? "#home" : "#" + active;
     }
-    const content = document.getElementById("content");
+    // const content = document.getElementById("content");
     // content?.addEventListener('dragleave' , ()=>{
     //   console.log(active);
     // })

@@ -3,20 +3,16 @@ import {
   faBell,
   faHome,
   faSignOut,
-  faThumbsUp,
   faTv,
   faUser,
   faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getAuth } from "firebase/auth";
 import Link from "next/link";
-import { useContext, useEffect, useState } from "react";
-import AuthContext from "../../context/AuthContext";
-import { app } from "../../lib/firebase";
+import { useEffect, useState } from "react";
 import { signout } from "../../lib/signout";
 import styles from "../../styles/Home.module.css";
-import { Navitems } from "./Navitems";
+import Navitems from "./Navitems";
 
 // import user from '../hooks/useAuth'
 const Logo = () => {
@@ -29,12 +25,10 @@ const Logo = () => {
   );
 };
 
-export function Header(props: any) {
+export default function Header(props: any) {
   const { email } = props;
-  const { user } = useContext(AuthContext);
-  // console.log(user);
-  // const {email} = user;
-  // { name: "/", icon: <AiFillHome /> },
+  // const { user } = useContext(AuthContext);
+
   const pages = [
     { name: "/", icon: <FontAwesomeIcon icon={faHome} /> },
     { name: "Friend", icon: <FontAwesomeIcon icon={faUserGroup} /> },
@@ -44,19 +38,7 @@ export function Header(props: any) {
     { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
   ];
   const [width, setwidth] = useState<number>();
-  const auth = getAuth(app);
-  // const user = useUser();
-  // const [email, setemail] = useState<String | null>(null);
 
-  // useEffect(() => {
-  //   onAuthStateChanged(auth, (user) => {
-  //     if (user) {
-  //       setemail(user.email);
-  //     } else {
-  //       setemail(null);
-  //     }
-  //   });
-  // }, [email]);
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];
     if (email) {
@@ -79,8 +61,7 @@ export function Header(props: any) {
     //   setwidth(Math.floor(nav.clientWidth / 6));
     //   console.log("onload")
     // }
-  }, [width]);
-  // }, [width, email]);
+  }, [email, width]);
 
   return (
     <>
@@ -95,8 +76,6 @@ export function Header(props: any) {
         <Logo />
         {email && (
           <button className={styles.logoutBtn} onClick={() => signout()}>
-            {/* <span style={{ color: "white", fontWeight: "bold" }}>Logout😡</span> */}
-            {/* {email} */}
             <FontAwesomeIcon
               style={{ color: "#0070f3", fontWeight: "bold" }}
               icon={faSignOut}
@@ -107,7 +86,6 @@ export function Header(props: any) {
 
       {email && (
         <nav className={styles.nav}>
-          {/* <div className={styles.navContainer}> */}
           {pages.map((page, index) => (
             <Navitems
               index={index}
@@ -116,7 +94,6 @@ export function Header(props: any) {
               icon={page.icon}
             />
           ))}
-          {/* </div> */}
           <div className={styles.indicatorContainer}>
             <div
               style={{

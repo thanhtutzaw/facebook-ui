@@ -1,13 +1,11 @@
-import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useActive } from "../../hooks/useActive";
 import styles from "../../styles/Home.module.css";
 
-export function Navitems(props: any) {
+export default function Navitems(props: any) {
   const { icon, name, index } = props;
-  const targetName = name.toLowerCase();
+  const TabName = name.toLowerCase();
   const { active, setActive } = useActive();
-  const router = useRouter();
 
   // const indicator = document.querySelector('.indicatorContainer>.indicator')
   // console.log(indicator);
@@ -43,11 +41,12 @@ export function Navitems(props: any) {
     // }
   }, []);
 
-  const isActive = active === targetName ? styles.active : "";
-  function handleClick(e: any) {
-    // router.push(`${targetName !=  '/' ? "#"+targetName : targetName }`);
-    setActive(targetName);
-    window.location.hash = targetName === "/" ? "#home" : "#" + targetName;
+  const isActive = active === TabName ? styles.active : "";
+  const hashValue = TabName === "/" ? "#home" : "#" + TabName;
+  function handleClick() {
+    // router.push(`${TabName !=  '/' ? "#"+TabName : TabName }`);
+    setActive(TabName);
+    window.location.hash = hashValue;
 
     const content = document.getElementById("content");
     content?.scrollTo({
@@ -57,11 +56,7 @@ export function Navitems(props: any) {
   }
   return (
     <>
-      <div
-        // href={`${name === '/' ? " #home" : "#"+name.toLowerCase()}`}
-        onClick={handleClick}
-        className={`${styles.navItems} ${isActive} `}
-      >
+      <div onClick={handleClick} className={`${styles.navItems} ${isActive} `}>
         {icon}
       </div>
     </>

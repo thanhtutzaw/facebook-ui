@@ -4,10 +4,9 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useEffect } from "react";
-import { Content } from "../components/Content";
-import { Header } from "../components/Header/Header";
+import { Content } from "../Components/Content";
+import Header from "../Components/Header/Header";
 import { useActive } from "../hooks/useActive";
-import { useUser } from "../hooks/useUser";
 import { app, db } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import styles from "../styles/Home.module.css";
@@ -69,12 +68,11 @@ export default function Home(
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
   const { posts, email } = props;
-  // const email = "null email";
   // console.log({ uid });
   const { active } = useActive();
   const router = useRouter();
   const auth = getAuth(app);
-  const user = useUser();
+  // const user = useUser();
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (!user) {
