@@ -9,14 +9,22 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const auth = getAuth(app);
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unsub = onAuthStateChanged(auth, (user) => {
       if (user) {
         router.push("/");
       } else {
         router.push("/login");
       }
     });
-  }, []);
+    return () => unsub();
+  }, [auth]);
+  // onAuthStateChanged(auth, (user) => {
+  //   if (user) {
+  //     router.push("/");
+  //   } else {
+  //     router.push("/login");
+  //   }
+  // });
 
   const email = "testuser@gmail.com";
   const password = "111111";

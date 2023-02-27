@@ -1,11 +1,12 @@
 import "../styles/globals.css";
+import styles from "../styles/Home.module.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import Layout from "../Components/Layout";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 config.autoAddCss = false;
 import { AuthProvider } from "../context/auth";
+// import Layout from "../Components/Layout";
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
@@ -15,9 +16,11 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Layout>
+      {/* <Layout> */}
+      <main className={styles.main}>
         <Component {...pageProps} />
-      </Layout>
+        {/* </Layout> */}
+      </main>
     </AuthProvider>
   );
 }
