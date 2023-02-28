@@ -25,18 +25,18 @@ const Logo = () => {
   );
 };
 
+export const pages = [
+  { name: "/", icon: <FontAwesomeIcon icon={faHome} /> },
+  { name: "Friend", icon: <FontAwesomeIcon icon={faUserGroup} /> },
+  { name: "Watch", icon: <FontAwesomeIcon icon={faTv} /> },
+  { name: "Profile", icon: <FontAwesomeIcon icon={faUser} /> },
+  { name: "Noti", icon: <FontAwesomeIcon icon={faBell} /> },
+  { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
+];
 export default function Header(props: any) {
   const { email } = props;
   // const { user } = useContext(AuthContext);
 
-  const pages = [
-    { name: "/", icon: <FontAwesomeIcon icon={faHome} /> },
-    { name: "Friend", icon: <FontAwesomeIcon icon={faUserGroup} /> },
-    { name: "Watch", icon: <FontAwesomeIcon icon={faTv} /> },
-    { name: "Profile", icon: <FontAwesomeIcon icon={faUser} /> },
-    { name: "Noti", icon: <FontAwesomeIcon icon={faBell} /> },
-    { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
-  ];
   const [width, setwidth] = useState<number>();
 
   useEffect(() => {

@@ -51,7 +51,7 @@ export default function Navitems(props: any) {
     const content = document.getElementById("content");
     content?.scrollTo({
       left: index * content.clientWidth,
-      behavior: "smooth",
+      // behavior: "smooth",
     });
   }
   return (

@@ -36,6 +36,7 @@ a {
 button {
   -webkit-tap-highlight-color: transparent;
   cursor                     : pointer;
+  user-select                : none;
 }
 
 @media (prefers-color-scheme: dark) {

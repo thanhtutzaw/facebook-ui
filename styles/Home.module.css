@@ -1,10 +1,15 @@
 .main {
   background-color: white;
+  background-color: rgb(214, 214, 214);
   width           : 100vw;
   max-width       : var(--main-width);
   overflow        : auto;
   height          : 100vh;
   scroll-behavior : smooth;
+}
+
+.main:only-child {
+  background-color: white;
 }
 
 .sticky {
@@ -18,7 +23,9 @@
 }
 
 .headerContainer {
-  transition: all .2s ease;
+  transition : transform .2s ease, height .2s ease;
+  will-change: transform;
+  will-change: height;
 }
 
 .header {
@@ -43,14 +50,14 @@
 }
 
 .nav {
-  scroll-snap-align: start;
-  overflow         : hidden;
-  display          : flex;
-  align-items      : center;
-  justify-content  : center;
-  max-width        : var(--main-width);
-  height           : 60px;
-  transition       : all .5s ease-in-out;
+  scroll-snap-align   : start;
+  overflow            : hidden;
+  display             : flex;
+  align-items         : center;
+  justify-content     : center;
+  max-width           : var(--main-width);
+  height              : 60px;
+  /* transition       : all .5s ease-in-out; */
 }
 
 .active {
@@ -75,6 +82,7 @@
   border-radius   : 10px;
   position        : absolute;
   transform       : translateX(0px);
+  will-change     : transform;
 }
 
 .nav>.navItems {
@@ -106,24 +114,30 @@
 }
 
 .nav .navItems:active {
-  background-color: rgb(199, 199, 199);
+  background-color   : rgb(199, 199, 199);
+  /* color           : var(--blue-origin) */
 }
 
 .content {
-  background-color: #dadada;
-  display         : flex;
-  scroll-snap-type: x mandatory;
-  overflow-x      : scroll;
-  scroll-behavior : smooth;
+  background-color         : #dadada;
+  display                  : flex;
+  scroll-snap-type         : x mandatory;
+  overflow-x               : scroll;
+  scroll-behavior          : smooth;
+  height                   : calc(100dvh - 60px);
+  transition               : height 0s;
+  /* width                 : calc(500px * 6); */
+  /* border                : 3px solid red; */
 }
 
 .content>div {
-  overflow-y       : auto;
-  scroll-snap-align: center;
-  scroll-snap-stop : always;
-  max-width        : var(--main-width);
-  min-width        : 100%;
-  height           : fit-content;
+  overflow-y          : auto;
+  scroll-snap-align   : center;
+  scroll-snap-stop    : always;
+  max-width           : var(--main-width);
+  /* width            :100vw; */
+  min-width           : 100%;
+  /* height           : fit-content; */
 }
 
 
@@ -258,11 +272,23 @@
   border          : none;
   color           : white;
 }
+
 .loginBtn:active,
 .storyCard:active,
 .logoutBtn:active {
   animation: card .3s ease-in-out;
 }
+
+
+.logoutBtn:active {
+  background-color: rgb(230, 230, 230);
+}
+
+.loginBtn:active {
+  outline: 4px solid #6aa6eb;
+}
+
+
 @keyframes card {
   0% {
     scale: 1;

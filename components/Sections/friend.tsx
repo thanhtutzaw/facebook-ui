@@ -5,12 +5,9 @@ function Friend() {
   useEffect(() => {
     console.log("Friend is Rendering");
   }, []);
-
-  return (
-    <div id="friend" className={styles.add}>
-      add
-    </div>
-  );
+  // if (active !== "Friend") return;
+  // return <>{active === "friend" && <div>add</div>}</>;
+  return <>add</>;
 }
 
 export default Friend;

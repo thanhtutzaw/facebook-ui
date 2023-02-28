@@ -19,6 +19,7 @@ import { Post } from "../types/interfaces";
 export interface Props {
   posts: Post[];
   email: string | undefined;
+  // active: string;
 }
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
@@ -91,16 +92,21 @@ export default function Home(
       "Home_headerContainer__dbWZE"
     )[0] as HTMLDivElement;
 
-    if (window.location.hash !== "#home") {
-    } else {
+    if (window.location.hash === "#home") {
       headerContainer.style.transform = "translateY(0px)";
       headerContainer.style.height = "120px";
+      // if (content) {
+      //   content.style.height = "calc(100vh - 125px)";
+      // }
       // main.style.scrollSnapType = "none";
 
       main.scrollTo({
         top: 0,
         behavior: "smooth",
       });
+    } else {
+      // if (!content) return;
+      // content.style.height = "100vh";
     }
 
     // main.scrollTo({
@@ -154,9 +160,16 @@ export default function Home(
         main.style.scrollSnapType = "none";
         headerContainer.style.transform = "translateY(-60px)";
         headerContainer.style.height = "60px";
+
         header.ontransitionend = () => {};
       }
     };
+    // if (content) {
+    //   content.style.height = "100vh";
+    // }
+    // if (active) {
+    //   window.location.hash = active === "/" ? "#home" : "#" + active;
+    // }
     // main.addEventListener("scroll", handleScroll);
 
     // function handleScroll() {
@@ -177,6 +190,7 @@ export default function Home(
     // }
 
     // return () => window.removeEventListener("scroll", handleScroll);
+    console.log(active);
   }, [router, active]);
 
   return (
