@@ -1,100 +1,80 @@
 .post {
-    background-color: rgb(253, 253, 253);
-    margin          : .5rem 0;
+  background-color: rgb(253, 253, 253);
+  margin: 0.5rem 0;
 }
-
-.post>p {
-    word-break    : break-word;
-    white-space   : break-spaces;
-    padding-bottom: 0.7rem !important;
+.post > p {
+  word-break: break-word;
+  white-space: break-spaces;
+  padding-bottom: 0.7rem !important;
 }
-
-.post>* {
-    padding: 0 1rem;
+.post .postHeader,
+.post > p {
+  padding: 15px 1rem;
+  padding: 10px 0.8rem;
+  padding-top: 15px;
+  margin: 0;
+}
+.post .postHeader:active,
+.post > p:active {
+  background-color: rgb(207, 207, 207);
 }
 
 .postHeader {
-    display    : flex;
-    align-items: center;
-    gap        : .5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
-
-.postHeader,
-.post>p {
-    padding: 15px 1rem;
-    padding: 10px .8rem;
-    margin : 0;
-}
-
-.postHeader:active,
-.post>p:active {
-    background-color: rgb(207, 207, 207);
-}
-
-@keyframes fadeout {
-    0% {
-        background-color: rgb(207, 207, 207);
-    }
-
-    100% {
-        background-color: rgba(207, 207, 207, 0);
-    }
-}
-
 .postHeader p {
-    margin     : 0;
-    padding    : 0;
-    font-size  : 18px;
-    line-height: 20px;
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  line-height: 20px;
 }
-
-.postHeader>div>p:last-child {
-    color    : #4e4e4e;
-    font-size: 15px;
+.postHeader :first-child {
+  font-weight: 500;
 }
-
-.postContainer>p {
-    margin       : 0;
-    padding      : 20px 0;
-    border-bottom: 2px solid #e9e9e9;
+.postHeader > div > p:last-child {
+  color: #4e4e4e;
+  font-size: 15px;
+}
+.postHeader .postContainer > p {
+  margin: 0;
+  padding: 20px 0;
+  border-bottom: 2px solid #e9e9e9;
 }
 
 .profile {
-    width           : 38px;
-    height          : 38px;
-    border-radius   : 50%;
-    border          : 0;
-    background-color: thistle;
-    background-color: rgb(221, 221, 221);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 0;
+  background-color: thistle;
+  background-color: rgb(221, 221, 221);
 }
 
 .postAction {
-    display    : flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
-
-.postAction>button {
-    display         : flex;
-    flex            : 1;
-    justify-content : center;
-    align-items     : center;
-    height          : 55px;
-    border          : none;
-    background-color: white;
-    border-top      : 1px solid #dbdbdb;
-    transition      : background-color .2s ease;
+.postAction > button {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  height: 55px;
+  border: none;
+  background-color: white;
+  border-top: 1px solid #dfdfdf;
+  transition: background-color 0.2s ease;
 }
-
 .postAction p {
-    margin-left: .3rem;
+  margin-left: 0.3rem;
 }
-
-.postAction>button:active {
+.postAction > button:active {
+  background-color: rgb(207, 207, 207);
+}
+@media (hover: hover) and (pointer: fine) {
+  .postAction > button:hover {
     background-color: rgb(207, 207, 207);
-}
-
-@media only screen and (min-width: 500px) {
-    .postAction>button:hover {
-        background-color: rgb(207, 207, 207);
-    }
-}
+  }
+}/*# sourceMappingURL=Post.module.css.map */

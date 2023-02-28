@@ -3,13 +3,13 @@ import { collectionGroup, getDocs } from "firebase/firestore";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Content } from "../components/Content";
 import Header from "../components/Header/Header";
 import { useActive } from "../hooks/useActive";
 import { app, db } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/Home.module.scss";
 import { Post } from "../types/interfaces";
 // async function fetchUser() {
 //   const res = await fetch("https://jsonplaceholder.typicode.com/users");
@@ -19,7 +19,8 @@ import { Post } from "../types/interfaces";
 export interface Props {
   posts: Post[];
   email: string | undefined;
-  // active: string;
+  // indicatorContainerRef: HTMLDivElement;
+  indicatorContainerRef?: React.RefObject<HTMLDivElement>;
 }
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
@@ -69,10 +70,12 @@ export default function Home(
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
   const { posts, email } = props;
-  // console.log({ uid });
+  const indicatorContainerRef = useRef<HTMLDivElement>(null);
+
   const { active } = useActive();
   const router = useRouter();
   const auth = getAuth(app);
+  const headerContainerRef = useRef<HTMLDivElement>(null);
   // const user = useUser();
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -87,19 +90,18 @@ export default function Home(
     const content = document.getElementById("content");
     const main = document.getElementsByTagName("main")[0];
     // const nav = document.getElementsByTagName("nav")[0];
-    const header = document.getElementsByTagName("header")[0];
-    const headerContainer = document.getElementsByClassName(
-      "Home_headerContainer__dbWZE"
-    )[0] as HTMLDivElement;
+    // const header = document.getElementsByTagName("header")[0];
+    const headerContainer = headerContainerRef.current;
+    // const headerContainer = document.getElementsByClassName(
+    //   "Home_headerContainer__B6rj0"
+    // )[0] as HTMLDivElement;
+    // const headerContainer = document.getElementsByClassName(
+    //   "Home_headerContainer__dbWZE"
+    // )[0] as HTMLDivElement;
 
-    if (window.location.hash === "#home") {
+    if (window.location.hash === "#home" && headerContainer) {
       headerContainer.style.transform = "translateY(0px)";
       headerContainer.style.height = "120px";
-      // if (content) {
-      //   content.style.height = "calc(100vh - 125px)";
-      // }
-      // main.style.scrollSnapType = "none";
-
       main.scrollTo({
         top: 0,
         behavior: "smooth",
@@ -134,13 +136,11 @@ export default function Home(
     // }
     //hereeee
 
-    // console.log(window.location.hash === "")
     if (window.location.hash === "" || window.location.hash === "#home") {
       content?.scrollTo({
         left: 0,
         behavior: "smooth",
       });
-      // window.location.hash = "#home"
     }
     window.onhashchange = (e) => {
       if (window.location.hash === "" || window.location.hash === "#home") {
@@ -158,10 +158,11 @@ export default function Home(
           behavior: "smooth",
         });
         main.style.scrollSnapType = "none";
+        if (!headerContainer) return;
         headerContainer.style.transform = "translateY(-60px)";
         headerContainer.style.height = "60px";
 
-        header.ontransitionend = () => {};
+        // header.ontransitionend = () => {};
       }
     };
     // if (content) {
@@ -195,10 +196,14 @@ export default function Home(
 
   return (
     <>
-      <div className={styles.headerContainer}>
-        <Header email={email} />
+      <div ref={headerContainerRef} className={styles.headerContainer}>
+        <Header indicatorContainerRef={indicatorContainerRef} email={email} />
       </div>
-      <Content email={email} posts={posts} />
+      <Content
+        indicatorContainerRef={indicatorContainerRef}
+        email={email}
+        posts={posts}
+      />
     </>
   );
 }

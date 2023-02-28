@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useActive } from "../../hooks/useActive";
-import styles from "../../styles/Home.module.css";
+import styles from "../../styles/Home.module.scss";
 
 export default function Navitems(props: any) {
   const { icon, name, index } = props;

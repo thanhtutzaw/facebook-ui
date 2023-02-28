@@ -9,9 +9,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { signout } from "../../lib/signout";
-import styles from "../../styles/Home.module.css";
+import styles from "../../styles/Home.module.scss";
 import Navitems from "./Navitems";
 
 // import user from '../hooks/useAuth'
@@ -34,7 +34,8 @@ export const pages = [
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
 export default function Header(props: any) {
-  const { email } = props;
+  
+  const { email , indicatorContainerRef } = props;
   // const { user } = useContext(AuthContext);
 
   const [width, setwidth] = useState<number>();
@@ -94,7 +95,10 @@ export default function Header(props: any) {
               icon={page.icon}
             />
           ))}
-          <div className={styles.indicatorContainer}>
+          <div
+            ref={indicatorContainerRef}
+            className={styles.indicatorContainer}
+          >
             <div
               style={{
                 width: `${width}px`,

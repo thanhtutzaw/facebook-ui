@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useActive } from "../hooks/useActive";
 // import Friend from "./Sections/friend";
 const Friend = dynamic(() => import("./Sections/friend"), {
@@ -17,16 +17,18 @@ const Menu = dynamic(() => import("./Sections/menu"), {
   loading: () => <p>Loading</p>,
 });
 
-import styles from "../styles/Home.module.css";
-import { Home } from "./Sections/Home/Home";
 import { InferGetServerSidePropsType } from "next";
-import { getServerSideProps } from "../pages";
 import dynamic from "next/dynamic";
 import Tab from "../components/Tab";
-type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
+import { getServerSideProps } from "../pages";
+import styles from "../styles/Home.module.scss";
+import { Home } from "./Sections/Home/Home";
+// type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 
+// export function Content(props: Props) {
+import { Props } from "../pages/index";
 export function Content(props: Props) {
-  const { posts, email } = props;
+  const { posts, email, indicatorContainerRef } = props;
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { active } = useActive();
@@ -88,10 +90,18 @@ export function Content(props: Props) {
       onScroll={(e) => {
         const target = e.target as HTMLDivElement;
         const scroll = target.scrollLeft;
-        const indicator = document.getElementsByClassName(
-          "Home_indicator__htkkp"
-        )[0] as HTMLDivElement;
+        if (!indicatorContainerRef) return;
+        const indicator = indicatorContainerRef.current;
+        if (!indicator) return;
         indicator.style.transform = `translateX(${scroll / 6}px)`;
+
+        // const indicator = document.getElementsByClassName(
+        //   "Home_indicator__yizMM"
+        // )[0] as HTMLDivElement;
+        // const indicator = document.getElementsByClassName(
+        //   "Home_indicator__htkkp"
+        // )[0] as HTMLDivElement;
+        // indicator.style.transform =
       }}
     >
       <Home email={email} posts={posts} />

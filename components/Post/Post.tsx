@@ -1,4 +1,4 @@
-import styles from "./Post.module.css";
+import styles from "./Post.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faThumbsUp,

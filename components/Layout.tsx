@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from "react";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/Home.module.scss";
 // import { Header } from './Header';
 
 export default function Layout({ children }: PropsWithChildren) {

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { app } from "../lib/firebase";
 import { signin } from "../lib/signin";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/Home.module.scss";
 export default function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);

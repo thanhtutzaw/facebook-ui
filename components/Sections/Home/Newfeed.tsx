@@ -1,5 +1,5 @@
 import { InferGetServerSidePropsType } from "next";
-import styles from "../../../styles/Home.module.css";
+import styles from "../../../styles/Home.module.scss";
 import { Post as PostType } from "../../../types/interfaces";
 import Post from "../../Post";
 import { getServerSideProps } from "../../../pages";
