@@ -28,7 +28,7 @@ import { Home } from "./Sections/Home/Home";
 // export function Content(props: Props) {
 import { Props } from "../pages/index";
 export function Content(props: Props) {
-  const { posts, email, indicatorContainerRef } = props;
+  const { posts, email, indicatorRef } = props;
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { active } = useActive();
@@ -90,8 +90,8 @@ export function Content(props: Props) {
       onScroll={(e) => {
         const target = e.target as HTMLDivElement;
         const scroll = target.scrollLeft;
-        if (!indicatorContainerRef) return;
-        const indicator = indicatorContainerRef.current;
+        if (!indicatorRef) return;
+        const indicator = indicatorRef.current;
         if (!indicator) return;
         indicator.style.transform = `translateX(${scroll / 6}px)`;
 
@@ -105,7 +105,7 @@ export function Content(props: Props) {
       }}
     >
       <Home email={email} posts={posts} />
-      <div id="friend" className={styles.add}>
+      <div id="friend" className={styles.tab}>
         {/* <a
           style={{ display: "none", pointerEvents: "none" }}
           aria-disabled
@@ -115,28 +115,28 @@ export function Content(props: Props) {
           <Friend />
         </Tab>
       </div>
-      <div id="watch" className={styles.profile}>
+      <div id="watch" className={styles.tab}>
         <Tab active={active} name="watch">
           <Watch />
         </Tab>
       </div>
-      <div id="profile" className={styles.profile}>
+      <div id="profile" className={styles.tab}>
         <Tab active={active} name="profile">
           <Profile />
         </Tab>
       </div>
-      <div id="noti" className={styles.profile}>
+      <div id="noti" className={styles.tab}>
         <Tab active={active} name="noti">
           <Noti />
         </Tab>
       </div>
-      <div id="menu" className={styles.profile}>
+      <div id="menu" className={styles.tab}>
         <Tab active={active} name="menu">
           <Menu />
         </Tab>
       </div>
-      <div className={styles.profile}>
-      </div>
+      {/* <div className={styles.profile}>
+      </div> */}
     </div>
   );
 }

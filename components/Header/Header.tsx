@@ -36,9 +36,9 @@ export const pages = [
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
 export default function Header(props: any) {
-  const { email, indicatorContainerRef } = props;
+  const { email, indicatorRef } = props;
   // const { user } = useContext(AuthContext);
-  // const { navigateTab, active, setActive } = useActive();
+  const { navigateTab, active, setActive } = useActive();
   const [width, setwidth] = useState<number>();
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];
@@ -75,7 +75,7 @@ export default function Header(props: any) {
         className={styles.header}
       >
         <Logo />
-        {/* <button
+        <button
           className={styles.logoutBtn}
           onClick={() => {
             if (active === "/") {
@@ -92,7 +92,7 @@ export default function Header(props: any) {
             style={{ color: "#0070f3", fontWeight: "bold" }}
             icon={faSignOut}
           />
-        </button> */}
+        </button>
       </header>
 
       {email && (
@@ -105,11 +105,9 @@ export default function Header(props: any) {
               icon={page.icon}
             />
           ))}
-          <div
-            ref={indicatorContainerRef}
-            className={styles.indicatorContainer}
-          >
+          <div className={styles.indicatorContainer}>
             <div
+              ref={indicatorRef}
               style={{
                 width: `${width}px`,
               }}

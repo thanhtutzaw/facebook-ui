@@ -19,8 +19,7 @@ import { Post } from "../types/interfaces";
 export interface Props {
   posts: Post[];
   email: string | undefined;
-  // indicatorContainerRef: HTMLDivElement;
-  indicatorContainerRef?: React.RefObject<HTMLDivElement>;
+  indicatorRef?: React.RefObject<HTMLDivElement>;
 }
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
@@ -70,7 +69,7 @@ export default function Home(
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
   const { posts, email } = props;
-  const indicatorContainerRef = useRef<HTMLDivElement>(null);
+  const indicatorRef = useRef<HTMLDivElement>(null);
 
   const { active, setActive } = useActive();
   const router = useRouter();
@@ -136,13 +135,9 @@ export default function Home(
   return (
     <>
       <div ref={headerContainerRef} className={styles.headerContainer}>
-        <Header indicatorContainerRef={indicatorContainerRef} email={email} />
+        <Header indicatorRef={indicatorRef} email={email} />
       </div>
-      <Content
-        indicatorContainerRef={indicatorContainerRef}
-        email={email}
-        posts={posts}
-      />
+      <Content indicatorRef={indicatorRef} email={email} posts={posts} />
     </>
   );
 }
