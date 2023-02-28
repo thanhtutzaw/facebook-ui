@@ -4,54 +4,38 @@ import { useActive } from "../hooks/useActive";
 const Friend = dynamic(() => import("./Sections/friend"), {
   loading: () => <p>Loading</p>,
 });
-// const Friend = lazy(() => import("./Sections/friend"));
-// const Friend = dynamic(() => import("./Sections/friend"), {
-//   loading: () => "Loading...",
-// });
+const Watch = dynamic(() => import("./Sections/watch"), {
+  loading: () => <p>Loading</p>,
+});
+const Profile = dynamic(() => import("./Sections/profile"), {
+  loading: () => <p>Loading</p>,
+});
+const Noti = dynamic(() => import("./Sections/noti"), {
+  loading: () => <p>Loading</p>,
+});
+const Menu = dynamic(() => import("./Sections/menu"), {
+  loading: () => <p>Loading</p>,
+});
 
-import Menu from "./Sections/menu";
-import Noti from "./Sections/noti";
 import styles from "../styles/Home.module.css";
 import { Home } from "./Sections/Home/Home";
-import Watch from "./Sections/watch";
 import { InferGetServerSidePropsType } from "next";
 import { getServerSideProps } from "../pages";
 import dynamic from "next/dynamic";
-import Profile from "./Sections/profile";
 import Tab from "../components/Tab";
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
-// export function Content({ posts }: { posts: Post[] }) {
 
 export function Content(props: Props) {
-  // export function Content(
-  //   props: InferGetServerSidePropsType<typeof getServerSideProps>
-  // )
   const { posts, email } = props;
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { active } = useActive();
-  // const router = useRouter();
-
-  // useEffect(() => {
-  //   console.log(canDrag)
-  //   console.log(router.asPath);
-  //   if(canDrag){
-
-  //   }
-  // }, [canDrag ,router])
 
   useEffect(() => {
     if (active) {
       window.location.hash = active === "/" ? "#home" : "#" + active;
     }
-    // const content = document.getElementById("content");
-    // content?.addEventListener('dragleave' , ()=>{
-    //   console.log(active);
-    // })
-    // content?.addEventListener('click' , ()=>{
-    //   console.log(content)
-    //   router.push(`${active === "/" ? active : "#" + active}`);
-    // })
+
     window.addEventListener("mouseup", () => {
       setcanDrag(false);
     });
@@ -73,9 +57,6 @@ export function Content(props: Props) {
     currentTarget.style.cursor = "grabbing";
   }
   function dragStop(e: any) {
-    // if (active) {
-    //   router.push(`${active === "/" ? active : "#" + active}`);
-    // }
     e.preventDefault();
     e.stopPropagation();
     const currentTarget = e.currentTarget;
@@ -91,10 +72,7 @@ export function Content(props: Props) {
       const currentTarget = e.currentTarget as HTMLDivElement;
       const dx = e.clientX - pos.x;
       const dy = e.clientY - pos.y;
-      // currentTarget.scrollLeft = dx;
       currentTarget.scrollLeft = pos.left - dx;
-
-      // currentTarget.scrollTop = pos.top - dx;
     } else {
       setcanDrag(false);
     }
