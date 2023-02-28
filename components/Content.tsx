@@ -13,7 +13,7 @@ const Profile = dynamic(() => import("./Sections/profile"), {
 const Noti = dynamic(() => import("./Sections/noti"), {
   loading: () => <p>Loading</p>,
 });
-const Menu = dynamic(() => import("./Sections/menu"), {
+const Menu = dynamic(() => import("./Sections/Menu/menu"), {
   loading: () => <p>Loading</p>,
 });
 
@@ -106,6 +106,11 @@ export function Content(props: Props) {
     >
       <Home email={email} posts={posts} />
       <div id="friend" className={styles.add}>
+        {/* <a
+          style={{ display: "none", pointerEvents: "none" }}
+          aria-disabled
+          href={`#friend`}
+        ></a> */}
         <Tab active={active} name="friend">
           <Friend />
         </Tab>
@@ -129,6 +134,8 @@ export function Content(props: Props) {
         <Tab active={active} name="menu">
           <Menu />
         </Tab>
+      </div>
+      <div className={styles.profile}>
       </div>
     </div>
   );

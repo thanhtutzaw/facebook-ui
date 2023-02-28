@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 export function useActive() {
   const [active, setActive] = useState("");
-
+  function navigateTab(tab: string) {
+    setActive(tab);
+    const target = document.getElementById(tab);
+    console.log(target);
+    target?.scrollIntoView({ behavior: "smooth" });
+  }
   useEffect(() => {
     const content = document.querySelectorAll("#content > div");
     let options = {
@@ -17,7 +22,7 @@ export function useActive() {
         }
       });
     }
-
+    console.log("it is running");
     const observer = new IntersectionObserver(handleObserver, options);
     content.forEach((item) => {
       observer.observe(item);
@@ -30,5 +35,5 @@ export function useActive() {
     };
   }, [active]);
 
-  return { active, setActive };
+  return { active, setActive, navigateTab };
 }

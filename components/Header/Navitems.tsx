@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useActive } from "../../hooks/useActive";
 import styles from "../../styles/Home.module.scss";
+import { useRouter } from "next/router";
 
 export default function Navitems(props: any) {
   const { icon, name, index } = props;
   const TabName = name.toLowerCase();
   const { active, setActive } = useActive();
-
   // const indicator = document.querySelector('.indicatorContainer>.indicator')
   // console.log(indicator);
   useEffect(() => {

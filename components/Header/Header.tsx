@@ -13,6 +13,8 @@ import { useEffect, useRef, useState } from "react";
 import { signout } from "../../lib/signout";
 import styles from "../../styles/Home.module.scss";
 import Navitems from "./Navitems";
+import { useActive } from "../../hooks/useActive";
+import { off } from "process";
 
 // import user from '../hooks/useAuth'
 const Logo = () => {
@@ -34,12 +36,10 @@ export const pages = [
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
 export default function Header(props: any) {
-  
-  const { email , indicatorContainerRef } = props;
+  const { email, indicatorContainerRef } = props;
   // const { user } = useContext(AuthContext);
-
+  // const { navigateTab, active, setActive } = useActive();
   const [width, setwidth] = useState<number>();
-
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];
     if (email) {
@@ -75,14 +75,24 @@ export default function Header(props: any) {
         className={styles.header}
       >
         <Logo />
-        {email && (
-          <button className={styles.logoutBtn} onClick={() => signout()}>
-            <FontAwesomeIcon
-              style={{ color: "#0070f3", fontWeight: "bold" }}
-              icon={faSignOut}
-            />
-          </button>
-        )}
+        {/* <button
+          className={styles.logoutBtn}
+          onClick={() => {
+            if (active === "/") {
+              console.log(active);
+              setActive("menu2");
+              const target = document.getElementById("menu");
+              console.log(target);
+              target?.scrollIntoView({ behavior: "smooth" });
+              // navigateTab("menu");
+            }
+          }}
+        >
+          <FontAwesomeIcon
+            style={{ color: "#0070f3", fontWeight: "bold" }}
+            icon={faSignOut}
+          />
+        </button> */}
       </header>
 
       {email && (

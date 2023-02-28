@@ -127,16 +127,6 @@
   /* height           : fit-content; */
 }
 
-.add,
-.profile {
-  background-color: rebeccapurple;
-  padding: 2rem;
-}
-
-.profile {
-  background-color: orangered;
-}
-
 .postContainer > div:last-child {
   margin-bottom: 2rem;
 }

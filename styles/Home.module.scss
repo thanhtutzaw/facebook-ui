@@ -127,17 +127,18 @@
   max-width: var(--main-width);
   /* width            :100vw; */
   min-width: 100%;
+  // padding: 2rem;
+
   /* height           : fit-content; */
 }
 
 .add,
 .profile {
-  background-color: rebeccapurple;
-  padding: 2rem;
+  // background-color: rebeccapurple;
 }
 
 .profile {
-  background-color: orangered;
+  // background-color: orangered;
 }
 
 .postContainer > div:last-child {
