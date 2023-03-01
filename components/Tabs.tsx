@@ -19,7 +19,45 @@ const Menu = dynamic(() => import("./Sections/Menu/menu"));
 import dynamic from "next/dynamic";
 import Tab from "./Tab";
 import styles from "../styles/Home.module.scss";
-import t from "./tabs.module.scss";
+
+
+
+
+
+
+
+
+
+
+
+
+
+import t from "./Tabs.module.scss"; // correct
+//import t from "./tabs.module.scss"; // this doesn't show error in development
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { Home } from "./Sections/Home/Home";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 
