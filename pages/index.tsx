@@ -4,18 +4,14 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useEffect, useRef } from "react";
-import { Content } from "../components/Content";
 import Header from "../components/Header/Header";
 import { useActive } from "../hooks/useActive";
 import { app, db } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import styles from "../styles/Home.module.scss";
 import { Post } from "../types/interfaces";
-// async function fetchUser() {
-//   const res = await fetch("https://jsonplaceholder.typicode.com/users");
-//   const data = await res.json();
-//   return data;
-// }
+import Tabs from "../components/Tabs";
+
 export interface Props {
   posts: Post[];
   email: string | undefined;
@@ -29,10 +25,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     console.log(cookies.token);
 
     const token = await verifyIdToken(cookies.token);
-    const { email } = token;
+    const { email  } = token;
     // const email = "null email";
 
-    // console.log(token);
     // const uid = null;
 
     const query = collectionGroup(db, `posts`);
@@ -86,7 +81,7 @@ export default function Home(
 
   // const path = active === '/' ? '#home' : '#'+active
   useEffect(() => {
-    const content = document.getElementById("content");
+    const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
     const headerContainer = headerContainerRef.current;
     if (window.location.hash === "#home" && headerContainer) {
@@ -100,20 +95,14 @@ export default function Home(
     //hereeee
 
     if (window.location.hash === "" || window.location.hash === "#home") {
-      content?.scrollTo({
+      tabs?.scrollTo({
         left: 0,
         behavior: "smooth",
       });
     }
     window.onhashchange = (e) => {
-      console.log("hash changed");
-      // if (window.location.hash !== active) {
-      // setActive(window.location.hash.slice(1));
-      // window.location.href = window.location.hash;
-      // console.log(active);
-      // }
       if (window.location.hash === "" || window.location.hash === "#home") {
-        content?.scrollTo({
+        tabs?.scrollTo({
           left: 0,
           behavior: "smooth",
         });
@@ -137,7 +126,7 @@ export default function Home(
       <div ref={headerContainerRef} className={styles.headerContainer}>
         <Header indicatorRef={indicatorRef} email={email} />
       </div>
-      <Content indicatorRef={indicatorRef} email={email} posts={posts} />
+      <Tabs indicatorRef={indicatorRef} email={email} posts={posts} />
     </>
   );
 }

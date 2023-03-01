@@ -5,11 +5,6 @@ interface TabProps {
   children: ReactElement;
 }
 const Tab = ({ active, name, children }: TabProps) => {
-  return (
-    <>
-      
-      {active === name && children}
-    </>
-  );
+  return <>{active === name && children}</>;
 };
 export default memo(Tab);

@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useActive } from "../../hooks/useActive";
 import styles from "../../styles/Home.module.scss";
-import { useRouter } from "next/router";
 
 export default function Navitems(props: any) {
   const { icon, name, index } = props;
@@ -48,9 +47,9 @@ export default function Navitems(props: any) {
     setActive(TabName);
     window.location.hash = hashValue;
 
-    const content = document.getElementById("content");
-    content?.scrollTo({
-      left: index * content.clientWidth,
+    const tabs = document.getElementById("tabs");
+    tabs?.scrollTo({
+      left: index * tabs.clientWidth,
       // behavior: "smooth",
     });
   }

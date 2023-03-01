@@ -1,13 +1,11 @@
 import React, { useEffect } from "react";
-import styles from "../../styles/Home.module.scss";
+import s from "./Friends.module.scss";
 
-function Friend() {
+export default function Friend() {
   useEffect(() => {
     console.log("Friend is Rendering");
   }, []);
   // if (active !== "Friend") return;
   // return <>{active === "friend" && <div>add</div>}</>;
-  return <>add</>;
+  return <div className={s.container}>friends</div>;
 }
-
-export default Friend;

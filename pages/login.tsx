@@ -1,6 +1,6 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { app } from "../lib/firebase";
 import { signin } from "../lib/signin";
 import styles from "../styles/Home.module.scss";
@@ -12,7 +12,7 @@ export default function Login() {
     const unsub = onAuthStateChanged(auth, (user) => {
       if (user) {
         router.push("/");
-      } else {
+      } else if (!user && router.pathname !== "/") {
         router.push("/login");
       }
     });

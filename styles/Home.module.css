@@ -7,7 +7,6 @@
   height: 100dvh;
   scroll-behavior: smooth;
 }
-
 .main:only-child {
   background-color: white;
 }
@@ -27,8 +26,7 @@
   will-change: transform;
   will-change: height;
 }
-
-.header {
+.headerContainer .header {
   max-width: var(--main-width);
   background-color: white;
   scroll-snap-align: start;
@@ -84,7 +82,6 @@
   background-color: rgb(255, 255, 255);
   height: 60px;
   flex: 1;
-  /* font-size       : 21px; */
   display: flex;
   justify-content: center;
   align-items: center;

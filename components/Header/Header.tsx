@@ -9,12 +9,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { signout } from "../../lib/signout";
+import { useEffect, useState } from "react";
 import styles from "../../styles/Home.module.scss";
 import Navitems from "./Navitems";
 import { useActive } from "../../hooks/useActive";
-import { off } from "process";
 
 // import user from '../hooks/useAuth'
 const Logo = () => {
@@ -29,16 +27,16 @@ const Logo = () => {
 
 export const pages = [
   { name: "/", icon: <FontAwesomeIcon icon={faHome} /> },
-  { name: "Friend", icon: <FontAwesomeIcon icon={faUserGroup} /> },
+  { name: "Friends", icon: <FontAwesomeIcon icon={faUserGroup} /> },
   { name: "Watch", icon: <FontAwesomeIcon icon={faTv} /> },
   { name: "Profile", icon: <FontAwesomeIcon icon={faUser} /> },
-  { name: "Noti", icon: <FontAwesomeIcon icon={faBell} /> },
+  { name: "Notifications", icon: <FontAwesomeIcon icon={faBell} /> },
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
 export default function Header(props: any) {
   const { email, indicatorRef } = props;
   // const { user } = useContext(AuthContext);
-  const { navigateTab, active, setActive } = useActive();
+  const { active, setActive } = useActive();
   const [width, setwidth] = useState<number>();
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];
@@ -47,21 +45,15 @@ export default function Header(props: any) {
 
       if (window.innerWidth < 500) {
         console.log(window.innerWidth);
-        // console.log(window.innerWidth);
       }
       window.onresize = () => {
         setwidth(Math.floor(nav.clientWidth / 6));
         console.log("resize");
       };
       window.onbeforeunload = () => {
-        // console.log("object");
         setwidth(Math.floor(nav.clientWidth / 6));
       };
     }
-    // window.onload =()=>{
-    //   setwidth(Math.floor(nav.clientWidth / 6));
-    //   console.log("onload")
-    // }
   }, [email, width]);
 
   return (
@@ -80,7 +72,7 @@ export default function Header(props: any) {
           onClick={() => {
             if (active === "/") {
               console.log(active);
-              setActive("menu2");
+              setActive("menu");
               const target = document.getElementById("menu");
               console.log(target);
               target?.scrollIntoView({ behavior: "smooth" });

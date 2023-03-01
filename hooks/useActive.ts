@@ -8,9 +8,9 @@ export function useActive() {
     target?.scrollIntoView({ behavior: "smooth" });
   }
   useEffect(() => {
-    const content = document.querySelectorAll("#content > div");
+    const tabs = document.querySelectorAll("#tabs > div");
     let options = {
-      root: document.querySelector("#content"),
+      root: document.querySelector("#tabs"),
       rootMargin: "0px",
       threshold: 1,
     };
@@ -22,14 +22,13 @@ export function useActive() {
         }
       });
     }
-    console.log("it is running");
     const observer = new IntersectionObserver(handleObserver, options);
-    content.forEach((item) => {
+    tabs.forEach((item) => {
       observer.observe(item);
     });
 
     return () => {
-      content.forEach((item) => {
+      tabs.forEach((item) => {
         observer.unobserve(item);
       });
     };

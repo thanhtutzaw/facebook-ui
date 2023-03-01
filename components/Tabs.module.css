@@ -1,0 +1,16 @@
+.header {
+  background-color: rgb(255, 255, 255);
+  overflow: auto;
+  padding: 0 1rem;
+  height: 65px;
+  display: flex;
+  align-items: center;
+  padding-bottom: 10px;
+}
+.header h2 {
+  margin: 0;
+}
+
+.container {
+  padding: 1rem;
+}/*# sourceMappingURL=Tabs.module.css.map */
