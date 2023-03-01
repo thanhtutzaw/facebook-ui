@@ -37,7 +37,7 @@ export default function Login() {
           }
         }}
       >
-        {loading ? "Loading..." : "Sign in as testUser"}
+        {loading ? "Logging in..." : "Log in as testUser"}
       </button>
     </>
   );

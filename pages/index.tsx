@@ -14,7 +14,7 @@ import Tabs from "../components/Tabs";
 
 export interface Props {
   posts: Post[];
-  email: string | undefined;
+  email?: string | null;
   indicatorRef?: React.RefObject<HTMLDivElement>;
 }
 export const getServerSideProps: GetServerSideProps<Props> = async (

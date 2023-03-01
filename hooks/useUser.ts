@@ -10,11 +10,9 @@ export function useUser() {
   const [user, setuser] = useState<User | null>(null);
   useEffect(() => {
     onIdTokenChanged(auth, async (user) => {
-      // set token in cookie with nookies
       if (!user) {
         nookies.destroy(undefined, "token");
         setuser(null);
-        // window.location.href="/login"
         return;
       }
       const token = await user?.getIdToken();
@@ -33,7 +31,7 @@ export function useUser() {
     //   }
 
     // });
-  }, [user]);
+  }, [auth, user]);
   return {
     user,
   };

@@ -7,4 +7,4 @@ interface TabProps {
 const Tab = ({ active, name, children }: TabProps) => {
   return <>{active === name && children}</>;
 };
-export default memo(Tab);
+export default Tab;

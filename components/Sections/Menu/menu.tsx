@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // import styles from "../../styles/Home.module.scss";
 import s from "../../Sections/Menu/menu.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,7 +7,7 @@ import { signout } from "../../../lib/signout";
 import { useActive } from "../../../hooks/useActive";
 function Menu() {
   const { navigateTab } = useActive();
-
+  const [loading, setLoading] = useState(false);
   return (
     <div className={s.container}>
       <button
@@ -22,14 +22,27 @@ function Menu() {
         />
         Go to Profile
       </button>
-      
-      <button className={`${s.item} ${s.logoutBtn}`} onClick={() => signout()}>
-        {/* <button className={styles.logoutBtn} onClick={() => signout()}> */}
+
+      <button
+        disabled={loading}
+        className={`${s.item} ${s.logoutBtn}`}
+        onClick={() => {
+          setLoading(true);
+          try {
+            setTimeout(() => {
+              signout();
+            }, 700);
+          } catch (error) {
+            setLoading(false);
+            console.error(error);
+          }
+        }}
+      >
         <FontAwesomeIcon
           style={{ color: "#0070f3", fontWeight: "bold" }}
           icon={faSignOut}
         />
-        Logout
+        {loading ? "Logging out..." : "Logout"}
       </button>
     </div>
   );

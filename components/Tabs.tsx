@@ -1,54 +1,39 @@
 import { useEffect, useState } from "react";
 import { useActive } from "../hooks/useActive";
-const Friends = dynamic(() => import("./Sections/Friends/Friends"));
-const Watch = dynamic(() => import("./Sections/Watch/watch"));
+import styles from "../styles/Home.module.scss";
+import Tab from "./Tab";
+import t from "./Tabs.module.scss";
+import { Home } from "./Sections/Home/Home";
+import { Props } from "../pages/index";
+import dynamic from "next/dynamic";
+const Friends = dynamic(() => import("./Sections/Friends/Friends"), {
+  ssr: false,
+});
+const Watch = dynamic(() => import("./Sections/Watch/watch"), { ssr: false });
 const Notifications = dynamic(
   () => import("./Sections/Notifications/Notifications")
 );
-const Menu = dynamic(() => import("./Sections/Menu/menu"));
-// type TabComponents = {
-//   [key: string]: React.ComponentType<{}>;
-// };
-// const tabsComponent = {
-//   Friends,
-//   Watch,
-//   Profile,
-//   Notifications,
-//   Menu,
-// };
-import dynamic from "next/dynamic";
-import Tab from "./Tab";
-import styles from "../styles/Home.module.scss";
+const Profile = dynamic(() => import("./Sections/Profile/Profile"), {
+  ssr: false,
+});
+const Menu = dynamic(() => import("./Sections/Menu/menu"), { ssr: false });
 
-import t from "./Tabs.module.scss";
-
-import { Home } from "./Sections/Home/Home";
-// type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
-
-// export function Content(props: Props) {
-import { Props } from "../pages/index";
-import Profile from "./Sections/Profile/Profile";
-// import Menu from "./Sections/Menu/menu";
 export default function Tabs(props: Props) {
   const { posts, email, indicatorRef } = props;
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { active } = useActive();
-
   useEffect(() => {
     if (active) {
       window.location.hash = active === "/" ? "#home" : "#" + active;
     }
-
     window.addEventListener("mouseup", () => {
       setcanDrag(false);
     });
   }, [active, canDrag]);
-
   function dragStart(e: any) {
     e.preventDefault();
     e.stopPropagation();
-
     const currentTarget = e.currentTarget;
     if (e.target.className == "Home_storyCard__3_T_R") return;
     setpos({
@@ -81,7 +66,6 @@ export default function Tabs(props: Props) {
       setcanDrag(false);
     }
   }
-
   return (
     <div
       id="tabs"
@@ -99,62 +83,48 @@ export default function Tabs(props: Props) {
       }}
     >
       <Home email={email} posts={posts} />
-      {/* {pages.map((page, index) => {
-        const pageLower = page.name.toLowerCase();
-        const name = page.name;
-        const Component = tabsComponent[name];
-        return (
-          <div key={index} id={pageLower} className={styles.tab}>
-            <Tab active={active} name={pageLower}>
-              <Component />
-            </Tab>
-          </div>
-        );
-      })} */}
       <div id="friends" className={styles.tab}>
-        <Tab active={active} name="friends">
-          <>
-            <div className={t.header}>
-              <h2>Friends</h2>
-            </div>
-            <Friends />
-          </>
-        </Tab>
+        {/* <Tab active={active} name="friends"> */}
+        <>
+          <div className={t.header}>
+            <h2>Friends</h2>
+          </div>
+          <Friends />
+        </>
+        {/* </Tab> */}
       </div>
       <div id="watch">
-        <Tab active={active} name="watch">
-          <>
-            <div className={t.header}>
-              <h2>Watch</h2>
-            </div>
-            <Watch />
-          </>
-        </Tab>
+        {/* <Tab active={active} name="watch"> */}
+        <>
+          <div className={t.header}>
+            <h2>Watch</h2>
+          </div>
+          <Watch />
+        </>
+        {/* </Tab> */}
       </div>
       <div id="profile">
-        <Tab active={active} name="profile">
-          <Profile email={email} posts={[]} />
-        </Tab>
+        {/* <Tab active={active} name="profile"> */}
+        <Profile email={email} posts={[]} />
+        {/* </Tab> */}
       </div>
       <div id="notifications">
-        <Tab active={active} name="notifications">
-          <>
-            <div className={t.header}>
-              <h2>Notifications</h2>
-            </div>
-            <Notifications />
-          </>
-        </Tab>
+        {/* <Tab active={active} name="notifications"> */}
+        <>
+          <div className={t.header}>
+            <h2>Notifications</h2>
+          </div>
+          <Notifications />
+        </>
+        {/* </Tab> */}
       </div>
       <div id="menu">
-        {/* <Tab active={active} name="menu"> */}
-          <>
-            <div className={t.header}>
-              <h2>Menu</h2>
-            </div>
-            <Menu />
-          </>
-        {/* </Tab> */}
+        <>
+          <div className={t.header}>
+            <h2>Menu</h2>
+          </div>
+          <Menu />
+        </>
       </div>
     </div>
   );
