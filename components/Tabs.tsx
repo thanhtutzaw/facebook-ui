@@ -20,43 +20,7 @@ import dynamic from "next/dynamic";
 import Tab from "./Tab";
 import styles from "../styles/Home.module.scss";
 
-
-
-
-
-
-
-
-
-
-
-
-
-import t from "./Tabs.module.scss"; // correct
-//import t from "./tabs.module.scss"; // this doesn't show error in development
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import t from "./Tabs.module.scss";
 
 import { Home } from "./Sections/Home/Home";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
@@ -183,14 +147,14 @@ export default function Tabs(props: Props) {
         </Tab>
       </div>
       <div id="menu">
-        <Tab active={active} name="menu">
+        {/* <Tab active={active} name="menu"> */}
           <>
             <div className={t.header}>
               <h2>Menu</h2>
             </div>
             <Menu />
           </>
-        </Tab>
+        {/* </Tab> */}
       </div>
     </div>
   );
