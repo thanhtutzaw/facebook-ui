@@ -40,14 +40,15 @@
   height: 60px;
   background-color: white;
 }
-
-.logo {
+.logoContainer .logo {
   color: var(--blue-origin);
   font-weight: bold;
   font-size: clamp(1.6em, 2vw, 3em);
+  margin-left: 0.7rem;
 }
 
 .nav {
+  -webkit-tap-highlight-color: transparent;
   scroll-snap-align: start;
   overflow: hidden;
   display: flex;
@@ -56,20 +57,17 @@
   max-width: var(--main-width);
   height: 60px;
 }
-
-.active {
+.nav .active {
   color: var(--blue-origin);
 }
-
-.indicatorContainer {
+.nav .indicatorContainer {
   height: 6px;
   width: 100%;
   max-width: var(--main-width);
   position: absolute;
   top: 117px;
 }
-
-.indicator {
+.nav .indicatorContainer .indicator {
   height: 3px;
   background-color: var(--blue-origin);
   border-radius: 10px;
@@ -77,7 +75,6 @@
   transform: translateX(0px);
   will-change: transform;
 }
-
 .nav > .navItems {
   background-color: rgb(255, 255, 255);
   height: 60px;
@@ -85,6 +82,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+}
+.nav .navItems:active {
+  background-color: rgb(199, 199, 199);
+  opacity: 0.5;
 }
 
 @media only screen and (min-width: 500px) {
@@ -95,15 +97,9 @@
     background-color: #1c7ff3;
   }
   .logoutBtn:hover {
-    background-color: rgb(240, 34, 34);
-    background-color: rgb(226, 165, 165);
     background-color: rgb(230, 230, 230);
   }
 }
-.nav .navItems:active {
-  background-color: rgb(199, 199, 199);
-}
-
 .content {
   background-color: #dadada;
   display: flex;
@@ -113,7 +109,6 @@
   height: calc(100dvh - 60px);
   transition: height 0s;
 }
-
 .content > div {
   overflow-y: auto;
   scroll-snap-align: center;
@@ -188,15 +183,13 @@
   display: flex;
   align-items: center;
 }
-
-.storyCards {
+.storyContainer .storyCards {
   overflow-x: scroll;
   display: flex;
   gap: 10px;
   padding: 1rem 0.8rem;
 }
-
-.storyCards > div {
+.storyContainer .storyCards > div {
   scroll-snap-align: start;
 }
 
@@ -216,7 +209,7 @@
   display: flex;
 }
 
-.storyCards .addStory {
+.addStory {
   display: flex;
   text-align: center;
   justify-content: center;
@@ -225,7 +218,23 @@
   font-size: 15px;
   border: 1px solid #e0e0e0;
 }
-
+.addStory > p {
+  width: 100%;
+  position: relative;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 0.5rem 0;
+  background-color: rgb(255, 255, 255);
+  color: rgb(44, 44, 44);
+  height: 70px;
+  font-weight: 500;
+  line-height: 30px;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
 .addStory > button {
   position: relative;
   bottom: -27%;
@@ -268,23 +277,43 @@
     scale: 1;
   }
 }
-.addStory > p {
-  width: 100%;
-  position: relative;
-  margin: 0;
+.postAction {
+  padding: 1rem 0.8rem;
+  padding-top: 5px;
+  gap: 0.8rem;
+  align-items: center;
   display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  padding: 0.5rem 0;
-  background-color: rgb(207, 124, 124);
   background-color: rgb(255, 255, 255);
-  color: rgb(44, 44, 44);
-  height: 70px;
-  font-weight: 500;
-  line-height: 30px;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
+}
+.postAction input {
+  width: 100%;
+  font-size: calc(10px + 1.5vmin);
+  border-radius: 100px;
+  border: 1px solid rgb(179, 179, 179);
+  padding: 10px;
+}
+.postAction input:focus-visible {
+  outline: 1px solid #66b5ff;
+}
+.postAction .addMedia {
+  border-radius: 100px;
+  border: 0;
+  padding: 10px;
+  background-color: transparent;
+}
+.postAction .addMedia:hover {
+  background-color: rgb(216, 216, 216);
+}
+.postAction .addMedia:active {
+  opacity: 0.8;
+}
+.postAction .profile {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 0;
+  background-color: thistle;
+  background-color: rgb(221, 221, 221);
 }
 
 .card {
@@ -304,21 +333,20 @@
 .card:active {
   color: var(--blue-origin);
   border-color: var(--blue-origin);
+  border: 3px solid red;
 }
 
 .card h2 {
   margin: 0 0 1rem 0;
   font-size: 1.5rem;
+  border: 3px solid red;
 }
 
 .card p {
   margin: 0;
   line-height: 1.5;
   font-size: 1.25rem;
-}
-
-.logo {
-  margin-left: 0.7rem;
+  border: 3px solid red;
 }
 
 @media (max-width: 600px) {

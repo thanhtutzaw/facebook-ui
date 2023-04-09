@@ -41,8 +41,8 @@ export default function Post({ post, email }: Props) {
       <p>{text}</p>
       <div
         className={styles.postAction}
-        onPointerEnter={() => setBounce(true)}
-        onPointerLeave={() => setBounce(false)}
+        // onPointerEnter={() => setBounce(true)}
+        // onPointerLeave={() => setBounce(false)}
       >
         <button>
           <FontAwesomeIcon bounce={Bounce} icon={faThumbsUp} />

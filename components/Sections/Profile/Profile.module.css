@@ -1,0 +1,9 @@
+.container {
+  padding: 1rem;
+  background-color: white;
+  text-align: center;
+  height: 100%;
+}
+.container .profile {
+  border-radius: 50%;
+}/*# sourceMappingURL=Profile.module.css.map */

@@ -39,15 +39,16 @@
   align-items: center;
   height: 60px;
   background-color: white;
-}
-
-.logo {
-  color: var(--blue-origin);
-  font-weight: bold;
-  font-size: clamp(1.6em, 2vw, 3em);
+  .logo {
+    color: var(--blue-origin);
+    font-weight: bold;
+    font-size: clamp(1.6em, 2vw, 3em);
+    margin-left: 0.7rem;
+  }
 }
 
 .nav {
+  -webkit-tap-highlight-color: transparent;
   // scroll-snap-align: center;
   scroll-snap-align: start;
   overflow: hidden;
@@ -56,36 +57,37 @@
   justify-content: center;
   max-width: var(--main-width);
   height: 60px;
-}
-
-.active {
-  color: var(--blue-origin);
-}
-
-.indicatorContainer {
-  height: 6px;
-  width: 100%;
-  max-width: var(--main-width);
-  position: absolute;
-  top: calc(120px - 3px);
-}
-
-.indicator {
-  height: 3px;
-  background-color: var(--blue-origin);
-  border-radius: 10px;
-  position: absolute;
-  transform: translateX(0px);
-  will-change: transform;
-}
-
-.nav > .navItems {
-  background-color: rgba(255, 255, 255);
-  height: 60px;
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  .active {
+    color: var(--blue-origin);
+  }
+  .indicatorContainer {
+    height: 6px;
+    width: 100%;
+    max-width: var(--main-width);
+    position: absolute;
+    top: calc(120px - 3px);
+    .indicator {
+      height: 3px;
+      background-color: var(--blue-origin);
+      border-radius: 10px;
+      position: absolute;
+      transform: translateX(0px);
+      will-change: transform;
+    }
+  }
+  & > .navItems {
+    background-color: rgba(255, 255, 255);
+    height: 60px;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  .navItems:active {
+    background-color: rgb(199, 199, 199);
+    opacity: 0.5;
+  }
 }
 
 @media only screen and (min-width: 500px) {
@@ -98,14 +100,8 @@
   }
 
   .logoutBtn:hover {
-    background-color: rgb(240, 34, 34);
-    background-color: rgb(226, 165, 165);
     background-color: rgb(230, 230, 230);
   }
-}
-
-.nav .navItems:active {
-  background-color: rgb(199, 199, 199);
 }
 
 .content {
@@ -117,26 +113,19 @@
   height: calc(100dvh - 60px);
   transition: height 0s;
   // scroll-padding: .1rem;
+  & > div {
+    overflow-y: auto;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    max-width: var(--main-width);
+    /* width            :100vw; */
+    min-width: 100%;
+    /* height           : fit-content; */
+  }
 }
-
-.content > div {
-  overflow-y: auto;
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
-  max-width: var(--main-width);
-  /* width            :100vw; */
-  min-width: 100%;
-  /* height           : fit-content; */
-}
-
-.tab {
-  // padding:0 1rem;
-}
-
 .postContainer > div:last-child {
   margin-bottom: 2rem;
 }
-
 .loginBtn:disabled {
   pointer-events: none;
 }
@@ -197,17 +186,15 @@
   background-color: rgb(255, 255, 255);
   display: flex;
   align-items: center;
-}
-
-.storyCards {
-  overflow-x: scroll;
-  display: flex;
-  gap: 10px;
-  padding: 1rem 0.8rem;
-}
-
-.storyCards > div {
-  scroll-snap-align: start;
+  .storyCards {
+    overflow-x: scroll;
+    display: flex;
+    gap: 10px;
+    padding: 1rem 0.8rem;
+    & > div {
+      scroll-snap-align: start;
+    }
+  }
 }
 
 .storyCard {
@@ -225,8 +212,7 @@
   gap: 10px;
   display: flex;
 }
-
-.storyCards .addStory {
+.addStory {
   display: flex;
   text-align: center;
   justify-content: center;
@@ -234,35 +220,47 @@
   flex-direction: column;
   font-size: 15px;
   border: 1px solid #e0e0e0;
+  & > p {
+    width: 100%;
+    position: relative;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 0.5rem 0;
+    // background-color: rgb(207, 124, 124);
+    background-color: rgb(255, 255, 255);
+    color: rgb(44, 44, 44);
+    height: 70px;
+    font-weight: 500;
+    line-height: 30px;
+    user-select: none;
+  }
+  & > button {
+    position: relative;
+    bottom: -27%;
+    z-index: 100;
+    margin: auto;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: 4px solid rgb(255, 255, 255);
+    background-color: var(--blue-origin);
+    border: none;
+    color: white;
+  }
 }
-
-.addStory > button {
-  position: relative;
-  bottom: -27%;
-  z-index: 100;
-  margin: auto;
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  outline: 4px solid rgb(255, 255, 255);
-  background-color: var(--blue-origin);
-  border: none;
-  color: white;
-}
-
 .loginBtn:active,
 .storyCard:active,
 .logoutBtn:active {
   animation: card 0.3s ease-in-out;
 }
-
 .logoutBtn:active {
   background-color: rgb(230, 230, 230);
 }
-
 .loginBtn:active {
   outline: 4px solid #6aa6eb;
 }
@@ -281,21 +279,43 @@
   }
 }
 
-.addStory > p {
-  width: 100%;
-  position: relative;
-  margin: 0;
+.postAction {
+  padding: 1rem 0.8rem;
+  padding-top: 5px;
+  gap: 0.8rem;
+  align-items: center;
   display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  padding: 0.5rem 0;
-  background-color: rgb(207, 124, 124);
   background-color: rgb(255, 255, 255);
-  color: rgb(44, 44, 44);
-  height: 70px;
-  font-weight: 500;
-  line-height: 30px;
-  user-select: none;
+  input {
+    width: 100%;
+    font-size: calc(10px + 1.5vmin);
+    border-radius: 100px;
+    border: 1px solid rgb(179, 179, 179);
+    padding: 10px;
+    &:focus-visible {
+      outline: 1px solid lighten($color: rgb(0, 132, 255), $amount: 20);
+    }
+  }
+  .addMedia {
+    border-radius: 100px;
+    border: 0;
+    padding: 10px;
+    background-color: transparent;
+    &:hover {
+      background-color: rgb(216, 216, 216);
+    }
+    &:active {
+      opacity: 0.8;
+    }
+  }
+  .profile {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 0;
+    background-color: thistle;
+    background-color: rgb(221, 221, 221);
+  }
 }
 
 .card {
@@ -315,32 +335,24 @@
 .card:active {
   color: var(--blue-origin);
   border-color: var(--blue-origin);
+  border: 3px solid red;
 }
 
 .card h2 {
   margin: 0 0 1rem 0;
   font-size: 1.5rem;
+  border: 3px solid red;
 }
 
 .card p {
   margin: 0;
   line-height: 1.5;
   font-size: 1.25rem;
+  border: 3px solid red;
 }
-
-.logo {
-  margin-left: 0.7rem;
-}
-
 @media (max-width: 600px) {
   .grid {
     width: 100%;
     flex-direction: column;
   }
-
-  // .storyCards {
-  // }
-
-  // .storyCard > div {
-  // }
 }

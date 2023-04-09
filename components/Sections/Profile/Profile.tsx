@@ -6,18 +6,16 @@ export default function Profile(props: Props) {
   const { email } = props;
   return (
     <div className={s.container}>
-      <>
-        <Image
-          className={s.profile}
-          alt={email || ""}
-          width={120}
-          height={120}
-          src={
-            "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
-          }
-        />
-        <p>User: {email ? email : "Null"}</p>
-      </>
+      <Image
+        className={s.profile}
+        alt={email || ""}
+        width={120}
+        height={120}
+        src={
+          "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+        }
+      />
+      <p>User: {email ? email : "Null"}</p>
     </div>
   );
 }

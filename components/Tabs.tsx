@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
-import { useActive } from "../hooks/useActiveTab";
-import styles from "../styles/Home.module.scss";
-import Tab from "./Tab";
-import t from "./Tabs.module.scss";
-import { Home } from "./Sections/Home/Home";
-import { Props } from "../pages/index";
 import dynamic from "next/dynamic";
+import { MouseEvent, useEffect, useState } from "react";
+import { useActive } from "../hooks/useActiveTab";
+import { Props } from "../pages/index";
+import styles from "../styles/Home.module.scss";
+import { Home } from "./Sections/Home/Home";
+import t from "./Tabs.module.scss";
 const Friends = dynamic(() => import("./Sections/Friends/Friends"), {
   ssr: false,
 });
@@ -31,11 +30,12 @@ export default function Tabs(props: Props) {
       setcanDrag(false);
     });
   }, [active, canDrag]);
-  function dragStart(e: any) {
-    e.preventDefault();
+  function dragStart(e: MouseEvent<HTMLDivElement>) {
+    // e.preventDefault();
     e.stopPropagation();
     const currentTarget = e.currentTarget;
-    if (e.target.className == "Home_storyCard__3_T_R") return;
+    if (e.currentTarget.className == "Home_storyCard__3_T_R") return;
+    // if (e.target.className == "Home_storyCard__3_T_R") return;
     setpos({
       left: currentTarget.scrollLeft,
       top: currentTarget.scrollTop,
@@ -45,7 +45,7 @@ export default function Tabs(props: Props) {
     setcanDrag(true);
     currentTarget.style.cursor = "grabbing";
   }
-  function dragStop(e: any) {
+  function dragStop(e: MouseEvent<HTMLDivElement>) {
     e.preventDefault();
     e.stopPropagation();
     const currentTarget = e.currentTarget;
@@ -54,13 +54,13 @@ export default function Tabs(props: Props) {
     }
     setcanDrag(false);
   }
-  function dragging(e: any) {
+  function dragging(e: MouseEvent<HTMLDivElement>) {
     if (canDrag === true) {
       e.stopPropagation();
       e.preventDefault();
-      const currentTarget = e.currentTarget as HTMLDivElement;
+      const currentTarget = e.currentTarget;
       const dx = e.clientX - pos.x;
-      const dy = e.clientY - pos.y;
+      // const dy = e.clientY - pos.y;
       currentTarget.scrollLeft = pos.left - dx;
     } else {
       setcanDrag(false);
@@ -69,10 +69,11 @@ export default function Tabs(props: Props) {
   return (
     <div
       id="tabs"
+      role="tabs"
       className={styles.content}
-      onMouseDown={dragStart}
-      onMouseUp={dragStop}
-      onMouseMove={dragging}
+      onMouseDown={(e) => dragStart(e)}
+      onMouseUp={(e) => dragStop(e)}
+      onMouseMove={(e) => dragging(e)}
       onScroll={(e) => {
         const target = e.target as HTMLDivElement;
         const scroll = target.scrollLeft;
@@ -82,49 +83,33 @@ export default function Tabs(props: Props) {
         indicator.style.transform = `translateX(${scroll / 6}px)`;
       }}
     >
-      <Home email={email} posts={posts} />
+      <Home canDrag={canDrag} email={email} posts={posts} />
       <div id="friends" className={styles.tab}>
-        {/* <Tab active={active} name="friends"> */}
-        <>
-          <div className={t.header}>
-            <h2>Friends</h2>
-          </div>
-          <Friends />
-        </>
-        {/* </Tab> */}
+        <div className={t.header}>
+          <h2>Friends</h2>
+        </div>
+        <Friends />
       </div>
       <div id="watch">
-        {/* <Tab active={active} name="watch"> */}
-        <>
-          <div className={t.header}>
-            <h2>Watch</h2>
-          </div>
-          <Watch />
-        </>
-        {/* </Tab> */}
+        <div className={t.header}>
+          <h2>Watch</h2>
+        </div>
+        <Watch />
       </div>
       <div id="profile">
-        {/* <Tab active={active} name="profile"> */}
         <Profile email={email} posts={[]} />
-        {/* </Tab> */}
       </div>
       <div id="notifications">
-        {/* <Tab active={active} name="notifications"> */}
-        <>
-          <div className={t.header}>
-            <h2>Notifications</h2>
-          </div>
-          <Notifications />
-        </>
-        {/* </Tab> */}
+        <div className={t.header}>
+          <h2>Notifications</h2>
+        </div>
+        <Notifications />
       </div>
       <div id="menu">
-        <>
-          <div className={t.header}>
-            <h2>Menu</h2>
-          </div>
-          <Menu />
-        </>
+        <div className={t.header}>
+          <h2>Menu</h2>
+        </div>
+        <Menu tabIndex={active === "menu" ? 1 : -1} />
       </div>
     </div>
   );

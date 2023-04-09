@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
 
@@ -6,6 +6,7 @@ export default function Navitems(props: any) {
   const { icon, name, index } = props;
   const TabName = name.toLowerCase();
   const { active, setActive } = useActive();
+  const [focus, setfocus] = useState(false);
   // const indicator = document.querySelector('.indicatorContainer>.indicator')
   useEffect(() => {
     //     const indicator = document.getElementsByClassName(
@@ -45,11 +46,9 @@ export default function Navitems(props: any) {
     // router.push(`${TabName !=  '/' ? "#"+TabName : TabName }`);
     setActive(TabName);
     window.location.hash = activeTab;
-
     const tabs = document.getElementById("tabs");
     tabs?.scrollTo({
       left: index * tabs.clientWidth,
-      // behavior: "smooth",
     });
   }
   return (
