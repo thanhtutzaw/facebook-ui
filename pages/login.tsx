@@ -17,6 +17,7 @@ export default function Login() {
       }
     });
     return () => unsub();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth]);
   const email = "testuser@gmail.com";
   const password = "111111";

@@ -11,7 +11,7 @@ import { useEffect } from "react";
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 export function Home(props: Props) {
   const { posts, email } = props;
-  useEffect(() => {
+  useEffect(() => { 
     console.log("Home is Rendering");
   }, []);
 

@@ -5,12 +5,12 @@ import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useEffect, useRef } from "react";
 import Header from "../components/Header/Header";
-import { useActive } from "../hooks/useActive";
+import Tabs from "../components/Tabs";
+import { useActive } from "../hooks/useActiveTab";
 import { app, db } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import styles from "../styles/Home.module.scss";
 import { Post } from "../types/interfaces";
-import Tabs from "../components/Tabs";
 
 export interface Props {
   posts: Post[];
@@ -22,12 +22,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 ) => {
   try {
     const cookies = nookies.get(context);
-    console.log(cookies.token);
-
+    // console.log(cookies.token);
     const token = await verifyIdToken(cookies.token);
-    const { email  } = token;
+    const { email } = token;
     // const email = "null email";
-
+    console.log(token);
     // const uid = null;
 
     const query = collectionGroup(db, `posts`);

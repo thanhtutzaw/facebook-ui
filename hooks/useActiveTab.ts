@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 export function useActive() {
   const [active, setActive] = useState("");
-  function navigateTab(tab: string) {
-    setActive(tab);
-    const target = document.getElementById(tab);
-    console.log(target);
-    target?.scrollIntoView({ behavior: "smooth" });
+  function navigateTab(targetTab: string) {
+    setActive(targetTab);
+    const target = document.getElementById(targetTab);
+    target?.scrollIntoView();
   }
   useEffect(() => {
     const tabs = document.querySelectorAll("#tabs > div");
@@ -14,7 +13,7 @@ export function useActive() {
       rootMargin: "0px",
       threshold: 1,
     };
-    function handleObserver(entries: any) {
+    function handleObserver(entries: IntersectionObserverEntry[]) {
       entries.map((entry: any) => {
         if (entry.isIntersecting) {
           const targetID = entry.target.id;

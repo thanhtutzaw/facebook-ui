@@ -48,6 +48,7 @@
 }
 
 .nav {
+  // scroll-snap-align: center;
   scroll-snap-align: start;
   overflow: hidden;
   display: flex;
@@ -115,6 +116,7 @@
   scroll-behavior: smooth;
   height: calc(100dvh - 60px);
   transition: height 0s;
+  // scroll-padding: .1rem;
 }
 
 .content > div {

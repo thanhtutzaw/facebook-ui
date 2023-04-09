@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-// import styles from "../../styles/Home.module.scss";
-import s from "../../Sections/Menu/menu.module.scss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOut, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState } from "react";
+import { useActive } from "../../../hooks/useActiveTab";
 import { signout } from "../../../lib/signout";
-import { useActive } from "../../../hooks/useActive";
-function Menu() {
+import s from "../../Sections/Menu/menu.module.scss";
+export default function Menu() {
   const { navigateTab } = useActive();
   const [loading, setLoading] = useState(false);
   return (
@@ -25,7 +24,7 @@ function Menu() {
 
       <button
         disabled={loading}
-        className={`${s.item} ${s.logoutBtn}`}
+        className={`${s.item}`}
         onClick={() => {
           setLoading(true);
           try {
@@ -47,5 +46,3 @@ function Menu() {
     </div>
   );
 }
-
-export default Menu;

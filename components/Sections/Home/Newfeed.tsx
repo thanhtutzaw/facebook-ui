@@ -5,11 +5,11 @@ import Post from "../../Post";
 import { getServerSideProps } from "../../../pages";
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 export default function Newfeed(props: Props) {
-  const { posts } = props;
+  const { posts, email } = props;
   return (
     <div className={styles.postContainer}>
       {posts?.map((post: PostType, index: number) => (
-        <Post key={index} post={post} />
+        <Post key={index} post={post} email={email} />
       ))}
       <p style={{ textAlign: "center" }}>No more posts</p>
 

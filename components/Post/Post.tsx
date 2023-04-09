@@ -15,53 +15,49 @@ import { useState } from "react";
 // }
 interface Props {
   post: PostType;
+  email: string | null | undefined;
 }
-export default function Post({ post }: Props) {
+export default function Post({ post, email }: Props) {
   const { id, text } = post;
   const [Bounce, setBounce] = useState(false);
   return (
-    <>
-      <div className={styles.post} key={id}>
-        {/* <div className={styles.postContainer}> */}
-        <div className={styles.postHeader}>
-          {/* <img className={styles.profile}></img> */}
-          <Image
-            className={styles.profile}
-            alt={text}
-            width={50}
-            height={50}
-            src={
-              "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-            }
-          />
-          <div>
-            {/* <p>{email}</p> */}
-            <p>Name</p>
-            <p>Time</p>
-          </div>
-        </div>
-        <p>{text}</p>
-        <div
-          className={styles.postAction}
-          onPointerEnter={() => setBounce(true)}
-          onPointerLeave={() => setBounce(false)}
-        >
-          <button>
-            <FontAwesomeIcon bounce={Bounce} icon={faThumbsUp} />
-            <p>Like</p>
-          </button>
-          <button>
-            <FontAwesomeIcon icon={faComment} bounce={Bounce} />
-
-            <p>Comment</p>
-          </button>
-          <button>
-            <FontAwesomeIcon icon={faShare} bounce={Bounce} />
-            <p>Share</p>
-          </button>
+    <div className={styles.post} key={id}>
+      <div className={styles.postHeader}>
+        <Image
+          className={styles.profile}
+          alt={text}
+          width={50}
+          height={50}
+          src={
+            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+          }
+        />
+        <div>
+          {/* <p>{email}</p> */}
+          <p>Name</p>
+          <p>Time</p>
         </div>
       </div>
-      {/* </div> */}
-    </>
+      <p>{text}</p>
+      <div
+        className={styles.postAction}
+        onPointerEnter={() => setBounce(true)}
+        onPointerLeave={() => setBounce(false)}
+      >
+        <button>
+          <FontAwesomeIcon bounce={Bounce} icon={faThumbsUp} />
+          <p>Like</p>
+        </button>
+        <button>
+          <FontAwesomeIcon icon={faComment} bounce={Bounce} />
+
+          <p>Comment</p>
+        </button>
+        <button>
+          <FontAwesomeIcon icon={faShare} bounce={Bounce} />
+          <p>Share</p>
+        </button>
+      </div>
+    </div>
   );
 }

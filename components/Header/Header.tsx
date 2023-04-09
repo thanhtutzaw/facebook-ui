@@ -10,10 +10,9 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
 import Navitems from "./Navitems";
-import { useActive } from "../../hooks/useActive";
-
 // import user from '../hooks/useAuth'
 const Logo = () => {
   return (
@@ -40,21 +39,20 @@ export default function Header(props: any) {
   const [width, setwidth] = useState<number>();
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];
-    if (email) {
+    // if (email) {
+    setwidth(Math.floor(nav.clientWidth / 6));
+    // if (window.innerWidth < 500) {
+    //   console.log(window.innerWidth);
+    // }
+    window.onresize = () => {
       setwidth(Math.floor(nav.clientWidth / 6));
-
-      if (window.innerWidth < 500) {
-        console.log(window.innerWidth);
-      }
-      window.onresize = () => {
-        setwidth(Math.floor(nav.clientWidth / 6));
-        console.log("resize");
-      };
-      window.onbeforeunload = () => {
-        setwidth(Math.floor(nav.clientWidth / 6));
-      };
-    }
-  }, [email, width]);
+      console.log("resize");
+    };
+    window.onbeforeunload = () => {
+      setwidth(Math.floor(nav.clientWidth / 6));
+    };
+    // }
+  }, [width]);
 
   return (
     <>
@@ -70,14 +68,11 @@ export default function Header(props: any) {
         <button
           className={styles.logoutBtn}
           onClick={() => {
-            if (active === "/") {
-              console.log(active);
-              setActive("menu");
-              const target = document.getElementById("menu");
-              console.log(target);
-              target?.scrollIntoView({ behavior: "smooth" });
-              // navigateTab("menu");
-            }
+            setActive("menu");
+            const tabs = document.getElementById("tabs");
+            tabs?.scrollTo({
+              left: 5 * tabs.clientWidth,
+            });
           }}
         >
           <FontAwesomeIcon
@@ -87,27 +82,27 @@ export default function Header(props: any) {
         </button>
       </header>
 
-      {email && (
-        <nav className={styles.nav}>
-          {pages.map((page, index) => (
-            <Navitems
-              index={index}
-              key={page.name}
-              name={page.name}
-              icon={page.icon}
-            />
-          ))}
-          <div className={styles.indicatorContainer}>
-            <div
-              ref={indicatorRef}
-              style={{
-                width: `${width}px`,
-              }}
-              className={styles.indicator}
-            ></div>
-          </div>
-        </nav>
-      )}
+      {/* {email && ( */}
+      <nav className={styles.nav}>
+        {pages.map((page, index) => (
+          <Navitems
+            key={page.name}
+            index={index}
+            name={page.name}
+            icon={page.icon}
+          />
+        ))}
+        <div className={styles.indicatorContainer}>
+          <div
+            ref={indicatorRef}
+            style={{
+              width: `${width}px`,
+            }}
+            className={styles.indicator}
+          ></div>
+        </div>
+      </nav>
+      {/* )} */}
     </>
   );
 }

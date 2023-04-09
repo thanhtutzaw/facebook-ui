@@ -33,9 +33,14 @@ a {
 }
 
 button {
-  -webkit-tap-highlight-color: transparent;
   cursor                     : pointer;
   user-select                : none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:disabled {
+  opacity: .5;
+  cursor : not-allowed !important;
 }
 
 @media (prefers-color-scheme: dark) {

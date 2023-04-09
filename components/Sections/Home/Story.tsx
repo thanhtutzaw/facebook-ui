@@ -112,6 +112,7 @@ export default function Story() {
     //   target.style.transform = `translateX(0px)`;
     // }
     if (draggable === true) {
+      document.body.style.userSelect = 'none'
       const maxDelta = window.innerWidth / 2;
       // target.style.transform = `translateX(${e.clientX / 10}px)`;
       const dx = e.clientX - pos.x;
@@ -130,6 +131,7 @@ export default function Story() {
       // }
     } else {
       setdraggable(false);
+      document.body.style.userSelect = 'initial'
     }
     // setdraggable(false);
     // target.style.transform = `translateX(0px)`;

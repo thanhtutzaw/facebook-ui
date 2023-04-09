@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useActive } from "../../hooks/useActive";
+import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
 
 export default function Navitems(props: any) {
@@ -7,7 +7,6 @@ export default function Navitems(props: any) {
   const TabName = name.toLowerCase();
   const { active, setActive } = useActive();
   // const indicator = document.querySelector('.indicatorContainer>.indicator')
-  // console.log(indicator);
   useEffect(() => {
     //     const indicator = document.getElementsByClassName(
     //       "Home_indicator__htkkp"
@@ -41,11 +40,11 @@ export default function Navitems(props: any) {
   }, []);
 
   const isActive = active === TabName ? styles.active : "";
-  const hashValue = TabName === "/" ? "#home" : "#" + TabName;
+  const activeTab = TabName === "/" ? "#home" : "#" + TabName;
   function handleClick() {
     // router.push(`${TabName !=  '/' ? "#"+TabName : TabName }`);
     setActive(TabName);
-    window.location.hash = hashValue;
+    window.location.hash = activeTab;
 
     const tabs = document.getElementById("tabs");
     tabs?.scrollTo({
@@ -54,10 +53,8 @@ export default function Navitems(props: any) {
     });
   }
   return (
-    <>
-      <div onClick={handleClick} className={`${styles.navItems} ${isActive} `}>
-        {icon}
-      </div>
-    </>
+    <div onClick={handleClick} className={`${styles.navItems} ${isActive}`}>
+      {icon}
+    </div>
   );
 }

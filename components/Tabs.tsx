@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useActive } from "../hooks/useActive";
+import { useActive } from "../hooks/useActiveTab";
 import styles from "../styles/Home.module.scss";
 import Tab from "./Tab";
 import t from "./Tabs.module.scss";

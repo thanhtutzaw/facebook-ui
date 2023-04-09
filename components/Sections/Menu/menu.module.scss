@@ -1,8 +1,7 @@
 .container {
-    
     display: flex;
     gap: 0.5rem;
-    padding:1rem;
+    padding: 1rem;
     flex-direction: column;
 
     > * {
@@ -17,8 +16,7 @@
     }
     button {
         border: 0;
-        > svg{
-            // border:3px solid red;
+        > svg {
             width: 23px;
             height: 23px;
         }
