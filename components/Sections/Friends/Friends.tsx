@@ -1,11 +1,45 @@
-import React, { useEffect } from "react";
+import React, { useEffect} from "react";
 import s from "./Friends.module.scss";
-
-export default function Friend() {
+import { Request } from "./Request";
+import { AddSuggestFriend } from "./AddSuggestFriend";
+interface FriendProps {
+  tabIndex: number;
+}
+export default function Friend(props: FriendProps) {
   useEffect(() => {
     console.log("Friend is Rendering");
   }, []);
-  // if (active !== "Friend") return;
-  // return <>{active === "friend" && <div>add</div>}</>;
-  return <div className={s.container}>friends</div>;
+  const { tabIndex } = props;
+
+  const friends = ["Captain America", "Iron Man", "Thor"];
+  const length = friends.length;
+  return (
+    <div className={s.container}>
+      <div className={s.action}>
+        <button tabIndex={tabIndex}>Suggestions</button>
+        <button tabIndex={tabIndex}>My Friends</button>
+      </div>
+      <div className={s.requestPending}>
+        <h2 className={s.header}>
+          <p>Friends Requests</p>
+          {/* <p className={s.length}>{length}</p> */}
+        </h2>
+        {friends.map((f) => (
+          <>
+            <Request f={f} tabIndex={tabIndex} />
+          </>
+        ))}
+      </div>
+      <div className={s.requestPending}>
+        <h2 className={s.header}>
+          <p>People you may know</p>
+        </h2>
+        {friends.map((f) => (
+          <>
+            <AddSuggestFriend f={f} tabIndex={tabIndex} />
+          </>
+        ))}
+      </div>
+    </div>
+  );
 }

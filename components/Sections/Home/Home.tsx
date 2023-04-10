@@ -13,9 +13,10 @@ import { setTimeout } from "timers";
 // }
 type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
   canDrag: boolean;
+  tabIndex: number;
 };
 export function Home(props: Props) {
-  const { posts, email, canDrag } = props;
+  const { tabIndex, posts, email, canDrag } = props;
   // useEffect(() => {
   //   console.log("Home is Rendering");
   // }, []);
@@ -34,17 +35,24 @@ export function Home(props: Props) {
           }
         />
         <input
-          onFocus={() => {
-            router.push("addPost");
+          readOnly
+          onClick={() => {
+            // router.push("addPost");
+            // setAddpostMounted(true)
           }}
           type="text"
           placeholder="What is on your mind ?"
         />
-        <button className={styles.addMedia}>
+        <button tabIndex={tabIndex} className={styles.addMedia}>
           <FontAwesomeIcon color="#0070f3" icon={faPhotoFilm} />
         </button>
       </div>
-      <Newfeed canDrag={canDrag} email={email} posts={posts} />
+      <Newfeed
+        tabIndex={tabIndex}
+        canDrag={canDrag}
+        email={email}
+        posts={posts}
+      />
     </div>
   );
 }

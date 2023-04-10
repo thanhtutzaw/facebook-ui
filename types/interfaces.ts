@@ -1,4 +1,4 @@
 export interface Post {
-  id: string;
+  id?: string | number;
   text: string;
 }

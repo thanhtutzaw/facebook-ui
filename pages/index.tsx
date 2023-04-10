@@ -1,9 +1,9 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { collectionGroup, getDocs } from "firebase/firestore";
+import { collection, collectionGroup, getDocs } from "firebase/firestore";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs";
 import { useActive } from "../hooks/useActiveTab";
@@ -13,6 +13,7 @@ import styles from "../styles/Home.module.scss";
 import { Post } from "../types/interfaces";
 
 export interface Props {
+  myPost?: Post[];
   posts: Post[];
   email?: string | null;
   indicatorRef?: React.RefObject<HTMLDivElement>;
@@ -24,20 +25,30 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const cookies = nookies.get(context);
     // console.log(cookies.token);
     const token = await verifyIdToken(cookies.token);
-    const { email } = token;
+    const { email, uid } = token;
     // const email = "null email";
     console.log(token);
     // const uid = null;
 
     const query = collectionGroup(db, `posts`);
+    const mypostQuery = collection(db, `/users/${uid}/posts`);
     // const docRef = collection(db, `/users/${uid}/posts`);
     // const docRef = doc(db, `/users/${uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
     // const docRef = doc(db, `/users/${user?.uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
     const docSnap = await getDocs(query);
+    const myPostSnap = await getDocs(mypostQuery);
     const posts = docSnap.docs.map((doc) => {
       const data = doc.data() as Post;
       return {
         // id: doc.id,
+        ...data,
+      };
+    });
+    const myPost = myPostSnap.docs.map((doc) => {
+      const data = doc.data() as Post;
+      return {
+        // id: doc.id,
+        // ...doc.data(),
         ...data,
       };
     });
@@ -46,6 +57,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       props: {
         posts,
         email,
+        myPost,
       },
     };
   } catch {
@@ -55,6 +67,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       props: {
         posts: [],
         email: "",
+        myPost: [],
       },
     };
   }
@@ -62,13 +75,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 export default function Home(
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
-  const { posts, email } = props;
+  const { posts, email, myPost } = props;
   const indicatorRef = useRef<HTMLDivElement>(null);
 
   const { active, setActive } = useActive();
   const router = useRouter();
   const auth = getAuth(app);
   const headerContainerRef = useRef<HTMLDivElement>(null);
+  const [AddpostMounted, setAddpostMounted] = useState(false);
+
   // const user = useUser();
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -125,7 +140,7 @@ export default function Home(
       <div ref={headerContainerRef} className={styles.headerContainer}>
         <Header indicatorRef={indicatorRef} email={email} />
       </div>
-      <Tabs indicatorRef={indicatorRef} email={email} posts={posts} />
+      <Tabs myPost={myPost} indicatorRef={indicatorRef} email={email} posts={posts} />
     </>
   );
 }

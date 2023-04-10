@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { MouseEvent, memo, useEffect, useRef, useState } from "react";
 import styles from "../../../styles/Home.module.scss";
 
 export default function Story() {
@@ -11,9 +11,6 @@ export default function Story() {
   const [Percentage, setPercentage] = useState<number>();
   const [scroll, setscroll] = useState<number>();
   useEffect(() => {
-    const container = document.getElementsByClassName(
-      "Home_storyCards__DWtf_"
-    )[0] as HTMLDivElement;
     // const startPoint = scroll! < 50;
     // const centerPoint = scroll! > 1 && scroll! < 80;
     // if (scroll! < 50) {
@@ -28,38 +25,29 @@ export default function Story() {
     // }
 
     window.addEventListener("mouseup", () => {
-      // console.log("window mouseup");
-      // container.style.transform = 'translateX(0px)'
-      // container.style.transition = 'all .2s ease'
+      // setdraggable(false);
+      console.log("window mouseup");
     });
-    const unsub = document.body.addEventListener("mouseup", () => {
-      // console.log("body mouseup");
+    function dragStop() {
+      console.log("body mouseup");
       setdraggable(false);
       setprevPoint(Percentage!);
-      // setdraggable(false);
-      // const container = document.getElementsByClassName(
-      //   "Home_storyCards__DWtf_"
-      // )[0] as HTMLDivElement;
-      // setprevPoint(Percentage!);
-      // container.style.transform = 'translateX(0px)'
-      // container.style.transition = 'all .2s ease'
-    });
-    return () => unsub;
-  }, [draggable, Percentage]);
+    }
+    document.body.addEventListener("mouseup", dragStop);
 
-  function dragStart(e: React.MouseEvent) {
+    return () => {
+      document.body.removeEventListener("mouseup", dragStop);
+    };
+  }, [draggable]);
+
+  function dragStart(e: MouseEvent) {
     e.stopPropagation();
-    // e.preventDefault();
     const target = e.currentTarget as HTMLDivElement;
-
     // target.style.cursor = "grabbing !important";
     target.style.scrollBehavior = "initial";
     target.style.cursor = "grabbing";
-    if (draggable) {
-    }
     setdraggable(true);
     // target.style.cursor = "grabbing !important"
-    // console.log("draggable");
     setpos({
       ...pos,
       left: target.scrollLeft,
@@ -69,7 +57,7 @@ export default function Story() {
       // y: e.clientY,
     });
   }
-  function drageStop(e: React.MouseEvent) {
+  function drageStop(e: MouseEvent) {
     e.stopPropagation();
     e.preventDefault();
     const target = e.currentTarget as HTMLDivElement;
@@ -102,17 +90,16 @@ export default function Story() {
       target.scrollLeft = 80;
     }
   }
-  function dragging(e: React.MouseEvent) {
+  function dragging(e: MouseEvent) {
     e.stopPropagation();
     e.preventDefault();
-
     const target = e.currentTarget as HTMLDivElement;
     doScrollSnap(target);
     // if (e.pageX > 300 || e.pageX < 500) {
     //   target.style.transform = `translateX(0px)`;
     // }
     if (draggable === true) {
-      document.body.style.userSelect = 'none'
+      document.body.style.userSelect = "none";
       const maxDelta = window.innerWidth / 2;
       // target.style.transform = `translateX(${e.clientX / 10}px)`;
       const dx = e.clientX - pos.x;
@@ -122,20 +109,16 @@ export default function Story() {
       const nextPrecentage = Math.max(Math.min(nextPrecentageOrigin, 0), -30);
       setPercentage(nextPrecentage);
       // target.style.transform = `translateX(${nextPrecentage}%)`;
-      // console.log(Percentage);
 
-      // console.log(e.clientX);
       // if (e.clientX <= 365) {
       //   setdraggable(false);
       //   target.style.transform = `translateX(0px)`;
       // }
     } else {
       setdraggable(false);
-      document.body.style.userSelect = 'initial'
+      document.body.style.userSelect = "initial";
     }
-    // setdraggable(false);
     // target.style.transform = `translateX(0px)`;
-    // target.style.transition = `all .2s ease`;
   }
 
   return (
@@ -152,40 +135,35 @@ export default function Story() {
         onMouseMove={dragging}
         onTouchMove={(e) => {
           const target = e.currentTarget;
-          const scroll = target.scrollLeft;
+          // const scroll = target.scrollLeft;
           target.style.scrollBehavior = "smooth";
           // target.style.scrollSnapStop = 'always'
           doScrollSnap(target);
-          console.log(scroll);
         }}
         onScroll={(e) => {
-          const target = e.currentTarget;
-          const scroll = target.scrollLeft;
-          // console.log(scroll +" is 80");
-          setscroll(scroll);
-
+          // const target = e.currentTarget;
+          // const scroll = target.scrollLeft;
+          // setscroll(scroll);
           // const
           // lessthan15 = scroll < 15 ,
           // between15and80 = scroll >15 && scroll < 80  ,
           // lessthan80 = scroll < 80
           // console.log(scroll)
           // console.log(lessthan15 ||  lessthan80);
-
           // const canScroll = scroll >= 82;
           // console.log(canScroll);
-          if (scroll < 58) {
-            // target.scrollLeft = 0
-            // target.style.scrollBehavior = 'smooth'
-          }
-          if (scroll >= 58) {
-            // target.scrollLeft = 99;
-            // target.style.removeProperty("scroll-snap-type");
-            // target.style.scrollSnapType = "unset"
-            // console.log(target.re);
-          } else if (scroll <= 83) {
-            // target.style.scrollSnapType = "x mandatory";
-          }
-
+          // if (scroll < 58) {
+          // target.scrollLeft = 0
+          // target.style.scrollBehavior = 'smooth'
+          // }
+          // if (scroll >= 58) {
+          // target.scrollLeft = 99;
+          // target.style.removeProperty("scroll-snap-type");
+          // target.style.scrollSnapType = "unset"
+          // console.log(target.re);
+          // } else if (scroll <= 83) {
+          // target.style.scrollSnapType = "x mandatory";
+          // }
           // target.style.setProperty('scroll-snap-type', 'x mandatory')
         }}
         // e.currentTarget.style.transform = `translateX(${e.clientX * 0}px)`;
@@ -197,17 +175,15 @@ export default function Story() {
         className={styles.storyCards}
       >
         <div
-          onClick={() => {
-            fileInput.current?.click();
-          }}
-          className={[styles.storyCard, styles.addStory].join(" ")}
+          onClick={() => fileInput.current?.click()}
+          className={`${styles.storyCard} ${styles.addStory}`}
         >
           <input
             style={{ display: "none", visibility: "hidden" }}
             ref={fileInput}
             type="file"
           />
-          <button>
+          <button tabIndex={-1}>
             <FontAwesomeIcon icon={faAdd} />
           </button>
           <p>Create Story</p>

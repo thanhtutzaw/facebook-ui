@@ -1,25 +1,31 @@
 @import "../../styles/mixins";
 .post {
     background-color: rgb(253, 253, 253);
+    // color: red;
     margin: 0.5rem 0;
+    &:not(:first-child) {
+        // margin: 0.5rem 0;
+    }
+
     > p {
         word-break: break-word;
         white-space: break-spaces;
         padding-bottom: 0.7rem !important;
     }
-    .postHeader,
+    .header,
     > p {
         padding: 15px 1rem;
         padding: 10px 0.8rem;
         padding-top: 15px;
         margin: 0;
     }
-    .postHeader:active,
+    .header:active,
     > p:active {
         background-color: rgb(207, 207, 207);
     }
 }
-.postHeader {
+
+.header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -51,7 +57,7 @@
     background-color: rgb(221, 221, 221);
 }
 
-.postAction {
+.action {
     display: flex;
     align-items: center;
     > button {

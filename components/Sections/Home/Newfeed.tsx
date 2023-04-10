@@ -5,13 +5,14 @@ import { Post as PostType } from "../../../types/interfaces";
 import Post from "../../Post";
 type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
   canDrag: boolean;
+  tabIndex: number;
 };
 export default function Newfeed(props: NewfeedProps) {
-  const { posts, email} = props;
+  const { tabIndex, posts, email } = props;
   return (
     <div className={styles.postContainer}>
       {posts?.map((post: PostType, index: number) => (
-        <Post   key={index} post={post} email={email} />
+        <Post tabIndex={tabIndex} key={index} post={post} email={email} />
       ))}
       <p style={{ textAlign: "center" }}>No more posts</p>
 

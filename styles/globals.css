@@ -3,6 +3,28 @@
   --main-width : 500px;
 }
 
+main {
+  width          : 100vw;
+  max-width      : var(--main-width);
+  overflow       : auto;
+  height         : 100dvh;
+  scroll-behavior: smooth;
+  transition     : scale 0.3s cubic-bezier(1, 0.14, 0.01, 1.09), opacity 0.3s cubic-bezier(1, 0.14, 0.01, 1.09);
+
+}
+
+.loginIcon {
+  padding         : 6px;
+  background-color: #fff;
+  border-radius   : 50%;
+  display         : flex;
+}
+
+
+main:only-child {
+  background-color: white;
+}
+
 html,
 body {
   padding: 0;

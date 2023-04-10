@@ -16,13 +16,14 @@ import { useState } from "react";
 interface Props {
   post: PostType;
   email: string | null | undefined;
+  tabIndex: number;
 }
-export default function Post({ post, email }: Props) {
+export default function Post({ post, email, tabIndex }: Props) {
   const { id, text } = post;
   const [Bounce, setBounce] = useState(false);
   return (
     <div className={styles.post} key={id}>
-      <div className={styles.postHeader}>
+      <div className={styles.header}>
         <Image
           className={styles.profile}
           alt={text}
@@ -40,20 +41,20 @@ export default function Post({ post, email }: Props) {
       </div>
       <p>{text}</p>
       <div
-        className={styles.postAction}
+        className={styles.action}
         // onPointerEnter={() => setBounce(true)}
         // onPointerLeave={() => setBounce(false)}
       >
-        <button>
+        <button tabIndex={tabIndex}>
           <FontAwesomeIcon bounce={Bounce} icon={faThumbsUp} />
           <p>Like</p>
         </button>
-        <button>
+        <button tabIndex={tabIndex}>
           <FontAwesomeIcon icon={faComment} bounce={Bounce} />
 
           <p>Comment</p>
         </button>
-        <button>
+        <button tabIndex={tabIndex}>
           <FontAwesomeIcon icon={faShare} bounce={Bounce} />
           <p>Share</p>
         </button>

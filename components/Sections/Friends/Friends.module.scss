@@ -1,3 +1,63 @@
-.container{
-    padding:1rem ;
+.container {
+    background-color: white;
+    padding: 0 1rem;
+    & > .action button {
+        margin: 0 8px;
+        padding: 10px;
+    }
+    button {
+        flex: 1;
+        height: 50px;
+        border: 0;
+        border-radius: 10px;
+    }
+    .requestPending {
+        .header {
+            background-color: rgb(255, 255, 255);
+            overflow: auto;
+            gap: 20px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            margin: 0;
+            p {
+                margin: 0;
+            }
+            .length {
+                color: red;
+            }
+        }
+        .card {
+            padding-block: 1rem;
+            display: flex;
+            flex: 1;
+            align-items: center;
+            gap: 20px;
+            .profile {
+                border-radius: 100%;
+            }
+            p {
+                margin: 0;
+            }
+            .right {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                gap: 10px;
+                .info {
+                    gap: 18px;
+                    display: flex;
+                    justify-content: space-between;
+                }
+                .action {
+                    gap: 10px;
+                    display: flex;
+                    .primary {
+                        background-color: var(--blue-origin);
+                        color: white;
+                    }
+                }
+            }
+        }
+    }
 }

@@ -6,7 +6,7 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 config.autoAddCss = false;
 import { AuthProvider } from "../context/auth";
-// import Layout from "../Components/Layout";
+import { useState } from "react";
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
@@ -16,10 +16,10 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* <Layout> */}
-      <main className={styles.main}>
+      <main
+      // style={{ scale: AddpostMounted ? ".8" : "1" }}
+      >
         <Component {...pageProps} />
-        {/* </Layout> */}
       </main>
     </AuthProvider>
   );

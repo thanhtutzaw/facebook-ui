@@ -6,7 +6,7 @@ export default function Navitems(props: any) {
   const { icon, name, index } = props;
   const TabName = name.toLowerCase();
   const { active, setActive } = useActive();
-  const [focus, setfocus] = useState(false);
+  // const [focus, setfocus] = useState(false);
   // const indicator = document.querySelector('.indicatorContainer>.indicator')
   useEffect(() => {
     //     const indicator = document.getElementsByClassName(
@@ -43,7 +43,6 @@ export default function Navitems(props: any) {
   const isActive = active === TabName ? styles.active : "";
   const activeTab = TabName === "/" ? "#home" : "#" + TabName;
   function handleClick() {
-    // router.push(`${TabName !=  '/' ? "#"+TabName : TabName }`);
     setActive(TabName);
     window.location.hash = activeTab;
     const tabs = document.getElementById("tabs");
