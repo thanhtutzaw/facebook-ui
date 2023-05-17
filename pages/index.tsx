@@ -14,7 +14,7 @@ import { Post } from "../types/interfaces";
 
 export interface Props {
   myPost?: Post[];
-  posts: Post[];
+  posts?: Post[];
   email?: string | null;
   indicatorRef?: React.RefObject<HTMLDivElement>;
 }
@@ -140,7 +140,12 @@ export default function Home(
       <div ref={headerContainerRef} className={styles.headerContainer}>
         <Header indicatorRef={indicatorRef} email={email} />
       </div>
-      <Tabs myPost={myPost} indicatorRef={indicatorRef} email={email} posts={posts} />
+      <Tabs
+        myPost={myPost}
+        indicatorRef={indicatorRef}
+        email={email}
+        posts={posts}
+      />
     </>
   );
 }

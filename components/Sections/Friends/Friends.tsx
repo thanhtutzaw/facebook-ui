@@ -1,4 +1,4 @@
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import s from "./Friends.module.scss";
 import { Request } from "./Request";
 import { AddSuggestFriend } from "./AddSuggestFriend";
@@ -24,20 +24,16 @@ export default function Friend(props: FriendProps) {
           <p>Friends Requests</p>
           {/* <p className={s.length}>{length}</p> */}
         </h2>
-        {friends.map((f) => (
-          <>
-            <Request f={f} tabIndex={tabIndex} />
-          </>
+        {friends.map((f, index) => (
+          <Request key={index} f={f} tabIndex={tabIndex} />
         ))}
       </div>
       <div className={s.requestPending}>
         <h2 className={s.header}>
           <p>People you may know</p>
         </h2>
-        {friends.map((f) => (
-          <>
-            <AddSuggestFriend f={f} tabIndex={tabIndex} />
-          </>
+        {friends.map((f, index) => (
+          <AddSuggestFriend key={index} f={f} tabIndex={tabIndex} />
         ))}
       </div>
     </div>

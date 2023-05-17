@@ -7,7 +7,6 @@ import styles from "../../../styles/Home.module.scss";
 import Newfeed from "./Newfeed";
 import Story from "./Story";
 import { useRouter } from "next/router";
-import { setTimeout } from "timers";
 // export interface Post {
 //   text: String;
 // }
@@ -17,13 +16,10 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
 };
 export function Home(props: Props) {
   const { tabIndex, posts, email, canDrag } = props;
-  // useEffect(() => {
-  //   console.log("Home is Rendering");
-  // }, []);
   const router = useRouter();
   return (
     <div id="/" className={styles.home}>
-      <Story />
+      <Story email={email} />
       <div className={styles.postAction}>
         <Image
           className={styles.profile}
@@ -37,13 +33,19 @@ export function Home(props: Props) {
         <input
           readOnly
           onClick={() => {
-            // router.push("addPost");
+            router.push("addPost");
             // setAddpostMounted(true)
           }}
           type="text"
           placeholder="What is on your mind ?"
         />
-        <button tabIndex={tabIndex} className={styles.addMedia}>
+        <button
+          onClick={() => {
+            router.push("addPost");
+          }}
+          tabIndex={tabIndex}
+          className={styles.addMedia}
+        >
           <FontAwesomeIcon color="#0070f3" icon={faPhotoFilm} />
         </button>
       </div>

@@ -3,10 +3,6 @@
     background-color: rgb(253, 253, 253);
     // color: red;
     margin: 0.5rem 0;
-    &:not(:first-child) {
-        // margin: 0.5rem 0;
-    }
-
     > p {
         word-break: break-word;
         white-space: break-spaces;
@@ -60,6 +56,11 @@
 .action {
     display: flex;
     align-items: center;
+    svg {
+        font-size: 18px;
+        // color: rgb(110, 110, 110);
+        color: rgb(62 62 62);
+    }
     > button {
         display: flex;
         flex: 1;
@@ -73,6 +74,7 @@
     }
     p {
         margin-left: 0.3rem;
+        font-size: 16px !important;
     }
     > button:active {
         background-color: rgb(207, 207, 207);

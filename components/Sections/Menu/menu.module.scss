@@ -24,6 +24,7 @@
 
     .item {
         cursor: pointer;
+        font-size: 18px;
         &:hover {
             background-color: darken($color: white, $amount: 23);
         }

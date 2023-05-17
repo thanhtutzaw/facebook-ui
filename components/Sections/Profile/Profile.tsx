@@ -1,22 +1,22 @@
+import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { Props } from "../../../pages/index";
-import s from "./Profile.module.scss";
-import Post from "../../Post/Post";
 import { Post as PostType } from "../../../types/interfaces";
-import { faFilter, faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Post from "../../Post/Post";
+import s from "./Profile.module.scss";
 export default function Profile(props: Props) {
   const { email, myPost } = props;
-  const posts = [
-    {
-      id: "hello",
-      text: "foo barr",
-    },
-    {
-      id: "hello2",
-      text: "foo barr222",
-    },
-  ];
+  // const posts = [
+  //   {
+  //     id: "hello",
+  //     text: "foo barr",
+  //   },
+  //   {
+  //     id: "hello2",
+  //     text: "foo barr222",
+  //   },
+  // ];
   return (
     <div className={s.container}>
       <div className={s.info}>
@@ -29,7 +29,8 @@ export default function Profile(props: Props) {
             "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
           }
         />
-        <p>User: {email ? email : "Null"}</p>
+        {/* <p>User: {email ? email : "Null"}</p> */}
+        <p>{email === "testuser@gmail.com" ? "testUser" : email}</p>
       </div>
 
       <div className={s.myPost}>

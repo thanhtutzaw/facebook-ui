@@ -56,6 +56,10 @@
   display: flex;
   align-items: center;
 }
+.action svg {
+  font-size: 18px;
+  color: rgb(62, 62, 62);
+}
 .action > button {
   display: flex;
   flex: 1;
@@ -69,6 +73,7 @@
 }
 .action p {
   margin-left: 0.3rem;
+  font-size: 16px !important;
 }
 .action > button:active {
   background-color: rgb(207, 207, 207);

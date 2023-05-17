@@ -2,8 +2,10 @@ import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MouseEvent, memo, useEffect, useRef, useState } from "react";
 import styles from "../../../styles/Home.module.scss";
-
-export default function Story() {
+import { InferGetServerSidePropsType } from "next";
+import { getServerSideProps } from "../../../pages";
+type StoryProps = InferGetServerSidePropsType<typeof getServerSideProps>;
+export default function Story({ email }: StoryProps) {
   const fileInput = useRef<HTMLInputElement>(null);
   const [draggable, setdraggable] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
@@ -24,11 +26,12 @@ export default function Story() {
     //   container.scrollLeft = 80;
     // }
 
-    window.addEventListener("mouseup", () => {
-      // setdraggable(false);
-      console.log("window mouseup");
-    });
+    // window.addEventListener("mouseup", () => {
+    //   // setdraggable(false);
+    //   console.log("window mouseup");
+    // });
     function dragStop() {
+      if (!email) return;
       console.log("body mouseup");
       setdraggable(false);
       setprevPoint(Percentage!);

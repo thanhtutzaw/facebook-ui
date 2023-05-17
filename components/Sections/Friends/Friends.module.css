@@ -5,12 +5,14 @@
 .container > .action button {
   margin: 0 8px;
   padding: 10px;
+  height: initial;
 }
 .container button {
   flex: 1;
   height: 50px;
   border: 0;
   border-radius: 10px;
+  font-size: 18px;
 }
 .container .requestPending .header {
   background-color: rgb(255, 255, 255);

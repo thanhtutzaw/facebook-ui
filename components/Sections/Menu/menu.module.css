@@ -23,6 +23,7 @@
 }
 .container .item {
   cursor: pointer;
+  font-size: 18px;
 }
 .container .item:hover {
   background-color: #c4c4c4;

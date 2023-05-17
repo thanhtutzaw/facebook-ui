@@ -34,8 +34,8 @@ export default function Post({ post, email, tabIndex }: Props) {
           }
         />
         <div>
-          {/* <p>{email}</p> */}
-          <p>Name</p>
+          <p>{"Post Author"}</p>
+          {/* <p>{}</p> */}
           <p>Time</p>
         </div>
       </div>
