@@ -32,7 +32,9 @@ export default function Profile(props: Props) {
           }
         />
         <h3>{email === "testuser@gmail.com" ? "Peter 1" : email}</h3>
-        <p className={s.bio}>Listen I didn't kill Mysterio. The drones did!</p>
+        <p className={s.bio}>
+          Listen I didn&apos;t kill Mysterio. The drones did!
+        </p>
       </div>
 
       <div className={s.myPost}>
