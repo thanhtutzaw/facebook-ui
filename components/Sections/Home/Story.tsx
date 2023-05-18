@@ -4,6 +4,7 @@ import { MouseEvent, memo, useEffect, useRef, useState } from "react";
 import styles from "../../../styles/Home.module.scss";
 import { InferGetServerSidePropsType } from "next";
 import { getServerSideProps } from "../../../pages";
+import Image from "next/image";
 type StoryProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 export default function Story({ email }: StoryProps) {
   const fileInput = useRef<HTMLInputElement>(null);
@@ -41,6 +42,7 @@ export default function Story({ email }: StoryProps) {
     return () => {
       document.body.removeEventListener("mouseup", dragStop);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draggable]);
 
   function dragStart(e: MouseEvent) {
@@ -174,13 +176,26 @@ export default function Story({ email }: StoryProps) {
         //   ()=>{console.log("dragging")}
         // }
         // e.currentTarget.style.transform = `translateX(${e.clientX * 10}px)`;
-
         className={styles.storyCards}
       >
         <div
-          onClick={() => fileInput.current?.click()}
+          // onClick={() => fileInput.current?.click()}
           className={`${styles.storyCard} ${styles.addStory}`}
         >
+          <div className={styles.storyProfile}>
+            <Image
+              // className={s.profile}
+              alt={email || ""}
+              width={95}
+              height={105}
+              src={
+                email === "testuser@gmail.com"
+                  ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
+                  : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+              }
+            />
+          </div>
+
           <input
             style={{ display: "none", visibility: "hidden" }}
             ref={fileInput}

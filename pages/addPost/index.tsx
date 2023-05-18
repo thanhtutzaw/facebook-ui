@@ -3,19 +3,14 @@ import s from "../../styles/Home.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/router";
+import BackHeader from "../../components/Header/BackHeader";
 export default function AddPost() {
   const router = useRouter();
   return (
     <div className={s.addPost}>
-      <div className={s.header}>
-        <button
-          onClick={() => {
-            router.back();
-          }}
-        >
-          <FontAwesomeIcon icon={faArrowLeft} />
-        </button>
+      <BackHeader>
         <h2>Create Post</h2>
+
         <button
           type="submit"
           className={s.submit}
@@ -25,7 +20,7 @@ export default function AddPost() {
         >
           Post
         </button>
-      </div>
+      </BackHeader>
       <div className={s.input}>
         <div contentEditable>
           fdfdsfsdfdsfdfdfdfsddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd

@@ -4,7 +4,7 @@ import s from "./Watch.module.scss";
 function Watch() {
   return (
     <div className={s.container}>
-      <p>watch</p>
+      <p>Coming soon</p>
     </div>
   );
 }

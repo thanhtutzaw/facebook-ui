@@ -11,8 +11,9 @@ export default function Friend(props: FriendProps) {
   }, []);
   const { tabIndex } = props;
 
-  const friends = ["Captain America", "Iron Man", "Thor"];
-  const length = friends.length;
+  const Requests = ["Aunt May", "Peter 2", "Peter 3"];
+  const Suggestions = ["Captain America", "Iron Man", "Thor"];
+
   return (
     <div className={s.container}>
       <div className={s.action}>
@@ -24,7 +25,7 @@ export default function Friend(props: FriendProps) {
           <p>Friends Requests</p>
           {/* <p className={s.length}>{length}</p> */}
         </h2>
-        {friends.map((f, index) => (
+        {Requests.map((f, index) => (
           <Request key={index} f={f} tabIndex={tabIndex} />
         ))}
       </div>
@@ -32,7 +33,7 @@ export default function Friend(props: FriendProps) {
         <h2 className={s.header}>
           <p>People you may know</p>
         </h2>
-        {friends.map((f, index) => (
+        {Suggestions.map((f, index) => (
           <AddSuggestFriend key={index} f={f} tabIndex={tabIndex} />
         ))}
       </div>

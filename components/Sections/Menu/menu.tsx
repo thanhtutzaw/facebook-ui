@@ -14,6 +14,8 @@ export default function Menu(props: MenuProps) {
   return (
     <div className={s.container}>
       <button
+        aria-label="Go to Profile"
+        title="Go to Profile"
         tabIndex={tabIndex}
         className={s.item}
         onClick={() => navigateTab("profile")}
@@ -22,10 +24,12 @@ export default function Menu(props: MenuProps) {
           style={{ color: "#0070f3", fontWeight: "bold" }}
           icon={faUser}
         />
-        Go to Profile
+        View Profile
       </button>
 
       <button
+        aria-label="Logout Button"
+        title="Logout"
         tabIndex={tabIndex}
         disabled={loading}
         className={`${s.item}`}

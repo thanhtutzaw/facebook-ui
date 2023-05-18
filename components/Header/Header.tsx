@@ -68,6 +68,8 @@ export default function Header(props: any) {
             />
           </button>
           <button
+            title="Go to logout button"
+            aria-label="go to logout button"
             className={styles.logoutBtn}
             onClick={() => {
               setActive("menu");

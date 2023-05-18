@@ -26,11 +26,13 @@ export default function Profile(props: Props) {
           width={120}
           height={120}
           src={
-            "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+            email === "testuser@gmail.com"
+              ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
+              : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
           }
         />
-        {/* <p>User: {email ? email : "Null"}</p> */}
-        <p>{email === "testuser@gmail.com" ? "testUser" : email}</p>
+        <h3>{email === "testuser@gmail.com" ? "Peter 1" : email}</h3>
+        <p className={s.bio}>Listen I didn't kill Mysterio. The drones did!</p>
       </div>
 
       <div className={s.myPost}>
@@ -43,6 +45,7 @@ export default function Profile(props: Props) {
         {myPost?.map((post: PostType, index: number) => (
           <Post key={index} post={post} email={null} tabIndex={1} />
         ))}
+        <p style={{ textAlign: "center" }}>No more posts</p>
       </div>
     </div>
   );

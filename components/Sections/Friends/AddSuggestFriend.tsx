@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import s from "./Friends.module.scss";
 import Image from "next/image";
+import Card from "./Card";
 interface RequestProps {
   f: string;
   tabIndex: number;
@@ -16,46 +17,39 @@ export function AddSuggestFriend(props: RequestProps) {
     setreject(true);
   }
   return (
-    <div className={s.card}>
-      <Image
-        className={s.profile}
-        alt={"name"}
-        width={80}
-        height={80}
-        src={
-          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-        }
-      />
-      <div className={s.right}>
-        <div className={s.info}>
-          <p>{f}</p>
-          <p>1min</p>
-        </div>
-        <div className={s.action}>
-          {accept ? (
-            "Request Sended"
-          ) : reject ? (
-            "Deleted"
-          ) : (
-            <>
-              <button
-                onClick={handleConfirmRequest}
-                tabIndex={tabIndex}
-                className={s.primary}
-              >
-                Add Friend
-              </button>
-              <button
-                onClick={handleReject}
-                tabIndex={tabIndex}
-                className={s.secondary}
-              >
-                Delete
-              </button>
-            </>
-          )}
-        </div>
+    <Card f={f}>
+      <div className={s.action}>
+        {accept ? (
+          "Request Sended"
+        ) : reject ? (
+          "Deleted"
+        ) : (
+          <>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                handleConfirmRequest();
+              }}
+              tabIndex={tabIndex}
+              className={s.primary}
+            >
+              Add Friend
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                handleReject();
+              }}
+              tabIndex={tabIndex}
+              className={s.secondary}
+            >
+              Delete
+            </button>
+          </>
+        )}
       </div>
-    </div>
+    </Card>
   );
 }

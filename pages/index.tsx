@@ -61,8 +61,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       },
     };
   } catch {
-    context.res.writeHead(302, { Location: "/login" });
-    context.res.end();
+    // context.res.writeHead(302, { Location: "/login" });
+    // context.res.end();
     return {
       props: {
         posts: [],

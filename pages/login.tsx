@@ -5,6 +5,7 @@ import { app } from "../lib/firebase";
 import { signin } from "../lib/signin";
 import styles from "../styles/Home.module.scss";
 import GoogleLogo from "../components/GoogleLogo";
+import Image from "next/image";
 export default function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -50,11 +51,21 @@ export default function Login() {
   return (
     <section className={styles.login}>
       <button
+        aria-label="Log in as Peter 1"
         disabled={loading}
         className={styles.SecondaryloginBtn}
         onClick={handleTestUserSignin}
       >
-        {loading ? "Logging in..." : "Log in as testUser"}
+        <Image
+          style={{ objectFit: "cover", borderRadius: "100px" }}
+          width={35}
+          height={35}
+          alt="testuser photo"
+          src={
+            "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
+          }
+        />
+        {loading ? "Logging in..." : "Log in as Peter 1"}
       </button>
       or
       <button

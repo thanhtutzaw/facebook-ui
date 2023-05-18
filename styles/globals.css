@@ -12,6 +12,9 @@ main {
   transition     : scale 0.3s cubic-bezier(1, 0.14, 0.01, 1.09), opacity 0.3s cubic-bezier(1, 0.14, 0.01, 1.09);
 
 }
+.user{
+  /* padding:0 1rem; */
+}
 
 .loginIcon {
   padding         : 6px;
