@@ -20,7 +20,8 @@ export default function Profile(props: Props) {
   return (
     <div className={s.container}>
       <div className={s.info}>
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           className={s.profile}
           alt={email || ""}
           width={120}

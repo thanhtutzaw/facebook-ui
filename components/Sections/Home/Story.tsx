@@ -183,7 +183,8 @@ export default function Story({ email }: StoryProps) {
           className={`${styles.storyCard} ${styles.addStory}`}
         >
           <div className={styles.storyProfile}>
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               // className={s.profile}
               alt={email || ""}
               width={95}
