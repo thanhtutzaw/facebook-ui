@@ -60,6 +60,7 @@ export default function Header(props: any) {
         className={styles.header}
       >
         <Logo />
+        {email}
         <div className={styles.action}>
           <button className={styles.logoutBtn}>
             <FontAwesomeIcon
