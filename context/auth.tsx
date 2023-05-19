@@ -17,10 +17,15 @@ export function AuthProvider({ children }: any) {
         setuser(null);
         return;
       }
-      const token = await user?.getIdToken();
+      const token = await user.getIdToken();
       if (token) {
         setuser(user);
-        nookies.set(undefined, "token", token, {});
+        nookies.set(undefined, "token", token, {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+          secure: true,
+          // httpOnly: true,
+        });
       }
     });
     // onAuthStateChanged(auth, async (user) => {
@@ -32,7 +37,7 @@ export function AuthProvider({ children }: any) {
     //   }
 
     // });
-  }, [user]);
+  }, [auth, user]);
   return (
     <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
   );
