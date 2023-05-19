@@ -16,12 +16,31 @@ export default function Login() {
       if (user) {
         router.push("/");
       } else if (!user && router.pathname !== "/") {
-        router.push("/login");
+        // router.push("/login");
       }
     });
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth]);
+
+  // useEffect(() => {
+  //   const auth = getAuth();
+
+  //   // Check if user is already authenticated
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       // router.push("/#home");
+  //       router.replace('#home')
+  //     }
+  //   });
+
+  //   return () => unsubscribe();
+  // }, [router]);
+
+  // useEffect(() => {
+  //   console.log(auth.currentUser);
+  // }, []);
+
   const email = "testuser@gmail.com";
   const password = "111111";
   const loginStyle: CSSProperties = {
@@ -48,6 +67,7 @@ export default function Login() {
       console.error(error);
     }
   };
+  if (auth.currentUser) return <h2>Loading...</h2>;
   return (
     <section className={styles.login}>
       <button

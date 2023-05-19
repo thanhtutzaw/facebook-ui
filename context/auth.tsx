@@ -28,15 +28,6 @@ export function AuthProvider({ children }: any) {
         });
       }
     });
-    // onAuthStateChanged(auth, async (user) => {
-    //   if (user) {
-    //     setuser(user);
-    //     const uid = user.uid;
-    //   } else {
-    //     setuser(null);
-    //   }
-
-    // });
   }, [auth, user]);
   return (
     <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>

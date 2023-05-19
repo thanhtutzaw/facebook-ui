@@ -3,7 +3,7 @@ import { collection, collectionGroup, getDocs } from "firebase/firestore";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs";
 import { useActive } from "../hooks/useActiveTab";
@@ -11,6 +11,7 @@ import { app, db } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import styles from "../styles/Home.module.scss";
 import { Post } from "../types/interfaces";
+import AuthContext from "../context/AuthContext";
 
 export interface Props {
   myPost?: Post[];
@@ -26,29 +27,22 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // console.log(cookies.token);
     const token = await verifyIdToken(cookies.token);
     const { email, uid } = token;
-    // const email = "null email";
-    console.log(token);
-    // const uid = null;
+    // console.log(token);
+    console.log(email);
 
     const query = collectionGroup(db, `posts`);
     const mypostQuery = collection(db, `/users/${uid}/posts`);
-    // const docRef = collection(db, `/users/${uid}/posts`);
-    // const docRef = doc(db, `/users/${uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
-    // const docRef = doc(db, `/users/${user?.uid}/posts/MqmLWlWY9B9XkBYiNkdh`);
     const docSnap = await getDocs(query);
     const myPostSnap = await getDocs(mypostQuery);
     const posts = docSnap.docs.map((doc) => {
       const data = doc.data() as Post;
       return {
-        // id: doc.id,
         ...data,
       };
     });
     const myPost = myPostSnap.docs.map((doc) => {
       const data = doc.data() as Post;
       return {
-        // id: doc.id,
-        // ...doc.data(),
         ...data,
       };
     });
@@ -83,15 +77,18 @@ export default function Home(
   const auth = getAuth(app);
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const [AddpostMounted, setAddpostMounted] = useState(false);
-
+  const { user } = useContext(AuthContext);
   // const user = useUser();
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (!user) {
         router.push("/login");
+      } else {
+        router.push("/");
       }
     });
-  }, [auth, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth]);
 
   // const path = active === '/' ? '#home' : '#'+active
   useEffect(() => {
@@ -134,9 +131,10 @@ export default function Home(
 
     console.log(active);
   }, [router, active, setActive]);
-
+  if (!email) return <h2>Loading ...</h2>;
   return (
     <>
+      {/* {user?.email} */}
       <div ref={headerContainerRef} className={styles.headerContainer}>
         <Header indicatorRef={indicatorRef} email={email} />
       </div>
