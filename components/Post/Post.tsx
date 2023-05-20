@@ -28,8 +28,9 @@ export default function Post({ post, tabIndex }: PostProps) {
         <Image
           className={styles.profile}
           alt={text}
-          width={50}
-          height={50}
+          width={200}
+          height={200}
+          style={{objectFit:'cover' ,}}
           src={
             // "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
             authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
