@@ -1,20 +1,35 @@
 import { InferGetServerSidePropsType } from "next";
-import { getServerSideProps } from "../../../pages";
+// import { getServerSideProps } from "../../../pages";
 import styles from "../../../styles/Home.module.scss";
 import { Post as PostType } from "../../../types/interfaces";
 import Post from "../../Post";
+import { getServerSideProps } from "../../../pages";
+// type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
+//   canDrag: boolean;
+//   tabIndex: number;
+// };
 type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
   canDrag: boolean;
   tabIndex: number;
 };
 export default function Newfeed(props: NewfeedProps) {
-  const { tabIndex, posts, email } = props;
+  const { tabIndex, posts } = props;
   return (
     <div className={styles.postContainer}>
-      {posts?.map((post: PostType, index: number) => (
-        <Post tabIndex={tabIndex} key={index} post={post} email={email} />
-      ))}
-      <p style={{ textAlign: "center" }}>No more posts</p>
+      {posts?.length !== 0 ? (
+        <>
+          {posts?.map((post: PostType, index: number) => {
+            return <Post tabIndex={tabIndex} key={index} post={post} />;
+          })}
+          <p style={{ textAlign: "center" }}>No more posts</p>
+        </>
+      ) : (
+        <p style={{ textAlign: "center" }}>Empty Posts !</p>
+      )}
+
+      {/* {posts?.map((post: PostType, index: number) => (
+        <Post tabIndex={tabIndex} key={index} post={post} email={email} /> )}
+      <p style={{ textAlign: "center" }}>No more posts</p> */}
 
       {/* <Post text="lorem lorem fdsfsdfdf" />
       <Post text="lorem lorem fdsfsdfdf sdfsdfksdfsdjfdsfsdfdksfksdfkdhfds  kfhnds kfdfkdsds jfsfsdjkfsdsdfk dsklfds " />

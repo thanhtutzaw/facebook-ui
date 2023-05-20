@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import s from "./Friends.module.scss";
 import { Request } from "./Request";
 import { AddSuggestFriend } from "./AddSuggestFriend";
+import { AuthContext } from "../../../context/AuthContext";
+import { Props } from "../../../types/interfaces";
 interface FriendProps {
   tabIndex: number;
 }
@@ -12,8 +14,8 @@ export default function Friend(props: FriendProps) {
   const { tabIndex } = props;
 
   const Requests = ["Aunt May", "Peter 2", "Peter 3"];
-  const Suggestions = ["Captain America", "Iron Man", "Thor"];
-
+  // const Suggestions = ["Captain America", "Iron Man", "Thor"];
+  const { allUsers } = useContext(AuthContext) as Props;
   return (
     <div className={s.container}>
       <div className={s.action}>
@@ -33,8 +35,8 @@ export default function Friend(props: FriendProps) {
         <h2 className={s.header}>
           <p>People you may know</p>
         </h2>
-        {Suggestions.map((f, index) => (
-          <AddSuggestFriend key={index} f={f} tabIndex={tabIndex} />
+        {allUsers?.map((f: any, index: number) => (
+          <AddSuggestFriend key={index} f={f.id} tabIndex={tabIndex} />
         ))}
       </div>
     </div>

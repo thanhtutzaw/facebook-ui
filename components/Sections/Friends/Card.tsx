@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { ReactNode } from "react";
 import s from "./Friends.module.scss";
-export default function Card(props: { children: ReactNode; f: string }) {
+export default function Card(props: { children: ReactNode; f: any }) {
   const { f } = props;
   return (
     <Link href={f}>

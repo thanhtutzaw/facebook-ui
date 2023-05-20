@@ -6,20 +6,21 @@ import {
   faShare,
 } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
-import { Post as PostType } from "../../types/interfaces";
-import { useState } from "react";
+import { Post as PostType, Props } from "../../types/interfaces";
+import { useState, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 // import { Post } from "../../types/interfaces";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 // interface Props {
 //   post: Post;
 // }
-interface Props {
+interface PostProps {
   post: PostType;
-  email: string | null | undefined;
   tabIndex: number;
 }
-export default function Post({ post, email, tabIndex }: Props) {
-  const { id, text } = post;
+export default function Post({ post, tabIndex }: PostProps) {
+  const { authorId, id, text } = post;
+  // const { uid } = useContext(AuthContext) as Props;
   const [Bounce, setBounce] = useState(false);
   return (
     <div className={styles.post} key={id}>
@@ -30,15 +31,27 @@ export default function Post({ post, email, tabIndex }: Props) {
           width={50}
           height={50}
           src={
-            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+            // "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+            authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
+              ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
+              : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
           }
+          // src={
+          //   "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+          // }
         />
         <div>
-          <p>{"Post Author"}</p>
+          <p>
+            {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
+              ? "Peter 1"
+              : "Other User"}
+          </p>
           {/* <p>{}</p> */}
           <p>Time</p>
         </div>
       </div>
+      {/* <p>author_Id: {authorId}</p> */}
+      {/* <p>post_id: {id}</p> */}
       <p>{text}</p>
       <div
         className={styles.action}

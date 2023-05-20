@@ -1,64 +1,82 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { collection, collectionGroup, getDocs } from "firebase/firestore";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs";
+import { AuthProvider } from "../context/AuthContext";
 import { useActive } from "../hooks/useActiveTab";
 import { app, db } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import styles from "../styles/Home.module.scss";
-import { Post } from "../types/interfaces";
-import AuthContext from "../context/AuthContext";
+import { Post, Props } from "../types/interfaces";
 
-export interface Props {
-  myPost?: Post[];
-  posts?: Post[];
-  email?: string | null;
-  indicatorRef?: React.RefObject<HTMLDivElement>;
-}
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
   try {
     const cookies = nookies.get(context);
-    // console.log(cookies.token);
     const token = await verifyIdToken(cookies.token);
     const { email, uid } = token;
-    // console.log(token);
-    console.log(email);
+    console.log(token);
 
     const query = collectionGroup(db, `posts`);
+    const allUsersQuery = collectionGroup(db, `users`);
     const mypostQuery = collection(db, `/users/${uid}/posts`);
     const docSnap = await getDocs(query);
+    const allUsersSnap = await getDocs(allUsersQuery);
     const myPostSnap = await getDocs(mypostQuery);
     const posts = docSnap.docs.map((doc) => {
+      // getting all users posts
+      // db/users/uid-JE0sy/posts/abc
       const data = doc.data() as Post;
       return {
+        authorId: doc.ref.parent.parent?.id,
+        id: doc.id,
         ...data,
       };
     });
     const myPost = myPostSnap.docs.map((doc) => {
       const data = doc.data() as Post;
       return {
+        authorId: doc.ref.parent.parent?.id,
+        id: doc.id,
         ...data,
+        // ref: doc.ref.id.toString(),
       };
     });
+    const allUsers = allUsersSnap.docs
+      .map((doc) => {
+        const data = doc.data();
+        // console.log(data);
+        const id = doc.id;
+        return {
+          id: doc.id,
+          ...data,
+        };
+      })
+      .filter((users) => users.id !== uid);
+    console.log(posts);
 
     return {
       props: {
+        uid,
+        allUsers,
         posts,
         email,
         myPost,
       },
     };
-  } catch {
-    context.res.writeHead(302, { Location: "/login" });
-    context.res.end();
+  } catch (error) {
+    console.log(error);
+    // context.res.writeHead(302, { Location: "/login" });
+    // context.res.end();
     return {
       props: {
+        uid: "",
+        allUsers: [],
         posts: [],
         email: "",
         myPost: [],
@@ -66,19 +84,16 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     };
   }
 };
-export default function Home(
-  props: InferGetServerSidePropsType<typeof getServerSideProps>
-) {
-  const { posts, email, myPost } = props;
+export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
+  // props: InferGetServerSidePropsType<typeof getServerSideProps>
+  // const { posts, email, myPost } = useContext(AuthContext) as Props;
   const indicatorRef = useRef<HTMLDivElement>(null);
 
   const { active, setActive } = useActive();
   const router = useRouter();
   const auth = getAuth(app);
   const headerContainerRef = useRef<HTMLDivElement>(null);
-  const [AddpostMounted, setAddpostMounted] = useState(false);
-  const { user } = useContext(AuthContext);
-  // const user = useUser();
+  // const [AddpostMounted, setAddpostMounted] = useState(false);
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (!user) {
@@ -89,8 +104,6 @@ export default function Home(
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth]);
-
-  // const path = active === '/' ? '#home' : '#'+active
   useEffect(() => {
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
@@ -131,10 +144,17 @@ export default function Home(
 
     console.log(active);
   }, [router, active, setActive]);
-  if (!email) return <h2>Loading ...</h2>;
+  if (!email) return <p style={{ textAlign: "center" }}>Loading ...</p>;
   return (
-    <>
-      {/* {user?.email} */}
+    // <AuthProvider value={{ posts, email, myPost }}>
+    <AuthProvider
+      uid={uid}
+      allUsers={allUsers}
+      posts={posts}
+      email={email}
+      myPost={myPost}
+      indicatorRef={indicatorRef}
+    >
       <div ref={headerContainerRef} className={styles.headerContainer}>
         <Header indicatorRef={indicatorRef} email={email} />
       </div>
@@ -144,6 +164,6 @@ export default function Home(
         email={email}
         posts={posts}
       />
-    </>
+    </AuthProvider>
   );
 }

@@ -1,10 +1,10 @@
 import dynamic from "next/dynamic";
 import { MouseEvent, useEffect, useState } from "react";
 import { useActive } from "../hooks/useActiveTab";
-import { Props } from "../pages/index";
 import styles from "../styles/Home.module.scss";
 import { Home } from "./Sections/Home/Home";
 import t from "./Tabs.module.scss";
+import { Props } from "../types/interfaces";
 const Friends = dynamic(() => import("./Sections/Friends/Friends"), {
   ssr: false,
 });

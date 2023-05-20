@@ -4,7 +4,9 @@ import { app } from "../lib/firebase";
 import { User } from "firebase/auth";
 import nookies from "nookies";
 
-import AuthContext from "./AuthContext";
+import { createContext } from "react";
+const AppContext = createContext<{ user: User | null }>({ user: null });
+export default AppContext;
 
 export function AuthProvider({ children }: any) {
   const auth = getAuth(app);
@@ -29,7 +31,5 @@ export function AuthProvider({ children }: any) {
       }
     });
   }, [auth, user]);
-  return (
-    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
-  );
+  return <AppContext.Provider value={{ user }}>{children}</AppContext.Provider>;
 }

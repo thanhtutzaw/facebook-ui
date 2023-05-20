@@ -3,7 +3,7 @@ import s from "./Friends.module.scss";
 import Image from "next/image";
 import Card from "./Card";
 interface RequestProps {
-  f: string;
+  f: any;
   tabIndex: number;
 }
 export function AddSuggestFriend(props: RequestProps) {

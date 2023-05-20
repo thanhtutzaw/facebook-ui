@@ -1,11 +1,11 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { CSSProperties, useEffect, useState } from "react";
+import GoogleLogo from "../components/GoogleLogo";
 import { app } from "../lib/firebase";
 import { signin } from "../lib/signin";
 import styles from "../styles/Home.module.scss";
-import GoogleLogo from "../components/GoogleLogo";
-import Image from "next/image";
 export default function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -22,24 +22,6 @@ export default function Login() {
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth]);
-
-  // useEffect(() => {
-  //   const auth = getAuth();
-
-  //   // Check if user is already authenticated
-  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
-  //     if (user) {
-  //       // router.push("/#home");
-  //       router.replace('#home')
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [router]);
-
-  // useEffect(() => {
-  //   console.log(auth.currentUser);
-  // }, []);
 
   const email = "testuser@gmail.com";
   const password = "111111";
@@ -67,7 +49,8 @@ export default function Login() {
       console.error(error);
     }
   };
-  if (auth.currentUser) return <h2>Loading...</h2>;
+  if (auth.currentUser)
+    return <p style={{ textAlign: "center" }}>Loading ...</p>;
   return (
     <section className={styles.login}>
       <button

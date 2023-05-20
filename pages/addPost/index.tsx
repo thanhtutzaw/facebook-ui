@@ -22,7 +22,7 @@ export default function AddPost() {
         </button>
       </BackHeader>
       <div className={s.input}>
-        <div contentEditable>
+        <div contentEditable suppressContentEditableWarning={true}>
           fdfdsfsdfdsfdfdfdfsddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
           fdfdsfsdfdsfdfdfdfsddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
           fdfdsfsdfdsfdfdfdfsddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd

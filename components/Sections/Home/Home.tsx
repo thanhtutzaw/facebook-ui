@@ -2,11 +2,12 @@ import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { InferGetServerSidePropsType } from "next";
 import Image from "next/image";
-import { getServerSideProps } from "../../../pages";
 import styles from "../../../styles/Home.module.scss";
 import Newfeed from "./Newfeed";
 import Story from "./Story";
 import { useRouter } from "next/router";
+import { getServerSideProps } from "../../../pages";
+// import { getServerSideProps } from "../../../pages/_app";
 // export interface Post {
 //   text: String;
 // }
@@ -24,8 +25,10 @@ export function Home(props: Props) {
         <Image
           className={styles.profile}
           alt={"add post"}
-          width={50}
-          height={50}
+          width={200}
+          height={170}
+          // style={{ objectFit: "cover" }}
+          style={{ width: "40px", height: "40px" }}
           src={
             // "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
             email === "testuser@gmail.com"
@@ -55,7 +58,6 @@ export function Home(props: Props) {
       <Newfeed
         tabIndex={tabIndex}
         canDrag={canDrag}
-        email={email}
         posts={posts}
       />
     </div>

@@ -3,8 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MouseEvent, memo, useEffect, useRef, useState } from "react";
 import styles from "../../../styles/Home.module.scss";
 import { InferGetServerSidePropsType } from "next";
-import { getServerSideProps } from "../../../pages";
 import Image from "next/image";
+import { getServerSideProps } from "../../../pages";
+// import { getServerSideProps } from "../../../pages/_app";
 type StoryProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 export default function Story({ email }: StoryProps) {
   const fileInput = useRef<HTMLInputElement>(null);
@@ -183,42 +184,13 @@ export default function Story({ email }: StoryProps) {
           className={`${styles.storyCard} ${styles.addStory}`}
         >
           <div className={styles.storyProfile}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              // className={s.profile}
-              alt={email || ""}
-              width={95}
-              height={105}
-              src={
-                email === "testuser@gmail.com"
-                  ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
-                  : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-              }
-            />
-          </div>
-
-          <input
-            style={{ display: "none", visibility: "hidden" }}
-            ref={fileInput}
-            type="file"
-          />
-          <button tabIndex={-1}>
-            <FontAwesomeIcon icon={faAdd} />
-          </button>
-          <p>html img</p>
-          {/* <p>Create Story</p> */}
-        </div>
-        <div
-          // onClick={() => fileInput.current?.click()}
-          className={`${styles.storyCard} ${styles.addStory}`}
-        >
-          <div className={styles.storyProfile}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <Image
-              // className={s.profile}
+              width={200}
+              height={170}
+              style={{ objectFit: "cover", width: "100%", height: "105px" }}
               alt={email || ""}
-              width={95}
-              height={105}
+              // width={95}
+              // height={105}
               src={
                 email === "testuser@gmail.com"
                   ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
@@ -235,8 +207,10 @@ export default function Story({ email }: StoryProps) {
           <button tabIndex={-1}>
             <FontAwesomeIcon icon={faAdd} />
           </button>
-          <p>next/image</p>
+          {/* <p>html img</p> */}
+          <p>Create Story</p>
         </div>
+
         <div className={styles.cardContainer}>
           <div className={styles.storyCard}></div>
           <div className={styles.storyCard}></div>
