@@ -44,14 +44,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         authorId: doc.ref.parent.parent?.id,
         id: doc.id,
         ...data,
-        // ref: doc.ref.id.toString(),
       };
     });
     const allUsers = allUsersSnap.docs
       .map((doc) => {
         const data = doc.data();
-        // console.log(data);
-        const id = doc.id;
         return {
           id: doc.id,
           ...data,
@@ -93,7 +90,6 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
   const router = useRouter();
   const auth = getAuth(app);
   const headerContainerRef = useRef<HTMLDivElement>(null);
-  // const [AddpostMounted, setAddpostMounted] = useState(false);
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (!user) {
@@ -144,7 +140,39 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
 
     console.log(active);
   }, [router, active, setActive]);
-  if (!email) return <p style={{ textAlign: "center" }}>Loading ...</p>;
+  if (!email)
+    return (
+      <div
+        style={{
+          opacity: "0",
+          animation: "blink .8s forwards ease-in-out",
+          cursor: "wait",
+          display: "grid",
+          alignContent: "center",
+          height: "100vh",
+        }}
+      >
+        <h2
+          style={{
+            userSelect: "none",
+            textAlign: "center",
+          }}
+        >
+          Welcome Back 🎉
+        </h2>
+        <p
+          style={{
+            userSelect: "none",
+            // opacity: "0",
+            // animation: "blink 1s infinite ease-in-out",
+            textAlign: "center",
+            color: "gray",
+          }}
+        >
+          Loading ...
+        </p>
+      </div>
+    );
   return (
     // <AuthProvider value={{ posts, email, myPost }}>
     <AuthProvider
