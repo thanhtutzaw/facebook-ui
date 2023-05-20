@@ -1,7 +1,7 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { collection, collectionGroup, getDocs } from "firebase/firestore";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import nookies from "nookies";
 import { useEffect, useRef } from "react";
 import Header from "../components/Header/Header";
@@ -104,7 +104,9 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
     const headerContainer = headerContainerRef.current;
-    if (window.location.hash === "#home" && headerContainer) {
+
+    if (window.location.hash === "" || window.location.hash === "#home") {
+      if (!headerContainer) return;
       headerContainer.style.transform = "translateY(0px)";
       headerContainer.style.height = "120px";
       main.scrollTo({
