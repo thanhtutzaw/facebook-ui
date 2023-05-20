@@ -15,12 +15,12 @@ export function useUser() {
         setuser(null);
         return;
       }
-      const token = await user?.getIdToken();
-      if (token) {
-        setuser(user);
-        window.location.href="/#home"
-        nookies.set(undefined, "token", token, {});
-      }
+      // const token = await user?.getIdToken();
+      // if (token) {
+      //   setuser(user);
+      //   window.location.href="/#home"
+      //   nookies.set(undefined, "token", token, {});
+      // }
     });
     // onAuthStateChanged(auth, async (user) => {
     //   if (user) {

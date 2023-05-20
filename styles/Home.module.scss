@@ -290,7 +290,7 @@
 .storyCard:active,
 .SecondaryloginBtn:active,
 .logoutBtn:active {
-  animation: card 0.2s ease-in-out;
+  animation: card 0.2s ease-in-out !important;
 }
 .logoutBtn:active {
   background-color: rgb(230, 230, 230);
@@ -305,6 +305,7 @@
   }
   50% {
     scale: 0.95;
+    // transform: translate3d(200, 20 ,30);
   }
   100% {
     scale: 1;

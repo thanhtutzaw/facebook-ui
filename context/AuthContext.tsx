@@ -20,25 +20,40 @@ export function AuthProvider(props: Props) {
   const auth = getAuth(app);
   const [user, setuser] = useState<User | null>(null);
   useEffect(() => {
-    onIdTokenChanged(auth, async (user) => {
-      // set token in cookie with nookies
+    const unsubscribe = onIdTokenChanged(auth, async (user) => {
       if (!user) {
+        // User is not authenticated
         nookies.destroy(undefined, "token");
         setuser(null);
         return;
       }
-      const token = await user.getIdToken();
-      if (token) {
+
+      try {
+        const token = await user.getIdToken();
+
+        // Update the user state
         setuser(user);
+
+        // Store the token in a cookie
         nookies.set(undefined, "token", token, {
           maxAge: 30 * 24 * 60 * 60,
           path: "/",
           secure: true,
-          // httpOnly: true,
         });
+
+        // Handle the login process
+        // This could be a function that performs any necessary actions after the user logs in
+        // handleLogin();
+      } catch (error) {
+        console.log("Error refreshing ID token:", error);
       }
     });
-  }, [auth, user]);
+
+    return () => {
+      // Unsubscribe from the onIdTokenChanged listener when the component unmounts
+      unsubscribe();
+    };
+  }, []); // Empty dependency array ensures the effect runs only once
   return (
     <AuthContext.Provider
       value={{ uid, allUsers, posts, email, myPost, indicatorRef }}
