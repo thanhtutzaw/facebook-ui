@@ -88,6 +88,21 @@ export default function Login() {
           <div className="AppLoginButton__subtitleContainer">Secured log-in</div>
         </div>
       </button> */}
+      <a
+        className="githublink"
+        href="https://github.com/thanhtutzaw"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <span
+          style={{
+            color: "gray",
+          }}
+        >
+          Developed by{" "}
+        </span>
+        thanhtutzaw
+      </a>
     </section>
   );
 }

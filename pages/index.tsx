@@ -12,6 +12,7 @@ import styles from "../styles/Home.module.scss";
 import { Post, Props } from "../types/interfaces";
 import nookies from "nookies";
 import { useRef, useEffect } from "react";
+import { Welcome } from "../components/Welcome";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -19,7 +20,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
     const { email, uid } = token;
-    console.log(token);
+    // console.log(token);
 
     const query = collectionGroup(db, `posts`);
     const allUsersQuery = collectionGroup(db, `users`);
@@ -54,7 +55,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         };
       })
       .filter((users) => users.id !== uid);
-    console.log(posts);
+    // console.log(posts);
 
     return {
       props: {
@@ -142,62 +143,8 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
 
     console.log(active);
   }, [active]);
-  useEffect(() => {
-    const unsubscribe = onIdTokenChanged(auth, async (user) => {
-      if (!user) {
-        nookies.destroy(undefined, "token");
-        return;
-      }
-      try {
-        const token = await user.getIdToken();
-        // Store the token in a cookie
-        nookies.set(undefined, "token", token, {
-          maxAge: 30 * 24 * 60 * 60,
-          path: "/",
-          secure: true,
-        });
-      } catch (error) {
-        console.log("Error refreshing ID token:", error);
-      }
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, [auth]);
-  if (!email)
-    return (
-      <div
-        style={{
-          opacity: "0",
-          animation: "blink .8s forwards ease-in-out",
-          cursor: "wait",
-          display: "grid",
-          alignContent: "center",
-          height: "100vh",
-        }}
-      >
-        <h2
-          style={{
-            userSelect: "none",
-            textAlign: "center",
-          }}
-        >
-          Welcome Back 🎉
-        </h2>
-        <p
-          style={{
-            userSelect: "none",
-            // opacity: "0",
-            // animation: "blink 1s infinite ease-in-out",
-            textAlign: "center",
-            color: "gray",
-          }}
-        >
-          Loading ...
-        </p>
-      </div>
-    );
+  
+  if (!email) return <Welcome />;
 
   return (
     // <AuthProvider value={{ posts, email, myPost }}>
