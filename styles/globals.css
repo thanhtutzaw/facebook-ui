@@ -12,10 +12,18 @@ main {
   transition     : scale 0.3s cubic-bezier(1, 0.14, 0.01, 1.09), opacity 0.3s cubic-bezier(1, 0.14, 0.01, 1.09);
 
 }
+
 #nprogress .bar {
-  background-color: red !important;
+  background-color   : red !important;
   /* background-color: #0070f3 !important; */
 }
+
+#nprogress .peg {
+  opacity: 0 !important;
+  display: none !important;
+
+}
+
 @keyframes blink {
   from {
     opacity: 0;
