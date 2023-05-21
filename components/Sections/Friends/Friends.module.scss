@@ -50,6 +50,13 @@
                     gap: 18px;
                     display: flex;
                     justify-content: space-between;
+                    > p:first-child {
+                        width: 30vw;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        flex: 1;
+                        white-space: nowrap;
+                    }
                 }
                 .action {
                     gap: 10px;

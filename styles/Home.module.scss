@@ -340,8 +340,9 @@
   .addMedia {
     border-radius: 100px;
     border: 0;
-    padding: 10px;
     background-color: transparent;
+    padding: 0.5rem;
+    height: 45px;
     &:hover {
       background-color: rgb(216, 216, 216);
     }

@@ -11,9 +11,15 @@
         align-items: center;
         background-color: white;
         padding-top: 1rem;
+        > h3 {
+            padding: 0 1rem;
+            text-align: center;
+        }
         .bio {
             margin-top: 0;
             font-size: 18px;
+            padding: 0 1rem;
+            text-align: center;
         }
     }
     .profile {
