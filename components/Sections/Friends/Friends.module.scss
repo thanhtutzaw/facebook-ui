@@ -32,9 +32,11 @@
         .card {
             padding-block: 1rem;
             display: flex;
-            flex: 1;
+            flex: 1 1;
             align-items: center;
             gap: 20px;
+            border: 1px solid;
+            overflow: hidden;
             .profile {
                 border-radius: 100%;
             }
@@ -52,12 +54,20 @@
                     justify-content: space-between;
                     flex-wrap: wrap;
                     > p:first-child {
-                        width: 30vw;
+                        max-width: 55vw;
+                        width: 100%;
+                        /* min-width: 100vw; */
                         overflow: hidden;
                         text-overflow: ellipsis;
-                        flex: 1;
+                        flex: 1 1;
                         white-space: nowrap;
                     }
+                    // width: 30vw;
+                    // overflow: hidden;
+                    // text-overflow: ellipsis;
+                    // flex: 1;
+                    // white-space: nowrap;
+                    // }
                 }
                 .action {
                     gap: 10px;

@@ -10,8 +10,8 @@
 
 .headerContainer {
   transition: transform 0.2s ease, height 0.2s ease;
-  will-change: transform;
-  will-change: height;
+  will-change: height, transform;
+  transform: translateY(0px);
   .header {
     max-width: var(--main-width);
     background-color: white;
