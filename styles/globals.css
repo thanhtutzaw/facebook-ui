@@ -14,8 +14,7 @@ main {
 }
 
 #nprogress .bar {
-  background-color   : red !important;
-  /* background-color: #0070f3 !important; */
+  background-color: #0070f3 !important;
 }
 
 #nprogress .peg {
