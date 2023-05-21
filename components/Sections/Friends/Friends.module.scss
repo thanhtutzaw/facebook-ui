@@ -50,6 +50,7 @@
                     gap: 18px;
                     display: flex;
                     justify-content: space-between;
+                    flex-wrap: wrap;
                     > p:first-child {
                         width: 30vw;
                         overflow: hidden;
