@@ -29,7 +29,7 @@ export default function Tabs(props: Props) {
     window.addEventListener("mouseup", () => {
       setcanDrag(false);
     });
-  }, [active, canDrag]);
+  }, [active]); //here can darg
   function dragStart(e: MouseEvent<HTMLDivElement>) {
     // e.preventDefault();
     e.stopPropagation();
