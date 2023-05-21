@@ -1,9 +1,7 @@
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onIdTokenChanged, onAuthStateChanged } from "firebase/auth";
 import { collection, collectionGroup, getDocs } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import router, { useRouter } from "next/router";
-import nookies from "nookies";
-import { useEffect, useRef } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs";
 import { AuthProvider } from "../context/AuthContext";
@@ -12,7 +10,8 @@ import { app, db } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import styles from "../styles/Home.module.scss";
 import { Post, Props } from "../types/interfaces";
-
+import nookies from "nookies";
+import { useRef, useEffect } from "react";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -143,6 +142,29 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
 
     console.log(active);
   }, [active]);
+  useEffect(() => {
+    const unsubscribe = onIdTokenChanged(auth, async (user) => {
+      if (!user) {
+        nookies.destroy(undefined, "token");
+        return;
+      }
+      try {
+        const token = await user.getIdToken();
+        // Store the token in a cookie
+        nookies.set(undefined, "token", token, {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+          secure: true,
+        });
+      } catch (error) {
+        console.log("Error refreshing ID token:", error);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [auth]);
   if (!email)
     return (
       <div
@@ -176,6 +198,7 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
         </p>
       </div>
     );
+
   return (
     // <AuthProvider value={{ posts, email, myPost }}>
     <AuthProvider

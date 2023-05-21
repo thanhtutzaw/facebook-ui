@@ -1,0 +1,33 @@
+{
+  "name": "Facebook",
+  "short_name": "Facebook",
+  "description": "Nextjs Facebook clone with SSR",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0070f3",
+  "theme_color": "#0070f3",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "192x192",
+      "type": "image/icon",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "200x200",
+      "type": "image/icon",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/logo512.svg",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -12,7 +12,8 @@ export default function App({ Component, pageProps }: AppProps) {
       <Head>
         <title>Facebook Next</title>
         <meta name="description" content="Facebook-Mobile-UI with Next.js" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/logo.svg" />
+        <link rel="manifest" href="/manifest.json" />
       </Head>
       <main>
         <Component {...pageProps} />
