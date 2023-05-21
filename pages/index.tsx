@@ -95,7 +95,7 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
       if (!user) {
         router.push("/login");
       } else {
-        router.push("/");
+        // router.replace("/#home");
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -143,7 +143,7 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
 
     console.log(active);
   }, [active]);
-  
+
   if (!email) return <Welcome />;
 
   return (
@@ -156,7 +156,10 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
       myPost={myPost}
     >
       <div ref={headerContainerRef} className={styles.headerContainer}>
-        <Header indicatorRef={indicatorRef} email={email} />
+        <Header
+          headerContainerRef={headerContainerRef}
+          indicatorRef={indicatorRef}
+        />
       </div>
       <Tabs
         myPost={myPost}

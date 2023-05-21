@@ -10,12 +10,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
 import Navitems from "./Navitems";
-import { AuthContext } from "../../context/AuthContext";
-import { Props } from "../../types/interfaces";
 const Logo = () => {
   return (
     <div className={styles.logoContainer}>
@@ -35,7 +33,7 @@ export const pages = [
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
 export default function Header(props: any) {
-  const { indicatorRef } = props;
+  const { indicatorRef, headerContainerRef } = props;
   const { setActive } = useActive();
   const [width, setwidth] = useState<number>();
   useEffect(() => {
@@ -61,7 +59,7 @@ export default function Header(props: any) {
         className={styles.header}
       >
         <Logo />
-        {/* {email}  */}
+        headerContainerRef= {headerContainerRef?.current ? "true" : "false"}
         <div className={styles.action}>
           <button className={styles.logoutBtn}>
             <FontAwesomeIcon
