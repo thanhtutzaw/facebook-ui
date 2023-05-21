@@ -77,8 +77,7 @@ export default function Tabs(props: Props) {
       onScroll={(e) => {
         const target = e.target as HTMLDivElement;
         const scroll = target.scrollLeft;
-        if (!indicatorRef) return;
-        const indicator = indicatorRef.current;
+        const indicator = indicatorRef?.current;
         if (!indicator) return;
         indicator.style.transform = `translateX(${scroll / 6}px)`;
       }}

@@ -7,7 +7,7 @@ import { Props } from "../types/interfaces";
 export const AuthContext = createContext<Props | null>(null);
 
 export function AuthProvider(props: Props) {
-  const { uid, allUsers, posts, email, myPost, indicatorRef } = props;
+  const { uid, allUsers, posts, email, myPost} = props;
   const auth = getAuth(app);
   // const [user, setuser] = useState<User | null>(null);
   useEffect(() => {
@@ -38,7 +38,7 @@ export function AuthProvider(props: Props) {
   }, []);
   return (
     <AuthContext.Provider
-      value={{ uid, allUsers, posts, email, myPost, indicatorRef }}
+      value={{ uid, allUsers, posts, email, myPost }}
     >
       {props.children}
     </AuthContext.Provider>

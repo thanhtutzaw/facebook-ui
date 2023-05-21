@@ -103,10 +103,11 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
   useEffect(() => {
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
-    const headerContainer = headerContainerRef.current;
 
+    const headerContainer = headerContainerRef?.current;
     if (window.location.hash === "" || window.location.hash === "#home") {
       if (!headerContainer) return;
+      console.log(headerContainerRef.current);
       headerContainer.style.transform = "translateY(0px)";
       headerContainer.style.height = "120px";
       main.scrollTo({
@@ -141,7 +142,7 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
     };
 
     console.log(active);
-  }, [router, active, setActive]);
+  }, [active]);
   if (!email)
     return (
       <div
@@ -183,7 +184,6 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
       posts={posts}
       email={email}
       myPost={myPost}
-      indicatorRef={indicatorRef}
     >
       <div ref={headerContainerRef} className={styles.headerContainer}>
         <Header indicatorRef={indicatorRef} email={email} />

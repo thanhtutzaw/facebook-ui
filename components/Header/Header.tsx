@@ -35,8 +35,8 @@ export const pages = [
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
 export default function Header(props: any) {
-  const { email, indicatorRef } = useContext(AuthContext) as Props;
-  const { active, setActive } = useActive();
+  const { indicatorRef } = props;
+  const { setActive } = useActive();
   const [width, setwidth] = useState<number>();
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];
