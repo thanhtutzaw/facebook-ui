@@ -5,7 +5,7 @@ import Head from "next/head";
 import "../styles/globals.css";
 import { AuthProvider } from "../context/AuthContext";
 import { useEffect } from "react";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import nProgress from "nprogress";
 import "nprogress/nprogress.css";
 

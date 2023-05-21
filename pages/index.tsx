@@ -19,6 +19,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
+    // if (!token) return;
     const { email, uid } = token;
     // console.log(token);
 
@@ -67,7 +68,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       },
     };
   } catch (error) {
-    console.log(error);
+    console.log("SSR Error " + error);
     // context.res.writeHead(302, { Location: "/login" });
     // context.res.end();
     return {
@@ -142,7 +143,7 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
     };
 
     console.log(active);
-  }, [active]);
+  }, [active, email]);
 
   if (!email) return <Welcome />;
 

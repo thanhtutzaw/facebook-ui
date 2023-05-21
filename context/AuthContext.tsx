@@ -3,14 +3,15 @@ import nookies from "nookies";
 import { createContext, useEffect } from "react";
 import { app } from "../lib/firebase";
 import { Props } from "../types/interfaces";
+import { addTokenRenewalListener } from "../lib/firebaseAuth";
 
 export const AuthContext = createContext<Props | null>(null);
 
 export function AuthProvider(props: Props) {
   const { uid, allUsers, posts, email, myPost } = props;
-  // const [user, setuser] = useState<User | null>(null);
   const auth = getAuth(app);
   useEffect(() => {
+    addTokenRenewalListener();
     const unsubscribe = onIdTokenChanged(auth, async (user) => {
       if (!user) {
         nookies.destroy(undefined, "token");
