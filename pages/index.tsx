@@ -91,15 +91,16 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
   const router = useRouter();
   const auth = getAuth(app);
   const headerContainerRef = useRef<HTMLDivElement>(null);
+  const { setActive } = useActive();
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) {
         router.push("/login");
       } else {
-        router.push("/");
-        // router.replace("/#home");
+        // router.push("/");
       }
     });
+    return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth]);
   useEffect(() => {
@@ -144,6 +145,7 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
     };
 
     console.log(active);
+    if (active === "/") window.location.hash = "#home";
   }, [active, email]);
   // const [user, setuser] = useState<User | null>(null);
 

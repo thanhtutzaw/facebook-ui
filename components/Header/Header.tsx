@@ -47,7 +47,7 @@ export default function Header(props: any) {
       setwidth(Math.floor(nav.clientWidth / 6));
     };
   }, [width]);
-
+  const { active } = useActive();
   return (
     <>
       <header
@@ -59,7 +59,8 @@ export default function Header(props: any) {
         className={styles.header}
       >
         <Logo />
-        {headerContainerRef?.current ? "true" : "false"}
+        {/* {headerContainerRef?.current ? "true" : "false"} */}
+        {active}
         <div className={styles.action}>
           <button className={styles.logoutBtn}>
             <FontAwesomeIcon

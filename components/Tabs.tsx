@@ -5,6 +5,7 @@ import styles from "../styles/Home.module.scss";
 import { Props } from "../types/interfaces";
 import { Home } from "./Sections/Home/Home";
 import t from "./Tabs.module.scss";
+import { useRouter } from "next/router";
 const Friends = dynamic(() => import("./Sections/Friends/Friends"), {
   ssr: false,
 });
@@ -22,13 +23,17 @@ export default function Tabs(props: Props) {
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { active } = useActive();
+  const router = useRouter();
+
   useEffect(() => {
     if (active) {
-      window.location.hash = active === "/" ? "#home" : "#" + active;
+      // window.location.hash = active === "/" ? "#home" : `#${active}`;
+      router.push({ hash: active === "/" ? "#home" : `#${active}` });
     }
     window.addEventListener("mouseup", () => {
       setcanDrag(false);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]); //here can darg
   function dragStart(e: MouseEvent<HTMLDivElement>) {
     // e.preventDefault();
