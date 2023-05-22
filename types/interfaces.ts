@@ -7,6 +7,8 @@ import { ReactNode } from "react";
 export interface Props {
   children?: ReactNode;
   uid?: string;
+  active?: string;
+  setActive?: Function;
   allUsers?: any;
   myPost?: Post[];
   posts?: Post[];

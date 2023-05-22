@@ -60,7 +60,7 @@ export default function Header(props: any) {
       >
         <Logo />
         {/* {headerContainerRef?.current ? "true" : "false"} */}
-        {active}
+        {/* {active} */}
         <div className={styles.action}>
           <button className={styles.logoutBtn}>
             <FontAwesomeIcon

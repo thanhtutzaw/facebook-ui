@@ -55,7 +55,7 @@ export default function Navitems(props: any) {
   }
   return (
     <div onClick={handleClick} className={`${styles.navItems} ${isActive}`}>
-      {icon}
+      <div>{icon}</div>
     </div>
   );
 }

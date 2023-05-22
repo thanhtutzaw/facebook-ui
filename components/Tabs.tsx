@@ -23,8 +23,6 @@ export default function Tabs(props: Props) {
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { active } = useActive();
-  const router = useRouter();
-
   useEffect(() => {
     if (active) {
       window.location.hash = active === "/" ? "#home" : `#${active}`;

@@ -69,7 +69,7 @@
   max-width: var(--main-width);
   height: 60px;
   transition: scale 0.1s ease-in-out;
-  .active {
+  .active > div {
     color: var(--blue-origin);
   }
   .indicatorContainer {
@@ -96,7 +96,15 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    &:active {
+    > div {
+      height: 100%;
+      flex: 1 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      // border: 1px solid;
+    }
+    &:active > div {
       background-color: rgb(199, 199, 199);
       opacity: 0.8;
       scale: 0.88;
@@ -140,7 +148,7 @@
   }
 }
 @media only screen and (min-width: 500px) {
-  .nav .navItems:hover {
+  .nav .navItems:hover > div {
     background-color: rgb(199, 199, 199);
   }
 

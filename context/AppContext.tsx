@@ -6,12 +6,13 @@ import nookies from "nookies";
 
 import { createContext } from "react";
 import { Props } from "../types/interfaces";
+import { useActive } from "../hooks/useActiveTab";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
 export const AppContext = createContext<Props | null>(null);
 
 export function AppProvider(props: Props) {
   const { uid, allUsers, posts, email, myPost } = props;
-
+  const { active, setActive } = useActive();
   // const auth = getAuth(app);
   // const [user, setuser] = useState<User | null>(null);
   // useEffect(() => {
@@ -35,7 +36,9 @@ export function AppProvider(props: Props) {
   //   });
   // }, [auth, user]);
   return (
-    <AppContext.Provider value={{ uid, allUsers, posts, email, myPost }}>
+    <AppContext.Provider
+      value={{ active, setActive, uid, allUsers, posts, email, myPost }}
+    >
       {props.children}
     </AppContext.Provider>
   );
