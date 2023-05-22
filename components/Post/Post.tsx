@@ -8,7 +8,6 @@ import {
 import Image from "next/image";
 import { Post as PostType, Props } from "../../types/interfaces";
 import { useState, useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
 // import { Post } from "../../types/interfaces";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 // interface Props {
@@ -20,7 +19,6 @@ interface PostProps {
 }
 export default function Post({ post, tabIndex }: PostProps) {
   const { authorId, id, text } = post;
-  // const { uid } = useContext(AuthContext) as Props;
   const [Bounce, setBounce] = useState(false);
   return (
     <div className={styles.post} key={id}>
@@ -30,7 +28,7 @@ export default function Post({ post, tabIndex }: PostProps) {
           alt={text}
           width={200}
           height={200}
-          style={{objectFit:'cover' ,}}
+          style={{ objectFit: "cover" }}
           src={
             // "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
             authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"

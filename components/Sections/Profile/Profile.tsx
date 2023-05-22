@@ -3,13 +3,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useContext } from "react";
 // import { Props } from "../../../pages/index";
+import { AppContext } from "../../../context/AppContext";
 import { Post as PostType, Props } from "../../../types/interfaces";
 import Post from "../../Post/Post";
 import s from "./Profile.module.scss";
-import { AuthContext } from "../../../context/AuthContext";
-export default function Profile(props: Props) {
-  const { myPost } = props;
-  const { email } = useContext(AuthContext) as Props;
+export default function Profile() {
+  // const { myPost } = props;
+  // const { email } = import { AppContext } from "../../../context/AppContext"; as Props;
+  const { myPost, email } = useContext(AppContext) as Props;
   // const posts = [
   //   {
   //     id: "hello",

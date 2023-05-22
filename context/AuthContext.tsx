@@ -1,24 +1,26 @@
-import { getAuth, onIdTokenChanged } from "firebase/auth";
+import { User, getAuth, onIdTokenChanged } from "firebase/auth";
 import nookies from "nookies";
-import { createContext, useEffect } from "react";
+import { createContext, useEffect, useState, ReactNode } from "react";
 import { app } from "../lib/firebase";
 import { Props } from "../types/interfaces";
-import { addTokenRenewalListener } from "../lib/firebaseAuth";
+// import { addTokenRenewalListener } from "../lib/firebaseAuth";
 
-export const AuthContext = createContext<Props | null>(null);
+// export const AuthContext = createContext(null);
 
-export function AuthProvider(props: Props) {
-  const { uid, allUsers, posts, email, myPost } = props;
+export function AuthProvider({ children }: { children: ReactNode }) {
+  // const { uid, allUsers, posts, email, myPost } = props;
   const auth = getAuth(app);
+  const [user, setuser] = useState<User | null>(null);
   useEffect(() => {
-    addTokenRenewalListener();
     const unsubscribe = onIdTokenChanged(auth, async (user) => {
       if (!user) {
         nookies.destroy(undefined, "token");
+        setuser(null);
         return;
       }
       try {
         const token = await user.getIdToken();
+        setuser(user);
         // Store the token in a cookie
         nookies.set(undefined, "token", token, {
           maxAge: 30 * 24 * 60 * 60,
@@ -35,9 +37,6 @@ export function AuthProvider(props: Props) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return (
-    <AuthContext.Provider value={{ uid, allUsers, posts, email, myPost }}>
-      {props.children}
-    </AuthContext.Provider>
-  );
+  // return <AuthContext.Provider>{children}</AuthContext.Provider>;
+  return <></>;
 }

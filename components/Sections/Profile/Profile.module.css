@@ -10,8 +10,20 @@
   background-color: white;
   padding-top: 1rem;
 }
+.container .info > h3 {
+  padding: 0 1rem;
+  text-align: center;
+}
+.container .info .bio {
+  margin-top: 0;
+  font-size: 18px;
+  padding: 0 1rem;
+  text-align: center;
+}
 .container .profile {
   border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 .container .myPost .header {
   background-color: white;
@@ -31,6 +43,7 @@
   border: 0;
   padding: 10px;
   background-color: transparent;
+  font-size: 1rem;
 }
 .container .myPost .header .filterBtn:hover {
   background-color: rgb(216, 216, 216);

@@ -5,8 +5,10 @@ import Image from "next/image";
 import styles from "../../../styles/Home.module.scss";
 import Newfeed from "./Newfeed";
 import Story from "./Story";
-import { useRouter } from "next/router";
+import { useContext } from "react";
+import { useRouter} from "next/router";
 import { getServerSideProps } from "../../../pages";
+import { AppContext } from "../../../context/AppContext";
 // import { getServerSideProps } from "../../../pages/_app";
 // export interface Post {
 //   text: String;
@@ -16,7 +18,8 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
   tabIndex: number;
 };
 export function Home(props: Props) {
-  const { tabIndex, posts, email, canDrag } = props;
+  const { tabIndex, canDrag } = props;
+  const { posts, email } = useContext(AppContext) as Props;
   const router = useRouter();
   return (
     <div id="/" className={styles.home}>
@@ -55,11 +58,7 @@ export function Home(props: Props) {
           <FontAwesomeIcon color="#0070f3" icon={faPhotoFilm} />
         </button>
       </div>
-      <Newfeed
-        tabIndex={tabIndex}
-        canDrag={canDrag}
-        posts={posts}
-      />
+      <Newfeed tabIndex={tabIndex} canDrag={canDrag} posts={posts} />
     </div>
   );
 }

@@ -2,8 +2,8 @@ import React, { useEffect, useContext } from "react";
 import s from "./Friends.module.scss";
 import { Request } from "./Request";
 import { AddSuggestFriend } from "./AddSuggestFriend";
-import { AuthContext } from "../../../context/AuthContext";
 import { Props } from "../../../types/interfaces";
+import { AppContext } from "../../../context/AppContext";
 interface FriendProps {
   tabIndex: number;
 }
@@ -15,7 +15,7 @@ export default function Friend(props: FriendProps) {
 
   const Requests = ["Aunt May", "Peter 2", "Peter 3"];
   // const Suggestions = ["Captain America", "Iron Man", "Thor"];
-  const { allUsers } = useContext(AuthContext) as Props;
+  const {allUsers} = useContext(AppContext) as Props;
   return (
     <div className={s.container}>
       <div className={s.action}>

@@ -10,7 +10,7 @@
 
 .headerContainer {
   transition: transform 0.2s ease, height 0.2s ease;
-  will-change: height, transform;
+  will-change: height;
   transform: translateY(0px);
   .header {
     max-width: var(--main-width);

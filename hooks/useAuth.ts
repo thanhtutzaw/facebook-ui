@@ -1,7 +1,8 @@
-import {AuthContext} from "../context/AuthContext";
+import { AppContext } from "../context/AppContext";
 import { useContext } from "react";
+import { Props } from "../types/interfaces";
 
 export function useAuth() {
-  const user = useContext(AuthContext);
+  const user = useContext(AppContext) as Props;
   return { user };
 }

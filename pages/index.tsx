@@ -1,18 +1,18 @@
-import { getAuth, onIdTokenChanged, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, onIdTokenChanged } from "firebase/auth";
 import { collection, collectionGroup, getDocs } from "firebase/firestore";
 import { GetServerSideProps } from "next";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
+import nookies from "nookies";
+import { useEffect, useRef } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs";
-import { AuthProvider } from "../context/AuthContext";
+import { Welcome } from "../components/Welcome";
 import { useActive } from "../hooks/useActiveTab";
 import { app, db } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import styles from "../styles/Home.module.scss";
 import { Post, Props } from "../types/interfaces";
-import nookies from "nookies";
-import { useRef, useEffect } from "react";
-import { Welcome } from "../components/Welcome";
+import { AppProvider } from "../context/AppContext";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -84,10 +84,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 };
 export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
   // props: InferGetServerSidePropsType<typeof getServerSideProps>
-  // const { posts, email, myPost } = useContext(AuthContext) as Props;
+  // const { posts, email, myPost } = import { AppContext } from "../../../context/AppContext"; as Props;
   const indicatorRef = useRef<HTMLDivElement>(null);
 
-  const { active, setActive } = useActive();
+  const { active } = useActive();
   const router = useRouter();
   const auth = getAuth(app);
   const headerContainerRef = useRef<HTMLDivElement>(null);
@@ -144,12 +144,38 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
 
     console.log(active);
   }, [active, email]);
+  // const [user, setuser] = useState<User | null>(null);
+  useEffect(() => {
+    const unsubscribe = onIdTokenChanged(auth, async (user) => {
+      if (!user) {
+        nookies.destroy(undefined, "token");
+        // setuser(null);
+        return;
+      }
+      try {
+        const token = await user.getIdToken();
+        // setuser(user);
+        // Store the token in a cookie
+        nookies.set(undefined, "token", token, {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+          secure: true,
+        });
+      } catch (error) {
+        console.log("Error refreshing ID token:", error);
+      }
+    });
 
+    return () => {
+      unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   if (!email) return <Welcome />;
 
   return (
     // <AuthProvider value={{ posts, email, myPost }}>
-    <AuthProvider
+    <AppProvider
       uid={uid}
       allUsers={allUsers}
       posts={posts}
@@ -162,12 +188,7 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
           indicatorRef={indicatorRef}
         />
       </div>
-      <Tabs
-        myPost={myPost}
-        indicatorRef={indicatorRef}
-        email={email}
-        posts={posts}
-      />
-    </AuthProvider>
+      <Tabs indicatorRef={indicatorRef} />
+    </AppProvider>
   );
 }

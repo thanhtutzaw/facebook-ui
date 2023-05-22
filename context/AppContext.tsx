@@ -5,12 +5,15 @@ import { User } from "firebase/auth";
 import nookies from "nookies";
 
 import { createContext } from "react";
-const AppContext = createContext<{ user: User | null }>({ user: null });
-export default AppContext;
+import { Props } from "../types/interfaces";
+// const AppContext = createContext<{ user: User | null }>({ user: null });
+export const AppContext = createContext<Props | null>(null);
 
-export function AppProvider({ children }: any) {
-  const auth = getAuth(app);
-  const [user, setuser] = useState<User | null>(null);
+export function AppProvider(props: Props) {
+  const { uid, allUsers, posts, email, myPost } = props;
+
+  // const auth = getAuth(app);
+  // const [user, setuser] = useState<User | null>(null);
   // useEffect(() => {
   //   onIdTokenChanged(auth, async (user) => {
   //     // set token in cookie with nookies
@@ -31,5 +34,9 @@ export function AppProvider({ children }: any) {
   //     }
   //   });
   // }, [auth, user]);
-  // return <AppContext.Provider value={{ user }}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={{ uid, allUsers, posts, email, myPost }}>
+      {props.children}
+    </AppContext.Provider>
+  );
 }

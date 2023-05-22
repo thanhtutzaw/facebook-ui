@@ -59,7 +59,7 @@ export default function Header(props: any) {
         className={styles.header}
       >
         <Logo />
-        headerContainerRef= {headerContainerRef?.current ? "true" : "false"}
+        {headerContainerRef?.current ? "true" : "false"}
         <div className={styles.action}>
           <button className={styles.logoutBtn}>
             <FontAwesomeIcon

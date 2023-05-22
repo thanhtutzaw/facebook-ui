@@ -32,9 +32,10 @@
 .container .requestPending .card {
   padding-block: 1rem;
   display: flex;
-  flex: 1;
+  flex: 1 1;
   align-items: center;
   gap: 20px;
+  overflow: hidden;
 }
 .container .requestPending .card .profile {
   border-radius: 100%;
@@ -52,6 +53,16 @@
   gap: 18px;
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+}
+.container .requestPending .card .right .info > p:first-child {
+  max-width: 55vw;
+  width: 100%;
+  /* min-width: 100vw; */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1 1;
+  white-space: nowrap;
 }
 .container .requestPending .card .right .action {
   gap: 10px;

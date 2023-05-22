@@ -2,9 +2,9 @@ import dynamic from "next/dynamic";
 import { MouseEvent, useEffect, useState } from "react";
 import { useActive } from "../hooks/useActiveTab";
 import styles from "../styles/Home.module.scss";
+import { Props } from "../types/interfaces";
 import { Home } from "./Sections/Home/Home";
 import t from "./Tabs.module.scss";
-import { Props } from "../types/interfaces";
 const Friends = dynamic(() => import("./Sections/Friends/Friends"), {
   ssr: false,
 });
@@ -18,7 +18,7 @@ const Profile = dynamic(() => import("./Sections/Profile/Profile"), {
 const Menu = dynamic(() => import("./Sections/Menu/menu"), { ssr: false });
 
 export default function Tabs(props: Props) {
-  const { myPost, posts, email, indicatorRef } = props;
+  const { indicatorRef } = props;
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { active } = useActive();
@@ -82,12 +82,7 @@ export default function Tabs(props: Props) {
         indicator.style.transform = `translateX(${scroll / 6}px)`;
       }}
     >
-      <Home
-        tabIndex={active === "/" ? 1 : -1}
-        canDrag={canDrag}
-        email={email}
-        posts={posts}
-      />
+      <Home tabIndex={active === "/" ? 1 : -1} canDrag={canDrag} />
       <div id="friends" className={styles.tab}>
         <div className={t.header}>
           <h2>Friends</h2>
@@ -101,7 +96,7 @@ export default function Tabs(props: Props) {
         <Watch />
       </div>
       <div id="profile">
-        <Profile myPost={myPost} email={email} posts={[]} />
+        <Profile />
       </div>
       <div id="notifications">
         <div className={t.header}>

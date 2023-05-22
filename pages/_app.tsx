@@ -3,7 +3,6 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import "../styles/globals.css";
-import { AuthProvider } from "../context/AuthContext";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import nProgress from "nprogress";
@@ -30,7 +29,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [router.events]);
 
   return (
-    <AuthProvider>
+    <>
       <Head>
         <title>Facebook Next</title>
         <meta name="description" content="Facebook-Mobile-UI with Next.js" />
@@ -41,6 +40,6 @@ export default function App({ Component, pageProps }: AppProps) {
       <main>
         <Component {...pageProps} />
       </main>
-    </AuthProvider>
+    </>
   );
 }

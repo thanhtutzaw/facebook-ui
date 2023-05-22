@@ -10,8 +10,8 @@
 
 .headerContainer {
   transition: transform 0.2s ease, height 0.2s ease;
-  will-change: transform;
   will-change: height;
+  transform: translateY(0px);
 }
 .headerContainer .header {
   max-width: var(--main-width);
@@ -23,6 +23,22 @@
   display: flex;
   margin-right: 0.7rem;
   gap: 10px;
+}
+.headerContainer .header .action > button {
+  cursor: pointer;
+  border-radius: 50px;
+  overflow: auto;
+  border: none;
+  text-align: left;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(245, 223, 223);
+  background-color: transparent;
+  border: 0;
+  font-size: 1rem;
+  background-color: rgb(243, 243, 243);
 }
 
 .logoContainer {
@@ -73,6 +89,7 @@
   background-color: rgb(255, 255, 255);
   height: 100%;
   flex: 1;
+  font-size: 1.1rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -95,10 +112,10 @@
   gap: 1rem;
 }
 .login .SecondaryloginBtn {
+  display: flex;
+  gap: 10px;
   cursor: pointer;
-  width: 300px;
   height: 75px;
-  gap: "10px";
   padding: 0.7rem;
   background-color: white;
   color: var(--blue-origin);
@@ -125,7 +142,7 @@
     background-color: #1c7ff3;
   }
   .logoutBtn:hover {
-    background-color: rgb(230, 230, 230);
+    background-color: rgb(230, 230, 230) !important;
   }
 }
 .content {
@@ -157,7 +174,6 @@
 
 .loginBtn {
   cursor: pointer;
-  width: 300px;
   height: 75px;
   border: 0;
   background: var(--blue-origin);
@@ -169,24 +185,6 @@
   justify-content: center;
   line-height: 33px;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-}
-
-.logoutBtn {
-  cursor: pointer;
-  border-radius: 50px;
-  overflow: auto;
-  border: none;
-  text-align: left;
-  height: 50px;
-  width: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgb(245, 223, 223);
-  background-color: transparent;
-  padding: 0 0.5rem;
-  border: 0;
-  font-size: 21px;
 }
 
 .grid {
@@ -217,12 +215,22 @@
 .storyCard {
   height: 170px;
   background-color: greenyellow;
-  background-color: rgb(224, 224, 224);
+  background-color: rgb(240, 240, 240);
   border: none;
   min-width: 95px;
   border-radius: 10px;
   text-align: left;
   overflow: hidden;
+}
+.storyCard .storyProfile {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+.storyCard .storyProfile img {
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
 .cardContainer {
@@ -237,7 +245,7 @@
   align-items: center;
   flex-direction: column;
   font-size: 15px;
-  border: 1px solid #e0e0e0;
+  position: relative;
 }
 .addStory > p {
   width: 100%;
@@ -255,10 +263,15 @@
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
+  border: 1px solid #eaeaea;
+  overflow: hidden;
+  border-radius: 0 0 10px 10px;
+  border-top: 0;
 }
 .addStory > button {
-  position: relative;
-  bottom: -27%;
+  position: absolute;
+  /* bottom: -10%; */
+  top: 50%;
   z-index: 100;
   margin: auto;
   border-radius: 50%;
@@ -271,13 +284,14 @@
   background-color: var(--blue-origin);
   border: none;
   color: white;
+  font-size: 16px;
 }
 
 .loginBtn:active,
 .storyCard:active,
 .SecondaryloginBtn:active,
 .logoutBtn:active {
-  animation: card 0.2s ease-in-out;
+  animation: card 0.2s ease-in-out !important;
 }
 
 .logoutBtn:active {
@@ -313,7 +327,7 @@
   font-size: calc(10px + 1.5vmin);
   border-radius: 100px;
   border: 1px solid rgb(179, 179, 179);
-  padding: 10px;
+  padding: 10px 15px;
 }
 .postAction input:focus-visible {
   outline: 1px solid #66b5ff;
@@ -321,8 +335,9 @@
 .postAction .addMedia {
   border-radius: 100px;
   border: 0;
-  padding: 10px;
   background-color: transparent;
+  padding: 0.5rem;
+  height: 45px;
 }
 .postAction .addMedia:hover {
   background-color: rgb(216, 216, 216);
@@ -341,9 +356,62 @@
   border: 0;
   background-color: thistle;
   background-color: rgb(221, 221, 221);
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
-.addPost .header,
+.backHeader {
+  background-color: rgb(255, 255, 255);
+  overflow: auto;
+  padding: 0 1rem;
+  padding-left: 10px;
+  height: 65px;
+  width: 100vw;
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: fixed;
+  top: 0;
+  border-bottom: 1px solid rgb(235, 235, 235);
+}
+.backHeader svg {
+  font-size: 1.2rem;
+}
+.backHeader button:not(.submit) {
+  border-radius: 100px;
+  width: 50px;
+  height: 50px;
+  border: 0;
+  background-color: transparent;
+}
+.backHeader button:not(.submit):hover {
+  background-color: rgb(240, 240, 240);
+}
+.backHeader button:not(.submit):active {
+  opacity: 0.6;
+}
+.backHeader .submit {
+  background-color: rgb(0, 112, 243);
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 0;
+  border-radius: 1rem;
+}
+.backHeader .submit:hover {
+  background-color: rgba(0, 112, 243, 0.8);
+}
+.backHeader .submit:active {
+  opacity: 0.6;
+}
+.backHeader h2 {
+  margin-top: 0;
+  margin-bottom: 0;
+  display: flex;
+  flex: 1;
+}
+
 .addPost .footer {
   background-color: rgb(255, 255, 255);
   overflow: auto;
@@ -352,50 +420,6 @@
   height: 65px;
   width: 100vw;
   max-width: 500px;
-}
-.addPost .header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: fixed;
-  top: 0;
-  border-bottom: 1px solid rgb(235, 235, 235);
-}
-.addPost .header svg {
-  font-size: 1.2rem;
-}
-.addPost .header button:not(.submit) {
-  border-radius: 100px;
-  width: 50px;
-  height: 50px;
-  border: 0;
-  background-color: transparent;
-}
-.addPost .header button:not(.submit):hover {
-  background-color: rgb(240, 240, 240);
-}
-.addPost .header button:not(.submit):active {
-  opacity: 0.6;
-}
-.addPost .header .submit {
-  background-color: rgb(0, 112, 243);
-  color: white;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border: 0;
-  border-radius: 1rem;
-}
-.addPost .header .submit:hover {
-  background-color: rgba(0, 112, 243, 0.8);
-}
-.addPost .header .submit:active {
-  opacity: 0.6;
-}
-.addPost .header h2 {
-  margin-top: 0;
-  margin-bottom: 0;
-  display: flex;
-  flex: 1;
 }
 .addPost .footer {
   display: flex;
