@@ -8,7 +8,7 @@ import "nprogress/nprogress.css";
 import { useEffect } from "react";
 import "../styles/globals.css";
 
-import { getAuth, onIdTokenChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, onIdTokenChanged } from "firebase/auth";
 import nookies from "nookies";
 import { app } from "../lib/firebase";
 
@@ -58,6 +58,19 @@ export default function App({ Component, pageProps }: AppProps) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const auth = getAuth(app);
+  // useEffect(() => {
+  //   const unsub = onAuthStateChanged(auth, (user) => {
+  //     if (!user) {
+  //       router.push("/login");
+  //     } else {
+  //       router.push("/");
+  //     }
+  //   });
+
+  //   return () => unsub();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [auth]); // Add auth as a dependency to useEffect
   return (
     <>
       <Head>

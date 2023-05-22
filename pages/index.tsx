@@ -148,7 +148,22 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
     if (active === "/") window.location.hash = "#home";
   }, [active, email]);
   // const [user, setuser] = useState<User | null>(null);
-
+  if (!auth.currentUser && !email)
+    return (
+      <div
+        style={{
+          alignContent: "center",
+          justifyItems: "center",
+          textAlign: "center",
+          height: "100vh",
+          userSelect: "none",
+          display: "grid",
+          justifyContent: "center",
+        }}
+      >
+        <p style={{ textAlign: "center", color: "gray" }}>Loading...</p>;
+      </div>
+    );
   if (!email) return <Welcome />;
 
   return (
