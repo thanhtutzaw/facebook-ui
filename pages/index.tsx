@@ -97,7 +97,7 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
       if (!user) {
         router.push("/login");
       } else {
-        // router.push("/");
+        router.push("/");
       }
     });
     return () => unsub();

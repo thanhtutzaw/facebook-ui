@@ -27,8 +27,8 @@ export default function Tabs(props: Props) {
 
   useEffect(() => {
     if (active) {
-      // window.location.hash = active === "/" ? "#home" : `#${active}`;
-      router.push({ hash: active === "/" ? "#home" : `#${active}` });
+      window.location.hash = active === "/" ? "#home" : `#${active}`;
+      // router.push({ hash: active === "/" ? "#home" : `#${active}` });
     }
     window.addEventListener("mouseup", () => {
       setcanDrag(false);
