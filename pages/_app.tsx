@@ -2,11 +2,15 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import "../styles/globals.css";
-import { useEffect } from "react";
 import { useRouter } from "next/router";
 import nProgress from "nprogress";
 import "nprogress/nprogress.css";
+import { useEffect } from "react";
+import "../styles/globals.css";
+
+import { getAuth, onIdTokenChanged } from "firebase/auth";
+import nookies from "nookies";
+import { app } from "../lib/firebase";
 
 config.autoAddCss = false;
 export default function App({ Component, pageProps }: AppProps) {
@@ -27,7 +31,33 @@ export default function App({ Component, pageProps }: AppProps) {
       router.events.off("routeChangeError", handleRouteDone);
     };
   }, [router.events]);
+  useEffect(() => {
+    const auth = getAuth(app);
+    const unsubscribe = onIdTokenChanged(auth, async (user) => {
+      if (!user) {
+        nookies.destroy(undefined, "token");
+        // setuser(null);
+        return;
+      }
+      try {
+        const token = await user.getIdToken();
+        // setuser(user);
+        // Store the token in a cookie
+        nookies.set(undefined, "token", token, {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+          secure: true,
+        });
+      } catch (error) {
+        console.log("Error refreshing ID token:", error);
+      }
+    });
 
+    return () => {
+      unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <>
       <Head>

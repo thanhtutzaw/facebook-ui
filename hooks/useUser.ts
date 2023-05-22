@@ -20,6 +20,7 @@ export function useUser() {
       if (token) {
         setuser(user);
         window.location.href = "/#home";
+        alert("should not run")
         nookies.set(undefined, "token", token, {});
       }
     });
