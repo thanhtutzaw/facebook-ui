@@ -6,6 +6,7 @@ export interface Post {
 import { ReactNode } from "react";
 export interface Props {
   children?: ReactNode;
+  expired?: boolean;
   uid?: string;
   active?: string;
   setActive?: Function;

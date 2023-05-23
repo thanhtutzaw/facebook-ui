@@ -3,7 +3,7 @@ import { collection, collectionGroup, getDocs } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs";
 import { Welcome } from "../components/Welcome";
@@ -22,7 +22,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // if (!token) return;
     const { email, uid } = token;
     // console.log(token);
-
+    let expired = false;
     const query = collectionGroup(db, `posts`);
     const allUsersQuery = collectionGroup(db, `users`);
     const mypostQuery = collection(db, `/users/${uid}/posts`);
@@ -60,6 +60,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
     return {
       props: {
+        expired,
         uid,
         allUsers,
         posts,
@@ -69,10 +70,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     };
   } catch (error) {
     console.log("SSR Error " + error);
+
+    // context.res.writeHead(302, { Location: "/" });
     // context.res.writeHead(302, { Location: "/login" });
     // context.res.end();
     return {
       props: {
+        expired: true,
         uid: "",
         allUsers: [],
         posts: [],
@@ -82,7 +86,14 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     };
   }
 };
-export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
+export default function Home({
+  expired,
+  uid,
+  allUsers,
+  posts,
+  email,
+  myPost,
+}: Props) {
   // props: InferGetServerSidePropsType<typeof getServerSideProps>
   // const { posts, email, myPost } = import { AppContext } from "../../../context/AppContext"; as Props;
   const indicatorRef = useRef<HTMLDivElement>(null);
@@ -91,12 +102,13 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
   const router = useRouter();
   const auth = getAuth(app);
   const headerContainerRef = useRef<HTMLDivElement>(null);
-  const { setActive } = useActive();
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) {
         router.push("/login");
       } else {
+        // if (active === "" && auth.currentUser) return;
+        if (!expired) return;
         router.push("/");
       }
     });
@@ -180,6 +192,7 @@ export default function Home({ uid, allUsers, posts, email, myPost }: Props) {
           headerContainerRef={headerContainerRef}
           indicatorRef={indicatorRef}
         />
+        {expired ? "true" : "false"}
       </div>
       <Tabs indicatorRef={indicatorRef} />
     </AppProvider>
