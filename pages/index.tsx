@@ -161,7 +161,8 @@ export default function Home({
   }, [active, email]);
   // const [user, setuser] = useState<User | null>(null);
 
-  if (expired && auth.currentUser) return <Welcome />;
+  if (expired && email) return <Welcome />;
+  // if (expired && auth.currentUser) return <Welcome />;
   // if (!auth.currentUser)
   //   return (
   //     <div
@@ -188,6 +189,7 @@ export default function Home({
       email={email}
       myPost={myPost}
     >
+      {/* {router.asPath} */}
       <div ref={headerContainerRef} className={styles.headerContainer}>
         <Header
           headerContainerRef={headerContainerRef}
