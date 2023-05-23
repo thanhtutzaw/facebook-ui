@@ -160,24 +160,25 @@ export default function Home({
     if (active === "/") window.location.hash = "#home";
   }, [active, email]);
   // const [user, setuser] = useState<User | null>(null);
-  if (!auth.currentUser && !email)
-    return (
-      <div
-        style={{
-          alignContent: "center",
-          justifyItems: "center",
-          textAlign: "center",
-          height: "100vh",
-          userSelect: "none",
-          display: "grid",
-          justifyContent: "center",
-        }}
-      >
-        <p style={{ textAlign: "center", color: "gray" }}>Loading...</p>;
-      </div>
-    );
-  if (expired) return <Welcome />;
 
+  if (expired && auth.currentUser) return <Welcome />;
+  // if (!auth.currentUser)
+  //   return (
+  //     <div
+  //       style={{
+  //         alignContent: "center",
+  //         justifyItems: "center",
+  //         textAlign: "center",
+  //         height: "100vh",
+  //         userSelect: "none",
+  //         display: "grid",
+  //         justifyContent: "center",
+  //       }}
+  //     >
+  //       <p style={{ textAlign: "center", color: "gray" }}>Loading...</p>;
+  //     </div>
+  //   );
+  if (!email) return <></>;
   return (
     // <AuthProvider value={{ posts, email, myPost }}>
     <AppProvider
