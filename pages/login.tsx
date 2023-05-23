@@ -60,9 +60,16 @@ export default function Login() {
         onClick={handleTestUserSignin}
       >
         <Image
-          style={{ objectFit: "cover", borderRadius: "100px" }}
-          width={35}
-          height={35}
+          // width={35}
+          // height={35}
+          width={200}
+          height={170}
+          style={{
+            objectFit: "cover",
+            width: "30%",
+            height: "50px",
+            borderRadius: "100px",
+          }}
           alt="testuser photo"
           src={
             "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"

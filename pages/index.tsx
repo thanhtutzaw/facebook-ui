@@ -9,7 +9,7 @@ import Tabs from "../components/Tabs";
 import { Welcome } from "../components/Welcome";
 import { useActive } from "../hooks/useActiveTab";
 import { app, db } from "../lib/firebase";
-import { verifyIdToken } from "../lib/firebaseAdmin";
+import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import styles from "../styles/Home.module.scss";
 import { Post, Props } from "../types/interfaces";
 import { AppProvider } from "../context/AppContext";
@@ -53,15 +53,19 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         return {
           id: doc.id,
           ...data,
+          ...getUserData(doc.id),
         };
       })
       .filter((users) => users.id !== uid);
-    // console.log(posts);
-
+    // const allUser = allUsers.map(async (user) => {
+    //   await getUserData(user.id, allUsers);
+    // });
+    console.log(allUsers);
     return {
       props: {
         expired,
         uid,
+        // allUsers: allUser,
         allUsers,
         posts,
         email,
@@ -70,7 +74,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     };
   } catch (error) {
     console.log("SSR Error " + error);
-
     // context.res.writeHead(302, { Location: "/" });
     // context.res.writeHead(302, { Location: "/login" });
     // context.res.end();
@@ -161,7 +164,8 @@ export default function Home({
   }, [active, email]);
   // const [user, setuser] = useState<User | null>(null);
 
-  if (expired && email) return <Welcome />;
+  if (expired) return <Welcome />;
+  // if (expired && email) return <Welcome />;
   // if (expired && auth.currentUser) return <Welcome />;
   // if (!auth.currentUser)
   //   return (
@@ -179,7 +183,7 @@ export default function Home({
   //       <p style={{ textAlign: "center", color: "gray" }}>Loading...</p>;
   //     </div>
   //   );
-  if (!email) return <></>;
+  // if (!email) return <></>;
   return (
     // <AuthProvider value={{ posts, email, myPost }}>
     <AppProvider
@@ -195,7 +199,7 @@ export default function Home({
           headerContainerRef={headerContainerRef}
           indicatorRef={indicatorRef}
         />
-        {expired ? "true" : "false"}
+        {/* {expired ? "true" : "false"} */}
       </div>
       <Tabs indicatorRef={indicatorRef} />
     </AppProvider>
