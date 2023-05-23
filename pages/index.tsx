@@ -176,7 +176,7 @@ export default function Home({
         <p style={{ textAlign: "center", color: "gray" }}>Loading...</p>;
       </div>
     );
-  if (!email) return <Welcome />;
+  if (expired) return <Welcome />;
 
   return (
     // <AuthProvider value={{ posts, email, myPost }}>

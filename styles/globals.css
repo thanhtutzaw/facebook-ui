@@ -23,6 +23,11 @@ main {
 
 }
 
+#nprogress .spinner-icon {
+  border-top-color : #0070f3 !important;
+  border-left-color: #0070f3 !important;
+}
+
 @keyframes blink {
   from {
     opacity: 0;
