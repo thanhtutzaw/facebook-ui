@@ -1,18 +1,15 @@
-import { getAuth, onIdTokenChanged } from "firebase/auth";
-import { useEffect, useState } from "react";
-import { app } from "../lib/firebase";
-import { User } from "firebase/auth";
-import nookies from "nookies";
-
+import { useState } from "react";
 import { createContext } from "react";
-import { Props } from "../types/interfaces";
 import { useActive } from "../hooks/useActiveTab";
+import { Props } from "../types/interfaces";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
 export const AppContext = createContext<Props | null>(null);
 
 export function AppProvider(props: Props) {
   const { uid, allUsers, posts, email, myPost } = props;
   const { active, setActive } = useActive();
+  const [preventClick, setpreventClick] = useState(false);
+
   // const auth = getAuth(app);
   // const [user, setuser] = useState<User | null>(null);
   // useEffect(() => {
@@ -37,7 +34,17 @@ export function AppProvider(props: Props) {
   // }, [auth, user]);
   return (
     <AppContext.Provider
-      value={{ active, setActive, uid, allUsers, posts, email, myPost }}
+      value={{
+        active,
+        setActive,
+        uid,
+        allUsers,
+        posts,
+        email,
+        myPost,
+        preventClick,
+        setpreventClick,
+      }}
     >
       {props.children}
     </AppContext.Provider>

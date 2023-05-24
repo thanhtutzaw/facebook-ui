@@ -6,7 +6,7 @@ import styles from "../../../styles/Home.module.scss";
 import Newfeed from "./Newfeed";
 import Story from "./Story";
 import { useContext } from "react";
-import { useRouter} from "next/router";
+import { useRouter } from "next/router";
 import { getServerSideProps } from "../../../pages";
 import { AppContext } from "../../../context/AppContext";
 // import { getServerSideProps } from "../../../pages/_app";
@@ -22,7 +22,11 @@ export function Home(props: Props) {
   const { posts, email } = useContext(AppContext) as Props;
   const router = useRouter();
   return (
-    <div id="/" className={styles.home}>
+    <div
+      // style={{ pointerEvents: canDrag ? "none" : "initial" }}
+      id="/"
+      className={styles.home}
+    >
       <Story email={email} />
       <div className={styles.postAction}>
         <Image
@@ -58,7 +62,7 @@ export function Home(props: Props) {
           <FontAwesomeIcon color="#0070f3" icon={faPhotoFilm} />
         </button>
       </div>
-      <Newfeed tabIndex={tabIndex} canDrag={canDrag} posts={posts} />
+      <Newfeed tabIndex={tabIndex} posts={posts} />
     </div>
   );
 }

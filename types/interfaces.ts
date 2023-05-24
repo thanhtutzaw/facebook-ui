@@ -6,6 +6,8 @@ export interface Post {
 import { ReactNode } from "react";
 export interface Props {
   children?: ReactNode;
+  preventClick?: boolean;
+  setpreventClick?: Function;
   expired?: boolean;
   uid?: string;
   active?: string;

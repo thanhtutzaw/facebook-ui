@@ -9,7 +9,6 @@ import { getServerSideProps } from "../../../pages";
 //   tabIndex: number;
 // };
 type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
-  canDrag: boolean;
   tabIndex: number;
 };
 export default function Newfeed(props: NewfeedProps) {

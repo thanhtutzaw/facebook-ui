@@ -8,14 +8,14 @@ interface FriendProps {
   tabIndex: number;
 }
 export default function Friend(props: FriendProps) {
+  const { tabIndex } = props;
   useEffect(() => {
     console.log("Friend is Rendering");
   }, []);
-  const { tabIndex } = props;
 
   const Requests = ["Aunt May", "Peter 2", "Peter 3"];
   // const Suggestions = ["Captain America", "Iron Man", "Thor"];
-  const {allUsers} = useContext(AppContext) as Props;
+  const { allUsers: Suggestions } = useContext(AppContext) as Props;
   return (
     <div className={s.container}>
       <div className={s.action}>
@@ -35,7 +35,7 @@ export default function Friend(props: FriendProps) {
         <h2 className={s.header}>
           <p>People you may know</p>
         </h2>
-        {allUsers?.map((f: any, index: number) => (
+        {Suggestions?.map((f: any, index: number) => (
           <AddSuggestFriend key={index} f={f.id} tabIndex={tabIndex} />
         ))}
       </div>

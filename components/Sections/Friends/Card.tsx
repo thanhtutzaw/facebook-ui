@@ -1,11 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useContext } from "react";
 import s from "./Friends.module.scss";
+import { AppContext } from "../../../context/AppContext";
+import { Props } from "../../../types/interfaces";
 export default function Card(props: { children: ReactNode; f: any }) {
   const { f } = props;
+  const { preventClick } = useContext(AppContext) as Props;
   return (
-    <Link href={f}>
+    <Link href={f} style={{ pointerEvents: preventClick ? "none" : "initial" }}>
       <div className={s.card}>
         <Image
           className={s.profile}

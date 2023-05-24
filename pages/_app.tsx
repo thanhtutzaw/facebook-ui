@@ -8,7 +8,7 @@ import "nprogress/nprogress.css";
 import { useEffect } from "react";
 import "../styles/globals.css";
 
-import { getAuth, onAuthStateChanged, onIdTokenChanged } from "firebase/auth";
+import { getAuth, onIdTokenChanged } from "firebase/auth";
 import nookies from "nookies";
 import { app } from "../lib/firebase";
 

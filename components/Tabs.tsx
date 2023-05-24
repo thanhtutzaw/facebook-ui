@@ -1,11 +1,11 @@
 import dynamic from "next/dynamic";
-import { MouseEvent, useEffect, useState } from "react";
+import { MouseEvent, useContext, useEffect, useState } from "react";
+import { AppContext } from "../context/AppContext";
 import { useActive } from "../hooks/useActiveTab";
 import styles from "../styles/Home.module.scss";
 import { Props } from "../types/interfaces";
 import { Home } from "./Sections/Home/Home";
 import t from "./Tabs.module.scss";
-import { useRouter } from "next/router";
 const Friends = dynamic(() => import("./Sections/Friends/Friends"), {
   ssr: false,
 });
@@ -20,9 +20,12 @@ const Menu = dynamic(() => import("./Sections/Menu/menu"), { ssr: false });
 
 export default function Tabs(props: Props) {
   const { indicatorRef } = props;
+  // style={{pointerEvents: preventClick ? 'none' : 'initial' }}
+
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { active } = useActive();
+  const { setpreventClick } = useContext(AppContext) as Props;
   useEffect(() => {
     if (active) {
       window.location.hash = active === "/" ? "#home" : `#${active}`;
@@ -33,6 +36,8 @@ export default function Tabs(props: Props) {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]); //here can darg
+  // if (!setpreventClick) return;
+
   function dragStart(e: MouseEvent<HTMLDivElement>) {
     // e.preventDefault();
     e.stopPropagation();
@@ -65,8 +70,11 @@ export default function Tabs(props: Props) {
       const dx = e.clientX - pos.x;
       // const dy = e.clientY - pos.y;
       currentTarget.scrollLeft = pos.left - dx;
+      // if (setpreventClick === "undefined") return;
+      setpreventClick?.(true);
     } else {
       setcanDrag(false);
+      setpreventClick?.(false);
     }
   }
   return (
