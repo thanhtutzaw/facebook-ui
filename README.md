@@ -1,34 +1,32 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+<div align="center">
+<img src="public/logo.svg" width="100" height="100" alt="logo" title="logo" /></div>
+<h1 align="center" >Facebook - SSR Web Application with Nextjs and Firebase</h1>
+<br />
 
-First, run the development server:
+Project is created with:
+* Next.js and Typescript
+* Google Sign-in and [Cloud Firestore](https://github.com/thanhtutzaw/todolist3/blob/main/README.md#nosql-document-database)
+* [Firebase-Admin-SDK](https://www.npmjs.com/package/firebase-admin) and [Nookies](https://www.npmjs.com/package/nookies)
+* [Font-Awesome](https://fontawesome.com)
 
-```bash
-npm run dev
-# or
-yarn dev
+## Features
+:ballot_box_with_check:	Fetch All Users Posts\
+:ballot_box_with_check:	Draggable Tabs
+
+## User-Interface
+![facebook-ui](https://github.com/thanhtutzaw/facebook-ui/assets/71011043/aebfa8bd-d6d4-4879-8074-023d83647ab4)
+
+## Demo
+[Facebook-ui](https://facebook-ui-zee.app)
+
+## Setup
+To run this project, install it locally using npm:
+
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+$ git clone https://github.com/thanhtutzaw/facebook-ui.git
+$ cd facebook-ui
+$ cp .env.local.example .env.local
+$ npm install
+$ npm run dev
+```
