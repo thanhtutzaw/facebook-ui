@@ -161,7 +161,7 @@ export default function Home({
 
     console.log(active);
     if (active === "/") window.location.hash = "#home";
-  }, [active, email]);
+  }, [active]);
   // const [user, setuser] = useState<User | null>(null);
 
   if (!email || expired)
