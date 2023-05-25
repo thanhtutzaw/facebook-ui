@@ -18,7 +18,7 @@ Project is created with:
 ![facebook-ui](https://github.com/thanhtutzaw/facebook-ui/assets/71011043/aebfa8bd-d6d4-4879-8074-023d83647ab4)
 
 ## Demo
-[Facebook-ui](https://facebook-ui-zee.app)
+<img src="public/logo.svg" width="18" height="18" alt="logo" title="logo" />  [Facebook-ui](https://facebook-ui-zee.app)
 
 ## Setup
 To run this project, install it locally using npm:
