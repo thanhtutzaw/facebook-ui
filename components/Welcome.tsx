@@ -1,4 +1,5 @@
-export function Welcome({email , expired}) {
+export function Welcome(props: { email: string; expired: boolean }) {
+  const { email, expired } = props;
   return (
     <div
       style={{
