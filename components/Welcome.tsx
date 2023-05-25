@@ -1,4 +1,4 @@
-export function Welcome({}) {
+export function Welcome({email , expired}) {
   return (
     <div
       style={{
@@ -19,6 +19,8 @@ export function Welcome({}) {
       >
         Welcome Back 🎉
       </h2>
+      <h2>{email}</h2>
+      <h2>{expired}</h2>
       <p
         style={{
           userSelect: "none",
