@@ -189,8 +189,6 @@ export default function Story({ email }: StoryProps) {
               height={170}
               style={{ objectFit: "cover", width: "100%", height: "105px" }}
               alt={email || ""}
-              // width={95}
-              // height={105}
               src={
                 email === "testuser@gmail.com"
                   ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
