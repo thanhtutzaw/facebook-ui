@@ -74,9 +74,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     };
   } catch (error) {
     console.log("SSR Error " + error);
-    context.res.writeHead(302, { Location: "/" });
+    // context.res.writeHead(302, { Location: "/" });
     // context.res.writeHead(302, { Location: "/login" });
-    context.res.end();
+    // context.res.end();
     return {
       props: {
         expired: true,
@@ -110,15 +110,15 @@ export default function Home({
       if (!user) {
         router.push("/login");
       } else {
-        // if (active === "" && auth.currentUser) return;
-        if (email) return;
+        if (active === "" && auth.currentUser) return;
+        // if (email) return;
         // if (!expired) return;
         router.push("/");
       }
     });
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth, email]);
+  }, [auth]);
   useEffect(() => {
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
