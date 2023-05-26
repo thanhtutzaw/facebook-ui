@@ -47,6 +47,8 @@ export function Home(props: Props) {
           readOnly
           onClick={() => {
             router.push("addPost");
+            // router.push({pathname:'addPost' , query:uid})
+            // the data
             // setAddpostMounted(true)
           }}
           type="text"

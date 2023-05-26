@@ -431,10 +431,12 @@
     background-color: rgb(255, 255, 255);
     overflow: auto;
     padding: 0 1rem;
-    padding-left: 10px;
     height: 65px;
     width: 100vw;
     max-width: 500px;
+    padding: 0 1rem;
+    /* padding-left: 10px; */
+    justify-content: space-between;
   }
 
   .footer {
@@ -450,17 +452,16 @@
       margin-bottom: 0;
       display: flex;
       flex: 1;
-      // padding-inline: 1rem;
-      // padding: 1rem;
     }
     button {
       border-radius: 100px;
-      width: 50px;
-      height: 50px;
+      width: 45px;
+      height: 45px;
       border: 0;
       background-color: transparent;
+      background-color: rgb(240, 240, 240);
       &:hover {
-        background-color: rgb(240, 240, 240);
+        background-color: rgb(228, 228, 228);
       }
       &:active {
         opacity: 0.6;
@@ -468,6 +469,21 @@
     }
     svg {
       font-size: 1rem;
+    }
+    select {
+      font-size: 1rem;
+      padding: 10px;
+      border-radius: 100px;
+      &:focus-visible {
+        outline: 0;
+        background-color: var(--blue-origin);
+        color: white;
+      }
+    }
+    option {
+      &:disabled {
+        color: rgb(212, 212, 212);
+      }
     }
   }
   .input {

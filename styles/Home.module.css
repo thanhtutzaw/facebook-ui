@@ -30,6 +30,8 @@
   overflow: auto;
   border: none;
   text-align: left;
+  height: 45px;
+  width: 45px;
   padding: 0.5rem;
   display: flex;
   align-items: center;
@@ -67,7 +69,7 @@
   height: 60px;
   transition: scale 0.1s ease-in-out;
 }
-.nav .active {
+.nav .active > div {
   color: var(--blue-origin);
 }
 .nav .indicatorContainer {
@@ -95,7 +97,14 @@
   align-items: center;
   cursor: pointer;
 }
-.nav .navItems:active {
+.nav .navItems > div {
+  height: 100%;
+  flex: 1 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.nav .navItems:active > div {
   background-color: rgb(199, 199, 199);
   opacity: 0.8;
   scale: 0.88;
@@ -135,7 +144,7 @@
 }
 
 @media only screen and (min-width: 500px) {
-  .nav .navItems:hover {
+  .nav .navItems:hover > div {
     background-color: rgb(199, 199, 199);
   }
   .loginBtn:hover {
@@ -324,7 +333,7 @@
 .postAction input {
   cursor: pointer;
   width: 100%;
-  font-size: calc(10px + 1.5vmin);
+  font-size: calc(12px + 1.5vmin);
   border-radius: 100px;
   border: 1px solid rgb(179, 179, 179);
   padding: 10px 15px;
@@ -416,10 +425,12 @@
   background-color: rgb(255, 255, 255);
   overflow: auto;
   padding: 0 1rem;
-  padding-left: 10px;
   height: 65px;
   width: 100vw;
   max-width: 500px;
+  padding: 0 1rem;
+  /* padding-left: 10px; */
+  justify-content: space-between;
 }
 .addPost .footer {
   display: flex;
@@ -437,19 +448,33 @@
 }
 .addPost .footer button {
   border-radius: 100px;
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   border: 0;
   background-color: transparent;
+  background-color: rgb(240, 240, 240);
 }
 .addPost .footer button:hover {
-  background-color: rgb(240, 240, 240);
+  background-color: rgb(228, 228, 228);
 }
 .addPost .footer button:active {
   opacity: 0.6;
 }
 .addPost .footer svg {
   font-size: 1rem;
+}
+.addPost .footer select {
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 100px;
+}
+.addPost .footer select:focus-visible {
+  outline: 0;
+  background-color: var(--blue-origin);
+  color: white;
+}
+.addPost .footer option:disabled {
+  color: rgb(212, 212, 212);
 }
 .addPost .input {
   padding: 1rem;
