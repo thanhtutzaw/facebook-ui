@@ -76,7 +76,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     console.log("SSR Error " + error);
     context.res.writeHead(302, { Location: "/" });
     // context.res.writeHead(302, { Location: "/login" });
-    // context.res.end();
+    context.res.end();
     return {
       props: {
         expired: true,
