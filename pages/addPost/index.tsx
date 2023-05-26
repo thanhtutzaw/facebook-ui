@@ -35,6 +35,7 @@ export default function AddPost() {
             try {
               addPost(uid, textRef.current.textContent, visibility);
               router.push("/");
+              router.replace(router.asPath);
             } catch (error: any) {
               alert(error.message);
             }

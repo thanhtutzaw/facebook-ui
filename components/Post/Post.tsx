@@ -1,13 +1,14 @@
-import styles from "./Post.module.scss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faThumbsUp,
   faComment,
   faShare,
+  faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
-import { Post as PostType, Props } from "../../types/interfaces";
-import { useState, useContext } from "react";
+import { useState } from "react";
+import { Post as PostType } from "../../types/interfaces";
+import styles from "./Post.module.scss";
 // import { Post } from "../../types/interfaces";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 // interface Props {
@@ -18,10 +19,12 @@ interface PostProps {
   tabIndex: number;
 }
 export default function Post({ post, tabIndex }: PostProps) {
-  const { authorId, id, text } = post;
+  const { authorId, id, text, visibility, createdAt } = post;
   const [Bounce, setBounce] = useState(false);
+  const date = new Timestamp(createdAt.seconds, createdAt.nanoseconds);
+  // const date = createdAt ? createdAt?.toDate().toLocaleDateString() : 0;
   return (
-    <div className={styles.post} key={id}>
+    <div className={styles.post}>
       <div className={styles.header}>
         <Image
           className={styles.profile}
@@ -45,8 +48,9 @@ export default function Post({ post, tabIndex }: PostProps) {
               ? "Peter 1"
               : "Other User"}
           </p>
-          {/* <p>{}</p> */}
-          <p>Time</p>
+          <p>{date.toDate().toLocaleDateString()}</p>
+          {/* {createdAt && <time>{createdAt ? date : "date"}</time>} */}
+          <p>{visibility}</p>
         </div>
       </div>
       {/* <p>author_Id: {authorId}</p> */}

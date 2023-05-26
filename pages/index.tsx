@@ -1,18 +1,25 @@
-import { getAuth, onAuthStateChanged, onIdTokenChanged } from "firebase/auth";
-import { collection, collectionGroup, getDocs } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  Timestamp,
+  collection,
+  collectionGroup,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs";
 import { Welcome } from "../components/Welcome";
+import { AppProvider } from "../context/AppContext";
 import { useActive } from "../hooks/useActiveTab";
-import { app, db } from "../lib/firebase";
+import { app, db, postToJSON } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import styles from "../styles/Home.module.scss";
 import { Post, Props } from "../types/interfaces";
-import { AppProvider } from "../context/AppContext";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -23,30 +30,38 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const { email, uid } = token;
     // console.log(token);
     let expired = false;
-    const query = collectionGroup(db, `posts`);
+
     const allUsersQuery = collectionGroup(db, `users`);
-    const mypostQuery = collection(db, `/users/${uid}/posts`);
-    const docSnap = await getDocs(query);
     const allUsersSnap = await getDocs(allUsersQuery);
+
+    const postQuery = query(
+      collectionGroup(db, `posts`),
+      orderBy("createdAt", "desc")
+    );
+    const docSnap = await getDocs(postQuery);
+    const posts = docSnap.docs.map((doc) => postToJSON(doc));
+
+    // const getDate = (post: Post) => {
+    //   const date = new Timestamp(
+    //     post.createdAt.seconds,
+    //     post.createdAt.nanoseconds
+    //   );
+    //   return {
+    //     date,
+    //   };
+    // };
+    // .sort((a, b) => a.createdAt - b.createdAt);
+
+    // getting all users posts
+    // db/users/uid-JE0sy/posts/abc
+    // const data = doc.data() as Post;
+    const mypostQuery = query(
+      collection(db, `/users/${uid}/posts`),
+      orderBy("createdAt", "desc")
+    );
     const myPostSnap = await getDocs(mypostQuery);
-    const posts = docSnap.docs.map((doc) => {
-      // getting all users posts
-      // db/users/uid-JE0sy/posts/abc
-      const data = doc.data() as Post;
-      return {
-        authorId: doc.ref.parent.parent?.id,
-        id: doc.id,
-        ...data,
-      };
-    });
-    const myPost = myPostSnap.docs.map((doc) => {
-      const data = doc.data() as Post;
-      return {
-        authorId: doc.ref.parent.parent?.id,
-        id: doc.id,
-        ...data,
-      };
-    });
+
+    const myPost = myPostSnap.docs.map((doc) => postToJSON(doc));
     const allUsers = allUsersSnap.docs
       .map((doc) => {
         const data = doc.data();
@@ -60,7 +75,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // const allUser = allUsers.map(async (user) => {
     //   await getUserData(user.id, allUsers);
     // });
-    console.log(allUsers);
+    // console.log(sort);
     return {
       props: {
         expired,

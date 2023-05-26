@@ -34,7 +34,11 @@
     :first-child {
         font-weight: 500;
     }
-    > div > p:last-child {
+    // > div > p:last-child {
+    //     color: #4e4e4e;
+    //     font-size: 15px;
+    // }
+    > div > p:not(:first-child) {
         color: #4e4e4e;
         font-size: 15px;
     }

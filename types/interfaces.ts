@@ -2,7 +2,10 @@ export interface Post {
   authorId?: string | number;
   id?: string | number;
   text: string;
+  visibility: ["public", "friends", "onlyme"];
+  createdAt: Timestamp;
 }
+import { Timestamp } from "firebase/firestore";
 import { ReactNode } from "react";
 export interface Props {
   children?: ReactNode;

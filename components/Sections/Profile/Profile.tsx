@@ -64,8 +64,8 @@ export default function Profile() {
             <FontAwesomeIcon color="#0070f3" icon={faFilter} />
           </button>
         </h2>
-        {myPost?.map((post: PostType, index: number) => (
-          <Post key={index} post={post} tabIndex={1} />
+        {myPost?.map((post: PostType) => (
+          <Post key={post.id} post={post} tabIndex={1} />
         ))}
         <p style={{ textAlign: "center" }}>No more posts</p>
       </div>
