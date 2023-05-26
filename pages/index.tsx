@@ -74,7 +74,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     };
   } catch (error) {
     console.log("SSR Error " + error);
-    // context.res.writeHead(302, { Location: "/" });
+    context.res.writeHead(302, { Location: "/" });
     // context.res.writeHead(302, { Location: "/login" });
     // context.res.end();
     return {
@@ -165,8 +165,7 @@ export default function Home({
   }, [active]);
   // const [user, setuser] = useState<User | null>(null);
 
-  if (!email || expired)
-    return <Welcome email={email ?? ""} expired={expired ?? false} />;
+  if (!email || expired) return <Welcome />;
   // if (expired && email) return <Welcome />;
   // if (expired && auth.currentUser) return <Welcome />;
   // if (!auth.currentUser)
