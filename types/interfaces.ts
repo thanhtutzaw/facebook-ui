@@ -2,7 +2,7 @@ export interface Post {
   authorId?: string | number;
   id?: string | number;
   text: string;
-  visibility: ["public", "friends", "onlyme"];
+  visibility?: ["public", "friends", "onlyme"];
   createdAt: Timestamp;
 }
 import { Timestamp } from "firebase/firestore";

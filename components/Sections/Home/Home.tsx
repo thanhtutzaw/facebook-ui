@@ -19,8 +19,8 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
 };
 export function Home(props: Props) {
   const { tabIndex, canDrag } = props;
-  const { posts, email } = useContext(AppContext) as Props;
   const router = useRouter();
+  const { email } = useContext(AppContext) as Props;
   return (
     <div
       // style={{ pointerEvents: canDrag ? "none" : "initial" }}
@@ -64,7 +64,7 @@ export function Home(props: Props) {
           <FontAwesomeIcon color="#0070f3" icon={faPhotoFilm} />
         </button>
       </div>
-      <Newfeed tabIndex={tabIndex} posts={posts} />
+      <Newfeed tabIndex={tabIndex} />
     </div>
   );
 }

@@ -1,24 +1,28 @@
 import { InferGetServerSidePropsType } from "next";
-import styles from "../../../styles/Home.module.scss";
-import { Post as PostType } from "../../../types/interfaces";
-import Post from "../../Post";
+import { useContext } from "react";
+import { AppContext } from "../../../context/AppContext";
 import { getServerSideProps } from "../../../pages";
+import styles from "../../../styles/Home.module.scss";
+import { Post as PostType, Props } from "../../../types/interfaces";
+import Post from "../../Post";
 // type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 //   canDrag: boolean;
 //   tabIndex: number;
 // };
-type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> &
-  PostType & {
-    tabIndex: number;
-  };
+type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
+  tabIndex: number;
+};
 export default function Newfeed(props: NewfeedProps) {
-  const { id, authorId, tabIndex, posts } = props;
+  const { tabIndex } = props;
+  const { posts } = useContext(AppContext) as Props;
+  // const { id, authorId, text, visibility, createdAt } = posts;
+
   return (
     <div className={styles.postContainer}>
       {posts?.length !== 0 ? (
         <>
           {posts?.map((post: PostType) => (
-            <Post tabIndex={tabIndex} key={id} post={post} />
+            <Post tabIndex={tabIndex} key={post.id} post={post} />
           ))}
           <p style={{ textAlign: "center" }}>No more posts</p>
         </>
