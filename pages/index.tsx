@@ -110,9 +110,9 @@ export default function Home({
       if (!user) {
         router.push("/login");
       } else {
-        if (active === "" && auth.currentUser) return;
+        // if (active === "" && auth.currentUser) return;
         // if (email) return;
-        // if (!expired) return;
+        if (!expired) return;
         router.push("/");
       }
     });
