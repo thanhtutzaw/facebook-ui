@@ -1,4 +1,6 @@
 .container {
+    transition: transform 0.3s ease-in-out;
+
     // padding: 1rem;
     // background-color: white;
     // text-align: center;
@@ -11,6 +13,7 @@
         align-items: center;
         background-color: white;
         padding-top: 1rem;
+        transition: translate 0.3s ease-in-out;
         > h3 {
             padding: 0 1rem;
             text-align: center;
@@ -25,22 +28,21 @@
     .profile {
         border-radius: 50%;
         object-fit: cover;
-        // width:150px;
-        // height:auto;
     }
     .myPost {
+        // transform: translateY(-200px);
         .header {
             background-color: white;
             padding: 1rem;
-            // padding-bottom: .5rem;
             margin: 0;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 10px;
             p {
                 margin: 0;
+                flex: 1;
             }
-            .filterBtn {
+            > button {
                 height: 40px;
                 width: 40px;
                 border-radius: 100px;
@@ -48,6 +50,7 @@
                 padding: 10px;
                 background-color: transparent;
                 font-size: 1rem;
+                background-color: rgb(238, 238, 238);
                 &:hover {
                     background-color: rgb(216, 216, 216);
                 }
