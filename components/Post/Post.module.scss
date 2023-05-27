@@ -88,13 +88,15 @@
         gap: 10px;
         padding: 0.5rem 1rem;
         color: rgb(39, 39, 39);
+        transition: all 0.02s ease-in-out;
         &:hover {
             background-color: var(--blue-origin);
             color: white;
         }
         &:active {
             opacity: 0.5;
-            scale: 1.1;
+            scale: 0.9;
+            border-radius: 50px;
         }
     }
 }
@@ -113,7 +115,8 @@
     svg {
         font-size: 18px;
         // color: rgb(110, 110, 110);
-        color: rgb(62 62 62);
+        // color: rgb(62 62 62);
+        color: rgb(39, 39, 39);
     }
     > button {
         display: flex;

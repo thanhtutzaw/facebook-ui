@@ -8,6 +8,7 @@ import { Post as PostType, Props } from "../../../types/interfaces";
 import Post from "../../Post/Post";
 import s from "./Profile.module.scss";
 import { useActive } from "../../../hooks/useActiveTab";
+import { motion } from "framer-motion";
 export default function Profile() {
   // const { myPost } = props;
   // const { email } = import { AppContext } from "../../../context/AppContext"; as Props;
@@ -69,9 +70,14 @@ export default function Profile() {
           <button>
             <FontAwesomeIcon color="#0070f3" icon={faFilter} />
           </button>
-          <button onClick={() => setactive((prev) => !prev)}>
+          <motion.button
+            animate={{ rotate: active ? 480 : 0 }}
+            transition={{duration:'.5'}}
+            // transition={{ type: "spring", stiffness: 130 }}
+            onClick={() => setactive((prev) => !prev)}
+          >
             <FontAwesomeIcon color="#0070f3" icon={faGear} />
-          </button>
+          </motion.button>
         </h2>
         <div
           style={{

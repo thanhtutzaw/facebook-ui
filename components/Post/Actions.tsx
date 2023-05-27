@@ -5,6 +5,7 @@ import { deletePost } from "../../lib/firestore/post";
 import styles from "./Post.module.scss";
 import { getAuth } from "firebase/auth";
 import { app } from "../../lib/firebase";
+import { motion } from "framer-motion";
 function Actions(props: {
   authorId: string | number;
   id: string;
@@ -13,7 +14,7 @@ function Actions(props: {
   const { authorId, id, setshowAction } = props;
   const auth = getAuth(app);
   return (
-    <div className={styles.actions}>
+    <>
       <button
         onClick={async (e) => {
           e.preventDefault();
@@ -66,7 +67,7 @@ function Actions(props: {
         <FontAwesomeIcon icon={faTrash} />
         Delete
       </button>
-    </div>
+    </>
   );
 }
 

@@ -20,6 +20,7 @@ import { deletePost } from "../../lib/firestore/post";
 import { getAuth } from "firebase/auth";
 import { app } from "../../lib/firebase";
 import Actions from "./Actions";
+import { AnimatePresence, motion } from "framer-motion";
 // import { Post } from "../../types/interfaces";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 // interface Props {
@@ -43,6 +44,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
     active: tab,
     showAction,
     setshowAction,
+    uid,
   } = useContext(AppContext) as Props;
   if (!active && checked) {
     setChecked(false);
@@ -51,7 +53,10 @@ export default function Post({ active, post, tabIndex }: PostProps) {
     setshowAction?.("");
   }
   useEffect(() => {
-    if (tab !== "profile" && tab !== "") {
+    if (tab !== "profile") {
+      setshowAction?.("");
+    }
+    if (tab !== "") {
       setshowAction?.("");
     }
   }, [setshowAction, tab]);
@@ -105,8 +110,10 @@ export default function Post({ active, post, tabIndex }: PostProps) {
           </div>
           {!active ? (
             <>
-              {auth?.currentUser?.uid === authorId ? (
-                <button
+              {uid === authorId ? (
+                <motion.button
+                  whileTap={{ scale: "1.1" }}
+                  whileHover={{ opacity: 0.8 }}
                   aria-expanded={showAction !== ""}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -118,7 +125,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
                   }}
                 >
                   <FontAwesomeIcon icon={faEllipsisH} />
-                </button>
+                </motion.button>
               ) : (
                 <></>
               )}
@@ -156,9 +163,24 @@ export default function Post({ active, post, tabIndex }: PostProps) {
         </div>
         {/* <p>author_Id: {authorId}</p> */}
         {/* <p>post_id: {id}</p> */}
-        {showAction === id && (
-          <Actions authorId={authorId!} id={id!} setshowAction={setshowAction!} />
-        )}
+        <AnimatePresence>
+          {showAction === id && (
+            <motion.div
+              key={id}
+              transition={{ type: "spring", stiffness: 100 }}
+              initial={{ opacity: "0", scale: 0.8 }}
+              animate={{ opacity: showAction === id ? 1 : 0, scale: 1 }}
+              exit={{ opacity: "0", scale: 0.8 }}
+              className={styles.actions}
+            >
+              <Actions
+                authorId={authorId!}
+                id={id!}
+                setshowAction={setshowAction!}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
         <p>{text}</p>
       </span>
       <div
