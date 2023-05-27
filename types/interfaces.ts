@@ -9,6 +9,8 @@ import { Timestamp } from "firebase/firestore";
 import { ReactNode } from "react";
 export interface Props {
   children?: ReactNode;
+  showAction?: string ;
+  setshowAction?: Function;
   preventClick?: boolean;
   setpreventClick?: Function;
   expired?: boolean;

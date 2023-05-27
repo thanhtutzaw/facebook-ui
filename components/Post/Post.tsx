@@ -9,9 +9,11 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { Post as PostType } from "../../types/interfaces";
+import { useContext, useRef, useState } from "react";
+import { Post as PostType, Props } from "../../types/interfaces";
 import styles from "./Post.module.scss";
+import { useRouter } from "next/router";
+import { AppContext } from "../../context/AppContext";
 // import { Post } from "../../types/interfaces";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 // interface Props {
@@ -28,12 +30,17 @@ export default function Post({ active, post, tabIndex }: PostProps) {
   const date = new Timestamp(createdAt.seconds, createdAt.nanoseconds);
   // const date = createdAt ? createdAt?.toDate().toLocaleDateString() : 0;
   const [checked, setChecked] = useState(false);
+  const checkRef = useRef<HTMLButtonElement>(null);
+  const uncheckRef = useRef<HTMLButtonElement>(null);
+  const router = useRouter();
+  const { showAction, setshowAction } = useContext(AppContext) as Props;
   if (!active && checked) {
     setChecked(false);
   }
+  if (active && showAction) {
+    setshowAction?.("");
+  }
 
-  const checkRef = useRef<HTMLButtonElement>(null);
-  const uncheckRef = useRef<HTMLButtonElement>(null);
   return (
     <div
       className={styles.post}
@@ -42,6 +49,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
       <span
         onClick={() => {
           if (!active) {
+            router.push(id?.toString()!);
             // setactiveNote(id);
             // if (activeNote !== id) return;
             // setactiveNote("");
@@ -80,7 +88,17 @@ export default function Post({ active, post, tabIndex }: PostProps) {
             </div>
           </div>
           {!active ? (
-            <button>
+            <button
+              aria-expanded={showAction !== ""}
+              onClick={(e) => {
+                e.stopPropagation();
+                setshowAction?.(id?.toString());
+                if (showAction === id) {
+                  setshowAction?.("");
+                }
+                // alert(showAction);
+              }}
+            >
               <FontAwesomeIcon icon={faEllipsisH} />
             </button>
           ) : (
@@ -116,6 +134,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
         </div>
         {/* <p>author_Id: {authorId}</p> */}
         {/* <p>post_id: {id}</p> */}
+        {showAction === id && <button>Delete</button>}
         <p>{text}</p>
       </span>
       <div

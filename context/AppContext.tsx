@@ -9,6 +9,7 @@ export function AppProvider(props: Props) {
   const { uid, allUsers, posts, email, myPost } = props;
   const { active, setActive } = useActive();
   const [preventClick, setpreventClick] = useState(false);
+  const [showAction, setshowAction] = useState("");
 
   // const auth = getAuth(app);
   // const [user, setuser] = useState<User | null>(null);
@@ -35,6 +36,8 @@ export function AppProvider(props: Props) {
   return (
     <AppContext.Provider
       value={{
+        showAction,
+        setshowAction,
         active,
         setActive,
         uid,
