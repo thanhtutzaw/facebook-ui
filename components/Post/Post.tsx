@@ -5,6 +5,7 @@ import {
   faEllipsisH,
   faShare,
   faThumbsUp,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Timestamp } from "firebase/firestore";
@@ -14,6 +15,9 @@ import { Post as PostType, Props } from "../../types/interfaces";
 import styles from "./Post.module.scss";
 import { useRouter } from "next/router";
 import { AppContext } from "../../context/AppContext";
+import { deletePost } from "../../lib/firestore/post";
+import { getAuth } from "firebase/auth";
+import { app } from "../../lib/firebase";
 // import { Post } from "../../types/interfaces";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 // interface Props {
@@ -40,7 +44,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
   if (active && showAction) {
     setshowAction?.("");
   }
-
+  const auth = getAuth(app);
   return (
     <div
       className={styles.post}
@@ -134,7 +138,26 @@ export default function Post({ active, post, tabIndex }: PostProps) {
         </div>
         {/* <p>author_Id: {authorId}</p> */}
         {/* <p>post_id: {id}</p> */}
-        {showAction === id && <button>Delete</button>}
+        {showAction === id && (
+          <button
+            onClick={async (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              try {
+                await deletePost(auth.currentUser?.uid!, id!);
+                router.replace("/", undefined, {
+                  scroll: false,
+                });
+                setshowAction?.("");
+              } catch (error: any) {
+                alert(error.message);
+              }
+            }}
+          >
+            <FontAwesomeIcon icon={faTrash} />
+            Delete
+          </button>
+        )}
         <p>{text}</p>
       </span>
       <div
