@@ -1,14 +1,26 @@
 .container {
-  height: 100%;
+  transition: transform 0.3s ease-in-out;
+  height: 0;
 }
 .container .info {
+  transition: all 0.3s ease-in-out;
   display: flex;
   flex-direction: column;
   flex: 1;
+  opacity: 1;
   justify-content: center;
   align-items: center;
   background-color: white;
   padding-top: 1rem;
+  will-change: opacity;
+}
+.container .info:is(.active) * {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+.container .info:is(:not(.active)) * {
+  opacity: 1;
+  transition: opacity 0.5s ease-in;
 }
 .container .info > h3 {
   padding: 0 1rem;
@@ -25,18 +37,22 @@
   -o-object-fit: cover;
      object-fit: cover;
 }
+.container .myPost {
+  padding-bottom: 1rem;
+}
 .container .myPost .header {
   background-color: white;
-  padding: 1rem;
+  padding: 1rem 0.8rem;
   margin: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 10px;
 }
 .container .myPost .header p {
   margin: 0;
+  flex: 1;
 }
-.container .myPost .header .filterBtn {
+.container .myPost .header > button {
   height: 40px;
   width: 40px;
   border-radius: 100px;
@@ -44,11 +60,12 @@
   padding: 10px;
   background-color: transparent;
   font-size: 1rem;
+  background-color: rgb(238, 238, 238);
 }
-.container .myPost .header .filterBtn:hover {
+.container .myPost .header > button:hover {
   background-color: rgb(216, 216, 216);
 }
-.container .myPost .header .filterBtn:active {
+.container .myPost .header > button:active {
   opacity: 0.8;
   scale: 0.9;
 }/*# sourceMappingURL=Profile.module.css.map */

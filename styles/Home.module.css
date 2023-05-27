@@ -467,6 +467,7 @@
   font-size: 1rem;
   padding: 10px;
   border-radius: 100px;
+  border-color: rgb(192, 192, 192);
 }
 .addPost .footer select:focus-visible {
   outline: 0;

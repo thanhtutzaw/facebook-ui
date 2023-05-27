@@ -40,7 +40,11 @@ export default function Profile() {
       }}
       className={s.container}
     >
-      <div ref={infoRef} className={s.info}>
+      <div
+        // style={{ transition: "all .3s ease-in-out" }}
+        ref={infoRef}
+        className={`${s.info} ${active ? s.active : ""}`}
+      >
         <Image
           className={s.profile}
           width={200}
@@ -69,9 +73,17 @@ export default function Profile() {
             <FontAwesomeIcon color="#0070f3" icon={faGear} />
           </button>
         </h2>
-        {myPost?.map((post: PostType) => (
-          <Post key={post.id} post={post} tabIndex={1} />
-        ))}
+        <div
+          style={{
+            willChange: "margin",
+            marginInline: active ? "1rem" : "initial",
+            transition: "all .2s ease-in-out",
+          }}
+        >
+          {myPost?.map((post: PostType) => (
+            <Post active={active} key={post.id} post={post} tabIndex={1} />
+          ))}
+        </div>
         <p style={{ textAlign: "center" }}>No more posts</p>
       </div>
     </div>

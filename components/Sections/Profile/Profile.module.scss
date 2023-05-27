@@ -1,19 +1,29 @@
 .container {
     transition: transform 0.3s ease-in-out;
-
+    height: 0;
     // padding: 1rem;
     // background-color: white;
     // text-align: center;
     // height: 100%;
     .info {
+        transition: all 0.3s ease-in-out;
         display: flex;
         flex-direction: column;
         flex: 1;
+        opacity: 1;
         justify-content: center;
         align-items: center;
         background-color: white;
         padding-top: 1rem;
-        transition: translate 0.3s ease-in-out;
+        will-change: opacity;
+        &:is(.active) * {
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+        &:is(:not(.active)) * {
+            opacity: 1;
+            transition: opacity 0.5s ease-in;
+        }
         > h3 {
             padding: 0 1rem;
             text-align: center;
@@ -30,10 +40,12 @@
         object-fit: cover;
     }
     .myPost {
+        padding-bottom: 1rem;
         // transform: translateY(-200px);
         .header {
             background-color: white;
-            padding: 1rem;
+            // padding: 1rem;
+            padding: 1rem 0.8rem;
             margin: 0;
             display: flex;
             align-items: center;

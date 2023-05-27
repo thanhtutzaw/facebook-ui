@@ -1,12 +1,15 @@
 import {
+  faCircleCheck,
+  faCircleDot,
   faComment,
+  faEllipsisH,
   faShare,
   faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Post as PostType } from "../../types/interfaces";
 import styles from "./Post.module.scss";
 // import { Post } from "../../types/interfaces";
@@ -15,47 +18,106 @@ import styles from "./Post.module.scss";
 //   post: Post;
 // }
 interface PostProps {
+  active?: boolean;
   post: PostType;
   tabIndex: number;
 }
-export default function Post({ post, tabIndex }: PostProps) {
+export default function Post({ active, post, tabIndex }: PostProps) {
   const { authorId, id, text, visibility, createdAt } = post;
   const [Bounce, setBounce] = useState(false);
   const date = new Timestamp(createdAt.seconds, createdAt.nanoseconds);
   // const date = createdAt ? createdAt?.toDate().toLocaleDateString() : 0;
+  const [checked, setChecked] = useState(false);
+  if (!active && checked) {
+    setChecked(false);
+  }
+
+  const checkRef = useRef<HTMLButtonElement>(null);
+  const uncheckRef = useRef<HTMLButtonElement>(null);
   return (
-    <div className={styles.post}>
-      <div className={styles.header}>
-        <Image
-          className={styles.profile}
-          alt={text}
-          width={200}
-          height={200}
-          style={{ objectFit: "cover" }}
-          src={
-            // "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-            authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
-              ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
-              : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+    <div
+      className={styles.post}
+      style={{ userSelect: active ? "none" : "initial" }}
+    >
+      <span
+        onClick={() => {
+          if (!active) {
+            // setactiveNote(id);
+            // if (activeNote !== id) return;
+            // setactiveNote("");
+          } else {
+            !checked ? checkRef.current?.click() : uncheckRef.current?.click();
           }
-          // src={
-          //   "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-          // }
-        />
-        <div>
-          <p>
-            {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
-              ? "Peter 1"
-              : "Other User"}
-          </p>
-          <p>{date.toDate().toLocaleDateString()}</p>
-          {/* {createdAt && <time>{createdAt ? date : "date"}</time>} */}
-          <p>{visibility}</p>
+        }}
+      >
+        <div className={styles.header}>
+          <div className={styles.left}>
+            <Image
+              className={styles.profile}
+              alt={text}
+              width={200}
+              height={200}
+              style={{ objectFit: "cover" }}
+              src={
+                // "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+                authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
+                  ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
+                  : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+              }
+              // src={
+              //   "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+              // }
+            />
+            <div>
+              <p>
+                {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
+                  ? "Peter 1"
+                  : "Other User"}
+              </p>
+              <p>{date.toDate().toLocaleDateString()}</p>
+              {/* {createdAt && <time>{createdAt ? date : "date"}</time>} */}
+              <p>{visibility}</p>
+            </div>
+          </div>
+          {!active ? (
+            <button>
+              <FontAwesomeIcon icon={faEllipsisH} />
+            </button>
+          ) : (
+            <>
+              {checked ? (
+                <button
+                  ref={uncheckRef}
+                  className={styles.check}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // alert("hey");
+                    setChecked(false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faCircleCheck} />
+                </button>
+              ) : (
+                <button
+                  ref={checkRef}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setChecked(true);
+                    // alert("hey");
+                  }}
+                >
+                  <FontAwesomeIcon icon={faCircleDot} />
+                </button>
+              )}
+            </>
+          )}
         </div>
-      </div>
-      {/* <p>author_Id: {authorId}</p> */}
-      {/* <p>post_id: {id}</p> */}
-      <p>{text}</p>
+        {/* <p>author_Id: {authorId}</p> */}
+        {/* <p>post_id: {id}</p> */}
+        <p>{text}</p>
+      </span>
       <div
         className={styles.action}
         // onPointerEnter={() => setBounce(true)}
