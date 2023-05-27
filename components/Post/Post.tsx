@@ -2,6 +2,7 @@ import {
   faCircleCheck,
   faCircleDot,
   faComment,
+  faEdit,
   faEllipsisH,
   faShare,
   faThumbsUp,
@@ -10,7 +11,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Post as PostType, Props } from "../../types/interfaces";
 import styles from "./Post.module.scss";
 import { useRouter } from "next/router";
@@ -18,6 +19,7 @@ import { AppContext } from "../../context/AppContext";
 import { deletePost } from "../../lib/firestore/post";
 import { getAuth } from "firebase/auth";
 import { app } from "../../lib/firebase";
+import Actions from "./Actions";
 // import { Post } from "../../types/interfaces";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 // interface Props {
@@ -37,13 +39,23 @@ export default function Post({ active, post, tabIndex }: PostProps) {
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
-  const { showAction, setshowAction } = useContext(AppContext) as Props;
+  const {
+    active: tab,
+    showAction,
+    setshowAction,
+  } = useContext(AppContext) as Props;
   if (!active && checked) {
     setChecked(false);
   }
   if (active && showAction) {
     setshowAction?.("");
   }
+  useEffect(() => {
+    if (tab !== "profile" && tab !== "") {
+      setshowAction?.("");
+    }
+  }, [setshowAction, tab]);
+
   const auth = getAuth(app);
   return (
     <div
@@ -92,19 +104,25 @@ export default function Post({ active, post, tabIndex }: PostProps) {
             </div>
           </div>
           {!active ? (
-            <button
-              aria-expanded={showAction !== ""}
-              onClick={(e) => {
-                e.stopPropagation();
-                setshowAction?.(id?.toString());
-                if (showAction === id) {
-                  setshowAction?.("");
-                }
-                // alert(showAction);
-              }}
-            >
-              <FontAwesomeIcon icon={faEllipsisH} />
-            </button>
+            <>
+              {auth?.currentUser?.uid === authorId ? (
+                <button
+                  aria-expanded={showAction !== ""}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setshowAction?.(id?.toString());
+                    if (showAction === id) {
+                      setshowAction?.("");
+                    }
+                    // alert(showAction);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faEllipsisH} />
+                </button>
+              ) : (
+                <></>
+              )}
+            </>
           ) : (
             <>
               {checked ? (
@@ -139,24 +157,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
         {/* <p>author_Id: {authorId}</p> */}
         {/* <p>post_id: {id}</p> */}
         {showAction === id && (
-          <button
-            onClick={async (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              try {
-                await deletePost(auth.currentUser?.uid!, id!);
-                router.replace("/", undefined, {
-                  scroll: false,
-                });
-                setshowAction?.("");
-              } catch (error: any) {
-                alert(error.message);
-              }
-            }}
-          >
-            <FontAwesomeIcon icon={faTrash} />
-            Delete
-          </button>
+          <Actions authorId={authorId!} id={id!} setshowAction={setshowAction!} />
         )}
         <p>{text}</p>
       </span>

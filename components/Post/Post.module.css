@@ -1,6 +1,7 @@
 .post {
   background-color: rgb(253, 253, 253);
   margin: 0.5rem 0;
+  position: relative;
 }
 .post > p {
   word-break: break-word;
@@ -59,6 +60,35 @@
 .header .check {
   color: #15d900;
   background-color: rgba(16, 250, 16, 0.1490196078);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+  position: absolute;
+  top: 55px;
+  right: 1rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  padding-block: 0.7rem;
+  background-color: rgb(241, 241, 241);
+}
+.actions > button {
+  font-size: 1rem;
+  border: 0;
+  display: flex;
+  gap: 10px;
+  padding: 0.5rem 1rem;
+  color: rgb(39, 39, 39);
+}
+.actions > button:hover {
+  background-color: var(--blue-origin);
+  color: white;
+}
+.actions > button:active {
+  opacity: 0.5;
+  scale: 1.1;
 }
 
 .profile {
