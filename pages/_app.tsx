@@ -40,7 +40,7 @@ export default function App({ Component, pageProps }: AppProps) {
         return;
       }
       try {
-        const token = await user.getIdToken();
+        const token = await user.getIdToken(/* forceRefresh */ true);
         // setuser(user);
         // Store the token in a cookie
         nookies.set(undefined, "token", token, {
