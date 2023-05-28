@@ -420,11 +420,21 @@
   h2 {
     margin-top: 0;
     margin-bottom: 0;
-    display: flex;
     flex: 1;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     // padding-inline: 1rem;
     // padding: 1rem;
   }
+}
+.title {
+  // color:red;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block !important;
+  width: 100px;
 }
 .addPost {
   .footer {

@@ -128,7 +128,7 @@ export default function Home({
         // if (active === "" && auth.currentUser) return;
         // if (email === "") return;
         // if (email) return;
-        if (window.location.hash === "#home") return;
+        if (!expired || window.location.hash === "#home") return;
         // if (!expired) return;
         router.push("/");
       }
