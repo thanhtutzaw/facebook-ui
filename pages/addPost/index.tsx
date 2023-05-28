@@ -57,6 +57,7 @@ export default function AddPost() {
       </div>
       <div className={s.footer}>
         <button
+          tabIndex={-1}
           onClick={() => {
             // router.back();
           }}
@@ -64,6 +65,7 @@ export default function AddPost() {
           <FontAwesomeIcon icon={faPhotoFilm} />
         </button>
         <select
+          tabIndex={-1}
           onChange={(e) => {
             setvisibility(e.target.value);
           }}

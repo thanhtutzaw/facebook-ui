@@ -416,6 +416,11 @@
     &:active {
       opacity: 0.6;
     }
+    &:focus-visible {
+      opacity: 0.6;
+      outline: 2px solid var(--blue-origin);
+      outline-offset: 2px;
+    }
   }
   h2 {
     margin-top: 0;
