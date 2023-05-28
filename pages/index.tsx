@@ -128,14 +128,14 @@ export default function Home({
         // if (active === "" && auth.currentUser) return;
         // if (email === "") return;
         // if (email) return;
-        if (!expired || window.location.hash === "#home") return;
+        if (!expired && window.location.hash === "#home") return;
         // if (!expired) return;
         router.push("/");
       }
     });
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth, email]);
+  }, [auth, expired]);
   useEffect(() => {
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
