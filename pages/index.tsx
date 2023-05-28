@@ -127,7 +127,7 @@ export default function Home({
       } else {
         // if (active === "" && auth.currentUser) return;
         // if (email) return;
-        if (!expired) return;
+        // if (!expired) return;
         router.push("/");
       }
     });
