@@ -183,7 +183,7 @@ export default function Home({
   // const [user, setuser] = useState<User | null>(null);
 
   // if (!email || expired) return <Welcome email={""} expired={expired!} />;
-  if (!email || expired) return <Welcome email={""} expired={expired!} />;
+  if (expired) return <Welcome email={""} expired={expired!} />;
   // if (expired && email) return <Welcome />;
   // if (expired && auth.currentUser) return <Welcome />;
   // if (!auth.currentUser)
