@@ -47,6 +47,7 @@ export default function Profile() {
         className={`${s.info} ${active ? s.active : ""}`}
       >
         <Image
+          priority={false}
           className={s.profile}
           width={200}
           height={170}

@@ -41,7 +41,9 @@ export default function Post({ active, post, tabIndex }: PostProps) {
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
+  const photoURL = "";
   const {
+    email,
     active: tab,
     showAction,
     setshowAction,
@@ -86,8 +88,9 @@ export default function Post({ active, post, tabIndex }: PostProps) {
         <div className={styles.header}>
           <div className={styles.left}>
             <Image
+              priority={false}
               className={styles.profile}
-              alt={text}
+              alt={email ?? " "}
               width={200}
               height={200}
               style={{ objectFit: "cover" }}
@@ -95,6 +98,8 @@ export default function Post({ active, post, tabIndex }: PostProps) {
                 // "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
                 authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
                   ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
+                  : photoURL
+                  ? photoURL
                   : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
               }
               // src={
@@ -116,7 +121,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
             <>
               {uid === authorId ? (
                 <motion.button
-                  whileTap={{ scale: "1.1" }}
+                  whileTap={{ scale: 1.3 }}
                   whileHover={{ opacity: 0.8 }}
                   aria-expanded={showAction !== ""}
                   onClick={(e) => {
