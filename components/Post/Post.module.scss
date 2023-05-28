@@ -57,6 +57,7 @@
         border-radius: 100px;
         border: 0;
         color: gray;
+        background-color: transparent;
     }
 
     .check {
@@ -95,8 +96,8 @@
         }
         &:active {
             opacity: 0.5;
-            scale: 0.9;
-            border-radius: 50px;
+            // scale: 0.9;
+            // border-radius: 50px;
         }
     }
 }

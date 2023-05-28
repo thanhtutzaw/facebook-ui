@@ -167,10 +167,11 @@ export default function Post({ active, post, tabIndex }: PostProps) {
           {showAction === id && (
             <motion.div
               key={id}
-              transition={{ type: "spring", stiffness: 100 }}
+              // transition={{ type: "spring", stiffness: 100 }}
               initial={{ opacity: "0", scale: 0.8 }}
               animate={{ opacity: showAction === id ? 1 : 0, scale: 1 }}
               exit={{ opacity: "0", scale: 0.8 }}
+              transition={{ duration: 0.15 }}
               className={styles.actions}
             >
               <Actions
