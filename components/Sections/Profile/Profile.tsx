@@ -12,6 +12,7 @@ import { animate, motion } from "framer-motion";
 export default function Profile() {
   // const { myPost } = props;
   // const { email } = import { AppContext } from "../../../context/AppContext"; as Props;
+  const photoURL = "";
   const { myPost, email } = useContext(AppContext) as Props;
   // const posts = [
   //   {
@@ -56,6 +57,8 @@ export default function Profile() {
           src={
             email === "testuser@gmail.com"
               ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
+              : photoURL
+              ? photoURL
               : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
           }
         />
