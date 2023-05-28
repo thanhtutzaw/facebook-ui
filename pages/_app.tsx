@@ -40,11 +40,13 @@ export default function App({ Component, pageProps }: AppProps) {
         return;
       }
       try {
-        const token = await user.getIdToken(/* forceRefresh */ true);
+        // const token = await user.getIdToken(/* forceRefresh */ true);
+        const token = await user.getIdToken();
         // setuser(user);
         // Store the token in a cookie
         nookies.set(undefined, "token", token, {
-          maxAge: 30 * 24 * 60 * 60,
+          // maxAge: 30 * 24 * 60 * 60,
+          maxAge: 55 * 60,
           path: "/",
           secure: true,
         });

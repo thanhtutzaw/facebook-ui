@@ -27,6 +27,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
     // if (!token) return;
+    const convertSecondsToTime = (seconds: number) => {
+      const days = Math.floor(seconds / (3600 * 24));
+      const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const remainingSeconds = seconds % 60;
+
+      return { days, hours, minutes, seconds: remainingSeconds };
+    };
+    console.log(convertSecondsToTime(token.exp));
     const { email, uid } = token;
     // console.log(token);
     let expired = false;
