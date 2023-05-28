@@ -2,6 +2,7 @@
   background-color: rgb(253, 253, 253);
   margin: 0.5rem 0;
   position: relative;
+  cursor: default;
 }
 .post > p {
   word-break: break-word;

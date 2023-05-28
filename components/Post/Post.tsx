@@ -2,6 +2,7 @@ import {
   faCircleCheck,
   faCircleDot,
   faComment,
+  faDotCircle,
   faEdit,
   faEllipsisH,
   faShare,
@@ -65,7 +66,10 @@ export default function Post({ active, post, tabIndex }: PostProps) {
   return (
     <div
       className={styles.post}
-      style={{ userSelect: active ? "none" : "initial" }}
+      style={{
+        userSelect: active ? "none" : "initial",
+        cursor: active ? "pointer" : "initial",
+      }}
     >
       <span
         onClick={() => {
@@ -147,6 +151,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
                 </button>
               ) : (
                 <button
+                  style={{ opacity: ".3" }}
                   ref={checkRef}
                   onClick={(e) => {
                     e.preventDefault();
@@ -155,7 +160,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
                     // alert("hey");
                   }}
                 >
-                  <FontAwesomeIcon icon={faCircleDot} />
+                  <FontAwesomeIcon icon={faDotCircle} />
                 </button>
               )}
             </>

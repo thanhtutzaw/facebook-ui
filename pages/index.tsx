@@ -126,14 +126,14 @@ export default function Home({
         router.push("/login");
       } else {
         // if (active === "" && auth.currentUser) return;
-        // if (email) return;
-        if (!expired) return;
+        if (email) return;
+        // if (!expired) return;
         router.push("/");
       }
     });
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth, expired]);
+  }, [auth, email]);
   useEffect(() => {
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
