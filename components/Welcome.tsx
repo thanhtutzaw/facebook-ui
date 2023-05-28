@@ -1,5 +1,4 @@
-export function Welcome(props: { email: string; expired: boolean }) {
-  const { email, expired } = props;
+export function Welcome() {
   return (
     <div
       style={{
@@ -20,8 +19,6 @@ export function Welcome(props: { email: string; expired: boolean }) {
       >
         Welcome Back 🎉
       </h2>
-      <h3>{expired ? "true" : "false"}</h3>
-      <h3>{email}</h3>
       <p
         style={{
           userSelect: "none",

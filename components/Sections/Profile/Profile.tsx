@@ -34,19 +34,18 @@ export default function Profile() {
   }, [tab]);
 
   return (
-    <div
-      style={{
-        transform: active
-          ? `translateY(-${infoRef?.current?.clientHeight}px)`
-          : "translateY(0px)",
-      }}
+    <motion.div
+      // transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
+      // animate{{ : active ? 100 : 0 }}
+      style={{ y: active ? -infoRef?.current?.clientHeight! : 0 }}
+      // style={{
+      //   transform: active
+      //     ? `translateY(-${infoRef?.current?.clientHeight}px)`
+      //     : "translateY(0px)",
+      // }}
       className={s.container}
     >
-      <div
-        // style={{ transition: "all .3s ease-in-out" }}
-        ref={infoRef}
-        className={`${s.info} ${active ? s.active : ""}`}
-      >
+      <div ref={infoRef} className={`${s.info} ${active ? s.active : ""}`}>
         <Image
           priority={false}
           className={s.profile}
@@ -74,7 +73,7 @@ export default function Profile() {
           <button>
             <FontAwesomeIcon color="#0070f3" icon={faFilter} />
           </button>
-          <motion.button onClick={() => setactive((prev) => !prev)}>
+          <button onClick={() => setactive((prev) => !prev)}>
             <motion.span
               transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
               animate={{ rotate: active ? 480 : 0 }}
@@ -87,7 +86,7 @@ export default function Profile() {
             >
               <FontAwesomeIcon color="#0070f3" icon={faGear} />
             </motion.span>
-          </motion.button>
+          </button>
         </h2>
         <div
           style={{
@@ -102,6 +101,6 @@ export default function Profile() {
         </div>
         <p style={{ textAlign: "center" }}>No more posts</p>
       </div>
-    </div>
+    </motion.div>
   );
 }

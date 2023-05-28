@@ -138,13 +138,13 @@ export default function Home({
         // if (email === "") return;
         // if (email) return;
         // if (!expired && window.location.hash === "#home") return;
-        // if (!expired) return;
+        if (!expired) return;
         router.push("/");
       }
     });
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth]);
+  }, [auth, expired]);
   useEffect(() => {
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
@@ -189,10 +189,9 @@ export default function Home({
     console.log(active);
     if (active === "/") window.location.hash = "#home";
   }, [active]);
-  // const [user, setuser] = useState<User | null>(null);
 
   // if (!email || expired) return <Welcome email={""} expired={expired!} />;
-  if (expired) return <Welcome email={""} expired={expired!} />;
+  if (expired) return <Welcome />;
   // if (expired && email) return <Welcome />;
   // if (expired && auth.currentUser) return <Welcome />;
   // if (!auth.currentUser)
