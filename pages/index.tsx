@@ -126,7 +126,9 @@ export default function Home({
         router.push("/login");
       } else {
         // if (active === "" && auth.currentUser) return;
-        if (email) return;
+        // if (email === "") return;
+        // if (email) return;
+        if (window.location.hash === "#home") return;
         // if (!expired) return;
         router.push("/");
       }
@@ -180,7 +182,7 @@ export default function Home({
   }, [active]);
   // const [user, setuser] = useState<User | null>(null);
 
-  if (!email || expired) return <Welcome />;
+  if (!email || expired) return <Welcome email={""} expired={expired!} />;
   // if (expired && email) return <Welcome />;
   // if (expired && auth.currentUser) return <Welcome />;
   // if (!auth.currentUser)

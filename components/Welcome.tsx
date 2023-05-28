@@ -1,6 +1,5 @@
-import style from "styled-jsx/style";
-
-export function Welcome() {
+export function Welcome(props: { email: string; expired: boolean }) {
+  const { email, expired } = props;
   return (
     <div
       style={{
@@ -21,6 +20,8 @@ export function Welcome() {
       >
         Welcome Back 🎉
       </h2>
+      <h3>{expired ? "true" : "false"}</h3>
+      <h3>{email}</h3>
       <p
         style={{
           userSelect: "none",
