@@ -189,6 +189,11 @@ export default function Home({
     console.log(active);
     if (active === "/") window.location.hash = "#home";
   }, [active]);
+useEffect(() => {
+  if(expired){
+    router.push('/')
+  }
+}, [expired])
 
   // if (!email || expired) return <Welcome email={""} expired={expired!} />;
   if (expired) return <Welcome />;
