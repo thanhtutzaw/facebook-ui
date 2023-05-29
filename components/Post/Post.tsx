@@ -35,7 +35,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
-  // const photoURL = "";
+  const photoURL = "";
   const {
     email,
     active: tab,
