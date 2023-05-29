@@ -102,7 +102,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
                   : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
               }
             />
-            <div>
+            {/* <div>
               <p>
                 {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
                   ? "Peter 1"
@@ -110,7 +110,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
               </p>
               <p>{date.toDate().toLocaleDateString()}</p>
               <p>{visibility}</p>
-            </div>
+            </div> */}
           </div>
           {/* {!active ? (
             <>
