@@ -88,7 +88,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
         <div className={styles.header}>
           <div className={styles.left}>
             <Image
-              priority={false}
+              // priority={false}
               className={styles.profile}
               alt={email ?? " "}
               width={200}
