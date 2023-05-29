@@ -67,10 +67,10 @@ export default function Post({ active, post, tabIndex }: PostProps) {
   return (
     <div
       className={styles.post}
-      style={{
-        userSelect: active ? "none" : "initial",
-        cursor: active ? "pointer" : "initial",
-      }}
+      // style={{
+      //   userSelect: active ? "none" : "initial",
+      //   cursor: active ? "pointer" : "initial",
+      // }}
     >
       <span
         onClick={() => {
@@ -101,18 +101,17 @@ export default function Post({ active, post, tabIndex }: PostProps) {
                   : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
               }
             /> */}
-            <div>
+            {/* <div>
               <p>
                 {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
                   ? "Peter 1"
                   : "Other User"}
               </p>
               <p>{date.toDate().toLocaleDateString()}</p>
-              {/* {createdAt && <time>{createdAt ? date : "date"}</time>} */}
               <p>{visibility}</p>
-            </div>
+            </div> */}
           </div>
-          {!active ? (
+          {/* {!active ? (
             <>
               {uid === authorId && (
                 <motion.button
@@ -162,11 +161,11 @@ export default function Post({ active, post, tabIndex }: PostProps) {
                 </button>
               )}
             </>
-          )}
+          )} */}
         </div>
         {/* <p>author_Id: {authorId}</p> */}
         {/* <p>post_id: {id}</p> */}
-        <AnimatePresence>
+        {/* <AnimatePresence>
           {showAction === id && (
             <motion.div
               key={id}
@@ -184,15 +183,15 @@ export default function Post({ active, post, tabIndex }: PostProps) {
               />
             </motion.div>
           )}
-        </AnimatePresence>
-        <p>{text}</p>
+        </AnimatePresence> */}
+        {/* <p>{text}</p> */}
       </span>
       <div
         className={styles.action}
         // onPointerEnter={() => setBounce(true)}
         // onPointerLeave={() => setBounce(false)}
       >
-        <button tabIndex={tabIndex}>
+        {/* <button tabIndex={tabIndex}>
           <FontAwesomeIcon bounce={Bounce} icon={faThumbsUp} />
           <p>Like</p>
         </button>
@@ -204,7 +203,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
         <button tabIndex={tabIndex}>
           <FontAwesomeIcon icon={faShare} bounce={Bounce} />
           <p>Share</p>
-        </button>
+        </button> */}
       </div>
     </div>
   );
