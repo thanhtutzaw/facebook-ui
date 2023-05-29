@@ -49,7 +49,7 @@ export default function Profile() {
     >
       <div ref={infoRef} className={`${s.info} ${active ? s.active : ""}`}>
         <Image
-          // priority={false}
+          priority={false}
           className={s.profile}
           width={200}
           height={170}
