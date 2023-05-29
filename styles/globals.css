@@ -38,6 +38,11 @@ main {
   font-size          : 1rem;
 }
 
+.selectModal{
+  display: flex;
+  justify-content: center;
+  
+}
 @keyframes blink {
   from {
     opacity: 0;

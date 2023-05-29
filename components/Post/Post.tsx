@@ -55,11 +55,32 @@ export default function Post({ active, post, tabIndex }: PostProps) {
       }
     }
   }, [active, checked, setshowAction, showAction]);
+
+
+
+
+
+
+
+
+  
+
   const dateString = useRef("");
   useEffect(() => {
     const date = new Timestamp(createdAt.seconds, createdAt.nanoseconds);
     dateString.current = date.toDate().toLocaleDateString();
   }, [createdAt.nanoseconds, createdAt.seconds]);
+
+
+
+
+
+
+
+
+
+
+
 
   useEffect(() => {
     if (tab !== "profile") {

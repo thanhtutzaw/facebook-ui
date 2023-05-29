@@ -17,6 +17,8 @@ import styles from "../../styles/Home.module.scss";
 import { Props } from "../../types/interfaces";
 import Navitems from "./Navitems";
 import SelectModal from "./SelectModal";
+import { AnimatePresence, motion } from "framer-motion";
+import style from "styled-jsx/style";
 const Logo = () => {
   return (
     <div className={styles.logoContainer}>
@@ -91,42 +93,26 @@ export default function Header(props: any) {
         </div>
       </header>
 
-      <nav className={styles.nav}>
-        {pages.map((page, index) => (
-          <Navitems
-            key={page.name}
-            index={index}
-            name={page.name}
-            icon={page.icon}
-          />
-        ))}
-        {/* {selectMode ? (
+      <>
+        <nav style={{ margin: "0 auto" }} className={styles.nav}>
+          {/* <AnimatePresence> */}
           <SelectModal />
-        ) : (
-          <>
-            {pages.map((page, index) => (
-              <Navitems
-                key={page.name}
-                index={index}
-                name={page.name}
-                icon={page.icon}
-              />
-            ))}
-          </>
-        )} */}
-        <div
-          style={{ opacity: selectMode ? 0 : 1 }}
-          className={styles.indicatorContainer}
-        >
+          {/* </AnimatePresence> */}
+
           <div
-            ref={indicatorRef}
-            style={{
-              width: `${width}px`,
-            }}
-            className={styles.indicator}
-          ></div>
-        </div>
-      </nav>
+            style={{ opacity: selectMode ? 0 : 1 }}
+            className={styles.indicatorContainer}
+          >
+            <div
+              ref={indicatorRef}
+              style={{
+                width: `${width}px`,
+              }}
+              className={styles.indicator}
+            ></div>
+          </div>
+        </nav>
+      </>
     </>
   );
 }
