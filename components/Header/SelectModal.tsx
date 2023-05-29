@@ -13,15 +13,16 @@ function SelectModal() {
       {selectMode ? (
         <motion.div
           key="selectModal"
-          initial={{ width: 330, opacity: 0 }}
+          initial={{ width: "90%", opacity: 0 }}
           // initial={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0.3 }}
           animate={{
-            width: !selectMode ? 330 : "100vw",
+            width: !selectMode ? "90%" : "100%",
             opacity: selectMode ? 1 : 0,
           }}
-          exit={{ opacity: 0, width: 330 }}
+          exit={{ opacity: 0, width: "90%" }}
           className="selectModal"
+          style={{ willChange: "width , opacity " }}
           // style={{ width: "400px" }}
         >
           <BackHeader
@@ -54,6 +55,7 @@ function SelectModal() {
             transition={{ duration: 0.3 }}
             exit={{ opacity: 0, width: "60%" }}
             style={{
+              willChange: "width , opacity ",
               opacity: selectMode ? "0" : "1",
               display: "flex",
               width: "100%",

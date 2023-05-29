@@ -1,6 +1,5 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {
-  Timestamp,
   collection,
   collectionGroup,
   getDocs,
@@ -19,7 +18,7 @@ import { useActive } from "../hooks/useActiveTab";
 import { app, db, postToJSON } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import styles from "../styles/Home.module.scss";
-import { Post, Props } from "../types/interfaces";
+import { Props } from "../types/interfaces";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -122,7 +121,6 @@ export default function Home({
   myPost,
 }: Props) {
   // props: InferGetServerSidePropsType<typeof getServerSideProps>
-  // const { posts, email, myPost } = import { AppContext } from "../../../context/AppContext"; as Props;
   const indicatorRef = useRef<HTMLDivElement>(null);
 
   const { active } = useActive();
@@ -187,13 +185,14 @@ export default function Home({
     };
 
     console.log(active);
-    if (active === "/") window.location.hash = "#home";
+    // if (active === "/") window.location.hash = "#home";
   }, [active]);
-useEffect(() => {
-  if(expired){
-    router.push('/')
-  }
-}, [expired])
+  useEffect(() => {
+    if (expired) {
+      router.push("/");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expired]);
 
   // if (!email || expired) return <Welcome email={""} expired={expired!} />;
   if (expired) return <Welcome />;
@@ -215,9 +214,7 @@ useEffect(() => {
   //       <p style={{ textAlign: "center", color: "gray" }}>Loading...</p>;
   //     </div>
   //   );
-  // if (!email) return <></>;
   return (
-    // <AuthProvider value={{ posts, email, myPost }}>
     <AppProvider
       uid={uid}
       allUsers={allUsers}
@@ -231,7 +228,6 @@ useEffect(() => {
           headerContainerRef={headerContainerRef}
           indicatorRef={indicatorRef}
         />
-        {/* {expired ? "true" : "false"} */}
       </div>
       <Tabs indicatorRef={indicatorRef} />
     </AppProvider>
