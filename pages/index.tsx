@@ -149,6 +149,10 @@ export default function Home({
 
     const headerContainer = headerContainerRef?.current;
     if (window.location.hash === "" || window.location.hash === "#home") {
+      if (!headerContainerRef.current) {
+        alert("no headerRef");
+      }
+      if (!email) return;
       if (!headerContainer) return;
       console.log(headerContainerRef.current);
       headerContainer.style.transform = "translateY(0px)";
@@ -178,6 +182,10 @@ export default function Home({
           behavior: "smooth",
         });
         main.style.scrollSnapType = "none";
+        if (!headerContainer) {
+          alert("no header in onhashChange");
+        }
+        if (!email) return;
         if (!headerContainer) return;
         headerContainer.style.transform = "translateY(-60px)";
         headerContainer.style.height = "60px";
@@ -186,7 +194,7 @@ export default function Home({
 
     console.log(active);
     // if (active === "/") window.location.hash = "#home";
-  }, [active]);
+  }, [active, email]);
   useEffect(() => {
     if (expired) {
       router.push("/");
@@ -222,12 +230,8 @@ export default function Home({
       email={email}
       myPost={myPost}
     >
-      {/* {router.asPath} */}
       <div ref={headerContainerRef} className={styles.headerContainer}>
-        <Header
-          headerContainerRef={headerContainerRef}
-          indicatorRef={indicatorRef}
-        />
+        <Header indicatorRef={indicatorRef} />
       </div>
       <Tabs indicatorRef={indicatorRef} />
     </AppProvider>

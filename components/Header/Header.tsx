@@ -54,7 +54,6 @@ export default function Header(props: any) {
       setwidth(Math.floor(nav.clientWidth / 6));
     };
   }, [width]);
-  const { active } = useActive();
   return (
     <>
       <header
