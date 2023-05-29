@@ -198,12 +198,12 @@ export default function Home({
     console.log(active);
     // if (active === "/") window.location.hash = "#home";
   }, [active]);
-  useEffect(() => {
-    if (expired) {
-      router.push("/");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expired]);
+  // useEffect(() => {
+  //   if (expired) {
+  //     router.push("/");
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [expired]);
 
   // if (!email || expired) return <Welcome email={""} expired={expired!} />;
   if (expired) return <Welcome />;
