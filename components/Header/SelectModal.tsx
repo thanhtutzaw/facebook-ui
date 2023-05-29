@@ -46,17 +46,17 @@ function SelectModal() {
         <>
           <motion.div
             // key="navItems"
-            initial={{ width: "100vw", opacity: 1 }}
+            initial={{ width: "100%", opacity: 1 }}
             animate={{
-              width: selectMode ? 330 : "100vw",
+              width: selectMode ? "60%" : "100%",
               opacity: selectMode ? 0 : 1,
             }}
             transition={{ duration: 0.3 }}
-            exit={{ opacity: 0, width: 330 }}
+            exit={{ opacity: 0, width: "60%" }}
             style={{
               opacity: selectMode ? "0" : "1",
               display: "flex",
-              width: "100vw",
+              width: "100%",
               height: "100%",
             }}
           >
