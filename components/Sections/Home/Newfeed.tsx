@@ -24,10 +24,10 @@ export default function Newfeed(props: NewfeedProps) {
           {posts?.map((post: PostType) => (
             <Post tabIndex={tabIndex} key={post.id} post={post} />
           ))}
-          <p style={{ textAlign: "center" }}>No more posts</p>
+          <p>No more posts</p>
         </>
       ) : (
-        <p style={{ textAlign: "center" }}>Empty Posts !</p>
+        <p>Empty Posts !</p>
       )}
 
       {/* {posts?.map((post: PostType, index: number) => (

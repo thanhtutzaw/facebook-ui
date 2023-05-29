@@ -176,8 +176,13 @@
     min-width: 100%;
   }
 }
-.postContainer > div:last-child {
-  margin-bottom: 2rem;
+.postContainer {
+  & > div:last-child {
+    margin-bottom: 2rem;
+  }
+  & > p {
+    text-align: center;
+  }
 }
 .SecondaryloginBtn:disabled,
 .loginBtn:disabled {
