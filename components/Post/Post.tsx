@@ -43,15 +43,18 @@ export default function Post({ active, post, tabIndex }: PostProps) {
     uid,
   } = useContext(AppContext) as Props;
 
-  if (active) {
-    if (showAction) {
-      setshowAction?.("");
+  useEffect(() => {
+    if (active) {
+      if (showAction) {
+        setshowAction?.("");
+      }
+    } else {
+      if (checked) {
+        setChecked(false);
+      }
     }
-  } else {
-    if (checked) {
-      setChecked(false);
-    }
-  }
+  }, [active, checked, setshowAction, showAction]);
+
   useEffect(() => {
     if (tab !== "profile") {
       setshowAction?.("");
