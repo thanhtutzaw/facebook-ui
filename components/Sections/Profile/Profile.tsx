@@ -1,14 +1,14 @@
 import { faFilter, faGear } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 // import { Props } from "../../../pages/index";
+import { motion } from "framer-motion";
 import { AppContext } from "../../../context/AppContext";
+import { useActive } from "../../../hooks/useActiveTab";
 import { Post as PostType, Props } from "../../../types/interfaces";
 import Post from "../../Post/Post";
 import s from "./Profile.module.scss";
-import { useActive } from "../../../hooks/useActiveTab";
-import { animate, motion } from "framer-motion";
 export default function Profile() {
   // const { myPost } = props;
   // const { email } = import { AppContext } from "../../../context/AppContext"; as Props;
@@ -34,7 +34,6 @@ export default function Profile() {
       setactive?.(false);
     }
   }, [setactive, tab]);
-  if (!setactive) return;
 
   return (
     <motion.div
@@ -76,7 +75,7 @@ export default function Profile() {
           <button>
             <FontAwesomeIcon color="#0070f3" icon={faFilter} />
           </button>
-          <button onClick={() => setactive((prev: any) => !prev)}>
+          <button onClick={() => setactive?.((prev: any) => !prev)}>
             <motion.span
               transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
               animate={{ rotate: active ? 480 : 0 }}
