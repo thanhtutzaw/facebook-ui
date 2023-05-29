@@ -152,7 +152,7 @@ export default function Home({
       if (!headerContainerRef.current) {
         alert("no headerRef");
       }
-      if (!email) return;
+      if (expired) return;
       if (!headerContainer) return;
       console.log(headerContainerRef.current);
       headerContainer.style.transform = "translateY(0px)";
@@ -185,7 +185,7 @@ export default function Home({
         if (!headerContainer) {
           alert("no header in onhashChange");
         }
-        if (!email) return;
+        // if (expired) return;
         if (!headerContainer) return;
         headerContainer.style.transform = "translateY(-60px)";
         headerContainer.style.height = "60px";
@@ -194,7 +194,7 @@ export default function Home({
 
     console.log(active);
     // if (active === "/") window.location.hash = "#home";
-  }, [active, email]);
+  }, [active, expired]);
   useEffect(() => {
     if (expired) {
       router.push("/");
