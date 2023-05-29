@@ -134,7 +134,7 @@ export default function Home({
       } else {
         // if (active === "" && auth.currentUser) return;
         // if (email === "") return;
-        if (email) return;
+        // if (email) return;
         // if (!expired && window.location.hash === "#home") return;
         // if (!expired) return;
         router.push("/");
@@ -142,13 +142,17 @@ export default function Home({
     });
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth, email]);
+  }, [auth]);
   useEffect(() => {
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
 
     const headerContainer = headerContainerRef?.current;
-    if (window.location.hash === "" || window.location.hash === "#home") {
+    if (
+      window.location.hash === "" ||
+      window.location.hash === "#home" ||
+      active === "/"
+    ) {
       if (!headerContainerRef.current) {
         alert("no headerRef");
       }
@@ -185,7 +189,7 @@ export default function Home({
         if (!headerContainer) {
           alert("no header in onhashChange");
         }
-        if (expired) return;
+        // if (expired) return;
         if (!headerContainer) return;
         headerContainer.style.transform = "translateY(-60px)";
         headerContainer.style.height = "60px";
@@ -193,7 +197,7 @@ export default function Home({
     };
     console.log(active);
     // if (active === "/") window.location.hash = "#home";
-  }, [active, expired]);
+  }, [active]);
   useEffect(() => {
     if (expired) {
       router.push("/");
