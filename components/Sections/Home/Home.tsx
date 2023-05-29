@@ -65,7 +65,7 @@ export function Home(props: Props) {
           <FontAwesomeIcon color="#0070f3" icon={faPhotoFilm} />
         </button>
       </div>
-      {/* <Newfeed tabIndex={tabIndex} /> */}
+      <Newfeed tabIndex={tabIndex} />
     </div>
   );
 }
