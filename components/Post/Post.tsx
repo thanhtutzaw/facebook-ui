@@ -30,6 +30,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
   const { authorId, id, text, visibility, createdAt } = post;
   const [Bounce, setBounce] = useState(false);
   const date = new Timestamp(createdAt.seconds, createdAt.nanoseconds);
+  const dateString = date.toDate().toLocaleDateString();
   // const date = createdAt ? createdAt?.toDate().toLocaleDateString() : 0;
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
@@ -108,6 +109,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
                   ? "Peter 1"
                   : "Other User"}
               </p>
+              <p>{dateString}</p>
               {/* <p>{date.toDate().toLocaleDateString()}</p> */}
               <p>{visibility}</p>
             </div>
