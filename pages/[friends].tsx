@@ -17,8 +17,7 @@ export default function Page() {
   return (
     <div className="user">
       <BackHeader>
-        <h2 className={s.title}>fdddddddddddddddddddddddddddddddddddddddddd</h2>
-        {/* <h2>{router.query.friends}</h2> */}
+        <h2 className={s.title}>{router.query.friends}</h2>
       </BackHeader>
 
       {/* <p>User: {router.query.friends}</p> */}
