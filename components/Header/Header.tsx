@@ -17,6 +17,7 @@ import Navitems from "./Navitems";
 import { AppContext } from "../../context/AppContext";
 import { Props } from "../../types/interfaces";
 import SelectModal from "./SelectModal";
+import { motion } from "framer-motion";
 const Logo = () => {
   return (
     <div className={styles.logoContainer}>
@@ -102,6 +103,7 @@ export default function Header(props: any) {
             {pages.map((page, index) => (
               <Navitems
                 key={page.name}
+                // key={"hi"}
                 index={index}
                 name={page.name}
                 icon={page.icon}
@@ -109,17 +111,18 @@ export default function Header(props: any) {
             ))}
           </>
         )}
-        {!selectMode && (
-          <div className={styles.indicatorContainer}>
-            <div
-              ref={indicatorRef}
-              style={{
-                width: `${width}px`,
-              }}
-              className={styles.indicator}
-            ></div>
-          </div>
-        )}
+        <motion.div
+          style={{ opacity: selectMode ? 0 : 1 }}
+          className={styles.indicatorContainer}
+        >
+          <div
+            ref={indicatorRef}
+            style={{
+              width: `${width}px`,
+            }}
+            className={styles.indicator}
+          ></div>
+        </motion.div>
       </nav>
     </>
   );
