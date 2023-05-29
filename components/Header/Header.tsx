@@ -11,13 +11,12 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
+import { AppContext } from "../../context/AppContext";
 import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
-import Navitems from "./Navitems";
-import { AppContext } from "../../context/AppContext";
 import { Props } from "../../types/interfaces";
+import Navitems from "./Navitems";
 import SelectModal from "./SelectModal";
-import { motion } from "framer-motion";
 const Logo = () => {
   return (
     <div className={styles.logoContainer}>
@@ -37,10 +36,10 @@ export const pages = [
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
 export default function Header(props: any) {
-  const { indicatorRef, headerContainerRef } = props;
+  const { indicatorRef } = props;
   const { setActive } = useActive();
   const [width, setwidth] = useState<number>();
-  const { selectMode, setselectMode } = useContext(AppContext) as Props;
+  const { selectMode } = useContext(AppContext) as Props;
 
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];
@@ -65,8 +64,6 @@ export default function Header(props: any) {
         className={styles.header}
       >
         <Logo />
-        {/* {headerContainerRef?.current ? "true" : "false"} */}
-        {/* {active} */}
         <div className={styles.action}>
           <button className={styles.logoutBtn}>
             <FontAwesomeIcon
@@ -94,24 +91,30 @@ export default function Header(props: any) {
         </div>
       </header>
 
-      {/* {email && ( */}
       <nav className={styles.nav}>
-        {selectMode ? (
+        {pages.map((page, index) => (
+          <Navitems
+            key={page.name}
+            index={index}
+            name={page.name}
+            icon={page.icon}
+          />
+        ))}
+        {/* {selectMode ? (
           <SelectModal />
         ) : (
           <>
             {pages.map((page, index) => (
               <Navitems
                 key={page.name}
-                // key={"hi"}
                 index={index}
                 name={page.name}
                 icon={page.icon}
               />
             ))}
           </>
-        )}
-        <motion.div
+        )} */}
+        <div
           style={{ opacity: selectMode ? 0 : 1 }}
           className={styles.indicatorContainer}
         >
@@ -122,7 +125,7 @@ export default function Header(props: any) {
             }}
             className={styles.indicator}
           ></div>
-        </motion.div>
+        </div>
       </nav>
     </>
   );
