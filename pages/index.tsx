@@ -147,7 +147,7 @@ export default function Home({
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
 
-    const headerContainer = headerContainerRef?.current;
+    const headerContainer = headerContainerRef?.current!;
     if (
       window.location.hash === "" ||
       window.location.hash === "#home" ||
