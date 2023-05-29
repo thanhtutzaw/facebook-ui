@@ -24,14 +24,17 @@ export default function Profile() {
   //     text: "foo barr222",
   //   },
   // ];
-  const [active, setactive] = useState(false);
+  const { selectMode: active, setselectMode: setactive } = useContext(
+    AppContext
+  ) as Props;
   const { active: tab } = useActive();
   const infoRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (tab !== "profile") {
-      setactive(false);
+      setactive?.(false);
     }
-  }, [tab]);
+  }, [setactive, tab]);
+  if (!setactive) return;
 
   return (
     <motion.div
@@ -73,7 +76,7 @@ export default function Profile() {
           <button>
             <FontAwesomeIcon color="#0070f3" icon={faFilter} />
           </button>
-          <button onClick={() => setactive((prev) => !prev)}>
+          <button onClick={() => setactive((prev: any) => !prev)}>
             <motion.span
               transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
               animate={{ rotate: active ? 480 : 0 }}

@@ -10,7 +10,7 @@ export function AppProvider(props: Props) {
   const { active, setActive } = useActive();
   const [preventClick, setpreventClick] = useState(false);
   const [showAction, setshowAction] = useState("");
-
+const [selectMode, setselectMode] = useState(false);
   // const auth = getAuth(app);
   // const [user, setuser] = useState<User | null>(null);
   // useEffect(() => {
@@ -36,6 +36,8 @@ export function AppProvider(props: Props) {
   return (
     <AppContext.Provider
       value={{
+        selectMode,
+        setselectMode,
         showAction,
         setshowAction,
         active,

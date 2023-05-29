@@ -2,7 +2,10 @@ import { MouseEventHandler, useEffect, useState } from "react";
 import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
 import { useRouter } from "next/router";
-
+import { AppContext } from "../../context/AppContext";
+import { Props } from "../../types/interfaces";
+import { useContext } from "react";
+import SelectModal from "./SelectModal";
 export default function Navitems(props: any) {
   const { icon, name, index } = props;
   const TabName = name.toLowerCase();

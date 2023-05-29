@@ -10,10 +10,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
 import Navitems from "./Navitems";
+import { AppContext } from "../../context/AppContext";
+import { Props } from "../../types/interfaces";
+import SelectModal from "./SelectModal";
 const Logo = () => {
   return (
     <div className={styles.logoContainer}>
@@ -36,6 +39,8 @@ export default function Header(props: any) {
   const { indicatorRef, headerContainerRef } = props;
   const { setActive } = useActive();
   const [width, setwidth] = useState<number>();
+  const { selectMode, setselectMode } = useContext(AppContext) as Props;
+
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];
     setwidth(Math.floor(nav.clientWidth / 6));
@@ -90,23 +95,31 @@ export default function Header(props: any) {
 
       {/* {email && ( */}
       <nav className={styles.nav}>
-        {pages.map((page, index) => (
-          <Navitems
-            key={page.name}
-            index={index}
-            name={page.name}
-            icon={page.icon}
-          />
-        ))}
-        <div className={styles.indicatorContainer}>
-          <div
-            ref={indicatorRef}
-            style={{
-              width: `${width}px`,
-            }}
-            className={styles.indicator}
-          ></div>
-        </div>
+        {selectMode ? (
+          <SelectModal />
+        ) : (
+          <>
+            {pages.map((page, index) => (
+              <Navitems
+                key={page.name}
+                index={index}
+                name={page.name}
+                icon={page.icon}
+              />
+            ))}
+          </>
+        )}
+        {!selectMode && (
+          <div className={styles.indicatorContainer}>
+            <div
+              ref={indicatorRef}
+              style={{
+                width: `${width}px`,
+              }}
+              className={styles.indicator}
+            ></div>
+          </div>
+        )}
       </nav>
     </>
   );

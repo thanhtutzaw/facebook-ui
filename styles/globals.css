@@ -28,6 +28,16 @@ main {
   border-left-color: #0070f3 !important;
 }
 
+.deleteBtn {
+  /* background-color   : red !important; */
+  background-color   : rgba(255, 0, 0, 0.068) !important;
+  color              : red;
+  /* width           : 50px !important; */
+  width              : auto !important;
+  padding            : 0 1rem;
+  font-size          : 1rem;
+}
+
 @keyframes blink {
   from {
     opacity: 0;
