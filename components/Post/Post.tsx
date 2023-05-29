@@ -1,27 +1,20 @@
 import {
   faCircleCheck,
-  faCircleDot,
   faComment,
   faDotCircle,
-  faEdit,
   faEllipsisH,
   faShare,
   faThumbsUp,
-  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Timestamp } from "firebase/firestore";
-import Image from "next/image";
-import { useContext, useEffect, useRef, useState } from "react";
-import { Post as PostType, Props } from "../../types/interfaces";
-import styles from "./Post.module.scss";
-import { useRouter } from "next/router";
-import { AppContext } from "../../context/AppContext";
-import { deletePost } from "../../lib/firestore/post";
-import { getAuth } from "firebase/auth";
-import { app } from "../../lib/firebase";
-import Actions from "./Actions";
 import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/router";
+import { useContext, useEffect, useRef, useState } from "react";
+import { AppContext } from "../../context/AppContext";
+import { Post as PostType, Props } from "../../types/interfaces";
+import Actions from "./Actions";
+import styles from "./Post.module.scss";
 // import { Post } from "../../types/interfaces";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 // interface Props {
@@ -41,7 +34,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
-  const photoURL = "";
+  // const photoURL = "";
   const {
     email,
     active: tab,
@@ -49,11 +42,15 @@ export default function Post({ active, post, tabIndex }: PostProps) {
     setshowAction,
     uid,
   } = useContext(AppContext) as Props;
-  if (!active && checked) {
-    setChecked(false);
-  }
-  if (active && showAction) {
-    setshowAction?.("");
+
+  if (active) {
+    if (showAction) {
+      setshowAction?.("");
+    }
+  } else {
+    if (checked) {
+      setChecked(false);
+    }
   }
   useEffect(() => {
     if (tab !== "profile") {
@@ -64,7 +61,6 @@ export default function Post({ active, post, tabIndex }: PostProps) {
     }
   }, [setshowAction, tab]);
 
-  const auth = getAuth(app);
   return (
     <div
       className={styles.post}
@@ -87,7 +83,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
       >
         <div className={styles.header}>
           <div className={styles.left}>
-            <Image
+            {/* <Image
               // priority={false}
               className={styles.profile}
               alt={email ?? " "}
@@ -95,17 +91,13 @@ export default function Post({ active, post, tabIndex }: PostProps) {
               height={200}
               style={{ objectFit: "cover" }}
               src={
-                // "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
                 authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
                   ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
                   : photoURL
                   ? photoURL
                   : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
               }
-              // src={
-              //   "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-              // }
-            />
+            /> */}
             <div>
               <p>
                 {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
@@ -119,7 +111,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
           </div>
           {!active ? (
             <>
-              {uid === authorId ? (
+              {uid === authorId && (
                 <motion.button
                   whileTap={{ scale: 1.3 }}
                   whileHover={{ opacity: 0.8 }}
@@ -135,8 +127,6 @@ export default function Post({ active, post, tabIndex }: PostProps) {
                 >
                   <FontAwesomeIcon icon={faEllipsisH} />
                 </motion.button>
-              ) : (
-                <></>
               )}
             </>
           ) : (
