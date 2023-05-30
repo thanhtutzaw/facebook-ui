@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
 import { MouseEvent, useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppContext";
-import { useActive } from "../hooks/useActiveTab";
 import styles from "../styles/Home.module.scss";
 import { Props } from "../types/interfaces";
 import { Home } from "./Sections/Home/Home";
@@ -24,8 +23,58 @@ export default function Tabs(props: Props) {
 
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
-  const { active } = useActive();
-  const { setpreventClick } = useContext(AppContext) as Props;
+  // const { active } = useActive();
+  const { setpreventClick, active, headerContainerRef } = useContext(
+    AppContext
+  ) as Props;
+  useEffect(() => {
+    const tabs = document.getElementById("tabs");
+    const main = document.getElementsByTagName("main")[0];
+
+    const headerContainer = headerContainerRef?.current;
+    if (window.location.hash === "" || window.location.hash === "#home") {
+      main.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+    // console.log("in useeffect " + headerContainerRef);
+    // const header = headerContainerRef?.current;
+    // if (!header) return;
+    // if (window.location.hash === "" || window.location.hash === "#home") {
+    //   header.style.height = "120px";
+    //   header.style.transform = "translateY(0px)";
+    //   console.log("yes email " + headerContainerRef.current?.clientHeight);
+    // } else {
+    //   header.style.height = "60px";
+    //   header.style.transform = "translateY(-60px)";
+    //   console.log("no email" + headerContainerRef.current);
+    // }
+    window.onhashchange = () => {
+      if (window.location.hash === "" || window.location.hash === "#home") {
+        if (!headerContainer) return;
+        headerContainer.style.transform = "translateY(0px)";
+        headerContainer.style.height = "120px";
+        tabs?.scrollTo({
+          left: 0,
+          behavior: "smooth",
+        });
+      } else {
+        main.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+        main.style.scrollSnapType = "none";
+
+        if (!headerContainer) return;
+        headerContainer.style.transform = "translateY(-60px)";
+        headerContainer.style.height = "60px";
+      }
+    };
+    console.log(active);
+    if (active === "/") window.location.hash = "#home";
+  }, [active, headerContainerRef]);
+
   useEffect(() => {
     if (active) {
       window.location.hash = active === "/" ? "#home" : `#${active}`;

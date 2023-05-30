@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createContext } from "react";
 import { useActive } from "../hooks/useActiveTab";
 import { Props } from "../types/interfaces";
@@ -10,7 +10,9 @@ export function AppProvider(props: Props) {
   const { active, setActive } = useActive();
   const [preventClick, setpreventClick] = useState(false);
   const [showAction, setshowAction] = useState("");
-const [selectMode, setselectMode] = useState(false);
+  const [selectMode, setselectMode] = useState(false);
+  const headerContainerRef = useRef<HTMLDivElement>(null);
+
   // const auth = getAuth(app);
   // const [user, setuser] = useState<User | null>(null);
   // useEffect(() => {
@@ -36,6 +38,7 @@ const [selectMode, setselectMode] = useState(false);
   return (
     <AppContext.Provider
       value={{
+        headerContainerRef,
         selectMode,
         setselectMode,
         showAction,

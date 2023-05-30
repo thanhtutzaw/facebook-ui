@@ -124,7 +124,7 @@ export default function Home({
   // props: InferGetServerSidePropsType<typeof getServerSideProps>
   const indicatorRef = useRef<HTMLDivElement>(null);
 
-  const { active } = useActive();
+  // const { active } = useActive();
   const router = useRouter();
   const auth = getAuth(app);
   useEffect(() => {
@@ -139,44 +139,7 @@ export default function Home({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
-  const headerContainerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const tabs = document.getElementById("tabs");
-    const main = document.getElementsByTagName("main")[0];
-
-    const headerContainer = headerContainerRef?.current;
-    // console.log(headerContainer);
-    if (window.location.hash === "" || window.location.hash === "#home") {
-      // main.scrollTo({
-      //   top: 0,
-      //   behavior: "smooth",
-      // });
-    }
-    window.onhashchange = () => {
-      if (window.location.hash === "" || window.location.hash === "#home") {
-        if (!headerContainer) return;
-        // headerContainer.style.transform = "translateY(0px)";
-        // headerContainer.style.height = "120px";
-        tabs?.scrollTo({
-          left: 0,
-          behavior: "smooth",
-        });
-      } else {
-        // main.scrollTo({
-        //   top: 0,
-        //   behavior: "smooth",
-        // });
-        main.style.scrollSnapType = "none";
-
-        if (!headerContainer) return;
-        // headerContainer.style.transform = "translateY(-60px)";
-        // headerContainer.style.height = "60px";
-      }
-    };
-    console.log(active);
-    if (active === "/") window.location.hash = "#home";
-  }, [active, headerContainerRef]);
   // }, [active]);
   // useEffect(() => {
   //   if (expired) {
@@ -192,20 +155,7 @@ export default function Home({
   // }, [headerContainerRef]);
 
   // if (!email || expired) return <Welcome email={""} expired={expired!} />;
-  useEffect(() => {
-    console.log("in useeffect " + headerContainerRef);
-    const header = headerContainerRef?.current;
-    if (!header) return;
-    if (window.location.hash === "" || window.location.hash === "#home") {
-      header.style.height = "120px";
-      header.style.transform = "translateY(0px)";
-      console.log("yes email " + headerContainerRef.current?.clientHeight);
-    } else {
-      header.style.height = "60px";
-      header.style.transform = "translateY(-60px)";
-      console.log("no email" + headerContainerRef.current);
-    }
-  }, [active]);
+
   if (expired) return <Welcome />;
   // if (expired && email) return <Welcome />;
   // if (expired && auth.currentUser) return <Welcome />;
@@ -234,18 +184,7 @@ export default function Home({
       email={email}
       myPost={myPost}
     >
-      <div
-        style={
-          {
-            // transform: active === "/" ? "translateY(0px)" : "translateY(-60px)",
-            // height: active === "/" ? "120px" : "60px",
-          }
-        }
-        ref={headerContainerRef}
-        className={styles.headerContainer}
-      >
-        <Header indicatorRef={indicatorRef} />
-      </div>
+      <Header indicatorRef={indicatorRef} />
       <Tabs indicatorRef={indicatorRef} />
     </AppProvider>
   );

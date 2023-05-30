@@ -42,7 +42,9 @@ export default function Header(props: any) {
   const { indicatorRef } = props;
   const { setActive } = useActive();
   const [width, setwidth] = useState<number>();
-  const { selectMode, setselectMode } = useContext(AppContext) as Props;
+  const { selectMode, setselectMode, headerContainerRef, active } = useContext(
+    AppContext
+  ) as Props;
 
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];
@@ -65,15 +67,25 @@ export default function Header(props: any) {
       setselectMode?.(false);
     };
   }, [selectMode]);
+
   // useEffect(() => {
   //   const parent = indicatorRef.current?.parentElement;
   //   if (window.location.hash === "#home") {
   //     parent.opacity = "1";
   //   }
   // }, [indicatorRef]);
-
+  
   return (
-    <>
+    <div
+      style={
+        {
+          // transform: active === "/" ? "translateY(0px)" : "translateY(-60px)",
+          // height: active === "/" ? "120px" : "60px",
+        }
+      }
+      ref={headerContainerRef}
+      className={styles.headerContainer}
+    >
       <header
         style={{
           display: "flex",
@@ -95,7 +107,7 @@ export default function Header(props: any) {
             aria-label="go to logout button"
             className={styles.logoutBtn}
             onClick={() => {
-              setActive("menu");
+              setActive?.("menu");
               const tabs = document.getElementById("tabs");
               tabs?.scrollTo({
                 left: 5 * tabs.clientWidth,
@@ -173,6 +185,6 @@ export default function Header(props: any) {
           ></div>
         </div>
       </nav>
-    </>
+    </div>
   );
 }

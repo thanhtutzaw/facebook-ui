@@ -23,5 +23,6 @@ export interface Props {
   myPost?: Post[];
   posts?: Post[];
   email?: string | null;
+  headerContainerRef?: React.RefObject<HTMLDivElement>;
   indicatorRef?: React.RefObject<HTMLDivElement>;
 }
