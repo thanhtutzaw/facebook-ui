@@ -131,12 +131,12 @@ export default function Home({
       if (!user) {
         router.push("/login");
       } else {
+        router.push("/");
         // if (active === "" && auth.currentUser) return;
         // if (email === "") return;
         // if (email) return;
         // if (!expired && window.location.hash === "#home") return;
         // if (!expired) return;
-        router.push("/");
       }
     });
     return () => unsub();
