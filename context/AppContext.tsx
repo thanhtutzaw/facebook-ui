@@ -1,18 +1,25 @@
-import { useRef, useState, useEffect   } from "react";
+import { useRef, useState, useEffect } from "react";
 import { createContext } from "react";
 import { useActive } from "../hooks/useActiveTab";
 import { Props } from "../types/interfaces";
+import { useRouter } from "next/router";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
 export const AppContext = createContext<Props | null>(null);
 
 export function AppProvider(props: Props) {
-  const { uid, allUsers, posts, email, myPost } = props;
+  const { uid, allUsers, posts, email, myPost, expired } = props;
   const { active, setActive } = useActive();
   const [preventClick, setpreventClick] = useState(false);
   const [showAction, setshowAction] = useState("");
   const [selectMode, setselectMode] = useState(false);
   const headerContainerRef = useRef<HTMLDivElement>(null);
-
+  const router = useRouter();
+  useEffect(() => {
+    if (expired) {
+      router.push("/");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expired]);
   // const auth = getAuth(app);
   // const [user, setuser] = useState<User | null>(null);
   // useEffect(() => {

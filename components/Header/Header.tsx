@@ -60,13 +60,18 @@ export default function Header(props: any) {
   const router = useRouter();
   useEffect(() => {
     window.onpopstate = () => {
-      if (window.location.hash === "#home") return;
-      history.pushState(null, document.title, location.hash);
-      // if (!selectMode && window.location.hash === "#profile") router.back();
-      if (!selectMode) return;
-      setselectMode?.(false);
+      if (window.location.hash === "#profile") {
+        history.pushState(null, document.title, location.hash);
+        if (selectMode) {
+          setselectMode?.(false);
+        } else {
+          // history.pushState(null, document.title, "hi");
+        }
+        // if (!selectMode && window.location.hash === "#profile") router.back();
+        // if (!selectMode) return;
+      }
     };
-  }, [selectMode]);
+  }, [selectMode, setselectMode]);
 
   // useEffect(() => {
   //   const parent = indicatorRef.current?.parentElement;

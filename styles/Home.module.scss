@@ -77,7 +77,7 @@
     max-width: var(--main-width);
     position: absolute;
     top: calc(120px - 3px);
-    opacity:1;
+    opacity: 1;
     transition: opacity 0.2s ease-in-out;
     .indicator {
       height: 3px;
@@ -148,7 +148,9 @@
     }
   }
 }
-@media only screen and (min-width: 500px) {
+
+// @media only screen and (min-width: 500px) {
+@media only screen and (hover: hover) and (pointer: fine) {
   .nav .navItems:hover > div {
     background-color: rgb(199, 199, 199);
   }

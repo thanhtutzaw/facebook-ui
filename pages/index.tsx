@@ -141,12 +141,7 @@ export default function Home({
   }, [auth, expired]);
 
   // }, [active]);
-  // useEffect(() => {
-  //   if (expired) {
-  //     router.push("/");
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [expired]);
+
   // useEffect(() => {
   //   if (headerContainerRef) {
   //     router.push("/");
@@ -155,7 +150,7 @@ export default function Home({
   // }, [headerContainerRef]);
 
   // if (!email || expired) return <Welcome email={""} expired={expired!} />;
- 
+
   if (expired) return <Welcome />;
   // if (expired && email) return <Welcome />;
   // if (expired && auth.currentUser) return <Welcome />;
@@ -178,6 +173,7 @@ export default function Home({
 
   return (
     <AppProvider
+      expired={expired}
       uid={uid}
       allUsers={allUsers}
       posts={posts}
