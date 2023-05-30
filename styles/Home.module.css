@@ -9,8 +9,8 @@
 }
 
 .headerContainer {
-  transition: transform 0.2s ease, height 0.2s ease;
-  will-change: height;
+  transition: transform 0.18s ease, height 0.15s ease;
+  will-change: height, transform;
   transform: translateY(0px);
 }
 .headerContainer .header {
@@ -21,8 +21,8 @@
 }
 .headerContainer .header .action {
   display: flex;
-  margin-right: 0.7rem;
-  gap: 10px;
+  margin-right: 0.8rem;
+  gap: 0.8rem;
 }
 .headerContainer .header .action > button {
   cursor: pointer;
@@ -78,6 +78,8 @@
   max-width: var(--main-width);
   position: absolute;
   top: 117px;
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
 }
 .nav .indicatorContainer .indicator {
   height: 3px;
@@ -173,6 +175,9 @@
 
 .postContainer > div:last-child {
   margin-bottom: 2rem;
+}
+.postContainer > p {
+  text-align: center;
 }
 
 .SecondaryloginBtn:disabled,
@@ -376,7 +381,7 @@
   padding-left: 10px;
   height: 65px;
   width: 100vw;
-  max-width: 500px;
+  max-width: var(--main-width);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -414,11 +419,26 @@
 .backHeader .submit:active {
   opacity: 0.6;
 }
+.backHeader .submit:focus-visible {
+  opacity: 0.6;
+  outline: 2px solid var(--blue-origin);
+  outline-offset: 2px;
+}
 .backHeader h2 {
   margin-top: 0;
   margin-bottom: 0;
-  display: flex;
   flex: 1;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block !important;
+  width: 100px;
 }
 
 .addPost .footer {
@@ -427,7 +447,7 @@
   padding: 0 1rem;
   height: 65px;
   width: 100vw;
-  max-width: 500px;
+  max-width: var(--main-width);
   padding: 0 1rem;
   /* padding-left: 10px; */
   justify-content: space-between;
