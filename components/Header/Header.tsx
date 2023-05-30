@@ -42,7 +42,7 @@ export default function Header(props: any) {
   const { indicatorRef } = props;
   const { setActive } = useActive();
   const [width, setwidth] = useState<number>();
-  const { selectMode, setselectMode, headerContainerRef, active } = useContext(
+  const { selectMode, setselectMode, headerContainerRef } = useContext(
     AppContext
   ) as Props;
 
@@ -74,7 +74,7 @@ export default function Header(props: any) {
   //     parent.opacity = "1";
   //   }
   // }, [indicatorRef]);
-  
+
   return (
     <div
       style={
@@ -107,7 +107,7 @@ export default function Header(props: any) {
             aria-label="go to logout button"
             className={styles.logoutBtn}
             onClick={() => {
-              setActive?.("menu");
+              setActive("menu");
               const tabs = document.getElementById("tabs");
               tabs?.scrollTo({
                 left: 5 * tabs.clientWidth,

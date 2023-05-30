@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect   } from "react";
 import { createContext } from "react";
 import { useActive } from "../hooks/useActiveTab";
 import { Props } from "../types/interfaces";
@@ -35,6 +35,46 @@ export function AppProvider(props: Props) {
   //     }
   //   });
   // }, [auth, user]);
+  useEffect(() => {
+    const tabs = document.getElementById("tabs");
+    const main = document.getElementsByTagName("main")[0];
+
+    const headerContainer = headerContainerRef?.current;
+    if (window.location.hash === "" || window.location.hash === "#home") {
+      if (!headerContainer) return;
+      console.log(headerContainerRef.current);
+      headerContainer.style.transform = "translateY(0px)";
+      headerContainer.style.height = "120px";
+      main.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      tabs?.scrollTo({
+        left: 0,
+        behavior: "smooth",
+      });
+    }
+    window.onhashchange = (e) => {
+      if (window.location.hash === "" || window.location.hash === "#home") {
+        tabs?.scrollTo({
+          left: 0,
+          behavior: "smooth",
+        });
+      } else {
+        main.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+        main.style.scrollSnapType = "none";
+        if (!headerContainer) return;
+        headerContainer.style.transform = "translateY(-60px)";
+        headerContainer.style.height = "60px";
+      }
+    };
+
+    console.log(active);
+    if (active === "/") window.location.hash = "#home";
+  }, [active]);
   return (
     <AppContext.Provider
       value={{

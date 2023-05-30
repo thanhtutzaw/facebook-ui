@@ -124,7 +124,7 @@ export default function Home({
   // props: InferGetServerSidePropsType<typeof getServerSideProps>
   const indicatorRef = useRef<HTMLDivElement>(null);
 
-  // const { active } = useActive();
+  const { active } = useActive();
   const router = useRouter();
   const auth = getAuth(app);
   useEffect(() => {
@@ -155,7 +155,7 @@ export default function Home({
   // }, [headerContainerRef]);
 
   // if (!email || expired) return <Welcome email={""} expired={expired!} />;
-
+ 
   if (expired) return <Welcome />;
   // if (expired && email) return <Welcome />;
   // if (expired && auth.currentUser) return <Welcome />;
