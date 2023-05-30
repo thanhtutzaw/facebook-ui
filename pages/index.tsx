@@ -137,7 +137,7 @@ export default function Home({
     });
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth]);
+  }, [auth, email]);
   const headerContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
