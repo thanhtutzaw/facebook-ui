@@ -97,14 +97,15 @@ export default function Header(props: any) {
           {selectMode ? (
             <motion.div
               key="selectModal"
-              initial={{ width: "90%", opacity: 0 }}
+              initial={{ width: "70%", opacity: 0 }}
               // initial={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.25 }}
               animate={{
-                width: !selectMode ? "90%" : "100%",
+                // width: !selectMode ? "90%" : "100%",
+                width: !selectMode ? "70%" : "100%",
                 opacity: selectMode ? 1 : 0,
               }}
-              exit={{ opacity: 0, width: "90%" }}
+              exit={{ opacity: 0, width: "70%" }}
               className="selectModal"
               style={{ willChange: "width , opacity " }}
               // style={{ width: "400px" }}
@@ -119,7 +120,7 @@ export default function Header(props: any) {
                 width: selectMode ? "60%" : "100%",
                 opacity: selectMode ? 0 : 1,
               }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.25 }}
               exit={{ opacity: 0, width: "60%" }}
               style={{
                 willChange: "width , opacity ",

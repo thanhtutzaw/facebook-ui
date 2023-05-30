@@ -3,6 +3,24 @@
   --main-width : 500px;
 }
 
+@media only screen and (orientation:landscape) {
+  :root {
+    --main-width: 700px;
+  }
+}
+
+@media only screen and (orientation:landscape) and (pointer: coarse) {
+  :root {
+    --main-width: 100vw;
+  }
+}
+
+/* @media only screen and (min-aspect-ratio: 1/1) {
+  :root {
+    --main-width: 100vw;
+  }
+} */
+
 main {
   width          : 100vw;
   max-width      : var(--main-width);
@@ -38,11 +56,12 @@ main {
   font-size          : 1rem;
 }
 
-.selectModal{
-  display: flex;
+.selectModal {
+  display        : flex;
   justify-content: center;
-  
+
 }
+
 @keyframes blink {
   from {
     opacity: 0;

@@ -187,9 +187,10 @@ export default function Story({ email }: StoryProps) {
           <div className={styles.storyProfile}>
             <Image
               priority={true}
-              width={200}
+              // width={200}
+              width={95}
               height={170}
-              style={{ objectFit: "cover", width: "100%", height: "105px" }}
+              style={{ objectFit: "cover", height: "105px" }}
               alt={email || ""}
               src={
                 email === "testuser@gmail.com"
