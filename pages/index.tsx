@@ -131,6 +131,7 @@ export default function Home({
       if (!user) {
         router.push("/login");
       } else {
+        if (email) return;
         router.push("/");
       }
     });
@@ -154,8 +155,8 @@ export default function Home({
     window.onhashchange = () => {
       if (window.location.hash === "" || window.location.hash === "#home") {
         if (!headerContainer) return;
-        headerContainer.style.transform = "translateY(0px)";
-        headerContainer.style.height = "120px";
+        // headerContainer.style.transform = "translateY(0px)";
+        // headerContainer.style.height = "120px";
         tabs?.scrollTo({
           left: 0,
           behavior: "smooth",
@@ -168,8 +169,8 @@ export default function Home({
         main.style.scrollSnapType = "none";
 
         if (!headerContainer) return;
-        headerContainer.style.transform = "translateY(-60px)";
-        headerContainer.style.height = "60px";
+        // headerContainer.style.transform = "translateY(-60px)";
+        // headerContainer.style.height = "60px";
       }
     };
     console.log(active);
@@ -217,7 +218,14 @@ export default function Home({
       email={email}
       myPost={myPost}
     >
-      <div ref={headerContainerRef} className={styles.headerContainer}>
+      <div
+        style={{
+          transform: active === "/" ? "translateY(0px)" : "translateY(-60px)",
+          height: active === "/" ? "120px" : "60px",
+        }}
+        ref={headerContainerRef}
+        className={styles.headerContainer}
+      >
         <Header indicatorRef={indicatorRef} />
       </div>
       <Tabs indicatorRef={indicatorRef} />

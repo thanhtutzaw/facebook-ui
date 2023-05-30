@@ -41,7 +41,7 @@ export default function Header(props: any) {
   const { indicatorRef } = props;
   const { setActive } = useActive();
   const [width, setwidth] = useState<number>();
-  const { selectMode } = useContext(AppContext) as Props;
+  const { selectMode, setselectMode } = useContext(AppContext) as Props;
 
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];
@@ -54,6 +54,14 @@ export default function Header(props: any) {
       setwidth(Math.floor(nav.clientWidth / 6));
     };
   }, [width]);
+  useEffect(() => {
+    window.onpopstate = () => {
+      history.pushState(null, document.title, location.hash);
+      if (!selectMode) return;
+      setselectMode?.(false);
+    };
+  }, [selectMode, setselectMode]);
+
   return (
     <>
       <header
@@ -99,7 +107,7 @@ export default function Header(props: any) {
               key="selectModal"
               initial={{ width: "70%", opacity: 0 }}
               // initial={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.2 }}
               animate={{
                 // width: !selectMode ? "90%" : "100%",
                 width: !selectMode ? "70%" : "100%",
@@ -120,7 +128,7 @@ export default function Header(props: any) {
                 width: selectMode ? "60%" : "100%",
                 opacity: selectMode ? 0 : 1,
               }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.2 }}
               exit={{ opacity: 0, width: "60%" }}
               style={{
                 willChange: "width , opacity ",

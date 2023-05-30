@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AppContext } from "../../context/AppContext";
 import { Props } from "../../types/interfaces";
 import BackHeader from "./BackHeader";
@@ -9,7 +9,7 @@ import useEscape from "../../hooks/useEscape";
 
 function SelectModal() {
   const { selectMode, setselectMode } = useContext(AppContext) as Props;
-
+ 
   useEscape(() => {
     if (!selectMode) return;
     setselectMode?.(false);
