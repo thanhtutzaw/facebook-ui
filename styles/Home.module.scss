@@ -179,7 +179,12 @@
     max-width: var(--main-width);
     min-width: 100%;
   }
+  & > div:first-child {
+    // padding-top: 0px;
+    // transition: padding 0.18s ease;
+  }
 }
+
 .postContainer {
   & > div:last-child {
     margin-bottom: 2rem;

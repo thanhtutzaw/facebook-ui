@@ -6,7 +6,7 @@ import styles from "../../../styles/Home.module.scss";
 import Newfeed from "./Newfeed";
 import Story from "./Story";
 import { useContext } from "react";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import { getServerSideProps } from "../../../pages";
 import { AppContext } from "../../../context/AppContext";
 // import { getServerSideProps } from "../../../pages/_app";
@@ -20,12 +20,33 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
 export function Home(props: Props) {
   const { tabIndex, canDrag } = props;
   const router = useRouter();
-  const { email } = useContext(AppContext) as Props;
+  const { email, headerContainerRef } = useContext(AppContext) as Props;
   return (
     <div
       // style={{ pointerEvents: canDrag ? "none" : "initial" }}
       id="/"
       className={styles.home}
+      onScroll={(e) => {
+        // console.log();
+        const home = document.getElementById("/");
+
+        const header = headerContainerRef?.current;
+        if (!header) return;
+        if (!home) return;
+        // if (e.currentTarget.scrollTop >= 39) {
+        // }
+        if (e.currentTarget.scrollTop >= 60) {
+          // console.log(home);
+          // home.style.paddingTop = "55px";
+
+          header.style.transform = "translateY(-60px)";
+          header.style.height = "60px";
+        } else {
+          // home.style.paddingTop = "0px";
+          header.style.transform = "translateY(0px)";
+          header.style.height = "120px";
+        }
+      }}
     >
       <Story email={email} />
       <div className={styles.postAction}>
