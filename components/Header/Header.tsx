@@ -92,26 +92,68 @@ export default function Header(props: any) {
         </div>
       </header>
 
-      <>
-        <nav style={{ margin: "0 auto" }} className={styles.nav}>
-          {/* <AnimatePresence> */}
-          <SelectModal />
-          {/* </AnimatePresence> */}
-
-          <div
-            style={{ opacity: selectMode ? 0 : 1 }}
-            className={styles.indicatorContainer}
-          >
-            <div
-              ref={indicatorRef}
-              style={{
-                width: `${width}px`,
+      <nav className={styles.nav}>
+        <AnimatePresence mode="wait">
+          {selectMode ? (
+            <motion.div
+              key="selectModal"
+              initial={{ width: "90%", opacity: 0 }}
+              // initial={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              animate={{
+                width: !selectMode ? "90%" : "100%",
+                opacity: selectMode ? 1 : 0,
               }}
-              className={styles.indicator}
-            ></div>
-          </div>
-        </nav>
-      </>
+              exit={{ opacity: 0, width: "90%" }}
+              className="selectModal"
+              style={{ willChange: "width , opacity " }}
+              // style={{ width: "400px" }}
+            >
+              <SelectModal />
+            </motion.div>
+          ) : (
+            <motion.div
+              // key="navItems"
+              initial={{ width: "100%", opacity: 1 }}
+              animate={{
+                width: selectMode ? "60%" : "100%",
+                opacity: selectMode ? 0 : 1,
+              }}
+              transition={{ duration: 0.3 }}
+              exit={{ opacity: 0, width: "60%" }}
+              style={{
+                willChange: "width , opacity ",
+                opacity: selectMode ? "0" : "1",
+                display: "flex",
+                width: "100%",
+                height: "100%",
+              }}
+            >
+              {pages.map((page, index) => (
+                <Navitems
+                  key={page.name}
+                  index={index}
+                  name={page.name}
+                  icon={page.icon}
+                />
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div
+          style={{ opacity: selectMode ? 0 : 1 }}
+          className={styles.indicatorContainer}
+        >
+          <div
+            ref={indicatorRef}
+            style={{
+              width: `${width}px`,
+            }}
+            className={styles.indicator}
+          ></div>
+        </div>
+      </nav>
     </>
   );
 }

@@ -126,7 +126,6 @@ export default function Home({
   const { active } = useActive();
   const router = useRouter();
   const auth = getAuth(app);
-  const headerContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) {
@@ -143,16 +142,17 @@ export default function Home({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth]);
+  const headerContainerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
 
-    const headerContainer = headerContainerRef?.current!;
+    const headerContainer = headerContainerRef?.current;
     if (window.location.hash === "" || window.location.hash === "#home") {
       if (!headerContainerRef.current) {
         alert("no headerRef");
       }
-      // if (expired) return;
       if (!headerContainer) return;
       console.log(headerContainerRef.current);
       headerContainer.style.transform = "translateY(0px)";
@@ -185,7 +185,6 @@ export default function Home({
         if (!headerContainer) {
           alert("no header in onhashChange");
         }
-        // if (expired) return;
         if (!headerContainer) return;
         headerContainer.style.transform = "translateY(-60px)";
         headerContainer.style.height = "60px";
@@ -193,7 +192,8 @@ export default function Home({
     };
     console.log(active);
     if (active === "/") window.location.hash = "#home";
-  }, [active]);
+  }, [active, headerContainerRef]);
+  // }, [active]);
   // useEffect(() => {
   //   if (expired) {
   //     router.push("/");
