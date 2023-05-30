@@ -19,6 +19,7 @@ import { app, db, postToJSON } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import styles from "../styles/Home.module.scss";
 import { Props } from "../types/interfaces";
+import style from "styled-jsx/style";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -145,7 +146,7 @@ export default function Home({
     const main = document.getElementsByTagName("main")[0];
 
     const headerContainer = headerContainerRef?.current;
-    console.log(headerContainer);
+    // console.log(headerContainer);
     if (window.location.hash === "" || window.location.hash === "#home") {
       // main.scrollTo({
       //   top: 0,
@@ -191,6 +192,20 @@ export default function Home({
   // }, [headerContainerRef]);
 
   // if (!email || expired) return <Welcome email={""} expired={expired!} />;
+  useEffect(() => {
+    console.log("in useeffect " + headerContainerRef);
+    const header = headerContainerRef?.current;
+    if (!header) return;
+    if (window.location.hash === "" || window.location.hash === "#home") {
+      header.style.height = "120px";
+      header.style.transform = "translateY(0px)";
+      console.log("yes email " + headerContainerRef.current?.clientHeight);
+    } else {
+      header.style.height = "60px";
+      header.style.transform = "translateY(-60px)";
+      console.log("no email" + headerContainerRef.current);
+    }
+  }, [active]);
   if (expired) return <Welcome />;
   // if (expired && email) return <Welcome />;
   // if (expired && auth.currentUser) return <Welcome />;
@@ -210,6 +225,7 @@ export default function Home({
   //       <p style={{ textAlign: "center", color: "gray" }}>Loading...</p>;
   //     </div>
   //   );
+
   return (
     <AppProvider
       uid={uid}
@@ -219,10 +235,12 @@ export default function Home({
       myPost={myPost}
     >
       <div
-        style={{
-          transform: active === "/" ? "translateY(0px)" : "translateY(-60px)",
-          height: active === "/" ? "120px" : "60px",
-        }}
+        style={
+          {
+            // transform: active === "/" ? "translateY(0px)" : "translateY(-60px)",
+            // height: active === "/" ? "120px" : "60px",
+          }
+        }
         ref={headerContainerRef}
         className={styles.headerContainer}
       >
