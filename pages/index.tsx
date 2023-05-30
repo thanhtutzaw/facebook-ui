@@ -192,7 +192,7 @@ export default function Home({
       }
     };
     console.log(active);
-    // if (active === "/") window.location.hash = "#home";
+    if (active === "/") window.location.hash = "#home";
   }, [active]);
   // useEffect(() => {
   //   if (expired) {
@@ -200,12 +200,12 @@ export default function Home({
   //   }
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [expired]);
-  useEffect(() => {
-    if (headerContainerRef) {
-      router.push("/");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [headerContainerRef]);
+  // useEffect(() => {
+  //   if (headerContainerRef) {
+  //     router.push("/");
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [headerContainerRef]);
 
   // if (!email || expired) return <Welcome email={""} expired={expired!} />;
   if (expired) return <Welcome />;
