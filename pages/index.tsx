@@ -132,11 +132,6 @@ export default function Home({
         router.push("/login");
       } else {
         router.push("/");
-        // if (active === "" && auth.currentUser) return;
-        // if (email === "") return;
-        // if (email) return;
-        // if (!expired && window.location.hash === "#home") return;
-        // if (!expired) return;
       }
     });
     return () => unsub();
@@ -149,42 +144,29 @@ export default function Home({
     const main = document.getElementsByTagName("main")[0];
 
     const headerContainer = headerContainerRef?.current;
+    console.log(headerContainer);
     if (window.location.hash === "" || window.location.hash === "#home") {
-      if (!headerContainerRef.current) {
-        alert("no headerRef");
-      }
-      if (!headerContainer) return;
-      console.log(headerContainerRef.current);
-      headerContainer.style.transform = "translateY(0px)";
-      headerContainer.style.height = "120px";
-      main.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+      // main.scrollTo({
+      //   top: 0,
+      //   behavior: "smooth",
+      // });
     }
-    //hereeee
-
-    if (window.location.hash === "" || window.location.hash === "#home") {
-      tabs?.scrollTo({
-        left: 0,
-        behavior: "smooth",
-      });
-    }
-    window.onhashchange = (e) => {
+    window.onhashchange = () => {
       if (window.location.hash === "" || window.location.hash === "#home") {
+        if (!headerContainer) return;
+        headerContainer.style.transform = "translateY(0px)";
+        headerContainer.style.height = "120px";
         tabs?.scrollTo({
           left: 0,
           behavior: "smooth",
         });
       } else {
-        main.scrollTo({
-          top: 0,
-          behavior: "smooth",
-        });
+        // main.scrollTo({
+        //   top: 0,
+        //   behavior: "smooth",
+        // });
         main.style.scrollSnapType = "none";
-        if (!headerContainer) {
-          alert("no header in onhashChange");
-        }
+
         if (!headerContainer) return;
         headerContainer.style.transform = "translateY(-60px)";
         headerContainer.style.height = "60px";

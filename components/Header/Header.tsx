@@ -99,7 +99,7 @@ export default function Header(props: any) {
               key="selectModal"
               initial={{ width: "90%", opacity: 0 }}
               // initial={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.2 }}
               animate={{
                 width: !selectMode ? "90%" : "100%",
                 opacity: selectMode ? 1 : 0,
@@ -119,7 +119,7 @@ export default function Header(props: any) {
                 width: selectMode ? "60%" : "100%",
                 opacity: selectMode ? 0 : 1,
               }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.2 }}
               exit={{ opacity: 0, width: "60%" }}
               style={{
                 willChange: "width , opacity ",
