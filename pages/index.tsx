@@ -132,13 +132,13 @@ export default function Home({
       if (!user) {
         router.push("/login");
       } else {
-        if (email) return;
+        if (!expired) return;
         router.push("/");
       }
     });
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth, email]);
+  }, [auth, expired]);
   const headerContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

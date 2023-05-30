@@ -19,6 +19,7 @@ import Navitems from "./Navitems";
 import SelectModal from "./SelectModal";
 import { AnimatePresence, motion } from "framer-motion";
 import style from "styled-jsx/style";
+import { useRouter } from "next/router";
 const Logo = () => {
   return (
     <div className={styles.logoContainer}>
@@ -54,13 +55,22 @@ export default function Header(props: any) {
       setwidth(Math.floor(nav.clientWidth / 6));
     };
   }, [width]);
+  const router = useRouter();
   useEffect(() => {
     window.onpopstate = () => {
+      if (window.location.hash === "#home") return;
       history.pushState(null, document.title, location.hash);
+      // if (!selectMode && window.location.hash === "#profile") router.back();
       if (!selectMode) return;
       setselectMode?.(false);
     };
-  }, [selectMode, setselectMode]);
+  }, [selectMode]);
+  // useEffect(() => {
+  //   const parent = indicatorRef.current?.parentElement;
+  //   if (window.location.hash === "#home") {
+  //     parent.opacity = "1";
+  //   }
+  // }, [indicatorRef]);
 
   return (
     <>
