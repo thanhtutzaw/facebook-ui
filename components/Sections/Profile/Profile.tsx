@@ -54,7 +54,7 @@ export default function Profile() {
         <Image
           priority={false}
           className={s.profile}
-          width={200}
+          width={500}
           height={170}
           style={{ objectFit: "cover", width: "120px", height: "120px" }}
           alt={email || "profile"}

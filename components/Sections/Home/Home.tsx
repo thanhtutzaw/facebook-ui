@@ -51,7 +51,7 @@ export function Home(props: Props) {
       <Story email={email} />
       <div className={styles.postAction}>
         <Image
-          priority={true}
+          // priority={true}
           className={styles.profile}
           alt={"add post"}
           width={200}
