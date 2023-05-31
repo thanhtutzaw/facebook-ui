@@ -184,7 +184,13 @@
     // transition: padding 0.18s ease;
   }
 }
-
+.userContent {
+  margin-block: 65px;
+  text-align: center;
+  display: grid;
+  align-content: center;
+  color: gray;
+}
 .postContainer {
   & > div:last-child {
     margin-bottom: 2rem;
@@ -526,7 +532,14 @@
     }
   }
 }
-
+.input {
+  padding: 1rem;
+  margin-block: 65px;
+  > div {
+    outline: 0;
+    border: 0;
+  }
+}
 .card {
   margin: 1rem;
   padding: 1.5rem;

@@ -8,7 +8,10 @@ export default function Card(props: { children: ReactNode; f: any }) {
   const { f } = props;
   const { preventClick } = useContext(AppContext) as Props;
   return (
-    <Link href={f} style={{ pointerEvents: preventClick ? "none" : "initial" }}>
+    <Link
+      href={"rEvJE0sb1yVJxfHTbtn915TSfqJ2"}
+      style={{ pointerEvents: preventClick ? "none" : "initial" }}
+    >
       <div className={s.card}>
         <Image
           className={s.profile}

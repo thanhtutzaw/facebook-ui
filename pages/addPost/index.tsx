@@ -70,14 +70,14 @@ export default function AddPost() {
             setvisibility(e.target.value);
           }}
         >
-          <option value="public" key="Public">
+          <option value="Pubilc" key="Public">
             Public
           </option>
-          <option value="friends" key="Friends">
+          <option value="Friend" key="Friends">
             {/* <option disabled value="friends" key="Friends"> */}
             Friends
           </option>
-          <option value="onlyme" key="Only Me">
+          <option value="Onlyme" key="Only Me">
             {/* <option disabled value="onlyme" key="Only Me"> */}
             Only Me
           </option>

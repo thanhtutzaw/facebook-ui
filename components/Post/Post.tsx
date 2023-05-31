@@ -78,7 +78,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
       <span
         onClick={() => {
           if (!active) {
-            router.push(id?.toString()!);
+            router.push(authorId + "/" + id?.toString()!);
             // setactiveNote(id);
             // if (activeNote !== id) return;
             // setactiveNote("");
@@ -111,6 +111,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
                   : "Other User"}
               </p>
               <p>{dateString.current}</p>
+              {/* <p>{visibility?.[0] === "public" ? "hi" : visibility}</p> */}
               <p>{visibility}</p>
             </div>
           </div>

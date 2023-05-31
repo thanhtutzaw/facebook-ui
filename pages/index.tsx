@@ -40,8 +40,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // console.log(token);
     let expired = false;
 
-    const allUsersQuery = collectionGroup(db, `users`);
-    const allUsersSnap = await getDocs(allUsersQuery);
 
     const postQuery = query(
       collectionGroup(db, `posts`),
@@ -71,6 +69,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const myPostSnap = await getDocs(mypostQuery);
 
     const myPost = myPostSnap.docs.map((doc) => postToJSON(doc));
+    // if (!myPost) {
+    //   return {
+    //     notFound: true,
+    //   };
+    // }
+    const allUsersQuery = collectionGroup(db, `users`);
+
+    const allUsersSnap = await getDocs(allUsersQuery);
+
     const allUsers = allUsersSnap.docs
       .map((doc) => {
         const data = doc.data();
