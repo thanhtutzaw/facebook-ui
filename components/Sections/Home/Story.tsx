@@ -189,7 +189,7 @@ export default function Story({ email }: StoryProps) {
               priority={true}
               width={95}
               height={170}
-              style={{ objectFit: "cover", width: "auto", height: "105px" }}
+              style={{ objectFit: "cover", height: "105px" }}
               alt={email || ""}
               src={
                 email === "testuser@gmail.com"
