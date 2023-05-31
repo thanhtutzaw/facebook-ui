@@ -6,20 +6,23 @@ import BackHeader from "./BackHeader";
 import Navitems from "./Navitems";
 import { pages } from "./Header";
 import useEscape from "../../hooks/useEscape";
+import { useRouter } from "next/router";
 
 function SelectModal() {
   const { selectMode, setselectMode } = useContext(AppContext) as Props;
- 
+
   useEscape(() => {
     if (!selectMode) return;
     setselectMode?.(false);
   });
-
+  const router = useRouter();
   return (
     <BackHeader
       selectMode={selectMode!}
       onClick={() => {
+        router.back();
         setselectMode?.(false);
+        // window.location.hash = ""
       }}
       style={{
         position: "initial",

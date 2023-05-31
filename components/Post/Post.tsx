@@ -46,24 +46,11 @@ export default function Post({ active, post, tabIndex }: PostProps) {
 
   useEffect(() => {
     if (active) {
-      if (showAction) {
-        setshowAction?.("");
-      }
+      showAction && setshowAction?.("");
     } else {
-      if (checked) {
-        setChecked(false);
-      }
+      checked && setChecked(false);
     }
   }, [active, checked, setshowAction, showAction]);
-
-
-
-
-
-
-
-
-  
 
   const dateString = useRef("");
   useEffect(() => {
@@ -71,24 +58,13 @@ export default function Post({ active, post, tabIndex }: PostProps) {
     dateString.current = date.toDate().toLocaleDateString();
   }, [createdAt.nanoseconds, createdAt.seconds]);
 
-
-
-
-
-
-
-
-
-
-
-
   useEffect(() => {
-    if (tab !== "profile") {
+    if (tab !== "profile" || "") {
       setshowAction?.("");
     }
-    if (tab !== "") {
-      setshowAction?.("");
-    }
+    // if (tab !== "") {
+    //   setshowAction?.("");
+    // }
   }, [setshowAction, tab]);
 
   return (

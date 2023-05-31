@@ -33,7 +33,10 @@ export default function Profile() {
     if (tab !== "profile") {
       setactive?.(false);
     }
-  }, [setactive, tab]);
+    if (active) {
+      window.location.hash = "selecting";
+    }
+  }, [setactive, tab, active]);
 
   return (
     <motion.div

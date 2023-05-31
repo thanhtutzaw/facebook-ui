@@ -60,11 +60,18 @@ export default function Header(props: any) {
   const router = useRouter();
   useEffect(() => {
     window.onpopstate = () => {
+      // if (window.location. === "/") {
+      //   history.pushState(null, document.title, location.hash);
+      // }
       if (window.location.hash === "#profile") {
-        history.pushState(null, document.title, location.hash);
+        // if (window.location.href === "/") {
+        // history.pushState(null, document.title, location.hash);
+        // }
         if (selectMode) {
+          // window.location.hash = "selecting";
           setselectMode?.(false);
         } else {
+          // history.pushState(null, document.title, location.hash);
           // history.pushState(null, document.title, "hi");
         }
         // if (!selectMode && window.location.hash === "#profile") router.back();
