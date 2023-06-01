@@ -22,19 +22,15 @@
 } */
 
 main {
-  width          : 100vw;
-  max-width      : var(--main-width);
-  overflow       : auto;
-  height         : 100dvh;
-  scroll-behavior: smooth;
-  transition     : scale 0.3s cubic-bezier(1, 0.14, 0.01, 1.09), opacity 0.3s cubic-bezier(1, 0.14, 0.01, 1.09);
-
+  width           : 100vw;
+  max-width       : var(--main-width);
+  overflow        : auto;
+  height          : 100dvh;
+  scroll-behavior : smooth;
+  transition      : scale 0.3s cubic-bezier(1, 0.14, 0.01, 1.09), opacity 0.3s cubic-bezier(1, 0.14, 0.01, 1.09);
+  background-color: white;
 }
 
-main:only-child {
-  background-color   : white;
-  /* height          : 100dvh; */
-}
 
 #nprogress .bar {
   background-color: #0070f3 !important;
@@ -149,7 +145,7 @@ button:disabled {
 }
 
 
-/* ::-webkit-scrollbar {
+::-webkit-scrollbar {
   width     : 0;
   display   : none;
   background: transparent;
@@ -157,4 +153,4 @@ button:disabled {
 
 ::-webkit-scrollbar-thumb {
   background: #a0a0a0;
-} */
+}
