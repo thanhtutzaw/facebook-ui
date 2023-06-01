@@ -1,17 +1,10 @@
-import { MouseEventHandler, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
-import { useRouter } from "next/router";
-import { AppContext } from "../../context/AppContext";
-import { Props } from "../../types/interfaces";
-import { useContext } from "react";
-import SelectModal from "./SelectModal";
 export default function Navitems(props: any) {
   const { icon, name, index } = props;
   const TabName = name.toLowerCase();
   const { active, setActive } = useActive();
-  // const [focus, setfocus] = useState(false);
-  // const indicator = document.querySelector('.indicatorContainer>.indicator')
   useEffect(() => {
     //     const indicator = document.getElementsByClassName(
     //       "Home_indicator__htkkp"
@@ -46,15 +39,21 @@ export default function Navitems(props: any) {
 
   const isActive = active === TabName ? styles.active : "";
 
-  // const activeTab = TabName === "/" ? "#home" : "#" + TabName;
-  // TabName === "/" && router.asPath !== "/" ? "#home" : "#" + TabName;
-  function handleClick() {
+  function handleClick(e: React.MouseEvent<HTMLDivElement>) {
     setActive(TabName);
     window.location.hash = TabName === "/" ? "#home" : "#" + TabName;
     const tabs = document.getElementById("tabs");
+    const div = document.getElementById(TabName);
     tabs?.scrollTo({
       left: index * tabs.clientWidth,
+      behavior: "smooth",
     });
+    if (TabName === active) {
+      div?.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
   }
   return (
     <div onClick={handleClick} className={`${styles.navItems} ${isActive}`}>
