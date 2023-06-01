@@ -78,7 +78,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
     >
       <Link
         scroll={false}
-        href={authorId + "/" + id?.toString()}
+        href={`${authorId}/${id?.toString()}`}
         onClick={() => {
           if (!active) {
             // router.push(authorId + "/" + id?.toString()!);

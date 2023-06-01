@@ -142,6 +142,7 @@ button:disabled {
   } */
 }
 
+/* 
 ::-webkit-scrollbar {
   width     : 0;
   display   : none;
@@ -150,4 +151,4 @@ button:disabled {
 
 ::-webkit-scrollbar-thumb {
   background: #a0a0a0;
-}
+} */

@@ -23,7 +23,7 @@ import { useRouter } from "next/router";
 const Logo = () => {
   return (
     <div className={styles.logoContainer}>
-      <Link href="/" className={styles.logo}>
+      <Link scroll={false} href="/" className={styles.logo}>
         facebook
       </Link>
     </div>

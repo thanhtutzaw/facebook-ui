@@ -18,10 +18,10 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   useEffect(() => {
     const handleRouteStart = () => {
-      nProgress.start();
+      // nProgress.start();
     };
     const handleRouteDone = () => {
-      nProgress.done();
+      // nProgress.done();
     };
     router.events.on("routeChangeStart", handleRouteStart);
     router.events.on("routeChangeComplete", handleRouteDone);

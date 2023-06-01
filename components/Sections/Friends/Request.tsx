@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import s from "./Friends.module.scss";
-import Image from "next/image";
-import Link from "next/link";
 import Card from "./Card";
 interface RequestProps {
   f: string;

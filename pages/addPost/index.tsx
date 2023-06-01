@@ -59,7 +59,6 @@ export default function AddPost() {
         <button
           tabIndex={-1}
           onClick={() => {
-            // router.back();
           }}
         >
           <FontAwesomeIcon icon={faPhotoFilm} />

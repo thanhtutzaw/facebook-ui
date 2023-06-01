@@ -9,6 +9,7 @@ export default function Card(props: { children: ReactNode; f: any }) {
   const { preventClick } = useContext(AppContext) as Props;
   return (
     <Link
+      scroll={false}
       href={"rEvJE0sb1yVJxfHTbtn915TSfqJ2"}
       style={{ pointerEvents: preventClick ? "none" : "initial" }}
     >

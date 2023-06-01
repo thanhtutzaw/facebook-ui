@@ -1,6 +1,5 @@
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { CSSProperties, MouseEventHandler, ReactNode } from "react";
 import s from "../../styles/Home.module.scss";
@@ -17,11 +16,7 @@ function BackHeader(props: {
       router.back();
     });
   return (
-    <div
-      
-      style={props.style}
-      className={s.backHeader}
-    >
+    <div style={props.style} className={s.backHeader}>
       <button onClick={handleClick}>
         <FontAwesomeIcon icon={faArrowLeft} />
       </button>

@@ -86,6 +86,7 @@ export default function Page(props: { uid: string; myPost: Post }) {
       <BackHeader
         onClick={() => {
           router.back();
+          // window.history.back();
           // router.push(`/#profile`, undefined, { shallow: true });
           // setActive("profile");
           // router.push(`/#profile`, undefined, { shallow: true });
