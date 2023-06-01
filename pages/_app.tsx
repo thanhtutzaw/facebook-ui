@@ -12,10 +12,69 @@ import { getAuth, onIdTokenChanged } from "firebase/auth";
 import nookies from "nookies";
 import { PageProvider } from "../context/PageContext";
 import { app } from "../lib/firebase";
+import { GetServerSideProps } from "next";
+import { verifyIdToken } from "../lib/firebaseAdmin";
+import { Props } from "../types/interfaces";
 
 config.autoAddCss = false;
-export default function App({ Component, pageProps }: AppProps) {
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
+  try {
+    const cookies = nookies.get(context);
+    const token = await verifyIdToken(cookies.token);
+    // console.log(token);
+    let expired = false;
+
+    // const getDate = (post: Post) => {
+    //   const date = new Timestamp(
+    //     post.createdAt.seconds,
+    //     post.createdAt.nanoseconds
+    //   );
+    //   return {
+    //     date,
+    //   };
+    // };
+    // .sort((a, b) => a.createdAt - b.createdAt);
+
+    // getting all users posts
+    // db/users/uid-JE0sy/posts/abc
+    // const data = doc.data() as Post;
+
+    // if (!myPost) {
+    //   return {
+    //     notFound: true,
+    //   };
+    // }
+    return {
+      props: {
+        expired,
+      },
+    };
+  } catch (error) {
+    console.log("SSR Error " + error);
+    // context.res.writeHead(302, { Location: "/" });
+    // context.res.writeHead(302, { Location: "/login" });
+    // context.res.end();
+    return {
+      props: {
+        expired: true,
+      },
+    };
+  }
+};
+export default function App({
+  Component,
+  pageProps,
+  expired,
+}: AppProps & { expired: boolean }) {
   const router = useRouter();
+  useEffect(() => {
+    if (expired) {
+      router.push("/");
+      console.log("expired and pushed(_app.tsx)");
+    }
+  }, [expired, router]);
   useEffect(() => {
     const handleRouteStart = () => {
       nProgress.start();
@@ -62,18 +121,6 @@ export default function App({ Component, pageProps }: AppProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const auth = getAuth(app);
-  // useEffect(() => {
-  //   const unsub = onAuthStateChanged(auth, (user) => {
-  //     if (!user) {
-  //       router.push("/login");
-  //     } else {
-  //       router.push("/");
-  //     }
-  //   });
-
-  //   return () => unsub();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [auth]); // Add auth as a dependency to useEffect
   return (
     <>
       <Head>

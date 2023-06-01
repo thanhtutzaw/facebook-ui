@@ -77,8 +77,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     };
   }
 };
-export default function Page(props: { uid: string; myPost: Post }) {
-  const { uid, myPost } = props;
+export default function Page(props: {
+  uid: string;
+  myPost: Post;
+  email: string;
+}) {
+  const { uid, myPost, email } = props;
   const router = useRouter();
   const { active, setActive } = useContext(PageContext) as PageProps;
   return (
@@ -99,7 +103,10 @@ export default function Page(props: { uid: string; myPost: Post }) {
         {/* {active} */}
         {/* <h2>{uid}</h2> */}
         {/* <h2 className={s.title}>{myPost.id}</h2> */}
-        <h2 className={s.title}>Post</h2>
+        {/* <h2 className={s.title}>Post</h2> */}
+        <h2 className={s.title}>{email}</h2>
+        <h2 className={s.title}>{uid}</h2>
+
         {/* <h2 className={s.title}>{active}</h2> */}
 
         {/* <h2 className={s.title}>{router.query.friends}</h2> */}

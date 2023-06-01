@@ -15,12 +15,12 @@ export function AppProvider(props: Props) {
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   useEffect(() => {
+    // if (expired && router.asPath !== "/") {
     if (expired) {
       router.push("/");
-      console.log("expired and pushed");
+      console.log("expired and pushed(AppContext)");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expired]);
+  }, [expired, router]);
   // const auth = getAuth(app);
   // const [user, setuser] = useState<User | null>(null);
   // useEffect(() => {
