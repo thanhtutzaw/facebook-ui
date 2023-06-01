@@ -40,7 +40,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // console.log(token);
     let expired = false;
 
-
     const postQuery = query(
       collectionGroup(db, `posts`),
       orderBy("createdAt", "desc")
@@ -143,6 +142,9 @@ export default function Home({
         router.push("/");
       }
     });
+    if (expired) {
+      router.push("/");
+    }
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);

@@ -17,6 +17,7 @@ export function AppProvider(props: Props) {
   useEffect(() => {
     if (expired) {
       router.push("/");
+      console.log("expired and pushed");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expired]);
