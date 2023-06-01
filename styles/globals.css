@@ -31,6 +31,11 @@ main {
 
 }
 
+main:only-child {
+  background-color   : white;
+  /* height          : 100dvh; */
+}
+
 #nprogress .bar {
   background-color: #0070f3 !important;
 }
@@ -80,9 +85,6 @@ main {
 }
 
 
-main:only-child {
-  background-color: white;
-}
 
 html,
 body {
@@ -94,13 +96,13 @@ body {
 }
 
 body {
-  display         : flex;
-  justify-content : center;
-  align-items     : center;
-  height          : 100%;
-  background-color: rgb(214, 214, 214);
-  background-color: #005cc5c0;
-  background-color: rgb(184, 184, 184);
+  display            : flex;
+  justify-content    : center;
+  align-items        : center;
+  /* height          : 100%; */
+  background-color   : rgb(214, 214, 214);
+  background-color   : #005cc5c0;
+  background-color   : rgb(184, 184, 184);
 
 }
 
@@ -119,6 +121,10 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+.user {
+  /* height: 100vh; */
 }
 
 button {
@@ -142,8 +148,8 @@ button:disabled {
   } */
 }
 
-/* 
-::-webkit-scrollbar {
+
+/* ::-webkit-scrollbar {
   width     : 0;
   display   : none;
   background: transparent;

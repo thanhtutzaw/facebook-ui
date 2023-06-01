@@ -7,11 +7,8 @@ const nextConfig = {
 module.exports = nextConfig
 
 module.exports = {
-  experimental: {
-    scrollRestoration: true,
-  },
   i18n: {
-    locales: ['en'],
+    locales: ['en'],  
     defaultLocale: 'en',
   },
   images: {

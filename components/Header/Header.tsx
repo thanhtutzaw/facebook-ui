@@ -77,6 +77,9 @@ export default function Header(props: any) {
         // if (!selectMode) return;
       }
     };
+    // if (selectMode) {
+    //   window.location.hash = "#selecting";
+    // }
   }, [selectMode, setselectMode]);
 
   // useEffect(() => {

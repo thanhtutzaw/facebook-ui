@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useContext, useEffect, useRef } from "react";
 // import { Props } from "../../../pages/index";
 import { motion } from "framer-motion";
+import { useRouter } from "next/router";
 import { AppContext } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
 import { Post as PostType, Props } from "../../../types/interfaces";
@@ -29,6 +30,7 @@ export default function Profile() {
   ) as Props;
   const { active: tab } = useActive();
   const infoRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   useEffect(() => {
     if (tab !== "profile") {
       setactive?.(false);
@@ -36,6 +38,10 @@ export default function Profile() {
     if (active) {
       window.location.hash = "selecting";
     }
+    if (!active && tab === "profile" && window.location.hash === "#selecting") {
+      router.back();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setactive, tab, active]);
 
   return (

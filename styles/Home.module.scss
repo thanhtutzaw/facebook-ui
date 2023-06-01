@@ -526,6 +526,8 @@
   .input {
     padding: 1rem;
     margin-block: 65px;
+    background-color: red;
+
     > div {
       outline: 0;
       border: 0;
@@ -534,7 +536,10 @@
 }
 .input {
   padding: 1rem;
-  margin-block: 65px;
+  // margin-block: 65px;
+  margin-top: 65px;
+  // min-height: calc(100dvh - 60px);
+  // min-height: 100vh;
   > div {
     outline: 0;
     border: 0;

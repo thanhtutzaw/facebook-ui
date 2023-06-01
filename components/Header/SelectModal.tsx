@@ -10,17 +10,18 @@ import { useRouter } from "next/router";
 
 function SelectModal() {
   const { selectMode, setselectMode } = useContext(AppContext) as Props;
+  const router = useRouter();
 
   useEscape(() => {
     if (!selectMode) return;
     setselectMode?.(false);
+    // router.back();
   });
-  const router = useRouter();
   return (
     <BackHeader
       selectMode={selectMode!}
       onClick={() => {
-        router.back();
+        // router.back();
         setselectMode?.(false);
         // window.location.hash = ""
       }}

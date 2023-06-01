@@ -104,7 +104,7 @@ export default function Page(props: { uid: string; myPost: Post }) {
 
         {/* <h2 className={s.title}>{router.query.friends}</h2> */}
       </BackHeader>
-      <div contentEditable={false} className={s.input}>
+      <div contentEditable={true} className={s.input}>
         {myPost.text}
       </div>
       {/* <p>User: {router.query.friends}</p> */}
