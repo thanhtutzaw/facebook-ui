@@ -140,10 +140,12 @@ export default function Home({
       } else {
         if (!expired) return;
         router.push("/");
+        console.log("expired , user exist and pushed");
       }
     });
     if (expired) {
       router.push("/");
+      console.log("expired , pushed in index");
     }
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
