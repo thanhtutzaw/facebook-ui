@@ -185,11 +185,12 @@ export default function Story({ email }: StoryProps) {
           className={`${styles.storyCard} ${styles.addStory}`}
         >
           <div className={styles.storyProfile}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <Image
               priority={true}
-              width={95}
+              width={150}
               height={170}
-              style={{ objectFit: "cover", height: "105px" }}
+              style={{ objectFit: "cover", width: "95px", height: "105px" }}
               alt={email || ""}
               src={
                 email === "testuser@gmail.com"
