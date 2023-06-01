@@ -14,6 +14,8 @@ import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { Post, Props } from "../../types/interfaces";
 import nookies from "nookies";
 import console from "console";
+import { useContext } from "react";
+import { PageContext, PageProps } from "../../context/PageContext";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -78,13 +80,27 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 export default function Page(props: { uid: string; myPost: Post }) {
   const { uid, myPost } = props;
   const router = useRouter();
+  const { active, setActive } = useContext(PageContext) as PageProps;
   return (
     <div className="user">
-      <BackHeader>
+      <BackHeader
+        onClick={() => {
+          router.back();
+          // router.push(`/#profile`, undefined, { shallow: true });
+          // setActive("profile");
+          // router.push(`/#profile`, undefined, { shallow: true });
+          // if (router.asPath !== "/") {
+          //   router.back();
+          // } else if (active === "profile") {
+          // }
+        }}
+      >
         {/* {active} */}
         {/* <h2>{uid}</h2> */}
         {/* <h2 className={s.title}>{myPost.id}</h2> */}
         <h2 className={s.title}>Post</h2>
+        {/* <h2 className={s.title}>{active}</h2> */}
+
         {/* <h2 className={s.title}>{router.query.friends}</h2> */}
       </BackHeader>
       <div contentEditable={false} className={s.input}>

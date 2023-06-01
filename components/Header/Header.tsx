@@ -51,7 +51,6 @@ export default function Header(props: any) {
     setwidth(Math.floor(nav.clientWidth / 6));
     window.onresize = () => {
       setwidth(Math.floor(nav.clientWidth / 6));
-      console.log("resize");
     };
     window.onbeforeunload = () => {
       setwidth(Math.floor(nav.clientWidth / 6));

@@ -10,6 +10,7 @@ import "../styles/globals.css";
 
 import { getAuth, onIdTokenChanged } from "firebase/auth";
 import nookies from "nookies";
+import { PageProvider } from "../context/PageContext";
 import { app } from "../lib/firebase";
 
 config.autoAddCss = false;
@@ -82,9 +83,11 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/logo.svg" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <main>
-        <Component {...pageProps} />
-      </main>
+      <PageProvider active={""} setActive={Function}>
+        <main>
+          <Component {...pageProps} />
+        </main>
+      </PageProvider>
     </>
   );
 }

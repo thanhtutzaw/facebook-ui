@@ -50,13 +50,12 @@ export function AppProvider(props: Props) {
     const headerContainer = headerContainerRef?.current;
     if (window.location.hash === "" || window.location.hash === "#home") {
       if (!headerContainer) return;
-      console.log(headerContainerRef.current);
       headerContainer.style.transform = "translateY(0px)";
       headerContainer.style.height = "120px";
-      main.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+      // main.scrollTo({
+      //   top: 0,
+      //   behavior: "smooth",
+      // });
       tabs?.scrollTo({
         left: 0,
         behavior: "smooth",
@@ -69,10 +68,10 @@ export function AppProvider(props: Props) {
           behavior: "smooth",
         });
       } else {
-        main.scrollTo({
-          top: 0,
-          behavior: "smooth",
-        });
+        // main.scrollTo({
+        //   top: 0,
+        //   behavior: "smooth",
+        // });
         main.style.scrollSnapType = "none";
         if (!headerContainer) return;
         headerContainer.style.transform = "translateY(-60px)";
@@ -80,8 +79,7 @@ export function AppProvider(props: Props) {
       }
     };
 
-    console.log(active);
-    if (active === "/") window.location.hash = "#home";
+    // if (active === "/") window.location.hash = "#home";
   }, [active]);
   return (
     <AppContext.Provider

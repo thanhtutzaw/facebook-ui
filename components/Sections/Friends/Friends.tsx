@@ -9,9 +9,6 @@ interface FriendProps {
 }
 export default function Friend(props: FriendProps) {
   const { tabIndex } = props;
-  useEffect(() => {
-    console.log("Friend is Rendering");
-  }, []);
 
   const Requests = ["Aunt May", "Peter 2", "Peter 3"];
   // const Suggestions = ["Captain America", "Iron Man", "Thor"];
