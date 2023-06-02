@@ -81,114 +81,117 @@ export default function Post({ active, post, tabIndex }: PostProps) {
         // href={`${authorId}/${id?.toString()}`}
         onClick={() => {
           if (!active) {
-            router.push(`${authorId}/${id?.toString()}`);
+            router.push({
+              pathname: `${authorId}/${id?.toString()}`,
+              // query: { edit: false },
+            });
           } else {
             !checked ? checkRef.current?.click() : uncheckRef.current?.click();
           }
         }}
       >
-          <div className={styles.header}>
-            <div className={styles.left}>
-              <Image
-                priority={false}
-                className={styles.profile}
-                alt={email ?? " "}
-                width={200}
-                height={200}
-                style={{ objectFit: "cover" }}
-                src={
-                  authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
-                    ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
-                    : photoURL
-                    ? photoURL
-                    : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-                }
-              />
-              <div>
-                <p>
-                  {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
-                    ? "Peter 1"
-                    : "Other User"}
-                </p>
-                <p>{dateString.current}</p>
-                {/* <p>{visibility?.[0] === "public" ? "hi" : visibility}</p> */}
-                <p>{visibility}</p>
-              </div>
+        <div className={styles.header}>
+          <div className={styles.left}>
+            <Image
+              priority={false}
+              className={styles.profile}
+              alt={email ?? " "}
+              width={200}
+              height={200}
+              style={{ objectFit: "cover" }}
+              src={
+                authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
+                  ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
+                  : photoURL
+                  ? photoURL
+                  : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+              }
+            />
+            <div>
+              <p>
+                {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
+                  ? "Peter 1"
+                  : "Other User"}
+              </p>
+              <p>{dateString.current}</p>
+              {/* <p>{visibility?.[0] === "public" ? "hi" : visibility}</p> */}
+              <p>{visibility}</p>
             </div>
-            {!active ? (
-              <>
-                {uid === authorId && (
-                  <motion.button
-                    whileTap={{ scale: 1.3 }}
-                    whileHover={{ opacity: 0.8 }}
-                    aria-expanded={showAction !== ""}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setshowAction?.(id?.toString());
-                      if (showAction === id) {
-                        setshowAction?.("");
-                      }
-                      // alert(showAction);
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faEllipsisH} />
-                  </motion.button>
-                )}
-              </>
-            ) : (
-              <>
-                {checked ? (
-                  <button
-                    ref={uncheckRef}
-                    className={styles.check}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      // alert("hey");
-                      setChecked(false);
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faCircleCheck} />
-                  </button>
-                ) : (
-                  <button
-                    style={{ opacity: ".3" }}
-                    ref={checkRef}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setChecked(true);
-                      // alert("hey");
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faDotCircle} />
-                  </button>
-                )}
-              </>
-            )}
           </div>
-          {/* <p>author_Id: {authorId}</p> */}
-          {/* <p>post_id: {id}</p> */}
-          <AnimatePresence>
-            {showAction === id && (
-              <motion.div
-                key={id}
-                // transition={{ type: "spring", stiffness: 100 }}
-                initial={{ opacity: "0", scale: 0.8 }}
-                animate={{ opacity: showAction === id ? 1 : 0, scale: 1 }}
-                exit={{ opacity: "0", scale: 0.8 }}
-                transition={{ duration: 0.15 }}
-                className={styles.actions}
-              >
-                <Actions
-                  authorId={authorId!}
-                  id={id!}
-                  setshowAction={setshowAction!}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <p className={styles.text}>{text}</p>
+          {!active ? (
+            <>
+              {uid === authorId && (
+                <motion.button
+                  whileTap={{ scale: 1.3 }}
+                  whileHover={{ opacity: 0.8 }}
+                  aria-expanded={showAction !== ""}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setshowAction?.(id?.toString());
+                    if (showAction === id) {
+                      setshowAction?.("");
+                    }
+                    // alert(showAction);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faEllipsisH} />
+                </motion.button>
+              )}
+            </>
+          ) : (
+            <>
+              {checked ? (
+                <button
+                  ref={uncheckRef}
+                  className={styles.check}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // alert("hey");
+                    setChecked(false);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faCircleCheck} />
+                </button>
+              ) : (
+                <button
+                  style={{ opacity: ".3" }}
+                  ref={checkRef}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setChecked(true);
+                    // alert("hey");
+                  }}
+                >
+                  <FontAwesomeIcon icon={faDotCircle} />
+                </button>
+              )}
+            </>
+          )}
+        </div>
+        {/* <p>author_Id: {authorId}</p> */}
+        {/* <p>post_id: {id}</p> */}
+        <AnimatePresence>
+          {showAction === id && (
+            <motion.div
+              key={id}
+              // transition={{ type: "spring", stiffness: 100 }}
+              initial={{ opacity: "0", scale: 0.8 }}
+              animate={{ opacity: showAction === id ? 1 : 0, scale: 1 }}
+              exit={{ opacity: "0", scale: 0.8 }}
+              transition={{ duration: 0.15 }}
+              className={styles.actions}
+            >
+              <Actions
+                authorId={authorId!}
+                id={id!}
+                setshowAction={setshowAction!}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <p className={styles.text}>{text}</p>
       </span>
       <div
         className={styles.action}

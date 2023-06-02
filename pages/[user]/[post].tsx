@@ -1,7 +1,3 @@
-import { useRouter } from "next/router";
-import BackHeader from "../../components/Header/BackHeader";
-import s from "../../styles/Home.module.scss";
-import { db, postToJSON } from "../../lib/firebase";
 import {
   collection,
   collectionGroup,
@@ -10,12 +6,16 @@ import {
   query,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
-import { verifyIdToken } from "../../lib/firebaseAdmin";
-import { Post, Props } from "../../types/interfaces";
+import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useContext, useEffect } from "react";
-import { PageContext, PageProps } from "../../context/PageContext";
+import { useContext, useEffect, useRef } from "react";
+import BackHeader from "../../components/Header/BackHeader";
 import Input from "../../components/Input";
+import { PageContext, PageProps } from "../../context/PageContext";
+import { db, postToJSON } from "../../lib/firebase";
+import { verifyIdToken } from "../../lib/firebaseAdmin";
+import s from "../../styles/Home.module.scss";
+import { Post, Props } from "../../types/interfaces";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -95,12 +95,72 @@ export default function Page(props: {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expired]);
+  const InputRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // console.log(router.locale);
+    InputRef.current?.focus();
+  }, []);
+  // useEffect(() => {
+  //   if (InputRef.current?.textContent !== myPost.text) {
+  //     alert("exit without saving");
+  //   }
+  // }, [myPost.text]);
+  useEffect(() => {
+    const input = InputRef.current;
+    // return () => {
+    window.onpopstate = () => {
+      // alert("exit without saving");
+      // if (input?.textContent !== myPost.text) {
+      //   alert("exit without saving");
+      //   history.pushState(
+      //     router.asPath.split("?")[0],
+      //     document.title,
+      //     router.asPath.split("?")[0]
+      //   );
+      //   // history.pushState(null, document.title, router.asPath);
+      // }
+    };
+    // };
+  }, [myPost.text]);
+  useEffect(() => {
+    const input = InputRef.current;
+    if (input?.textContent !== myPost.text) {
+      history.pushState(null, document.title, window.location.href);
+    }
+    window.onpopstate = () => {
+      // history.pushState(null, document.title, window.location.href);
+      if (input?.textContent !== myPost.text) {
+        window.history.go(1);
+        if (window.location.hash === "#home") {
+          alert("exit without saving");
+        }
+      }
+    };
+    if (input?.textContent !== myPost.text) {
+      // history.pushState(null, document.title, location.hash);
+      // history.pushState(
+      //   router.asPath.split("?")[0],
+      //   document.title,
+      //   router.asPath.split("?")[0]
+      // );
+    } else {
+      // router.back();
+      // router.replace("/", undefined, { scroll: false });
+    }
+  }, [myPost.text]);
 
   return (
     <div className="user">
       <BackHeader
         onClick={() => {
+          InputRef.current?.focus();
           router.back();
+          alert("exit without saving");
+          // if (InputRef.current?.textContent !== myPost.text) {
+          //   alert("exit without saving");
+          // } else {
+          //   // router.back();
+          // }
           // window.history.back();
           // router.push(`/#profile`, undefined, { shallow: true });
           // setActive("profile");
@@ -115,14 +175,21 @@ export default function Page(props: {
         {/* <h2>{uid}</h2> */}
         {/* <h2 className={s.title}>{myPost.id}</h2> */}
         {/* <h2 className={s.title}>Post</h2> */}
-        <h2 className={s.title}>{email}</h2>
-        <h2 className={s.title}>{uid}</h2>
+        <h2 className={s.title}>{router.query.edit ? "Edit" : "Post"}</h2>
+        {/* <h2 className={s.title}>{uid}</h2> */}
 
         {/* <h2 className={s.title}>{active}</h2> */}
 
         {/* <h2 className={s.title}>{router.query.friends}</h2> */}
       </BackHeader>
-      <Input>{myPost.text}</Input>
+      <Input
+        style={{ cursor: router.query.edit ? "initial" : "default" }}
+        element={InputRef}
+        contentEditable={router.query.edit ? true : false}
+      >
+        {myPost.text}
+      </Input>
+      {/* <p>{router.query.edit}</p> */}
       {/* <p>User: {router.query.friends}</p> */}
     </div>
   );

@@ -19,7 +19,11 @@ function Actions(props: {
         onClick={async (e) => {
           e.preventDefault();
           e.stopPropagation();
-
+          router.push({
+            pathname: `${authorId}/${id?.toString()}`,
+            query: { edit: true },
+          });
+          
           // if (auth.currentUser?.uid !== authorId) {
           //   alert("Not Allowed ! Mismatch userId and authorId");
           //   throw new Error("Not Allowed");
