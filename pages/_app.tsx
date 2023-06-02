@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
-    // console.log(token);
+    console.log(token.email + "in app.tsx");
     let expired = false;
 
     // const getDate = (post: Post) => {

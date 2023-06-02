@@ -13,9 +13,9 @@ import { GetServerSideProps } from "next";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { Post, Props } from "../../types/interfaces";
 import nookies from "nookies";
-import console from "console";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
+import Input from "../../components/Input";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -33,7 +33,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // };
     // console.log(convertSecondsToTime(token.exp));
     const { email, uid } = token;
-    // let expired = false;
+    let expired = false;
 
     // const allUsersQuery = collectionGroup(db, `users`);
 
@@ -58,6 +58,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     }
     return {
       props: {
+        expired,
         uid,
         email,
         myPost: post,
@@ -70,6 +71,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // context.res.end();
     return {
       props: {
+        expired: true,
         uid: "",
         email: "",
         myPost: [],
@@ -78,13 +80,22 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   }
 };
 export default function Page(props: {
+  expired: boolean;
   uid: string;
   myPost: Post;
   email: string;
 }) {
-  const { uid, myPost, email } = props;
+  const { uid, myPost, email, expired } = props;
   const router = useRouter();
   const { active, setActive } = useContext(PageContext) as PageProps;
+  useEffect(() => {
+    if (expired) {
+      router.push("/");
+      console.log("expired , pushed in post page");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expired]);
+
   return (
     <div className="user">
       <BackHeader
@@ -111,9 +122,7 @@ export default function Page(props: {
 
         {/* <h2 className={s.title}>{router.query.friends}</h2> */}
       </BackHeader>
-      <div contentEditable={true} className={s.input}>
-        {myPost.text}
-      </div>
+      <Input>{myPost.text}</Input>
       {/* <p>User: {router.query.friends}</p> */}
     </div>
   );

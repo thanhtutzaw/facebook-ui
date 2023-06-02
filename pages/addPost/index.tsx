@@ -7,6 +7,7 @@ import BackHeader from "../../components/Header/BackHeader";
 import { app } from "../../lib/firebase";
 import { addPost } from "../../lib/firestore/post";
 import s from "../../styles/Home.module.scss";
+import Input from "../../components/Input";
 export default function AddPost() {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
@@ -48,19 +49,9 @@ export default function AddPost() {
           Post
         </button>
       </BackHeader>
-      <div className={s.input}>
-        <div
-          ref={textRef}
-          contentEditable
-          suppressContentEditableWarning={true}
-        ></div>
-      </div>
+      <Input element={textRef} contentEditable></Input>
       <div className={s.footer}>
-        <button
-          tabIndex={-1}
-          onClick={() => {
-          }}
-        >
+        <button tabIndex={-1} onClick={() => {}}>
           <FontAwesomeIcon icon={faPhotoFilm} />
         </button>
         <select

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
+import { useRouter } from "next/router";
 export default function Navitems(props: any) {
   const { icon, name, index } = props;
   const TabName = name.toLowerCase();
@@ -38,8 +39,8 @@ export default function Navitems(props: any) {
   }, []);
 
   const isActive = active === TabName ? styles.active : "";
-
-  function handleClick(e: React.MouseEvent<HTMLDivElement>) {
+  const router = useRouter();
+  function handleClick() {
     setActive(TabName);
     window.location.hash = TabName === "/" ? "#home" : "#" + TabName;
     const tabs = document.getElementById("tabs");
@@ -53,6 +54,9 @@ export default function Navitems(props: any) {
         top: 0,
         behavior: "smooth",
       });
+      if (active !== "/") return;
+      console.log("refreshing new data in Newsfeed");
+      router.replace("/", undefined, { scroll: false });
     }
   }
   return (

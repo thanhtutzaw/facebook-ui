@@ -76,18 +76,17 @@ export default function Post({ active, post, tabIndex }: PostProps) {
         cursor: active ? "pointer" : "initial",
       }}
     >
-      <Link
-        scroll={false}
-        href={`${authorId}/${id?.toString()}`}
+      <span
+        // scroll={false}
+        // href={`${authorId}/${id?.toString()}`}
         onClick={() => {
           if (!active) {
-            // router.push(authorId + "/" + id?.toString()!);
+            router.push(`${authorId}/${id?.toString()}`);
           } else {
             !checked ? checkRef.current?.click() : uncheckRef.current?.click();
           }
         }}
       >
-        <>
           <div className={styles.header}>
             <div className={styles.left}>
               <Image
@@ -189,9 +188,8 @@ export default function Post({ active, post, tabIndex }: PostProps) {
               </motion.div>
             )}
           </AnimatePresence>
-          <p>{text}</p>
-        </>
-      </Link>
+          <p className={styles.text}>{text}</p>
+      </span>
       <div
         className={styles.action}
         // onPointerEnter={() => setBounce(true)}
