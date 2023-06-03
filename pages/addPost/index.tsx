@@ -1,13 +1,14 @@
 import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
 import { app } from "../../lib/firebase";
 import { addPost } from "../../lib/firestore/post";
 import s from "../../styles/Home.module.scss";
 import Input from "../../components/Input";
+import error from "next/error";
 export default function AddPost() {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
@@ -19,7 +20,9 @@ export default function AddPost() {
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (input?.textContent) {
+        // history.pushState(null, document.title, location.href);
         e.preventDefault();
+        console.log(e);
         e.returnValue = ""; // Chrome requires this line
         // history.pushState(null, document.title, location.href);
       }
@@ -27,16 +30,18 @@ export default function AddPost() {
     const handlePopState = (e: PopStateEvent) => {
       if (input?.textContent) {
         e.preventDefault();
-        history.forward();
+        // router.reload();
+        // history.forward();
         // history.go(1);
         // history.back();
       }
     };
+
     window.addEventListener("beforeunload", handleBeforeUnload);
-    window.addEventListener("popstate", handlePopState);
+    // window.addEventListener("popstate", handlePopState);
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      window.removeEventListener("popstate", handlePopState);
+      // window.removeEventListener("popstate", handlePopState);
     };
 
     // if (input?.textContent !== myPost.text) {
@@ -52,6 +57,30 @@ export default function AddPost() {
     //   }
     // };
   }, []);
+  useEffect(() => {
+    // window.addEventListener("click", (e) => {
+    //   // console.log(e.currentTarget.textContent);
+    //   const target = e.target;
+    //   console.log(target);
+    // });
+    router.beforePopState(({ as }) => {
+      const currentPath = router.asPath;
+      if (as !== currentPath && textRef.current?.textContent) {
+        // router.back();
+        //This code work but I want to display Leave Propmt , instead confirm box
+        if (confirm("Changes you made may not be saved.")) {
+          return true;
+        } else {
+          history.pushState(null, document.title, currentPath);
+          return false;
+        }
+      }
+      return true;
+    });
+    return () => {
+      router.beforePopState(() => true);
+    };
+  }, [router]);
   const auth = getAuth(app);
   return (
     <div className={s.addPost}>

@@ -173,8 +173,10 @@ export default function Page(props: {
       //   !confirm("Are you sure you want to leave this page?") &&
       //   e
       // ) {
-      if (input?.textContent !== myPost.text) {
-        console.log("2");
+      if (
+        input?.textContent !== myPost.text &&
+        !confirm("Are you sure you want to leave this page?")
+      ) {
         // history.pushState(null, document.title, window.location.href);
         e.preventDefault();
         // history.forward();
@@ -198,10 +200,10 @@ export default function Page(props: {
       }
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
-    window.addEventListener("popstate", handlePopState);
+    // window.addEventListener("popstate", handlePopState);
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      window.removeEventListener("popstate", handlePopState);
+      // window.removeEventListener("popstate", handlePopState);
     };
     // if (input?.textContent !== myPost.text) {
     //   history.pushState(null, document.title, window.location.href);
@@ -216,7 +218,27 @@ export default function Page(props: {
     //   }
     // };
   }, []);
+  useEffect(() => {
+    router.beforePopState(({ as }) => {
+      const currentPath = router.asPath;
+      if (as !== currentPath && InputRef.current?.textContent !== myPost.text) {
+        // Will run when leaving the current page; on back/forward actions
+        // Add your logic here, like toggling the modal state
+        // for example
+        if (confirm("Changes you made may not be saved.")) {
+          return true;
+        } else {
+          window.history.pushState(null, document.title, currentPath);
+          return false;
+        }
+      }
+      return true;
+    });
 
+    return () => {
+      router.beforePopState(() => true);
+    };
+  }, [router]); // Add any state variables to dependencies array if needed.
   return (
     <div className="user">
       <BackHeader
