@@ -27,7 +27,8 @@ export default function AddPost() {
     const handlePopState = (e: PopStateEvent) => {
       if (input?.textContent) {
         e.preventDefault();
-        history.forward();
+        // history.forward();
+        history.go(1);
         // history.back();
       }
     };

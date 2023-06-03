@@ -177,7 +177,8 @@ export default function Page(props: {
         console.log("2");
         // history.pushState(null, document.title, window.location.href);
         e.preventDefault();
-        history.forward();
+        // history.forward();
+        history.go(1);
         // history.back();
         // window.onbeforeunload = (e) => {
         //   e.preventDefault();
