@@ -69,12 +69,12 @@ export default function App({
   expired,
 }: AppProps & { expired: boolean }) {
   const router = useRouter();
-  useEffect(() => {
-    if (expired) {
-      router.push("/");
-      console.log("expired and pushed(_app.tsx)");
-    }
-  }, [expired, router]);
+  // useEffect(() => {
+  //   if (expired) {
+  //     router.push("/");
+  //     console.log("expired and pushed(_app.tsx)");
+  //   }
+  // }, [expired, router]);
   useEffect(() => {
     const handleRouteStart = () => {
       nProgress.start();

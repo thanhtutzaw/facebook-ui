@@ -8,7 +8,7 @@ import {
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
 import Input from "../../components/Input";
 import { PageContext, PageProps } from "../../context/PageContext";
@@ -16,6 +16,8 @@ import { db, postToJSON } from "../../lib/firebase";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
 import s from "../../styles/Home.module.scss";
 import { Post, Props } from "../../types/interfaces";
+import nProgress from "nprogress";
+import useEscape from "../../hooks/useEscape";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -88,13 +90,13 @@ export default function Page(props: {
   const { uid, myPost, email, expired } = props;
   const router = useRouter();
   const { active, setActive } = useContext(PageContext) as PageProps;
-  useEffect(() => {
-    if (expired) {
-      router.push("/");
-      console.log("expired , pushed in post page");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expired]);
+  // useEffect(() => {
+  //   if (expired) {
+  //     router.push("/");
+  //     console.log("expired , pushed in post page");
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [expired]);
   const InputRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     // console.log(router.locale);
@@ -122,32 +124,97 @@ export default function Page(props: {
     };
     // };
   }, [myPost.text]);
+  // const [isDirty, setisDirty] = useState(false);
+  const [isDirty, setisDirty] = useState(
+    InputRef.current?.textContent !== myPost.text ?? false
+  );
+  // useEscape(() => {
+  //   router.back();
+  //   // if (InputRef.current?.textContent !== myPost.text) {
+  //   // }
+  // });
+  // useEffect(() => {
+  //   function handleEscape(e: KeyboardEvent) {
+  //     if (!(e.key === "Escape")) return;
+  //     // router.back();
+  //     history.forward();
+  //   }
+  //   window.addEventListener("keyup", handleEscape);
+  //   // return () => window.removeEventListener("keyup", handleEscape);
+  // }, [router]);
   useEffect(() => {
     const input = InputRef.current;
-    if (input?.textContent !== myPost.text) {
-      history.pushState(null, document.title, window.location.href);
-    }
-    window.onpopstate = () => {
-      // history.pushState(null, document.title, window.location.href);
-      if (input?.textContent !== myPost.text) {
-        window.history.go(1);
-        if (window.location.hash === "#home") {
-          alert("exit without saving");
-        }
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent | PopStateEvent) => {
+      if (input?.textContent !== myPost.text && window.location.href !== "/") {
+        console.log("1");
+        e.preventDefault();
+
+        e.returnValue = "";
+        // if (e) {
+        //   alert("jh");
+        // }
       }
     };
-    if (input?.textContent !== myPost.text) {
-      // history.pushState(null, document.title, location.hash);
-      // history.pushState(
-      //   router.asPath.split("?")[0],
-      //   document.title,
-      //   router.asPath.split("?")[0]
-      // );
-    } else {
-      // router.back();
-      // router.replace("/", undefined, { scroll: false });
-    }
-  }, [myPost.text]);
+    // const routeChangeStartHandler = () => {
+    //   if (
+    //     input?.textContent !== myPost.text &&
+    //     !window.confirm(
+    //       "You have unsaved changes. Do you want to leave the page?"
+    //     )
+    //   ) {
+    //     nProgress.done();
+    //     throw "routeChange aborted";
+    //   }
+    // };
+    const handlePopState = (e: PopStateEvent) => {
+      // if (
+      //   input?.textContent !== myPost.text &&
+      //   !confirm("Are you sure you want to leave this page?") &&
+      //   e
+      // ) {
+      if (input?.textContent !== myPost.text) {
+        console.log("2");
+        // history.pushState(null, document.title, window.location.href);
+        e.preventDefault();
+        history.forward();
+        // history.back();
+        // window.onbeforeunload = (e) => {
+        //   e.preventDefault();
+        //   e.returnValue = "";
+        // };
+
+        // history.forward();
+        // if (e.state) {
+        //   console.log(e.state);
+        // } else {
+        //   console.log("no e");
+        // }
+        // history.forward();
+        // history.go(1);
+        // if (e) {
+        // } // history.forward();
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handlePopState);
+    };
+    // if (input?.textContent !== myPost.text) {
+    //   history.pushState(null, document.title, window.location.href);
+    // }
+    // window.onpopstate = () => {
+    //   // history.pushState(null, document.title, window.location.href);
+    //   if (input?.textContent !== myPost.text) {
+    //     window.history.go(1);
+    //     if (window.location.hash === "#home") {
+    //       alert("exit without saving");
+    //     }
+    //   }
+    // };
+  }, []);
 
   return (
     <div className="user">
@@ -155,7 +222,7 @@ export default function Page(props: {
         onClick={() => {
           InputRef.current?.focus();
           router.back();
-          alert("exit without saving");
+          // alert("exit without saving");
           // if (InputRef.current?.textContent !== myPost.text) {
           //   alert("exit without saving");
           // } else {

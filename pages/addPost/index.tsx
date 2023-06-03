@@ -12,8 +12,44 @@ export default function AddPost() {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
   const [visibility, setvisibility] = useState("public");
+
   useEffect(() => {
     textRef.current?.focus();
+    const input = textRef.current;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (input?.textContent) {
+        e.preventDefault();
+        e.returnValue = ""; // Chrome requires this line
+        // history.pushState(null, document.title, location.href);
+      }
+    };
+    const handlePopState = (e: PopStateEvent) => {
+      if (input?.textContent) {
+        e.preventDefault();
+        history.forward();
+        // history.back();
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handlePopState);
+    };
+
+    // if (input?.textContent !== myPost.text) {
+    //   history.pushState(null, document.title, window.location.href);
+    // }
+    // window.onpopstate = () => {
+    //   // history.pushState(null, document.title, window.location.href);
+    //   if (input?.textContent !== myPost.text) {
+    //     window.history.go(1);
+    //     if (window.location.hash === "#home") {
+    //       alert("exit without saving");
+    //     }
+    //   }
+    // };
   }, []);
   const auth = getAuth(app);
   return (
@@ -22,7 +58,7 @@ export default function AddPost() {
         onClick={() => {
           textRef.current?.focus();
           if (textRef.current?.textContent) {
-            alert("exit without saving");
+            // alert("exit without saving");
           } else {
             router.back();
           }

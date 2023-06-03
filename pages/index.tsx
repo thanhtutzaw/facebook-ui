@@ -140,13 +140,13 @@ export default function Home({
       } else {
         if (!expired) return;
         router.push("/");
-        console.log("expired , user exist and pushed");
+        // console.log("expired , user exist and pushed");
       }
     });
-    if (expired) {
-      router.push("/");
-      console.log("expired , pushed in index");
-    }
+    // if (expired) {
+    //   router.push("/");
+    //   console.log("expired , pushed in index");
+    // }
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
@@ -162,7 +162,7 @@ export default function Home({
 
   // if (!email || expired) return <Welcome email={""} expired={expired!} />;
 
-  if (expired) return <Welcome />;
+  if (expired) return <Welcome expired={expired} />;
   // if (expired && email) return <Welcome />;
   // if (expired && auth.currentUser) return <Welcome />;
   // if (!auth.currentUser)

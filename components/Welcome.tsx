@@ -1,4 +1,16 @@
-export function Welcome() {
+import router, { useRouter } from "next/router";
+import { useEffect } from "react";
+
+export function Welcome({ expired }: { expired: boolean }) {
+  const router = useRouter();
+  useEffect(() => {
+    if (expired) {
+      router.push("/");
+      console.log("expired and pushed(in Welcome.tsx)");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expired]);
+
   return (
     <div
       style={{
