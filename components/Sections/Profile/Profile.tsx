@@ -1,15 +1,16 @@
-import { faFilter, faGear } from "@fortawesome/free-solid-svg-icons";
+import { faGear, faSort } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 // import { Props } from "../../../pages/index";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { AppContext } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
 import { Post as PostType, Props } from "../../../types/interfaces";
 import Post from "../../Post/Post";
 import s from "./Profile.module.scss";
+import { SortPostAction } from "./SortPostAction";
 export default function Profile() {
   // const { myPost } = props;
   // const { email } = import { AppContext } from "../../../context/AppContext"; as Props;
@@ -43,7 +44,7 @@ export default function Profile() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setactive, tab, active]);
-
+  const [sort, setSort] = useState(false);
   return (
     <motion.div
       // transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
@@ -78,11 +79,16 @@ export default function Profile() {
         </p>
       </div>
 
-      <div className={s.myPost}>
+      <div style={{ position: "relative" }} className={s.myPost}>
         <h2 className={s.header}>
           <p>My Posts</p>
-          <button>
-            <FontAwesomeIcon color="#0070f3" icon={faFilter} />
+          <button
+            onClick={() => {
+              setSort((prev) => !prev);
+            }}
+            aria-label="sort post"
+          >
+            <FontAwesomeIcon color="#0070f3" icon={faSort} />
           </button>
           <button onClick={() => setactive?.((prev: any) => !prev)}>
             <motion.span
@@ -99,6 +105,9 @@ export default function Profile() {
             </motion.span>
           </button>
         </h2>
+        <AnimatePresence>
+          {sort && <SortPostAction setSort={setSort} />}
+        </AnimatePresence>
         <div
           style={{
             willChange: "margin",
@@ -109,6 +118,7 @@ export default function Profile() {
           {myPost?.map((post: PostType) => (
             <Post active={active} key={post.id} post={post} tabIndex={1} />
           ))}
+          A
         </div>
         <p style={{ textAlign: "center" }}>No more posts</p>
       </div>

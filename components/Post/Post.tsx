@@ -170,8 +170,6 @@ export default function Post({ active, post, tabIndex }: PostProps) {
             </>
           )}
         </div>
-        {/* <p>author_Id: {authorId}</p> */}
-        {/* <p>post_id: {id}</p> */}
         <AnimatePresence>
           {showAction === id && (
             <motion.div

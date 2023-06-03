@@ -1,3 +1,4 @@
+import { getAuth } from "firebase/auth";
 import {
   collection,
   collectionGroup,
@@ -12,12 +13,11 @@ import { useContext, useEffect, useRef, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
 import Input from "../../components/Input";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { db, postToJSON } from "../../lib/firebase";
+import { app, db, postToJSON } from "../../lib/firebase";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
+import { updatePost } from "../../lib/firestore/post";
 import s from "../../styles/Home.module.scss";
 import { Post, Props } from "../../types/interfaces";
-import nProgress from "nprogress";
-import useEscape from "../../hooks/useEscape";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -229,6 +229,7 @@ export default function Page(props: {
       router.beforePopState(() => true);
     };
   }, [router]); // Add any state variables to dependencies array if needed.
+  const auth = getAuth(app);
   return (
     <div className="user">
       <BackHeader
@@ -238,6 +239,38 @@ export default function Page(props: {
         }}
       >
         <h2 className={s.title}>{router.query.edit ? "Edit" : "Post"}</h2>
+        <button
+          aria-label="update button"
+          type="submit"
+          className={s.submit}
+          onClick={async () => {
+            const uid = auth.currentUser?.uid;
+            if (
+              !InputRef.current?.textContent ||
+              InputRef.current?.textContent === myPost.text ||
+              !uid ||
+              !myPost
+            )
+              return;
+            if (uid !== myPost.authorId) {
+              // alert("")
+              throw new Error("Unauthorized !");
+            }
+            try {
+              await updatePost(
+                uid,
+                InputRef.current.textContent,
+                myPost.id?.toString()!,
+                myPost
+              );
+              router.replace("/", undefined, { scroll: false });
+            } catch (error: any) {
+              alert(error.message);
+            }
+          }}
+        >
+          Save
+        </button>
       </BackHeader>
       <Input
         style={{ cursor: router.query.edit ? "initial" : "default" }}
