@@ -65,15 +65,15 @@ export default function AddPost() {
     // });
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
-      if (as !== currentPath && textRef.current?.textContent) {
+      if (
+        as !== currentPath &&
+        textRef.current?.textContent &&
+        !confirm("Changes you made may not be saved.")
+      ) {
         // router.back();
         //This code work but I want to display Leave Propmt , instead confirm box
-        if (confirm("Changes you made may not be saved.")) {
-          return true;
-        } else {
-          history.pushState(null, document.title, currentPath);
-          return false;
-        }
+        history.pushState(null, document.title, currentPath);
+        return false;
       }
       return true;
     });
@@ -87,11 +87,7 @@ export default function AddPost() {
       <BackHeader
         onClick={() => {
           textRef.current?.focus();
-          if (textRef.current?.textContent) {
-            // alert("exit without saving");
-          } else {
-            router.back();
-          }
+          router.back();
         }}
       >
         {/* <h2>{textRef.current?.textContent === ""}</h2> */}

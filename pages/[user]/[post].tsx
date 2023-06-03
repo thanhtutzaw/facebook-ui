@@ -111,9 +111,7 @@ export default function Page(props: {
     const input = InputRef.current;
     // return () => {
     window.onpopstate = () => {
-      // alert("exit without saving");
       // if (input?.textContent !== myPost.text) {
-      //   alert("exit without saving");
       //   history.pushState(
       //     router.asPath.split("?")[0],
       //     document.title,
@@ -147,13 +145,8 @@ export default function Page(props: {
 
     const handleBeforeUnload = (e: BeforeUnloadEvent | PopStateEvent) => {
       if (input?.textContent !== myPost.text && window.location.href !== "/") {
-        console.log("1");
         e.preventDefault();
-
         e.returnValue = "";
-        // if (e) {
-        //   alert("jh");
-        // }
       }
     };
     // const routeChangeStartHandler = () => {
@@ -222,9 +215,6 @@ export default function Page(props: {
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
       if (as !== currentPath && InputRef.current?.textContent !== myPost.text) {
-        // Will run when leaving the current page; on back/forward actions
-        // Add your logic here, like toggling the modal state
-        // for example
         if (confirm("Changes you made may not be saved.")) {
           return true;
         } else {
@@ -245,32 +235,9 @@ export default function Page(props: {
         onClick={() => {
           InputRef.current?.focus();
           router.back();
-          // alert("exit without saving");
-          // if (InputRef.current?.textContent !== myPost.text) {
-          //   alert("exit without saving");
-          // } else {
-          //   // router.back();
-          // }
-          // window.history.back();
-          // router.push(`/#profile`, undefined, { shallow: true });
-          // setActive("profile");
-          // router.push(`/#profile`, undefined, { shallow: true });
-          // if (router.asPath !== "/") {
-          //   router.back();
-          // } else if (active === "profile") {
-          // }
         }}
       >
-        {/* {active} */}
-        {/* <h2>{uid}</h2> */}
-        {/* <h2 className={s.title}>{myPost.id}</h2> */}
-        {/* <h2 className={s.title}>Post</h2> */}
         <h2 className={s.title}>{router.query.edit ? "Edit" : "Post"}</h2>
-        {/* <h2 className={s.title}>{uid}</h2> */}
-
-        {/* <h2 className={s.title}>{active}</h2> */}
-
-        {/* <h2 className={s.title}>{router.query.friends}</h2> */}
       </BackHeader>
       <Input
         style={{ cursor: router.query.edit ? "initial" : "default" }}
@@ -279,8 +246,6 @@ export default function Page(props: {
       >
         {myPost.text}
       </Input>
-      {/* <p>{router.query.edit}</p> */}
-      {/* <p>User: {router.query.friends}</p> */}
     </div>
   );
 }
