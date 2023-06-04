@@ -12,7 +12,7 @@ import { db, postToJSON } from "../../../lib/firebase";
 import { Post as PostType, Props } from "../../../types/interfaces";
 import Post from "../../Post";
 import s from "./Profile.module.scss";
-import { SortPostAction } from "./SortPostAction";
+import { SortDropdown } from "./SortDropdown";
 export default function Profile() {
   const photoURL = "";
   const { myPost, email } = useContext(AppContext) as Props;
@@ -115,14 +115,19 @@ export default function Profile() {
         <h2 className={s.header}>
           <p>My Posts</p>
           <button
+            aria-expanded={sort}
             onClick={() => {
               setSort((prev) => !prev);
             }}
-            aria-label="sort post"
+            aria-label="sort dropdown toggle"
           >
-            <FontAwesomeIcon color="#0070f3" icon={faSort} />
+            <div>
+              <FontAwesomeIcon color="#0070f3" icon={faSort} />
+            </div>
           </button>
           <button
+            aria-label="post select mode"
+            aria-expanded={active}
             onClick={(e) => {
               setactive?.((prev: any) => !prev);
               setSort(false);
@@ -133,23 +138,26 @@ export default function Profile() {
               }
             }}
           >
-            <motion.span
-              transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-              animate={{ rotate: active ? 480 : 0 }}
-              style={{
-                willChange: "transform",
-                height: "20px",
-                width: "20px",
-                display: "flex",
-              }}
-            >
-              <FontAwesomeIcon color="#0070f3" icon={faGear} />
-            </motion.span>
+            <div>
+              <motion.span
+                transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
+                animate={{ rotate: active ? 480 : 0 }}
+                style={{
+                  willChange: "transform",
+                  height: "20px",
+                  width: "20px",
+                  display: "flex",
+                }}
+              >
+                <FontAwesomeIcon color="#0070f3" icon={faGear} />
+              </motion.span>
+            </div>
           </button>
         </h2>
         <AnimatePresence>
           {sort && (
-            <SortPostAction
+            <SortDropdown
+              sort={sort}
               sortby={sortby}
               setsortby={setsortby}
               setSort={setSort}

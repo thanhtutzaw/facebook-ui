@@ -1,13 +1,20 @@
 :root {
-  --blue-origin: #0070f3;
-  --main-width : 500px;
+  --blue-origin   : #0070f3;
+  --main-width    : 700px;
+  /* --main-width : 500px; */
 }
 
-@media only screen and (orientation:landscape) {
+/* @media only screen and (min-width:700px) {
   :root {
     --main-width: 700px;
   }
-}
+} */
+
+/* @media only screen and (orientation:landscape) {
+  :root {
+    --main-width: 700px;
+  }
+} */
 
 @media only screen and (orientation:landscape) and (pointer: coarse) {
   :root {
@@ -122,10 +129,6 @@ a {
 
 * {
   box-sizing: border-box;
-}
-
-.user {
-  /* height: 100vh; */
 }
 
 button {

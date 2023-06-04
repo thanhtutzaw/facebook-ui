@@ -4,8 +4,8 @@
   position: relative;
   cursor: default;
 }
-.post span > p {
-  padding: 6px 0.8rem 1rem;
+.post .text {
+  padding: 10px 0.8rem 1rem;
   margin: 0;
 }
 .post .header {

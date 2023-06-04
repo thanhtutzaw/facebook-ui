@@ -40,6 +40,17 @@
 .container .myPost {
   padding-bottom: 1rem;
 }
+.container .myPost button:focus-visible {
+  outline: 2px solid var(--blue-origin);
+  border-radius: 100px;
+}
+.container .myPost .active {
+  background-color: gainsboro;
+  opacity: 0.7;
+}
+.container .myPost .active:hover {
+  color: black;
+}
 .container .myPost .header {
   background-color: white;
   padding: 1rem 0.8rem;
@@ -47,12 +58,19 @@
   display: flex;
   align-items: center;
   gap: 15px;
+  cursor: default;
 }
 .container .myPost .header p {
   margin: 0;
   flex: 1;
 }
 .container .myPost .header > button {
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  font-size: 1rem;
+}
+.container .myPost .header > button > div {
   justify-content: center;
   align-items: center;
   display: flex;
@@ -61,14 +79,13 @@
   border-radius: 100px;
   border: 0;
   padding: 10px;
-  background-color: transparent;
   font-size: 1rem;
   background-color: rgb(238, 238, 238);
 }
-.container .myPost .header > button:hover {
+.container .myPost .header > button > div:hover {
   background-color: rgb(216, 216, 216);
 }
-.container .myPost .header > button:active {
+.container .myPost .header > button > div:active {
   opacity: 0.8;
   scale: 0.9;
 }/*# sourceMappingURL=Profile.module.css.map */

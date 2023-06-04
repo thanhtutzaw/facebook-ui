@@ -2,8 +2,6 @@
     transition: transform 0.3s ease-in-out;
     height: 0;
     // padding: 1rem;
-    // background-color: white;
-    // text-align: center;
     // height: 100%;
     .info {
         transition: all 0.3s ease-in-out;
@@ -41,37 +39,57 @@
     }
     .myPost {
         padding-bottom: 1rem;
-        // transform: translateY(-200px);
+        button {
+            &:focus-visible {
+                outline: 2px solid var(--blue-origin);
+                border-radius: 100px;
+            }
+        }
+        .active {
+            background-color: gainsboro;
+            opacity: 0.7;
+            &:hover {
+                color: black;
+            }
+        }
         .header {
             background-color: white;
-            // padding: 1rem;
             padding: 1rem 0.8rem;
             margin: 0;
             display: flex;
             align-items: center;
             gap: 15px;
+            cursor: default;
             p {
                 margin: 0;
                 flex: 1;
             }
             > button {
-                justify-content: center;
-                align-items: center;
-                display: flex;
-                height: 45px;
-                width: 45px;
-                border-radius: 100px;
+                padding: 0;
                 border: 0;
-                padding: 10px;
                 background-color: transparent;
                 font-size: 1rem;
-                background-color: rgb(238, 238, 238);
-                &:hover {
-                    background-color: rgb(216, 216, 216);
-                }
-                &:active {
-                    opacity: 0.8;
-                    scale: 0.9;
+                & > div {
+                    justify-content: center;
+                    align-items: center;
+                    display: flex;
+                    height: 45px;
+                    width: 45px;
+                    border-radius: 100px;
+                    border: 0;
+                    padding: 10px;
+                    font-size: 1rem;
+                    background-color: rgb(238, 238, 238);
+                    &:hover {
+                        background-color: rgb(216, 216, 216);
+                    }
+                    &:active {
+                        opacity: 0.8;
+                        scale: 0.9;
+                    }
+                    // &:focus-visible {
+                    //     outline: 2px solid var(--blue-origin);
+                    // }
                 }
             }
         }

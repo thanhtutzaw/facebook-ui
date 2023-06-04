@@ -1,12 +1,17 @@
 import { motion } from "framer-motion";
 import styles from "../../Post/Post.module.scss";
-export function SortPostAction(props: {
+import s from "./Profile.module.scss";
+import useEscape from "../../../hooks/useEscape";
+export function SortDropdown(props: {
+  sort: boolean;
   sortby: string;
   setSort: Function;
   setsortby: Function;
 }) {
-  const { sortby, setSort, setsortby } = props;
-
+  const { sort, sortby, setSort, setsortby } = props;
+  useEscape(() => {
+    if (sort) setSort(false);
+  });
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -19,18 +24,17 @@ export function SortPostAction(props: {
         zIndex: "100",
         width: "auto",
         boxShadow: "0 0 10px #a9a9a973",
+        cursor: "default",
+        top: "70px",
+        right: "40px",
       }}
     >
       <button
-        className={sortby === "new" ? "active" : ""}
+        className={sortby === "new" ? s.active : ""}
         id="new"
         onClick={async (e) => {
           e.preventDefault();
           e.stopPropagation(); // router.push({
-
-          if (sortby === e.currentTarget.id) {
-            e.currentTarget.style.border = "2px solid red";
-          }
           setSort(false);
           setsortby(e.currentTarget.id);
           //   pathname: `${authorId}/${id?.toString()}`,
@@ -55,15 +59,11 @@ export function SortPostAction(props: {
         Date added (Newest)
       </button>
       <button
-        className={sortby === "old" ? "active" : ""}
+        className={sortby === "old" ? s.active : ""}
         id="old"
         onClick={async (e) => {
-          // e.stopPropagation();
           setSort(false);
           setsortby(e.currentTarget.id);
-          if (sortby === e.currentTarget.id) {
-            e.currentTarget.style.border = "2px solid red";
-          }
           // if (auth.currentUser?.uid !== authorId) {
           //   alert("Not Allowed ! Mismatch userId and authorId");
           //   throw new Error("Not Allowed");

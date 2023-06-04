@@ -179,10 +179,6 @@
     max-width: var(--main-width);
     min-width: 100%;
   }
-  & > div:first-child {
-    // padding-top: 0px;
-    // transition: padding 0.18s ease;
-  }
 }
 .userContent {
   margin-block: 65px;
@@ -237,6 +233,7 @@
   display: flex;
   align-items: center;
   .storyCards {
+    cursor: default;
     overflow-x: scroll;
     display: flex;
     gap: 10px;

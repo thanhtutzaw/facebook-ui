@@ -109,6 +109,7 @@ export default function App({
           maxAge: 55 * 60,
           path: "/",
           secure: true,
+          sameSite: "lax",
         });
       } catch (error) {
         console.log("Error refreshing ID token:", error);
