@@ -3,17 +3,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useContext, useEffect, useRef, useState } from "react";
 // import { Props } from "../../../pages/index";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { AppContext } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
+import { db, postToJSON } from "../../../lib/firebase";
 import { Post as PostType, Props } from "../../../types/interfaces";
-import Post from "../../Post/Post";
+import Post from "../../Post";
 import s from "./Profile.module.scss";
 import { SortPostAction } from "./SortPostAction";
 export default function Profile() {
-  // const { myPost } = props;
-  // const { email } = import { AppContext } from "../../../context/AppContext"; as Props;
   const photoURL = "";
   const { myPost, email } = useContext(AppContext) as Props;
   // const posts = [
@@ -26,9 +26,11 @@ export default function Profile() {
   //     text: "foo barr222",
   //   },
   // ];
-  const { selectMode: active, setselectMode: setactive } = useContext(
-    AppContext
-  ) as Props;
+  const {
+    uid,
+    selectMode: active,
+    setselectMode: setactive,
+  } = useContext(AppContext) as Props;
   const { active: tab } = useActive();
   const infoRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -45,6 +47,36 @@ export default function Profile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setactive, tab, active]);
   const [sort, setSort] = useState(false);
+  const [sortby, setsortby] = useState("new");
+  const [sortedPost, setsortedPost] = useState(myPost);
+
+  useEffect(() => {
+    if (!active) {
+      setSort(false);
+    }
+    if (tab !== "profile" && !uid) return;
+    setsortedPost(myPost);
+    if (sortby === "old") {
+      // setsortedPost([]);
+      const mypostQuery = query(
+        collection(db, `/users/${uid}/posts`),
+        orderBy("createdAt", "asc")
+      );
+      const unsub = onSnapshot(mypostQuery, (snapshot) => {
+        setsortedPost(snapshot.docs.map((doc) => postToJSON(doc)));
+      });
+      // const myPost = myPostSnap.docs.map((doc) => postToJSON(doc));
+      return () => {
+        unsub();
+        setsortby("new");
+      };
+    }
+  }, [active, myPost, sortby, tab, uid]);
+
+  // const sortedPost = myPost?.sort((a, b) => {
+  //   b.createdAt.toDate() - a.createdAt.toDate();
+  // });
+  // const sortedPost = myPost?.sort((a, b) =>{ b.createdAt.toDate()-a.createdAt.toDate()});
   return (
     <motion.div
       // transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
@@ -90,7 +122,17 @@ export default function Profile() {
           >
             <FontAwesomeIcon color="#0070f3" icon={faSort} />
           </button>
-          <button onClick={() => setactive?.((prev: any) => !prev)}>
+          <button
+            onClick={(e) => {
+              setactive?.((prev: any) => !prev);
+              setSort(false);
+              if (!active) {
+                const parent =
+                  e.currentTarget.parentElement?.parentElement?.parentElement;
+                parent?.scrollIntoView({ behavior: "smooth" });
+              }
+            }}
+          >
             <motion.span
               transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
               animate={{ rotate: active ? 480 : 0 }}
@@ -106,7 +148,13 @@ export default function Profile() {
           </button>
         </h2>
         <AnimatePresence>
-          {sort && <SortPostAction setSort={setSort} />}
+          {sort && (
+            <SortPostAction
+              sortby={sortby}
+              setsortby={setsortby}
+              setSort={setSort}
+            />
+          )}
         </AnimatePresence>
         <div
           style={{
@@ -115,10 +163,9 @@ export default function Profile() {
             transition: "all .2s ease-in-out",
           }}
         >
-          {myPost?.map((post: PostType) => (
+          {sortedPost?.map((post: PostType) => (
             <Post active={active} key={post.id} post={post} tabIndex={1} />
           ))}
-          A
         </div>
         <p style={{ textAlign: "center" }}>No more posts</p>
       </div>
