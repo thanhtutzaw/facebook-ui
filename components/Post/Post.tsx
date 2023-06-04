@@ -38,6 +38,8 @@ export default function Post({ active, post, tabIndex }: PostProps) {
   const router = useRouter();
   const photoURL = "";
   const {
+    selectedId,
+    setSelectedId,
     email,
     active: tab,
     showAction,
@@ -142,26 +144,30 @@ export default function Post({ active, post, tabIndex }: PostProps) {
             <>
               {checked ? (
                 <button
+                  aria-label="deselect post"
                   ref={uncheckRef}
                   className={styles.check}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    // alert("hey");
                     setChecked(false);
+                    setSelectedId?.(
+                      selectedId?.filter((selectedId) => selectedId !== id)
+                    );
                   }}
                 >
                   <FontAwesomeIcon icon={faCircleCheck} />
                 </button>
               ) : (
                 <button
+                  aria-label="select post"
                   style={{ opacity: ".3" }}
                   ref={checkRef}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    setSelectedId?.([...selectedId!, id?.toString()]);
                     setChecked(true);
-                    // alert("hey");
                   }}
                 >
                   <FontAwesomeIcon icon={faDotCircle} />

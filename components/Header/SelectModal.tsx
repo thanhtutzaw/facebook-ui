@@ -9,13 +9,15 @@ import useEscape from "../../hooks/useEscape";
 import { useRouter } from "next/router";
 
 function SelectModal() {
-  const { selectMode, setselectMode } = useContext(AppContext) as Props;
+  const { selectedId, setSelectedId, selectMode, setselectMode } = useContext(
+    AppContext
+  ) as Props;
   const router = useRouter();
 
   useEscape(() => {
     if (!selectMode) return;
     setselectMode?.(false);
-    // router.back();
+    setSelectedId?.([]);
   });
   return (
     <BackHeader
@@ -23,6 +25,7 @@ function SelectModal() {
       onClick={() => {
         // router.back();
         setselectMode?.(false);
+        setSelectedId?.([]);
         // window.location.hash = ""
       }}
       style={{
@@ -31,9 +34,16 @@ function SelectModal() {
       }}
     >
       <h2>
-        <span>0</span> Selected
+        <span>{selectedId?.length}</span> Selected
       </h2>
-      <button className="deleteBtn">Delete</button>
+      <button
+        onClick={() => {
+          alert(selectedId);
+        }}
+        className="deleteBtn"
+      >
+        Delete
+      </button>
     </BackHeader>
   );
 }

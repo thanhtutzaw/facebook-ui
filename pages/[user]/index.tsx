@@ -81,9 +81,7 @@ export default function Page({ user }: { user: any }) {
         {/* <h2 className={s.title}>{router.query.user}</h2> */}
         <h2 className={s.title}>{user.id}</h2>
       </BackHeader>
-      <div className={s.userContent}>
-        This page currently display for only testuser
-      </div>
+      <div className={s.userContent}>This page currently display testuser</div>
     </div>
   );
 }

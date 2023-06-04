@@ -42,9 +42,8 @@ export default function Header(props: any) {
   const { indicatorRef } = props;
   const { setActive } = useActive();
   const [width, setwidth] = useState<number>();
-  const { selectMode, setselectMode, headerContainerRef } = useContext(
-    AppContext
-  ) as Props;
+  const { setSelectedId, selectMode, setselectMode, headerContainerRef } =
+    useContext(AppContext) as Props;
 
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];
@@ -69,6 +68,7 @@ export default function Header(props: any) {
         if (selectMode) {
           // window.location.hash = "selecting";
           setselectMode?.(false);
+          setSelectedId?.([]);
         } else {
           // history.pushState(null, document.title, location.hash);
           // history.pushState(null, document.title, "hi");
@@ -80,7 +80,7 @@ export default function Header(props: any) {
     // if (selectMode) {
     //   window.location.hash = "#selecting";
     // }
-  }, [selectMode, setselectMode]);
+  }, [selectMode, setSelectedId, setselectMode]);
 
   // useEffect(() => {
   //   const parent = indicatorRef.current?.parentElement;

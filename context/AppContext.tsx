@@ -13,6 +13,8 @@ export function AppProvider(props: Props) {
   const [showAction, setshowAction] = useState("");
   const [selectMode, setselectMode] = useState(false);
   const headerContainerRef = useRef<HTMLDivElement>(null);
+  const [selectedId, setSelectedId] = useState([]);
+
   const router = useRouter();
   // useEffect(() => {
   //   // if (expired && router.asPath !== "/") {
@@ -84,6 +86,8 @@ export function AppProvider(props: Props) {
   return (
     <AppContext.Provider
       value={{
+        selectedId,
+        setSelectedId,
         headerContainerRef,
         selectMode,
         setselectMode,

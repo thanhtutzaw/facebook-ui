@@ -8,6 +8,8 @@ export interface Post {
 import { Timestamp } from "firebase/firestore";
 import { ReactNode } from "react";
 export interface Props {
+  selectedId?: string[];
+  setSelectedId?: Function;
   children?: ReactNode;
   showAction?: string;
   setselectMode?: Function;

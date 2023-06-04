@@ -49,7 +49,6 @@ export default function Profile() {
   const [sort, setSort] = useState(false);
   const [sortby, setsortby] = useState("new");
   const [sortedPost, setsortedPost] = useState(myPost);
-
   useEffect(() => {
     if (!active) {
       setSort(false);
