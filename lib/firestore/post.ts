@@ -6,6 +6,7 @@ import {
   doc,
   serverTimestamp,
   updateDoc,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { Post } from "../../types/interfaces";
@@ -51,6 +52,22 @@ export async function deletePost(uid: string, postid: string | number) {
   const Ref = doc(db, `users/${uid}/posts/${postid.toString()}`);
   try {
     await deleteDoc(Ref);
+  } catch (error: any) {
+    alert("Delete Failed !" + error.message);
+  }
+}
+export async function deleteMultiple(uid: string, selctedId: string[]) {
+  const chunkSize = 10;
+  const batch = writeBatch(db);
+  for (let i = 0; i < selctedId.length; i += chunkSize) {
+    const chunk = selctedId.slice(i, i + chunkSize);
+    for (let j = 0; j < chunk.length; j++) {
+      const docRef = doc(db, `users/${uid}/posts/${chunk[j]}`);
+      batch.delete(docRef);
+    }
+  }
+  try {
+    await batch.commit();
   } catch (error: any) {
     alert("Delete Failed !" + error.message);
   }

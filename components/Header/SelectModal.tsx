@@ -1,17 +1,14 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/router";
 import { useContext, useEffect } from "react";
 import { AppContext } from "../../context/AppContext";
+import useEscape from "../../hooks/useEscape";
+import { deleteMultiple } from "../../lib/firestore/post";
 import { Props } from "../../types/interfaces";
 import BackHeader from "./BackHeader";
-import Navitems from "./Navitems";
-import { pages } from "./Header";
-import useEscape from "../../hooks/useEscape";
-import { useRouter } from "next/router";
 
 function SelectModal() {
-  const { selectedId, setSelectedId, selectMode, setselectMode } = useContext(
-    AppContext
-  ) as Props;
+  const { uid, selectedId, setSelectedId, selectMode, setselectMode } =
+    useContext(AppContext) as Props;
   const router = useRouter();
 
   useEscape(() => {
@@ -19,6 +16,7 @@ function SelectModal() {
     setselectMode?.(false);
     setSelectedId?.([]);
   });
+
   return (
     <BackHeader
       selectMode={selectMode!}
@@ -37,8 +35,18 @@ function SelectModal() {
         <span>{selectedId?.length}</span> Selected
       </h2>
       <button
-        onClick={() => {
-          alert(selectedId);
+        onClick={async () => {
+          if (!uid || selectedId?.length === 0 || !selectedId) return;
+          try {
+            await deleteMultiple(uid, selectedId);
+            router.replace(router.asPath);
+            setTimeout(() => {
+              setSelectedId?.([]);
+              setselectMode?.(false);
+            }, 500);
+          } catch (error: any) {
+            alert(error.message);
+          }
         }}
         className="deleteBtn"
       >
