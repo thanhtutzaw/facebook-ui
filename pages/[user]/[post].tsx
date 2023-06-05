@@ -94,6 +94,10 @@ export default function Page(props: {
   const router = useRouter();
   const { active, setActive } = useContext(PageContext) as PageProps;
   const [visibility, setVisibility] = useState<string>(myPost.visibility!);
+  const text = myPost.text
+    .replace(/<br\s*\/?>/g, "\n")
+    .replaceAll("<div>", "")
+    .replaceAll("</div>", "");
   // useEffect(() => {
   //   if (expired) {
   //     router.push("/");
@@ -107,10 +111,11 @@ export default function Page(props: {
   }, []);
   useEffect(() => {
     const input = InputRef.current;
-
+    console.log(myPost.text);
+    console.log(input?.innerHTML);
     const handleBeforeUnload = (e: BeforeUnloadEvent | PopStateEvent) => {
       if (
-        input?.textContent !== myPost.text ||
+        input?.innerHTML.replace(/\n/g, "<br>") !== myPost.text ||
         (visibility !== myPost.visibility && window.location.href !== "/")
       ) {
         e.preventDefault();
@@ -126,7 +131,8 @@ export default function Page(props: {
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
       if (
-        (as !== currentPath && InputRef.current?.textContent !== myPost.text) ||
+        (as !== currentPath &&
+          InputRef.current?.innerHTML.replace(/\n/g, "<br>") !== myPost.text) ||
         visibility !== myPost.visibility
       ) {
         if (confirm("Changes you made may not be saved.")) {
@@ -147,8 +153,8 @@ export default function Page(props: {
   const [newdata, setNewdata] = useState(myPost);
   // useEffect(() => {
   //   const input = InputRef?.current;
-  //   if (!input || !input?.textContent) return;
-  //   setNewdata({ ...myPost, text: input?.textContent });
+  //   if (!input || !input?.innerHTML) return;
+  //   setNewdata({ ...myPost, text: input?.innerHTML });
   // }, [myPost]);
 
   return (
@@ -168,19 +174,20 @@ export default function Page(props: {
             className={s.submit}
             onClick={async () => {
               const uid = auth.currentUser?.uid;
-              if (!InputRef.current?.textContent || !uid || !myPost) return;
+              if (!InputRef.current?.innerHTML || !uid || !myPost) return;
               if (uid !== myPost.authorId) {
                 throw new Error("Unauthorized !");
               }
               if (
                 visibility === myPost.visibility &&
-                InputRef.current?.textContent === myPost.text
+                InputRef.current?.innerHTML.replace(/\n/g, "<br>") ===
+                  myPost.text
               )
                 return;
               try {
                 await updatePost(
                   uid,
-                  InputRef.current.textContent,
+                  InputRef.current.innerHTML,
                   myPost.id?.toString()!,
                   myPost,
                   visibility
@@ -196,11 +203,15 @@ export default function Page(props: {
         )}
       </BackHeader>
       <Input
+        role="textbox"
         element={InputRef}
         contentEditable={router.query.edit ? true : false}
-        style={{ cursor: router.query.edit ? "initial" : "default" }}
+        style={{
+          cursor: router.query.edit ? "initial" : "default",
+          whiteSpace: "pre-line",
+        }}
       >
-        {myPost.text}
+        {text}
       </Input>
       <div className={s.footer}>
         <button tabIndex={-1} onClick={() => {}}>

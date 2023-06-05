@@ -69,7 +69,9 @@ export default function Post({ active, post, tabIndex }: PostProps) {
     //   setshowAction?.("");
     // }
   }, [setshowAction, tab]);
-
+  // var patt2 = new RegExp("<div>", "g");
+  // var patt3 = new RegExp("</div>", "g");
+  // var patt4 = new RegExp("<br>", "g");
   return (
     <div
       className={styles.post}
@@ -199,7 +201,30 @@ export default function Post({ active, post, tabIndex }: PostProps) {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className={styles.text}>{text}</p>
+        <div
+          role="textbox"
+          contentEditable="false"
+          suppressContentEditableWarning={true}
+          className={styles.text}
+          style={{ whiteSpace: "pre-line" }}
+        >
+          {text
+            .replace(/<br\s*\/?>/g, "\n")
+            .replaceAll("<div>", "")
+            .replaceAll("</div>", "")}
+          {/* <pre>
+            {text
+              .replaceAll(patt2, "\n")
+              .replaceAll(patt3, "")
+              .replace(patt4, "")}
+          </pre> */}
+        </div>
+        {/* <div
+          
+          
+        >
+          {text}
+        </div> */}
       </span>
       <div
         className={styles.action}

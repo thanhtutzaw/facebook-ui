@@ -72,8 +72,10 @@ export default function AddPost() {
             const uid = auth.currentUser?.uid;
             if (!textRef.current || !textRef.current.textContent || !uid)
               return;
+            const text = textRef.current.innerHTML.replace(/\n/g, "<br>");
             try {
-              await addPost(uid, textRef.current.textContent, visibility);
+              await addPost(uid, text, visibility);
+              // console.log(textRef.current.innerHTML);
               router.replace("/", undefined, { scroll: false });
             } catch (error: any) {
               alert(error.message);
