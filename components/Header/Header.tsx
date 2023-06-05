@@ -57,48 +57,17 @@ export default function Header(props: any) {
   }, [width]);
   useEffect(() => {
     window.onpopstate = () => {
-      // if (window.location. === "/") {
-      //   history.pushState(null, document.title, location.hash);
-      // }
       if (window.location.hash === "#profile") {
-        // if (window.location.href === "/") {
-        // history.pushState(null, document.title, location.hash);
-        // }
         if (selectMode) {
-          // window.location.hash = "selecting";
           setselectMode?.(false);
           setSelectedId?.([]);
-        } else {
-          // history.pushState(null, document.title, location.hash);
-          // history.pushState(null, document.title, "hi");
         }
-        // if (!selectMode && window.location.hash === "#profile") router.back();
-        // if (!selectMode) return;
       }
     };
-    // if (selectMode) {
-    //   window.location.hash = "#selecting";
-    // }
   }, [selectMode, setSelectedId, setselectMode]);
 
-  // useEffect(() => {
-  //   const parent = indicatorRef.current?.parentElement;
-  //   if (window.location.hash === "#home") {
-  //     parent.opacity = "1";
-  //   }
-  // }, [indicatorRef]);
-
   return (
-    <div
-      style={
-        {
-          // transform: active === "/" ? "translateY(0px)" : "translateY(-60px)",
-          // height: active === "/" ? "120px" : "60px",
-        }
-      }
-      ref={headerContainerRef}
-      className={styles.headerContainer}
-    >
+    <div ref={headerContainerRef} className={styles.headerContainer}>
       <header
         style={{
           display: "flex",
@@ -136,55 +105,55 @@ export default function Header(props: any) {
       </header>
 
       <nav className={styles.nav}>
-        <AnimatePresence mode="wait">
-          {selectMode ? (
-            <motion.div
-              key="selectModal"
-              initial={{ width: "70%", opacity: 0 }}
-              // initial={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              animate={{
-                // width: !selectMode ? "90%" : "100%",
-                width: !selectMode ? "70%" : "100%",
-                opacity: selectMode ? 1 : 0,
-              }}
-              exit={{ opacity: 0, width: "70%" }}
-              className="selectModal"
-              style={{ willChange: "width , opacity " }}
-              // style={{ width: "400px" }}
-            >
-              <SelectModal />
-            </motion.div>
-          ) : (
-            <motion.div
-              // key="navItems"
-              initial={{ width: "100%", opacity: 0 }}
-              animate={{
-                width: selectMode ? "60%" : "100%",
-                opacity: selectMode ? 0 : 1,
-              }}
-              transition={{ duration: 0.2 }}
-              exit={{ opacity: 0, width: "60%" }}
-              style={{
-                willChange: "width , opacity ",
-                opacity: 0,
-                display: "flex",
-                width: "100%",
-                height: "100%",
-              }}
-            >
-              {pages.map((page, index) => (
-                <Navitems
-                  key={page.name}
-                  index={index}
-                  name={page.name}
-                  icon={page.icon}
-                />
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
+        {!selectMode && (
+          <motion.div
+            // key="navItems"
+            initial={{ width: "100%", opacity: 1 }}
+            animate={{
+              width: selectMode ? "60%" : "100%",
+              opacity: selectMode ? 0 : 1,
+            }}
+            transition={{ duration: 0.2 }}
+            exit={{ opacity: 0, width: "60%" }}
+            style={{
+              willChange: "width , opacity ",
+              opacity: 1,
+              display: "flex",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            {pages.map((page, index) => (
+              <Navitems
+                key={page.name}
+                index={index}
+                name={page.name}
+                icon={page.icon}
+              />
+            ))}
+          </motion.div>
+        )}
+        {selectMode && (
+          <motion.div
+            initial={{ width: "70%", opacity: 0 }}
+            // initial={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            animate={{
+              width: !selectMode ? "70%" : "100%",
+              opacity: selectMode ? 1 : 0,
+            }}
+            exit={{ opacity: 0, width: "70%" }}
+            className="selectModal"
+            style={{
+              willChange: "width , opacity",
+              opacity: "1",
+              width: "70%",
+            }}
+            // style={{ width: "400px" }}
+          >
+            <SelectModal />
+          </motion.div>
+        )}
         <div
           style={{ opacity: selectMode ? 0 : 1 }}
           className={styles.indicatorContainer}
