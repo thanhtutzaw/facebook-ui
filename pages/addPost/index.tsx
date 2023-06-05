@@ -8,7 +8,6 @@ import { app } from "../../lib/firebase";
 import { addPost } from "../../lib/firestore/post";
 import s from "../../styles/Home.module.scss";
 import Input from "../../components/Input";
-import error from "next/error";
 export default function AddPost() {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
@@ -20,42 +19,16 @@ export default function AddPost() {
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (input?.textContent) {
-        // history.pushState(null, document.title, location.href);
         e.preventDefault();
         console.log(e);
         e.returnValue = ""; // Chrome requires this line
-        // history.pushState(null, document.title, location.href);
-      }
-    };
-    const handlePopState = (e: PopStateEvent) => {
-      if (input?.textContent) {
-        e.preventDefault();
-        // router.reload();
-        // history.forward();
-        // history.go(1);
-        // history.back();
       }
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
-    // window.addEventListener("popstate", handlePopState);
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      // window.removeEventListener("popstate", handlePopState);
     };
-
-    // if (input?.textContent !== myPost.text) {
-    //   history.pushState(null, document.title, window.location.href);
-    // }
-    // window.onpopstate = () => {
-    //   // history.pushState(null, document.title, window.location.href);
-    //   if (input?.textContent !== myPost.text) {
-    //     window.history.go(1);
-    //     if (window.location.hash === "#home") {
-    //       alert("exit without saving");
-    //     }
-    //   }
-    // };
   }, []);
   useEffect(() => {
     // window.addEventListener("click", (e) => {
@@ -90,7 +63,6 @@ export default function AddPost() {
           router.back();
         }}
       >
-        {/* <h2>{textRef.current?.textContent === ""}</h2> */}
         <h2>Create Post</h2>
         <button
           type="submit"
@@ -126,11 +98,9 @@ export default function AddPost() {
             Public
           </option>
           <option value="Friend" key="Friends">
-            {/* <option disabled value="friends" key="Friends"> */}
             Friends
           </option>
           <option value="Onlyme" key="Only Me">
-            {/* <option disabled value="onlyme" key="Only Me"> */}
             Only Me
           </option>
         </select>

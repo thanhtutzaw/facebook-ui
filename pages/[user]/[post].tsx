@@ -105,102 +105,30 @@ export default function Page(props: {
   useEffect(() => {
     InputRef.current?.focus();
   }, []);
-  // useEffect(() => {
-  //   if (InputRef.current?.textContent !== myPost.text) {
-  //     alert("exit without saving");
-  //   }
-  // }, [myPost.text]);
-  useEffect(() => {}, [myPost.text]);
-
-  // useEscape(() => {
-  //   router.back();
-  //   // if (InputRef.current?.textContent !== myPost.text) {
-  //   // }
-  // });
-  // useEffect(() => {
-  //   function handleEscape(e: KeyboardEvent) {
-  //     if (!(e.key === "Escape")) return;
-  //     // router.back();
-  //     history.forward();
-  //   }
-  //   window.addEventListener("keyup", handleEscape);
-  //   // return () => window.removeEventListener("keyup", handleEscape);
-  // }, [router]);
   useEffect(() => {
     const input = InputRef.current;
 
     const handleBeforeUnload = (e: BeforeUnloadEvent | PopStateEvent) => {
-      if (input?.textContent !== myPost.text && window.location.href !== "/") {
+      if (
+        input?.textContent !== myPost.text ||
+        (visibility !== myPost.visibility && window.location.href !== "/")
+      ) {
         e.preventDefault();
         e.returnValue = "";
       }
     };
-    // const routeChangeStartHandler = () => {
-    //   if (
-    //     input?.textContent !== myPost.text &&
-    //     !window.confirm(
-    //       "You have unsaved changes. Do you want to leave the page?"
-    //     )
-    //   ) {
-    //     nProgress.done();
-    //     throw "routeChange aborted";
-    //   }
-    // };
-    const handlePopState = (e: PopStateEvent) => {
-      // if (
-      //   input?.textContent !== myPost.text &&
-      //   !confirm("Are you sure you want to leave this page?") &&
-      //   e
-      // ) {
-      if (
-        input?.textContent !== myPost.text &&
-        !confirm("Are you sure you want to leave this page?")
-      ) {
-        // history.pushState(null, document.title, window.location.href);
-        e.preventDefault();
-        // history.forward();
-        history.go(1);
-        // history.back();
-        // window.onbeforeunload = (e) => {
-        //   e.preventDefault();
-        //   e.returnValue = "";
-        // };
-
-        // history.forward();
-        // if (e.state) {
-        //   console.log(e.state);
-        // } else {
-        //   console.log("no e");
-        // }
-        // history.forward();
-        // history.go(1);
-        // if (e) {
-        // } // history.forward();
-      }
-    };
     window.addEventListener("beforeunload", handleBeforeUnload);
-    // window.addEventListener("popstate", handlePopState);
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      // window.removeEventListener("popstate", handlePopState);
     };
-    // if (input?.textContent !== myPost.text) {
-    //   history.pushState(null, document.title, window.location.href);
-    // }
-    // window.onpopstate = () => {
-    //   // history.pushState(null, document.title, window.location.href);
-    //   if (input?.textContent !== myPost.text) {
-    //     window.history.go(1);
-    //     if (window.location.hash === "#home") {
-    //       alert("exit without saving");
-    //     }
-    //   }
-    // };
-  }, []);
+  }, [myPost.text, myPost.visibility, visibility]);
   useEffect(() => {
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
-      if (as !== currentPath && InputRef.current?.textContent !== myPost.text) {
+      if (
+        (as !== currentPath && InputRef.current?.textContent !== myPost.text) ||
+        visibility !== myPost.visibility
+      ) {
         if (confirm("Changes you made may not be saved.")) {
           return true;
         } else {
@@ -214,7 +142,7 @@ export default function Page(props: {
     return () => {
       router.beforePopState(() => true);
     };
-  }, [router]); // Add any state variables to dependencies array if needed.
+  }, [myPost.text, myPost.visibility, router, visibility]); // Add any state variables to dependencies array if needed.
   const auth = getAuth(app);
   const [newdata, setNewdata] = useState(myPost);
   // useEffect(() => {
@@ -234,6 +162,7 @@ export default function Page(props: {
         <h2 className={s.title}>{router.query.edit ? "Edit" : "Post"}</h2>
         {router.query.edit && (
           <button
+            tabIndex={1}
             aria-label="update button"
             type="submit"
             className={s.submit}
@@ -243,12 +172,6 @@ export default function Page(props: {
               if (uid !== myPost.authorId) {
                 throw new Error("Unauthorized !");
               }
-              // if (
-              //   InputRef.current?.textContent === myPost.text ||
-              //   visibility === myPost.visibility
-              // )
-              //   return;
-              // setNewdata({ ...myPost, text: InputRef.current?.textContent });
               if (
                 visibility === myPost.visibility &&
                 InputRef.current?.textContent === myPost.text
@@ -284,6 +207,7 @@ export default function Page(props: {
           <FontAwesomeIcon icon={faPhotoFilm} />
         </button>
         <select
+          disabled={router.query.edit ? false : true}
           defaultValue={visibility}
           tabIndex={-1}
           onChange={(e) => {
