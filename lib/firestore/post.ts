@@ -30,12 +30,14 @@ export async function updatePost(
   uid: string,
   text: string,
   id: string,
-  myPost: Post
+  myPost: Post,
+  visibility: string
 ) {
   const Ref = doc(db, `users/${uid}/posts/${id}`);
   const data = {
     ...myPost,
     text: text,
+    visibility: visibility,
     createdAt: new Timestamp(
       myPost.createdAt.seconds,
       myPost.createdAt.nanoseconds

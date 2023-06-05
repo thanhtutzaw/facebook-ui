@@ -18,6 +18,9 @@ import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { updatePost } from "../../lib/firestore/post";
 import s from "../../styles/Home.module.scss";
 import { Post, Props } from "../../types/interfaces";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
+import error from "next/error";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -90,6 +93,7 @@ export default function Page(props: {
   const { uid, myPost, email, expired } = props;
   const router = useRouter();
   const { active, setActive } = useContext(PageContext) as PageProps;
+  const [visibility, setVisibility] = useState<string>(myPost.visibility!);
   // useEffect(() => {
   //   if (expired) {
   //     router.push("/");
@@ -99,7 +103,6 @@ export default function Page(props: {
   // }, [expired]);
   const InputRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    // console.log(router.locale);
     InputRef.current?.focus();
   }, []);
   // useEffect(() => {
@@ -107,25 +110,8 @@ export default function Page(props: {
   //     alert("exit without saving");
   //   }
   // }, [myPost.text]);
-  useEffect(() => {
-    const input = InputRef.current;
-    // return () => {
-    window.onpopstate = () => {
-      // if (input?.textContent !== myPost.text) {
-      //   history.pushState(
-      //     router.asPath.split("?")[0],
-      //     document.title,
-      //     router.asPath.split("?")[0]
-      //   );
-      //   // history.pushState(null, document.title, router.asPath);
-      // }
-    };
-    // };
-  }, [myPost.text]);
-  // const [isDirty, setisDirty] = useState(false);
-  const [isDirty, setisDirty] = useState(
-    InputRef.current?.textContent !== myPost.text ?? false
-  );
+  useEffect(() => {}, [myPost.text]);
+
   // useEscape(() => {
   //   router.back();
   //   // if (InputRef.current?.textContent !== myPost.text) {
@@ -230,6 +216,13 @@ export default function Page(props: {
     };
   }, [router]); // Add any state variables to dependencies array if needed.
   const auth = getAuth(app);
+  const [newdata, setNewdata] = useState(myPost);
+  // useEffect(() => {
+  //   const input = InputRef?.current;
+  //   if (!input || !input?.textContent) return;
+  //   setNewdata({ ...myPost, text: input?.textContent });
+  // }, [myPost]);
+
   return (
     <div className="user">
       <BackHeader
@@ -239,46 +232,77 @@ export default function Page(props: {
         }}
       >
         <h2 className={s.title}>{router.query.edit ? "Edit" : "Post"}</h2>
-        <button
-          aria-label="update button"
-          type="submit"
-          className={s.submit}
-          onClick={async () => {
-            const uid = auth.currentUser?.uid;
-            if (
-              !InputRef.current?.textContent ||
-              InputRef.current?.textContent === myPost.text ||
-              !uid ||
-              !myPost
-            )
-              return;
-            if (uid !== myPost.authorId) {
-              // alert("")
-              throw new Error("Unauthorized !");
-            }
-            try {
-              await updatePost(
-                uid,
-                InputRef.current.textContent,
-                myPost.id?.toString()!,
-                myPost
-              );
-              router.replace("/", undefined, { scroll: false });
-            } catch (error: any) {
-              alert(error.message);
-            }
-          }}
-        >
-          Save
-        </button>
+        {router.query.edit && (
+          <button
+            aria-label="update button"
+            type="submit"
+            className={s.submit}
+            onClick={async () => {
+              const uid = auth.currentUser?.uid;
+              if (!InputRef.current?.textContent || !uid || !myPost) return;
+              if (uid !== myPost.authorId) {
+                throw new Error("Unauthorized !");
+              }
+              // if (
+              //   InputRef.current?.textContent === myPost.text ||
+              //   visibility === myPost.visibility
+              // )
+              //   return;
+              // setNewdata({ ...myPost, text: InputRef.current?.textContent });
+              if (
+                visibility === myPost.visibility &&
+                InputRef.current?.textContent === myPost.text
+              )
+                return;
+              try {
+                await updatePost(
+                  uid,
+                  InputRef.current.textContent,
+                  myPost.id?.toString()!,
+                  myPost,
+                  visibility
+                );
+                router.replace("/", undefined, { scroll: false });
+              } catch (error: any) {
+                alert(error.message);
+              }
+            }}
+          >
+            Save
+          </button>
+        )}
       </BackHeader>
       <Input
-        style={{ cursor: router.query.edit ? "initial" : "default" }}
         element={InputRef}
         contentEditable={router.query.edit ? true : false}
+        style={{ cursor: router.query.edit ? "initial" : "default" }}
       >
         {myPost.text}
       </Input>
+      <div className={s.footer}>
+        <button tabIndex={-1} onClick={() => {}}>
+          <FontAwesomeIcon icon={faPhotoFilm} />
+        </button>
+        <select
+          defaultValue={visibility}
+          tabIndex={-1}
+          onChange={(e) => {
+            setVisibility(e.target.value);
+          }}
+        >
+          <option value="Pubilc" key="Public">
+            Public
+          </option>
+          <option value="Friend" key="Friends">
+            {/* <option disabled value="friends" key="Friends"> */}
+            Friends
+          </option>
+          <option value="Onlyme" key="Only Me">
+            {/* <option disabled value="onlyme" key="Only Me"> */}
+            Only Me
+          </option>
+        </select>
+      </div>
     </div>
   );
 }
