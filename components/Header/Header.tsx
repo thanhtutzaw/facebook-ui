@@ -55,7 +55,6 @@ export default function Header(props: any) {
       setwidth(Math.floor(nav.clientWidth / 6));
     };
   }, [width]);
-  const router = useRouter();
   useEffect(() => {
     window.onpopstate = () => {
       // if (window.location. === "/") {
@@ -159,7 +158,7 @@ export default function Header(props: any) {
           ) : (
             <motion.div
               // key="navItems"
-              initial={{ width: "100%", opacity: 1 }}
+              initial={{ width: "100%", opacity: 0 }}
               animate={{
                 width: selectMode ? "60%" : "100%",
                 opacity: selectMode ? 0 : 1,
@@ -168,7 +167,7 @@ export default function Header(props: any) {
               exit={{ opacity: 0, width: "60%" }}
               style={{
                 willChange: "width , opacity ",
-                opacity: selectMode ? "0" : "1",
+                opacity: 0,
                 display: "flex",
                 width: "100%",
                 height: "100%",

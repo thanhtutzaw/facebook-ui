@@ -74,6 +74,10 @@ export default function Post({ active, post, tabIndex }: PostProps) {
     <div
       className={styles.post}
       style={{
+        transition: "all .1s ease-in-out",
+        borderRadius: checked ? "50px" : "0",
+        border: checked ? "10px solid #0070f312" : "0px solid #0070f312",
+        // backgroundColor: checked ? "rgb(223 255 220)" : "",
         userSelect: active ? "none" : "initial",
         cursor: active ? "pointer" : "initial",
       }}

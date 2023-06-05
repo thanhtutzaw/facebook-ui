@@ -4,7 +4,8 @@
     margin: 0.5rem 0;
     position: relative;
     cursor: default;
-
+    overflow: hidden;
+    // transition: border 0.2s ease-in-out, borderRadius 0.2s ease-in-out;
     > p {
         // word-break: break-word;
         // white-space: break-spaces;
