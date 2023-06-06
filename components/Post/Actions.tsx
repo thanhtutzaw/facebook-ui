@@ -1,11 +1,9 @@
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import router from "next/router";
-import { deletePost } from "../../lib/firestore/post";
-import styles from "./Post.module.scss";
 import { getAuth } from "firebase/auth";
+import router from "next/router";
 import { app } from "../../lib/firebase";
-import { motion } from "framer-motion";
+import { deletePost } from "../../lib/firestore/post";
 function Actions(props: {
   authorId: string | number;
   id: string;
@@ -23,22 +21,6 @@ function Actions(props: {
             pathname: `${authorId}/${id?.toString()}`,
             query: { edit: true },
           });
-          
-          // if (auth.currentUser?.uid !== authorId) {
-          //   alert("Not Allowed ! Mismatch userId and authorId");
-          //   throw new Error("Not Allowed");
-          // }
-
-          // try {
-          //   await deletePost(auth.currentUser?.uid!, id?.toString()!);
-          //   router.replace("/", undefined, {
-          //     scroll: false,
-          //   });
-          // } catch (error: any) {
-          //   alert(error.message);
-          // } finally {
-          //   setshowAction?.("");
-          // }
         }}
       >
         <FontAwesomeIcon icon={faEdit} />

@@ -12,7 +12,7 @@ export default function AddPost() {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
   const [visibility, setvisibility] = useState("public");
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     textRef.current?.focus();
     const input = textRef.current;
@@ -65,6 +65,7 @@ export default function AddPost() {
       >
         <h2>Create Post</h2>
         <button
+          disabled={loading}
           type="submit"
           className={s.submit}
           onClick={async () => {
@@ -73,16 +74,20 @@ export default function AddPost() {
             if (!textRef.current || !textRef.current.textContent || !uid)
               return;
             const text = textRef.current.innerHTML.replace(/\n/g, "<br>");
+            setLoading(true);
             try {
+              setLoading(true);
               await addPost(uid, text, visibility);
               // console.log(textRef.current.innerHTML);
               router.replace("/", undefined, { scroll: false });
             } catch (error: any) {
               alert(error.message);
+            } finally {
+              // setLoading(false);
             }
           }}
         >
-          Post
+          {loading ? "Saving..." : "Post"}
         </button>
       </BackHeader>
       <Input element={textRef} contentEditable></Input>

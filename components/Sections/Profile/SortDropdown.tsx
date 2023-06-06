@@ -34,26 +34,9 @@ export function SortDropdown(props: {
         id="new"
         onClick={async (e) => {
           e.preventDefault();
-          e.stopPropagation(); // router.push({
+          e.stopPropagation();
           setSort(false);
           setsortby(e.currentTarget.id);
-          //   pathname: `${authorId}/${id?.toString()}`,
-          //   query: { edit: true },
-          // });
-          // if (auth.currentUser?.uid !== authorId) {
-          //   alert("Not Allowed ! Mismatch userId and authorId");
-          //   throw new Error("Not Allowed");
-          // }
-          // try {
-          //   await deletePost(auth.currentUser?.uid!, id?.toString()!);
-          //   router.replace("/", undefined, {
-          //     scroll: false,
-          //   });
-          // } catch (error: any) {
-          //   alert(error.message);
-          // } finally {
-          //   setshowAction?.("");
-          // }
         }}
       >
         Date added (Newest)
@@ -64,26 +47,8 @@ export function SortDropdown(props: {
         onClick={async (e) => {
           setSort(false);
           setsortby(e.currentTarget.id);
-          // if (auth.currentUser?.uid !== authorId) {
-          //   alert("Not Allowed ! Mismatch userId and authorId");
-          //   throw new Error("Not Allowed");
-          // }
-          // try {
-          //   await deletePost(auth.currentUser?.uid!, id!);
-          //   router.replace("/", undefined, {
-          //     scroll: false,
-          //   });
-          // } catch (error: any) {
-          //   alert(error.message);
-          // } finally {
-          //   router.replace("/", undefined, {
-          //     scroll: false,
-          //   });
-          //   setshowAction?.("");
-          // }
         }}
       >
-        {/* <FontAwesomeIcon icon={faTrash} /> */}
         Date added (Oldest)
       </button>
     </motion.div>

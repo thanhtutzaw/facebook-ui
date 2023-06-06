@@ -413,7 +413,6 @@
     border: 0;
     background-color: transparent;
     &:hover {
-      // background-color: red;
       background-color: rgb(240, 240, 240);
     }
     &:active {
@@ -447,12 +446,9 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    // padding-inline: 1rem;
-    // padding: 1rem;
   }
 }
 .title {
-  // color:red;
   overflow: hidden;
   text-overflow: ellipsis;
   display: block !important;
@@ -515,6 +511,7 @@
   //     }
   //   }
   // }
+
   .input {
     padding: 1rem;
     margin-block: 65px;
@@ -526,67 +523,69 @@
 }
 
 .footer {
-    background-color: rgb(255, 255, 255);
-    overflow: auto;
-    padding: 0 1rem;
-    height: 65px;
-    width: 100vw;
-    max-width: var(--main-width);
-    padding: 0 1rem;
-    justify-content: space-between;
+  background-color: rgb(255, 255, 255);
+  overflow: auto;
+  padding: 0 1rem;
+  height: 65px;
+  width: 100vw;
+  max-width: var(--main-width);
+  padding: 0 1rem;
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: fixed;
+  bottom: 0;
+  border-top: 1px solid rgb(235, 235, 235);
+  h2 {
+    margin-top: 0;
+    margin-bottom: 0;
     display: flex;
-    align-items: center;
-    gap: 10px;
-    position: fixed;
-    bottom: 0;
-    border-top: 1px solid rgb(235, 235, 235);
-    h2 {
-      margin-top: 0;
-      margin-bottom: 0;
-      display: flex;
-      flex: 1;
+    flex: 1;
+  }
+  button {
+    border-radius: 100px;
+    width: 45px;
+    height: 45px;
+    border: 0;
+    background-color: transparent;
+    background-color: rgb(240, 240, 240);
+    &:hover {
+      background-color: rgb(228, 228, 228);
     }
-    button {
-      border-radius: 100px;
-      width: 45px;
-      height: 45px;
-      border: 0;
-      background-color: transparent;
-      background-color: rgb(240, 240, 240);
-      &:hover {
-        background-color: rgb(228, 228, 228);
-      }
-      &:active {
-        opacity: 0.6;
-      }
-    }
-    svg {
-      font-size: 1rem;
-    }
-    select {
-      font-size: 1rem;
-      padding: 10px;
-      border-radius: 100px;
-      border-color: rgb(192, 192, 192);
-
-      &:focus-visible {
-        outline: 0;
-        background-color: var(--blue-origin);
-        color: white;
-      }
-    }
-    option {
-      &:disabled {
-        color: rgb(212, 212, 212);
-      }
+    &:active {
+      opacity: 0.6;
     }
   }
+  svg {
+    font-size: 1rem;
+  }
+  select {
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: 100px;
+    border-color: rgb(192, 192, 192);
+
+    &:focus-visible {
+      outline: 0;
+      background-color: var(--blue-origin);
+      color: white;
+    }
+  }
+  option {
+    &:disabled {
+      color: rgb(212, 212, 212);
+    }
+  }
+}
 .input {
   padding: 1rem;
-  // margin-block: 65px;
   margin-top: 65px;
   outline: 0;
   border: 0;
+  cursor: default;
+  white-space: pre-line;
+  word-break: break-word;
   // min-height: calc(100dvh - 60px);
   // min-height: 100vh;
   > div {

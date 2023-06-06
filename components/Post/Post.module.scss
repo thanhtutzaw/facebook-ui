@@ -12,6 +12,8 @@
         margin: 0;
         outline: 0;
         cursor: default;
+        word-break: break-word;
+        white-space: pre-line;
     }
     .header {
         // padding: 15px 1rem;

@@ -186,7 +186,6 @@ export default function Post({ active, post, tabIndex }: PostProps) {
           {showAction === id && (
             <motion.div
               key={id}
-              // transition={{ type: "spring", stiffness: 100 }}
               initial={{ opacity: "0", scale: 0.8 }}
               animate={{ opacity: showAction === id ? 1 : 0, scale: 1 }}
               exit={{ opacity: "0", scale: 0.8 }}
@@ -206,31 +205,14 @@ export default function Post({ active, post, tabIndex }: PostProps) {
           contentEditable="false"
           suppressContentEditableWarning={true}
           className={styles.text}
-          style={{ whiteSpace: "pre-line" }}
         >
           {text
             .replace(/<br\s*\/?>/g, "\n")
             .replaceAll("<div>", "")
             .replaceAll("</div>", "")}
-          {/* <pre>
-            {text
-              .replaceAll(patt2, "\n")
-              .replaceAll(patt3, "")
-              .replace(patt4, "")}
-          </pre> */}
         </div>
-        {/* <div
-          
-          
-        >
-          {text}
-        </div> */}
       </span>
-      <div
-        className={styles.action}
-        // onPointerEnter={() => setBounce(true)}
-        // onPointerLeave={() => setBounce(false)}
-      >
+      <div className={styles.action}>
         <button tabIndex={tabIndex}>
           <FontAwesomeIcon bounce={Bounce} icon={faThumbsUp} />
           <p>Like</p>
