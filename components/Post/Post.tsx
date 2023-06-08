@@ -142,7 +142,11 @@ export default function Post({ active, post, tabIndex }: PostProps) {
                   ? "Peter 1"
                   : "Other User"}
               </p>
-              {/* <p>{timeString}</p> */}
+              <p>
+                {new Timestamp(createdAt.seconds, createdAt.nanoseconds)
+                  .toDate()
+                  .toLocaleDateString()}
+              </p>
               {/* <p>{visibility?.[0] === "public" ? "hi" : visibility}</p> */}
               <p>{visibility}</p>
             </div>
