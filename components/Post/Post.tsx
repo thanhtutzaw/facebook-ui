@@ -10,13 +10,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Timestamp } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useRef, useState } from "react";
+import {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { AppContext } from "../../context/AppContext";
 import { Post as PostType, Props } from "../../types/interfaces";
 import Actions from "./Actions";
 import styles from "./Post.module.scss";
 import Image from "next/image";
 import Link from "next/link";
+import { set } from "nprogress";
+import { text } from "@fortawesome/fontawesome-svg-core";
 // import { Post } from "../../types/interfaces";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 // interface Props {
@@ -56,10 +64,13 @@ export default function Post({ active, post, tabIndex }: PostProps) {
   }, [active, checked, setshowAction, showAction]);
 
   const dateString = useRef("");
-  useEffect(() => {
-    const date = new Timestamp(createdAt.seconds, createdAt.nanoseconds);
-    dateString.current = date.toDate().toLocaleDateString();
-  }, [createdAt.nanoseconds, createdAt.seconds]);
+  const timeString = new Timestamp(createdAt.seconds, createdAt.nanoseconds)
+    .toDate()
+    .toLocaleDateString();
+  // useLayoutEffect(() => {
+  //   const date = new Timestamp(createdAt.seconds, createdAt.nanoseconds);
+  //   dateString.current = date.toDate().toLocaleDateString();
+  // }, [createdAt.nanoseconds, createdAt.seconds]);
 
   useEffect(() => {
     if (tab !== "profile" || "") {
@@ -72,6 +83,12 @@ export default function Post({ active, post, tabIndex }: PostProps) {
   // var patt2 = new RegExp("<div>", "g");
   // var patt3 = new RegExp("</div>", "g");
   // var patt4 = new RegExp("<br>", "g");
+  // const replace = text.replace("<div>", "").replaceAll("</div><div>", "<br>");
+  // const [client, setclient] = useState(false);
+  // useEffect(() => {
+  //   setclient(true);
+  // }, []);
+
   return (
     <div
       className={styles.post}
@@ -85,6 +102,10 @@ export default function Post({ active, post, tabIndex }: PostProps) {
       }}
     >
       <span
+        style={{
+          display: "block",
+          padding: "0 0 1rem",
+        }}
         // scroll={false}
         // href={`${authorId}/${id?.toString()}`}
         onClick={() => {
@@ -121,7 +142,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
                   ? "Peter 1"
                   : "Other User"}
               </p>
-              <p>{dateString.current}</p>
+              <p>{timeString}</p>
               {/* <p>{visibility?.[0] === "public" ? "hi" : visibility}</p> */}
               <p>{visibility}</p>
             </div>
@@ -205,11 +226,16 @@ export default function Post({ active, post, tabIndex }: PostProps) {
           contentEditable="false"
           suppressContentEditableWarning={true}
           className={styles.text}
+          // dangerouslySetInnerHTML={{ __html: client ? replace : "" }}
+          // dangerouslySetInnerHTML={{ __html: text }}
         >
-          {text
+          {text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")}
+          {/* {replace} */}
+          {/* {text
             .replace(/<br\s*\/?>/g, "\n")
             .replaceAll("<div>", "")
-            .replaceAll("</div>", "")}
+            .replaceAll("</div>", "")
+            .replaceAll("&nbsp;", " ")} */}
         </div>
       </span>
       <div className={styles.action}>

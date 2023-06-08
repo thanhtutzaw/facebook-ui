@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { Post } from "../../types/interfaces";
+import { useRouter } from "next/router";
 
 export async function addPost(uid: string, text: string, visibility: string) {
   // alert([uid, visibility, text]);

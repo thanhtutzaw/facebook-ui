@@ -23,6 +23,8 @@ export interface Props {
   active?: string;
   setActive?: Function;
   allUsers?: any;
+  sortedPost?: Post[];
+  setsortedPost?: Function;
   myPost?: Post[];
   posts?: Post[];
   email?: string | null;

@@ -15,7 +15,9 @@ import s from "./Profile.module.scss";
 import { SortDropdown } from "./SortDropdown";
 export default function Profile() {
   const photoURL = "";
-  const { myPost, email } = useContext(AppContext) as Props;
+  const { selectMode, myPost, email, sortedPost, setsortedPost } = useContext(
+    AppContext
+  ) as Props;
   // const posts = [
   //   {
   //     id: "hello",
@@ -27,6 +29,8 @@ export default function Profile() {
   //   },
   // ];
   const {
+    selectedId,
+    setSelectedId,
     uid,
     selectMode: active,
     setselectMode: setactive,
@@ -48,21 +52,19 @@ export default function Profile() {
   }, [setactive, tab, active]);
   const [sort, setSort] = useState(false);
   const [sortby, setsortby] = useState("new");
-  const [sortedPost, setsortedPost] = useState(myPost);
   useEffect(() => {
     if (!active) {
       setSort(false);
     }
     if (tab !== "profile" && !uid) return;
-    setsortedPost(myPost);
+    setsortedPost?.(myPost);
     if (sortby === "old") {
-      // setsortedPost([]);
       const mypostQuery = query(
         collection(db, `/users/${uid}/posts`),
         orderBy("createdAt", "asc")
       );
       const unsub = onSnapshot(mypostQuery, (snapshot) => {
-        setsortedPost(snapshot.docs.map((doc) => postToJSON(doc)));
+        setsortedPost?.(snapshot.docs.map((doc) => postToJSON(doc)));
       });
       // const myPost = myPostSnap.docs.map((doc) => postToJSON(doc));
       return () => {
@@ -70,12 +72,9 @@ export default function Profile() {
         setsortby("new");
       };
     }
-  }, [active, myPost, sortby, tab, uid]);
+  }, [active, myPost, setsortedPost, sortby, tab, uid]);
 
-  // const sortedPost = myPost?.sort((a, b) => {
-  //   b.createdAt.toDate() - a.createdAt.toDate();
-  // });
-  // const sortedPost = myPost?.sort((a, b) =>{ b.createdAt.toDate()-a.createdAt.toDate()});
+  const [loading, setLoading] = useState(false);
   return (
     <motion.div
       // transition={{ duration: 0.5, type: "spring", stiffness: 100 }}

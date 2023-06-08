@@ -136,7 +136,6 @@ export default function Header(props: any) {
         {selectMode && (
           <motion.div
             initial={{ width: "70%", opacity: 0 }}
-            // initial={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             animate={{
               width: !selectMode ? "70%" : "100%",
@@ -149,7 +148,6 @@ export default function Header(props: any) {
               opacity: "1",
               width: "70%",
             }}
-            // style={{ width: "400px" }}
           >
             <SelectModal />
           </motion.div>

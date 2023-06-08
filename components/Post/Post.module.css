@@ -3,10 +3,25 @@
   margin: 0.5rem 0;
   position: relative;
   cursor: default;
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
 }
 .post .text {
   padding: 10px 0.8rem 1rem;
+  padding: 6px 1rem 0;
+  padding: 0 0.8rem;
   margin: 0;
+  margin-block: 0.5rem 1.2rem;
+  margin-block: 0.5rem 0;
+  outline: 0;
+  cursor: default;
+  word-break: break-word;
+  white-space: pre-line;
+  --max-lines: 5;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--max-lines);
 }
 .post .header {
   padding: 15px 0.8rem 6px;

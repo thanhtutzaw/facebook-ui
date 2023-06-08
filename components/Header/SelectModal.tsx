@@ -5,6 +5,7 @@ import useEscape from "../../hooks/useEscape";
 import { deleteMultiple } from "../../lib/firestore/post";
 import { Props } from "../../types/interfaces";
 import BackHeader from "./BackHeader";
+import { setTimeout } from "timers";
 
 function SelectModal() {
   const { uid, selectedId, setSelectedId, selectMode, setselectMode } =
@@ -16,21 +17,14 @@ function SelectModal() {
     setselectMode?.(false);
     setSelectedId?.([]);
   });
-  // useEffect(() => {
-  //   if (!loading && selectedId?.length !== 0 && selectMode) {
-  //     setselectMode?.(false);
-  //     setSelectedId?.([]);
-  //   }
-  // }, [loading, selectMode, selectedId?.length, setSelectedId, setselectMode]);
   useEffect(() => {
     const handleRouteStart = () => {
       console.log("routestart");
     };
     const handleRouteDone = () => {
-      // setselectMode?.(false);
       console.log("routedone");
       setSelectedId?.([]);
-      // setselectMode?.(false);
+      setselectMode?.(false);
     };
     router.events.on("routeChangeStart", handleRouteStart);
     router.events.on("routeChangeComplete", handleRouteDone);
@@ -46,10 +40,8 @@ function SelectModal() {
     <BackHeader
       selectMode={selectMode!}
       onClick={() => {
-        // router.back();
         setselectMode?.(false);
         setSelectedId?.([]);
-        // window.location.hash = ""
       }}
       style={{
         position: "initial",
@@ -64,28 +56,21 @@ function SelectModal() {
         onClick={async () => {
           if (!uid || selectedId?.length === 0 || !selectedId) return;
           setLoading(true);
-          console.log("deleting");
           try {
             await deleteMultiple(uid, selectedId);
             setLoading(true);
-            // router.replace("/");
-            console.log("deleting...");
           } catch (error: any) {
             setLoading(false);
             alert(error.message);
           } finally {
             setLoading(false);
-            console.log("deleted");
-            setSelectedId?.([]);
-            setselectMode?.(false);
-            setTimeout(() => {
+            if (router.asPath === "/#home") {
               router.replace("/");
+              router.reload();
+            } else {
               router.replace(router.asPath);
-              // setLoading(false);
-              // setSelectedId?.([]);
-              // setselectMode?.(false);
-            }, 1000);
-            // router.replace(router.asPath);
+            }
+            setSelectedId?.([]);
           }
         }}
         className="deleteBtn"

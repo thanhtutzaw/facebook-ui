@@ -586,6 +586,8 @@
   cursor: default;
   white-space: pre-line;
   word-break: break-word;
+  direction: ltr;
+  // display: inline-block;
   // min-height: calc(100dvh - 60px);
   // min-height: 100vh;
   > div {

@@ -14,6 +14,7 @@ export function AppProvider(props: Props) {
   const [selectMode, setselectMode] = useState(false);
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const [selectedId, setSelectedId] = useState([]);
+  const [sortedPost, setsortedPost] = useState(myPost);
 
   const router = useRouter();
   // useEffect(() => {
@@ -86,6 +87,8 @@ export function AppProvider(props: Props) {
   return (
     <AppContext.Provider
       value={{
+        sortedPost,
+        setsortedPost,
         selectedId,
         setSelectedId,
         headerContainerRef,

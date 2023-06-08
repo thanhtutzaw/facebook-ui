@@ -1,3 +1,5 @@
+import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
 import {
   collection,
@@ -7,7 +9,7 @@ import {
   query,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import nookies from "nookies";
 import { useContext, useEffect, useRef, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
@@ -18,9 +20,7 @@ import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { updatePost } from "../../lib/firestore/post";
 import s from "../../styles/Home.module.scss";
 import { Post, Props } from "../../types/interfaces";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
-import error from "next/error";
+import { text } from "@fortawesome/fontawesome-svg-core";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -94,10 +94,25 @@ export default function Page(props: {
   const router = useRouter();
   const { active, setActive } = useContext(PageContext) as PageProps;
   const [visibility, setVisibility] = useState<string>(myPost.visibility!);
+  const InputRef = useRef<HTMLDivElement>(null);
+
+  const [value, setvalue] = useState("");
+
+  // const text = myPost.text
+  //   .replace(/<br\s*\/?>/g, "\n")
+  //   .replaceAll("<div>", "")
+  //   .replaceAll("</div>", "")
+  //   .replaceAll("&nbsp;", " ");
+
   const text = myPost.text
-    .replace(/<br\s*\/?>/g, "\n")
-    .replaceAll("<div>", "")
-    .replaceAll("</div>", "");
+    .replaceAll("</div>", "")
+    .replace("<div>", "<br>")
+    .replaceAll("<div><br><div>", "<br>")
+    .replaceAll("<br><div>", "<br>");
+  // const text = myPost.text
+  //   .replace("<div>", "")
+  //   .replaceAll("</div><div>", "<br>");
+
   // useEffect(() => {
   //   if (expired) {
   //     router.push("/");
@@ -105,34 +120,87 @@ export default function Page(props: {
   //   }
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [expired]);
-  const InputRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     InputRef.current?.focus();
   }, []);
   useEffect(() => {
     const input = InputRef.current;
-    console.log(myPost.text);
-    console.log(input?.innerHTML);
+    // console.log(myPost.text !== text);
+    setvalue(
+      InputRef.current?.innerHTML
+        .replaceAll("<div>", "")
+        .replaceAll("</div>", "")
+        .replace("<div>", "<br>")
+        .replaceAll("<div><br><div>", "<br>")
+        .replaceAll("<br><div>", "<br>")
+        .replace("</div>", "")!
+      // .replaceAll("</div>", "")
+      // .replace("<div>", "<br>")
+      // .replaceAll("<div><br><div>", "<br>")
+      // .replaceAll("<br><div>", "<br>")!
+    );
+    // console.log(value === text);
+
+    // console.log(
+    //   myPost.text
+    //     .replaceAll("</div>", "")
+    //     .replace("<div>", "<br>")
+    //     .replaceAll("<div><br><div>", "<br>")
+    //     .replaceAll("<br><div>", "<br>")
+    // );
+    // console.log(
+    //   myPost.text
+    //     .replaceAll("<div>", "")
+    //     .replaceAll("</div>", "")
+    //     .replace("<div>", "<br>")
+    //     .replaceAll("<div><br><div>", "<br>")
+    //     .replaceAll("<br><div>", "<br>")
+    //     .replace("</div>", "")
+    // );
     const handleBeforeUnload = (e: BeforeUnloadEvent | PopStateEvent) => {
       if (
-        input?.innerHTML.replace(/\n/g, "<br>") !== myPost.text ||
+        value ===
+          input?.innerHTML
+            .replaceAll("<div>", "")
+            .replaceAll("</div>", "")
+            .replace("<div>", "<br>")
+            .replaceAll("<div><br><div>", "<br>")
+            .replaceAll("<br><div>", "<br>")
+            .replace("</div>", "") ||
         (visibility !== myPost.visibility && window.location.href !== "/")
       ) {
         e.preventDefault();
         e.returnValue = "";
       }
+      // const handleBeforeUnload = (e: BeforeUnloadEvent | PopStateEvent) => {
+      //   if (
+      //     input?.innerHTML.replace(/\n/g, "<br>").replaceAll("&nbsp;", " ") !==
+      //       myPost.text ||
+      //     (visibility !== myPost.visibility && window.location.href !== "/")
+      //   ) {
+      //     e.preventDefault();
+      //     e.returnValue = "";
+      //   }
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [myPost.text, myPost.visibility, visibility]);
+  }, [myPost.text, myPost.visibility, text, value, visibility]);
   useEffect(() => {
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
+
       if (
         (as !== currentPath &&
-          InputRef.current?.innerHTML.replace(/\n/g, "<br>") !== myPost.text) ||
+          value ===
+            InputRef.current?.innerHTML
+              .replaceAll("<div>", "")
+              .replaceAll("</div>", "")
+              .replace("<div>", "<br>")
+              .replaceAll("<div><br><div>", "<br>")
+              .replaceAll("<br><div>", "<br>")
+              .replace("</div>", "")) ||
         visibility !== myPost.visibility
       ) {
         if (confirm("Changes you made may not be saved.")) {
@@ -143,12 +211,27 @@ export default function Page(props: {
         }
       }
       return true;
+      // if (
+      //   (as !== currentPath &&
+      //     InputRef.current?.innerHTML
+      //       .replace(/\n/g, "<br>")
+      //       .replaceAll("&nbsp;", " ") !== myPost.text) ||
+      //   visibility !== myPost.visibility
+      // ) {
+      //   if (confirm("Changes you made may not be saved.")) {
+      //     return true;
+      //   } else {
+      //     window.history.pushState(null, document.title, currentPath);
+      //     return false;
+      //   }
+      // }
+      // return true;
     });
 
     return () => {
       router.beforePopState(() => true);
     };
-  }, [myPost.text, myPost.visibility, router, visibility]); // Add any state variables to dependencies array if needed.
+  }, [myPost.visibility, router, value, visibility]); // Add any state variables to dependencies array if needed.
   const auth = getAuth(app);
   const [newdata, setNewdata] = useState(myPost);
   // useEffect(() => {
@@ -156,6 +239,10 @@ export default function Page(props: {
   //   if (!input || !input?.innerHTML) return;
   //   setNewdata({ ...myPost, text: input?.innerHTML });
   // }, [myPost]);
+  const [client, setClient] = useState(false);
+  useEffect(() => {
+    setClient(true);
+  }, []);
 
   return (
     <div className="user">
@@ -180,14 +267,21 @@ export default function Page(props: {
               }
               if (
                 visibility === myPost.visibility &&
-                InputRef.current?.innerHTML.replace(/\n/g, "<br>") ===
-                  myPost.text
+                InputRef.current?.innerHTML
+                  .replace(/\n/g, "<br>")
+                  .replaceAll("&nbsp;", " ") === myPost.text
               )
                 return;
               try {
                 await updatePost(
                   uid,
-                  InputRef.current.innerHTML,
+                  InputRef.current.innerHTML
+                    .replaceAll("<div>", "")
+                    .replaceAll("</div>", "")
+                    .replace("<div>", "<br>")
+                    .replaceAll("<div><br><div>", "<br>")
+                    .replaceAll("<br><div>", "<br>")
+                    .replace("</div>", ""),
                   myPost.id?.toString()!,
                   myPost,
                   visibility
@@ -210,9 +304,19 @@ export default function Page(props: {
           cursor: router.query.edit ? "initial" : "default",
           whiteSpace: "pre-line",
         }}
-      >
-        {text}
-      </Input>
+        onInput={(e) => {
+          setvalue(
+            e.currentTarget.innerHTML
+              .replaceAll("<div>", "")
+              .replaceAll("</div>", "")
+              .replace("<div>", "<br>")
+              .replaceAll("<div><br><div>", "<br>")
+              .replaceAll("<br><div>", "<br>")
+              .replace("</div>", "")
+          );
+        }}
+        dangerouslySetInnerHTML={{ __html: client ? text : "" }}
+      ></Input>
       <div className={s.footer}>
         <button tabIndex={-1} onClick={() => {}}>
           <FontAwesomeIcon icon={faPhotoFilm} />
