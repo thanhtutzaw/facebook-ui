@@ -41,7 +41,7 @@ export async function updatePost(
     visibility: visibility,
     createdAt: new Timestamp(
       myPost.createdAt.seconds,
-      myPost.createdAt.nanoseconds
+      myPost. createdAt.nanoseconds
     ),
     updatedAt: serverTimestamp(),
   };

@@ -9,6 +9,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Timestamp } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import {
   useContext,
@@ -21,10 +22,6 @@ import { AppContext } from "../../context/AppContext";
 import { Post as PostType, Props } from "../../types/interfaces";
 import Actions from "./Actions";
 import styles from "./Post.module.scss";
-import Image from "next/image";
-import Link from "next/link";
-import { set } from "nprogress";
-import { text } from "@fortawesome/fontawesome-svg-core";
 // import { Post } from "../../types/interfaces";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 // interface Props {
@@ -84,10 +81,10 @@ export default function Post({ active, post, tabIndex }: PostProps) {
   // var patt3 = new RegExp("</div>", "g");
   // var patt4 = new RegExp("<br>", "g");
   // const replace = text.replace("<div>", "").replaceAll("</div><div>", "<br>");
-  // const [client, setclient] = useState(false);
-  // useEffect(() => {
-  //   setclient(true);
-  // }, []);
+  const [client, setclient] = useState(false);
+  useEffect(() => {
+    setclient(true);
+  }, []);
 
   return (
     <div
@@ -143,10 +140,12 @@ export default function Post({ active, post, tabIndex }: PostProps) {
                   : "Other User"}
               </p>
               <p>
-                {new Timestamp(createdAt.seconds, createdAt.nanoseconds)
-                  .toDate()
-                  .toLocaleDateString()}
+                {client &&
+                  new Timestamp(createdAt.seconds, createdAt.nanoseconds)
+                    .toDate()
+                    .toLocaleDateString()}
               </p>
+              {/* <p>{createdAt}</p> */}
               {/* <p>{visibility?.[0] === "public" ? "hi" : visibility}</p> */}
               <p>{visibility}</p>
             </div>
