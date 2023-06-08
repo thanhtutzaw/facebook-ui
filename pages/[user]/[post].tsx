@@ -97,7 +97,13 @@ export default function Page(props: {
   const InputRef = useRef<HTMLDivElement>(null);
 
   const [value, setvalue] = useState("");
-
+  useEffect(() => {
+    if (expired) {
+      router.push("/");
+      console.log("expired and pushed(in user/post.tsx)");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expired]);
   // const text = myPost.text
   //   .replace(/<br\s*\/?>/g, "\n")
   //   .replaceAll("<div>", "")
@@ -112,20 +118,11 @@ export default function Page(props: {
   // const text = myPost.text
   //   .replace("<div>", "")
   //   .replaceAll("</div><div>", "<br>");
-
-  // useEffect(() => {
-  //   if (expired) {
-  //     router.push("/");
-  //     console.log("expired , pushed in post page");
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [expired]);
   useEffect(() => {
     InputRef.current?.focus();
   }, []);
   useEffect(() => {
     const input = InputRef.current;
-    // console.log(myPost.text !== text);
     setvalue(
       InputRef.current?.innerHTML
         .replaceAll("<div>", "")
@@ -139,24 +136,7 @@ export default function Page(props: {
       // .replaceAll("<div><br><div>", "<br>")
       // .replaceAll("<br><div>", "<br>")!
     );
-    // console.log(value === text);
 
-    // console.log(
-    //   myPost.text
-    //     .replaceAll("</div>", "")
-    //     .replace("<div>", "<br>")
-    //     .replaceAll("<div><br><div>", "<br>")
-    //     .replaceAll("<br><div>", "<br>")
-    // );
-    // console.log(
-    //   myPost.text
-    //     .replaceAll("<div>", "")
-    //     .replaceAll("</div>", "")
-    //     .replace("<div>", "<br>")
-    //     .replaceAll("<div><br><div>", "<br>")
-    //     .replaceAll("<br><div>", "<br>")
-    //     .replace("</div>", "")
-    // );
     const handleBeforeUnload = (e: BeforeUnloadEvent | PopStateEvent) => {
       if (
         value ===
@@ -172,15 +152,6 @@ export default function Page(props: {
         e.preventDefault();
         e.returnValue = "";
       }
-      // const handleBeforeUnload = (e: BeforeUnloadEvent | PopStateEvent) => {
-      //   if (
-      //     input?.innerHTML.replace(/\n/g, "<br>").replaceAll("&nbsp;", " ") !==
-      //       myPost.text ||
-      //     (visibility !== myPost.visibility && window.location.href !== "/")
-      //   ) {
-      //     e.preventDefault();
-      //     e.returnValue = "";
-      //   }
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
@@ -211,21 +182,6 @@ export default function Page(props: {
         }
       }
       return true;
-      // if (
-      //   (as !== currentPath &&
-      //     InputRef.current?.innerHTML
-      //       .replace(/\n/g, "<br>")
-      //       .replaceAll("&nbsp;", " ") !== myPost.text) ||
-      //   visibility !== myPost.visibility
-      // ) {
-      //   if (confirm("Changes you made may not be saved.")) {
-      //     return true;
-      //   } else {
-      //     window.history.pushState(null, document.title, currentPath);
-      //     return false;
-      //   }
-      // }
-      // return true;
     });
 
     return () => {
@@ -233,12 +189,6 @@ export default function Page(props: {
     };
   }, [myPost.visibility, router, value, visibility]); // Add any state variables to dependencies array if needed.
   const auth = getAuth(app);
-  const [newdata, setNewdata] = useState(myPost);
-  // useEffect(() => {
-  //   const input = InputRef?.current;
-  //   if (!input || !input?.innerHTML) return;
-  //   setNewdata({ ...myPost, text: input?.innerHTML });
-  // }, [myPost]);
   const [client, setClient] = useState(false);
   useEffect(() => {
     setClient(true);
@@ -333,11 +283,9 @@ export default function Page(props: {
             Public
           </option>
           <option value="Friend" key="Friends">
-            {/* <option disabled value="friends" key="Friends"> */}
             Friends
           </option>
           <option value="Onlyme" key="Only Me">
-            {/* <option disabled value="onlyme" key="Only Me"> */}
             Only Me
           </option>
         </select>
