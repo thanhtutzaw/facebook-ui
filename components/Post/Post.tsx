@@ -85,7 +85,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
   useEffect(() => {
     setclient(true);
   }, []);
-
+  const [showmore, setShowmore] = useState(false);
   return (
     <div
       className={styles.post}
@@ -232,7 +232,28 @@ export default function Post({ active, post, tabIndex }: PostProps) {
           // dangerouslySetInnerHTML={{ __html: client ? replace : "" }}
           // dangerouslySetInnerHTML={{ __html: text }}
         >
-          {text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")}
+          {/* {text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")} */}
+          {/* {text.match(/<br\s*[/]?>/gi)?.length} */}
+          {text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 1 : Infinity)
+            ? text
+                .replace(/<br\s*\/?>/g, "\n")
+                .replaceAll("<div>", "\n")
+                .substring(0, 30)
+            : text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")}
+          {text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
+            (text.match(/<div\s*[/]?>/gi)?.length! > 2 && (
+              <button
+                tabIndex={-1}
+                className={styles.seeMore}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowmore((prev) => !prev);
+                }}
+              >
+                {!showmore ? "See more" : "See less"}
+              </button>
+            ))}
           {/* {replace} */}
           {/* {text
             .replace(/<br\s*\/?>/g, "\n")

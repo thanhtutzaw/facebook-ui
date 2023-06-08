@@ -7,7 +7,15 @@
     overflow: hidden;
     transition: all 0.2s ease-in-out;
     // transition: border 0.2s ease-in-out, borderRadius 0.2s ease-in-out;
-
+    .seeMore {
+        margin: 0 10px;
+        font-size: 16px;
+        background: transparent;
+        border: 0;
+        /* font-weight: bold; */
+        color: dimgray;
+        font-family: system-ui;
+    }
     .text {
         padding: 10px 0.8rem 1rem;
         padding: 6px 1rem 0;
@@ -20,12 +28,12 @@
         word-break: break-word;
         white-space: pre-line;
 
-        --max-lines: 5;
-        overflow: hidden;
+        // --max-lines: 5;
+        // overflow: hidden;
 
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: var(--max-lines);
+        // display: -webkit-box;
+        // -webkit-box-orient: vertical;
+        // -webkit-line-clamp: var(--max-lines);
         // &::before {
         //     content: "";
         //     position: absolute;
