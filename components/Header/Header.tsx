@@ -42,8 +42,13 @@ export default function Header(props: any) {
   const { indicatorRef } = props;
   const { setActive } = useActive();
   const [width, setwidth] = useState<number>();
-  const { setSelectedId, selectMode, setselectMode, headerContainerRef } =
-    useContext(AppContext) as Props;
+  const {
+    expired,
+    setSelectedId,
+    selectMode,
+    setselectMode,
+    headerContainerRef,
+  } = useContext(AppContext) as Props;
 
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];
@@ -77,6 +82,7 @@ export default function Header(props: any) {
         className={styles.header}
       >
         <Logo />
+        expired - {expired ? "true" : "false"}
         <div className={styles.action}>
           <button className={styles.logoutBtn}>
             <FontAwesomeIcon
