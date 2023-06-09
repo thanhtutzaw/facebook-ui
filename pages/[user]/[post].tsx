@@ -110,12 +110,15 @@ export default function Page(props: {
   //   .replaceAll("</div>", "")
   //   .replaceAll("&nbsp;", " ");
 
-  const text =
-    myPost.text
-      .replaceAll("</div>", "")
-      .replace("<div>", "<br>")
-      .replaceAll("<div><br><div>", "<br>")
-      .replaceAll("<br><div>", "<br>") ?? "";
+  // if(myPost.text){
+  const text = myPost.text
+    ? myPost.text
+        .replaceAll("</div>", "")
+        .replace("<div>", "<br>")
+        .replaceAll("<div><br><div>", "<br>")
+        .replaceAll("<br><div>", "<br>")
+    : "";
+  // }
   // const text = myPost.text
   //   .replace("<div>", "")
   //   .replaceAll("</div><div>", "<br>");
