@@ -1,11 +1,10 @@
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import useEscape from "../../hooks/useEscape";
 import { deleteMultiple } from "../../lib/firestore/post";
 import { Props } from "../../types/interfaces";
 import BackHeader from "./BackHeader";
-import { setTimeout } from "timers";
 
 function SelectModal() {
   const { uid, selectedId, setSelectedId, selectMode, setselectMode } =
