@@ -6,6 +6,18 @@
   overflow: hidden;
   transition: all 0.2s ease-in-out;
 }
+.post .dot:hover {
+  background-color: rgb(231, 231, 231);
+}
+.post .seeMore {
+  margin: 0 10px;
+  font-size: 16px;
+  background: transparent;
+  border: 0;
+  /* font-weight: bold; */
+  color: dimgray;
+  font-family: system-ui;
+}
 .post .text {
   padding: 10px 0.8rem 1rem;
   padding: 6px 1rem 0;
@@ -17,11 +29,12 @@
   cursor: default;
   word-break: break-word;
   white-space: pre-line;
-  --max-lines: 5;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: var(--max-lines);
+}
+.post .text a {
+  color: var(--blue-origin);
+}
+.post .text a:hover {
+  text-decoration: underline;
 }
 .post .header {
   padding: 15px 0.8rem 6px;

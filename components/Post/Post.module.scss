@@ -32,7 +32,12 @@
         cursor: default;
         word-break: break-word;
         white-space: pre-line;
-
+        a {
+            color: var(--blue-origin);
+            &:hover {
+                text-decoration: underline;
+            }
+        }
         // --max-lines: 5;
         // overflow: hidden;
 

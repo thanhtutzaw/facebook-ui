@@ -587,6 +587,13 @@
   white-space: pre-line;
   word-break: break-word;
   direction: ltr;
+  a {
+    color: var(--blue-origin) !important;
+    text-decoration: underline;
+    // display: block;
+    pointer-events: none;
+    cursor: text;
+  }
   // display: inline-block;
   // min-height: calc(100dvh - 60px);
   // min-height: 100vh;

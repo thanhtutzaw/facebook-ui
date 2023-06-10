@@ -95,35 +95,18 @@ export default function Post({ active, post, tabIndex }: PostProps) {
         cursor: active ? "pointer" : "initial",
       }}
     >
-      {!active ? (
-        <Link href={!active ? `${authorId}/${id?.toString()}` : router.asPath}>
-          <Content
-            active={active!}
-            checked={checked}
-            photoURL={photoURL}
-            client={client}
-            uncheckRef={uncheckRef}
-            setChecked={setChecked}
-            checkRef={checkRef}
-            showmore={showmore}
-            setShowmore={setShowmore}
-            post={post}
-          />
-        </Link>
-      ) : (
-        <Content
-          active={active!}
-          checked={checked}
-          photoURL={photoURL}
-          client={client}
-          uncheckRef={uncheckRef}
-          setChecked={setChecked}
-          checkRef={checkRef}
-          showmore={showmore}
-          setShowmore={setShowmore}
-          post={post}
-        />
-      )}
+      <Content
+        active={active!}
+        checked={checked}
+        photoURL={photoURL}
+        client={client}
+        uncheckRef={uncheckRef}
+        setChecked={setChecked}
+        checkRef={checkRef}
+        showmore={showmore}
+        setShowmore={setShowmore}
+        post={post}
+      />
 
       <div className={styles.action}>
         <button tabIndex={tabIndex}>

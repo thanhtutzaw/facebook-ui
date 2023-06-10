@@ -220,6 +220,11 @@ export default function AddPost() {
               .replace("<div>", "<br>")
               .replaceAll("<div><br><div>", "<br>")
               .replaceAll("<br><div>", "<br>")
+              .replaceAll(
+                /(?:https?|ftp):\/\/[\n\S]+/g,
+                (url) =>
+                  `<a rel="nofollow" target="_blank" tabindex="0" href="${url}">${url}</a>`
+              )
           );
         }}
         // text={text}

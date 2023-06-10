@@ -12,6 +12,7 @@ import { AppContext } from "../../context/AppContext";
 import Actions from "./Actions";
 import styles from "./Post.module.scss";
 import { Post, Props } from "../../types/interfaces";
+import { useRouter } from "next/router";
 export default function Content(props: {
   active: boolean;
   checked: boolean;
@@ -39,6 +40,7 @@ export default function Content(props: {
   const { authorId, id, text, visibility, createdAt } = post;
   const { selectedId, setSelectedId, email, showAction, setshowAction, uid } =
     useContext(AppContext) as Props;
+  const router = useRouter();
   return (
     <span
       style={{
@@ -46,11 +48,14 @@ export default function Content(props: {
         padding: "0 0 1rem",
       }} // scroll={false}
       // href={`${authorId}/${id?.toString()}`}
-      onClick={() => {
+      onClick={(e) => {
         if (!active) {
-          // router.push({
-          //   pathname: `${authorId}/${id?.toString()}`,
-          // });
+          // if(e.target.tagName)
+          // e.preventDefault();
+          // e.stopPropagation();
+          router.push({
+            pathname: `${authorId}/${id?.toString()}`,
+          });
         } else {
           !checked ? checkRef.current?.click() : uncheckRef.current?.click();
         }
@@ -191,17 +196,23 @@ export default function Content(props: {
         contentEditable="false"
         suppressContentEditableWarning={true}
         className={styles.text} // dangerouslySetInnerHTML={{ __html: client ? replace : "" }}
-        // dangerouslySetInnerHTML={{ __html: text }}
+        dangerouslySetInnerHTML={{ __html: client ? text : "" }}
+        onClick={(e) => {
+          const target = e.target as HTMLElement;
+          if (target.tagName === "A") {
+            e.stopPropagation();
+          }
+        }}
       >
         {/* {text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")} */}
         {/* {text.match(/<br\s*[/]?>/gi)?.length} */}
-        {text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 1 : Infinity)
+        {/* {text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 3 : Infinity)
           ? text
               .replace(/<br\s*\/?>/g, "\n")
               .replaceAll("<div>", "\n")
-              .substring(0, 30)
-          : text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")}
-        {text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
+              .substring(0, text.length / text.match(/<br\s*[/]?>/gi)?.length!)
+          : text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")} */}
+        {/* {text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
           (text.match(/<div\s*[/]?>/gi)?.length! > 2 && (
             <button
               tabIndex={-1}
@@ -214,7 +225,8 @@ export default function Content(props: {
             >
               {!showmore ? "See more" : "See less"}
             </button>
-          ))}
+          ))} */}
+
         {/* {replace} */}
         {/* {text
       .replace(/<br\s*\/?>/g, "\n")

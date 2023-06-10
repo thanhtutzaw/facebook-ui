@@ -9,7 +9,7 @@ import {
   query,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useContext, useEffect, useRef, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
@@ -20,7 +20,6 @@ import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { updatePost } from "../../lib/firestore/post";
 import s from "../../styles/Home.module.scss";
 import { Post, Props } from "../../types/interfaces";
-import { text } from "@fortawesome/fontawesome-svg-core";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -236,7 +235,11 @@ export default function Page(props: {
                     .replace("<div>", "<br>")
                     .replaceAll("<div><br><div>", "<br>")
                     .replaceAll("<br><div>", "<br>")
-                    .replace("</div>", ""),
+                    .replace("</div>", "")
+                    .replaceAll(
+                      /(?:https?|ftp):\/\/[\n\S]+/g,
+                      (url) => `<a href="${url}">${url}</a>`
+                    ),
                   myPost.id?.toString()!,
                   myPost,
                   visibility

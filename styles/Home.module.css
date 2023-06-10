@@ -523,6 +523,12 @@
   word-break: break-word;
   direction: ltr;
 }
+.input a {
+  color: var(--blue-origin) !important;
+  text-decoration: underline;
+  pointer-events: none;
+  cursor: text;
+}
 .input > div {
   outline: 0;
   border: 0;
