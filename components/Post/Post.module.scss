@@ -7,7 +7,14 @@
     overflow: hidden;
     transition: all 0.2s ease-in-out;
     .dot {
-        &:hover {
+        @include mouse() {
+            &:hover {
+                background-color: rgb(231, 231, 231);
+            }
+        }
+        &:active {
+            opacity: 0.5;
+            scale: 1.1;
             background-color: rgb(231, 231, 231);
         }
     }

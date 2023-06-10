@@ -99,14 +99,8 @@ export default function Content(props: {
         {!active ? (
           <>
             {uid === authorId && (
-              <motion.button
+              <button
                 className={styles.dot}
-                whileTap={{
-                  scale: 1.3,
-                }}
-                whileHover={{
-                  opacity: 0.8,
-                }}
                 aria-expanded={showAction !== ""}
                 onClick={(e) => {
                   e.preventDefault();
@@ -119,7 +113,7 @@ export default function Content(props: {
                 }}
               >
                 <FontAwesomeIcon icon={faEllipsisH} />
-              </motion.button>
+              </button>
             )}
           </>
         ) : (

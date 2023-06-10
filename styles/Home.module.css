@@ -362,12 +362,15 @@
   padding: 0.5rem;
   height: 45px;
 }
-.postAction .addMedia:hover {
-  background-color: rgb(216, 216, 216);
+@media (hover: hover) and (pointer: fine) {
+  .postAction .addMedia:hover {
+    background-color: rgb(240, 240, 240);
+  }
 }
 .postAction .addMedia:active {
   opacity: 0.8;
   scale: 0.9;
+  background-color: rgb(240, 240, 240);
 }
 .postAction .addMedia svg {
   font-size: 1rem;
@@ -408,11 +411,14 @@
   border: 0;
   background-color: transparent;
 }
-.backHeader button:not(.submit):hover {
-  background-color: rgb(240, 240, 240);
+@media (hover: hover) and (pointer: fine) {
+  .backHeader button:not(.submit):hover {
+    background-color: rgb(240, 240, 240);
+  }
 }
 .backHeader button:not(.submit):active {
   opacity: 0.6;
+  background-color: rgb(240, 240, 240);
 }
 .backHeader .submit {
   background-color: rgb(0, 112, 243);

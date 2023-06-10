@@ -82,7 +82,7 @@ export default function Header(props: any) {
         className={styles.header}
       >
         <Logo />
-        expired - {expired ? "true" : "false"}
+        {/* expired - {expired ? "true" : "false"} */}
         <div className={styles.action}>
           <button className={styles.logoutBtn}>
             <FontAwesomeIcon

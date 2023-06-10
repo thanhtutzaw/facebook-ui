@@ -1,3 +1,4 @@
+@import "../styles/mixins";
 .sticky {
   position: fixed;
   width: 100%;
@@ -367,12 +368,17 @@
     background-color: transparent;
     padding: 0.5rem;
     height: 45px;
-    &:hover {
-      background-color: rgb(216, 216, 216);
+    @include mouse() {
+      &:hover {
+        // background-color: rgb(216, 216, 216);
+        background-color: rgb(240, 240, 240);
+      }
     }
     &:active {
       opacity: 0.8;
       scale: 0.9;
+      // background-color: rgb(216, 216, 216);
+      background-color: rgb(240, 240, 240);
     }
     svg {
       font-size: 1rem;
@@ -401,22 +407,25 @@
   gap: 10px;
   position: fixed;
   top: 0;
-
   border-bottom: 1px solid rgb(235, 235, 235);
   svg {
     font-size: 1.2rem;
   }
+
   button:not(.submit) {
     border-radius: 100px;
     width: 50px;
     height: 50px;
     border: 0;
     background-color: transparent;
-    &:hover {
-      background-color: rgb(240, 240, 240);
+    @include mouse() {
+      &:hover {
+        background-color: rgb(240, 240, 240);
+      }
     }
     &:active {
       opacity: 0.6;
+      background-color: rgb(240, 240, 240);
     }
   }
   .submit {
