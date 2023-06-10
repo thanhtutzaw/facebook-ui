@@ -245,9 +245,6 @@ export default function Post({ active, post, tabIndex }: PostProps) {
                 tabIndex={-1}
                 className={styles.seeMore}
                 onClick={(e) => {
-                  e.currentTarget.parentElement?.parentElement?.parentElement?.scrollIntoView(
-                    { behavior: "smooth" }
-                  );
                   e.preventDefault();
                   e.stopPropagation();
                   setShowmore((prev) => !prev);
