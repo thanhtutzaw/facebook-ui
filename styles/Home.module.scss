@@ -411,7 +411,9 @@
   svg {
     font-size: 1.2rem;
   }
-
+  button {
+    border: 2px soldi red !important;
+  }
   button:not(.submit) {
     border-radius: 100px;
     width: 50px;
@@ -464,6 +466,22 @@
   width: 100px;
 }
 .addPost {
+  img {
+    object-fit: contain;
+  }
+  .img1 {
+    min-width: 50%;
+    flex: 1 0 50%;
+    object-fit: contain;
+    background: black;
+    position: relative;
+    img {
+      // position: absolute;
+      // top: 50%;
+      // bottom: 50%;
+    }
+  }
+
   // .footer {
   //   background-color: rgb(255, 255, 255);
   //   overflow: auto;

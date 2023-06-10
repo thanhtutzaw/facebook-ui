@@ -404,6 +404,9 @@
 .backHeader svg {
   font-size: 1.2rem;
 }
+.backHeader button {
+  border: 2px soldi red !important;
+}
 .backHeader button:not(.submit) {
   border-radius: 100px;
   width: 50px;
@@ -456,6 +459,18 @@
   width: 100px;
 }
 
+.addPost img {
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.addPost .img1 {
+  min-width: 50%;
+  flex: 1 0 50%;
+  -o-object-fit: contain;
+     object-fit: contain;
+  background: black;
+  position: relative;
+}
 .addPost .input {
   padding: 1rem;
   margin-block: 65px;

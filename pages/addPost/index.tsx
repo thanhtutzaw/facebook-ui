@@ -9,6 +9,7 @@ import { app } from "../../lib/firebase";
 import s from "../../styles/Home.module.scss";
 import { addPost } from "../../lib/firestore/post";
 import error from "next/error";
+import { InputFiles } from "typescript";
 export default function AddPost() {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
@@ -117,6 +118,16 @@ export default function AddPost() {
     // console.log(original);
   }, [content]);
   const [replace, setReplace] = useState("");
+  const fileRef = useRef<HTMLInputElement>(null);
+  // useEffect(() => {
+  //   console.log(fileRef.current?.files);
+  // }, [fileRef.current?.files]);
+  // const [files, setFiles] = useState([
+  //   "public/1.gif",
+  //   "public/2.gif",
+  //   "public/3.jpg",
+  // ]);
+  const [files, setFiles] = useState<File[]>([]);
   return (
     <div
       style={{
@@ -242,10 +253,108 @@ export default function AddPost() {
         {/* {text?.split(/\n/g)} */}
         {/* {text?.replace(/\n/g, "<br>")} */}
       </Input>
+      {/* <img
+        style={{ maxWidth: "100%", margin: "0 auto" }}
+        // src={URL.createObjectURL(files[0])}
+        src="public/3.jpg"
+        alt="Selected"
+      /> */}
+      <div
+        style={{
+          display: "flex",
+          backgroundColor: "black",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {files && files[0] && (
+          <div className={s.img1} style={{ display: "flex", minWidth: "50%" }}>
+            {files[0].type.startsWith("image/") && (
+              <img
+                style={{ maxWidth: "100%", margin: "0 auto" }}
+                // src={URL.createObjectURL(files[0])}
+                src={URL.createObjectURL(files[0])}
+                alt="Selected"
+              />
+            )}
+          </div>
+        )}
+        {/* {files && files[0] && (
+          <div className={s.img1} style={{ display: "flex", minWidth: "50%" }}>
+            {files[0] && (
+              <img
+                style={{ maxWidth: "100%", margin: "0 auto" }}
+                // src={URL.createObjectURL(files[0])}
+                src={files[0]}
+                alt="Selected"
+              />
+            )}
+          </div>
+        )} */}
+        <div>
+          {files && files[1] && (
+            <div style={{ display: "flex" }}>
+              {files[1].type.startsWith("image/") && (
+                <img
+                  style={{ maxWidth: "100%", margin: "0 auto" }}
+                  // src={URL.createObjectURL(files[1])}
+                  src={URL.createObjectURL(files[1])}
+                  alt="Selected"
+                />
+              )}
+            </div>
+          )}
+          {files && files[2] && (
+            <div style={{ display: "flex" }}>
+              {files[2].type.startsWith("image/") && (
+                <img
+                  style={{ maxWidth: "100%", margin: "0 auto" }}
+                  // src={URL.createObjectURL(files[2])}
+                  src={URL.createObjectURL(files[2])}
+                  alt="Selected"
+                />
+              )}
+            </div>
+          )}
+        </div>
+        {/* {files?.map((file, index) => (
+          // <p key={index}>{file.name}</p>
+          <div style={{ display: "flex" }} key={index}>
+            {file.type.startsWith("image/") && (
+              <img
+                style={{ maxWidth: "100%", margin: "0 auto" }}
+                src={URL.createObjectURL(file)}
+                alt="Selected"
+              />
+            )}
+          </div>
+        ))} */}
+      </div>
+      {files.length !== 0 && (
+        <p style={{ textAlign: "center" }}>Demo Photo Layout !</p>
+      )}
       <div className={s.footer}>
-        <button tabIndex={-1} onClick={() => {}}>
+        <button
+          tabIndex={-1}
+          onClick={() => {
+            fileRef?.current?.click();
+          }}
+        >
           <FontAwesomeIcon icon={faPhotoFilm} />
+          {/* {fileRef.current?.files?.item} */}
         </button>
+        <input
+          multiple
+          accept="image/*"
+          onChange={(e) => {
+            const files = e.target.files;
+            const fileArray = Array.from(files ?? []);
+            setFiles(fileArray);
+          }}
+          ref={fileRef}
+          style={{ display: "none", visibility: "hidden" }}
+          type="file"
+        />
         <select
           tabIndex={-1}
           onChange={(e) => {
