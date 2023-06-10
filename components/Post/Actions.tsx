@@ -34,7 +34,6 @@ function Actions(props: {
             alert("Not Allowed ! Mismatch userId and authorId");
             throw new Error("Not Allowed");
           }
-
           try {
             await deletePost(auth.currentUser?.uid!, id!);
             router.replace("/", undefined, {

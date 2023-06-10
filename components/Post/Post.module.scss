@@ -6,6 +6,11 @@
     cursor: default;
     overflow: hidden;
     transition: all 0.2s ease-in-out;
+    .dot {
+        &:hover {
+            background-color: rgb(231, 231, 231);
+        }
+    }
     // transition: border 0.2s ease-in-out, borderRadius 0.2s ease-in-out;
     .seeMore {
         margin: 0 10px;

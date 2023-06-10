@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Timestamp } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import {
   useContext,
   useEffect,
@@ -22,7 +22,8 @@ import { AppContext } from "../../context/AppContext";
 import { Post as PostType, Props } from "../../types/interfaces";
 import Actions from "./Actions";
 import styles from "./Post.module.scss";
-// import { Post } from "../../types/interfaces";
+import Link from "next/link";
+import Content from "./Content";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 // interface Props {
 //   post: Post;
@@ -33,7 +34,7 @@ interface PostProps {
   tabIndex: number;
 }
 export default function Post({ active, post, tabIndex }: PostProps) {
-  const { authorId, id, text, visibility, createdAt } = post;
+  const { authorId, id } = post;
   const [Bounce, setBounce] = useState(false);
 
   // const date = createdAt ? createdAt?.toDate().toLocaleDateString() : 0;
@@ -43,13 +44,9 @@ export default function Post({ active, post, tabIndex }: PostProps) {
   const router = useRouter();
   const photoURL = "";
   const {
-    selectedId,
-    setSelectedId,
-    email,
     active: tab,
     showAction,
     setshowAction,
-    uid,
   } = useContext(AppContext) as Props;
 
   useEffect(() => {
@@ -60,10 +57,10 @@ export default function Post({ active, post, tabIndex }: PostProps) {
     }
   }, [active, checked, setshowAction, showAction]);
 
-  const dateString = useRef("");
-  const timeString = new Timestamp(createdAt.seconds, createdAt.nanoseconds)
-    .toDate()
-    .toLocaleDateString();
+  // const dateString = useRef("");
+  // const timeString = new Timestamp(createdAt.seconds, createdAt.nanoseconds)
+  //   .toDate()
+  //   .toLocaleDateString();
   // useLayoutEffect(() => {
   //   const date = new Timestamp(createdAt.seconds, createdAt.nanoseconds);
   //   dateString.current = date.toDate().toLocaleDateString();
@@ -98,169 +95,36 @@ export default function Post({ active, post, tabIndex }: PostProps) {
         cursor: active ? "pointer" : "initial",
       }}
     >
-      <span
-        style={{
-          display: "block",
-          padding: "0 0 1rem",
-        }}
-        // scroll={false}
-        // href={`${authorId}/${id?.toString()}`}
-        onClick={() => {
-          if (!active) {
-            router.push({
-              pathname: `${authorId}/${id?.toString()}`,
-              // query: { edit: false },
-            });
-          } else {
-            !checked ? checkRef.current?.click() : uncheckRef.current?.click();
-          }
-        }}
-      >
-        <div className={styles.header}>
-          <div className={styles.left}>
-            <Image
-              priority={false}
-              className={styles.profile}
-              alt={email ?? " "}
-              width={200}
-              height={200}
-              style={{ objectFit: "cover" }}
-              src={
-                authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
-                  ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
-                  : photoURL
-                  ? photoURL
-                  : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-              }
-            />
-            <div>
-              <p>
-                {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
-                  ? "Peter 1"
-                  : "Other User"}
-              </p>
-              <p>
-                {client &&
-                  new Timestamp(createdAt.seconds, createdAt.nanoseconds)
-                    .toDate()
-                    .toLocaleDateString()}
-              </p>
-              {/* <p>{visibility?.[0] === "public" ? "hi" : visibility}</p> */}
-              <p>{visibility}</p>
-            </div>
-          </div>
-          {!active ? (
-            <>
-              {uid === authorId && (
-                <motion.button
-                  whileTap={{ scale: 1.3 }}
-                  whileHover={{ opacity: 0.8 }}
-                  aria-expanded={showAction !== ""}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setshowAction?.(id?.toString());
-                    if (showAction === id) {
-                      setshowAction?.("");
-                    }
-                    // alert(showAction);
-                  }}
-                >
-                  <FontAwesomeIcon icon={faEllipsisH} />
-                </motion.button>
-              )}
-            </>
-          ) : (
-            <>
-              {checked ? (
-                <button
-                  aria-label="deselect post"
-                  ref={uncheckRef}
-                  className={styles.check}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setChecked(false);
-                    setSelectedId?.(
-                      selectedId?.filter((selectedId) => selectedId !== id)
-                    );
-                  }}
-                >
-                  <FontAwesomeIcon icon={faCircleCheck} />
-                </button>
-              ) : (
-                <button
-                  aria-label="select post"
-                  style={{ opacity: ".3" }}
-                  ref={checkRef}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setSelectedId?.([...selectedId!, id?.toString()]);
-                    setChecked(true);
-                  }}
-                >
-                  <FontAwesomeIcon icon={faDotCircle} />
-                </button>
-              )}
-            </>
-          )}
-        </div>
-        <AnimatePresence>
-          {showAction === id && (
-            <motion.div
-              key={id}
-              initial={{ opacity: "0", scale: 0.8 }}
-              animate={{ opacity: showAction === id ? 1 : 0, scale: 1 }}
-              exit={{ opacity: "0", scale: 0.8 }}
-              transition={{ duration: 0.15 }}
-              className={styles.actions}
-            >
-              <Actions
-                authorId={authorId!}
-                id={id!}
-                setshowAction={setshowAction!}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-        <div
-          role="textbox"
-          contentEditable="false"
-          suppressContentEditableWarning={true}
-          className={styles.text}
-          // dangerouslySetInnerHTML={{ __html: client ? replace : "" }}
-          // dangerouslySetInnerHTML={{ __html: text }}
-        >
-          {/* {text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")} */}
-          {/* {text.match(/<br\s*[/]?>/gi)?.length} */}
-          {text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 1 : Infinity)
-            ? text
-                .replace(/<br\s*\/?>/g, "\n")
-                .replaceAll("<div>", "\n")
-                .substring(0, 30)
-            : text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")}
-          {text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
-            (text.match(/<div\s*[/]?>/gi)?.length! > 2 && (
-              <button
-                tabIndex={-1}
-                className={styles.seeMore}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setShowmore((prev) => !prev);
-                }}
-              >
-                {!showmore ? "See more" : "See less"}
-              </button>
-            ))}
-          {/* {replace} */}
-          {/* {text
-            .replace(/<br\s*\/?>/g, "\n")
-            .replaceAll("<div>", "")
-            .replaceAll("</div>", "")
-            .replaceAll("&nbsp;", " ")} */}
-        </div>
-      </span>
+      {!active ? (
+        <Link href={!active ? `${authorId}/${id?.toString()}` : router.asPath}>
+          <Content
+            active={active!}
+            checked={checked}
+            photoURL={photoURL}
+            client={client}
+            uncheckRef={uncheckRef}
+            setChecked={setChecked}
+            checkRef={checkRef}
+            showmore={showmore}
+            setShowmore={setShowmore}
+            post={post}
+          />
+        </Link>
+      ) : (
+        <Content
+          active={active!}
+          checked={checked}
+          photoURL={photoURL}
+          client={client}
+          uncheckRef={uncheckRef}
+          setChecked={setChecked}
+          checkRef={checkRef}
+          showmore={showmore}
+          setShowmore={setShowmore}
+          post={post}
+        />
+      )}
+
       <div className={styles.action}>
         <button tabIndex={tabIndex}>
           <FontAwesomeIcon bounce={Bounce} icon={faThumbsUp} />
