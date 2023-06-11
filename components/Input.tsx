@@ -26,7 +26,6 @@ export default function Input({
       style={style}
       ref={element}
       // dangerouslySetInnerHTML={{ __html: text! }}
-      // contentEditable={contentEditable}
       suppressContentEditableWarning={true}
       className={s.input}
     >
