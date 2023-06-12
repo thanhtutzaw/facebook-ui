@@ -6,6 +6,7 @@
     cursor: default;
     overflow: hidden;
     transition: all 0.2s ease-in-out;
+
     .img1 {
         min-width: 50%;
         flex: 1 0 50%;
@@ -82,6 +83,36 @@
     }
     > p:active {
         background-color: rgb(207, 207, 207);
+    }
+}
+.deletePhoto {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.4rem;
+    border-radius: 100px;
+    background-color: white;
+    border: 0;
+    transition: all 0.15s ease-in-out;
+    > * {
+        color: var(--blue-origin);
+        opacity: 0.8;
+    }
+    &:active {
+        width: 100px;
+        opacity: 0.5;
+        background-color: rgb(228, 228, 228);
+    }
+    @include mouse() {
+        &:hover {
+            background-color: rgb(228, 228, 228);
+        }
     }
 }
 .header {

@@ -1,4 +1,5 @@
-import React from "react";
+import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import s from "./Post.module.scss";
 function PhotoLayout({
   files = ["1.gif", "2.gif", "3.jpg", "4.png"],
@@ -21,7 +22,12 @@ function PhotoLayout({
       >
         {files.map((file: any, i: number) => (
           <div
-            style={{ backgroundColor: "black", display: "flex", width: "100%" }}
+            style={{
+              backgroundColor: "black",
+              display: "flex",
+              width: "100%",
+              position: "relative",
+            }}
             key={i}
           >
             <img
@@ -32,6 +38,16 @@ function PhotoLayout({
               }}
               src={file}
             />
+            <button
+              onClick={(e) => {
+                e.currentTarget?.parentElement?.remove();
+              }}
+              aria-label="delete media"
+              tabIndex={-1}
+              className={s.deletePhoto}
+            >
+              <FontAwesomeIcon icon={faClose} />
+            </button>
           </div>
         ))}
       </div>
