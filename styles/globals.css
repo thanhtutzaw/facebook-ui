@@ -153,6 +153,11 @@ button:disabled {
   } */
 }
 
+.user>div:nth-last-child(2) {
+  /* border: 2px solid red; */
+  margin-bottom: 65px;
+
+}
 
 ::-webkit-scrollbar {
   width     : 0;

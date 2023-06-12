@@ -20,6 +20,7 @@ import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { updatePost } from "../../lib/firestore/post";
 import s from "../../styles/Home.module.scss";
 import { Post, Props } from "../../types/interfaces";
+import PhotoLayout from "../../components/Post/PhotoLayout";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -275,6 +276,7 @@ export default function Page(props: {
         }}
         dangerouslySetInnerHTML={{ __html: client ? text : "" }}
       ></Input>
+      <PhotoLayout files={["../1.gif", "../2.gif", "../3.jpg", "../4.png"]} />
       <div className={s.footer}>
         <button tabIndex={-1} onClick={() => {}}>
           <FontAwesomeIcon icon={faPhotoFilm} />

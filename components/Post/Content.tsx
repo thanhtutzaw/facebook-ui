@@ -13,6 +13,7 @@ import Actions from "./Actions";
 import styles from "./Post.module.scss";
 import { Post, Props } from "../../types/interfaces";
 import { useRouter } from "next/router";
+import PhotoLayout from "./PhotoLayout";
 export default function Content(props: {
   active: boolean;
   checked: boolean;
@@ -45,7 +46,7 @@ export default function Content(props: {
     <span
       style={{
         display: "block",
-        padding: "0 0 1rem",
+        // padding: "0 0 1rem",
       }} // scroll={false}
       // href={`${authorId}/${id?.toString()}`}
       onClick={(e) => {
@@ -228,6 +229,7 @@ export default function Content(props: {
       .replaceAll("</div>", "")
       .replaceAll("&nbsp;", " ")} */}
       </div>
+      <PhotoLayout preview />
     </span>
   );
 }

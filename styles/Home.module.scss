@@ -466,6 +466,9 @@
   width: 100px;
 }
 .addPost {
+  > div:nth-last-child(2) {
+    margin-bottom: 65px;
+  }
   img {
     object-fit: contain;
   }
@@ -550,7 +553,7 @@
 }
 
 .footer {
-  background-color: rgb(255, 255, 255);
+  background-color: rgba(255, 255, 255, 0.5);
   overflow: auto;
   padding: 0 1rem;
   height: 65px;
@@ -563,7 +566,9 @@
   gap: 10px;
   position: fixed;
   bottom: 0;
-  border-top: 1px solid rgb(235, 235, 235);
+  // border-top: 1px solid rgb(235, 235, 235);
+  box-shadow: rgb(0 0 0 / 17%) 0px -6px 6px -6px;
+  backdrop-filter: blur(10px);
   h2 {
     margin-top: 0;
     margin-bottom: 0;
