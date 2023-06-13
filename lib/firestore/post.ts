@@ -21,7 +21,8 @@ export async function addPost(
   const Ref = collection(db, `users/${uid}/posts`);
   const data = {
     text: text,
-    media: files.map((file) => ({ ...file, id: doc().id })),
+    // media: files.map((file) => ({ ...file, id: doc().id })),
+    media: files,
     visibility: visibility,
     createdAt: serverTimestamp(),
     updatedAt: "Invalid Date",
