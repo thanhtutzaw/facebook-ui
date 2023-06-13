@@ -467,6 +467,15 @@
   width: 100px;
 }
 .addPost {
+  video,
+  img {
+    background-color: black;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  video {
+    aspect-ratio: 16/9;
+  }
   > div:nth-last-child(2) {
     margin-bottom: 65px;
   }

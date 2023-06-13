@@ -12,17 +12,24 @@ import { db } from "../firebase";
 import { Post } from "../../types/interfaces";
 import { useRouter } from "next/router";
 
-export async function addPost(uid: string, text: string, visibility: string) {
+export async function addPost(
+  uid: string,
+  files: any,
+  text: string,
+  visibility: string
+) {
   // alert([uid, visibility, text]);
   const Ref = collection(db, `users/${uid}/posts`);
   const data = {
     text: text,
+    media: files,
     visibility: visibility,
     createdAt: serverTimestamp(),
     updatedAt: "Invalid Date",
   };
   try {
-    await addDoc(Ref, data);
+    // await addDoc(Ref, data);
+    console.log(data);
   } catch (error: any) {
     alert("Adding Post Failed !" + error.message);
   }
@@ -41,7 +48,7 @@ export async function updatePost(
     visibility: visibility,
     createdAt: new Timestamp(
       myPost.createdAt.seconds,
-      myPost. createdAt.nanoseconds
+      myPost.createdAt.nanoseconds
     ),
     updatedAt: serverTimestamp(),
   };

@@ -1,27 +1,28 @@
 import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
+import { ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
 import Input from "../../components/Input";
-import { app } from "../../lib/firebase";
-import s from "../../styles/Home.module.scss";
-import { addPost } from "../../lib/firestore/post";
-import error from "next/error";
-import { InputFiles } from "typescript";
 import PhotoLayout from "../../components/Post/PhotoLayout";
+import { app, storage } from "../../lib/firebase";
+import s from "../../styles/Home.module.scss";
 export default function AddPost() {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
   const [visibility, setvisibility] = useState("public");
   const [loading, setLoading] = useState(false);
+  // const [files, setFiles] = useState(["1.gif", "2.gif", "3.jpg", "4.png"]);
+  // const [files, setFiles] = useState<File>([{ id: 1, name: "1.gif" }]);
+  const [files, setFiles] = useState<File[]>([]);
   useEffect(() => {
     textRef.current?.focus();
     const input = textRef.current;
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (input?.textContent) {
+      if (input?.textContent && files) {
         e.preventDefault();
         console.log(e);
         e.returnValue = ""; // Chrome requires this line
@@ -32,7 +33,7 @@ export default function AddPost() {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, []);
+  }, [files]);
   useEffect(() => {
     // window.addEventListener("click", (e) => {
     //   // console.log(e.currentTarget.textContent);
@@ -44,6 +45,7 @@ export default function AddPost() {
       if (
         as !== currentPath &&
         textRef.current?.textContent &&
+        files &&
         !confirm("Changes you made may not be saved.")
       ) {
         // router.back();
@@ -126,9 +128,51 @@ export default function AddPost() {
   // const [files, setFiles] = useState(["1.gif", "2.gif", "3.jpg"]);
   // const [files, setFiles] = useState<File[]>([]);
   // const sanitizer = new Sanitizer();
+  // Points to the root reference
+  const storageRef = ref(storage);
+  // Note that you can use variables to create child values
+  // const fileName = "images/Screenshot (181).png";
+  const fileName = "images";
+  const spaceRef = ref(storageRef, fileName);
 
+  // File path is 'images/space.jpg'
+  const path = spaceRef.fullPath;
+  // File name is 'space.jpg'
+  const name = spaceRef.name;
+  const imagesRefAgain = spaceRef.parent;
+  // const storageRef = ref(storage, "some-child");
+
+  // 'file' comes from the Blob or File API
+
+  // console.log([path, spaceRef.name, spaceRef.parent]);
+  // getDownloadURL(spaceRef)
+  //   .then((url) => {
+  //     console.log(url);
+  //   })
+  //   .catch((error) => {
+  //     console.log(error);
+  //     alert(error);
+  //   });
+  const dummyRef = useRef<HTMLDivElement>(null);
+  const [fileLoading, setFileLoading] = useState(false);
+  useEffect(() => {
+    if (fileLoading) return;
+    dummyRef.current?.scrollIntoView();
+    // const height = dummyRef.current?.clientHeight;
+
+    // const element = dummyRef.current;
+    // console.log(element?.parentElement);
+    // console.log(height);
+    // element?.parentElement?.scrollTo({ top: height });
+    // Scroll to the latest item in the file list
+    // if (fileListRef.current) {
+    //   const fileList = fileListRef.current;
+    //   fileList.scrollTop = fileList.scrollHeight;
+    // }
+  }, [fileLoading, files]);
   return (
     <div
+      // ref={dummyRef}
       style={{
         pointerEvents: loading ? "none" : "initial",
         cursor: loading ? "wait" : "default",
@@ -181,14 +225,48 @@ export default function AddPost() {
             // const text = textRef.current.innerHTML
             //   .replace(/\n/g, "<br>")
             //   .replaceAll("&nbsp;", " ");
+
             setLoading(true);
             console.log(text);
             setContent(text);
             try {
               setLoading(true);
               window.document.body.style.cursor = "wait";
-              await addPost(uid, replace, visibility);
-              router.replace("/", undefined, { scroll: false });
+              for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const filename = file.name;
+                // const filetype = file.type;
+                const fileType = file.type;
+                console.log(file.type);
+                if (
+                  fileType === "image/jpeg" ||
+                  fileType === "image/jpg" ||
+                  fileType === "image/png" ||
+                  fileType === "image/gif" ||
+                  fileType === "video/mp4"
+                ) {
+                  const fileRef = ref(
+                    storageRef,
+                    fileType !== "video/mp4"
+                      ? `images/${filename}`
+                      : `videos/${filename}`
+                  );
+
+                  // Upload the file to Firebase Storage
+                  uploadBytes(fileRef, file).then((snapshot) => {
+                    console.log(snapshot.ref);
+                  });
+                } else {
+                  alert(
+                    `${fileType} is Invalid Type .\nJPEG , PNG , GIF and MP4 are only Allowed !`
+                  );
+                }
+
+                // Create a storage reference for each file
+              }
+
+              // await addPost(uid, files, replace, visibility);
+              // router.replace("/", undefined, { scroll: false });
             } catch (error: any) {
               alert(error.message);
             } finally {
@@ -304,7 +382,13 @@ export default function AddPost() {
         element={textRef}
         contentEditable
       ></Input>
-      <PhotoLayout />
+      {/* <img src="https://firebasestorage.googleapis.com/v0/b/facebook-37f93.appspot.com/o/Screenshot%20(181).png?alt=media&token=7e481983-25bb-4e08-ad9c-f746f2e9658b"></img> */}
+      <PhotoLayout
+        dummyRef={dummyRef}
+        setFiles={setFiles}
+        files={files}
+        edit={true}
+      />
       <div className={s.footer}>
         <button
           tabIndex={-1}
@@ -319,9 +403,80 @@ export default function AddPost() {
           multiple
           accept="image/*"
           onChange={(e) => {
-            // const files = e.target.files;
-            // const fileArray = Array.from(files ?? []);
-            // setFiles(fileArray);
+            const fileArray = Array.from(e.target.files ?? []);
+            let valid = true;
+            fileArray.map((file) => {
+              const fileType = file.type;
+              if (
+                fileType === "image/jpeg" ||
+                fileType === "image/jpg" ||
+                fileType === "image/png" ||
+                fileType === "image/gif" ||
+                fileType === "video/mp4"
+              ) {
+                console.log(
+                  `File '${file.name}' is an image (JPEG, PNG, or GIF) or an MP4 video`
+                );
+              } else {
+                alert(
+                  `File '${file.name}' is not one of the specified formats.\nJPEG , PNG , GIF and MP4 are only Allowed !`
+                );
+                valid = false;
+              }
+            });
+            setFileLoading(true);
+            if (valid) {
+              // setFiles(...files, fileArray);
+              setFiles([...files, ...fileArray]);
+              // dummyRef.current?.scrollIntoView();
+            }
+            // console.log();
+
+            setTimeout(() => {
+              setFileLoading(false);
+            }, 500);
+            // console.log(
+            //   e.currentTarget.parentElement?.parentElement?.parentElement
+            // );
+            // if (dummyRef.current) {
+            //   dummyRef.current.scrollIntoView({
+            //     behavior: "smooth",
+            //     block: "end",
+            //   });
+            // }
+            // e.currentTarget.parentElement?.parentElement?.scrollTo({
+            //   top: -100000,
+            // });
+
+            // e.currentTarget.parentElement.parentElement.parentElement.scrollTop =
+            //   e.currentTarget.parentElement.parentElement.parentElement
+            //     .scrollHeight - 1000;
+
+            // if (!e.currentTarget?.parentElement?.parentElement?.parentElement)
+            //   return;
+            // e.currentTarget.parentElement.parentElement.parentElement.scrollTo({
+            //   // top: 10000 + 100,
+            //   top: e.currentTarget.parentElement.parentElement.parentElement
+            //     .clientHeight,
+            // });
+
+            // e.currentTarget.parentElement?.parentElement?.parentElement?.scrollTo(
+            //   {
+            //     top:
+            //       e.currentTarget.parentElement?.parentElement?.scrollHeight -
+            //       1000,
+            //     // top:
+            //     //   e.currentTarget.parentElement?.parentElement?.parentElement
+            //     //     .clientHeight + 200,
+            //     // top:
+            //     //   e.currentTarget.parentElement.parentElement.clientHeight +
+            //     //   e.currentTarget.parentElement.parentElement.scrollHeight,
+            //   }
+            // );
+            console.log(
+              e.currentTarget.parentElement?.parentElement?.offsetHeight
+            );
+            // console.log(e.currentTarget.parentElement?.parentElement);
           }}
           ref={fileRef}
           style={{ display: "none", visibility: "hidden" }}

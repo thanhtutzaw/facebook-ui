@@ -1,12 +1,24 @@
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import s from "./Post.module.scss";
+import { RefObject } from "react";
 function PhotoLayout({
-  files = ["1.gif", "2.gif", "3.jpg", "4.png"],
+  files = [
+    { id: 1, name: "1.gif" },
+    { id: 2, name: "2.gif" },
+    { id: 3, name: "3.jpg" },
+    { id: 4, name: "4.png" },
+  ],
+  setFiles,
   preview = false,
+  edit,
+  dummyRef,
 }: {
   files?: any;
+  setFiles?: Function;
   preview?: boolean;
+  edit?: boolean;
+  dummyRef?: RefObject<HTMLDivElement>;
 }) {
   // const [files, setFiles] = useState();
   if (!preview) {
@@ -18,9 +30,10 @@ function PhotoLayout({
           justifyContent: "center",
           alignItems: "center",
           gap: "2rem",
+          // scrollPaddingTop: "500px",
         }}
       >
-        {files.map((file: any, i: number) => (
+        {files.map((file: File, i: number) => (
           <div
             style={{
               backgroundColor: "black",
@@ -28,28 +41,30 @@ function PhotoLayout({
               width: "100%",
               position: "relative",
             }}
+            // key={file.id}
             key={i}
           >
-            <img
-              style={{
-                maxWidth: "100%",
-                margin: "0 auto",
-                backgroundColor: "black",
-              }}
-              src={file}
-            />
-            <button
-              onClick={(e) => {
-                e.currentTarget?.parentElement?.remove();
-              }}
-              aria-label="delete media"
-              tabIndex={-1}
-              className={s.deletePhoto}
-            >
-              <FontAwesomeIcon icon={faClose} />
-            </button>
+            {file.type === "video/mp4" ? (
+              <video controls src={URL.createObjectURL(file)} />
+            ) : (
+              <img src={URL.createObjectURL(file)} />
+            )}
+            {edit && (
+              <button
+                onClick={(e) => {
+                  // setFiles?.(files.filter((f: any) => f.id !== file.id));
+                  // e.currentTarget?.parentElement?.remove();
+                }}
+                aria-label="delete media"
+                tabIndex={-1}
+                className={s.deletePhoto}
+              >
+                <FontAwesomeIcon icon={faClose} />
+              </button>
+            )}
           </div>
         ))}
+        <div ref={dummyRef}></div>
       </div>
     );
   }
@@ -82,7 +97,7 @@ function PhotoLayout({
                   maxWidth: "100%",
                   margin: "0 auto",
                 }} // src={URL.createObjectURL(files[0])}
-                src={files[0]}
+                src={files[0].name}
                 alt="Selected"
               />
             )}
@@ -116,7 +131,7 @@ function PhotoLayout({
                     maxWidth: "100%",
                     margin: "0 auto",
                   }} // src={URL.createObjectURL(files[1])}
-                  src={files[1]}
+                  src={files[1].name}
                   alt="Selected"
                 />
               )}
@@ -135,7 +150,7 @@ function PhotoLayout({
                     maxWidth: "100%",
                     margin: "0 auto",
                   }} // src={URL.createObjectURL(files[2])}
-                  src={files[2]}
+                  src={files[2].name}
                   alt="Selected"
                 />
               )}
@@ -199,15 +214,16 @@ function PhotoLayout({
        </div>
       ))} */}
       </div>
-      {files.length !== 0 && (
-        <p
-          style={{
-            textAlign: "center",
-          }}
-        >
-          Demo Photo Layout !
-        </p>
-      )}
+      {!files ||
+        (files?.length !== 0 && (
+          <p
+            style={{
+              textAlign: "center",
+            }}
+          >
+            Demo Photo Layout !
+          </p>
+        ))}
     </div>
   );
 }

@@ -197,7 +197,7 @@ export default function Page(props: {
   useEffect(() => {
     setClient(true);
   }, []);
-
+  const [loading, setLoading] = useState(false);
   return (
     <div className="user">
       <BackHeader
@@ -213,6 +213,7 @@ export default function Page(props: {
             tabIndex={1}
             aria-label="update button"
             type="submit"
+            disabled={loading}
             className={s.submit}
             onClick={async () => {
               const uid = auth.currentUser?.uid;
@@ -227,6 +228,7 @@ export default function Page(props: {
                   .replaceAll("&nbsp;", " ") === myPost.text
               )
                 return;
+              setLoading(true);
               try {
                 await updatePost(
                   uid,
@@ -251,7 +253,7 @@ export default function Page(props: {
               }
             }}
           >
-            Save
+            {loading ? "Saving..." : "Save"}
           </button>
         )}
       </BackHeader>
@@ -276,7 +278,16 @@ export default function Page(props: {
         }}
         dangerouslySetInnerHTML={{ __html: client ? text : "" }}
       ></Input>
-      <PhotoLayout files={["../1.gif", "../2.gif", "../3.jpg", "../4.png"]} />
+
+      <PhotoLayout
+        edit={router.query.edit ? true : false}
+        files={[
+          { id: 1, name: "../1.gif" },
+          { id: 2, name: "../2.gif" },
+          { id: 3, name: "../3.jpg" },
+          { id: 4, name: "../4.png" },
+        ]}
+      />
       <div className={s.footer}>
         <button tabIndex={-1} onClick={() => {}}>
           <FontAwesomeIcon icon={faPhotoFilm} />

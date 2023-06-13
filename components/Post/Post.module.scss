@@ -85,6 +85,7 @@
         background-color: rgb(207, 207, 207);
     }
 }
+
 .deletePhoto {
     position: absolute;
     top: 1rem;
@@ -100,18 +101,21 @@
     background-color: white;
     border: 0;
     transition: all 0.15s ease-in-out;
+    box-shadow: 0px 4px 8px 0px #80808066;
     > * {
         color: var(--blue-origin);
         opacity: 0.8;
     }
     &:active {
         width: 100px;
-        opacity: 0.5;
-        background-color: rgb(228, 228, 228);
+        opacity: 0.8;
+        // background-color: rgb(228, 228, 228);
+        background-color: rgb(241, 241, 241);
     }
     @include mouse() {
         &:hover {
             background-color: rgb(228, 228, 228);
+            background-color: rgb(241, 241, 241);
         }
     }
 }
