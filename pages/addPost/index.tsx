@@ -1,7 +1,7 @@
 import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
-import { ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
@@ -9,6 +9,8 @@ import Input from "../../components/Input";
 import PhotoLayout from "../../components/Post/PhotoLayout";
 import { app, storage } from "../../lib/firebase";
 import s from "../../styles/Home.module.scss";
+import { addPost } from "../../lib/firestore/post";
+import error from "next/error";
 export default function AddPost() {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
@@ -232,6 +234,8 @@ export default function AddPost() {
             try {
               setLoading(true);
               window.document.body.style.cursor = "wait";
+              let media: { name: string; url: string }[] = [];
+              const uploadPromises: any[] = [];
               for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const filename = file.name;
@@ -251,21 +255,38 @@ export default function AddPost() {
                       ? `images/${filename}`
                       : `videos/${filename}`
                   );
-
-                  // Upload the file to Firebase Storage
-                  uploadBytes(fileRef, file).then((snapshot) => {
-                    console.log(snapshot.ref);
-                  });
+                  const uploadPromise = uploadBytes(fileRef, file)
+                    .then(async (snapshot) => {
+                      const downloadURL = await getDownloadURL(snapshot.ref);
+                      const fileData = {
+                        name: filename,
+                        url: downloadURL,
+                      };
+                      // media.push(fileData);
+                      return fileData;
+                    })
+                    .catch((error) => {
+                      console.log("Error Uploading File:", error);
+                      return null;
+                    });
+                  // uploadPromises.push(uploadPromise);
+                  uploadPromises.push(uploadPromise);
                 } else {
                   alert(
                     `${fileType} is Invalid Type .\nJPEG , PNG , GIF and MP4 are only Allowed !`
                   );
                 }
-
-                // Create a storage reference for each file
               }
-
-              // await addPost(uid, files, replace, visibility);
+              // console.log(media);
+              await Promise.all(uploadPromises)
+                .then((uploadedFiles) => {
+                  media = uploadedFiles.filter((file) => file !== null);
+                  console.log(media);
+                })
+                .catch((error) => {
+                  console.log("Error uploading files:", error);
+                });
+              await addPost(uid, media, replace, visibility);
               // router.replace("/", undefined, { scroll: false });
             } catch (error: any) {
               alert(error.message);

@@ -154,6 +154,13 @@ button:disabled {
   } */
 }
 
+.user :is(img, video) {
+  /* border: 1px solid red; */
+  background-color: black;
+  max-width       : 100%;
+  margin          : 0 auto;
+}
+
 .user>div:nth-last-child(2) {
   /* border: 2px solid red; */
   margin-bottom: 65px;

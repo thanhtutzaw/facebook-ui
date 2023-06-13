@@ -38,7 +38,7 @@ export default function Content(props: {
     setShowmore,
     post,
   } = props;
-  const { authorId, id, text, visibility, createdAt } = post;
+  const { authorId, id, text, visibility, createdAt, media } = post;
   const { selectedId, setSelectedId, email, showAction, setshowAction, uid } =
     useContext(AppContext) as Props;
   const router = useRouter();
@@ -229,7 +229,7 @@ export default function Content(props: {
       .replaceAll("</div>", "")
       .replaceAll("&nbsp;", " ")} */}
       </div>
-      <PhotoLayout preview />
+      <PhotoLayout files={post.media} preview />
     </span>
   );
 }

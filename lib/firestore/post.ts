@@ -10,11 +10,10 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { Post } from "../../types/interfaces";
-import { useRouter } from "next/router";
 
 export async function addPost(
   uid: string,
-  files: any,
+  files: any[],
   text: string,
   visibility: string
 ) {
@@ -22,14 +21,18 @@ export async function addPost(
   const Ref = collection(db, `users/${uid}/posts`);
   const data = {
     text: text,
-    media: files,
+    media: files.map((file) => ({ ...file, id: doc().id })),
     visibility: visibility,
     createdAt: serverTimestamp(),
     updatedAt: "Invalid Date",
   };
   try {
-    // await addDoc(Ref, data);
     console.log(data);
+    await addDoc(Ref, data);
+    // console.log(data.media);
+    // data.media.map((m) => {
+    //   console.log(m.url);
+    // });
   } catch (error: any) {
     alert("Adding Post Failed !" + error.message);
   }

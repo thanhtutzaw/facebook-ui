@@ -115,7 +115,6 @@ export default function Post({ active, post, tabIndex }: PostProps) {
         </button>
         <button tabIndex={tabIndex}>
           <FontAwesomeIcon icon={faComment} bounce={Bounce} />
-
           <p>Comment</p>
         </button>
         <button tabIndex={tabIndex}>

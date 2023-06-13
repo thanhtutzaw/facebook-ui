@@ -2,22 +2,27 @@ import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import s from "./Post.module.scss";
 import { RefObject } from "react";
+import { Post } from "../../types/interfaces";
 function PhotoLayout({
   files = [
-    { id: 1, name: "1.gif" },
-    { id: 2, name: "2.gif" },
-    { id: 3, name: "3.jpg" },
-    { id: 4, name: "4.png" },
+    { id: 1, url: "1.gif" },
+    { id: 2, url: "2.gif" },
+    { id: 3, url: "3.jpg" },
+    { id: 4, url: "4.png" },
   ],
   setFiles,
   preview = false,
   edit,
   dummyRef,
+  uid,
+  myPost,
 }: {
   files?: any;
   setFiles?: Function;
   preview?: boolean;
   edit?: boolean;
+  uid?: string;
+  myPost?: Post;
   dummyRef?: RefObject<HTMLDivElement>;
 }) {
   // const [files, setFiles] = useState();
@@ -33,7 +38,7 @@ function PhotoLayout({
           // scrollPaddingTop: "500px",
         }}
       >
-        {files.map((file: File, i: number) => (
+        {files.map((file: any, i: number) => (
           <div
             style={{
               backgroundColor: "black",
@@ -47,11 +52,13 @@ function PhotoLayout({
             {file.type === "video/mp4" ? (
               <video controls src={URL.createObjectURL(file)} />
             ) : (
-              <img src={URL.createObjectURL(file)} />
+              // <img src={URL.createObjectURL(file)} />
+              <img src={file.url} />
             )}
-            {edit && (
+            {edit && myPost?.authorId === uid && (
               <button
                 onClick={(e) => {
+                  // console.log(myPost, file.url);
                   // setFiles?.(files.filter((f: any) => f.id !== file.id));
                   // e.currentTarget?.parentElement?.remove();
                 }}
@@ -97,8 +104,8 @@ function PhotoLayout({
                   maxWidth: "100%",
                   margin: "0 auto",
                 }} // src={URL.createObjectURL(files[0])}
-                src={files[0].name}
-                alt="Selected"
+                src={files[0].url}
+                alt="Seletced"
               />
             )}
           </div>
@@ -131,7 +138,7 @@ function PhotoLayout({
                     maxWidth: "100%",
                     margin: "0 auto",
                   }} // src={URL.createObjectURL(files[1])}
-                  src={files[1].name}
+                  src={files[1].url}
                   alt="Selected"
                 />
               )}
@@ -150,7 +157,7 @@ function PhotoLayout({
                     maxWidth: "100%",
                     margin: "0 auto",
                   }} // src={URL.createObjectURL(files[2])}
-                  src={files[2].name}
+                  src={files[2].url}
                   alt="Selected"
                 />
               )}

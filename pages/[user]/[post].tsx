@@ -280,13 +280,16 @@ export default function Page(props: {
       ></Input>
 
       <PhotoLayout
+        uid={uid}
+        myPost={myPost}
         edit={router.query.edit ? true : false}
-        files={[
-          { id: 1, name: "../1.gif" },
-          { id: 2, name: "../2.gif" },
-          { id: 3, name: "../3.jpg" },
-          { id: 4, name: "../4.png" },
-        ]}
+        files={myPost.media}
+        // files={[
+        //   { id: 1, name: "../1.gif" },
+        //   { id: 2, name: "../2.gif" },
+        //   { id: 3, name: "../3.jpg" },
+        //   { id: 4, name: "../4.png" },
+        // ]}
       />
       <div className={s.footer}>
         <button tabIndex={-1} onClick={() => {}}>
