@@ -1,23 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import s from "./Post.module.scss";
 import { RefObject } from "react";
 import { Post } from "../../types/interfaces";
-function PhotoLayout({
-  files = [
-    { id: 1, url: "1.gif" },
-    { id: 2, url: "2.gif" },
-    { id: 3, url: "3.jpg" },
-    { id: 4, url: "4.png" },
-  ],
-  setFiles,
-  preview = false,
-  edit,
-  dummyRef,
-  uid,
-  myPost,
-}: {
-  files?: any;
+export default function PhotoLayout(props: {
+  files?: Post["media"] | File[] | any[];
   setFiles?: Function;
   preview?: boolean;
   edit?: boolean;
@@ -25,6 +13,15 @@ function PhotoLayout({
   myPost?: Post;
   dummyRef?: RefObject<HTMLDivElement>;
 }) {
+  const {
+    files,
+    setFiles,
+    preview = false,
+    edit,
+    dummyRef,
+    uid,
+    myPost,
+  } = props;
   // const [files, setFiles] = useState();
   if (!preview) {
     return (
@@ -38,43 +35,54 @@ function PhotoLayout({
           // scrollPaddingTop: "500px",
         }}
       >
-        {files.map((file: any, i: number) => (
-          <div
-            style={{
-              backgroundColor: "black",
-              display: "flex",
-              width: "100%",
-              position: "relative",
-            }}
-            // key={file.id}
-            key={i}
-          >
-            {file.type === "video/mp4" ? (
-              <video controls src={URL.createObjectURL(file)} />
-            ) : (
-              // <img src={URL.createObjectURL(file)} />
-              <img src={file.url} />
-            )}
-            {edit && myPost?.authorId === uid && (
-              <button
-                onClick={(e) => {
-                  // console.log(myPost, file.url);
-                  // setFiles?.(files.filter((f: any) => f.id !== file.id));
-                  // e.currentTarget?.parentElement?.remove();
-                }}
-                aria-label="delete media"
-                tabIndex={-1}
-                className={s.deletePhoto}
-              >
-                <FontAwesomeIcon icon={faClose} />
-              </button>
-            )}
-          </div>
-        ))}
+        {files &&
+          files.map((file: any, i: number) => (
+            <div
+              style={{
+                backgroundColor: "black",
+                display: "flex",
+                width: "100%",
+                position: "relative",
+              }}
+              // key={file.id}
+              key={i}
+            >
+              {file.type === "video/mp4" ? (
+                <video controls src={URL.createObjectURL(file)} />
+              ) : (
+                <img
+                  alt={file.name}
+                  src={
+                    !file.url ? URL.createObjectURL(file) : file.url
+                    // Array.isArray(files) &&
+                    // files.every((file) => file instanceof File)
+                    //   ? URL.createObjectURL(file)
+                    //   : file.url
+                  }
+                />
+                // <img src={file.url} />
+              )}
+              {edit && myPost?.authorId === uid && (
+                <button
+                  onClick={(e) => {
+                    // console.log(myPost, file.url);
+                    // setFiles?.(files.filter((f: any) => f.id !== file.id));
+                    // e.currentTarget?.parentElement?.remove();
+                  }}
+                  aria-label="delete media"
+                  tabIndex={-1}
+                  className={s.deletePhoto}
+                >
+                  <FontAwesomeIcon icon={faClose} />
+                </button>
+              )}
+            </div>
+          ))}
         <div ref={dummyRef}></div>
       </div>
     );
   }
+  if (!files) return <></>;
   return (
     <div
       style={{
@@ -88,28 +96,29 @@ function PhotoLayout({
           backgroundColor: "black",
           justifyContent: "center",
           alignItems: "center",
+          color: "white",
         }}
       >
-        {files && files[0] && (
-          <div
-            className={s.img1}
+        <div
+          className={s.img1}
+          style={{
+            overflow: "hidden",
+            display: "flex",
+            minWidth: "50%",
+          }}
+        >
+          {/* {files[0].url} */}
+          {/* {JSON.stringify(files[0].url)} */}
+          {/* {JSON.stringify(files[0].name)} */}
+          <img
             style={{
-              display: "flex",
-              minWidth: "50%",
+              maxWidth: "100%",
+              margin: "0 auto",
             }}
-          >
-            {files[0] && (
-              <img
-                style={{
-                  maxWidth: "100%",
-                  margin: "0 auto",
-                }} // src={URL.createObjectURL(files[0])}
-                src={files[0].url}
-                alt="Seletced"
-              />
-            )}
-          </div>
-        )}
+            src={files[0].url}
+            alt={files[0].name}
+          />
+        </div>
         {/* {files && files[0] && (
        <div
          className={s.img1}
@@ -125,43 +134,39 @@ function PhotoLayout({
          )}
        </div>
       )} */}
-        <div>
-          {files && files[1] && (
-            <div
+        <div style={{ overflow: "hidden" }}>
+          <div
+            style={{
+              display: "flex",
+            }}
+          >
+            <img
               style={{
-                display: "flex",
+                maxWidth: "100%",
+                margin: "0 auto",
               }}
-            >
-              {files[1] && (
-                <img
-                  style={{
-                    maxWidth: "100%",
-                    margin: "0 auto",
-                  }} // src={URL.createObjectURL(files[1])}
-                  src={files[1].url}
-                  alt="Selected"
-                />
-              )}
-            </div>
-          )}
-          {files && files[2] && (
+              src={files[1].url}
+              alt={files[1].name}
+            />
+            {/* {JSON.stringify(files[1].url)} */}
+          </div>
+          {files[2] && (
             <div
               style={{
                 display: "flex",
                 position: "relative",
               }}
             >
-              {files[2] && (
-                <img
-                  style={{
-                    maxWidth: "100%",
-                    margin: "0 auto",
-                  }} // src={URL.createObjectURL(files[2])}
-                  src={files[2].url}
-                  alt="Selected"
-                />
-              )}
-              {files.length - 3 !== 0 && (
+              <img
+                style={{
+                  maxWidth: "100%",
+                  margin: "0 auto",
+                }}
+                src={files[2].url}
+                alt={files[2].name}
+              />
+              {/* {JSON.stringify(files[2].url)} */}
+              {myPost && myPost.media.length - 3 !== 0 && (
                 <h2
                   style={{
                     pointerEvents: "none",
@@ -234,5 +239,3 @@ function PhotoLayout({
     </div>
   );
 }
-
-export default PhotoLayout;

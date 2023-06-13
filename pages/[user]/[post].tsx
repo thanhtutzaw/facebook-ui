@@ -206,8 +206,8 @@ export default function Page(props: {
           router.back();
         }}
       >
-        {/* <h2 className={s.title}>{router.query.edit ? "Edit" : "Post"}</h2> */}
-        <h2 className={s.title}>{expired ? "true" : "false"}</h2>
+        <h2 className={s.title}>{router.query.edit ? "Edit" : "Post"}</h2>
+        {/* <h2 className={s.title}>{expired ? "true" : "false"}</h2> */}
         {router.query.edit && (
           <button
             tabIndex={1}

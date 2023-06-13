@@ -60,7 +60,7 @@ export default function AddPost() {
     return () => {
       router.beforePopState(() => true);
     };
-  }, [router]);
+  }, [files, router]);
   const auth = getAuth(app);
   const [text, setText] = useState("");
   // const str = ;
@@ -160,6 +160,7 @@ export default function AddPost() {
   useEffect(() => {
     if (fileLoading) return;
     dummyRef.current?.scrollIntoView();
+    // console.log(files);
     // const height = dummyRef.current?.clientHeight;
 
     // const element = dummyRef.current;
@@ -403,7 +404,6 @@ export default function AddPost() {
         element={textRef}
         contentEditable
       ></Input>
-      {/* <img src="https://firebasestorage.googleapis.com/v0/b/facebook-37f93.appspot.com/o/Screenshot%20(181).png?alt=media&token=7e481983-25bb-4e08-ad9c-f746f2e9658b"></img> */}
       <PhotoLayout
         dummyRef={dummyRef}
         setFiles={setFiles}
@@ -418,11 +418,10 @@ export default function AddPost() {
           }}
         >
           <FontAwesomeIcon icon={faPhotoFilm} />
-          {/* {fileRef.current?.files?.item} */}
         </button>
         <input
           multiple
-          accept="image/*"
+          accept="image/*,video/mp4"
           onChange={(e) => {
             const fileArray = Array.from(e.target.files ?? []);
             let valid = true;
@@ -447,57 +446,12 @@ export default function AddPost() {
             });
             setFileLoading(true);
             if (valid) {
-              // setFiles(...files, fileArray);
               setFiles([...files, ...fileArray]);
-              // dummyRef.current?.scrollIntoView();
+
+              setTimeout(() => {
+                setFileLoading(false);
+              }, 500);
             }
-            // console.log();
-
-            setTimeout(() => {
-              setFileLoading(false);
-            }, 500);
-            // console.log(
-            //   e.currentTarget.parentElement?.parentElement?.parentElement
-            // );
-            // if (dummyRef.current) {
-            //   dummyRef.current.scrollIntoView({
-            //     behavior: "smooth",
-            //     block: "end",
-            //   });
-            // }
-            // e.currentTarget.parentElement?.parentElement?.scrollTo({
-            //   top: -100000,
-            // });
-
-            // e.currentTarget.parentElement.parentElement.parentElement.scrollTop =
-            //   e.currentTarget.parentElement.parentElement.parentElement
-            //     .scrollHeight - 1000;
-
-            // if (!e.currentTarget?.parentElement?.parentElement?.parentElement)
-            //   return;
-            // e.currentTarget.parentElement.parentElement.parentElement.scrollTo({
-            //   // top: 10000 + 100,
-            //   top: e.currentTarget.parentElement.parentElement.parentElement
-            //     .clientHeight,
-            // });
-
-            // e.currentTarget.parentElement?.parentElement?.parentElement?.scrollTo(
-            //   {
-            //     top:
-            //       e.currentTarget.parentElement?.parentElement?.scrollHeight -
-            //       1000,
-            //     // top:
-            //     //   e.currentTarget.parentElement?.parentElement?.parentElement
-            //     //     .clientHeight + 200,
-            //     // top:
-            //     //   e.currentTarget.parentElement.parentElement.clientHeight +
-            //     //   e.currentTarget.parentElement.parentElement.scrollHeight,
-            //   }
-            // );
-            console.log(
-              e.currentTarget.parentElement?.parentElement?.offsetHeight
-            );
-            // console.log(e.currentTarget.parentElement?.parentElement);
           }}
           ref={fileRef}
           style={{ display: "none", visibility: "hidden" }}
