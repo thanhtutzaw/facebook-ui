@@ -24,7 +24,7 @@ export default function AddPost() {
     const input = textRef.current;
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (input?.textContent && files) {
+      if (input?.textContent || files.length > 0) {
         e.preventDefault();
         console.log(e);
         e.returnValue = ""; // Chrome requires this line
@@ -45,10 +45,8 @@ export default function AddPost() {
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
       if (
-        as !== currentPath &&
-        textRef.current?.textContent &&
-        files &&
-        !confirm("Changes you made may not be saved.")
+        (as !== currentPath && textRef.current?.textContent) ||
+        (files.length !== 0 && !confirm("Changes you made may not be saved."))
       ) {
         // router.back();
         //This code work but I want to display Leave Propmt , instead confirm box

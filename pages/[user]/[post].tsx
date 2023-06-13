@@ -11,7 +11,13 @@ import {
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useContext, useEffect, useRef, useState } from "react";
+import {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import BackHeader from "../../components/Header/BackHeader";
 import Input from "../../components/Input";
 import { PageContext, PageProps } from "../../context/PageContext";
@@ -97,6 +103,8 @@ export default function Page(props: {
   const InputRef = useRef<HTMLDivElement>(null);
 
   const [value, setvalue] = useState("");
+  const [files, setFiles] = useState<Post["media"]>([...myPost.media]);
+  const fileRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (expired) {
       router.push("/");
@@ -197,6 +205,10 @@ export default function Page(props: {
   useEffect(() => {
     setClient(true);
   }, []);
+  // useLayoutEffect(() => {
+  //   setFiles([...myPost.media]);
+  // }, [myPost.media]);
+
   const [loading, setLoading] = useState(false);
   return (
     <div className="user">
@@ -221,11 +233,13 @@ export default function Page(props: {
               if (uid !== myPost.authorId) {
                 throw new Error("Unauthorized !");
               }
+              console.log(files);
               if (
                 visibility === myPost.visibility &&
                 InputRef.current?.innerHTML
                   .replace(/\n/g, "<br>")
                   .replaceAll("&nbsp;", " ") === myPost.text
+                // files === myPost.media
               )
                 return;
               setLoading(true);
@@ -243,6 +257,7 @@ export default function Page(props: {
                       /(?:https?|ftp):\/\/[\n\S]+/g,
                       (url) => `<a href="${url}">${url}</a>`
                     ),
+                  files,
                   myPost.id?.toString()!,
                   myPost,
                   visibility
@@ -283,7 +298,8 @@ export default function Page(props: {
         uid={uid}
         myPost={myPost}
         edit={router.query.edit ? true : false}
-        files={myPost.media}
+        files={files}
+        setFiles={setFiles}
         // files={[
         //   { id: 1, name: "../1.gif" },
         //   { id: 2, name: "../2.gif" },
@@ -292,9 +308,52 @@ export default function Page(props: {
         // ]}
       />
       <div className={s.footer}>
-        <button tabIndex={-1} onClick={() => {}}>
+        <button
+          tabIndex={-1}
+          onClick={() => {
+            fileRef?.current?.click();
+          }}
+        >
           <FontAwesomeIcon icon={faPhotoFilm} />
         </button>
+        <input
+          multiple
+          accept="image/*,video/mp4"
+          // onChange={(e) => {
+          //   const fileArray = Array.from(e.target.files ?? []);
+          //   let valid = true;
+          //   fileArray.map((file) => {
+          //     const fileType = file.type;
+          //     if (
+          //       fileType === "image/jpeg" ||
+          //       fileType === "image/jpg" ||
+          //       fileType === "image/png" ||
+          //       fileType === "image/gif" ||
+          //       fileType === "video/mp4"
+          //     ) {
+          //       console.log(
+          //         `File '${file.name}' is an image (JPEG, PNG, or GIF) or an MP4 video`
+          //       );
+          //     } else {
+          //       alert(
+          //         `File '${file.name}' is not one of the specified formats.\nJPEG , PNG , GIF and MP4 are only Allowed !`
+          //       );
+          //       valid = false;
+          //     }
+          //   });
+          //   setFileLoading(true);
+          //   if (valid) {
+          //     setFiles([...files, ...fileArray]);
+
+          //     setTimeout(() => {
+          //       setFileLoading(false);
+          //     }, 500);
+          //   }
+          // }}
+          ref={fileRef}
+          style={{ display: "none", visibility: "hidden" }}
+          type="file"
+        />
         <select
           disabled={router.query.edit ? false : true}
           defaultValue={visibility}

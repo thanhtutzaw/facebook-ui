@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import s from "./Post.module.scss";
 import { RefObject } from "react";
 import { Post } from "../../types/interfaces";
+import { deleteStorage } from "../../lib/storage";
 export default function PhotoLayout(props: {
   files?: Post["media"] | File[] | any[];
   setFiles?: Function;
@@ -65,6 +66,17 @@ export default function PhotoLayout(props: {
               {edit && myPost?.authorId === uid && (
                 <button
                   onClick={(e) => {
+                    // if (file.url) {
+                    // deleteStorage();
+                    // } else {
+                    e.currentTarget.scrollIntoView();
+                    setFiles?.([...files.slice(0, i), ...files.slice(i + 1)]);
+                    // alert(i);
+                    // setFiles?.(files.filter((_, index) => index !== i));
+                    // setFiles?.(files.splice(i, 1));
+
+                    // }
+
                     // console.log(myPost, file.url);
                     // setFiles?.(files.filter((f: any) => f.id !== file.id));
                     // e.currentTarget?.parentElement?.remove();
