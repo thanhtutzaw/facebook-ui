@@ -147,21 +147,23 @@ export default function PhotoLayout(props: {
        </div>
       )} */}
         <div style={{ overflow: "hidden" }}>
-          <div
-            style={{
-              display: "flex",
-            }}
-          >
-            <img
+          {files[1] && (
+            <div
               style={{
-                maxWidth: "100%",
-                margin: "0 auto",
+                display: "flex",
               }}
-              src={files[1].url}
-              alt={files[1].name}
-            />
-            {/* {JSON.stringify(files[1].url)} */}
-          </div>
+            >
+              <img
+                style={{
+                  maxWidth: "100%",
+                  margin: "0 auto",
+                }}
+                src={files[1].url}
+                alt={files[1].name}
+              />
+              {/* {JSON.stringify(files[1].url)} */}
+            </div>
+          )}
           {files[2] && (
             <div
               style={{
