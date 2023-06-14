@@ -353,7 +353,7 @@
   padding: 10px 15px;
 }
 .postAction input:focus-visible {
-  outline: 1px solid #66b5ff;
+  outline: 1px solid var(--blue-origin);
 }
 .postAction .addMedia {
   border-radius: 100px;
@@ -405,8 +405,8 @@
 .backHeader svg {
   font-size: 1.2rem;
 }
-.backHeader button {
-  border: 2px soldi red !important;
+.backHeader button:first-child:focus-visible {
+  color: var(--blue-origin);
 }
 .backHeader button:not(.submit) {
   border-radius: 100px;
@@ -439,7 +439,7 @@
   opacity: 0.6;
 }
 .backHeader .submit:focus-visible {
-  opacity: 0.6;
+  opacity: 0.8;
   outline: 2px solid var(--blue-origin);
   outline-offset: 2px;
 }
@@ -476,16 +476,9 @@
   -o-object-fit: contain;
      object-fit: contain;
 }
-.addPost .img1 {
-  min-width: 50%;
-  flex: 1 0 50%;
-  -o-object-fit: contain;
-     object-fit: contain;
-  background: black;
-  position: relative;
-}
 .addPost .input {
   padding: 1rem;
+  cursor: text;
 }
 .addPost .input > div {
   outline: 0;

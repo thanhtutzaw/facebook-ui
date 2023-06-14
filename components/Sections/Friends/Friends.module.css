@@ -14,7 +14,8 @@
   border-radius: 10px;
   font-size: 18px;
 }
-.container .requestPending .header {
+.container .request .header,
+.container .suggest .header {
   background-color: rgb(255, 255, 255);
   overflow: auto;
   gap: 20px;
@@ -23,13 +24,16 @@
   align-items: center;
   margin: 0;
 }
-.container .requestPending .header p {
+.container .request .header p,
+.container .suggest .header p {
   margin: 0;
 }
-.container .requestPending .header .length {
+.container .request .header .length,
+.container .suggest .header .length {
   color: red;
 }
-.container .requestPending .card {
+.container .request .card,
+.container .suggest .card {
   padding-block: 1rem;
   display: flex;
   flex: 1 1;
@@ -37,25 +41,30 @@
   gap: 20px;
   overflow: hidden;
 }
-.container .requestPending .card .profile {
+.container .request .card .profile,
+.container .suggest .card .profile {
   border-radius: 100%;
 }
-.container .requestPending .card p {
+.container .request .card p,
+.container .suggest .card p {
   margin: 0;
 }
-.container .requestPending .card .right {
+.container .request .card .right,
+.container .suggest .card .right {
   display: flex;
   flex-direction: column;
   flex: 1;
   gap: 10px;
 }
-.container .requestPending .card .right .info {
+.container .request .card .right .info,
+.container .suggest .card .right .info {
   gap: 18px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
 }
-.container .requestPending .card .right .info > p:first-child {
+.container .request .card .right .info > p:first-child,
+.container .suggest .card .right .info > p:first-child {
   max-width: 55vw;
   width: 100%;
   /* min-width: 100vw; */
@@ -64,11 +73,13 @@
   flex: 1 1;
   white-space: nowrap;
 }
-.container .requestPending .card .right .action {
+.container .request .card .right .action,
+.container .suggest .card .right .action {
   gap: 10px;
   display: flex;
 }
-.container .requestPending .card .right .action .primary {
+.container .request .card .right .action .primary,
+.container .suggest .card .right .action .primary {
   background-color: var(--blue-origin);
   color: white;
 }/*# sourceMappingURL=Friends.module.css.map */

@@ -9,6 +9,7 @@ import {
   faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
@@ -17,13 +18,10 @@ import styles from "../../styles/Home.module.scss";
 import { Props } from "../../types/interfaces";
 import Navitems from "./Navitems";
 import SelectModal from "./SelectModal";
-import { AnimatePresence, motion } from "framer-motion";
-import style from "styled-jsx/style";
-import { useRouter } from "next/router";
 const Logo = () => {
   return (
     <div className={styles.logoContainer}>
-      <Link scroll={false} href="/" className={styles.logo}>
+      <Link tabIndex={-1} scroll={false} href="/" className={styles.logo}>
         facebook
       </Link>
     </div>
@@ -113,7 +111,6 @@ export default function Header(props: any) {
       <nav className={styles.nav}>
         {!selectMode && (
           <motion.div
-            // key="navItems"
             initial={{ width: "100%", opacity: 1 }}
             animate={{
               width: selectMode ? "60%" : "100%",

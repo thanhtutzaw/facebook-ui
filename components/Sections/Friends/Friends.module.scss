@@ -13,7 +13,8 @@
         border-radius: 10px;
         font-size: 18px;
     }
-    .requestPending {
+    .request,
+    .suggest {
         .header {
             background-color: rgb(255, 255, 255);
             overflow: auto;

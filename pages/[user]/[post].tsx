@@ -278,7 +278,6 @@ export default function Page(props: {
         contentEditable={router.query.edit ? true : false}
         style={{
           cursor: router.query.edit ? "initial" : "default",
-          whiteSpace: "pre-line",
         }}
         onInput={(e) => {
           setvalue(
@@ -309,6 +308,7 @@ export default function Page(props: {
       />
       <div className={s.footer}>
         <button
+          disabled={router.query.edit ? false : true}
           tabIndex={-1}
           onClick={() => {
             fileRef?.current?.click();

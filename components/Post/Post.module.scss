@@ -1,11 +1,42 @@
 @import "../../styles/mixins";
-.post {
-    background-color: rgb(253, 253, 253);
-    margin: 0.5rem 0;
-    position: relative;
-    cursor: default;
-    overflow: hidden;
-    transition: all 0.2s ease-in-out;
+.media {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    // scroll-padding-top:500px;
+    > div {
+        background-color: black;
+        display: flex;
+        width: 100%;
+        position: relative;
+    }
+}
+.preview {
+    display: flex;
+    background-color: black;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    img {
+        aspect-ratio: 16/9;
+        object-fit: contain;
+    }
+    & > div:first-child {
+        min-width: 50%;
+        flex: 1 0 50%;
+        object-fit: contain;
+        background: black;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        min-width: 50%;
+        // aspect-ratio: 9/10;
+    }
+    & > div:not(:first-child) {
+        overflow: hidden;
+    }
     .backDrop {
         pointer-events: none;
         position: absolute;
@@ -17,23 +48,20 @@
         color: #e1e1e1;
         backdrop-filter: brightness(0.7);
         margin: 0;
+        font-weight: 400;
+        color: white;
     }
-    img {
-        aspect-ratio: 16/9;
-        object-fit: contain;
-    }
+}
+.post {
+    background-color: rgb(253, 253, 253);
+    margin: 0.5rem 0;
+    position: relative;
+    cursor: default;
+    overflow: hidden;
+    transition: all 0.2s ease-in-out;
     // aspect-ratio: 16/9;
-    // // object-fit: contain;
-    // object-fit: cover;
-    .img1 {
-        min-width: 50%;
-        flex: 1 0 50%;
-        object-fit: contain;
-        background: black;
-        position: relative;
-        // aspect-ratio: 9/10;
-    }
     .dot {
+        transition: all 0.3s ease-in-out;
         @include mouse() {
             &:hover {
                 background-color: rgb(231, 231, 231);
@@ -43,6 +71,10 @@
             opacity: 0.5;
             scale: 1.1;
             background-color: rgb(231, 231, 231);
+        }
+        &:focus-visible {
+            color: var(--blue-origin);
+            transition: all 0.3s ease-in-out;
         }
     }
     // transition: border 0.2s ease-in-out, borderRadius 0.2s ease-in-out;
@@ -89,17 +121,13 @@
         // }
     }
     .header {
-        // padding: 15px 1rem;
         padding: 15px 0.8rem 6px;
-        // padding-top: 15px;
         margin: 0;
-        // border: 1px solid red !important;
     }
     > p:active {
         background-color: rgb(207, 207, 207);
     }
 }
-
 .deletePhoto {
     position: absolute;
     top: 1rem;
@@ -136,10 +164,11 @@
 .header {
     display: flex;
     justify-content: space-between;
-    &:has(.left:active) {
+    &:has(.authorInfo:active) {
         background-color: rgb(207, 207, 207);
     }
-    .left {
+    .authorInfo {
+        user-select: none;
         display: flex;
         flex: 1;
         gap: 0.5rem;
@@ -169,15 +198,10 @@
     }
 
     .check {
-        // color: #2dc61d !important;
-        // color: #31db1e;
         color: #15d900;
         background-color: #10fa1026;
     }
 }
-// .header-hovered {
-//     background-color: green !important;
-// }
 .actions {
     display: flex;
     flex-direction: column;
@@ -189,7 +213,7 @@
     overflow: hidden;
     padding-block: 0.7rem;
     background-color: rgb(241, 241, 241);
-
+    z-index: 200;
     > button {
         font-size: 1rem;
         border: 0;
@@ -204,8 +228,6 @@
         }
         &:active {
             opacity: 0.5;
-            // scale: 0.9;
-            // border-radius: 50px;
         }
     }
 }
@@ -220,11 +242,8 @@
 
 .action {
     display: flex;
-    align-items: center;
     svg {
         font-size: 18px;
-        // color: rgb(110, 110, 110);
-        // color: rgb(62 62 62);
         color: rgb(39, 39, 39);
     }
     > button {
@@ -239,7 +258,7 @@
         transition: background-color 0.2s ease;
     }
     p {
-        margin-left: 0.3rem;
+        margin-left: 0.4rem;
         font-size: 16px !important;
     }
     > button:active {

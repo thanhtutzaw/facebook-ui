@@ -63,7 +63,7 @@ export default function Content(props: {
       }}
     >
       <div className={styles.header}>
-        <div className={styles.left}>
+        <div className={styles.authorInfo}>
           <Image
             priority={false}
             className={styles.profile}

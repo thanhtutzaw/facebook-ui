@@ -19,7 +19,7 @@ export default function Friend(props: FriendProps) {
         <button tabIndex={tabIndex}>Suggestions</button>
         <button tabIndex={tabIndex}>My Friends</button>
       </div>
-      <div className={s.requestPending}>
+      <div className={s.request}>
         <h2 className={s.header}>
           <p>Friends Requests</p>
           {/* <p className={s.length}>{length}</p> */}
@@ -28,7 +28,7 @@ export default function Friend(props: FriendProps) {
           <Request key={index} f={f} tabIndex={tabIndex} />
         ))}
       </div>
-      <div className={s.requestPending}>
+      <div className={s.suggest}>
         <h2 className={s.header}>
           <p>People you may know</p>
         </h2>

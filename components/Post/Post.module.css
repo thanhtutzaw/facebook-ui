@@ -1,12 +1,44 @@
-.post {
-  background-color: rgb(253, 253, 253);
-  margin: 0.5rem 0;
-  position: relative;
-  cursor: default;
-  overflow: hidden;
-  transition: all 0.2s ease-in-out;
+.media {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
 }
-.post .backDrop {
+.media > div {
+  background-color: black;
+  display: flex;
+  width: 100%;
+  position: relative;
+}
+
+.preview {
+  display: flex;
+  background-color: black;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+.preview img {
+  aspect-ratio: 16/9;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.preview > div:first-child {
+  min-width: 50%;
+  flex: 1 0 50%;
+  -o-object-fit: contain;
+     object-fit: contain;
+  background: black;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  min-width: 50%;
+}
+.preview > div:not(:first-child) {
+  overflow: hidden;
+}
+.preview .backDrop {
   pointer-events: none;
   position: absolute;
   display: flex;
@@ -18,19 +50,20 @@
   -webkit-backdrop-filter: brightness(0.7);
           backdrop-filter: brightness(0.7);
   margin: 0;
+  font-weight: 400;
+  color: white;
 }
-.post img {
-  aspect-ratio: 16/9;
-  -o-object-fit: contain;
-     object-fit: contain;
-}
-.post .img1 {
-  min-width: 50%;
-  flex: 1 0 50%;
-  -o-object-fit: contain;
-     object-fit: contain;
-  background: black;
+
+.post {
+  background-color: rgb(253, 253, 253);
+  margin: 0.5rem 0;
   position: relative;
+  cursor: default;
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+}
+.post .dot {
+  transition: all 0.3s ease-in-out;
 }
 @media (hover: hover) and (pointer: fine) {
   .post .dot:hover {
@@ -41,6 +74,10 @@
   opacity: 0.5;
   scale: 1.1;
   background-color: rgb(231, 231, 231);
+}
+.post .dot:focus-visible {
+  color: var(--blue-origin);
+  transition: all 0.3s ease-in-out;
 }
 .post .seeMore {
   margin: 0 10px;
@@ -113,25 +150,28 @@
   display: flex;
   justify-content: space-between;
 }
-.header:has(.left:active) {
+.header:has(.authorInfo:active) {
   background-color: rgb(207, 207, 207);
 }
-.header .left {
+.header .authorInfo {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
   display: flex;
   flex: 1;
   gap: 0.5rem;
 }
-.header .left > div > p:not(:first-child) {
+.header .authorInfo > div > p:not(:first-child) {
   color: #4e4e4e;
   font-size: 15px;
 }
-.header .left p {
+.header .authorInfo p {
   margin: 0;
   padding: 0;
   font-size: 18px;
   line-height: 20px;
 }
-.header .left :first-child {
+.header .authorInfo :first-child {
   font-weight: 500;
 }
 .header button {
@@ -159,6 +199,7 @@
   overflow: hidden;
   padding-block: 0.7rem;
   background-color: rgb(241, 241, 241);
+  z-index: 200;
 }
 .actions > button {
   font-size: 1rem;
@@ -188,7 +229,6 @@
 
 .action {
   display: flex;
-  align-items: center;
 }
 .action svg {
   font-size: 18px;
@@ -206,7 +246,7 @@
   transition: background-color 0.2s ease;
 }
 .action p {
-  margin-left: 0.3rem;
+  margin-left: 0.4rem;
   font-size: 16px !important;
 }
 .action > button:active {

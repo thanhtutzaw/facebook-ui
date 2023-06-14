@@ -26,27 +26,13 @@ export default function PhotoLayout(props: {
   // const [files, setFiles] = useState();
   if (!preview) {
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "2rem",
-          // scrollPaddingTop: "500px",
-        }}
-      >
+      <div className={s.media}>
         {files &&
           files.map((file: any, i: number) => (
             <div
-              style={{
-                backgroundColor: "black",
-                display: "flex",
-                width: "100%",
-                position: "relative",
-              }}
               // key={file.id}
               key={i}
+              id={i.toString()}
             >
               {file.type === "video/mp4" ? (
                 <video controls src={URL.createObjectURL(file)} />
@@ -81,7 +67,7 @@ export default function PhotoLayout(props: {
                     // setFiles?.(files.filter((f: any) => f.id !== file.id));
                     // e.currentTarget?.parentElement?.remove();
                   }}
-                  aria-label="delete media"
+                  aria-label="remove media"
                   tabIndex={-1}
                   className={s.deletePhoto}
                 >
@@ -102,21 +88,10 @@ export default function PhotoLayout(props: {
         overflow: "hidden",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          backgroundColor: "black",
-          justifyContent: "center",
-          alignItems: "center",
-          color: "white",
-        }}
-      >
+      <div className={s.preview}>
         <div
-          className={s.img1}
           style={{
-            overflow: "hidden",
-            display: "flex",
-            minWidth: "50%",
+            
             aspectRatio: files?.length <= 2 ? "initial" : "9/10",
           }}
         >
@@ -132,7 +107,7 @@ export default function PhotoLayout(props: {
             alt={files[0].name}
           />
         </div>
-        <div style={{ overflow: "hidden" }}>
+        <div>
           {files[1] && (
             <div
               style={{

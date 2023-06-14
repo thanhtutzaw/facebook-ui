@@ -67,6 +67,15 @@ export function Home(props: Props) {
         />
         <input
           readOnly
+          onFocus={(e) => {
+            e.target.addEventListener("keydown", (event: KeyboardEvent) => {
+              console.log("keydown");
+              if (event.key === "Enter") {
+                console.log("enter");
+                e.target?.click();
+              }
+            });
+          }}
           onClick={() => {
             router.push("addPost");
             // router.push({pathname:'addPost' , query:uid})
