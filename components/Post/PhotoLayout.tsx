@@ -117,6 +117,7 @@ export default function PhotoLayout(props: {
             overflow: "hidden",
             display: "flex",
             minWidth: "50%",
+            aspectRatio: files?.length <= 2 ? "initial" : "9/10",
           }}
         >
           {/* {files[0].url} */}
@@ -131,26 +132,12 @@ export default function PhotoLayout(props: {
             alt={files[0].name}
           />
         </div>
-        {/* {files && files[0] && (
-       <div
-         className={s.img1}
-         style={{ display: "flex", minWidth: "50%" }}
-       >
-         {files[0].type.startsWith("image/") && (
-           <img
-             style={{ maxWidth: "100%", margin: "0 auto" }}
-             // src={URL.createObjectURL(files[0])}
-             src={URL.createObjectURL(files[0])}
-             alt="Selected"
-           />
-         )}
-       </div>
-      )} */}
         <div style={{ overflow: "hidden" }}>
           {files[1] && (
             <div
               style={{
                 display: "flex",
+                // aspectRatio: files.length <= 2 ? "initial" : "9/10",
               }}
             >
               <img
@@ -180,23 +167,8 @@ export default function PhotoLayout(props: {
                 alt={files[2].name}
               />
               {/* {JSON.stringify(files[2].url)} */}
-              {myPost && myPost.media.length - 3 !== 0 && (
-                <h2
-                  style={{
-                    pointerEvents: "none",
-                    position: "absolute",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    width: "100%",
-                    height: "-webkit-fill-available",
-                    color: "white",
-                    backdropFilter: "brightness(0.8)",
-                    margin: "0",
-                  }}
-                >
-                  +{files.length - 3}
-                </h2>
+              {files.length - 3 !== 0 && (
+                <h2 className={s.backDrop}>+{files.length - 3}</h2>
               )}
             </div>
           )}
@@ -240,7 +212,7 @@ export default function PhotoLayout(props: {
        </div>
       ))} */}
       </div>
-      {!files ||
+      {/* {!files ||
         (files?.length !== 0 && (
           <p
             style={{
@@ -249,7 +221,7 @@ export default function PhotoLayout(props: {
           >
             Demo Photo Layout !
           </p>
-        ))}
+        ))} */}
     </div>
   );
 }

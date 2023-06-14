@@ -6,18 +6,32 @@
     cursor: default;
     overflow: hidden;
     transition: all 0.2s ease-in-out;
-
+    .backDrop {
+        pointer-events: none;
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: -webkit-fill-available;
+        color: #e1e1e1;
+        backdrop-filter: brightness(0.7);
+        margin: 0;
+    }
+    img {
+        aspect-ratio: 16/9;
+        object-fit: contain;
+    }
+    // aspect-ratio: 16/9;
+    // // object-fit: contain;
+    // object-fit: cover;
     .img1 {
         min-width: 50%;
         flex: 1 0 50%;
         object-fit: contain;
         background: black;
         position: relative;
-        img {
-            // position: absolute;
-            // top: 50%;
-            // bottom: 50%;
-        }
+        // aspect-ratio: 9/10;
     }
     .dot {
         @include mouse() {

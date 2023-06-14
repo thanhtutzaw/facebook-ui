@@ -103,7 +103,7 @@ export default function Page(props: {
   const InputRef = useRef<HTMLDivElement>(null);
 
   const [value, setvalue] = useState("");
-  const [files, setFiles] = useState<Post["media"]>([...myPost.media]);
+  const [files, setFiles] = useState<Post["media"]>([...(myPost.media ?? [])]);
   const fileRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (expired) {

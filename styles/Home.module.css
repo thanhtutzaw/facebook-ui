@@ -400,6 +400,7 @@
   position: fixed;
   top: 0;
   border-bottom: 1px solid rgb(235, 235, 235);
+  z-index: 100;
 }
 .backHeader svg {
   font-size: 1.2rem;
@@ -459,6 +460,18 @@
   width: 100px;
 }
 
+.addPost video,
+.addPost img {
+  background-color: black;
+  max-width: 100%;
+  margin: 0 auto;
+}
+.addPost video {
+  aspect-ratio: 16/9;
+}
+.addPost > div:nth-last-child(2) {
+  margin-bottom: 65px;
+}
 .addPost img {
   -o-object-fit: contain;
      object-fit: contain;
@@ -473,7 +486,6 @@
 }
 .addPost .input {
   padding: 1rem;
-  margin-block: 65px;
 }
 .addPost .input > div {
   outline: 0;
@@ -494,7 +506,9 @@
   gap: 10px;
   position: fixed;
   bottom: 0;
-  border-top: 1px solid rgb(235, 235, 235);
+  box-shadow: rgba(0, 0, 0, 0.17) 0px -6px 6px -6px;
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
 }
 .footer h2 {
   margin-top: 0;
