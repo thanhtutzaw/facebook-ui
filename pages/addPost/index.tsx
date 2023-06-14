@@ -2,7 +2,7 @@ import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
 import Input from "../../components/Input";
@@ -11,6 +11,9 @@ import { app, storage } from "../../lib/firebase";
 import s from "../../styles/Home.module.scss";
 import { addPost } from "../../lib/firestore/post";
 import error from "next/error";
+import { Post } from "../../types/interfaces";
+import MediaInput from "../../components/MediaInput";
+import { uploadMedia } from "../../lib/storage";
 export default function AddPost() {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
@@ -18,13 +21,13 @@ export default function AddPost() {
   const [loading, setLoading] = useState(false);
   // const [files, setFiles] = useState(["1.gif", "2.gif", "3.jpg", "4.png"]);
   // const [files, setFiles] = useState<File>([{ id: 1, name: "1.gif" }]);
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<File[] | Post["media"]>([]);
   useEffect(() => {
     textRef.current?.focus();
     const input = textRef.current;
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (input?.textContent || files.length > 0) {
+      if (input?.textContent || files?.length! > 0) {
         e.preventDefault();
         console.log(e);
         e.returnValue = ""; // Chrome requires this line
@@ -46,7 +49,7 @@ export default function AddPost() {
       const currentPath = router.asPath;
       if (
         (as !== currentPath && textRef.current?.textContent) ||
-        (files.length !== 0 && !confirm("Changes you made may not be saved."))
+        (files?.length !== 0 && !confirm("Changes you made may not be saved."))
       ) {
         // router.back();
         //This code work but I want to display Leave Propmt , instead confirm box
@@ -233,60 +236,13 @@ export default function AddPost() {
             try {
               setLoading(true);
               window.document.body.style.cursor = "wait";
-              let media: { name: string; url: string }[] = [];
-              const uploadPromises: any[] = [];
-              for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const filename = file.name;
-                // const filetype = file.type;
-                const fileType = file.type;
-                console.log(file.type);
-                if (
-                  fileType === "image/jpeg" ||
-                  fileType === "image/jpg" ||
-                  fileType === "image/png" ||
-                  fileType === "image/gif" ||
-                  fileType === "video/mp4"
-                ) {
-                  const fileRef = ref(
-                    storageRef,
-                    fileType !== "video/mp4"
-                      ? `images/${filename}`
-                      : `videos/${filename}`
-                  );
-                  const uploadPromise = uploadBytes(fileRef, file)
-                    .then(async (snapshot) => {
-                      const downloadURL = await getDownloadURL(snapshot.ref);
-                      const fileData = {
-                        name: filename,
-                        url: downloadURL,
-                      };
-                      // media.push(fileData);
-                      return fileData;
-                    })
-                    .catch((error) => {
-                      console.log("Error Uploading File:", error);
-                      return null;
-                    });
-                  // uploadPromises.push(uploadPromise);
-                  uploadPromises.push(uploadPromise);
-                } else {
-                  alert(
-                    `${fileType} is Invalid Type .\nJPEG , PNG , GIF and MP4 are only Allowed !`
-                  );
-                }
-              }
-              // console.log(media);
-              await Promise.all(uploadPromises)
-                .then((uploadedFiles) => {
-                  media = uploadedFiles.filter((file) => file !== null);
-                  console.log(media);
-                })
-                .catch((error) => {
-                  console.log("Error uploading files:", error);
-                });
+
+              // const uploadPromises: Post["media"] = [];
+
+              const media = await uploadMedia(files as File[]);
+
               await addPost(uid, media, replace, visibility);
-              // router.replace("/", undefined, { scroll: false });
+              router.replace("/", undefined, { scroll: false });
             } catch (error: any) {
               alert(error.message);
             } finally {
@@ -405,7 +361,7 @@ export default function AddPost() {
       <PhotoLayout
         dummyRef={dummyRef}
         setFiles={setFiles}
-        files={files}
+        files={files!}
         edit={true}
       />
       <div className={s.footer}>
@@ -417,43 +373,11 @@ export default function AddPost() {
         >
           <FontAwesomeIcon icon={faPhotoFilm} />
         </button>
-        <input
-          multiple
-          accept="image/*,video/mp4"
-          onChange={(e) => {
-            const fileArray = Array.from(e.target.files ?? []);
-            let valid = true;
-            fileArray.map((file) => {
-              const fileType = file.type;
-              if (
-                fileType === "image/jpeg" ||
-                fileType === "image/jpg" ||
-                fileType === "image/png" ||
-                fileType === "image/gif" ||
-                fileType === "video/mp4"
-              ) {
-                console.log(
-                  `File '${file.name}' is an image (JPEG, PNG, or GIF) or an MP4 video`
-                );
-              } else {
-                alert(
-                  `File '${file.name}' is not one of the specified formats.\nJPEG , PNG , GIF and MP4 are only Allowed !`
-                );
-                valid = false;
-              }
-            });
-            setFileLoading(true);
-            if (valid) {
-              setFiles([...files, ...fileArray]);
-
-              setTimeout(() => {
-                setFileLoading(false);
-              }, 500);
-            }
-          }}
-          ref={fileRef}
-          style={{ display: "none", visibility: "hidden" }}
-          type="file"
+        <MediaInput
+          setFileLoading={setFileLoading}
+          setFiles={setFiles}
+          files={files as File[]}
+          fileRef={fileRef}
         />
         <select
           tabIndex={-1}

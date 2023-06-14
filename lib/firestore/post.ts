@@ -41,7 +41,7 @@ export async function addPost(
 export async function updatePost(
   uid: string,
   text: string,
-  files: any[],
+  files: Post["media"],
   id: string,
   myPost: Post,
   visibility: string
@@ -59,9 +59,9 @@ export async function updatePost(
     updatedAt: serverTimestamp(),
   };
   try {
+    console.log(data);
+    alert(JSON.stringify(data));
     // await updateDoc(Ref, data);
-    // console.log(data);
-    alert([data]);
   } catch (error: any) {
     alert("Adding Post Failed !" + error.message);
   }

@@ -21,12 +21,14 @@ import {
 import BackHeader from "../../components/Header/BackHeader";
 import Input from "../../components/Input";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { app, db, postToJSON } from "../../lib/firebase";
+import { app, db, postToJSON, storage } from "../../lib/firebase";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { updatePost } from "../../lib/firestore/post";
 import s from "../../styles/Home.module.scss";
 import { Post, Props } from "../../types/interfaces";
 import PhotoLayout from "../../components/Post/PhotoLayout";
+import MediaInput from "../../components/MediaInput";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -103,7 +105,9 @@ export default function Page(props: {
   const InputRef = useRef<HTMLDivElement>(null);
 
   const [value, setvalue] = useState("");
-  const [files, setFiles] = useState<Post["media"]>([...(myPost.media ?? [])]);
+  const [files, setFiles] = useState<Post["media"] | File[]>([
+    ...(myPost.media ?? []),
+  ]);
   const fileRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (expired) {
@@ -210,6 +214,7 @@ export default function Page(props: {
   // }, [myPost.media]);
 
   const [loading, setLoading] = useState(false);
+  const storageRef = ref(storage);
   return (
     <div className="user">
       <BackHeader
@@ -223,7 +228,7 @@ export default function Page(props: {
         {router.query.edit && (
           <button
             tabIndex={1}
-            aria-label="update button"
+            aria-label="update post"
             type="submit"
             disabled={loading}
             className={s.submit}
@@ -244,6 +249,63 @@ export default function Page(props: {
                 return;
               setLoading(true);
               try {
+                let media: Post["media"] = [];
+                const promises: Promise<{
+                  name: string;
+                  url: string;
+                } | null>[] = [];
+                if (files?.length !== 0) return;
+                for (let i = 0; i < files.length; i++) {
+                  const file = files[i] as File;
+                  const filename = file.name;
+                  const fileType = file.type;
+                  if (
+                    fileType === "image/jpeg" ||
+                    fileType === "image/jpg" ||
+                    fileType === "image/png" ||
+                    fileType === "image/gif" ||
+                    fileType === "video/mp4"
+                  ) {
+                    const fileRef = ref(
+                      storageRef,
+                      fileType !== "video/mp4"
+                        ? `images/${filename}`
+                        : `videos/${filename}`
+                    );
+                    const uploadPromise: Promise<{
+                      name: string;
+                      url: string;
+                    } | null> = uploadBytes(fileRef, file)
+                      .then(async (snapshot) => {
+                        const downloadURL = await getDownloadURL(snapshot.ref);
+                        const fileData = {
+                          name: filename,
+                          url: downloadURL,
+                        };
+                        return fileData;
+                      })
+                      .catch((error) => {
+                        console.log("Error Uploading File:", error);
+                        return null;
+                      });
+                    console.log(uploadPromise);
+                    promises.push(uploadPromise);
+                  } else {
+                    alert(
+                      `${fileType} is Invalid Type .\nJPEG , PNG , GIF and MP4 are only Allowed !`
+                    );
+                  }
+                }
+                await Promise.all(promises)
+                  .then((uploadedFiles) => {
+                    media = uploadedFiles.filter(
+                      (file) => file !== null
+                    ) as Post["media"];
+                    console.log(media);
+                  })
+                  .catch((error) => {
+                    console.log("Error uploading files:", error);
+                  });
                 await updatePost(
                   uid,
                   InputRef.current.innerHTML
@@ -257,7 +319,7 @@ export default function Page(props: {
                       /(?:https?|ftp):\/\/[\n\S]+/g,
                       (url) => `<a href="${url}">${url}</a>`
                     ),
-                  files,
+                  media,
                   myPost.id?.toString()!,
                   myPost,
                   visibility
@@ -316,6 +378,12 @@ export default function Page(props: {
         >
           <FontAwesomeIcon icon={faPhotoFilm} />
         </button>
+        <MediaInput
+          // setFileLoading={setFileLoading}
+          setFiles={setFiles}
+          files={files! as File[]}
+          fileRef={fileRef}
+        />
         <input
           multiple
           accept="image/*,video/mp4"

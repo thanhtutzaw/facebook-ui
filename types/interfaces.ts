@@ -5,10 +5,12 @@ export interface Post {
   visibility?: string;
   // visibility?: ["public", "friends", "onlyme"];
   createdAt: Timestamp;
-  media: {
-    name: string;
-    url: string;
-  }[];
+  media:
+    | {
+        name: string;
+        url: string;
+      }[]
+    | null;
 }
 import { Timestamp } from "firebase/firestore";
 import { ReactNode } from "react";

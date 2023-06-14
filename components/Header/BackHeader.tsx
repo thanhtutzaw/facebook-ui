@@ -17,7 +17,7 @@ function BackHeader(props: {
     });
   return (
     <div style={props.style} className={s.backHeader}>
-      <button onClick={handleClick}>
+      <button aria-label="back" onClick={handleClick}>
         <FontAwesomeIcon icon={faArrowLeft} />
       </button>
       {props.children}

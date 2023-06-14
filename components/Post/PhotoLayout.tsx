@@ -6,7 +6,7 @@ import { RefObject } from "react";
 import { Post } from "../../types/interfaces";
 import { deleteStorage } from "../../lib/storage";
 export default function PhotoLayout(props: {
-  files?: Post["media"] | File[] | any[];
+  files: Post["media"] | File[];
   setFiles?: Function;
   preview?: boolean;
   edit?: boolean;
@@ -41,6 +41,7 @@ export default function PhotoLayout(props: {
                   alt={file.name}
                   src={
                     !file.url ? URL.createObjectURL(file) : file.url
+                    // URL.createObjectURL(file)
                     // Array.isArray(files) &&
                     // files.every((file) => file instanceof File)
                     //   ? URL.createObjectURL(file)
@@ -80,7 +81,8 @@ export default function PhotoLayout(props: {
       </div>
     );
   }
-  if (!files) return <></>;
+  const media = files as Post["media"];
+  if (!files || !media) return <></>;
   return (
     <div
       style={{
@@ -89,26 +91,27 @@ export default function PhotoLayout(props: {
       }}
     >
       <div className={s.preview}>
-        <div
-          style={{
-            
-            aspectRatio: files?.length <= 2 ? "initial" : "9/10",
-          }}
-        >
-          {/* {files[0].url} */}
-          {/* {JSON.stringify(files[0].url)} */}
-          {/* {JSON.stringify(files[0].name)} */}
-          <img
+        {media[0] && (
+          <div
             style={{
-              maxWidth: "100%",
-              margin: "0 auto",
+              aspectRatio: files?.length <= 2 ? "initial" : "9/10",
             }}
-            src={files[0].url}
-            alt={files[0].name}
-          />
-        </div>
+          >
+            {/* {files[0].url} */}
+            {/* {JSON.stringify(files[0].url)} */}
+            {/* {JSON.stringify(files[0].name)} */}
+            <img
+              style={{
+                maxWidth: "100%",
+                margin: "0 auto",
+              }}
+              src={media[0].url}
+              alt={media[0].name}
+            />
+          </div>
+        )}
         <div>
-          {files[1] && (
+          {media[1] && (
             <div
               style={{
                 display: "flex",
@@ -120,13 +123,13 @@ export default function PhotoLayout(props: {
                   maxWidth: "100%",
                   margin: "0 auto",
                 }}
-                src={files[1].url}
-                alt={files[1].name}
+                src={media[1].url}
+                alt={media[1].name}
               />
               {/* {JSON.stringify(files[1].url)} */}
             </div>
           )}
-          {files[2] && (
+          {media[2] && (
             <div
               style={{
                 display: "flex",
@@ -138,8 +141,8 @@ export default function PhotoLayout(props: {
                   maxWidth: "100%",
                   margin: "0 auto",
                 }}
-                src={files[2].url}
-                alt={files[2].name}
+                src={media[2].url}
+                alt={media[2].name}
               />
               {/* {JSON.stringify(files[2].url)} */}
               {files.length - 3 !== 0 && (
