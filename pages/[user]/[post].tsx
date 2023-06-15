@@ -215,6 +215,10 @@ export default function Page(props: {
 
   const [loading, setLoading] = useState(false);
   const storageRef = ref(storage);
+  useEffect(() => {
+    console.table(files);
+  }, [files]);
+
   return (
     <div className="user">
       <BackHeader
@@ -238,13 +242,12 @@ export default function Page(props: {
               if (uid !== myPost.authorId) {
                 throw new Error("Unauthorized !");
               }
-              console.log(files);
               if (
-                visibility === myPost.visibility &&
-                InputRef.current?.innerHTML
-                  .replace(/\n/g, "<br>")
-                  .replaceAll("&nbsp;", " ") === myPost.text
-                // files === myPost.media
+                (visibility === myPost.visibility &&
+                  InputRef.current?.innerHTML
+                    .replace(/\n/g, "<br>")
+                    .replaceAll("&nbsp;", " ") === myPost.text) ||
+                files?.length === myPost.media?.length
               )
                 return;
               setLoading(true);
@@ -254,11 +257,17 @@ export default function Page(props: {
                   name: string;
                   url: string;
                 } | null>[] = [];
-                if (files?.length !== 0) return;
+                let newMedia: Post["media"] = [];
+                // if (files?.length === 0) return;
+                // if (files?.length === 0) return;
+                if (!files) return;
                 for (let i = 0; i < files.length; i++) {
                   const file = files[i] as File;
                   const filename = file.name;
                   const fileType = file.type;
+                  console.log(filename);
+                  // if (!file.type) return;
+                  // console.log("should not run");
                   if (
                     fileType === "image/jpeg" ||
                     fileType === "image/jpg" ||
@@ -272,6 +281,8 @@ export default function Page(props: {
                         ? `images/${filename}`
                         : `videos/${filename}`
                     );
+                    console.log(file.type);
+
                     const uploadPromise: Promise<{
                       name: string;
                       url: string;
@@ -291,9 +302,10 @@ export default function Page(props: {
                     console.log(uploadPromise);
                     promises.push(uploadPromise);
                   } else {
-                    alert(
-                      `${fileType} is Invalid Type .\nJPEG , PNG , GIF and MP4 are only Allowed !`
-                    );
+                    // console.log(file.length);
+                    // alert(
+                    //   `${fileType} is Invalid Type .\nJPEG , PNG , GIF and MP4 are only Allowed !`
+                    // );
                   }
                 }
                 await Promise.all(promises)
@@ -301,7 +313,11 @@ export default function Page(props: {
                     media = uploadedFiles.filter(
                       (file) => file !== null
                     ) as Post["media"];
-                    console.log(media);
+                    // console.log({ files });
+                    // console.log({ media });
+                    // setFiles([...(myPost.media ?? []), media]);
+                    newMedia = [...(myPost.media ?? []), ...(media ?? [])];
+                    // console.table(newMedia);
                   })
                   .catch((error) => {
                     console.log("Error uploading files:", error);
@@ -319,7 +335,7 @@ export default function Page(props: {
                       /(?:https?|ftp):\/\/[\n\S]+/g,
                       (url) => `<a href="${url}">${url}</a>`
                     ),
-                  media,
+                  newMedia,
                   myPost.id?.toString()!,
                   myPost,
                   visibility
@@ -374,6 +390,7 @@ export default function Page(props: {
           tabIndex={-1}
           onClick={() => {
             fileRef?.current?.click();
+            console.log(files);
           }}
         >
           <FontAwesomeIcon icon={faPhotoFilm} />
@@ -381,10 +398,10 @@ export default function Page(props: {
         <MediaInput
           // setFileLoading={setFileLoading}
           setFiles={setFiles}
-          files={files! as File[]}
+          files={files as File[]}
           fileRef={fileRef}
         />
-        <input
+        {/* <input
           multiple
           accept="image/*,video/mp4"
           // onChange={(e) => {
@@ -421,7 +438,7 @@ export default function Page(props: {
           ref={fileRef}
           style={{ display: "none", visibility: "hidden" }}
           type="file"
-        />
+        /> */}
         <select
           disabled={router.query.edit ? false : true}
           defaultValue={visibility}

@@ -5,6 +5,7 @@ import {
   getDocs,
   orderBy,
   query,
+  where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -42,6 +43,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
     const postQuery = query(
       collectionGroup(db, `posts`),
+      // where(`visibility`, "!=", "Onlyme"),
+      // orderBy("visibility", "asc"),
       orderBy("createdAt", "desc")
     );
     const docSnap = await getDocs(postQuery);

@@ -59,9 +59,9 @@ export async function updatePost(
     updatedAt: serverTimestamp(),
   };
   try {
-    console.log(data);
-    alert(JSON.stringify(data));
-    // await updateDoc(Ref, data);
+    // console.log({ data });
+    // alert(JSON.stringify(data));
+    await updateDoc(Ref, data);
   } catch (error: any) {
     alert("Adding Post Failed !" + error.message);
   }

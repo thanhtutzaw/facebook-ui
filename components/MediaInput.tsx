@@ -28,6 +28,13 @@ export default function MediaInput(props: {
             console.log(
               `File '${file.name}' is an image (JPEG, PNG, or GIF) or an MP4 video`
             );
+            if (file.size > 200 * 1024 * 1024) {
+              // Check if file size exceeds 200 MB
+              alert(
+                `File '${file.name}' size exceeds the allowed limit of 200 MB`
+              );
+              valid = false;
+            }
           } else {
             alert(
               `File '${file.name}' is not one of the specified formats.\nJPEG , PNG , GIF and MP4 are only Allowed !`
@@ -43,6 +50,7 @@ export default function MediaInput(props: {
             setFileLoading?.(false);
           }, 500);
         }
+        console.log(files);
       }}
       ref={fileRef}
       style={{
