@@ -97,7 +97,7 @@ export default function Tabs(props: Props) {
         indicator.style.transform = `translateX(${scroll / 6}px)`;
       }}
     >
-      <Home tabIndex={active === "/" ? 1 : -1} canDrag={canDrag} />
+      <Home tabIndex={active === "/" ? 1 : -1} />
       <div id="friends" className={styles.tab}>
         <div className={t.header}>
           <h2>Friends</h2>
