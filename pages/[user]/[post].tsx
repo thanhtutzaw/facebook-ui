@@ -11,13 +11,7 @@ import {
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import {
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
 import Input from "../../components/Input";
 import { PageContext, PageProps } from "../../context/PageContext";
@@ -29,6 +23,7 @@ import { Post, Props } from "../../types/interfaces";
 import PhotoLayout from "../../components/Post/PhotoLayout";
 import MediaInput from "../../components/MediaInput";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { Select } from "../../components/Post/Select";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -386,6 +381,8 @@ export default function Page(props: {
       />
       <div className={s.footer}>
         <button
+          aria-label="upload media"
+          title="Upload media"
           disabled={router.query.edit ? false : true}
           tabIndex={-1}
           onClick={() => {
@@ -439,24 +436,13 @@ export default function Page(props: {
           style={{ display: "none", visibility: "hidden" }}
           type="file"
         /> */}
-        <select
+        <Select
           disabled={router.query.edit ? false : true}
-          defaultValue={visibility}
-          tabIndex={-1}
           onChange={(e) => {
             setVisibility(e.target.value);
           }}
-        >
-          <option value="Pubilc" key="Public">
-            Public
-          </option>
-          <option value="Friend" key="Friends">
-            Friends
-          </option>
-          <option value="Onlyme" key="Only Me">
-            Only Me
-          </option>
-        </select>
+          visibility={visibility}
+        />
       </div>
     </div>
   );

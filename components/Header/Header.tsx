@@ -82,7 +82,7 @@ export default function Header(props: any) {
         <Logo />
         {/* expired - {expired ? "true" : "false"} */}
         <div className={styles.action}>
-          <button className={styles.logoutBtn}>
+          <button title="Go to Messages" aria-label="Go to Messages">
             <FontAwesomeIcon
               style={{ color: "#0070f3", fontWeight: "bold" }}
               icon={faMessage}
@@ -91,7 +91,6 @@ export default function Header(props: any) {
           <button
             title="Go to logout button"
             aria-label="go to logout button"
-            className={styles.logoutBtn}
             onClick={() => {
               setActive("menu");
               const tabs = document.getElementById("tabs");

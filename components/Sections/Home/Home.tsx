@@ -6,24 +6,19 @@ import styles from "../../../styles/Home.module.scss";
 import Newfeed from "./Newfeed";
 import Story from "./Story";
 import { useContext } from "react";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { getServerSideProps } from "../../../pages";
 import { AppContext } from "../../../context/AppContext";
 // import { getServerSideProps } from "../../../pages/_app";
-// export interface Post {
-//   text: String;
-// }
 type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
-  canDrag: boolean;
   tabIndex: number;
 };
 export function Home(props: Props) {
-  const { tabIndex, canDrag } = props;
+  const { tabIndex } = props;
   const router = useRouter();
   const { email, headerContainerRef } = useContext(AppContext) as Props;
   return (
     <div
-      // style={{ pointerEvents: canDrag ? "none" : "initial" }}
       id="/"
       className={styles.home}
       onScroll={(e) => {
@@ -51,12 +46,10 @@ export function Home(props: Props) {
       <Story email={email} />
       <div className={styles.postAction}>
         <Image
-          // priority={true}
           className={styles.profile}
           alt={"add post"}
           width={200}
           height={170}
-          // style={{ objectFit: "cover" }}
           style={{ width: "40px", height: "40px" }}
           src={
             // "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
@@ -78,14 +71,13 @@ export function Home(props: Props) {
           }}
           onClick={() => {
             router.push("addPost");
-            // router.push({pathname:'addPost' , query:uid})
-            // the data
-            // setAddpostMounted(true)
           }}
           type="text"
           placeholder="What is on your mind ?"
         />
         <button
+          aria-label="upload media"
+          title="Upload media"
           onClick={() => {
             router.push("addPost");
           }}

@@ -159,6 +159,11 @@ button:disabled {
   } */
 }
 
+img,
+video {
+  user-select: none;
+}
+
 .user :is(img, video) {
   /* border: 1px solid red; */
   background-color: black;

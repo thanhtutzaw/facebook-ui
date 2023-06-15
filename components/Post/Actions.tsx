@@ -4,6 +4,7 @@ import { getAuth } from "firebase/auth";
 import router from "next/router";
 import { app } from "../../lib/firebase";
 import { deletePost } from "../../lib/firestore/post";
+import { useState } from "react";
 function Actions(props: {
   authorId: string | number;
   id: string;
@@ -11,6 +12,7 @@ function Actions(props: {
 }) {
   const { authorId, id, setshowAction } = props;
   const auth = getAuth(app);
+  const [loading, setLoading] = useState(false);
   return (
     <>
       <button
@@ -27,6 +29,7 @@ function Actions(props: {
         Edit
       </button>
       <button
+        disabled={loading}
         onClick={async (e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -34,6 +37,7 @@ function Actions(props: {
             alert("Not Allowed ! Mismatch userId and authorId");
             throw new Error("Not Allowed");
           }
+          setLoading(true);
           try {
             await deletePost(auth.currentUser?.uid!, id!);
             router.replace("/", undefined, {
@@ -45,12 +49,12 @@ function Actions(props: {
             router.replace("/", undefined, {
               scroll: false,
             });
-            setshowAction?.("");
+            // setshowAction?.("");
           }
         }}
       >
         <FontAwesomeIcon icon={faTrash} />
-        Delete
+        {loading ? "Deleting" : "Delete"}
       </button>
     </>
   );

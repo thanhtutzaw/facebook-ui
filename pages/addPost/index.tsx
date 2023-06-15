@@ -14,10 +14,11 @@ import error from "next/error";
 import { Post } from "../../types/interfaces";
 import MediaInput from "../../components/MediaInput";
 import { uploadMedia } from "../../lib/storage";
+import { Select } from "../../components/Post/Select";
 export default function AddPost() {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
-  const [visibility, setvisibility] = useState("public");
+  const [visibility, setVisibility] = useState("public");
   const [loading, setLoading] = useState(false);
   // const [files, setFiles] = useState(["1.gif", "2.gif", "3.jpg", "4.png"]);
   // const [files, setFiles] = useState<File>([{ id: 1, name: "1.gif" }]);
@@ -366,6 +367,8 @@ export default function AddPost() {
       />
       <div className={s.footer}>
         <button
+          aria-label="upload media"
+          title="Upload media"
           tabIndex={-1}
           onClick={() => {
             fileRef?.current?.click();
@@ -379,22 +382,12 @@ export default function AddPost() {
           files={files as File[]}
           fileRef={fileRef}
         />
-        <select
-          tabIndex={-1}
+        <Select
           onChange={(e) => {
-            setvisibility(e.target.value);
+            setVisibility(e.target.value);
           }}
-        >
-          <option value="Pubilc" key="Public">
-            Public
-          </option>
-          <option value="Friend" key="Friends">
-            Friends
-          </option>
-          <option value="Onlyme" key="Only Me">
-            Only Me
-          </option>
-        </select>
+          visibility={visibility}
+        />
       </div>
     </div>
   );
