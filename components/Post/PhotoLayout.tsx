@@ -97,9 +97,6 @@ export default function PhotoLayout(props: {
               aspectRatio: files?.length <= 2 ? "initial" : "9/10",
             }}
           >
-            {/* {files[0].url} */}
-            {/* {JSON.stringify(files[0].url)} */}
-            {/* {JSON.stringify(files[0].name)} */}
             <img
               style={{
                 maxWidth: "100%",
@@ -112,22 +109,23 @@ export default function PhotoLayout(props: {
         )}
         <div>
           {media[1] && (
-            <div
+            <img
               style={{
-                display: "flex",
-                // aspectRatio: files.length <= 2 ? "initial" : "9/10",
+                maxWidth: "100%",
+                margin: "0 auto",
               }}
-            >
-              <img
-                style={{
-                  maxWidth: "100%",
-                  margin: "0 auto",
-                }}
-                src={media[1].url}
-                alt={media[1].name}
-              />
-              {/* {JSON.stringify(files[1].url)} */}
-            </div>
+              src={media[1].url}
+              alt={media[1].name}
+            />
+            // <div
+            //   style={{
+            //     display: "flex",
+            //     // aspectRatio: files.length <= 2 ? "initial" : "9/10",
+            //   }}
+            // >
+
+            //   {/* {JSON.stringify(files[1].url)} */}
+            // </div>
           )}
           {media[2] && (
             <div
