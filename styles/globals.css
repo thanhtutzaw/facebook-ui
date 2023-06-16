@@ -171,6 +171,17 @@ video {
   margin          : 0 auto;
 }
 
+.seeMore {
+  margin        : 0 10px;
+  font-size     : 16px;
+  background    : transparent;
+  border        : 0;
+  /* font-weight: bold; */
+  color         : dimgray;
+  font-family   : system-ui;
+  white-space: initial;
+}
+
 .user>div:nth-last-child(2) {
   /* border: 2px solid red; */
   margin-bottom: 65px;

@@ -7,7 +7,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Timestamp } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { RefObject, useContext } from "react";
+import {
+  MouseEvent,
+  MouseEventHandler,
+  RefObject,
+  useContext,
+  useEffect,
+} from "react";
 import { AppContext } from "../../context/AppContext";
 import Actions from "./Actions";
 import styles from "./Post.module.scss";
@@ -42,6 +48,57 @@ export default function Content(props: {
   const { selectedId, setSelectedId, email, showAction, setshowAction, uid } =
     useContext(AppContext) as Props;
   const router = useRouter();
+  // useEffect(() => {
+  //   const handleClick = (e: { currentTarget: { innerText: string } }) => {
+  //     // e.preventDefault();
+  //     // e.stopPropagation();
+  //     console.log(seeMore);
+  //     setShowmore((prev: any) => !prev);
+  //     e.currentTarget.innerText = "hello";
+  //   };
+
+  //   const seeMore = document.getElementsByClassName(
+  //     "seeMore"
+  //   )[0] as HTMLButtonElement;
+  //   if (seeMore && ) {
+  //     seeMore.addEventListener("click", handleClick);
+  //   }
+
+  //   return () => {
+  //     if (seeMore) {
+  //       seeMore.removeEventListener("click", handleClick);
+  //     }
+  //   };
+  // }, [setShowmore]);
+  const seemore =
+    text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
+    text.match(/<div\s*[/]?>/gi)?.length! > 2
+      ? `<button  tabindex="-1" class="seeMore">See more</button>`
+      : "";
+  // const seemore = `<button onclick="event.preventDefault(); event.stopPropagation(); event.currentTarget.innerText='See less'; " tabindex="-1" class="seeMore">See more</button>`;
+  //   const seemore = `
+  // <button tabIndex={-1} className={styles.seeMore}
+  //               onClick={(e) => {
+  //                 e.preventDefault();
+  //                 e.stopPropagation();
+  //                 setShowmore((prev: boolean) => !prev);
+  //               }}
+  //             >
+  //               {!showmore ? "See more" : "See less"}
+  //             </button>
+  // `;
+  const textContent =
+    text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 3 : Infinity)
+      ? text.replaceAll("<div>", "<br>").substring(0, 50) + seemore
+      : text + `<button  tabindex="-1" class="seeMore">See less</button>`;
+
+  // const textContent =
+  //   text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 3 : Infinity)
+  //     ? text
+  //         .replaceAll("<div>", "\n")
+  //         .substring(0, text.length / text.match(/<br\s*[/]?>/gi)?.length!) +
+  //       `<button>hi</button>`
+  //     : text + `<button>hi</button>`;
   return (
     <span
       style={{
@@ -191,22 +248,39 @@ export default function Content(props: {
         contentEditable="false"
         suppressContentEditableWarning={true}
         className={styles.text} // dangerouslySetInnerHTML={{ __html: client ? replace : "" }}
-        dangerouslySetInnerHTML={{ __html: client ? text : "" }}
+        dangerouslySetInnerHTML={{
+          __html: client
+            ? textContent
+            : // +
+              //   (text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
+              //   text.match(/<div\s*[/]?>/gi)?.length! > 2
+              //     ? `<button>See More</button>`
+              //     : `<button>end</button>`)
+              "",
+        }}
+        // `<button onclick="event.preventDefault(); event.stopPropagation();" tabindex="-1" class="seeMore">
+        //                ${!showmore ? "Show More" : "Show Less"}  </button>`
         onClick={(e) => {
           const target = e.target as HTMLElement;
+          console.log(target.tagName);
+          // alert("hey");
           if (target.tagName === "A") {
             e.stopPropagation();
           }
+          if (target.tagName === "BUTTON") {
+            e.stopPropagation();
+            e.preventDefault();
+            // console.log(target.tagName);
+            setShowmore((prev: boolean) => !prev);
+            console.log(showmore);
+            if (showmore) {
+              target.innerText = "Show less";
+            } else {
+              target.innerText = "Show more";
+            }
+          }
         }}
       >
-        {/* {text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")} */}
-        {/* {text.match(/<br\s*[/]?>/gi)?.length} */}
-        {/* {text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 3 : Infinity)
-          ? text
-              .replace(/<br\s*\/?>/g, "\n")
-              .replaceAll("<div>", "\n")
-              .substring(0, text.length / text.match(/<br\s*[/]?>/gi)?.length!)
-          : text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")} */}
         {/* {text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
           (text.match(/<div\s*[/]?>/gi)?.length! > 2 && (
             <button
@@ -221,6 +295,14 @@ export default function Content(props: {
               {!showmore ? "See more" : "See less"}
             </button>
           ))} */}
+        {/* {text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")} */}
+        {/* {text.match(/<br\s*[/]?>/gi)?.length} */}
+        {/* {text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 3 : Infinity)
+          ? text
+              .replace(/<br\s*\/?>/g, "\n")
+              .replaceAll("<div>", "\n")
+              .substring(0, text.length / text.match(/<br\s*[/]?>/gi)?.length!)
+          : text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")} */}
 
         {/* {replace} */}
         {/* {text
@@ -229,6 +311,34 @@ export default function Content(props: {
       .replaceAll("</div>", "")
       .replaceAll("&nbsp;", " ")} */}
       </div>
+      {/* {text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
+        (text.match(/<div\s*[/]?>/gi)?.length! > 2 && (
+          <button
+            tabIndex={-1}
+            className={styles.seeMore}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowmore((prev: boolean) => !prev);
+            }}
+          >
+            {!showmore ? "See more" : "See less"}
+          </button>
+        ))} */}
+      {/* {text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
+        (text.match(/<div\s*[/]?>/gi)?.length! > 2 && (
+          <button
+            tabIndex={-1}
+            className={styles.seeMore}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowmore((prev: boolean) => !prev);
+            }}
+          >
+            {!showmore ? "See more" : "See less"}
+          </button>
+        ))} */}
       <PhotoLayout files={post.media} preview />
     </span>
   );
