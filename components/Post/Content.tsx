@@ -53,6 +53,8 @@ export default function Content(props: {
     text.match("<span>")?.length! >= 2
       ? text.replaceAll("<div>", "<br>").substring(0, 50)
       : text;
+
+  const production = process.env.NODE_ENV == "production" ? true : false;
   return (
     <span
       style={{
@@ -199,10 +201,14 @@ export default function Content(props: {
         contentEditable="false"
         suppressContentEditableWarning={true}
         className={styles.text}
-        dangerouslySetInnerHTML={{ __html: textContent + seemore }}
-        // dangerouslySetInnerHTML={{
-        //   __html: client ? textContent + seemore : "",
-        // }}
+        // dangerouslySetInnerHTML={{ __html: textContent + seemore }}
+        dangerouslySetInnerHTML={{
+          __html: !production
+            ? client
+              ? textContent + seemore
+              : ""
+            : textContent + seemore,
+        }}
         onClick={(e) => {
           const target = e.target as HTMLElement;
           if (target.tagName === "A") {

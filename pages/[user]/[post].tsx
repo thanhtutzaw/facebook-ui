@@ -238,10 +238,10 @@ export default function Page(props: {
                 throw new Error("Unauthorized !");
               }
               if (
-                (visibility === myPost.visibility &&
-                  InputRef.current?.innerHTML
-                    .replace(/\n/g, "<br>")
-                    .replaceAll("&nbsp;", " ") === myPost.text) ||
+                visibility === myPost.visibility &&
+                InputRef.current?.innerHTML
+                  .replace(/\n/g, "<br>")
+                  .replaceAll("&nbsp;", " ") === myPost.text &&
                 files?.length === myPost.media?.length
               )
                 return;
