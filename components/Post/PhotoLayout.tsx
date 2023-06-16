@@ -6,10 +6,10 @@ import { RefObject, useEffect, useState } from "react";
 import { Post } from "../../types/interfaces";
 import { deleteStorage } from "../../lib/storage";
 export default function PhotoLayout(props: {
-  deleteFile: Post["media"] | File[];
+  deleteFile?: Post["media"] | File[];
   files: Post["media"] | File[];
-  setFiles: Function;
-  setdeleteFile: Function;
+  setFiles?: Function;
+  setdeleteFile?: Function;
   preview?: boolean;
   edit?: boolean;
   uid?: string;
@@ -68,13 +68,13 @@ export default function PhotoLayout(props: {
                       //   media?.filter((_, index) => index === i)
                       // ]);
                       // setdeleteFile([...deleteFile??[], data]);
-                      setdeleteFile([...(deleteFile ?? []), ...(data ?? [])]);
+                      setdeleteFile?.([...(deleteFile ?? []), ...(data ?? [])]);
                     }
                     // if (file.url) {
                     // deleteStorage();
                     // } else {
                     e.currentTarget.scrollIntoView();
-                    setFiles([...files.slice(0, i), ...files.slice(i + 1)]);
+                    setFiles?.([...files.slice(0, i), ...files.slice(i + 1)]);
                     // console.log(files.filter((_, index) => index === i));
                     // setFiles(files.filter((_, index) => index !== i));
                     // setFiles(files.splice(i, 1));
