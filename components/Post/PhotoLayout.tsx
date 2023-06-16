@@ -2,12 +2,14 @@
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import s from "./Post.module.scss";
-import { RefObject } from "react";
+import { RefObject, useEffect, useState } from "react";
 import { Post } from "../../types/interfaces";
 import { deleteStorage } from "../../lib/storage";
 export default function PhotoLayout(props: {
+  deleteFile: Post["media"] | File[];
   files: Post["media"] | File[];
-  setFiles?: Function;
+  setFiles: Function;
+  setdeleteFile: Function;
   preview?: boolean;
   edit?: boolean;
   uid?: string;
@@ -15,6 +17,8 @@ export default function PhotoLayout(props: {
   dummyRef?: RefObject<HTMLDivElement>;
 }) {
   const {
+    deleteFile,
+    setdeleteFile,
     files,
     setFiles,
     preview = false,
@@ -23,17 +27,20 @@ export default function PhotoLayout(props: {
     uid,
     myPost,
   } = props;
-  // const [files, setFiles] = useState();
+  useEffect(() => {
+    // if (deleteFile?.length !== 0 || deleteFile || deleteFile !== 'undefined') {
+    // }
+    if (deleteFile) {
+      console.log({ deleteFile });
+    }
+  }, [deleteFile]);
+
   if (!preview) {
     return (
       <div className={s.media}>
         {files &&
           files.map((file: any, i: number) => (
-            <div
-              // key={file.id}
-              key={i}
-              id={i.toString()}
-            >
+            <div key={i} id={i.toString()}>
               {file.type === "video/mp4" ? (
                 <video controls src={URL.createObjectURL(file)} />
               ) : (
@@ -41,32 +48,38 @@ export default function PhotoLayout(props: {
                   alt={file.name}
                   src={
                     !file.url ? URL.createObjectURL(file) : file.url
-                    // URL.createObjectURL(file)
                     // Array.isArray(files) &&
                     // files.every((file) => file instanceof File)
                     //   ? URL.createObjectURL(file)
                     //   : file.url
                   }
                 />
-                // <img src={file.url} />
               )}
               {edit && myPost?.authorId === uid && (
                 <button
                   onClick={(e) => {
+                    if (file.url) {
+                      // const media = files as Post["media"];
+                      const data = files.filter(
+                        (_, index) => index === i
+                      ) as Post["media"];
+                      // setdeleteFile([
+                      //   ...deleteFile! ?? [],
+                      //   media?.filter((_, index) => index === i)
+                      // ]);
+                      // setdeleteFile([...deleteFile??[], data]);
+                      setdeleteFile([...(deleteFile ?? []), ...(data ?? [])]);
+                    }
                     // if (file.url) {
                     // deleteStorage();
                     // } else {
                     e.currentTarget.scrollIntoView();
-                    setFiles?.([...files.slice(0, i), ...files.slice(i + 1)]);
-                    // alert(i);
-                    // setFiles?.(files.filter((_, index) => index !== i));
-                    // setFiles?.(files.splice(i, 1));
+                    setFiles([...files.slice(0, i), ...files.slice(i + 1)]);
+                    // console.log(files.filter((_, index) => index === i));
+                    // setFiles(files.filter((_, index) => index !== i));
+                    // setFiles(files.splice(i, 1));
 
                     // }
-
-                    // console.log(myPost, file.url);
-                    // setFiles?.(files.filter((f: any) => f.id !== file.id));
-                    // e.currentTarget?.parentElement?.remove();
                   }}
                   aria-label="remove media"
                   tabIndex={-1}
@@ -86,7 +99,6 @@ export default function PhotoLayout(props: {
   return (
     <div
       style={{
-        // marginBottom: "65px",
         overflow: "hidden",
       }}
     >
@@ -117,15 +129,6 @@ export default function PhotoLayout(props: {
               src={media[1].url}
               alt={media[1].name}
             />
-            // <div
-            //   style={{
-            //     display: "flex",
-            //     // aspectRatio: files.length <= 2 ? "initial" : "9/10",
-            //   }}
-            // >
-
-            //   {/* {JSON.stringify(files[1].url)} */}
-            // </div>
           )}
           {media[2] && (
             <div
@@ -142,62 +145,13 @@ export default function PhotoLayout(props: {
                 src={media[2].url}
                 alt={media[2].name}
               />
-              {/* {JSON.stringify(files[2].url)} */}
               {files.length - 3 !== 0 && (
                 <h2 className={s.backDrop}>+{files.length - 3}</h2>
               )}
             </div>
           )}
         </div>
-        {/* <div>
-       {files && files[1] && (
-         <div style={{ display: "flex" }}>
-           {files[1].type.startsWith("image/") && (
-             <img
-               style={{ maxWidth: "100%", margin: "0 auto" }}
-               // src={URL.createObjectURL(files[1])}
-               src={URL.createObjectURL(files[1])}
-               alt="Selected"
-             />
-           )}
-         </div>
-       )}
-       {files && files[2] && (
-         <div style={{ display: "flex" }}>
-           {files[2].type.startsWith("image/") && (
-             <img
-               style={{ maxWidth: "100%", margin: "0 auto" }}
-               // src={URL.createObjectURL(files[2])}
-               src={URL.createObjectURL(files[2])}
-               alt="Selected"
-             />
-           )}
-         </div>
-       )}
-      </div> */}
-        {/* {files?.map((file, index) => (
-       // <p key={index}>{file.name}</p>
-       <div style={{ display: "flex" }} key={index}>
-         {file.type.startsWith("image/") && (
-           <img
-             style={{ maxWidth: "100%", margin: "0 auto" }}
-             src={URL.createObjectURL(file)}
-             alt="Selected"
-           />
-         )}
-       </div>
-      ))} */}
       </div>
-      {/* {!files ||
-        (files?.length !== 0 && (
-          <p
-            style={{
-              textAlign: "center",
-            }}
-          >
-            Demo Photo Layout !
-          </p>
-        ))} */}
     </div>
   );
 }

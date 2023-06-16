@@ -22,7 +22,12 @@ import s from "../../styles/Home.module.scss";
 import { Post, Props } from "../../types/interfaces";
 import PhotoLayout from "../../components/Post/PhotoLayout";
 import MediaInput from "../../components/MediaInput";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { Select } from "../../components/Post/Select";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
@@ -103,6 +108,9 @@ export default function Page(props: {
   const [files, setFiles] = useState<Post["media"] | File[]>([
     ...(myPost.media ?? []),
   ]);
+  const [deleteFile, setdeleteFile] = useState<Post["media"]>([]);
+
+  const [New, setNew] = useState<Post["media"] | File[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (expired) {
@@ -204,15 +212,13 @@ export default function Page(props: {
   useEffect(() => {
     setClient(true);
   }, []);
-  // useLayoutEffect(() => {
-  //   setFiles([...myPost.media]);
-  // }, [myPost.media]);
-
   const [loading, setLoading] = useState(false);
   const storageRef = ref(storage);
   useEffect(() => {
     console.table(files);
   }, [files]);
+  let media: Post["media"] = [];
+  let newMedia: Post["media"] = [];
 
   return (
     <div className="user">
@@ -246,18 +252,18 @@ export default function Page(props: {
               )
                 return;
               setLoading(true);
+              const files2 = files;
+              setFiles(myPost.media);
               try {
-                let media: Post["media"] = [];
                 const promises: Promise<{
                   name: string;
                   url: string;
                 } | null>[] = [];
-                let newMedia: Post["media"] = [];
                 // if (files?.length === 0) return;
                 // if (files?.length === 0) return;
-                if (!files) return;
-                for (let i = 0; i < files.length; i++) {
-                  const file = files[i] as File;
+                if (!files2) return;
+                for (let i = 0; i < files2.length; i++) {
+                  const file = files2[i] as File;
                   const filename = file.name;
                   const fileType = file.type;
                   console.log(filename);
@@ -303,16 +309,86 @@ export default function Page(props: {
                     // );
                   }
                 }
+                for (let i = 0; i < deleteFile?.length!; i++) {
+                  if (!deleteFile) return;
+                  const file = deleteFile[i];
+                  // const filename = file.name;
+                  // const fileType = file.type;
+                  // console.log(filename);
+                  // if (!file.type) return;
+                  // console.log("should not run");
+                  const url = file.url;
+                  console.log(url);
+                  if (url) {
+                    const fileRef = ref(storageRef, `images/${url}`);
+                    // deleteObject(fileRef)
+                    //   .then(() => {
+                    //     console.log("File deleted successfully");
+                    //   })
+                    //   .catch((error) => {
+                    //     console.log(error);
+                    //     alert("Uh-oh, an error occurred!");
+                    //   });
+                    // const uploadPromise: Promise<{
+                    //   name: string;
+                    //   url: string;
+                    // } | null> = uploadBytes(fileRef, file)
+                    //   .then(async (snapshot) => {
+                    //     const downloadURL = await getDownloadURL(snapshot.ref);
+                    //     const fileData = {
+                    //       name: filename,
+                    //       url: downloadURL,
+                    //     };
+                    //     return fileData;
+                    //   })
+                    //   .catch((error) => {
+                    //     console.log("Error Uploading File:", error);
+                    //     return null;
+                    //   });
+                    // console.log(uploadPromise);
+                    // promises.push(uploadPromise);
+                  } else {
+                    // console.log(file.length);
+                    // alert(
+                    //   `${fileType} is Invalid Type .\nJPEG , PNG , GIF and MP4 are only Allowed !`
+                    // );
+                  }
+                }
+                // setFiles(myPost.media);
                 await Promise.all(promises)
                   .then((uploadedFiles) => {
+                    // const original = files as Post["media"];
+
+                    // setNew(
+                    //   uploadedFiles.filter(
+                    //     (file) => file !== null
+                    //   ) as Post["media"]
+                    // );
+                    // return [
+                    //   ...(original?.filter(
+                    //     (file) => file.url !== "undefined"
+                    //   ) ?? []),
+                    //   ...(uploadedFiles.filter((file) => file !== null) ??
+                    //     ([] as Post["media"])),
+                    // ];
                     media = uploadedFiles.filter(
                       (file) => file !== null
                     ) as Post["media"];
                     // console.log({ files });
                     // console.log({ media });
                     // setFiles([...(myPost.media ?? []), media]);
-                    newMedia = [...(myPost.media ?? []), ...(media ?? [])];
+                    const currentFile = files as Post["media"];
+                    // newMedia = [...(currentFile ?? []), ...(media ?? [])];
+                    // newMedia = [...(myPost.media ?? []), ...(media ?? [])];
+                    newMedia = [
+                      ...((files as Post["media"]) ?? []),
+                      ...(media ?? []),
+                    ].filter((file) => file.url);
+                    // setFiles([...(myPost.media ?? []), ...(media ?? [])]);
                     // console.table(newMedia);
+                    // console.table(files);
+                    // console.log([...(myPost.media ?? []), ...(media ?? [])]);
+                    // setNew([...(myPost.media ?? []), ...(media ?? [])]);
                   })
                   .catch((error) => {
                     console.log("Error uploading files:", error);
@@ -330,7 +406,11 @@ export default function Page(props: {
                       /(?:https?|ftp):\/\/[\n\S]+/g,
                       (url) => `<a href="${url}">${url}</a>`
                     ),
+                  // files as Post["media"],
+                  // New as Post["media"],
                   newMedia,
+                  // newFile as Post["media"],
+                  // New as Post["media"],
                   myPost.id?.toString()!,
                   myPost,
                   visibility
@@ -367,6 +447,8 @@ export default function Page(props: {
       ></Input>
 
       <PhotoLayout
+        deleteFile={deleteFile}
+        setdeleteFile={setdeleteFile}
         uid={uid}
         myPost={myPost}
         edit={router.query.edit ? true : false}
