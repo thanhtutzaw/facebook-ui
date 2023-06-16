@@ -5,21 +5,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Timestamp } from "firebase/firestore";
-import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import {
-  MouseEvent,
-  MouseEventHandler,
-  RefObject,
-  useContext,
-  useEffect,
-} from "react";
-import { AppContext } from "../../context/AppContext";
-import Actions from "./Actions";
-import styles from "./Post.module.scss";
-import { Post, Props } from "../../types/interfaces";
 import { useRouter } from "next/router";
+import { RefObject, useContext } from "react";
+import { AppContext } from "../../context/AppContext";
+import { Post, Props } from "../../types/interfaces";
+import Actions from "./Actions";
 import PhotoLayout from "./PhotoLayout";
+import styles from "./Post.module.scss";
 export default function Content(props: {
   active: boolean;
   checked: boolean;
@@ -44,73 +37,28 @@ export default function Content(props: {
     setShowmore,
     post,
   } = props;
-  const { authorId, id, text, visibility, createdAt, media } = post;
+  const { authorId, id, text, visibility, createdAt } = post;
   const { selectedId, setSelectedId, email, showAction, setshowAction, uid } =
     useContext(AppContext) as Props;
   const router = useRouter();
-  // useEffect(() => {
-  //   const handleClick = (e: { currentTarget: { innerText: string } }) => {
-  //     // e.preventDefault();
-  //     // e.stopPropagation();
-  //     console.log(seeMore);
-  //     setShowmore((prev: any) => !prev);
-  //     e.currentTarget.innerText = "hello";
-  //   };
-
-  //   const seeMore = document.getElementsByClassName(
-  //     "seeMore"
-  //   )[0] as HTMLButtonElement;
-  //   if (seeMore && ) {
-  //     seeMore.addEventListener("click", handleClick);
-  //   }
-
-  //   return () => {
-  //     if (seeMore) {
-  //       seeMore.removeEventListener("click", handleClick);
-  //     }
-  //   };
-  // }, [setShowmore]);
   const seemore =
     text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
     text.match(/<div\s*[/]?>/gi)?.length! > 2
-      ? `<button  tabindex="-1" class="seeMore">See more</button>`
+      ? `<button  tabindex="-1" class="seeMore">${
+          showmore ? "See Less" : "See more"
+        }</button>`
       : "";
-  // const seemore = `<button onclick="event.preventDefault(); event.stopPropagation(); event.currentTarget.innerText='See less'; " tabindex="-1" class="seeMore">See more</button>`;
-  //   const seemore = `
-  // <button tabIndex={-1} className={styles.seeMore}
-  //               onClick={(e) => {
-  //                 e.preventDefault();
-  //                 e.stopPropagation();
-  //                 setShowmore((prev: boolean) => !prev);
-  //               }}
-  //             >
-  //               {!showmore ? "See more" : "See less"}
-  //             </button>
-  // `;
   const textContent =
     text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 3 : Infinity)
-      ? text.replaceAll("<div>", "<br>").substring(0, 50) + seemore
-      : text + `<button  tabindex="-1" class="seeMore">See less</button>`;
-
-  // const textContent =
-  //   text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 3 : Infinity)
-  //     ? text
-  //         .replaceAll("<div>", "\n")
-  //         .substring(0, text.length / text.match(/<br\s*[/]?>/gi)?.length!) +
-  //       `<button>hi</button>`
-  //     : text + `<button>hi</button>`;
+      ? text.replaceAll("<div>", "<br>").substring(0, 50)
+      : text;
   return (
     <span
       style={{
         display: "block",
-        // padding: "0 0 1rem",
-      }} // scroll={false}
-      // href={`${authorId}/${id?.toString()}`}
+      }}
       onClick={(e) => {
         if (!active) {
-          // if(e.target.tagName)
-          // e.preventDefault();
-          // e.stopPropagation();
           router.push({
             pathname: `${authorId}/${id?.toString()}`,
           });
@@ -214,131 +162,99 @@ export default function Content(props: {
           </>
         )}
       </div>
-      <AnimatePresence>
-        {showAction === id && (
-          <motion.div
-            key={id}
-            initial={{
-              opacity: "0",
-              scale: 0.8,
-            }}
-            animate={{
-              opacity: showAction === id ? 1 : 0,
-              scale: 1,
-            }}
-            exit={{
-              opacity: "0",
-              scale: 0.8,
-            }}
-            transition={{
-              duration: 0.15,
-            }}
-            className={styles.actions}
-          >
-            <Actions
-              authorId={authorId!}
-              id={id!.toString()}
-              setshowAction={setshowAction!}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <div
+
+      <Actions
+        showAction={showAction ?? ""}
+        authorId={authorId!}
+        id={id!.toString()}
+      />
+      {/* <div
         role="textbox"
         contentEditable="false"
         suppressContentEditableWarning={true}
-        className={styles.text} // dangerouslySetInnerHTML={{ __html: client ? replace : "" }}
-        dangerouslySetInnerHTML={{
-          __html: client
-            ? textContent
-            : // +
-              //   (text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
-              //   text.match(/<div\s*[/]?>/gi)?.length! > 2
-              //     ? `<button>See More</button>`
-              //     : `<button>end</button>`)
-              "",
-        }}
-        // `<button onclick="event.preventDefault(); event.stopPropagation();" tabindex="-1" class="seeMore">
-        //                ${!showmore ? "Show More" : "Show Less"}  </button>`
+        className={styles.text}
+        // dangerouslySetInnerHTML={{ __html: text }}
+        // dangerouslySetInnerHTML={{
+        //   __html: client ? textContent + seemore : "",
+        // }}
         onClick={(e) => {
           const target = e.target as HTMLElement;
-          console.log(target.tagName);
-          // alert("hey");
           if (target.tagName === "A") {
             e.stopPropagation();
           }
           if (target.tagName === "BUTTON") {
             e.stopPropagation();
             e.preventDefault();
-            // console.log(target.tagName);
             setShowmore((prev: boolean) => !prev);
             console.log(showmore);
-            if (showmore) {
-              target.innerText = "Show less";
-            } else {
-              target.innerText = "Show more";
-            }
           }
         }}
       >
-        {/* {text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
-          (text.match(/<div\s*[/]?>/gi)?.length! > 2 && (
-            <button
-              tabIndex={-1}
-              className={styles.seeMore}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setShowmore((prev: boolean) => !prev);
-              }}
-            >
-              {!showmore ? "See more" : "See less"}
-            </button>
-          ))} */}
-        {/* {text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")} */}
-        {/* {text.match(/<br\s*[/]?>/gi)?.length} */}
-        {/* {text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 3 : Infinity)
+        {text}
+      </div> */}
+
+      {/* Server-side rendering */}
+      {typeof window === "undefined" && (
+        <div
+          // suppressHydrationWarning={true}
+          role="textbox"
+          contentEditable="false"
+          suppressContentEditableWarning={true}
+          className={styles.text}
+          dangerouslySetInnerHTML={{ __html: text }}
+          onClick={(e) => {
+            const target = e.target as HTMLElement;
+            if (target.tagName === "A") {
+              e.stopPropagation();
+            }
+            if (target.tagName === "BUTTON") {
+              e.stopPropagation();
+              e.preventDefault();
+              setShowmore((prev: boolean) => !prev);
+              console.log(showmore);
+            }
+          }}
+        />
+      )}
+
+      {/* Client-side rendering */}
+      {typeof window !== "undefined" && (
+        <div
+          // suppressHydrationWarning={true}
+          role="textbox"
+          contentEditable="false"
+          suppressContentEditableWarning={true}
+          className={styles.text}
+          dangerouslySetInnerHTML={{ __html: text }}
+          onClick={(e) => {
+            const target = e.target as HTMLElement;
+            if (target.tagName === "A") {
+              e.stopPropagation();
+            }
+            if (target.tagName === "BUTTON") {
+              e.stopPropagation();
+              e.preventDefault();
+              setShowmore((prev: boolean) => !prev);
+              console.log(showmore);
+            }
+          }}
+        />
+      )}
+
+      {/* {text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")} */}
+      {/* {text.match(/<br\s*[/]?>/gi)?.length} */}
+      {/* {text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 3 : Infinity)
           ? text
               .replace(/<br\s*\/?>/g, "\n")
               .replaceAll("<div>", "\n")
               .substring(0, text.length / text.match(/<br\s*[/]?>/gi)?.length!)
           : text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")} */}
 
-        {/* {replace} */}
-        {/* {text
+      {/* {text
       .replace(/<br\s*\/?>/g, "\n")
       .replaceAll("<div>", "")
       .replaceAll("</div>", "")
       .replaceAll("&nbsp;", " ")} */}
-      </div>
-      {/* {text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
-        (text.match(/<div\s*[/]?>/gi)?.length! > 2 && (
-          <button
-            tabIndex={-1}
-            className={styles.seeMore}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setShowmore((prev: boolean) => !prev);
-            }}
-          >
-            {!showmore ? "See more" : "See less"}
-          </button>
-        ))} */}
-      {/* {text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
-        (text.match(/<div\s*[/]?>/gi)?.length! > 2 && (
-          <button
-            tabIndex={-1}
-            className={styles.seeMore}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setShowmore((prev: boolean) => !prev);
-            }}
-          >
-            {!showmore ? "See more" : "See less"}
-          </button>
-        ))} */}
       <PhotoLayout files={post.media} preview />
     </span>
   );

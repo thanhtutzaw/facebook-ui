@@ -1,47 +1,27 @@
 import {
-  faCircleCheck,
   faComment,
-  faDotCircle,
-  faEllipsisH,
   faShare,
   faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Timestamp } from "firebase/firestore";
-import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
-import router, { useRouter } from "next/router";
-import {
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { Post as PostType, Props } from "../../types/interfaces";
-import Actions from "./Actions";
-import styles from "./Post.module.scss";
-import Link from "next/link";
 import Content from "./Content";
+import styles from "./Post.module.scss";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
-// interface Props {
-//   post: Post;
-// }
+
 interface PostProps {
   active?: boolean;
   post: PostType;
   tabIndex: number;
 }
 export default function Post({ active, post, tabIndex }: PostProps) {
-  const { authorId, id } = post;
   const [Bounce, setBounce] = useState(false);
-
   // const date = createdAt ? createdAt?.toDate().toLocaleDateString() : 0;
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
-  const router = useRouter();
   const photoURL = "";
   const {
     active: tab,
