@@ -49,7 +49,8 @@ export default function Content(props: {
         }</button>`
       : "";
   const textContent =
-    text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 3 : Infinity)
+    text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 3 : Infinity) ||
+    text.match("<span>")?.length! >= 2
       ? text.replaceAll("<div>", "<br>").substring(0, 50)
       : text;
   return (
@@ -92,11 +93,10 @@ export default function Content(props: {
                 ? "Peter 1"
                 : "Other User"}
             </p>
-            <p>
-              {client &&
-                new Timestamp(createdAt.seconds, createdAt.nanoseconds)
-                  .toDate()
-                  .toLocaleDateString()}
+            <p suppressHydrationWarning>
+              {new Timestamp(createdAt.seconds, createdAt.nanoseconds)
+                .toDate()
+                .toLocaleDateString()}
             </p>
             {/* <p>{visibility?.[0] === "public" ? "hi" : visibility}</p> */}
             <p>{visibility}</p>
@@ -193,53 +193,29 @@ export default function Content(props: {
         {text}
       </div> */}
 
-      {/* Server-side rendering */}
-      {typeof window === "undefined" && (
-        <div
-          // suppressHydrationWarning={true}
-          role="textbox"
-          contentEditable="false"
-          suppressContentEditableWarning={true}
-          className={styles.text}
-          dangerouslySetInnerHTML={{ __html: text }}
-          onClick={(e) => {
-            const target = e.target as HTMLElement;
-            if (target.tagName === "A") {
-              e.stopPropagation();
-            }
-            if (target.tagName === "BUTTON") {
-              e.stopPropagation();
-              e.preventDefault();
-              setShowmore((prev: boolean) => !prev);
-              console.log(showmore);
-            }
-          }}
-        />
-      )}
-
-      {/* Client-side rendering */}
-      {typeof window !== "undefined" && (
-        <div
-          // suppressHydrationWarning={true}
-          role="textbox"
-          contentEditable="false"
-          suppressContentEditableWarning={true}
-          className={styles.text}
-          dangerouslySetInnerHTML={{ __html: text }}
-          onClick={(e) => {
-            const target = e.target as HTMLElement;
-            if (target.tagName === "A") {
-              e.stopPropagation();
-            }
-            if (target.tagName === "BUTTON") {
-              e.stopPropagation();
-              e.preventDefault();
-              setShowmore((prev: boolean) => !prev);
-              console.log(showmore);
-            }
-          }}
-        />
-      )}
+      <div
+        suppressHydrationWarning={true}
+        role="textbox"
+        contentEditable="false"
+        suppressContentEditableWarning={true}
+        className={styles.text}
+        dangerouslySetInnerHTML={{ __html: textContent + seemore }}
+        // dangerouslySetInnerHTML={{
+        //   __html: client ? textContent + seemore : "",
+        // }}
+        onClick={(e) => {
+          const target = e.target as HTMLElement;
+          if (target.tagName === "A") {
+            e.stopPropagation();
+          }
+          if (target.tagName === "BUTTON") {
+            e.stopPropagation();
+            e.preventDefault();
+            setShowmore((prev: boolean) => !prev);
+            console.log(showmore);
+          }
+        }}
+      />
 
       {/* {text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")} */}
       {/* {text.match(/<br\s*[/]?>/gi)?.length} */}
