@@ -59,10 +59,8 @@ export default function PhotoLayout(props: {
                 <button
                   onClick={(e) => {
                     if (file.url) {
-                      // const media = files as Post["media"];
-                      const data = files.filter(
-                        (_, index) => index === i
-                      ) as Post["media"];
+                      const media = files as Post["media"];
+                      const data = media?.filter((_, index) => index === i);
                       // setdeleteFile([
                       //   ...deleteFile! ?? [],
                       //   media?.filter((_, index) => index === i)
