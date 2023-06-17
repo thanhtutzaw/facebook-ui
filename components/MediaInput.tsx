@@ -49,17 +49,13 @@ export default function MediaInput(props: {
 
         if (valid) {
           setFiles([...files, ...fileArray]);
-          // setTimeout(() => {
-          // }, 500);
         }
         if (files.length === fileArray.length) return;
         const lastFile = document.getElementsByTagName("main")[0]
           .lastChild as HTMLDivElement;
-        // setTimeout(() => {
-        lastFile.scrollIntoView({ behavior: "smooth", block: "end" });
-        // }, 200);
-        setFileLoading?.(false);
-        // console.log(files);
+        setTimeout(() => {
+          lastFile.scrollIntoView({ behavior: "smooth", block: "end" });
+        }, 300);
       }}
       ref={fileRef}
       style={{

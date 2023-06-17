@@ -197,13 +197,30 @@ export default function AddPost() {
   //     // }, 200);
   //   }
   // }, [fileLoading, files]);
-  useEffect(() => {
-    const lastFile = document.getElementsByTagName("main")[0]
-      .lastChild as HTMLDivElement;
-    setTimeout(() => {
-      lastFile.scrollIntoView({ behavior: "smooth", block: "end" });
-    }, 300);
-  }, [files]);
+  // const previousFileCount = useRef(files?.length);
+  // useEffect(() => {
+  //   const lastFile = document.getElementsByTagName("main")[0]
+  //     .lastChild as HTMLDivElement;
+  //   // if (files?.length! > 0) {
+  //   //   setTimeout(() => {
+  //   //     lastFile.scrollIntoView({ behavior: "smooth", block: "end" });
+  //   //   }, 300);
+  //   // }
+  //   if (!files) return;
+  //   // let previousFileCount = 0;
+  //   // console.log(previousFileCount.current?.length);
+  //   if (!previousFileCount.current) return;
+  //   console.log(previousFileCount.current);
+  //   if (files.length >= previousFileCount.current) {
+  //     setTimeout(() => {
+  //       lastFile.scrollIntoView({ behavior: "smooth", block: "end" });
+  //     }, 300);
+  //   }
+  //   previousFileCount.current = files.length;
+  //   console.log(previousFileCount.current);
+  //   // previousFileCount = files.length;
+  //   // console.log(previousFileCount);
+  // }, [files, previousFileCount]);
 
   return (
     <div
