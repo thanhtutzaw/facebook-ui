@@ -8,27 +8,26 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import nookies from "nookies";
-import { ElementType, useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
 import Input from "../../components/Input";
-import { PageContext, PageProps } from "../../context/PageContext";
+import MediaInput from "../../components/MediaInput";
+import PhotoLayout from "../../components/Post/PhotoLayout";
+import { Select } from "../../components/Post/Select";
 import { app, db, postToJSON, storage } from "../../lib/firebase";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { updatePost } from "../../lib/firestore/post";
 import s from "../../styles/Home.module.scss";
-import { Post, Props, Media } from "../../types/interfaces";
-import PhotoLayout from "../../components/Post/PhotoLayout";
-import MediaInput from "../../components/MediaInput";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
-import { Select } from "../../components/Post/Select";
+import { Media, Post, Props } from "../../types/interfaces";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -98,9 +97,8 @@ export default function Page(props: {
   myPost: Post;
   email: string;
 }) {
-  const { uid, myPost, email, expired } = props;
+  const { uid, myPost, expired } = props;
   const router = useRouter();
-  // const { active, setActive } = useContext(PageContext) as PageProps;
   const [visibility, setVisibility] = useState<string>(myPost.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
 
@@ -109,8 +107,6 @@ export default function Page(props: {
     ...(myPost.media ?? []),
   ]);
   const [deleteFile, setdeleteFile] = useState<Post["media"]>([]);
-
-  const [New, setNew] = useState<Post["media"] | File[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (expired) {
@@ -141,7 +137,65 @@ export default function Page(props: {
     InputRef.current?.focus();
   }, []);
   useEffect(() => {
-    const input = InputRef.current;
+    // setvalue(
+    //   // InputRef.current?.innerHTML
+    //   //   .replaceAll("<div>", "")
+    //   //   .replaceAll("</div>", "")
+    //   //   .replace("<div>", "<br>")
+    //   //   .replaceAll("<div><br><div>", "<br>")
+    //   //   .replaceAll("<br><div>", "<br>")
+    //   //   .replace("</div>", "")!
+
+    //   // .replaceAll("</div>", "")
+    //   // .replace("<div>", "<br>")
+    //   // .replaceAll("<div><br><div>", "<br>")
+    //   // .replaceAll("<br><div>", "<br>")!
+    // );
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent | PopStateEvent) => {
+      if (
+        // value ===
+        //   input?.innerHTML
+        //     .replaceAll("<div>", "")
+        //     .replaceAll("</div>", "")
+        //     .replace("<div>", "<br>")
+        //     .replaceAll("<div><br><div>", "<br>")
+        //     .replaceAll("<br><div>", "<br>")
+        //     .replace("</div>", "") ||
+        // (visibility !== myPost.visibility && window.location.href !== "/") ||
+        // files?.length !== myPost.media?.length
+        visibility !== myPost.visibility ||
+        files?.length !== myPost.media?.length ||
+        value !== "" ||
+        (deleteFile?.length !== 0 &&
+          value ===
+            InputRef.current?.innerHTML
+              .replaceAll("<div>", "")
+              .replaceAll("</div>", "")
+              .replace("<div>", "<br>")
+              .replaceAll("<div><br><div>", "<br>")
+              .replaceAll("<br><div>", "<br>")
+              .replace("</div>", ""))
+      ) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [
+    deleteFile?.length,
+    files?.length,
+    myPost.media?.length,
+    myPost.text,
+    myPost.visibility,
+    text,
+    value,
+    visibility,
+  ]);
+  useEffect(() => {
     setvalue(
       InputRef.current?.innerHTML
         .replaceAll("<div>", "")
@@ -155,43 +209,31 @@ export default function Page(props: {
       // .replaceAll("<div><br><div>", "<br>")
       // .replaceAll("<br><div>", "<br>")!
     );
-
-    const handleBeforeUnload = (e: BeforeUnloadEvent | PopStateEvent) => {
-      if (
-        value ===
-          input?.innerHTML
-            .replaceAll("<div>", "")
-            .replaceAll("</div>", "")
-            .replace("<div>", "<br>")
-            .replaceAll("<div><br><div>", "<br>")
-            .replaceAll("<br><div>", "<br>")
-            .replace("</div>", "") ||
-        (visibility !== myPost.visibility && window.location.href !== "/")
-      ) {
-        e.preventDefault();
-        e.returnValue = "";
-      }
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [myPost.text, myPost.visibility, text, value, visibility]);
-  useEffect(() => {
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
 
       if (
-        (as !== currentPath &&
-          value ===
-            InputRef.current?.innerHTML
-              .replaceAll("<div>", "")
-              .replaceAll("</div>", "")
-              .replace("<div>", "<br>")
-              .replaceAll("<div><br><div>", "<br>")
-              .replaceAll("<br><div>", "<br>")
-              .replace("</div>", "")) ||
-        visibility !== myPost.visibility
+        as !== currentPath &&
+        // value ===
+        // InputRef.current?.innerHTML
+        //   .replaceAll("<div>", "")
+        //   .replaceAll("</div>", "")
+        //   .replace("<div>", "<br>")
+        //   .replaceAll("<div><br><div>", "<br>")
+        //   .replaceAll("<br><div>", "<br>")
+        //   .replace("</div>", "") ||
+        (visibility !== myPost.visibility ||
+          files?.length !== myPost.media?.length ||
+          value !== "" ||
+          (deleteFile?.length !== 0 &&
+            value ===
+              InputRef.current?.innerHTML
+                .replaceAll("<div>", "")
+                .replaceAll("</div>", "")
+                .replace("<div>", "<br>")
+                .replaceAll("<div><br><div>", "<br>")
+                .replaceAll("<br><div>", "<br>")
+                .replace("</div>", "")))
       ) {
         if (confirm("Changes you made may not be saved.")) {
           return true;
@@ -206,7 +248,14 @@ export default function Page(props: {
     return () => {
       router.beforePopState(() => true);
     };
-  }, [myPost.visibility, router, value, visibility]); // Add any state variables to dependencies array if needed.
+  }, [
+    files?.length,
+    myPost.media?.length,
+    myPost.visibility,
+    router,
+    value,
+    visibility,
+  ]); // Add any state variables to dependencies array if needed.
   const auth = getAuth(app);
   const [client, setClient] = useState(false);
   useEffect(() => {
@@ -217,7 +266,6 @@ export default function Page(props: {
   useEffect(() => {
     console.table(files);
   }, [files]);
-  let media: Post["media"] = [];
   let newMedia: Post["media"] = [];
   return (
     <div className="user">
@@ -251,7 +299,6 @@ export default function Page(props: {
               )
                 return;
               setLoading(true);
-              // setFiles(myPost.media);
               try {
                 const promises: Promise<Media | null>[] = [];
                 const Deletepromises: Promise<void>[] = [];
@@ -289,10 +336,6 @@ export default function Page(props: {
                       });
                     console.log(uploadPromise);
                     promises.push(uploadPromise);
-                  } else {
-                    // alert(
-                    //   `${fileType} is Invalid Type .\nJPEG , PNG , GIF and MP4 are only Allowed !`
-                    // );
                   }
                 }
                 for (let i = 0; i < deleteFile?.length!; i++) {
@@ -300,10 +343,6 @@ export default function Page(props: {
                   const file = deleteFile[i];
                   const { url, type, name } = file;
                   if (url && name) {
-                    // const fileRef = ref(
-                    //   storageRef,
-                    //   `${type ?? "images"}/${url}`
-                    // );
                     if (!url) return;
                     console.log(type);
                     const fileRef = ref(

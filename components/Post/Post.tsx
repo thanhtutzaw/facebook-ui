@@ -18,7 +18,6 @@ interface PostProps {
 }
 export default function Post({ active, post, tabIndex }: PostProps) {
   const [Bounce, setBounce] = useState(false);
-  // const date = createdAt ? createdAt?.toDate().toLocaleDateString() : 0;
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
@@ -36,15 +35,6 @@ export default function Post({ active, post, tabIndex }: PostProps) {
       checked && setChecked(false);
     }
   }, [active, checked, setshowAction, showAction]);
-
-  // const dateString = useRef("");
-  // const timeString = new Timestamp(createdAt.seconds, createdAt.nanoseconds)
-  //   .toDate()
-  //   .toLocaleDateString();
-  // useLayoutEffect(() => {
-  //   const date = new Timestamp(createdAt.seconds, createdAt.nanoseconds);
-  //   dateString.current = date.toDate().toLocaleDateString();
-  // }, [createdAt.nanoseconds, createdAt.seconds]);
 
   useEffect(() => {
     if (tab !== "profile" || "") {
@@ -67,10 +57,9 @@ export default function Post({ active, post, tabIndex }: PostProps) {
     <div
       className={styles.post}
       style={{
-        transition: "all .1s ease-in-out",
+        transition: "all 0.3s ease-in-out",
         borderRadius: checked ? "50px" : "0",
         border: checked ? "10px solid #0070f312" : "0px solid #0070f312",
-        // backgroundColor: checked ? "rgb(223 255 220)" : "",
         userSelect: active ? "none" : "initial",
         cursor: active ? "pointer" : "initial",
       }}

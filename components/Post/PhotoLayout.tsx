@@ -23,17 +23,9 @@ export default function PhotoLayout(props: {
     setFiles,
     preview = false,
     edit,
-    dummyRef,
     uid,
     myPost,
   } = props;
-  useEffect(() => {
-    // if (deleteFile?.length !== 0 || deleteFile || deleteFile !== 'undefined') {
-    // }
-    if (deleteFile) {
-      console.log({ deleteFile });
-    }
-  }, [deleteFile]);
   // const placeholder = "https://via.placeholder.com/350x388";
 
   const placeholder =
@@ -78,16 +70,10 @@ export default function PhotoLayout(props: {
                       // setdeleteFile([...deleteFile??[], data]);
                       setdeleteFile?.([...(deleteFile ?? []), ...(data ?? [])]);
                     }
-                    // if (file.url) {
-                    // deleteStorage();
-                    // } else {
                     e.currentTarget.scrollIntoView();
                     setFiles?.([...files.slice(0, i), ...files.slice(i + 1)]);
-                    // console.log(files.filter((_, index) => index === i));
                     // setFiles(files.filter((_, index) => index !== i));
                     // setFiles(files.splice(i, 1));
-
-                    // }
                   }}
                   aria-label="remove media"
                   tabIndex={-1}
@@ -98,7 +84,6 @@ export default function PhotoLayout(props: {
               )}
             </div>
           ))}
-        {/* <div ref={dummyRef}></div> */}
       </div>
     );
   }
@@ -118,7 +103,7 @@ export default function PhotoLayout(props: {
               // minHeight: files?.length !== 1 ? "initial" : "394px",
               aspectRatio: files?.length <= 2 ? "initial" : "9/10",
               justifyContent: "center",
-              alignItems: "center",
+              // alignItems: "center",
             }}
           >
             <img
@@ -127,7 +112,7 @@ export default function PhotoLayout(props: {
                 img.src = placeholder;
                 img.alt = "Not Found !";
                 img.style.filter = "invert(1)";
-                img.style.minHeight = "394px";
+                img.style.minHeight = media.length === 2 ? "196px" : "394px";
               }}
               // onError={(e) => {
               //   // e.stopPropagation();
@@ -154,7 +139,7 @@ export default function PhotoLayout(props: {
                 img.src = placeholder;
                 img.alt = "Not Found !";
                 img.style.filter = "invert(1)";
-                img.style.minHeight = "394px";
+                img.style.minHeight = "196px";
               }}
               style={{
                 maxWidth: "100%",
@@ -177,7 +162,7 @@ export default function PhotoLayout(props: {
                   img.src = placeholder;
                   img.alt = "Not Found !";
                   img.style.filter = "invert(1)";
-                  img.style.minHeight = "394px";
+                  img.style.minHeight = "196px";
                 }}
                 style={{
                   maxWidth: "100%",

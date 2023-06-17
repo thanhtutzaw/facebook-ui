@@ -165,8 +165,8 @@ export default function Profile() {
         <div
           style={{
             willChange: "margin",
-            marginInline: active ? "1rem" : "initial",
-            transition: "all .2s ease-in-out",
+            marginInline: active ? "2rem" : "initial",
+            transition: "margin .35s ease-in-out",
           }}
         >
           {sortedPost?.map((post: PostType) => (
