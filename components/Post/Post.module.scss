@@ -20,6 +20,7 @@
     align-items: center;
     color: white;
     img {
+            display: flex;
         aspect-ratio: 16/9;
         object-fit: contain;
     }

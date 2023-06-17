@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import s from "./Post.module.scss";
-import { RefObject, useEffect, useState } from "react";
+import { RefObject, useEffect } from "react";
 import { Post } from "../../types/interfaces";
-import { deleteStorage } from "../../lib/storage";
+import s from "./Post.module.scss";
+import { log } from "console";
 export default function PhotoLayout(props: {
   deleteFile?: Post["media"] | File[];
   files: Post["media"] | File[];
@@ -34,7 +34,10 @@ export default function PhotoLayout(props: {
       console.log({ deleteFile });
     }
   }, [deleteFile]);
+  // const placeholder = "https://via.placeholder.com/350x388";
 
+  const placeholder =
+    "https://www.cvent-assets.com/brand-page-guestside-site/assets/images/venue-card-placeholder.png";
   if (!preview) {
     return (
       <div className={s.media}>
@@ -45,6 +48,13 @@ export default function PhotoLayout(props: {
                 <video controls src={URL.createObjectURL(file)} />
               ) : (
                 <img
+                  onError={(e) => {
+                    const img = e.currentTarget;
+                    console.log(e);
+                    img.src = placeholder;
+                    img.alt = "Not Found !";
+                    img.style.filter = "invert(1)";
+                  }}
                   alt={file.name}
                   src={
                     !file.url ? URL.createObjectURL(file) : file.url
@@ -94,6 +104,7 @@ export default function PhotoLayout(props: {
   }
   const media = files as Post["media"];
   if (!files || !media) return <></>;
+
   return (
     <div
       style={{
@@ -108,6 +119,21 @@ export default function PhotoLayout(props: {
             }}
           >
             <img
+              onError={(e) => {
+                const img = e.currentTarget;
+                console.log(e);
+                img.src = placeholder;
+                img.alt = "Not Found !";
+                img.style.filter = "invert(1)";
+              }}
+              // onError={(e) => {
+              //   // e.stopPropagation();
+              //   const placeholder = "https://via.placeholder.com/350x388";
+              //   const img = e.currentTarget;
+              //   console.log(e);
+              //   img.src = placeholder;
+              //   img.alt = "Not Found !";
+              // }}
               style={{
                 maxWidth: "100%",
                 margin: "0 auto",
@@ -120,6 +146,13 @@ export default function PhotoLayout(props: {
         <div>
           {media[1] && (
             <img
+              onError={(e) => {
+                const img = e.currentTarget;
+                console.log(e);
+                img.src = placeholder;
+                img.alt = "Not Found !";
+                img.style.filter = "invert(1)";
+              }}
               style={{
                 maxWidth: "100%",
                 margin: "0 auto",
@@ -136,6 +169,13 @@ export default function PhotoLayout(props: {
               }}
             >
               <img
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  console.log(e);
+                  img.src = placeholder;
+                  img.alt = "Not Found !";
+                  img.style.filter = "invert(1)";
+                }}
                 style={{
                   maxWidth: "100%",
                   margin: "0 auto",

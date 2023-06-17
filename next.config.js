@@ -8,11 +8,11 @@ module.exports = nextConfig
 
 module.exports = {
   i18n: {
-    locales: ['en'],  
+    locales: ['en'],
     defaultLocale: 'en',
   },
   images: {
-    domains: ['upload.wikimedia.org', 'images.unsplash.com', 'encrypted-tbn0.gstatic.com', 'www.femalefirst.co.uk'],
+    domains: ['upload.wikimedia.org', 'images.unsplash.com', 'cvent-assets.com', 'encrypted-tbn0.gstatic.com', 'www.femalefirst.co.uk'],
   },
 
 }
