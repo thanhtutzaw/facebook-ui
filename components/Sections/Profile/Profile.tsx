@@ -169,9 +169,9 @@ export default function Profile() {
             transition: "all .2s ease-in-out",
           }}
         >
-          {/* {sortedPost?.map((post: PostType) => (
+          {sortedPost?.map((post: PostType) => (
             <Post active={active} key={post.id} post={post} tabIndex={1} />
-          ))} */}
+          ))}
         </div>
         <p style={{ textAlign: "center" }}>No more posts</p>
       </div>

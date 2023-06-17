@@ -169,6 +169,7 @@ video {
   background-color: black;
   max-width       : 100%;
   margin          : 0 auto;
+  object-fit      : cover;
 }
 
 .seeMore {
@@ -179,7 +180,7 @@ video {
   /* font-weight: bold; */
   color         : dimgray;
   font-family   : system-ui;
-  white-space: initial;
+  white-space   : initial;
 }
 
 .user>div:nth-last-child(2) {

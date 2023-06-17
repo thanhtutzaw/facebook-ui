@@ -251,7 +251,7 @@ export default function Page(props: {
               )
                 return;
               setLoading(true);
-              setFiles(myPost.media);
+              // setFiles(myPost.media);
               try {
                 const promises: Promise<Media | null>[] = [];
                 const Deletepromises: Promise<void>[] = [];
@@ -304,13 +304,18 @@ export default function Page(props: {
                     //   storageRef,
                     //   `${type ?? "images"}/${url}`
                     // );
+                    if (!url) return;
+                    console.log(type);
                     const fileRef = ref(
                       storageRef,
-                      `${type ?? "images"}/${name}`
+                      `${type === "video/mp4" ? "videos" : "images"}/${name}`
                     );
                     const deletePromise = deleteObject(fileRef)
                       .then(() => {
-                        console.log("File deleted successfully");
+                        console.info(
+                          `%c ${deleteFile?.length} Media deleted successfully ✔️ `,
+                          "color: green"
+                        );
                       })
                       .catch((error) => {
                         console.log(error);
@@ -334,7 +339,7 @@ export default function Page(props: {
                       (file) => file !== null
                     ) as Media[]),
                   ].filter((file) => file?.url);
-                  await Promise.all(Deletepromises);
+                  // await Promise.all(Deletepromises);
                 } catch (error) {
                   console.log("Error uploading or deleting files:", error);
                 }

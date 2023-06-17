@@ -50,10 +50,10 @@ export default function PhotoLayout(props: {
                 <img
                   onError={(e) => {
                     const img = e.currentTarget;
-                    console.log(e);
                     img.src = placeholder;
                     img.alt = "Not Found !";
                     img.style.filter = "invert(1)";
+                    img.style.minHeight = "394px";
                   }}
                   alt={file.name}
                   src={
@@ -115,16 +115,19 @@ export default function PhotoLayout(props: {
         {media[0] && (
           <div
             style={{
+              // minHeight: files?.length !== 1 ? "initial" : "394px",
               aspectRatio: files?.length <= 2 ? "initial" : "9/10",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
             <img
               onError={(e) => {
                 const img = e.currentTarget;
-                console.log(e);
                 img.src = placeholder;
                 img.alt = "Not Found !";
                 img.style.filter = "invert(1)";
+                img.style.minHeight = "394px";
               }}
               // onError={(e) => {
               //   // e.stopPropagation();
@@ -148,10 +151,10 @@ export default function PhotoLayout(props: {
             <img
               onError={(e) => {
                 const img = e.currentTarget;
-                console.log(e);
                 img.src = placeholder;
                 img.alt = "Not Found !";
                 img.style.filter = "invert(1)";
+                img.style.minHeight = "394px";
               }}
               style={{
                 maxWidth: "100%",
@@ -171,10 +174,10 @@ export default function PhotoLayout(props: {
               <img
                 onError={(e) => {
                   const img = e.currentTarget;
-                  console.log(e);
                   img.src = placeholder;
                   img.alt = "Not Found !";
                   img.style.filter = "invert(1)";
+                  img.style.minHeight = "394px";
                 }}
                 style={{
                   maxWidth: "100%",

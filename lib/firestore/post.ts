@@ -50,7 +50,7 @@ export async function updatePost(
   const data = {
     ...myPost,
     text: text,
-    media: files,
+    media: files?.filter((file) => file.url),
     visibility: visibility,
     createdAt: new Timestamp(
       myPost.createdAt.seconds,
@@ -59,9 +59,9 @@ export async function updatePost(
     updatedAt: serverTimestamp(),
   };
   try {
-    console.log(data.media);
-    // alert(JSON.stringify(data));
-    // await updateDoc(Ref, data);
+    console.log({ data });
+    // console.log("updated post");
+    await updateDoc(Ref, data);
   } catch (error: any) {
     alert("Adding Post Failed !" + error.message);
   }

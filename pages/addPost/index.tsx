@@ -10,7 +10,6 @@ import PhotoLayout from "../../components/Post/PhotoLayout";
 import { app, storage } from "../../lib/firebase";
 import s from "../../styles/Home.module.scss";
 import { addPost } from "../../lib/firestore/post";
-import error from "next/error";
 import { Post } from "../../types/interfaces";
 import MediaInput from "../../components/MediaInput";
 import { uploadMedia } from "../../lib/storage";
@@ -20,8 +19,6 @@ export default function AddPost() {
   const textRef = useRef<HTMLDivElement>(null);
   const [visibility, setVisibility] = useState("public");
   const [loading, setLoading] = useState(false);
-  // const [files, setFiles] = useState(["1.gif", "2.gif", "3.jpg", "4.png"]);
-  // const [files, setFiles] = useState<File>([{ id: 1, name: "1.gif" }]);
   const [files, setFiles] = useState<File[] | Post["media"]>([]);
   useEffect(() => {
     textRef.current?.focus();
@@ -198,8 +195,15 @@ export default function AddPost() {
           onClick={async () => {
             textRef.current?.focus();
             const uid = auth.currentUser?.uid;
-            if (!textRef.current || !textRef.current.textContent || !uid)
-              return;
+            // if (
+            //   !textRef.current ||
+            //   !textRef.current.textContent ||
+            //   files?.length === 0 ||
+            //   !uid
+            // )
+            //   return;
+            if (!textRef.current || !uid) return;
+            if (textRef.current.innerHTML === "" && files?.length == 0) return;
             const text = textRef.current.innerHTML
               // .replaceAll("</div><div>", "<br>")
               .replaceAll("</div>", "")
@@ -232,7 +236,7 @@ export default function AddPost() {
             //   .replaceAll("&nbsp;", " ");
 
             setLoading(true);
-            console.log(text);
+            // console.log(text);
             setContent(text);
             try {
               setLoading(true);

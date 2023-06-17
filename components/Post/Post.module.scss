@@ -19,8 +19,13 @@
     justify-content: center;
     align-items: center;
     color: white;
+    // & div:only-child {
+    // }
+    // & > div:first-child:only-child {
+    //     border: 1px solid red;
+    // }
     img {
-            display: flex;
+        display: flex;
         aspect-ratio: 16/9;
         object-fit: contain;
     }
@@ -37,6 +42,7 @@
     }
     & > div:not(:first-child) {
         overflow: hidden;
+        // border: 2px solid green;
     }
     .backDrop {
         pointer-events: none;
