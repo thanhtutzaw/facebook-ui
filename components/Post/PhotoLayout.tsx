@@ -98,7 +98,7 @@ export default function PhotoLayout(props: {
               )}
             </div>
           ))}
-        <div ref={dummyRef}></div>
+        {/* <div ref={dummyRef}></div> */}
       </div>
     );
   }

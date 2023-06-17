@@ -12,9 +12,13 @@ export default function MediaInput(props: {
     <input
       multiple
       accept="image/*,video/mp4"
+      onClick={() => {
+        setFileLoading?.(true);
+      }}
       onChange={(e) => {
         const fileArray = Array.from(e.target.files ?? []);
         let valid = true;
+
         fileArray.map((file) => {
           const fileType = file.type;
 
@@ -42,15 +46,20 @@ export default function MediaInput(props: {
             valid = false;
           }
         });
-        setFileLoading?.(true);
 
         if (valid) {
           setFiles([...files, ...fileArray]);
-          setTimeout(() => {
-            setFileLoading?.(false);
-          }, 500);
+          // setTimeout(() => {
+          // }, 500);
         }
-        console.log(files);
+        if (files.length === fileArray.length) return;
+        const lastFile = document.getElementsByTagName("main")[0]
+          .lastChild as HTMLDivElement;
+        // setTimeout(() => {
+        lastFile.scrollIntoView({ behavior: "smooth", block: "end" });
+        // }, 200);
+        setFileLoading?.(false);
+        // console.log(files);
       }}
       ref={fileRef}
       style={{

@@ -156,25 +156,57 @@ export default function AddPost() {
   //   });
   const dummyRef = useRef<HTMLDivElement>(null);
   const [fileLoading, setFileLoading] = useState(false);
-  useEffect(() => {
-    if (fileLoading) return;
-    dummyRef.current?.scrollIntoView();
-    // console.log(files);
-    // const height = dummyRef.current?.clientHeight;
+  // useEffect(() => {
+  //   if (fileLoading) return;
+  //   dummyRef.current?.scrollIntoView();
+  //   // console.log(files);
+  //   // const height = dummyRef.current?.clientHeight;
 
-    // const element = dummyRef.current;
-    // console.log(element?.parentElement);
-    // console.log(height);
-    // element?.parentElement?.scrollTo({ top: height });
-    // Scroll to the latest item in the file list
-    // if (fileListRef.current) {
-    //   const fileList = fileListRef.current;
-    //   fileList.scrollTop = fileList.scrollHeight;
-    // }
-  }, [fileLoading, files]);
+  //   // const element = dummyRef.current;
+  //   // console.log(element?.parentElement);
+  //   // console.log(height);
+  //   // element?.parentElement?.scrollTo({ top: height });
+  //   // Scroll to the latest item in the file list
+  //   // if (fileListRef.current) {
+  //   //   const fileList = fileListRef.current;
+  //   //   fileList.scrollTop = fileList.scrollHeight;
+  //   // }
+  // }, [fileLoading, files]);
+
+  // useEffect(() => {
+  //   // if (dummyRef.current) {
+  //   // Scroll to the last added file
+  //   //  const lastFile = dummyRef.current.lastChild;
+  //   const lastFile = document.getElementsByTagName("main")[0]
+  //     .lastChild as HTMLDivElement;
+  //   if (lastFile) {
+  //     setTimeout(() => {
+  //       lastFile.scrollIntoView({ behavior: "smooth", block: "end" });
+  //     }, 200);
+  //   }
+  //   // }
+  //   // dummyRef.current?.scrollIntoView();
+  // }, [files]);
+  // useEffect(() => {
+  //   console.log(fileLoading);
+  //   const lastFile = document.getElementsByTagName("main")[0]
+  //     .lastChild as HTMLDivElement;
+  //   if (!fileLoading) {
+  //     // setTimeout(() => {
+  //     lastFile.scrollIntoView({ behavior: "smooth", block: "end" });
+  //     // }, 200);
+  //   }
+  // }, [fileLoading, files]);
+  useEffect(() => {
+    const lastFile = document.getElementsByTagName("main")[0]
+      .lastChild as HTMLDivElement;
+    setTimeout(() => {
+      lastFile.scrollIntoView({ behavior: "smooth", block: "end" });
+    }, 300);
+  }, [files]);
+
   return (
     <div
-      // ref={dummyRef}
       style={{
         pointerEvents: loading ? "none" : "initial",
         cursor: loading ? "wait" : "default",
@@ -195,13 +227,6 @@ export default function AddPost() {
           onClick={async () => {
             textRef.current?.focus();
             const uid = auth.currentUser?.uid;
-            // if (
-            //   !textRef.current ||
-            //   !textRef.current.textContent ||
-            //   files?.length === 0 ||
-            //   !uid
-            // )
-            //   return;
             if (!textRef.current || !uid) return;
             if (textRef.current.innerHTML === "" && files?.length == 0) return;
             const text = textRef.current.innerHTML
@@ -236,7 +261,6 @@ export default function AddPost() {
             //   .replaceAll("&nbsp;", " ");
 
             setLoading(true);
-            // console.log(text);
             setContent(text);
             try {
               setLoading(true);
