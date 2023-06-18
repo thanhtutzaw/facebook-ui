@@ -36,28 +36,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
-    // if (!token) return;
-    // const convertSecondsToTime = (seconds: number) => {
-    //   const days = Math.floor(seconds / (3600 * 24));
-    //   const hours = Math.floor((seconds % (3600 * 24)) / 3600);
-    //   const minutes = Math.floor((seconds % 3600) / 60);
-    //   const remainingSeconds = seconds % 60;
-
-    //   return { days, hours, minutes, seconds: remainingSeconds };
-    // };
-    // console.log(convertSecondsToTime(token.exp));
     const { email, uid } = token;
     let expired = false;
-
-    // const allUsersQuery = collectionGroup(db, `users`);
-
-    const postQuery = query(
-      collectionGroup(db, `posts`),
-      orderBy("createdAt", "desc")
-    );
-    // const docSnap = await getDocs(postQuery);
-    // const posts = docSnap.docs.map((doc) => postToJSON(doc));
-
     const mypostQuery = query(
       collection(db, `/users/${uid}/posts`),
       orderBy("createdAt", "desc")
@@ -80,9 +60,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     };
   } catch (error) {
     console.log("SSR Error " + error);
-    // context.res.writeHead(302, { Location: "/" });
-    // context.res.writeHead(302, { Location: "/login" });
-    // context.res.end();
     return {
       props: {
         expired: true,
@@ -241,7 +218,7 @@ export default function Page(props: {
     router,
     value,
     visibility,
-  ]); // Add any state variables to dependencies array if needed.
+  ]);
   const auth = getAuth(app);
   const [client, setClient] = useState(false);
   useEffect(() => {
@@ -275,10 +252,6 @@ export default function Page(props: {
               if (uid !== myPost.authorId) {
                 throw new Error("Unauthorized !");
               }
-              // !InputRef.current?.innerHTML ||
-              // console.log(
-              //   visibility?.toLowerCase() === myPost.visibility?.toLowerCase()
-              // );
               if (
                 visibility.toLowerCase() === myPost.visibility?.toLowerCase() &&
                 InputRef.current?.innerHTML
@@ -293,17 +266,11 @@ export default function Page(props: {
               try {
                 const promises: Promise<Media | null>[] = [];
                 const Deletepromises: Promise<void>[] = [];
-                const file3 = files as Media[] | File[];
-                // const addedfiles:File[] = file3?.filter((file) => !file.url);
                 for (let i = 0; i < files?.length!; i++) {
                   if (!files) return;
-                  // const file5 = addedfiles as File;
                   const file: File = files[i] as File;
                   if (file.lastModified) {
-                    // const file3 = files[i] as Media;
                     const { name, type } = file;
-                    // if (file3.url) return;
-                    console.log(file);
                     if (
                       type === "image/jpeg" ||
                       type === "image/jpg" ||
@@ -457,12 +424,6 @@ export default function Page(props: {
         edit={router.query.edit ? true : false}
         files={files}
         setFiles={setFiles}
-        // files={[
-        //   { id: 1, name: "../1.gif" },
-        //   { id: 2, name: "../2.gif" },
-        //   { id: 3, name: "../3.jpg" },
-        //   { id: 4, name: "../4.png" },
-        // ]}
       />
       <div className={s.footer}>
         <button
@@ -482,43 +443,6 @@ export default function Page(props: {
           files={files as File[]}
           fileRef={fileRef}
         />
-        {/* <input
-          multiple
-          accept="image/*,video/mp4"
-          // onChange={(e) => {
-          //   const fileArray = Array.from(e.target.files ?? []);
-          //   let valid = true;
-          //   fileArray.map((file) => {
-          //     if (
-          //       fileType === "image/jpeg" ||
-          //       fileType === "image/jpg" ||
-          //       fileType === "image/png" ||
-          //       fileType === "image/gif" ||
-          //       fileType === "video/mp4"
-          //     ) {
-          //       console.log(
-          //         `File '${file.name}' is an image (JPEG, PNG, or GIF) or an MP4 video`
-          //       );
-          //     } else {
-          //       alert(
-          //         `File '${file.name}' is not one of the specified formats.\nJPEG , PNG , GIF and MP4 are only Allowed !`
-          //       );
-          //       valid = false;
-          //     }
-          //   });
-          //   setFileLoading(true);
-          //   if (valid) {
-          //     setFiles([...files, ...fileArray]);
-
-          //     setTimeout(() => {
-          //       setFileLoading(false);
-          //     }, 500);
-          //   }
-          // }}
-          ref={fileRef}
-          style={{ display: "none", visibility: "hidden" }}
-          type="file"
-        /> */}
         <Select
           disabled={router.query.edit ? false : true}
           onChange={(e) => {
