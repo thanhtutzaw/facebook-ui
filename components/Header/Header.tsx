@@ -123,6 +123,8 @@ export default function Header(props: any) {
               display: "flex",
               width: "100%",
               height: "100%",
+              // borderBottom: "1px solid #e0e0e0",
+              borderBottom: "1px solid #e6e6e6",
             }}
           >
             {pages.map((page, index) => (

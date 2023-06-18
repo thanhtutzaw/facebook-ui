@@ -6,7 +6,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import { RefObject, useContext } from "react";
 import { AppContext } from "../../context/AppContext";
 import { Post, Props } from "../../types/interfaces";
@@ -38,8 +38,15 @@ export default function Content(props: {
     post,
   } = props;
   const { authorId, id, text, visibility, createdAt } = post;
-  const { selectedId, setSelectedId, email, showAction, setshowAction, uid } =
-    useContext(AppContext) as Props;
+  const {
+    preventClick,
+    selectedId,
+    setSelectedId,
+    email,
+    showAction,
+    setshowAction,
+    uid,
+  } = useContext(AppContext) as Props;
   const router = useRouter();
   const seemore =
     text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
@@ -59,6 +66,7 @@ export default function Content(props: {
     <span
       style={{
         display: "block",
+        pointerEvents: preventClick ? "none" : "initial",
       }}
       onClick={(e) => {
         if (!active) {

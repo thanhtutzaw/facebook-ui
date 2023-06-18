@@ -317,9 +317,6 @@ export default function Page(props: {
                           ? `images/${name}`
                           : `videos/${name}`
                       );
-                      // if (!file.prototype) return;
-                      // const urlfile = files as Media[]
-                      // const file4 =  file as File;
                       const uploadPromise: Promise<Media | null> = uploadBytes(
                         fileRef,
                         file
@@ -345,32 +342,31 @@ export default function Page(props: {
                     }
                   }
                 }
-                // for (let i = 0; i < deleteFile?.length!; i++) {
-                //   if (!deleteFile) return;
-                //   alert("hey");
-                //   const file = deleteFile[i];
-                //   const { url, type, name } = file;
-                //   if (url && name) {
-                //     if (!url) return;
-                //     console.log(type);
-                //     const fileRef = ref(
-                //       storageRef,
-                //       `${type === "video/mp4" ? "videos" : "images"}/${name}`
-                //     );
-                //     const deletePromise = deleteObject(fileRef)
-                //       .then(() => {
-                //         console.info(
-                //           `%c ${deleteFile?.length} Media deleted successfully ✔️ `,
-                //           "color: green"
-                //         );
-                //       })
-                //       .catch((error) => {
-                //         console.log(error);
-                //         alert("Uh-oh, Deleting Media Failed !");
-                //       });
-                //     Deletepromises.push(deletePromise);
-                //   }
-                // }
+                for (let i = 0; i < deleteFile?.length!; i++) {
+                  if (!deleteFile) return;
+                  const file = deleteFile[i];
+                  const { url, type, name } = file;
+                  if (url && name) {
+                    if (!url) return;
+                    console.log(type);
+                    const fileRef = ref(
+                      storageRef,
+                      `${type === "video/mp4" ? "videos" : "images"}/${name}`
+                    );
+                    const deletePromise = deleteObject(fileRef)
+                      .then(() => {
+                        console.info(
+                          `%c ${deleteFile?.length} Media deleted successfully ✔️ `,
+                          "color: green"
+                        );
+                      })
+                      .catch((error) => {
+                        console.log(error);
+                        alert("Uh-oh, Deleting Media Failed !");
+                      });
+                    Deletepromises.push(deletePromise);
+                  }
+                }
                 // await Promise.all([promises, Deletepromises])
                 //   .then((uploadedFiles) => {
                 //     // media = uploadedFiles.filter(
@@ -391,23 +387,19 @@ export default function Page(props: {
                 // } catch (error) {
                 //   console.log("Error uploading or deleting files:", error);
                 // }
-                await Promise.all(promises)
-                  .then((uploadedFiles) => {
-                    // newMedia = uploadedFiles.filter(
-                    //   (file) => file !== null
-                    // ) as Media[];
-                    newMedia = [
-                      ...(files as Media[]),
-                      ...(uploadedFiles.filter(
-                        (file) => file !== null
-                      ) as Media[]),
-                    ].filter((file) => file?.url);
-                    console.log({ newMedia });
-                  })
-                  .catch((error) => {
-                    console.log("Error uploading files:", error);
-                    return null;
-                  });
+                try {
+                  const uploadedFiles = await Promise.all(promises);
+                  newMedia = [
+                    ...(files as Media[]),
+                    ...(uploadedFiles.filter(
+                      (file) => file !== null
+                    ) as Media[]),
+                  ].filter((file) => file?.url);
+                  await Promise.all(Deletepromises);
+                } catch (error) {
+                  console.log("Error uploading files:", error);
+                  return null;
+                }
                 await updatePost(
                   uid,
                   InputRef.current.innerHTML

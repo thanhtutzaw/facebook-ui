@@ -24,7 +24,6 @@ export function Home(props: Props) {
       id="/"
       className={styles.home}
       onScroll={(e) => {
-        // console.log();
         const home = document.getElementById("/");
 
         const header = headerContainerRef?.current;
