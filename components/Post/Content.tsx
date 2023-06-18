@@ -100,7 +100,6 @@ export default function Content(props: {
                 .toDate()
                 .toLocaleDateString()}
             </p>
-            {/* <p>{visibility?.[0] === "public" ? "hi" : visibility}</p> */}
             <p>{visibility}</p>
           </div>
         </div>

@@ -3,21 +3,23 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import router, { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
 import Input from "../../components/Input";
 import PhotoLayout from "../../components/Post/PhotoLayout";
 import { app, storage } from "../../lib/firebase";
 import s from "../../styles/Home.module.scss";
 import { addPost } from "../../lib/firestore/post";
-import { Post } from "../../types/interfaces";
+import { Post, Props } from "../../types/interfaces";
 import MediaInput from "../../components/MediaInput";
 import { uploadMedia } from "../../lib/storage";
 import { Select } from "../../components/Post/Select";
+import { AppContext } from "../../context/AppContext";
+import { PageContext, PageProps } from "../../context/PageContext";
 export default function AddPost() {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
-  const [visibility, setVisibility] = useState("public");
+  const [visibility, setVisibility] = useState("Public");
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[] | Post["media"]>([]);
   useEffect(() => {
@@ -38,11 +40,6 @@ export default function AddPost() {
     };
   }, [files]);
   useEffect(() => {
-    // window.addEventListener("click", (e) => {
-    //   // console.log(e.currentTarget.textContent);
-    //   const target = e.target;
-    //   console.log(target);
-    // });
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
       if (
@@ -51,8 +48,14 @@ export default function AddPost() {
       ) {
         // router.back();
         //This code work but I want to display Leave Propmt , instead confirm box
-        history.pushState(null, document.title, currentPath);
-        return false;
+        // history.pushState(null, document.title, currentPath);
+        // return false;
+        if (confirm("Changes you made may not be saved.")) {
+          return true;
+        } else {
+          window.history.pushState(null, document.title, currentPath);
+          return false;
+        }
       }
       return true;
     });
@@ -122,7 +125,7 @@ export default function AddPost() {
     // console.log(original);
   }, [content]);
   const [replace, setReplace] = useState("");
-  const fileRef = useRef<HTMLInputElement>(null);
+  const { fileRef } = useContext(PageContext) as PageProps;
   // useEffect(() => {
   //   console.log(fileRef.current?.files);
   // }, [fileRef.current?.files]);
@@ -156,71 +159,6 @@ export default function AddPost() {
   //   });
   const dummyRef = useRef<HTMLDivElement>(null);
   const [fileLoading, setFileLoading] = useState(false);
-  // useEffect(() => {
-  //   if (fileLoading) return;
-  //   dummyRef.current?.scrollIntoView();
-  //   // console.log(files);
-  //   // const height = dummyRef.current?.clientHeight;
-
-  //   // const element = dummyRef.current;
-  //   // console.log(element?.parentElement);
-  //   // console.log(height);
-  //   // element?.parentElement?.scrollTo({ top: height });
-  //   // Scroll to the latest item in the file list
-  //   // if (fileListRef.current) {
-  //   //   const fileList = fileListRef.current;
-  //   //   fileList.scrollTop = fileList.scrollHeight;
-  //   // }
-  // }, [fileLoading, files]);
-
-  // useEffect(() => {
-  //   // if (dummyRef.current) {
-  //   // Scroll to the last added file
-  //   //  const lastFile = dummyRef.current.lastChild;
-  //   const lastFile = document.getElementsByTagName("main")[0]
-  //     .lastChild as HTMLDivElement;
-  //   if (lastFile) {
-  //     setTimeout(() => {
-  //       lastFile.scrollIntoView({ behavior: "smooth", block: "end" });
-  //     }, 200);
-  //   }
-  //   // }
-  //   // dummyRef.current?.scrollIntoView();
-  // }, [files]);
-  // useEffect(() => {
-  //   console.log(fileLoading);
-  //   const lastFile = document.getElementsByTagName("main")[0]
-  //     .lastChild as HTMLDivElement;
-  //   if (!fileLoading) {
-  //     // setTimeout(() => {
-  //     lastFile.scrollIntoView({ behavior: "smooth", block: "end" });
-  //     // }, 200);
-  //   }
-  // }, [fileLoading, files]);
-  // const previousFileCount = useRef(files?.length);
-  // useEffect(() => {
-  //   const lastFile = document.getElementsByTagName("main")[0]
-  //     .lastChild as HTMLDivElement;
-  //   // if (files?.length! > 0) {
-  //   //   setTimeout(() => {
-  //   //     lastFile.scrollIntoView({ behavior: "smooth", block: "end" });
-  //   //   }, 300);
-  //   // }
-  //   if (!files) return;
-  //   // let previousFileCount = 0;
-  //   // console.log(previousFileCount.current?.length);
-  //   if (!previousFileCount.current) return;
-  //   console.log(previousFileCount.current);
-  //   if (files.length >= previousFileCount.current) {
-  //     setTimeout(() => {
-  //       lastFile.scrollIntoView({ behavior: "smooth", block: "end" });
-  //     }, 300);
-  //   }
-  //   previousFileCount.current = files.length;
-  //   console.log(previousFileCount.current);
-  //   // previousFileCount = files.length;
-  //   // console.log(previousFileCount);
-  // }, [files, previousFileCount]);
 
   return (
     <div
@@ -425,7 +363,7 @@ export default function AddPost() {
           setFileLoading={setFileLoading}
           setFiles={setFiles}
           files={files as File[]}
-          fileRef={fileRef}
+          fileRef={fileRef!}
         />
         <Select
           onChange={(e) => {

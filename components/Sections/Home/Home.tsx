@@ -9,6 +9,7 @@ import { useContext } from "react";
 import { useRouter } from "next/router";
 import { getServerSideProps } from "../../../pages";
 import { AppContext } from "../../../context/AppContext";
+import { PageContext, PageProps } from "../../../context/PageContext";
 // import { getServerSideProps } from "../../../pages/_app";
 type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
   tabIndex: number;
@@ -17,6 +18,7 @@ export function Home(props: Props) {
   const { tabIndex } = props;
   const router = useRouter();
   const { email, headerContainerRef } = useContext(AppContext) as Props;
+  const { fileRef } = useContext(PageContext) as PageProps;
   return (
     <div
       id="/"
@@ -80,6 +82,9 @@ export function Home(props: Props) {
           title="Upload media"
           onClick={() => {
             router.push("addPost");
+            setTimeout(() => {
+              fileRef?.current?.click();
+            }, 200);
           }}
           tabIndex={tabIndex}
           className={styles.addMedia}

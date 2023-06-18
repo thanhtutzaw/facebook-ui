@@ -15,7 +15,7 @@ import {
   uploadBytes,
 } from "firebase/storage";
 import { GetServerSideProps } from "next";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useEffect, useRef, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
@@ -28,6 +28,8 @@ import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { updatePost } from "../../lib/firestore/post";
 import s from "../../styles/Home.module.scss";
 import { Media, Post, Props } from "../../types/interfaces";
+import { url } from "inspector";
+import router from "next/router";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -137,21 +139,6 @@ export default function Page(props: {
     InputRef.current?.focus();
   }, []);
   useEffect(() => {
-    // setvalue(
-    //   // InputRef.current?.innerHTML
-    //   //   .replaceAll("<div>", "")
-    //   //   .replaceAll("</div>", "")
-    //   //   .replace("<div>", "<br>")
-    //   //   .replaceAll("<div><br><div>", "<br>")
-    //   //   .replaceAll("<br><div>", "<br>")
-    //   //   .replace("</div>", "")!
-
-    //   // .replaceAll("</div>", "")
-    //   // .replace("<div>", "<br>")
-    //   // .replaceAll("<div><br><div>", "<br>")
-    //   // .replaceAll("<br><div>", "<br>")!
-    // );
-
     const handleBeforeUnload = (e: BeforeUnloadEvent | PopStateEvent) => {
       if (
         // value ===
@@ -164,7 +151,7 @@ export default function Page(props: {
         //     .replace("</div>", "") ||
         // (visibility !== myPost.visibility && window.location.href !== "/") ||
         // files?.length !== myPost.media?.length
-        visibility !== myPost.visibility ||
+        (window.location.href !== "/" && visibility !== myPost.visibility) ||
         files?.length !== myPost.media?.length ||
         value !== "" ||
         (deleteFile?.length !== 0 &&
@@ -189,9 +176,7 @@ export default function Page(props: {
     deleteFile?.length,
     files?.length,
     myPost.media?.length,
-    myPost.text,
     myPost.visibility,
-    text,
     value,
     visibility,
   ]);
@@ -249,6 +234,7 @@ export default function Page(props: {
       router.beforePopState(() => true);
     };
   }, [
+    deleteFile?.length,
     files?.length,
     myPost.media?.length,
     myPost.visibility,
@@ -276,7 +262,6 @@ export default function Page(props: {
         }}
       >
         <h2 className={s.title}>{router.query.edit ? "Edit" : "Post"}</h2>
-        {/* <h2 className={s.title}>{expired ? "true" : "false"}</h2> */}
         {router.query.edit && (
           <button
             tabIndex={1}
@@ -286,83 +271,106 @@ export default function Page(props: {
             className={s.submit}
             onClick={async () => {
               const uid = auth.currentUser?.uid;
-              if (!InputRef.current?.innerHTML || !uid || !myPost) return;
+              if (!uid || !myPost || !InputRef.current) return;
               if (uid !== myPost.authorId) {
                 throw new Error("Unauthorized !");
               }
+              // !InputRef.current?.innerHTML ||
+              // console.log(
+              //   visibility?.toLowerCase() === myPost.visibility?.toLowerCase()
+              // );
               if (
-                visibility === myPost.visibility &&
+                visibility.toLowerCase() === myPost.visibility?.toLowerCase() &&
                 InputRef.current?.innerHTML
                   .replace(/\n/g, "<br>")
                   .replaceAll("&nbsp;", " ") === myPost.text &&
-                files?.length === myPost.media?.length
+                files?.length === myPost.media?.length &&
+                value === "" &&
+                deleteFile?.length === 0
               )
                 return;
               setLoading(true);
               try {
                 const promises: Promise<Media | null>[] = [];
                 const Deletepromises: Promise<void>[] = [];
+                const file3 = files as Media[] | File[];
+                // const addedfiles:File[] = file3?.filter((file) => !file.url);
                 for (let i = 0; i < files?.length!; i++) {
                   if (!files) return;
-                  const file = files[i] as File;
-                  const { name, type } = file;
-                  if (
-                    type === "image/jpeg" ||
-                    type === "image/jpg" ||
-                    type === "image/png" ||
-                    type === "image/gif" ||
-                    type === "video/mp4"
-                  ) {
-                    const fileRef = ref(
-                      storageRef,
-                      type !== "video/mp4" ? `images/${name}` : `videos/${name}`
-                    );
-                    const uploadPromise: Promise<Media | null> = uploadBytes(
-                      fileRef,
-                      file
-                    )
-                      .then(async (snapshot) => {
-                        const downloadURL = await getDownloadURL(snapshot.ref);
-                        const fileData = {
-                          name: name,
-                          url: downloadURL,
-                          type: type,
-                        };
-                        return fileData;
-                      })
-                      .catch((error) => {
-                        console.log("Error Uploading File:", error);
-                        return null;
-                      });
-                    console.log(uploadPromise);
-                    promises.push(uploadPromise);
+                  // const file5 = addedfiles as File;
+                  const file: File = files[i] as File;
+                  if (file.lastModified) {
+                    // const file3 = files[i] as Media;
+                    const { name, type } = file;
+                    // if (file3.url) return;
+                    console.log(file);
+                    if (
+                      type === "image/jpeg" ||
+                      type === "image/jpg" ||
+                      type === "image/png" ||
+                      type === "image/gif" ||
+                      type === "video/mp4"
+                    ) {
+                      const fileRef = ref(
+                        storageRef,
+                        type !== "video/mp4"
+                          ? `images/${name}`
+                          : `videos/${name}`
+                      );
+                      // if (!file.prototype) return;
+                      // const urlfile = files as Media[]
+                      // const file4 =  file as File;
+                      const uploadPromise: Promise<Media | null> = uploadBytes(
+                        fileRef,
+                        file
+                      )
+                        .then(async (snapshot) => {
+                          const downloadURL = await getDownloadURL(
+                            snapshot.ref
+                          );
+                          const fileData = {
+                            name: name,
+                            url: downloadURL,
+                            type: type,
+                          };
+                          console.log(fileData);
+                          return fileData;
+                        })
+                        .catch((error) => {
+                          console.log("Error Uploading File:", error);
+                          return null;
+                        });
+                      console.log(uploadPromise);
+                      promises.push(uploadPromise);
+                    }
                   }
                 }
-                for (let i = 0; i < deleteFile?.length!; i++) {
-                  if (!deleteFile) return;
-                  const file = deleteFile[i];
-                  const { url, type, name } = file;
-                  if (url && name) {
-                    if (!url) return;
-                    console.log(type);
-                    const fileRef = ref(
-                      storageRef,
-                      `${type === "video/mp4" ? "videos" : "images"}/${name}`
-                    );
-                    const deletePromise = deleteObject(fileRef)
-                      .then(() => {
-                        console.info(
-                          `%c ${deleteFile?.length} Media deleted successfully ✔️ `,
-                          "color: green"
-                        );
-                      })
-                      .catch((error) => {
-                        console.log(error);
-                        alert("Uh-oh, Deleting Media Failed !");
-                      });
-                    Deletepromises.push(deletePromise);
-                  }
-                }
+                // for (let i = 0; i < deleteFile?.length!; i++) {
+                //   if (!deleteFile) return;
+                //   alert("hey");
+                //   const file = deleteFile[i];
+                //   const { url, type, name } = file;
+                //   if (url && name) {
+                //     if (!url) return;
+                //     console.log(type);
+                //     const fileRef = ref(
+                //       storageRef,
+                //       `${type === "video/mp4" ? "videos" : "images"}/${name}`
+                //     );
+                //     const deletePromise = deleteObject(fileRef)
+                //       .then(() => {
+                //         console.info(
+                //           `%c ${deleteFile?.length} Media deleted successfully ✔️ `,
+                //           "color: green"
+                //         );
+                //       })
+                //       .catch((error) => {
+                //         console.log(error);
+                //         alert("Uh-oh, Deleting Media Failed !");
+                //       });
+                //     Deletepromises.push(deletePromise);
+                //   }
+                // }
                 // await Promise.all([promises, Deletepromises])
                 //   .then((uploadedFiles) => {
                 //     // media = uploadedFiles.filter(
@@ -370,18 +378,36 @@ export default function Page(props: {
                 //     // );
                 //   })
                 //   .catch((error) => {});
-                try {
-                  const uploadedFiles = await Promise.all(promises);
-                  newMedia = [
-                    ...(files as Media[]),
-                    ...(uploadedFiles.filter(
-                      (file) => file !== null
-                    ) as Media[]),
-                  ].filter((file) => file?.url);
-                  // await Promise.all(Deletepromises);
-                } catch (error) {
-                  console.log("Error uploading or deleting files:", error);
-                }
+
+                // try {
+                //   const uploadedFiles = await Promise.all(promises);
+                //   newMedia = [
+                //     ...(files as Media[]),
+                //     ...(uploadedFiles.filter(
+                //       (file) => file !== null
+                //     ) as Media[]),
+                //   ].filter((file) => file?.url);
+                //   // await Promise.all(Deletepromises);
+                // } catch (error) {
+                //   console.log("Error uploading or deleting files:", error);
+                // }
+                await Promise.all(promises)
+                  .then((uploadedFiles) => {
+                    // newMedia = uploadedFiles.filter(
+                    //   (file) => file !== null
+                    // ) as Media[];
+                    newMedia = [
+                      ...(files as Media[]),
+                      ...(uploadedFiles.filter(
+                        (file) => file !== null
+                      ) as Media[]),
+                    ].filter((file) => file?.url);
+                    console.log({ newMedia });
+                  })
+                  .catch((error) => {
+                    console.log("Error uploading files:", error);
+                    return null;
+                  });
                 await updatePost(
                   uid,
                   InputRef.current.innerHTML
@@ -460,7 +486,6 @@ export default function Page(props: {
           <FontAwesomeIcon icon={faPhotoFilm} />
         </button>
         <MediaInput
-          // setFileLoading={setFileLoading}
           setFiles={setFiles}
           files={files as File[]}
           fileRef={fileRef}

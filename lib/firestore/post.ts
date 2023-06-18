@@ -28,7 +28,7 @@ export async function addPost(
     updatedAt: "Invalid Date",
   };
   try {
-    console.log(data);
+    console.log({ data });
     await addDoc(Ref, data);
     // console.log(data.media);
     // data.media.map((m) => {
@@ -50,7 +50,8 @@ export async function updatePost(
   const data = {
     ...myPost,
     text: text,
-    media: files?.filter((file) => file.url),
+    // media: files?.filter((file) => file.url),
+    media: files,
     visibility: visibility,
     createdAt: new Timestamp(
       myPost.createdAt.seconds,

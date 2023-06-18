@@ -40,13 +40,13 @@ export default function PhotoLayout(props: {
                 <video controls src={URL.createObjectURL(file)} />
               ) : (
                 <img
-                  onError={(e) => {
-                    const img = e.currentTarget;
-                    img.src = placeholder;
-                    img.alt = "Not Found !";
-                    img.style.filter = "invert(1)";
-                    img.style.minHeight = "394px";
-                  }}
+                  // onError={(e) => {
+                  //   const img = e.currentTarget;
+                  //   img.src = placeholder;
+                  //   img.alt = "Not Found !";
+                  //   img.style.filter = "invert(1)";
+                  //   img.style.minHeight = "394px";
+                  // }}
                   alt={file.name}
                   src={
                     !file.url ? URL.createObjectURL(file) : file.url
@@ -70,7 +70,7 @@ export default function PhotoLayout(props: {
                       // setdeleteFile([...deleteFile??[], data]);
                       setdeleteFile?.([...(deleteFile ?? []), ...(data ?? [])]);
                     }
-                    e.currentTarget.scrollIntoView();
+                    // e.currentTarget.scrollIntoView();
                     setFiles?.([...files.slice(0, i), ...files.slice(i + 1)]);
                     // setFiles(files.filter((_, index) => index !== i));
                     // setFiles(files.splice(i, 1));

@@ -131,7 +131,7 @@ export default function App({
         <link rel="icon" href="/logo.svg" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <PageProvider active={""} setActive={Function}>
+      <PageProvider  active={""} setActive={Function}>
         <main>
           <Component {...pageProps} />
         </main>

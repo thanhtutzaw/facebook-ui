@@ -1,4 +1,3 @@
-import router from "next/router";
 import { SelectHTMLAttributes } from "react";
 
 export function Select(

@@ -1,21 +1,21 @@
-export type Media= {
+export type Media = {
   name: string;
   url: string;
   type: string;
-}
+};
 
 export interface Post {
   authorId?: string | number;
   id?: string | number;
   text: string;
   visibility?: string;
-  // visibility?: ["public", "friends", "onlyme"];
   createdAt: Timestamp;
   media: Media[] | null;
 }
 import { Timestamp } from "firebase/firestore";
-import { ReactNode } from "react";
+import { ReactNode, RefObject } from "react";
 export interface Props {
+  
   selectedId?: string[];
   setSelectedId?: Function;
   children?: ReactNode;
