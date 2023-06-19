@@ -184,7 +184,8 @@ export default function AddPost() {
               setLoading(true);
               window.document.body.style.cursor = "wait";
               const media = await uploadMedia(files as File[]);
-
+              console.log(replace.current);
+              console.log(textRef.current.innerHTML);
               await addPost(uid, media, replace.current, visibility);
               router.replace("/", undefined, { scroll: false });
             } catch (error: any) {

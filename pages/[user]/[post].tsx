@@ -28,8 +28,6 @@ import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { updatePost } from "../../lib/firestore/post";
 import s from "../../styles/Home.module.scss";
 import { Media, Post, Props } from "../../types/interfaces";
-import { url } from "inspector";
-import router from "next/router";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -81,7 +79,8 @@ export default function Page(props: {
   const [visibility, setVisibility] = useState<string>(myPost.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
 
-  const [value, setvalue] = useState("");
+  // const [value, setvalue] = useState("");
+  // const valueRef = useRef("");
   const [files, setFiles] = useState<Post["media"] | File[]>([
     ...(myPost.media ?? []),
   ]);
@@ -99,8 +98,6 @@ export default function Page(props: {
   //   .replaceAll("<div>", "")
   //   .replaceAll("</div>", "")
   //   .replaceAll("&nbsp;", " ");
-
-  // if(myPost.text){
   const text = myPost.text
     ? myPost.text
         .replaceAll("</div>", "")
@@ -108,11 +105,8 @@ export default function Page(props: {
         .replaceAll("<div><br><div>", "<br>")
         .replaceAll("<br><div>", "<br>")
     : "";
-  // }
-  // const text = myPost.text
-  //   .replace("<div>", "")
-  //   .replaceAll("</div><div>", "<br>");
   useEffect(() => {
+    console.log(myPost.text);
     InputRef.current?.focus();
   }, []);
   useEffect(() => {
@@ -130,16 +124,17 @@ export default function Page(props: {
         // files?.length !== myPost.media?.length
         (window.location.href !== "/" && visibility !== myPost.visibility) ||
         files?.length !== myPost.media?.length ||
-        value !== "" ||
-        (deleteFile?.length !== 0 &&
-          value ===
-            InputRef.current?.innerHTML
-              .replaceAll("<div>", "")
-              .replaceAll("</div>", "")
-              .replace("<div>", "<br>")
-              .replaceAll("<div><br><div>", "<br>")
-              .replaceAll("<br><div>", "<br>")
-              .replace("</div>", ""))
+        // value !== "" ||
+        deleteFile?.length !== 0
+        // &&
+        // value ===
+        //   InputRef.current?.innerHTML
+        //     .replaceAll("<div>", "")
+        //     .replaceAll("</div>", "")
+        //     .replace("<div>", "<br>")
+        //     .replaceAll("<div><br><div>", "<br>")
+        //     .replaceAll("<br><div>", "<br>")
+        //     .replace("</div>", "")
       ) {
         e.preventDefault();
         e.returnValue = "";
@@ -154,23 +149,23 @@ export default function Page(props: {
     files?.length,
     myPost.media?.length,
     myPost.visibility,
-    value,
+    // value,
     visibility,
   ]);
   useEffect(() => {
-    setvalue(
-      InputRef.current?.innerHTML
-        .replaceAll("<div>", "")
-        .replaceAll("</div>", "")
-        .replace("<div>", "<br>")
-        .replaceAll("<div><br><div>", "<br>")
-        .replaceAll("<br><div>", "<br>")
-        .replace("</div>", "")!
-      // .replaceAll("</div>", "")
-      // .replace("<div>", "<br>")
-      // .replaceAll("<div><br><div>", "<br>")
-      // .replaceAll("<br><div>", "<br>")!
-    );
+    // setvalue(
+    //   InputRef.current?.innerHTML
+    //     .replaceAll("<div>", "")
+    //     .replaceAll("</div>", "")
+    //     .replace("<div>", "<br>")
+    //     .replaceAll("<div><br><div>", "<br>")
+    //     .replaceAll("<br><div>", "<br>")
+    //     .replace("</div>", "")!
+    //   // .replaceAll("</div>", "")
+    //   // .replace("<div>", "<br>")
+    //   // .replaceAll("<div><br><div>", "<br>")
+    //   // .replaceAll("<br><div>", "<br>")!
+    // );
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
 
@@ -186,16 +181,19 @@ export default function Page(props: {
         //   .replace("</div>", "") ||
         (visibility !== myPost.visibility ||
           files?.length !== myPost.media?.length ||
-          value !== "" ||
-          (deleteFile?.length !== 0 &&
-            value ===
-              InputRef.current?.innerHTML
-                .replaceAll("<div>", "")
-                .replaceAll("</div>", "")
-                .replace("<div>", "<br>")
-                .replaceAll("<div><br><div>", "<br>")
-                .replaceAll("<br><div>", "<br>")
-                .replace("</div>", "")))
+          deleteFile?.length !== 0)
+        // value !== "" ||
+        // deleteFile?.length !== 0
+        // &&
+        // value ===
+        //   InputRef.current?.innerHTML
+        //     .replaceAll("<div>", "")
+        //     .replaceAll("</div>", "")
+        //     .replace("<div>", "<br>")
+        //     .replaceAll("<div><br><div>", "<br>")
+        //     .replaceAll("<br><div>", "<br>")
+        //     .replace("</div>", ""))
+        // )
       ) {
         if (confirm("Changes you made may not be saved.")) {
           return true;
@@ -216,7 +214,7 @@ export default function Page(props: {
     myPost.media?.length,
     myPost.visibility,
     router,
-    value,
+    // value,
     visibility,
   ]);
   const auth = getAuth(app);
@@ -258,7 +256,7 @@ export default function Page(props: {
                   .replace(/\n/g, "<br>")
                   .replaceAll("&nbsp;", " ") === myPost.text &&
                 files?.length === myPost.media?.length &&
-                value === "" &&
+                // value === "" &&
                 deleteFile?.length === 0
               )
                 return;
@@ -402,17 +400,17 @@ export default function Page(props: {
         style={{
           cursor: router.query.edit ? "initial" : "default",
         }}
-        onInput={(e) => {
-          setvalue(
-            e.currentTarget.innerHTML
-              .replaceAll("<div>", "")
-              .replaceAll("</div>", "")
-              .replace("<div>", "<br>")
-              .replaceAll("<div><br><div>", "<br>")
-              .replaceAll("<br><div>", "<br>")
-              .replace("</div>", "")
-          );
-        }}
+        // onInput={(e) => {
+        //   setvalue(
+        //     e.currentTarget.innerHTML
+        //       .replaceAll("<div>", "")
+        //       .replaceAll("</div>", "")
+        //       .replace("<div>", "<br>")
+        //       .replaceAll("<div><br><div>", "<br>")
+        //       .replaceAll("<br><div>", "<br>")
+        //       .replace("</div>", "")
+        //   );
+        // }}
         dangerouslySetInnerHTML={{ __html: client ? text : "" }}
       ></Input>
 

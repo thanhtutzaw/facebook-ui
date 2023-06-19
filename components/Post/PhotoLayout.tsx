@@ -40,13 +40,13 @@ export default function PhotoLayout(props: {
                 <video controls src={URL.createObjectURL(file)} />
               ) : (
                 <img
-                  // onError={(e) => {
-                  //   const img = e.currentTarget;
-                  //   img.src = placeholder;
-                  //   img.alt = "Not Found !";
-                  //   img.style.filter = "invert(1)";
-                  //   img.style.minHeight = "394px";
-                  // }}
+                  onError={(e) => {
+                    const img = e.currentTarget;
+                    img.src = placeholder;
+                    img.alt = "Not Found !";
+                    img.style.filter = "invert(1)";
+                    img.style.minHeight = "394px";
+                  }}
                   alt={file.name}
                   src={
                     !file.url ? URL.createObjectURL(file) : file.url
