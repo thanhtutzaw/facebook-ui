@@ -11,10 +11,10 @@ Project is created with:
 * [Font-Awesome](https://fontawesome.com) and [nprogress](https://www.npmjs.com/package/nprogress) 
 
 ## Features
-:ballot_box_with_check:	Fetch All Users Posts\
+:ballot_box_with_check:	Fetch All Users Posts - SSR\
 :ballot_box_with_check:	Sort Posts by Created Date\
-:ballot_box_with_check:	Select & Delete Multiple Posts\
-:ballot_box_with_check:	Upload Medias\
+:ballot_box_with_check:	Select and Delete Multiple Posts\
+:ballot_box_with_check:	Upload Medias and Preview Layout\
 :ballot_box_with_check:	Draggable Tabs UI
 
 ## User-Interface
