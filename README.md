@@ -8,14 +8,7 @@ Project is created with:
 * Next.js v13.0.6 , Typescript and SASS
 * Google Sign-in , [Cloud Storage](https://firebase.google.com/docs/storage/web/start) and [Cloud Firestore](https://github.com/thanhtutzaw/todolist3/blob/main/README.md#nosql-document-database)
 * [Firebase-Admin-SDK](https://www.npmjs.com/package/firebase-admin) and [Nookies](https://www.npmjs.com/package/nookies)
-* [Font-Awesome](https://fontawesome.com) and [nprogress](https://www.npmjs.com/package/nprogress) 
-
-
-
-
-https://github.com/thanhtutzaw/facebook-ui/assets/71011043/aea96643-587b-4727-a1c6-dd058aa99960
-
-
+* [Font-Awesome](https://fontawesome.com) and [nprogress](https://www.npmjs.com/package/nprogress)
 
 ## Features
 :ballot_box_with_check:	Fetch All Users Posts - SSR\
