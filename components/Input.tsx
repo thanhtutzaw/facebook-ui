@@ -1,7 +1,5 @@
 import { HTMLAttributes, CSSProperties, ReactNode, RefObject } from "react";
 import s from "../styles/Home.module.scss";
-import { HtmlProps } from "next/dist/shared/lib/html-context";
-import { text } from "@fortawesome/fontawesome-svg-core";
 
 interface Props {
   style?: CSSProperties;
@@ -12,7 +10,6 @@ interface Props {
 }
 export default function Input({
   style,
-  // contentEditable = false,
   element,
   children,
   text,

@@ -124,7 +124,8 @@ export default function Header(props: any) {
               width: "100%",
               height: "100%",
               // borderBottom: "1px solid #e0e0e0",
-              borderBottom: "1px solid #e6e6e6",
+              // borderBottom: "1px solid #e6e6e6",
+              boxShadow: "0px 1px 1px rgba(0, 0, 0, 0.12)",
             }}
           >
             {pages.map((page, index) => (

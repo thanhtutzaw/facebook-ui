@@ -133,7 +133,6 @@ export default function Home({
   // props: InferGetServerSidePropsType<typeof getServerSideProps>
   const indicatorRef = useRef<HTMLDivElement>(null);
 
-  const { active } = useActive();
   const router = useRouter();
   const auth = getAuth(app);
   useEffect(() => {

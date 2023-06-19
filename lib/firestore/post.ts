@@ -10,11 +10,14 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { Post } from "../../types/interfaces";
+import { MutableRefObject } from "react";
 
 export async function addPost(
   uid: string,
   files: any[],
-  text: string,
+  // text: string,
+  // text: MutableRefObject<string>,
+  text:string,
   visibility: string
 ) {
   // alert([uid, visibility, text]);

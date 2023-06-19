@@ -1,21 +1,19 @@
 import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
 import Input from "../../components/Input";
-import PhotoLayout from "../../components/Post/PhotoLayout";
-import { app, storage } from "../../lib/firebase";
-import s from "../../styles/Home.module.scss";
-import { addPost } from "../../lib/firestore/post";
-import { Post, Props } from "../../types/interfaces";
 import MediaInput from "../../components/MediaInput";
-import { uploadMedia } from "../../lib/storage";
+import PhotoLayout from "../../components/Post/PhotoLayout";
 import { Select } from "../../components/Post/Select";
-import { AppContext } from "../../context/AppContext";
 import { PageContext, PageProps } from "../../context/PageContext";
+import { app } from "../../lib/firebase";
+import { addPost } from "../../lib/firestore/post";
+import { uploadMedia } from "../../lib/storage";
+import s from "../../styles/Home.module.scss";
+import { Post } from "../../types/interfaces";
 export default function AddPost() {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
@@ -23,8 +21,8 @@ export default function AddPost() {
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[] | Post["media"]>([]);
   useEffect(() => {
-    textRef.current?.focus();
     const input = textRef.current;
+    input?.focus();
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (input?.textContent || files?.length! > 0) {
@@ -64,7 +62,6 @@ export default function AddPost() {
     };
   }, [files, router]);
   const auth = getAuth(app);
-  const [text, setText] = useState("");
   // const str = ;
   // const replacedStr = str!;
   // const text = textRef.current?.innerHTML.replaceAll("<div>", "hello");
@@ -120,43 +117,9 @@ export default function AddPost() {
     if (!textRef.current || textRef.current.textContent) return;
     // console.log("aa " + updatedContent);
   };
-  useEffect(() => {
-    // const original = textRef.current?.innerHTML;
-    // console.log(original);
-  }, [content]);
-  const [replace, setReplace] = useState("");
+  // const [replace, setReplace] = useState("");
+  const replace = useRef("");
   const { fileRef } = useContext(PageContext) as PageProps;
-  // useEffect(() => {
-  //   console.log(fileRef.current?.files);
-  // }, [fileRef.current?.files]);
-  // const [files, setFiles] = useState(["1.gif", "2.gif", "3.jpg"]);
-  // const [files, setFiles] = useState<File[]>([]);
-  // const sanitizer = new Sanitizer();
-  // Points to the root reference
-  const storageRef = ref(storage);
-  // Note that you can use variables to create child values
-  // const fileName = "images/Screenshot (181).png";
-  const fileName = "images";
-  const spaceRef = ref(storageRef, fileName);
-
-  // File path is 'images/space.jpg'
-  const path = spaceRef.fullPath;
-  // File name is 'space.jpg'
-  const name = spaceRef.name;
-  const imagesRefAgain = spaceRef.parent;
-  // const storageRef = ref(storage, "some-child");
-
-  // 'file' comes from the Blob or File API
-
-  // console.log([path, spaceRef.name, spaceRef.parent]);
-  // getDownloadURL(spaceRef)
-  //   .then((url) => {
-  //     console.log(url);
-  //   })
-  //   .catch((error) => {
-  //     console.log(error);
-  //     alert(error);
-  //   });
   const dummyRef = useRef<HTMLDivElement>(null);
   const [fileLoading, setFileLoading] = useState(false);
 
@@ -220,12 +183,9 @@ export default function AddPost() {
             try {
               setLoading(true);
               window.document.body.style.cursor = "wait";
-
-              // const uploadPromises: Post["media"] = [];
-
               const media = await uploadMedia(files as File[]);
 
-              await addPost(uid, media, replace, visibility);
+              await addPost(uid, media, replace.current, visibility);
               router.replace("/", undefined, { scroll: false });
             } catch (error: any) {
               alert(error.message);
@@ -240,25 +200,18 @@ export default function AddPost() {
       <Input
         style={{ direction: "ltr" }}
         onKeyDown={(e) => {
-          // handleInput(e);
-          // setOriginalStr(originalStr + e.currentTarget.innerHTML);
-
           if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
-            // e.preventDefault(); // Prevent default behavior of Enter key
-
-            const element = textRef.current;
-            const selection = window.getSelection();
-            const range = selection?.getRangeAt(0)!;
-            const startOffset = range.startOffset;
-
+            // e.preventDefault();
+            // const element = textRef.current;
+            // const selection = window.getSelection();
+            // const range = selection?.getRangeAt(0)!;
+            // const startOffset = range.startOffset;
             // let content = element?.innerHTML;
             // const beforeCursor = content?.slice(0, startOffset);
             // const afterCursor = content?.slice(startOffset);
-
             // content = `${beforeCursor}<br>${afterCursor}`;
             // if (!element) return;
             // element.innerHTML = content;
-
             // const textNode = element.firstChild;
             // const newRange = document.createRange();
             // if (!textNode) return;
@@ -267,8 +220,6 @@ export default function AddPost() {
             // if (!selection) return;
             // selection.removeAllRanges();
             // selection.addRange(newRange);
-
-            // e.preventDefault();
             // setText((prevText) => prevText + "\n");
             // setOriginalStr((prev) => prev.replace(/<div>/g, "<br>"));
           }
@@ -323,21 +274,20 @@ export default function AddPost() {
           // selection.addRange(newRange);
         }}
         onInput={(e) => {
-          setReplace(
-            e.currentTarget.innerHTML
-              .replaceAll("</div>", "")
-              .replace("<div>", "<br>")
-              .replaceAll("<div><br><div>", "<br>")
-              .replaceAll("<br><div>", "<br>")
-              .replaceAll(
-                /(?:https?|ftp):\/\/[\n\S]+/g,
-                (url) =>
-                  `<a rel="nofollow" target="_blank" tabindex="0" href="${url}">${url}</a>`
-              )
-              .replace(/<\/?(?:span|p|div)[^>]*>/gi, "")
-            // .replace(/<[^>]+>/g, "")
-          );
-          // setContent((prev) => replace + prev);
+          // setReplace(
+          replace.current = e.currentTarget.innerHTML
+            .replaceAll("</div>", "")
+            .replace("<div>", "<br>")
+            .replaceAll("<div><br><div>", "<br>")
+            .replaceAll("<br><div>", "<br>")
+            .replaceAll(
+              /(?:https?|ftp):\/\/[\n\S]+/g,
+              (url) =>
+                `<a rel="nofollow" target="_blank" tabindex="0" href="${url}">${url}</a>`
+            )
+            .replace(/<\/?(?:span|p|div)[^>]*>/gi, "");
+          // .replace(/<[^>]+>/g, "")
+          // );
         }}
         element={textRef}
         contentEditable
@@ -374,7 +324,5 @@ export default function AddPost() {
       </div>
     </div>
   );
-  // dangerouslySetInnerHTML={{
   //         __html: content.replaceAll(/<\/?[^>]+(>|$)/gi, ""),
-  //       }}
 }
