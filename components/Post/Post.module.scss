@@ -28,11 +28,12 @@
         }
     }
     img {
-        background-color: black;
+        background-color: #3f3f3f;
         display: block;
         max-width: 100%;
-        object-fit: cover;
+        object-fit: contain;
         height: 100%;
+        margin: 0;
     }
     &:focus-visible {
         outline: 0;
