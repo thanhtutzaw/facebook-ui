@@ -12,6 +12,35 @@
   position: relative;
 }
 
+.dialog {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  border: 0;
+  padding: 0;
+  height: 100%;
+}
+.dialog .closeDialog:focus-visible {
+  outline: 0;
+}
+.dialog .closeDialog:active {
+  background-color: rgb(241, 241, 241);
+}
+.dialog img {
+  background-color: black;
+  display: block;
+  max-width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  height: 100%;
+}
+.dialog:focus-visible {
+  outline: 0;
+}
+.dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
 .preview {
   display: flex;
   background-color: black;
@@ -20,6 +49,7 @@
   color: white;
 }
 .preview img {
+  display: flex;
   aspect-ratio: 16/9;
   -o-object-fit: contain;
      object-fit: contain;
@@ -60,7 +90,7 @@
   position: relative;
   cursor: default;
   overflow: hidden;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 .post .dot {
   transition: all 0.3s ease-in-out;
@@ -87,6 +117,7 @@
   /* font-weight: bold; */
   color: dimgray;
   font-family: system-ui;
+  white-space: initial;
 }
 .post .text {
   padding: 10px 0.8rem 1rem;
@@ -113,7 +144,8 @@
   background-color: rgb(207, 207, 207);
 }
 
-.deletePhoto {
+.deletePhoto,
+.closeDialog {
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -130,17 +162,20 @@
   transition: all 0.15s ease-in-out;
   box-shadow: 0px 4px 8px 0px rgba(128, 128, 128, 0.4);
 }
-.deletePhoto > * {
+.deletePhoto > *,
+.closeDialog > * {
   color: var(--blue-origin);
   opacity: 0.8;
 }
-.deletePhoto:active {
+.deletePhoto:active:not(.closeDialog),
+.closeDialog:active:not(.closeDialog) {
   width: 100px;
   opacity: 0.8;
   background-color: rgb(241, 241, 241);
 }
 @media (hover: hover) and (pointer: fine) {
-  .deletePhoto:hover {
+  .deletePhoto:hover,
+  .closeDialog:hover {
     background-color: rgb(228, 228, 228);
     background-color: rgb(241, 241, 241);
   }

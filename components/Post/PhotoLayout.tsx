@@ -1,10 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { RefObject, useEffect } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { Post } from "../../types/interfaces";
 import s from "./Post.module.scss";
 import { log } from "console";
+import { ViewModal } from "./ViewModal";
 export default function PhotoLayout(props: {
   deleteFile?: Post["media"] | File[];
   files: Post["media"] | File[];
@@ -30,61 +31,81 @@ export default function PhotoLayout(props: {
 
   const placeholder =
     "https://www.cvent-assets.com/brand-page-guestside-site/assets/images/venue-card-placeholder.png";
+  const [view, setview] = useState({ src: "", name: "" });
+  const viewRef = useRef<HTMLDialogElement>(null);
   if (!preview) {
     return (
-      <div className={s.media}>
-        {files &&
-          files.map((file: any, i: number) => (
-            <div key={i} id={i.toString()}>
-              {file.type === "video/mp4" ? (
-                <video controls src={URL.createObjectURL(file)} />
-              ) : (
-                <img
-                  onError={(e) => {
-                    const img = e.currentTarget;
-                    img.src = placeholder;
-                    img.alt = "Not Found !";
-                    img.style.filter = "invert(1)";
-                    img.style.minHeight = "394px";
-                  }}
-                  alt={file.name}
-                  src={
-                    !file.url ? URL.createObjectURL(file) : file.url
-                    // Array.isArray(files) &&
-                    // files.every((file) => file instanceof File)
-                    //   ? URL.createObjectURL(file)
-                    //   : file.url
-                  }
-                />
-              )}
-              {edit && myPost?.authorId === uid && (
-                <button
-                  onClick={(e) => {
-                    if (file.url) {
-                      const media = files as Post["media"];
-                      const data = media?.filter((_, index) => index === i);
-                      // setdeleteFile([
-                      //   ...deleteFile! ?? [],
-                      //   media?.filter((_, index) => index === i)
-                      // ]);
-                      // setdeleteFile([...deleteFile??[], data]);
-                      setdeleteFile?.([...(deleteFile ?? []), ...(data ?? [])]);
+      <>
+        <div className={s.media}>
+          {files &&
+            files.map((file: any, i: number) => (
+              <div
+                onClick={() => {
+                  if (file.type === "video/mp4") return;
+                  setview({
+                    src: !file.url ? URL.createObjectURL(file) : file.url,
+                    name: file.name,
+                  });
+                  viewRef.current?.showModal();
+                }}
+                key={i}
+                id={i.toString()}
+              >
+                {file.type === "video/mp4" ? (
+                  <video controls src={URL.createObjectURL(file)} />
+                ) : (
+                  <img
+                    onError={(e) => {
+                      const img = e.currentTarget;
+                      img.src = placeholder;
+                      img.alt = "Not Found !";
+                      img.style.filter = "invert(1)";
+                      img.style.minHeight = "394px";
+                    }}
+                    alt={file.name}
+                    src={
+                      !file.url ? URL.createObjectURL(file) : file.url
+                      // Array.isArray(files) &&
+                      // files.every((file) => file instanceof File)
+                      //   ? URL.createObjectURL(file)
+                      //   : file.url
                     }
-                    // e.currentTarget.scrollIntoView();
-                    setFiles?.([...files.slice(0, i), ...files.slice(i + 1)]);
-                    // setFiles(files.filter((_, index) => index !== i));
-                    // setFiles(files.splice(i, 1));
-                  }}
-                  aria-label="remove media"
-                  tabIndex={-1}
-                  className={s.deletePhoto}
-                >
-                  <FontAwesomeIcon icon={faClose} />
-                </button>
-              )}
-            </div>
-          ))}
-      </div>
+                  />
+                )}
+                {edit && myPost?.authorId === uid && (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (file.url) {
+                        const media = files as Post["media"];
+                        const data = media?.filter((_, index) => index === i);
+                        // setdeleteFile([
+                        //   ...deleteFile! ?? [],
+                        //   media?.filter((_, index) => index === i)
+                        // ]);
+                        // setdeleteFile([...deleteFile??[], data]);
+                        setdeleteFile?.([
+                          ...(deleteFile ?? []),
+                          ...(data ?? []),
+                        ]);
+                      }
+                      setFiles?.([...files.slice(0, i), ...files.slice(i + 1)]);
+                      // setFiles(files.filter((_, index) => index !== i));
+                      // setFiles(files.splice(i, 1));
+                    }}
+                    aria-label="remove media"
+                    tabIndex={-1}
+                    className={s.deletePhoto}
+                  >
+                    <FontAwesomeIcon icon={faClose} />
+                  </button>
+                )}
+              </div>
+            ))}
+        </div>
+        <ViewModal view={view} viewRef={viewRef} />
+      </>
     );
   }
   const media = files as Post["media"];
