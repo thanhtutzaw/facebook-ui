@@ -1,10 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { RefObject, useRef, useState } from "react";
 import { Post } from "../../types/interfaces";
 import s from "./Post.module.scss";
-import { log } from "console";
 import { ViewModal } from "./ViewModal";
 export default function PhotoLayout(props: {
   deleteFile?: Post["media"] | File[];

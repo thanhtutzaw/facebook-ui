@@ -20,6 +20,7 @@
     padding: 0;
     height: 100%;
     .closeDialog {
+        z-index: 100;
         &:focus-visible {
             outline: 0;
         }
@@ -35,6 +36,8 @@
         object-fit: contain;
         height: 100%;
         margin: 0;
+        transition: scale 0.3s ease-in-out;
+        transform-origin: center center;
     }
     &:focus-visible {
         outline: 0;
