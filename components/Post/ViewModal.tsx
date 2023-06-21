@@ -1,38 +1,47 @@
-import { RefObject, useRef } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import s from "./Post.module.scss";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export function ViewModal(props: {
+  setview: Function;
   viewRef: RefObject<HTMLDialogElement>;
   view: { src: string; name: string };
 }) {
-  const { viewRef, view } = props;
-  let scale = 1;
+  const { setview, viewRef, view } = props;
+  // let scale = 1;
+  const [zoom, setZoom] = useState({ scale: 1 });
   const imgRef = useRef<HTMLImageElement>(null);
+  useEffect(() => {
+    const img = imgRef?.current!;
+    img.style.transform = `translate(0px,0px) scale(${zoom.scale})`;
+  }, [zoom]);
+  // useEffect(() => {
+
+  // }, [third])
+
   return (
     <>
       <dialog
-        // style={{ scale: scale }}
+        onClose={() => {
+          setZoom({ scale: 1 });
+        }}
         onWheel={(e) => {
-          // e.preventDefault();
-
-          scale += e.deltaY * -0.01;
-
+          // scale += e.deltaY * -0.01;
+          const scale = zoom.scale + e.deltaY * -0.01;
+          // setZoom({...zoom,scale: Math.min(Math.max(1, scale), 4)})
+          setZoom((prev) => ({
+            ...prev,
+            scale: Math.min(Math.max(1, scale), 4),
+          }));
           // Restrict scale
-          scale = Math.min(Math.max(1, scale), 4);
           // scale = Math.min(Math.max(0.125, scale), 4);
-          console.log(scale);
           const img = imgRef?.current!;
-          img.style.scale = scale.toString();
-          // Apply scale transform
-          // const img = document.getElementsByTagName("img")[0];
-          // console.log(img);
-          // img.style.transform = `scale(${scale})`;
-          // console.log(e.currentTarget);
+          // img.style.scale = scale.toString();
+          // img.style.transform = `translate(0px,0px) scale(${zoom.scale})`;
+          // img.style.transform = `translate(0px,0px) , scale(${scale.toString()})`;
         }}
         // onclick="event.target==this && this.close()"
         onClick={(e) => {
-          // console.log(e.target);
           if (e.target === e.currentTarget) {
             e.currentTarget.close();
           }
@@ -41,6 +50,7 @@ export function ViewModal(props: {
         ref={viewRef}
       >
         <button
+          title="Close"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -53,7 +63,12 @@ export function ViewModal(props: {
           <FontAwesomeIcon icon={faClose} />
         </button>
         {/*eslint-disable-next-line @next/next/no-img-element */}
-        <img ref={imgRef} src={view.src} alt={view.name}></img>
+        <img
+          // style={{ transform: `translate(0px,0px) scale(${zoom.scale})` }}
+          ref={imgRef}
+          src={view.src}
+          alt={view.name}
+        ></img>
       </dialog>
     </>
   );

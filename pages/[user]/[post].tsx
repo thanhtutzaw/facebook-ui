@@ -106,7 +106,6 @@ export default function Page(props: {
         .replaceAll("<br><div>", "<br>")
     : "";
   useEffect(() => {
-    console.log(myPost.text);
     InputRef.current?.focus();
   }, []);
   useEffect(() => {
