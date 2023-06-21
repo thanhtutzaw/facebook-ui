@@ -15,10 +15,45 @@
     }
 }
 .dialog {
+    opacity: 0;
     user-select: none;
     border: 0;
     padding: 0;
     height: 100%;
+    .indicator {
+        > div {
+            position: absolute;
+            top: 0;
+            right: 0;
+            position: fixed;
+            right: 1rem;
+            top: 1rem;
+            z-index: 100;
+            z-index: 1000;
+            width: 150px;
+            height: 150px;
+            border: 1px solid white;
+        }
+        // position: fixed;
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        position: fixed;
+        right: 1rem;
+        top: 1rem;
+        z-index: 100;
+        // top: -242px;
+        // left: 425px;
+        // scale: 0.2;
+        // opacity: 0.5;
+        // transform: translate(0px, 0px) scale(1);
+        z-index: 1000;
+        width: 150px;
+        height: 150px;
+        // border: 18px solid wheat;
+        border: 1px solid white;
+    }
     .closeDialog {
         width: 40px;
         height: 40px;
@@ -49,6 +84,11 @@
     }
     &::backdrop {
         background-color: rgba(0, 0, 0, 0.5);
+        // animation: fadein 0.5s forwards;
+
+        // #modal.close::backdrop {
+        //     animation: fadeout 0.5s forwards;
+        // }
     }
 }
 .preview {

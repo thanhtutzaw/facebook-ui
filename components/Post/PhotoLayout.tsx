@@ -5,6 +5,7 @@ import { RefObject, useRef, useState } from "react";
 import { Post } from "../../types/interfaces";
 import s from "./Post.module.scss";
 import { ViewModal } from "./ViewModal";
+import { AnimatePresence } from "framer-motion";
 export default function PhotoLayout(props: {
   deleteFile?: Post["media"] | File[];
   files: Post["media"] | File[];
@@ -103,7 +104,7 @@ export default function PhotoLayout(props: {
               </div>
             ))}
         </div>
-        {view && <ViewModal setview={setview} view={view} viewRef={viewRef} />}
+        <ViewModal setview={setview} view={view} viewRef={viewRef} />
       </>
     );
   }
