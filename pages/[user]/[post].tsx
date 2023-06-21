@@ -1,19 +1,7 @@
 import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
-import {
-  collection,
-  collectionGroup,
-  getDocs,
-  orderBy,
-  query,
-} from "firebase/firestore";
-import {
-  deleteObject,
-  getDownloadURL,
-  ref,
-  uploadBytes,
-} from "firebase/storage";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
@@ -23,9 +11,10 @@ import Input from "../../components/Input";
 import MediaInput from "../../components/MediaInput";
 import PhotoLayout from "../../components/Post/PhotoLayout";
 import { Select } from "../../components/Post/Select";
-import { app, db, postToJSON, storage } from "../../lib/firebase";
+import { app, db, postToJSON } from "../../lib/firebase";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { updatePost } from "../../lib/firestore/post";
+import { deleteStorage, uploadMedia } from "../../lib/storage";
 import s from "../../styles/Home.module.scss";
 import { Media, Post, Props } from "../../types/interfaces";
 export const getServerSideProps: GetServerSideProps<Props> = async (
@@ -78,9 +67,6 @@ export default function Page(props: {
   const router = useRouter();
   const [visibility, setVisibility] = useState<string>(myPost.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
-
-  // const [value, setvalue] = useState("");
-  // const valueRef = useRef("");
   const [files, setFiles] = useState<Post["media"] | File[]>([
     ...(myPost.media ?? []),
   ]);
@@ -222,7 +208,6 @@ export default function Page(props: {
     setClient(true);
   }, []);
   const [loading, setLoading] = useState(false);
-  const storageRef = ref(storage);
   useEffect(() => {
     console.table(files);
   }, [files]);
@@ -261,107 +246,17 @@ export default function Page(props: {
                 return;
               setLoading(true);
               try {
-                const promises: Promise<Media | null>[] = [];
-                const Deletepromises: Promise<void>[] = [];
-                for (let i = 0; i < files?.length!; i++) {
-                  if (!files) return;
-                  const file: File = files[i] as File;
-                  if (file.lastModified) {
-                    const { name, type } = file;
-                    if (
-                      type === "image/jpeg" ||
-                      type === "image/jpg" ||
-                      type === "image/png" ||
-                      type === "image/gif" ||
-                      type === "video/mp4"
-                    ) {
-                      const fileRef = ref(
-                        storageRef,
-                        type !== "video/mp4"
-                          ? `images/${name}`
-                          : `videos/${name}`
-                      );
-                      const uploadPromise: Promise<Media | null> = uploadBytes(
-                        fileRef,
-                        file
-                      )
-                        .then(async (snapshot) => {
-                          const downloadURL = await getDownloadURL(
-                            snapshot.ref
-                          );
-                          const fileData = {
-                            name: name,
-                            url: downloadURL,
-                            type: type,
-                          };
-                          console.log(fileData);
-                          return fileData;
-                        })
-                        .catch((error) => {
-                          console.log("Error Uploading File:", error);
-                          return null;
-                        });
-                      console.log(uploadPromise);
-                      promises.push(uploadPromise);
-                    }
-                  }
-                }
-                for (let i = 0; i < deleteFile?.length!; i++) {
-                  if (!deleteFile) return;
-                  const file = deleteFile[i];
-                  const { url, type, name } = file;
-                  if (url && name) {
-                    if (!url) return;
-                    console.log(type);
-                    const fileRef = ref(
-                      storageRef,
-                      `${type === "video/mp4" ? "videos" : "images"}/${name}`
-                    );
-                    const deletePromise = deleteObject(fileRef)
-                      .then(() => {
-                        console.info(
-                          `%c ${deleteFile?.length} Media deleted successfully ✔️ `,
-                          "color: green"
-                        );
-                      })
-                      .catch((error) => {
-                        console.log(error);
-                        alert("Uh-oh, Deleting Media Failed !");
-                      });
-                    Deletepromises.push(deletePromise);
-                  }
-                }
-                // await Promise.all([promises, Deletepromises])
-                //   .then((uploadedFiles) => {
-                //     // media = uploadedFiles.filter(
-                //     //   (file) => file !== null
-                //     // );
-                //   })
-                //   .catch((error) => {});
-
-                // try {
-                //   const uploadedFiles = await Promise.all(promises);
-                //   newMedia = [
-                //     ...(files as Media[]),
-                //     ...(uploadedFiles.filter(
-                //       (file) => file !== null
-                //     ) as Media[]),
-                //   ].filter((file) => file?.url);
-                //   // await Promise.all(Deletepromises);
-                // } catch (error) {
-                //   console.log("Error uploading or deleting files:", error);
-                // }
                 try {
-                  const uploadedFiles = await Promise.all(promises);
+                  const uploadedFiles = await uploadMedia(files as File[]);
                   newMedia = [
                     ...(files as Media[]),
                     ...(uploadedFiles.filter(
                       (file) => file !== null
                     ) as Media[]),
                   ].filter((file) => file?.url);
-                  await Promise.all(Deletepromises);
+                  await deleteStorage(deleteFile!);
                 } catch (error) {
-                  console.log("Error uploading files:", error);
+                  console.log("Error uploading and Deleting files:", error);
                   return null;
                 }
                 await updatePost(
