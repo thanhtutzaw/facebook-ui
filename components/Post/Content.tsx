@@ -98,7 +98,17 @@ export default function Content(props: {
             }
           />
           <div>
-            <p>
+            <p
+              className={styles.name}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                // router.push(post.authorId?.toString());
+                router.push({
+                  pathname: `${authorId}`,
+                });
+              }}
+            >
               {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
                 ? "Peter 1"
                 : "Other User"}
