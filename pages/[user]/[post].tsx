@@ -5,7 +5,7 @@ import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
 import Input from "../../components/Input";
 import MediaInput from "../../components/MediaInput";
@@ -17,6 +17,7 @@ import { updatePost } from "../../lib/firestore/post";
 import { deleteStorage, uploadMedia } from "../../lib/storage";
 import s from "../../styles/Home.module.scss";
 import { Media, Post, Props } from "../../types/interfaces";
+import { PageContext, PageProps } from "../../context/PageContext";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -137,6 +138,13 @@ export default function Page(props: {
     // value,
     visibility,
   ]);
+  // useEffect(() => {
+  //   window.onpopstate = () => {
+  //     // alert("hey");
+  //     history.pushState(null, document.title, location.hash);
+  //   };
+  // }, []);
+  const { viewRef } = useContext(PageContext) as PageProps;
   useEffect(() => {
     // setvalue(
     //   InputRef.current?.innerHTML
@@ -153,7 +161,11 @@ export default function Page(props: {
     // );
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
-
+      // console.log("hey");
+      // if (viewRef && viewRef.current?.open) {
+      //   viewRef.current.close();
+      // }
+      // if (viewRef && viewRef.current?.open) return;
       if (
         as !== currentPath &&
         // value ===

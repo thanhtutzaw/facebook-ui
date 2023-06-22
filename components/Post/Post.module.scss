@@ -79,6 +79,8 @@
         height: 100%;
         margin: 0;
         transition: all 0.3s ease-in-out;
+        // transform-origin: 0px 0px;
+        // transition: ;
     }
     &:focus-visible {
         outline: 0;

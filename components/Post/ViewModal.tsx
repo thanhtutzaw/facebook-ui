@@ -1,20 +1,24 @@
 /* eslint-disable @next/next/no-img-element */
-import { RefObject, useEffect, useRef, useState } from "react";
-import s from "./Post.module.scss";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
-export function ViewModal(props: {
-  viewRef: RefObject<HTMLDialogElement>;
-  view: { src: string; name: string };
-}) {
-  const { viewRef, view } = props;
+import { useContext, useEffect, useRef, useState } from "react";
+import { PageContext, PageProps } from "../../context/PageContext";
+import s from "./Post.module.scss";
+export function ViewModal(props: { view: { src: string; name: string } }) {
+  const { view } = props;
+  const { viewRef } = useContext(PageContext) as PageProps;
+
   const [zoom, setZoom] = useState({ scale: 1 });
   const imgRef = useRef<HTMLImageElement>(null);
+  const [start, setstart] = useState({ x: 0, y: 0 });
+  // let pointX = 0,
+  //   pointY = 0;
+  const [point, setpoint] = useState({ x: 0, y: 0 });
   useEffect(() => {
     const img = imgRef?.current!;
-    img.style.transform = `translate(0px,0px) scale(${zoom.scale})`;
-  }, [zoom]);
+    // img.style.transform = `translate(${start.x}px,${start.y}px) scale(${zoom.scale})`;
+  }, [start.x, start.y, zoom]);
   const [visible, setVisible] = useState(false);
   const [hovered, sethovered] = useState(false);
   useEffect(() => {
@@ -22,6 +26,10 @@ export function ViewModal(props: {
 
     if (visible) {
       if (zoom.scale === 1) {
+        setpoint({
+          x: 0,
+          y: 0,
+        });
         setTimeout(() => {
           setVisible(false);
         }, 500);
@@ -46,10 +54,37 @@ export function ViewModal(props: {
       clearTimeout(timeoutId);
     };
   }, [hovered, visible, zoom.scale]);
-
+  const [canDrag, setcanDrag] = useState(false);
+  useEffect(() => {
+    console.log(canDrag);
+  }, [canDrag]);
+  const transform = `translate(${point.x}px,${point.y}px) scale(${zoom.scale})`;
   return (
     <>
       <motion.dialog
+        onPointerDown={(e) => {
+          if (zoom.scale === 1) return;
+          setcanDrag(true);
+          setstart((prev) => ({
+            ...prev,
+            x: e.clientX - point.x,
+            y: e.clientY - point.y,
+          }));
+          // setstart((prev) => ({ ...prev, x: e.clientX, y: e.clientY }));
+        }}
+        onPointerUp={() => {
+          // if (zoom.scale === 1) return;
+          if (canDrag) {
+            setcanDrag(false);
+          }
+          if (zoom.scale === 1) {
+            setpoint((prev) => ({
+              ...prev,
+              x: 0,
+              y: 0,
+            }));
+          }
+        }}
         onPointerEnter={() => {
           sethovered(true);
           setVisible(true);
@@ -57,24 +92,34 @@ export function ViewModal(props: {
             setVisible(false);
           }
         }}
-        onPointerMove={() => {
+        onPointerMove={(e) => {
+          if (canDrag) {
+            console.log("dragging");
+            setpoint((prev) => ({
+              ...prev,
+              x: e.clientX - start.x,
+              y: e.clientY - start.y,
+            }));
+            // pointX = e.clientX - start.x;
+            // pointY = e.clientY - start.y;
+          }
           if (!visible) {
             if (zoom.scale === 1) return;
             setVisible(true);
           }
         }}
-        // onPointerLeave={() => sethovered(false)}
+        onPointerLeave={() => sethovered(false)}
         initial={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
         animate={{
-          opacity: viewRef.current?.open ? 1 : 0,
+          opacity: viewRef?.current?.open ? 1 : 0,
         }}
         exit={{ opacity: 0 }}
         onClose={() => {
           setZoom({ scale: 1 });
         }}
         onDoubleClick={() => {
-          setVisible(true)
+          setVisible(true);
           setZoom({ scale: 4 });
           if (zoom.scale === 4) {
             setZoom({ scale: 1 });
@@ -83,12 +128,20 @@ export function ViewModal(props: {
         onWheel={(e) => {
           if (!visible) {
             setVisible(true);
+            setpoint({
+              x: 0,
+              y: 0,
+            });
           }
           const scale = zoom.scale + e.deltaY * -0.01;
           setZoom((prev) => ({
             ...prev,
             scale: Math.min(Math.max(1, scale), 4),
           }));
+          var xs = (e.clientX - point.x) / scale,
+            ys = (e.clientY - point.y) / scale;
+          point.x = e.clientX - xs * scale;
+          point.y = e.clientY - ys * scale;
         }}
         onClick={(e) => {
           if (e.target === e.currentTarget) {
@@ -127,7 +180,14 @@ export function ViewModal(props: {
                 style={{
                   transition: "all .3s ease-in",
                   transform: `scale(${1 / zoom.scale})`,
-                  // border: "2px solid var(--blue-origin)",
+                  // transform: `translate(${.5 / point.x}px,${
+                  //   .5 / point.y
+                  // }px) scale(${1 / zoom.scale})`,
+                  // transform: `scale(${1 - (zoom.scale - 1) * 0.2})`,
+                  // transform: `scale(${1 - (zoom.scale - 1) * 0..8})`,
+
+                  // transform: `scale(${1 - (zoom.scale * 0.1) / 3.5})`,
+                  // transform: `scale(${1 / zoom.scale})`,
                   border: "2px solid white",
                   // WebkitMaskImage: `url(${view.src})`,
                   // maskImage: `url(${view.src})`,
@@ -174,7 +234,20 @@ export function ViewModal(props: {
             )}
           </AnimatePresence>
           <img
-            style={{ position: "fixed", inset: "0", width: "100%" }}
+            draggable={!visible}
+            style={{
+              position: "fixed",
+              inset: "0",
+              width: "100%",
+              cursor: zoom.scale > 1 ? "move" : "initial",
+              transform: transform,
+              transition: canDrag ? "initial" : "all 0.3s ease-in-out",
+              // cursor: visible
+              //   ? zoom.scale < 4
+              //     ? "zoom-in"
+              //     : "zoom-out"
+              //   : "initial",
+            }}
             ref={imgRef}
             src={view.src}
             alt={view.name}

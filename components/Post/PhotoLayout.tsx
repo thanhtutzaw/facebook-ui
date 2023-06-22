@@ -1,11 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { RefObject, useRef, useState } from "react";
+import { RefObject, useContext, useEffect, useRef, useState } from "react";
 import { Post } from "../../types/interfaces";
 import s from "./Post.module.scss";
 import { ViewModal } from "./ViewModal";
 import { AnimatePresence } from "framer-motion";
+import { PageContext, PageProps } from "../../context/PageContext";
+import router from "next/router";
 export default function PhotoLayout(props: {
   deleteFile?: Post["media"] | File[];
   files: Post["media"] | File[];
@@ -32,7 +34,22 @@ export default function PhotoLayout(props: {
   const placeholder =
     "https://www.cvent-assets.com/brand-page-guestside-site/assets/images/venue-card-placeholder.png";
   const [view, setview] = useState({ src: "", name: "" });
-  const viewRef = useRef<HTMLDialogElement>(null);
+  const { viewRef } = useContext(PageContext) as PageProps;
+
+  // useEffect(() => {
+  //   window.onpopstate = () => {
+  //     history.pushState(null, document.title, location.hash);
+  //     // if (!viewRef.current?.open) return;
+  //     // viewRef.current.close();
+  //     // if (exitWithoutSaving) {
+  //     //   console.log("back (exit without save)");
+  //     //   // confirmModalRef.current?.close();
+  //     //   // confirmModalRef?.current.showModal();
+  //     // } else {
+  //     //   console.log("back (just close)");
+  //     // }
+  //   };
+  // }, [viewRef]);
   if (!preview) {
     return (
       <>
@@ -41,11 +58,13 @@ export default function PhotoLayout(props: {
             files.map((file: any, i: number) => (
               <div
                 onClick={() => {
+                  // window.location.href = `${i.toString()}`;
                   if (file.type === "video/mp4") return;
                   setview({
                     src: !file.url ? URL.createObjectURL(file) : file.url,
                     name: file.name,
                   });
+                  if (!viewRef) return;
                   viewRef.current?.showModal();
                 }}
                 key={i}
@@ -104,13 +123,13 @@ export default function PhotoLayout(props: {
               </div>
             ))}
         </div>
-        <ViewModal view={view} viewRef={viewRef} />
+        <ViewModal view={view} />
       </>
     );
   }
   const media = files as Post["media"];
-  if (!files || !media) return <></>;
 
+  if (!files || !media) return <></>;
   return (
     <div
       style={{
@@ -122,7 +141,8 @@ export default function PhotoLayout(props: {
           <div
             style={{
               // minHeight: files?.length !== 1 ? "initial" : "394px",
-              borderRight: files?.length > 1 ? "1px solid rgb(63 63 63)" : "0",
+              borderRight:
+                files?.length > 1 ? "1px solid rgb(173 173 173)" : "0",
               aspectRatio: files?.length <= 2 ? "initial" : "9/10",
               justifyContent: "center",
               // alignItems: "center",
@@ -174,7 +194,7 @@ export default function PhotoLayout(props: {
           {media[2] && (
             <div
               style={{
-                borderTop: "1px solid rgb(63 63 63)",
+                borderTop: "1px solid rgb(173 173 173)",
                 display: "flex",
                 position: "relative",
               }}
