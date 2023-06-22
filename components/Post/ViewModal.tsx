@@ -73,6 +73,13 @@ export function ViewModal(props: {
         onClose={() => {
           setZoom({ scale: 1 });
         }}
+        onDoubleClick={() => {
+          setVisible(true)
+          setZoom({ scale: 4 });
+          if (zoom.scale === 4) {
+            setZoom({ scale: 1 });
+          }
+        }}
         onWheel={(e) => {
           if (!visible) {
             setVisible(true);
