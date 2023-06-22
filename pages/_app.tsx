@@ -127,11 +127,15 @@ export default function App({
       <Head>
         <title>Facebook Next</title>
         <meta name="description" content="Facebook-Mobile-UI with Next.js" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no"
+        />
 
         <link rel="icon" href="/logo.svg" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <PageProvider  active={""} setActive={Function}>
+      <PageProvider active={""} setActive={Function}>
         <main>
           <Component {...pageProps} />
         </main>

@@ -122,6 +122,7 @@ export default function PhotoLayout(props: {
           <div
             style={{
               // minHeight: files?.length !== 1 ? "initial" : "394px",
+              borderRight: files?.length > 1 ? "1px solid rgb(63 63 63)" : "0",
               aspectRatio: files?.length <= 2 ? "initial" : "9/10",
               justifyContent: "center",
               // alignItems: "center",
@@ -173,6 +174,7 @@ export default function PhotoLayout(props: {
           {media[2] && (
             <div
               style={{
+                borderTop: "1px solid rgb(63 63 63)",
                 display: "flex",
                 position: "relative",
               }}
