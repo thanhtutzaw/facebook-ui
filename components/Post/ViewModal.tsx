@@ -63,7 +63,7 @@ export function ViewModal(props: {
             setVisible(true);
           }
         }}
-        onPointerLeave={() => sethovered(false)}
+        // onPointerLeave={() => sethovered(false)}
         initial={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
         animate={{
@@ -111,8 +111,24 @@ export function ViewModal(props: {
               <div
                 style={{
                   transition: "all .3s ease-in",
+                  // transform: `scale(${1 / zoom.scale})`,
+                  backgroundColor: "rgba(0 0 0/.35)",
+                }}
+              ></div>
+              <div
+                className={s.mask}
+                style={{
+                  transition: "all .3s ease-in",
                   transform: `scale(${1 / zoom.scale})`,
-                  border: "2px solid var(--blue-origin)",
+                  // border: "2px solid var(--blue-origin)",
+                  border: "2px solid white",
+                  // WebkitMaskImage: `url(${view.src})`,
+                  // maskImage: `url(${view.src})`,
+
+                  // clipPath: "inset(0)",
+                  // maskImage: `linear-gradient(transparent, transparent), url(${view.src})`,
+                  // maskSize: "cover",
+                  // maskRepeat: "no-repeat",
                 }}
               >
                 <img
