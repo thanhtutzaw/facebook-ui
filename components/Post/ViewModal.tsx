@@ -1,24 +1,20 @@
+/* eslint-disable @next/next/no-img-element */
 import { RefObject, useEffect, useRef, useState } from "react";
 import s from "./Post.module.scss";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
 export function ViewModal(props: {
-  setview: Function;
   viewRef: RefObject<HTMLDialogElement>;
   view: { src: string; name: string };
 }) {
-  const { setview, viewRef, view } = props;
-  // let scale = 1;
+  const { viewRef, view } = props;
   const [zoom, setZoom] = useState({ scale: 1 });
   const imgRef = useRef<HTMLImageElement>(null);
   useEffect(() => {
     const img = imgRef?.current!;
     img.style.transform = `translate(0px,0px) scale(${zoom.scale})`;
   }, [zoom]);
-  // useEffect(() => {
-
-  // }, [third])
   const [visible, setVisible] = useState(false);
   const [hovered, sethovered] = useState(false);
   useEffect(() => {
@@ -26,40 +22,50 @@ export function ViewModal(props: {
 
     if (visible) {
       if (zoom.scale === 1) {
-        setVisible(false);
+        setTimeout(() => {
+          setVisible(false);
+        }, 500);
       }
       if (hovered) {
         setVisible(true);
         if (zoom.scale === 1) {
-          setVisible(false);
+          setTimeout(() => {
+            setVisible(false);
+          }, 500);
         }
-        clearTimeout(timeoutId); // Cancel the timeout if the element is being hovered
+
+        clearTimeout(timeoutId);
         return;
       }
-
       timeoutId = setTimeout(() => {
         setVisible(false);
       }, 500);
     }
 
     return () => {
-      clearTimeout(timeoutId); // Cleanup the timeout on component unmount or when visible changes
+      clearTimeout(timeoutId);
     };
   }, [hovered, visible, zoom.scale]);
 
   return (
     <>
       <motion.dialog
-        onMouseEnter={() => {
+        onPointerEnter={() => {
           sethovered(true);
           setVisible(true);
           if (zoom.scale === 1) {
             setVisible(false);
           }
         }}
-        onMouseLeave={() => sethovered(false)}
+        onPointerMove={() => {
+          if (!visible) {
+            if (zoom.scale === 1) return;
+            setVisible(true);
+          }
+        }}
+        onPointerLeave={() => sethovered(false)}
         initial={{ opacity: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.2 }}
         animate={{
           opacity: viewRef.current?.open ? 1 : 0,
         }}
@@ -71,24 +77,12 @@ export function ViewModal(props: {
           if (!visible) {
             setVisible(true);
           }
-          // scale += e.deltaY * -0.01;
           const scale = zoom.scale + e.deltaY * -0.01;
-          // setZoom({...zoom,scale: Math.min(Math.max(1, scale), 4)})
           setZoom((prev) => ({
             ...prev,
             scale: Math.min(Math.max(1, scale), 4),
           }));
-          // if (zoom.scale === 1) {
-          //   setVisible(false);
-          // }
-          // Restrict scale
-          // scale = Math.min(Math.max(0.125, scale), 4);
-          const img = imgRef?.current!;
-          // img.style.scale = scale.toString();
-          // img.style.transform = `translate(0px,0px) scale(${zoom.scale})`;
-          // img.style.transform = `translate(0px,0px) , scale(${scale.toString()})`;
         }}
-        // onclick="event.target==this && this.close()"
         onClick={(e) => {
           if (e.target === e.currentTarget) {
             e.currentTarget.close();
@@ -109,7 +103,7 @@ export function ViewModal(props: {
               className={s.indicator}
             >
               <img
-                // style={{ position: "absolute", top: "0" }}
+                draggable={false}
                 // style={{ transform: `translate(0px,0px) scale(${zoom.scale})` }}
                 src={view.src}
                 alt={view.name}
@@ -117,18 +111,17 @@ export function ViewModal(props: {
               <div
                 style={{
                   transition: "all .3s ease-in",
-                  transform: `scale(${(1 / zoom.scale) * 1})`,
-                  border: "3px solid white",
+                  transform: `scale(${1 / zoom.scale})`,
+                  border: "2px solid var(--blue-origin)",
                 }}
               >
                 <img
+                  draggable={false}
                   className={s.indicator}
                   style={{
                     opacity: "0",
                   }}
-                  // style={{ position: "absolute", top: "0" }}
                   // style={{ transform: `translate(0px,0px) scale(${zoom.scale})` }}
-                  // ref={imgRef}
                   src={view.src}
                   alt={view.name}
                 ></img>
@@ -148,11 +141,6 @@ export function ViewModal(props: {
                   }}
                   exit={{ opacity: 0 }}
                   title="Close"
-                  // onClick={(e) => {
-                  //   e.preventDefault();
-                  //   e.stopPropagation();
-                  //   viewRef.current?.close();
-                  // }}
                   aria-label="Close Photo View modal"
                   tabIndex={-1}
                   className={s.closeDialog}
@@ -162,11 +150,8 @@ export function ViewModal(props: {
               </form>
             )}
           </AnimatePresence>
-
-          {/*eslint-disable-next-line @next/next/no-img-element */}
           <img
             style={{ position: "fixed", inset: "0", width: "100%" }}
-            // style={{ transform: `translate(0px,0px) scale(${zoom.scale})` }}
             ref={imgRef}
             src={view.src}
             alt={view.name}

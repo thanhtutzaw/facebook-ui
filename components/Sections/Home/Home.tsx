@@ -81,9 +81,10 @@ export function Home(props: Props) {
           title="Upload media"
           onClick={() => {
             router.push("addPost");
+            console.log(fileRef?.current);
             setTimeout(() => {
               fileRef?.current?.click();
-            }, 200);
+            }, 500);
           }}
           tabIndex={tabIndex}
           className={styles.addMedia}

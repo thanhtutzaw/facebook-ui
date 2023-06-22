@@ -104,7 +104,7 @@ export default function PhotoLayout(props: {
               </div>
             ))}
         </div>
-        <ViewModal setview={setview} view={view} viewRef={viewRef} />
+        <ViewModal view={view} viewRef={viewRef} />
       </>
     );
   }
