@@ -1,9 +1,10 @@
-import { useRef, useState, useEffect, ReactNode, RefObject } from "react";
+import { useRef, useState, ReactNode, RefObject } from "react";
 import { createContext } from "react";
 import { useActive } from "../hooks/useActiveTab";
-import { useRouter } from "next/router";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
 export interface PageProps {
+  uploadButtonClicked?: boolean;
+  setuploadButtonClicked?: Function;
   viewRef?: RefObject<HTMLDialogElement>;
   fileRef?: RefObject<HTMLInputElement>;
   active: string;
@@ -18,10 +19,12 @@ export function PageProvider(props: PageProps) {
   const { active, setActive } = useActive();
   const fileRef = useRef<HTMLInputElement>(null);
   const viewRef = useRef<HTMLDialogElement>(null);
-
+  const [uploadButtonClicked, setuploadButtonClicked] = useState(false);
   return (
     <PageContext.Provider
       value={{
+        uploadButtonClicked,
+        setuploadButtonClicked,
         viewRef,
         fileRef,
         active,

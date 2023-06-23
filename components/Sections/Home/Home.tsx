@@ -18,7 +18,7 @@ export function Home(props: Props) {
   const { tabIndex } = props;
   const router = useRouter();
   const { email, headerContainerRef } = useContext(AppContext) as Props;
-  const { fileRef } = useContext(PageContext) as PageProps;
+  const { setuploadButtonClicked } = useContext(PageContext) as PageProps;
   return (
     <div
       id="/"
@@ -81,10 +81,7 @@ export function Home(props: Props) {
           title="Upload media"
           onClick={() => {
             router.push("addPost");
-            console.log(fileRef?.current);
-            setTimeout(() => {
-              fileRef?.current?.click();
-            }, 500);
+            setuploadButtonClicked?.(true);
           }}
           tabIndex={tabIndex}
           className={styles.addMedia}

@@ -12,13 +12,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
   const [zoom, setZoom] = useState({ scale: 1 });
   const imgRef = useRef<HTMLImageElement>(null);
   const [start, setstart] = useState({ x: 0, y: 0 });
-  // let pointX = 0,
-  //   pointY = 0;
   const [point, setpoint] = useState({ x: 0, y: 0 });
-  // useEffect(() => {
-  //   const img = imgRef?.current!;
-  //   // img.style.transform = `translate(${start.x}px,${start.y}px) scale(${zoom.scale})`;
-  // }, [start.x, start.y, zoom]);
   const [visible, setVisible] = useState(false);
   const [hovered, sethovered] = useState(false);
   useEffect(() => {
@@ -106,7 +100,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
               y: e.clientY - start.y,
             }));
             // pointX = e.clientX - start.x;
-            // pointY = e.clientY - start.y;  
+            // pointY = e.clientY - start.y;
           }
           if (!visible) {
             if (zoom.scale === 1) return;

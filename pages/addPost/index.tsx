@@ -62,8 +62,6 @@ export default function AddPost() {
     };
   }, [files, router]);
   const auth = getAuth(app);
-  // const str = ;
-  // const replacedStr = str!;
   // const text = textRef.current?.innerHTML.replaceAll("<div>", "hello");
   // .replace(/<div>/g, "<br>")!
   const [originalStr, setOriginalStr] = useState("<h1>hi</h1><div></div>");
@@ -115,13 +113,24 @@ export default function AddPost() {
     //   "<br>"
     // );
     if (!textRef.current || textRef.current.textContent) return;
-    // console.log("aa " + updatedContent);
   };
-  // const [replace, setReplace] = useState("");
   const replace = useRef("");
-  const { fileRef } = useContext(PageContext) as PageProps;
+  const { fileRef, uploadButtonClicked, setuploadButtonClicked } = useContext(
+    PageContext
+  ) as PageProps;
   const dummyRef = useRef<HTMLDivElement>(null);
   const [fileLoading, setFileLoading] = useState(false);
+  useEffect(() => {
+    if (uploadButtonClicked) {
+      fileRef?.current?.click();
+      setuploadButtonClicked?.(false);
+    }
+  }, [fileRef, setuploadButtonClicked, uploadButtonClicked]);
+  // useEffect(() => {
+  //   if (router.query.uploadMedia) {
+  //     fileRef?.current?.click();
+  //   }
+  // }, [fileRef, router.query.uploadMedia]);
 
   return (
     <div
