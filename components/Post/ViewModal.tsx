@@ -15,10 +15,10 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
   // let pointX = 0,
   //   pointY = 0;
   const [point, setpoint] = useState({ x: 0, y: 0 });
-  useEffect(() => {
-    const img = imgRef?.current!;
-    // img.style.transform = `translate(${start.x}px,${start.y}px) scale(${zoom.scale})`;
-  }, [start.x, start.y, zoom]);
+  // useEffect(() => {
+  //   const img = imgRef?.current!;
+  //   // img.style.transform = `translate(${start.x}px,${start.y}px) scale(${zoom.scale})`;
+  // }, [start.x, start.y, zoom]);
   const [visible, setVisible] = useState(false);
   const [hovered, sethovered] = useState(false);
   useEffect(() => {
@@ -56,9 +56,15 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
   }, [hovered, visible, zoom.scale]);
   const [canDrag, setcanDrag] = useState(false);
   useEffect(() => {
-    console.log(canDrag);
+    const cancelDrag = () => {
+      if (!canDrag) return;
+      setcanDrag(false);
+    };
+    window.addEventListener("mouseup", cancelDrag);
+    return () => {
+      window.removeEventListener("mouseup", cancelDrag);
+    };
   }, [canDrag]);
-  const transform = `translate(${point.x}px,${point.y}px) scale(${zoom.scale})`;
   return (
     <>
       <motion.dialog
@@ -94,14 +100,13 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         }}
         onPointerMove={(e) => {
           if (canDrag) {
-            console.log("dragging");
             setpoint((prev) => ({
               ...prev,
               x: e.clientX - start.x,
               y: e.clientY - start.y,
             }));
             // pointX = e.clientX - start.x;
-            // pointY = e.clientY - start.y;
+            // pointY = e.clientY - start.y;  
           }
           if (!visible) {
             if (zoom.scale === 1) return;
@@ -144,9 +149,9 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           point.y = e.clientY - ys * scale;
         }}
         onClick={(e) => {
-          if (e.target === e.currentTarget) {
-            e.currentTarget.close();
-          }
+          // if (e.target === e.currentTarget) {
+          //   e.currentTarget.close();
+          // }
         }}
         className={s.dialog}
         ref={viewRef}
@@ -162,12 +167,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
               exit={{ opacity: 0 }}
               className={s.indicator}
             >
-              <img
-                draggable={false}
-                // style={{ transform: `translate(0px,0px) scale(${zoom.scale})` }}
-                src={view.src}
-                alt={view.name}
-              ></img>
+              <img draggable={false} src={view.src} alt={view.name}></img>
               <div
                 style={{
                   transition: "all .3s ease-in",
@@ -179,7 +179,9 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
                 className={s.mask}
                 style={{
                   transition: "all .3s ease-in",
-                  transform: `scale(${1 / zoom.scale})`,
+                  transform: `translate(${point.x}px,${point.y}px) scale(${
+                    1 / zoom.scale
+                  })`,
                   // transform: `translate(${.5 / point.x}px,${
                   //   .5 / point.y
                   // }px) scale(${1 / zoom.scale})`,
@@ -240,7 +242,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
               inset: "0",
               width: "100%",
               cursor: zoom.scale > 1 ? "move" : "initial",
-              transform: transform,
+              transform: `translate(${point.x}px,${point.y}px) scale(${zoom.scale})`,
               transition: canDrag ? "initial" : "all 0.3s ease-in-out",
               // cursor: visible
               //   ? zoom.scale < 4

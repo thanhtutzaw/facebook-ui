@@ -14,18 +14,31 @@
     }
 }
 .dialog {
+    touch-action: none;
     opacity: 0;
     user-select: none;
     border: 0;
     padding: 0;
     height: 100%;
+    // display: block;
+    // visibility: visible;
+    // pointer-events: initial;
+
     .indicator {
-        .mask {
-            // -webkit-mask-size: cover;
-            // mask-size: cover;
-            // -webkit-mask-image: url("https://cdn.glitch.com/04eadd2b-7dd4-43fc-af3d-cff948811986%2Fstar-mask-gradient.png?v=1597757011489");
-            // : url("https://cdn.glitch.com/04eadd2b-7dd4-43fc-af3d-cff948811986%2Fstar-mask-gradient.png?v=1597757011489");
+        display: none;
+        visibility: hidden;
+        pointer-events: none;
+        @include mouse() {
+            display: block;
+            visibility: visible;
+            pointer-events: initial;
         }
+        // .mask {
+        //     // -webkit-mask-size: cover;
+        //     // mask-size: cover;
+        //     // -webkit-mask-image: url("https://cdn.glitch.com/04eadd2b-7dd4-43fc-af3d-cff948811986%2Fstar-mask-gradient.png?v=1597757011489");
+        //     // : url("https://cdn.glitch.com/04eadd2b-7dd4-43fc-af3d-cff948811986%2Fstar-mask-gradient.png?v=1597757011489");
+        // }
         > div {
             position: absolute;
             top: 0;
