@@ -5,10 +5,11 @@ import { RefObject, useContext, useEffect, useRef, useState } from "react";
 import { Post } from "../../types/interfaces";
 import s from "./Post.module.scss";
 import { ViewModal } from "./ViewModal";
-import { AnimatePresence } from "framer-motion";
+
 import { PageContext, PageProps } from "../../context/PageContext";
-import router from "next/router";
+
 export default function PhotoLayout(props: {
+  margin?: boolean;
   deleteFile?: Post["media"] | File[];
   files: Post["media"] | File[];
   setFiles?: Function;
@@ -20,6 +21,7 @@ export default function PhotoLayout(props: {
   dummyRef?: RefObject<HTMLDivElement>;
 }) {
   const {
+    margin,
     deleteFile,
     setdeleteFile,
     files,
@@ -53,7 +55,10 @@ export default function PhotoLayout(props: {
   if (!preview) {
     return (
       <>
-        <div className={s.media}>
+        <div
+          className={s.media}
+          style={{ marginBottom: margin ? "65px" : "initial" }}
+        >
           {files &&
             files.map((file: any, i: number) => (
               <div

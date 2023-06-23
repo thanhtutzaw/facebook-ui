@@ -3,12 +3,12 @@ import {
   faShare,
   faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { Post as PostType, Props } from "../../types/interfaces";
 import Content from "./Content";
 import styles from "./Post.module.scss";
+import { Footer } from "./Footer";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 
 interface PostProps {
@@ -77,20 +77,10 @@ export default function Post({ active, post, tabIndex }: PostProps) {
         post={post}
       />
 
-      <div className={styles.action}>
-        <button tabIndex={tabIndex}>
-          <FontAwesomeIcon bounce={Bounce} icon={faThumbsUp} />
-          <p>Like</p>
-        </button>
-        <button tabIndex={tabIndex}>
-          <FontAwesomeIcon icon={faComment} bounce={Bounce} />
-          <p>Comment</p>
-        </button>
-        <button tabIndex={tabIndex}>
-          <FontAwesomeIcon icon={faShare} bounce={Bounce} />
-          <p>Share</p>
-        </button>
-      </div>
+      <Footer
+        tabIndex={tabIndex}
+        Bounce={Bounce}
+      />
     </div>
   );
 }
