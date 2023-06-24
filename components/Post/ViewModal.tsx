@@ -80,26 +80,10 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
       //   //   scale: d2,
       //   // }),
       // },
-      onWheelStart: (state) => {
-        // console.log(state);
-      },
-      onWheelEnd: (state) => {
-        // if (zoom.scale !== 1) return;
-        // api.start({
-        //   x: 0,
-        //   y: 0,
-        //   // immediate: down,
-        // }),
-        {
-          // axis: "y",
-          // bounds: { left: -500, right: 500, top: -500, bottom: 500 },
-          // rubberband: true,
-        }
-        // console.log(state);
-      },
+      onWheelStart: (state) => {},
+      onWheelEnd: (state) => {},
     },
     {
-      // target: imgRef,
       // ...sharedOptions,
       drag: {
         axis: zoom.scale === 1 ? "y" : undefined,
@@ -128,17 +112,6 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           x: 0,
           y: 0,
         });
-        // api.start({
-        //   x: 0,
-        //   y: 0,
-        // });
-        // api.stop();
-        // api.delete()
-
-        // setpoint({
-        //   x: 0,
-        //   y: 0,
-        // });
         setTimeout(() => {
           setVisible(false);
         }, 500);

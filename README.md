@@ -8,6 +8,7 @@ Project is created with:
 * Next.js v13.0.6 , Typescript and SASS
 * Google Sign-in , [Cloud Storage](https://firebase.google.com/docs/storage/web/start) and [Cloud Firestore](https://github.com/thanhtutzaw/todolist3/blob/main/README.md#nosql-document-database)
 * [Firebase-Admin-SDK](https://www.npmjs.com/package/firebase-admin) and [Nookies](https://www.npmjs.com/package/nookies)
+* [use-gesture](https://www.npmjs.com/package/@use-gesture/react) and [react-spring](https://www.npmjs.com/package/react-spring)
 * [Font-Awesome](https://fontawesome.com) and [nprogress](https://www.npmjs.com/package/nprogress)
 
 ## Features

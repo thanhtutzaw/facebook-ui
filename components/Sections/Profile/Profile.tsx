@@ -3,7 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useContext, useEffect, useRef, useState } from "react";
 // import { Props } from "../../../pages/index";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import {
+  Unsubscribe,
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { AppContext } from "../../../context/AppContext";
@@ -15,7 +21,7 @@ import s from "./Profile.module.scss";
 import { SortDropdown } from "./SortDropdown";
 export default function Profile() {
   const photoURL = "";
-  const { selectMode, myPost, email, sortedPost, setsortedPost } = useContext(
+  const { myPost, email, sortedPost, setsortedPost } = useContext(
     AppContext
   ) as Props;
   // const posts = [
@@ -29,8 +35,6 @@ export default function Profile() {
   //   },
   // ];
   const {
-    selectedId,
-    setSelectedId,
     uid,
     selectMode: active,
     setselectMode: setactive,
@@ -53,38 +57,33 @@ export default function Profile() {
   const [sort, setSort] = useState(false);
   const [sortby, setsortby] = useState("new");
   useEffect(() => {
-    if (!active) {
-      setSort(false);
-    }
     if (tab !== "profile" && !uid) return;
     setsortedPost?.(myPost);
+    let unsub: Unsubscribe;
     if (sortby === "old") {
       const mypostQuery = query(
         collection(db, `/users/${uid}/posts`),
         orderBy("createdAt", "asc")
       );
-      const unsub = onSnapshot(mypostQuery, (snapshot) => {
+      unsub = onSnapshot(mypostQuery, (snapshot) => {
         setsortedPost?.(snapshot.docs.map((doc) => postToJSON(doc)));
       });
       // const myPost = myPostSnap.docs.map((doc) => postToJSON(doc));
-      return () => {
-        unsub();
-        setsortby("new");
-      };
     }
-  }, [active, myPost, setsortedPost, sortby, tab, uid]);
+    return () => {
+      unsub;
+    };
+  }, [myPost, setsortedPost, sortby, tab, uid]);
+  useEffect(() => {
+    if (!active) {
+      setSort(false);
+    }
+  }, [active]);
 
-  const [loading, setLoading] = useState(false);
   return (
     <motion.div
       // transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-      // animate{{ : active ? 100 : 0 }}
       style={{ y: active ? -infoRef?.current?.clientHeight! : 0 }}
-      // style={{
-      //   transform: active
-      //     ? `translateY(-${infoRef?.current?.clientHeight}px)`
-      //     : "translateY(0px)",
-      // }}
       className={s.container}
     >
       <div ref={infoRef} className={`${s.info} ${active ? s.active : ""}`}>
@@ -112,6 +111,7 @@ export default function Profile() {
       <div style={{ position: "relative" }} className={s.myPost}>
         <h2 className={s.header}>
           <p>My Posts</p>
+
           <button
             aria-expanded={sort}
             onClick={() => {
