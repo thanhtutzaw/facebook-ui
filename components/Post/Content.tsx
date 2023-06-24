@@ -78,7 +78,7 @@ export default function Content(props: {
         }
       }}
     >
-      <div className={styles.header}>
+      {/* <div className={styles.header}>
         <div className={styles.authorInfo}>
           <Image
             priority={false}
@@ -180,7 +180,7 @@ export default function Content(props: {
             )}
           </>
         )}
-      </div>
+      </div> */}
 
       <Actions
         showAction={showAction ?? ""}
@@ -212,7 +212,7 @@ export default function Content(props: {
         {text}
       </div> */}
 
-      <div
+      {/* <div
         suppressHydrationWarning={true}
         role="textbox"
         contentEditable="false"
@@ -238,7 +238,7 @@ export default function Content(props: {
             console.log(showmore);
           }
         }}
-      />
+      /> */}
 
       {/* {text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")} */}
       {/* {text.match(/<br\s*[/]?>/gi)?.length} */}
@@ -254,7 +254,7 @@ export default function Content(props: {
       .replaceAll("<div>", "")
       .replaceAll("</div>", "")
       .replaceAll("&nbsp;", " ")} */}
-      <h1>{post.media?.length}</h1>
+      <h5>{post.media?.length}</h5>
       <li>{post.media?.[0]?.url}</li>
       <li>{post.media?.[1]?.url}</li>
       <li>{post.media?.[2]?.url}</li>
