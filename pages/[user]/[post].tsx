@@ -211,7 +211,6 @@ export default function Page(props: {
     myPost.media?.length,
     myPost.visibility,
     router,
-    // value,
     visibility,
   ]);
   const auth = getAuth(app);
@@ -220,9 +219,7 @@ export default function Page(props: {
     setClient(true);
   }, []);
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    console.table(files);
-  }, [files]);
+
   let newMedia: Post["media"] = [];
   return (
     <div className="user">

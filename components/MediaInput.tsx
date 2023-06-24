@@ -2,19 +2,15 @@ import { RefObject } from "react";
 import { setTimeout } from "timers";
 
 export default function MediaInput(props: {
-  setFileLoading?: Function;
   setFiles: Function;
   files: File[];
   fileRef: RefObject<HTMLInputElement>;
 }) {
-  const { setFileLoading, setFiles, files, fileRef } = props;
+  const { setFiles, files, fileRef } = props;
   return (
     <input
       multiple
       accept="image/*,video/mp4"
-      onClick={() => {
-        setFileLoading?.(true);
-      }}
       onChange={(e) => {
         const fileArray = Array.from(e.target.files ?? []);
         let valid = true;

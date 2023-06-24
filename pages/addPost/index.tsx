@@ -64,7 +64,6 @@ export default function AddPost() {
   const auth = getAuth(app);
   // const text = textRef.current?.innerHTML.replaceAll("<div>", "hello");
   // .replace(/<div>/g, "<br>")!
-  const [originalStr, setOriginalStr] = useState("<h1>hi</h1><div></div>");
   // const [replacedStr, setReplacedStr] = useState(originalStr);
   // const [replacedStr, setReplacedStr] = useState("<h1>u</h1>");
 
@@ -73,7 +72,6 @@ export default function AddPost() {
   //   const element = textRef.current;
   //   if (element) {
   //     const replacedHTML = element.innerHTML.replace(/<div>/g, "<br>");
-  //     setOriginalStr(replacedHTML);
   //   }
   // }, [originalStr]);
 
@@ -82,15 +80,12 @@ export default function AddPost() {
   }) => {
     if (!textRef.current) return;
     const inputValue = e.currentTarget?.innerHTML;
-    setOriginalStr(inputValue);
     // setText(inputValue.replace(/<div>/g, "<br>"));
     // setText(e.currentTarget.innerHTML.replace(/<div>/g, "<br>"));
     // setText(
     //   (prev) => prev + textRef.current?.innerHTML.replace(/<div>/g, "<br>")
     // );
-    // setOriginalStr((prev) => prev + textRef?.current?.innerHTML);
   };
-  const [content, setContent] = useState("");
 
   const handleContentChange = (e: { currentTarget: { innerHTML: string } }) => {
     // const selection = window.getSelection();
@@ -106,8 +101,6 @@ export default function AddPost() {
     //   /<div>/g,
     //   "<br>"
     // );
-    // setContent(content);
-    // setContent(updatedContent!);
     // const updatedContent = textRef?.current?.innerHTML.replace(
     //   /<div>/g,
     //   "<br>"
@@ -119,18 +112,12 @@ export default function AddPost() {
     PageContext
   ) as PageProps;
   const dummyRef = useRef<HTMLDivElement>(null);
-  const [fileLoading, setFileLoading] = useState(false);
   useEffect(() => {
     if (uploadButtonClicked) {
       fileRef?.current?.click();
       setuploadButtonClicked?.(false);
     }
   }, [fileRef, setuploadButtonClicked, uploadButtonClicked]);
-  // useEffect(() => {
-  //   if (router.query.uploadMedia) {
-  //     fileRef?.current?.click();
-  //   }
-  // }, [fileRef, router.query.uploadMedia]);
 
   return (
     <div
@@ -156,12 +143,11 @@ export default function AddPost() {
             const uid = auth.currentUser?.uid;
             if (!textRef.current || !uid) return;
             if (textRef.current.innerHTML === "" && files?.length == 0) return;
-            const text = textRef.current.innerHTML
-              // .replaceAll("</div><div>", "<br>")
-              .replaceAll("</div>", "")
-              .replace("<div>", "<br>")
-              .replaceAll("<div><br><div>", "<br>")
-              .replaceAll("<br><div>", "<br>");
+            // const text = textRef.current.innerHTML
+            //   .replaceAll("</div>", "")
+            //   .replace("<div>", "<br>")
+            //   .replaceAll("<div><br><div>", "<br>")
+            //   .replaceAll("<br><div>", "<br>");
             // .replace("</div>", "");
             // .replaceAll("<div><br>", "<br>")
             // .replaceAll("<br></div>", "<br>")
@@ -188,13 +174,12 @@ export default function AddPost() {
             //   .replaceAll("&nbsp;", " ");
 
             setLoading(true);
-            setContent(text);
             try {
               setLoading(true);
               window.document.body.style.cursor = "wait";
               const media = await uploadMedia(files as File[]);
-              console.log(replace.current);
-              console.log(textRef.current.innerHTML);
+              // console.log(replace.current);
+              // console.log(textRef.current.innerHTML);
               await addPost(uid, media, replace.current, visibility);
               router.replace("/", undefined, { scroll: false });
             } catch (error: any) {
@@ -231,7 +216,6 @@ export default function AddPost() {
             // selection.removeAllRanges();
             // selection.addRange(newRange);
             // setText((prevText) => prevText + "\n");
-            // setOriginalStr((prev) => prev.replace(/<div>/g, "<br>"));
           }
         }}
         onChange={(e) => {
@@ -244,7 +228,6 @@ export default function AddPost() {
           // selection.removeAllRanges();
           // selection.addRange(range);
           // console.log(e.currentTarget.innerHTML);
-          // setOriginalStr(e.currentTarget.innerHTML.replace(/<div>/g, "<br>"));
         }}
         onKeyUp={(e) => {
           // e.currentTarget.innerHTML = e.currentTarget.innerHTML
@@ -258,10 +241,6 @@ export default function AddPost() {
           //       `<a rel="nofollow" target="_blank" tabindex="0" href="${url}">${url}</a>`
           //   )
           //   .replace(/<\/?(?:span|p|div)[^>]*>/gi, "");
-          // setOriginalStr(e.currentTarget.innerHTML.replace(/<div>/g, "<br>"));
-          // setOriginalStr(e.currentTarget.innerHTML.replace(/<div>/g, "<br>"));
-          // console.log(e.currentTarget.innerHTML);
-          // setOriginalStr(e.currentTarget?.innerText);
           // handleInput(e);
           // text.replaceAll("<div><br></div>", "\n");
           // const element = textRef.current;
@@ -320,7 +299,6 @@ export default function AddPost() {
           <FontAwesomeIcon icon={faPhotoFilm} />
         </button>
         <MediaInput
-          setFileLoading={setFileLoading}
           setFiles={setFiles}
           files={files as File[]}
           fileRef={fileRef!}

@@ -1,19 +1,11 @@
 import { collectionGroup, getDocs } from "firebase/firestore";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
-import nookies from "nookies";
 import BackHeader from "../../components/Header/BackHeader";
 import { db } from "../../lib/firebase";
-import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
+import { getUserData } from "../../lib/firebaseAdmin";
 import s from "../../styles/Home.module.scss";
-import { Props } from "../../types/interfaces";
-export const getServerSideProps: GetServerSideProps = async (
-  context
-) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    const cookies = nookies.get(context);
-    const token = await verifyIdToken(cookies.token);
-    const { email, uid } = token;
     const allUsersQuery = collectionGroup(db, `users`);
     const allUsersSnap = await getDocs(allUsersQuery);
     const allUsers = allUsersSnap.docs.map((doc) => {
