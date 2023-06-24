@@ -150,7 +150,6 @@ export default function PhotoLayout(props: {
                 files?.length > 1 ? "1px solid rgb(173 173 173)" : "0",
               aspectRatio: files?.length <= 2 ? "initial" : "9/10",
               justifyContent: "center",
-              // alignItems: "center",
             }}
           >
             <img

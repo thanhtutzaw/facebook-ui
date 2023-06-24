@@ -255,6 +255,9 @@ export default function Content(props: {
       .replaceAll("</div>", "")
       .replaceAll("&nbsp;", " ")} */}
       <h1>{post.media?.length}</h1>
+      <li>{post.media?.[0]?.url}</li>
+      <li>{post.media?.[1]?.url}</li>
+      <li>{post.media?.[2]?.url}</li>
       <PhotoLayout files={post.media} preview />
     </span>
   );
