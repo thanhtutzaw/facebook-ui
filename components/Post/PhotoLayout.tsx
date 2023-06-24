@@ -135,95 +135,73 @@ export default function PhotoLayout(props: {
   const media = files as Post["media"];
 
   if (!files || !media) return <></>;
+  const m1 = media[0];
+  // const aspectRatio = myPost?.media?.length! <= 2 ? "initial" : "9/10";
   return (
-    <div
-      style={{
-        overflow: "hidden",
-      }}
-    >
-      <div className={s.preview}>
-        {media[0] && (
+    <div className={s.preview}>
+      {media[0] && (
+        <div
+          style={{
+            // minHeight: files?.length !== 1 ? "initial" : "394px",
+            borderRight: files?.length > 1 ? "1px solid rgb(173 173 173)" : "0",
+            // aspectRatio: "initial",
+            // aspectRatio: "9/10",
+            justifyContent: "center",
+            // aspectRatio: "9/10",
+            // aspectRatio: "initial",
+          }}
+        >
+          <img
+            // onError={(e) => {
+            //   const img = e.currentTarget;
+            //   img.src = placeholder;
+            //   img.alt = "Not Found !";
+            //   img.style.filter = "invert(1)";
+            //   img.style.minHeight = media.length === 2 ? "196px" : "394px";
+            // }}
+            src={media[0].url}
+            alt={media[0].name}
+          />
+        </div>
+      )}
+      <div>
+        {media[1] && (
+          <img
+            // onError={(e) => {
+            //   const img = e.currentTarget;
+            //   img.src = placeholder;
+            //   img.alt = "Not Found !";
+            //   img.style.filter = "invert(1)";
+            //   img.style.minHeight = "196px";
+            // }}
+            src={media[1].url}
+            alt={media[1].name}
+          />
+        )}
+        {media[2] && (
           <div
             style={{
-              // minHeight: files?.length !== 1 ? "initial" : "394px",
-              borderRight:
-                files?.length > 1 ? "1px solid rgb(173 173 173)" : "0",
-              aspectRatio: files?.length <= 2 ? "initial" : "9/10",
-              justifyContent: "center",
+              borderTop: "1px solid rgb(173 173 173)",
+              display: "flex",
+              position: "relative",
             }}
           >
             <img
-              onError={(e) => {
-                const img = e.currentTarget;
-                img.src = placeholder;
-                img.alt = "Not Found !";
-                img.style.filter = "invert(1)";
-                img.style.minHeight = media.length === 2 ? "196px" : "394px";
-              }}
               // onError={(e) => {
-              //   // e.stopPropagation();
-              //   const placeholder = "https://via.placeholder.com/350x388";
               //   const img = e.currentTarget;
-              //   console.log(e);
               //   img.src = placeholder;
               //   img.alt = "Not Found !";
+              //   img.style.filter = "invert(1)";
+              //   img.style.minHeight = "196px";
               // }}
-              style={{
-                maxWidth: "100%",
-                margin: "0 auto",
-              }}
-              src={media[0].url}
-              alt={media[0].name}
+              src={media[2].url}
+              alt={media[2].name}
             />
+            {files.length - 3 !== 0 && (
+              <h2 className={s.backDrop}>+{files.length - 3}</h2>
+            )}
           </div>
         )}
-        <div>
-          {media[1] && (
-            <img
-              onError={(e) => {
-                const img = e.currentTarget;
-                img.src = placeholder;
-                img.alt = "Not Found !";
-                img.style.filter = "invert(1)";
-                img.style.minHeight = "196px";
-              }}
-              style={{
-                maxWidth: "100%",
-                margin: "0 auto",
-              }}
-              src={media[1].url}
-              alt={media[1].name}
-            />
-          )}
-          {media[2] && (
-            <div
-              style={{
-                borderTop: "1px solid rgb(173 173 173)",
-                display: "flex",
-                position: "relative",
-              }}
-            >
-              <img
-                onError={(e) => {
-                  const img = e.currentTarget;
-                  img.src = placeholder;
-                  img.alt = "Not Found !";
-                  img.style.filter = "invert(1)";
-                  img.style.minHeight = "196px";
-                }}
-                style={{
-                  maxWidth: "100%",
-                  margin: "0 auto",
-                }}
-                src={media[2].url}
-                alt={media[2].name}
-              />
-              {files.length - 3 !== 0 && (
-                <h2 className={s.backDrop}>+{files.length - 3}</h2>
-              )}
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );

@@ -108,10 +108,15 @@
     justify-content: center;
     align-items: center;
     color: white;
+    overflow: hidden;
+
     img {
         display: flex;
         aspect-ratio: 16/9;
         object-fit: contain;
+        max-width: 100%;
+        margin: 0 auto;
+        // &:onl
     }
     & > div:first-child {
         min-width: 50%;
@@ -123,6 +128,9 @@
         display: flex;
         min-width: 50%;
         // aspect-ratio: 9/10;
+    }
+    & > div img:only-child {
+        aspect-ratio: 9/10;
     }
     & > div:not(:first-child) {
         overflow: hidden;
