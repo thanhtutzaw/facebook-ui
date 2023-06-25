@@ -24,7 +24,8 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
   }));
   const bind = useGesture(
     {
-      onDrag: ({ down, offset: [mx, my], movement: [m], cancel }) => {
+      onDrag: ({ down, touches, offset: [mx, my], movement: [m], cancel }) => {
+        if (touches > 1) return;
         if (zoom.scale === 1) {
           // setZoom({ scale: 5 });
           // api.start({
@@ -74,7 +75,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           // rubberband: true,
         }
       },
-      onPinch: ({ offset: [s, r] }) => {
+      onPinch: ({ offset: [s, r], cancel }) => {
         const img = imgRef.current!;
         img.style.transition = "initial";
         // console.log(state);
@@ -128,6 +129,11 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
       // wheel: wheelOptions,
       pinch: {
         target: imgRef,
+        from: () => [
+          zoom.scale === 1 ? 1 : zoom.scale,
+          zoom.scale === 1 ? 0 : y.get(),
+        ],
+        // from: () => (zoom.scale === 1 ? 0 : zoom.scale),
       },
     }
   );
