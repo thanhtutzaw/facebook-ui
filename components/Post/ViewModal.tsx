@@ -27,15 +27,15 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
   const bind = useGesture(
     {
       onDrag: ({ down, touches, offset: [mx, my], movement: [m], cancel }) => {
-        if (touches > 1 && zoom.scale === 1) return;
-        if (zoom.scale === 1) {
+        if (touches > 1 && scale.get() === 1) return;
+        if (scale.get() === 1) {
           // setZoom({ scale: 5 });
           // api.start({
           //   y: 100,
           //   immediate: down,
           // });
         }
-        // if (zoom.scale === 1) return;
+        // if (scale.get() === 1) return;
         // console.log({ mx, my, m });
         api.start({
           x: mx,
@@ -50,15 +50,16 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
       },
       onDragStart: (state) => {},
       onDragEnd: ({ down, offset: [mx, my] }) => {
-        const snap = my >= 300 || my <= -300;
+        const snap = my >= 150 || my <= -150;
         api.start({
-          x: my > 800 ? 0 : x.get(),
+          // x: my > 800 ? 0 : x.get(),
+          x: x.get(),
           y:
-            snap && zoom.scale === 1
+            snap && scale.get() === 1
               ? my < 0
                 ? -window.innerHeight - 500
                 : window.innerHeight + 500
-              : zoom.scale === 1
+              : scale.get() === 1
               ? 0
               : y.get(),
           // y: snap && zoom.scale === 1 ? 1000 : y.get(),
@@ -67,7 +68,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           immediate: down,
         }),
           setTimeout(() => {
-            if (!snap || zoom.scale > 1) return;
+            if (!snap || scale.get() > 1) return;
             // if (zoom.scale > 1) return;
             viewRef?.current?.close();
           }, 300);
@@ -88,28 +89,32 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         //   offset, // [scale, angle] offsets (starts withs scale=1)
         // } = state;
         // console.log(offset);
-        setZoom({
-          ...zoom,
-          // scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
-          scale: parseFloat(Math.min(Math.max(1, s), 4).toFixed(1)),
-          // scale: s,
+        api.start({
+          scale: Math.min(Math.max(1, s), 4),
+          // immediate: wheeling,
         });
+        // setZoom({
+        //   ...zoom,
+        //   // scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
+        //   scale: parseFloat(Math.min(Math.max(1, s), 4).toFixed(1)),
+        //   // scale: s,
+        // });
       },
       // onPinchStart: (state) => {
       //   console.log(state);
       // },
       onPinchEnd: ({ offset: [s, r] }) => {
-        const img = imgRef.current!;
+        // const img = imgRef.current!;
         // img.style.transition = "transform 0.3s ease-in-out";
         // setZoom({
         //   ...zoom,
         //   // scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
         //   scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
         // });
-        api.start({
-          scale: Math.min(Math.max(1, s), 4),
-          // immediate: wheeling,
-        });
+        // api.start({
+        //   scale: Math.min(Math.max(1, s), 4),
+        //   // immediate: wheeling,
+        // });
       },
 
       // onWheel: ({ down, offset: [d1, d2] }) => {
@@ -122,6 +127,9 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
       //   // }),
       // },
       onWheel: ({ wheeling, offset: [d1, d2] }) => {
+        if (scale.get() < 2) {
+          api.start({ x: 0, y: 0 });
+        }
         setVisible(true);
         // if (d2 > -100) return;
         // console.log(d2);
@@ -132,7 +140,11 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         });
       },
       onWheelStart: (state) => {},
-      onWheelEnd: (state) => {},
+      onWheelEnd: (state) => {
+        // if (scale.get() < 2) {
+        //   api.start({ x: 0, y: 0, scale: 1 });
+        // }
+      },
     },
     {
       // ...sharedOptions,
@@ -142,10 +154,10 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         // rubberband: true,
       },
       drag: {
-        axis: zoom.scale === 1 ? "y" : undefined,
+        axis: scale.get() === 1 ? "y" : undefined,
         from: () => [
-          zoom.scale === 1 ? 0 : x.get(),
-          zoom.scale === 1 ? 0 : y.get(),
+          scale.get() === 1 ? 0 : x.get(),
+          scale.get() === 1 ? 0 : y.get(),
         ],
         // rubberband: true,
       },
@@ -168,22 +180,23 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
   //       rubberband: true,
   //     };
   // });
+
   useEffect(() => {
     let timeoutId: string | number | NodeJS.Timeout | undefined;
 
     if (visible) {
       if (zoom.scale === 1 || scale.get() === 1) {
-        api.start({
-          x: 0,
-          y: 0,
-        });
+        // api.start({
+        //   x: 0,
+        //   y: 0,
+        // });
         setTimeout(() => {
           setVisible(false);
         }, 500);
       }
       if (hovered) {
         setVisible(true);
-        if (zoom.scale === 1) {
+        if (scale.get() === 1) {
           setTimeout(() => {
             setVisible(false);
           }, 500);
@@ -266,7 +279,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           //   x: 0,
           //   y: 0,
           // });
-          if (zoom.scale === 1) return;
+          if (scale.get() === 1) return;
           setcanDrag(true);
           setstart((prev) => ({
             ...prev,
@@ -276,15 +289,15 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           // setstart((prev) => ({ ...prev, x: e.clientX, y: e.clientY }));
         }}
         onPointerUp={() => {
-          if (zoom.scale > 1) return;
-          setTimeout(() => {
-            api.start({ x: 0, y: 0 });
-          }, 300);
-          // if (zoom.scale === 1) return;
+          if (scale.get() > 1) return;
+          // setTimeout(() => {
+          //   api.start({ x: 0, y: 0, scale: 1 });
+          // }, 300);
+          // if (scale.get() === 1) return;
           if (canDrag) {
             setcanDrag(false);
           }
-          if (zoom.scale === 1) {
+          if (scale.get() === 1) {
             // setpoint((prev) => ({
             //   ...prev,
             //   x: 0,
@@ -302,7 +315,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         onPointerEnter={() => {
           sethovered(true);
           setVisible(true);
-          if (zoom.scale === 1) {
+          if (scale.get() === 1) {
             setVisible(false);
           }
         }}
@@ -317,7 +330,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
             // pointY = e.clientY - start.y;
           }
           if (!visible) {
-            if (zoom.scale === 1) return;
+            if (scale.get() === 1) return;
             setVisible(true);
           }
         }}
@@ -335,9 +348,13 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         }}
         onDoubleClick={() => {
           setVisible(true);
-          setZoom({ scale: 4 });
-          if (zoom.scale === 4) {
-            setZoom({ scale: 1 });
+          // api.start({ scale: 4 });
+          // setZoom({ scale: 4 });
+          if (scale.get() === 4) {
+            // setZoom({ scale: 1 });
+            api.start({ scale: 1 });
+          } else {
+            api.start({ scale: 4 });
           }
         }}
         // onWheel={(e) => {
@@ -348,7 +365,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         //       y: 0,
         //     });
         //   }
-        //   const scale = zoom.scale + e.deltaY * -0.01;
+        //   const scale = scale.get() + e.deltaY * -0.01;
         //   setZoom((prev) => ({
         //     ...prev,
         //     scale: Math.min(Math.max(1, scale), 4),
@@ -387,7 +404,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
             zIndex: "1000",
           }}
         >
-          {zoom.scale}
+          {x.get()}
         </h1>
 
         <AnimatePresence>
