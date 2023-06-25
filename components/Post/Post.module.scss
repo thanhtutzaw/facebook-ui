@@ -109,15 +109,51 @@
     align-items: center;
     color: white;
     overflow: hidden;
-
+ >div:not(:first-child){
+    // border:4px solid red !important;
+        min-width: 50%;
+ }
     img {
         display: flex;
         aspect-ratio: 16/9;
         object-fit: contain;
+        object-fit: cover;
         max-width: 100%;
         margin: 0 auto;
         // &:onl
+
+        // &:first-child {
+        //     border: 4px solid red !important;
+        // }
     }
+    > div:not(:only-child) {
+        // border: 4px solid green !important;
+        aspect-ratio: 9/10;
+        // img {
+        //     aspect-ratio: 9/10;
+        // }
+        // &:nth-child(1){
+
+        // }
+    }
+    > div > img:only-child {
+        // &:nth-child(1){
+        // border: 4px solid green !important;
+
+        // }
+    }
+    // &img:not(:nth-child(1)) {
+    //     aspect-ratio: 9/10;
+    //     border: 4px solid red !important;
+    // }
+    // img:is(:last-child):not(:nth-child(1)) {
+    //     border: 4px solid red !important;
+    // }
+    // img:first-child:not(:last-child),
+    // img:first-child:not(:last-child) ~ img {
+    //     border: 4px solid red !important;
+    // }
+
     & > div:first-child {
         min-width: 50%;
         flex: 1 0 50%;
@@ -128,10 +164,13 @@
         display: flex;
         min-width: 50%;
         // aspect-ratio: 9/10;
+        img:only-child {
+            // aspect-ratio: 9/10;
+        }
     }
-    & > div img:only-child {
-        aspect-ratio: 9/10;
-    }
+    // & > div img:only-child {
+    //     aspect-ratio: 9/10;
+    // }
     & > div:not(:first-child) {
         overflow: hidden;
     }

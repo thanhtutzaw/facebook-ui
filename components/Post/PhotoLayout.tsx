@@ -143,9 +143,10 @@ export default function PhotoLayout(props: {
         <div
           style={{
             // minHeight: files?.length !== 1 ? "initial" : "394px",
-            borderRight: files?.length > 1 ? "1px solid rgb(173 173 173)" : "0",
+            borderRight: files?.length > 1 ? "1px solid rgb(209 209 209)" : "0",
+            // aspectRatio: myPost?.media?.length === 1 ? "initial" : "9/10",
             // aspectRatio: "initial",
-            // aspectRatio: "9/10",
+            // aspectRatio: media[1] ? "initial" : "9/10",
             justifyContent: "center",
             // aspectRatio: "9/10",
             // aspectRatio: "initial",
@@ -164,28 +165,9 @@ export default function PhotoLayout(props: {
           />
         </div>
       )}
-      <div>
-        {media[1] && (
-          <img
-            // onError={(e) => {
-            //   const img = e.currentTarget;
-            //   img.src = placeholder;
-            //   img.alt = "Not Found !";
-            //   img.style.filter = "invert(1)";
-            //   img.style.minHeight = "196px";
-            // }}
-            src={media[1].url}
-            alt={media[1].name}
-          />
-        )}
-        {media[2] && (
-          <div
-            style={{
-              borderTop: "1px solid rgb(173 173 173)",
-              display: "flex",
-              position: "relative",
-            }}
-          >
+      {media.length > 1 && (
+        <div>
+          {media[1] && (
             <img
               // onError={(e) => {
               //   const img = e.currentTarget;
@@ -194,15 +176,36 @@ export default function PhotoLayout(props: {
               //   img.style.filter = "invert(1)";
               //   img.style.minHeight = "196px";
               // }}
-              src={media[2].url}
-              alt={media[2].name}
+              src={media[1].url}
+              alt={media[1].name}
             />
-            {files.length - 3 !== 0 && (
-              <h2 className={s.backDrop}>+{files.length - 3}</h2>
-            )}
-          </div>
-        )}
-      </div>
+          )}
+          {media[2] && (
+            <div
+              style={{
+                borderTop: "1px solid rgb(209 209 209)",
+                display: "flex",
+                position: "relative",
+              }}
+            >
+              <img
+                // onError={(e) => {
+                //   const img = e.currentTarget;
+                //   img.src = placeholder;
+                //   img.alt = "Not Found !";
+                //   img.style.filter = "invert(1)";
+                //   img.style.minHeight = "196px";
+                // }}
+                src={media[2].url}
+                alt={media[2].name}
+              />
+              {files.length - 3 !== 0 && (
+                <h2 className={s.backDrop}>+{files.length - 3}</h2>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

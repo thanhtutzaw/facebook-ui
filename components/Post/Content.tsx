@@ -78,7 +78,7 @@ export default function Content(props: {
         }
       }}
     >
-      {/* <div className={styles.header}>
+      <div className={styles.header}>
         <div className={styles.authorInfo}>
           <Image
             priority={false}
@@ -180,7 +180,7 @@ export default function Content(props: {
             )}
           </>
         )}
-      </div> */}
+      </div>
 
       <Actions
         showAction={showAction ?? ""}

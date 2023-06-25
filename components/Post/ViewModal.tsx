@@ -57,6 +57,8 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
               ? my < 0
                 ? -window.innerHeight
                 : window.innerHeight
+              : zoom.scale === 1
+              ? 0
               : y.get(),
           // y: snap && zoom.scale === 1 ? 1000 : y.get(),
           // x: mx > 800 ? 0 : x.get(),
