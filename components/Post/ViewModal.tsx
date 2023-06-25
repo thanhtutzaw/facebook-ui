@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { a, useSpring } from "@react-spring/web";
+import { animated, useSpring } from "@react-spring/web";
 import { useGesture } from "@use-gesture/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -32,7 +32,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           //   immediate: down,
           // });
         }
-        if (zoom.scale === 1) return;
+        // if (zoom.scale === 1) return;
         console.log({ mx, my, m });
         api.start({
           x: mx,
@@ -48,18 +48,31 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
       onDragStart: (state) => {
         console.log(state);
       },
-      onDragEnd: ({ down }) => {
-        if (zoom.scale !== 1) return;
+      onDragEnd: ({ down, offset: [mx, my] }) => {
+        const snap = my >= 300 || my <= -300;
         api.start({
-          x: 0,
-          y: 0,
+          x: my > 800 ? 0 : x.get(),
+          y:
+            snap && zoom.scale === 1
+              ? my < 0
+                ? -window.innerHeight
+                : window.innerHeight
+              : y.get(),
+          // y: snap && zoom.scale === 1 ? 1000 : y.get(),
+          // x: mx > 800 ? 0 : x.get(),
+          // y: my > -800 ? 0 : x.get(),
           immediate: down,
         }),
-          {
-            // axis: "y",
-            // bounds: { left: -500, right: 500, top: -500, bottom: 500 },
-            // rubberband: true,
-          };
+          setTimeout(() => {
+            if (!snap || zoom.scale > 1) return;
+            // if (zoom.scale > 1) return;
+            viewRef?.current?.close();
+          }, 300);
+        {
+          // axis: "y",
+          // bounds: { left: -500, right: 500, top: -500, bottom: 500 },
+          // rubberband: true,
+        }
       },
       // onPinch: (state) => {
       //   console.log(state);
@@ -91,6 +104,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           zoom.scale === 1 ? 0 : x.get(),
           zoom.scale === 1 ? 0 : y.get(),
         ],
+        // rubberband: true,
       },
       // wheel: wheelOptions,
       // pinch: pinchOptions,
@@ -148,6 +162,15 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
     };
   }, [canDrag]);
   // useEffect(() => {
+  //   if (viewRef?.current?.open) {
+  //     api.update({
+  //       x: 0,
+  //       y: 0,
+  //     });
+  //   }
+  // }, [api, viewRef]);
+
+  // useEffect(() => {
   //   if (point.y < -400) {
   //     setTimeout(() => {
   //       viewRef?.current?.close();
@@ -187,6 +210,11 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
     <>
       <motion.dialog
         onPointerDown={(e) => {
+          // api.start(x,y)
+          // api.start({
+          //   x: 0,
+          //   y: 0,
+          // });
           if (zoom.scale === 1) return;
           setcanDrag(true);
           setstart((prev) => ({
@@ -197,6 +225,10 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           // setstart((prev) => ({ ...prev, x: e.clientX, y: e.clientY }));
         }}
         onPointerUp={() => {
+          if (zoom.scale > 1) return;
+          setTimeout(() => {
+            api.start({ x: 0, y: 0 });
+          }, 300);
           // if (zoom.scale === 1) return;
           if (canDrag) {
             setcanDrag(false);
@@ -263,9 +295,6 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
               x: 0,
               y: 0,
             });
-            // if (zoom.scale === 1) {
-            //   api.stop();
-            // }
           }
           const scale = zoom.scale + e.deltaY * -0.01;
           setZoom((prev) => ({
@@ -379,7 +408,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
               </form>
             )}
           </AnimatePresence>
-          <a.img
+          <animated.img
             {...bind()}
             // draggable={!visible}
             draggable={false}
@@ -388,25 +417,13 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
               position: "fixed",
               inset: "0",
               width: "100%",
-              cursor: zoom.scale > 1 ? "move" : "initial",
-              // left: x,
-              // top: y,
-              x,
-              y,
-              // top: zoom.scale === 1 ? "" : y,
-              // y: zoom.scale !== 1 ? "" : y,
+              // cursor: zoom.scale > 1 ? "move" : "initial",
+              left: x,
+              top: y,
+              // x,
+              // y,
               scale: zoom.scale,
-              // transition: canDrag ? "initial" : "transform 0.3s ease-in-out",
-              // left: point.x,
-              // left: zoom.scale > 1 ? point.x : 0,
-              // top: point.y,
-              // top: zoom.scale > 1 ? point.y : 0,
-              // transform: `scale(${scale})`,
-              // scale: zoom.scale,
-
-              // transform: `translate(${point.x}px,${point.y}px) scale(${zoom.scale})`,
-              // transition: canDrag ? "initial" : "scale 0.3s ease-in-out",
-              // transition: "initial",
+              transition: canDrag ? "initial" : "transform 0.3s ease-in-out",
               // cursor: visible
               //   ? zoom.scale < 4
               //     ? "zoom-in"
@@ -416,7 +433,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
             ref={imgRef}
             src={view.src}
             alt={view.name}
-          ></a.img>
+          ></animated.img>
         </div>
       </motion.dialog>
     </>
