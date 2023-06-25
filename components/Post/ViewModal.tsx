@@ -78,7 +78,8 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
       },
       onPinch: ({ offset: [s, r], cancel }) => {
         const img = imgRef.current!;
-        img.style.transition = "initial";
+        img.style.transition = "transform .3s ease-in";
+        // img.style.transition = "initial";
         // console.log(state);
         // const {
         //   da, // [d,a] absolute distance and angle of the two pointers
@@ -90,6 +91,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           ...zoom,
           // scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
           scale: parseFloat(Math.min(Math.max(1, s), 4).toFixed(1)),
+          // scale: s,
         });
       },
       // onPinchStart: (state) => {
@@ -316,38 +318,38 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
             setZoom({ scale: 1 });
           }
         }}
-        onWheel={(e) => {
-          if (!visible) {
-            setVisible(true);
-            setpoint({
-              x: 0,
-              y: 0,
-            });
-          }
-          const scale = zoom.scale + e.deltaY * -0.01;
-          setZoom((prev) => ({
-            ...prev,
-            scale: Math.min(Math.max(1, scale), 4),
-          }));
-          // api.start({
-          //   x: 0,
-          //   y: 0,
-          // });
-          // setZoom((prev) => ({
-          //   ...prev,
-          //   scale: Math.min(Math.max(1, scale), 4),
-          // }));
-          // scale :{} 5
-          // api.start({
-          //   scale: init(scale),
-          //   // scale: Number(scale) + e.deltaY * -0.01,
-          // });
+        // onWheel={(e) => {
+        //   if (!visible) {
+        //     setVisible(true);
+        //     setpoint({
+        //       x: 0,
+        //       y: 0,
+        //     });
+        //   }
+        //   const scale = zoom.scale + e.deltaY * -0.01;
+        //   setZoom((prev) => ({
+        //     ...prev,
+        //     scale: Math.min(Math.max(1, scale), 4),
+        //   }));
+        //   // api.start({
+        //   //   x: 0,
+        //   //   y: 0,
+        //   // });
+        //   // setZoom((prev) => ({
+        //   //   ...prev,
+        //   //   scale: Math.min(Math.max(1, scale), 4),
+        //   // }));
+        //   // scale :{} 5
+        //   // api.start({
+        //   //   scale: init(scale),
+        //   //   // scale: Number(scale) + e.deltaY * -0.01,
+        //   // });
 
-          // var xs = (e.clientX - point.x) / scale,
-          //   ys = (e.clientY - point.y) / scale;
-          // point.x = e.clientX - xs * scale;
-          // point.y = e.clientY - ys * scale;
-        }}
+        //   // var xs = (e.clientX - point.x) / scale,
+        //   //   ys = (e.clientY - point.y) / scale;
+        //   // point.x = e.clientX - xs * scale;
+        //   // point.y = e.clientY - ys * scale;
+        // }}
         onClick={(e) => {
           // if (e.target === e.currentTarget) {
           //   e.currentTarget.close();
