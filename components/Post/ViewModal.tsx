@@ -121,7 +121,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
       //   //   scale: d2,
       //   // }),
       // },
-      onWheel: ({ wheeling, down, offset: [d1, d2] }) => {
+      onWheel: ({ wheeling, offset: [d1, d2] }) => {
         setVisible(true);
         // if (d2 > -100) return;
         // console.log(d2);
