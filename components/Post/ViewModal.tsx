@@ -84,7 +84,10 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         //   offset, // [scale, angle] offsets (starts withs scale=1)
         // } = state;
         // console.log(offset);
-        setZoom({ ...zoom, scale: Math.min(Math.max(1, s), 4) });
+        setZoom({
+          ...zoom,
+          scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
+        });
       },
       // onPinchStart: (state) => {
       //   console.log(state);
