@@ -99,7 +99,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         setZoom({
           ...zoom,
           // scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
-          scale: s <= 1.99 ? 5 : Math.min(Math.max(1, s), 4),
+          scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
         });
       },
 
