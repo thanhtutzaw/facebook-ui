@@ -75,6 +75,8 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         }
       },
       onPinch: ({ offset: [s, r] }) => {
+        const img = imgRef.current!;
+        img.style.transition = "initial";
         // console.log(state);
         // const {
         //   da, // [d,a] absolute distance and angle of the two pointers
