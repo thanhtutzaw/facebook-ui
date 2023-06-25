@@ -25,7 +25,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
   const bind = useGesture(
     {
       onDrag: ({ down, touches, offset: [mx, my], movement: [m], cancel }) => {
-        if (touches > 1) return;
+        if (touches > 1 && zoom.scale === 1) return;
         if (zoom.scale === 1) {
           // setZoom({ scale: 5 });
           // api.start({
