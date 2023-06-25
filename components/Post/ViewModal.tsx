@@ -19,9 +19,10 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
   const [point, setpoint] = useState({ x: 0, y: 0 });
   const [visible, setVisible] = useState(false);
   const [hovered, sethovered] = useState(false);
-  const [{ x, y }, api] = useSpring(() => ({
+  const [{ x, y, scale }, api] = useSpring(() => ({
     x: 0,
     y: 0,
+    scale: 1,
   }));
   const bind = useGesture(
     {
@@ -99,11 +100,15 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
       // },
       onPinchEnd: ({ offset: [s, r] }) => {
         const img = imgRef.current!;
-        img.style.transition = "transform 0.3s ease-in-out";
-        setZoom({
-          ...zoom,
-          // scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
-          scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
+        // img.style.transition = "transform 0.3s ease-in-out";
+        // setZoom({
+        //   ...zoom,
+        //   // scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
+        //   scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
+        // });
+        api.start({
+          scale: Math.min(Math.max(1, s), 4),
+          // immediate: wheeling,
         });
       },
 
@@ -116,11 +121,26 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
       //   //   scale: d2,
       //   // }),
       // },
+      onWheel: ({ wheeling, down, offset: [d1, d2] }) => {
+        setVisible(true);
+        // if (d2 > -100) return;
+        // console.log(d2);
+        // setscalevalue((s) => d2);
+        api.start({
+          scale: Math.min(Math.max(1, scale.get() + d2 * -0.01), 4),
+          // immediate: wheeling,
+        });
+      },
       onWheelStart: (state) => {},
       onWheelEnd: (state) => {},
     },
     {
       // ...sharedOptions,
+      wheel: {
+        // axis: zoom.scale === 1 ? "y" : undefined,
+        from: () => [0, 0],
+        // rubberband: true,
+      },
       drag: {
         axis: zoom.scale === 1 ? "y" : undefined,
         from: () => [
@@ -133,8 +153,9 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
       pinch: {
         target: imgRef,
         from: () => [
-          zoom.scale === 1 ? 1 : zoom.scale,
-          zoom.scale === 1 ? 0 : y.get(),
+          0, 0,
+          // zoom.scale === 1 ? 1 : zoom.scale,
+          // zoom.scale === 1 ? 0 : y.get(),
         ],
         // from: () => (zoom.scale === 1 ? 0 : zoom.scale),
       },
@@ -151,7 +172,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
     let timeoutId: string | number | NodeJS.Timeout | undefined;
 
     if (visible) {
-      if (zoom.scale === 1) {
+      if (zoom.scale === 1 || scale.get() === 1) {
         api.start({
           x: 0,
           y: 0,
@@ -179,7 +200,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [api, hovered, visible, zoom.scale]);
+  }, [api, hovered, scale, visible, zoom.scale]);
   const [canDrag, setcanDrag] = useState(false);
   useEffect(() => {
     const cancelDrag = () => {
@@ -308,6 +329,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         }}
         exit={{ opacity: 0 }}
         onClose={() => {
+          api.start({ scale: 1 });
           setZoom({ scale: 1 });
           // setpoint({ x: 0, y: 0 });
         }}
@@ -461,10 +483,11 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
               // cursor: zoom.scale > 1 ? "move" : "initial",
               left: x,
               top: y,
+              scale,
               // x,
               // y,
-              scale: zoom.scale,
-              transition: canDrag ? "initial" : "transform 0.3s ease-in-out",
+              // scale: zoom.scale,
+              // transition: canDrag ? "initial" : "transform 0.3s ease-in-out",
               // cursor: visible
               //   ? zoom.scale < 4
               //     ? "zoom-in"
