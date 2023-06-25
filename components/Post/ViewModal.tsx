@@ -6,6 +6,7 @@ import { useGesture } from "@use-gesture/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useContext, useEffect, useRef, useState } from "react";
 import { setTimeout } from "timers";
+import Image from "next/image";
 import { PageContext, PageProps } from "../../context/PageContext";
 import s from "./Post.module.scss";
 export function ViewModal(props: { view: { src: string; name: string } }) {
@@ -54,8 +55,8 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           y:
             snap && zoom.scale === 1
               ? my < 0
-                ? -window.innerHeight
-                : window.innerHeight
+                ? -window.innerHeight - 500
+                : window.innerHeight + 500
               : zoom.scale === 1
               ? 0
               : y.get(),
@@ -88,7 +89,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         setZoom({
           ...zoom,
           // scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
-          scale: Math.min(Math.max(1, s), 4),
+          scale: parseFloat(Math.min(Math.max(1, s), 4).toFixed(1)),
         });
       },
       // onPinchStart: (state) => {
@@ -445,7 +446,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
               </form>
             )}
           </AnimatePresence>
-          <animated.img
+          <animated.div
             {...bind()}
             // draggable={!visible}
             draggable={false}
@@ -454,6 +455,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
               position: "fixed",
               inset: "0",
               width: "100%",
+              height: "100%",
               // cursor: zoom.scale > 1 ? "move" : "initial",
               left: x,
               top: y,
@@ -468,9 +470,31 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
               //   : "initial",
             }}
             ref={imgRef}
-            src={view.src}
-            alt={view.name}
-          ></animated.img>
+          >
+            <Image
+              // draggable={!visible}
+              draggable={false}
+              style={{
+                touchAction: "none",
+                // position: "fixed",
+                // inset: "0",
+                // width: "100%",
+                // cursor: zoom.scale > 1 ? "move" : "initial",
+                // x,
+                // y,
+                // scale: zoom.scale,
+                // transition: canDrag ? "initial" : "transform 0.3s ease-in-out",
+                // cursor: visible
+                //   ? zoom.scale < 4
+                //     ? "zoom-in"
+                //     : "zoom-out"
+                //   : "initial",
+              }}
+              fill
+              src={view.src}
+              alt={view.name}
+            ></Image>
+          </animated.div>
         </div>
       </motion.dialog>
     </>
