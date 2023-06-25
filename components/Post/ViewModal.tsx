@@ -33,7 +33,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           // });
         }
         // if (zoom.scale === 1) return;
-        console.log({ mx, my, m });
+        // console.log({ mx, my, m });
         api.start({
           x: mx,
           y: my,
@@ -45,9 +45,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
             // rubberband: true,
           };
       },
-      onDragStart: (state) => {
-        console.log(state);
-      },
+      onDragStart: (state) => {},
       onDragEnd: ({ down, offset: [mx, my] }) => {
         const snap = my >= 300 || my <= -300;
         api.start({
@@ -76,9 +74,16 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           // rubberband: true,
         }
       },
-      // onPinch: (state) => {
-      //   console.log(state);
-      // },
+      onPinch: ({ offset: [s, r] }) => {
+        // console.log(state);
+        // const {
+        //   da, // [d,a] absolute distance and angle of the two pointers
+        //   origin, // coordinates of the center between the two touch event
+        //   offset, // [scale, angle] offsets (starts withs scale=1)
+        // } = state;
+        // console.log(offset);
+        setZoom({ ...zoom, scale: Math.min(Math.max(1, s), 4) });
+      },
       // onPinchStart: (state) => {
       //   console.log(state);
       // },
@@ -109,7 +114,9 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         // rubberband: true,
       },
       // wheel: wheelOptions,
-      // pinch: pinchOptions,
+      pinch: {
+        target: imgRef,
+      },
     }
   );
   // const bind = useDrag(({ down, movement: [mx, my] }) => {
@@ -330,6 +337,16 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         className={s.dialog}
         ref={viewRef}
       >
+        <h1
+          style={{
+            color: "var(--blue-origin)",
+            position: "fixed",
+            zIndex: "1000",
+          }}
+        >
+          {zoom.scale}
+        </h1>
+
         <AnimatePresence>
           {visible && (
             <motion.div

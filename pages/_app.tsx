@@ -136,7 +136,13 @@ export default function App({
         <link rel="manifest" href="/manifest.json" />
       </Head>
       <PageProvider active={""} setActive={Function}>
-        <main>
+        <main
+          style={
+            {
+              // overflow: "hidden",
+            }
+          }
+        >
           <Component {...pageProps} />
         </main>
       </PageProvider>

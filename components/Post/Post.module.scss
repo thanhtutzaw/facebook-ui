@@ -66,7 +66,6 @@
         right: 1rem;
         top: 1rem;
         z-index: 100;
-        // transform: translate(0px, 0px) scale(1);
         z-index: 1000;
         width: 150px;
         height: 150px;
@@ -92,8 +91,6 @@
         height: 100%;
         margin: 0;
         // transition: all 0.3s ease-in-out;
-        // transform-origin: 0px 0px;
-        // transition: ;
     }
     &:focus-visible {
         outline: 0;
@@ -110,7 +107,6 @@
     color: white;
     overflow: hidden;
     > div:not(:first-child) {
-        // border:4px solid red !important;
         min-width: 50%;
         // min-height: 196px;
     }
@@ -118,31 +114,12 @@
         display: flex;
         aspect-ratio: 16/9;
         object-fit: contain;
-        // border: 4px solid orangered;
         // object-fit: cover;
         max-width: 100%;
         margin: 0 auto;
-        // &:onl
-
-        // &:first-child {
-        //     border: 4px solid red !important;
-        // }
     }
     > div:not(:only-child) {
-        // border: 4px solid green !important;
         aspect-ratio: 9/10;
-        // img {
-        //     aspect-ratio: 9/10;
-        // }
-        // &:nth-child(1){
-
-        // }
-    }
-    > div > img:only-child {
-        // &:nth-child(1){
-        // border: 4px solid green !important;
-
-        // }
     }
     // &img:not(:nth-child(1)) {
     //     aspect-ratio: 9/10;
@@ -166,9 +143,6 @@
         display: flex;
         min-width: 50%;
         // aspect-ratio: 9/10;
-        img:only-child {
-            // aspect-ratio: 9/10;
-        }
     }
     // & > div img:only-child {
     //     aspect-ratio: 9/10;
@@ -387,7 +361,7 @@
 }
 
 .action {
-        border-bottom: 1px solid rgb(235, 235, 235);
+    border-bottom: 1px solid rgb(235, 235, 235);
     display: flex;
     svg {
         font-size: 18px;

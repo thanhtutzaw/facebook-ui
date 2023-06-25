@@ -25,16 +25,18 @@ export function Home(props: Props) {
       className={styles.home}
       onScroll={(e) => {
         const home = document.getElementById("/");
+        // const nav = document.getElementsByTagName("nav")[0];
 
         const header = headerContainerRef?.current;
         if (!header) return;
         if (!home) return;
         // if (e.currentTarget.scrollTop >= 39) {
         // }
+        // nav.style.position = "sticky";
+
         if (e.currentTarget.scrollTop >= 60) {
           // console.log(home);
           // home.style.paddingTop = "55px";
-
           header.style.transform = "translateY(-60px)";
           header.style.height = "60px";
         } else {
@@ -48,7 +50,7 @@ export function Home(props: Props) {
       <div className={styles.postAction}>
         <Image
           className={styles.profile}
-          alt={"add post"}
+          alt={"profile picture"}
           width={200}
           height={170}
           style={{ width: "40px", height: "40px" }}
@@ -60,12 +62,12 @@ export function Home(props: Props) {
           }
         />
         <input
+          aria-label="Go to Add Post page"
           readOnly
           onFocus={(e) => {
             e.target.addEventListener("keydown", (event: KeyboardEvent) => {
               console.log("keydown");
               if (event.key === "Enter") {
-                console.log("enter");
                 e.target?.click();
               }
             });
