@@ -78,7 +78,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
       },
       onPinch: ({ offset: [s, r], cancel }) => {
         const img = imgRef.current!;
-        img.style.transition = "transform .3s ease-in";
+        img.style.transition = "transform .1s ease-in-out";
         // img.style.transition = "initial";
         // console.log(state);
         // const {
