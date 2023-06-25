@@ -258,6 +258,7 @@ export default function Content(props: {
       <li>{post.media?.[0]?.url}</li>
       <li>{post.media?.[1]?.url}</li>
       <li>{post.media?.[2]?.url}</li> */}
+      {/* <h5>{post.media?.length}</h5> */}
       <PhotoLayout files={post.media} preview />
     </span>
   );

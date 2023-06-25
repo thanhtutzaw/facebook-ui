@@ -7,6 +7,7 @@ import s from "./Post.module.scss";
 import { ViewModal } from "./ViewModal";
 
 import { PageContext, PageProps } from "../../context/PageContext";
+import Image from "next/image";
 
 export default function PhotoLayout(props: {
   margin?: boolean;
@@ -78,7 +79,28 @@ export default function PhotoLayout(props: {
                 {file.type === "video/mp4" ? (
                   <video controls src={URL.createObjectURL(file)} />
                 ) : (
-                  <img
+                  // <img
+                  //   onError={(e) => {
+                  //     const img = e.currentTarget;
+                  //     img.src = placeholder;
+                  //     img.alt = "Not Found !";
+                  //     img.style.filter = "invert(1)";
+                  //     img.style.minHeight = "394px";
+                  //   }}
+                  //   alt={file.name}
+                  //   src={
+                  //     !file.url ? URL.createObjectURL(file) : file.url
+                  //     // Array.isArray(files) &&
+                  //     // files.every((file) => file instanceof File)
+                  //     //   ? URL.createObjectURL(file)
+                  //     //   : file.url
+                  //   }
+                  // />
+                  <Image
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    width={700}
+                    height={394}
+                    priority
                     onError={(e) => {
                       const img = e.currentTarget;
                       img.src = placeholder;
@@ -94,6 +116,7 @@ export default function PhotoLayout(props: {
                       //   ? URL.createObjectURL(file)
                       //   : file.url
                     }
+                    style={{ objectFit: "contain", height: "auto" }}
                   />
                 )}
                 {edit && myPost?.authorId === uid && (
@@ -138,21 +161,38 @@ export default function PhotoLayout(props: {
   const m1 = media[0];
   // const aspectRatio = myPost?.media?.length! <= 2 ? "initial" : "9/10";
   return (
-    <div className={s.preview}>
+    <div className={s.preview} style={{ objectFit: "contain" }}>
       {media[0] && (
         <div
           style={{
             // minHeight: files?.length !== 1 ? "initial" : "394px",
-            borderRight: files?.length > 1 ? "1px solid rgb(209 209 209)" : "0",
             // aspectRatio: myPost?.media?.length === 1 ? "initial" : "9/10",
             // aspectRatio: "initial",
             // aspectRatio: media[1] ? "initial" : "9/10",
             justifyContent: "center",
             // aspectRatio: "9/10",
             // aspectRatio: "initial",
+            // position: "relative",
+            borderRight: files?.length > 1 ? "1px solid rgb(209 209 209)" : "0",
           }}
         >
-          <img
+          <Image
+            priority
+            // onError={(e) => {
+            //   const img = e.currentTarget;
+            //   img.src = placeholder;
+            //   img.alt = "Not Found !";
+            //   img.style.filter = "invert(1)";
+            //   img.style.minHeight = media.length === 2 ? "196px" : "394px";
+            // }}
+            width={700}
+            height={394}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            src={media[0].url}
+            alt={media[0].name}
+            style={{ objectFit: "contain", height: "auto" }}
+          />
+          {/* <img
             // onError={(e) => {
             //   const img = e.currentTarget;
             //   img.src = placeholder;
@@ -162,23 +202,40 @@ export default function PhotoLayout(props: {
             // }}
             src={media[0].url}
             alt={media[0].name}
-          />
+            style={{ objectFit: "contain" }}
+          /> */}
         </div>
       )}
       {media.length > 1 && (
         <div>
           {media[1] && (
-            <img
+            <Image
+              priority
               // onError={(e) => {
               //   const img = e.currentTarget;
               //   img.src = placeholder;
               //   img.alt = "Not Found !";
               //   img.style.filter = "invert(1)";
-              //   img.style.minHeight = "196px";
+              //   img.style.minHeight = media.length === 2 ? "196px" : "394px";
               // }}
+              width={700}
+              height={394}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               src={media[1].url}
               alt={media[1].name}
+              style={{ objectFit: "contain", height: "auto", width: "auto" }}
             />
+            // <img
+            //   // onError={(e) => {
+            //   //   const img = e.currentTarget;
+            //   //   img.src = placeholder;
+            //   //   img.alt = "Not Found !";
+            //   //   img.style.filter = "invert(1)";
+            //   //   img.style.minHeight = "196px";
+            //   // }}
+            //   src={media[1].url}
+            //   alt={media[1].name}
+            // />
           )}
           {media[2] && (
             <div
@@ -188,7 +245,25 @@ export default function PhotoLayout(props: {
                 position: "relative",
               }}
             >
-              <img
+              <Image
+                priority
+                // onError={(e) => {
+                //   const img = e.currentTarget;
+                //   img.src = placeholder;
+                //   img.alt = "Not Found !";
+                //   img.style.filter = "invert(1)";
+                //   img.style.minHeight = media.length === 2 ? "196px" : "394px";
+                // }}
+                // width={700}
+                width={700}
+                height={394}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                // height={394}
+                src={media[2].url}
+                alt={media[2].name}
+                style={{ objectFit: "contain", height: "100%" }}
+              />
+              {/* <img
                 // onError={(e) => {
                 //   const img = e.currentTarget;
                 //   img.src = placeholder;
@@ -198,7 +273,7 @@ export default function PhotoLayout(props: {
                 // }}
                 src={media[2].url}
                 alt={media[2].name}
-              />
+              /> */}
               {files.length - 3 !== 0 && (
                 <h2 className={s.backDrop}>+{files.length - 3}</h2>
               )}
