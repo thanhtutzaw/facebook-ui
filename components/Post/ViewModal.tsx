@@ -86,15 +86,22 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         // console.log(offset);
         setZoom({
           ...zoom,
-          scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
+          // scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
+          scale: Math.min(Math.max(1, s), 4),
         });
       },
       // onPinchStart: (state) => {
       //   console.log(state);
       // },
-      // onPinchEnd: (state) => {
-      //   console.log(state);
-      // },
+      onPinchEnd: ({ offset: [s, r] }) => {
+        const img = imgRef.current!;
+        img.style.transition = "transform 0.3s ease-in-out";
+        setZoom({
+          ...zoom,
+          // scale: s <= 1.99 ? 1 : Math.min(Math.max(1, s), 4),
+          scale: s <= 1.99 ? 5 : Math.min(Math.max(1, s), 4),
+        });
+      },
 
       // onWheel: ({ down, offset: [d1, d2] }) => {
       //   setVisible(true);
