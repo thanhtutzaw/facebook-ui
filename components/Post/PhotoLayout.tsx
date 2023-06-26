@@ -152,6 +152,7 @@ export default function PhotoLayout(props: {
             ))}
         </div>
         <ViewModal view={view} />
+        {/* {view.src !== "" && <ViewModal view={view} />} */}
       </>
     );
   }

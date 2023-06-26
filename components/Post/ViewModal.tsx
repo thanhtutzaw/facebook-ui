@@ -4,9 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { animated, useSpring } from "@react-spring/web";
 import { useGesture } from "@use-gesture/react";
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import { useContext, useEffect, useRef, useState } from "react";
 import { setTimeout } from "timers";
-import Image from "next/image";
 import { PageContext, PageProps } from "../../context/PageContext";
 import s from "./Post.module.scss";
 export function ViewModal(props: { view: { src: string; name: string } }) {
@@ -51,18 +51,17 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
       onDragStart: (state) => {},
       onDragEnd: ({ down, offset: [mx, my] }) => {
         const snap = my >= 150 || my <= -150;
+        if (scale.get() > 1) return;
         api.start({
           // x: my > 800 ? 0 : x.get(),
           x: x.get(),
-          y:
-            snap && scale.get() === 1
-              ? my < 0
-                ? -window.innerHeight - 500
-                : window.innerHeight + 500
-              : scale.get() === 1
-              ? 0
-              : y.get(),
-          // y: snap && zoom.scale === 1 ? 1000 : y.get(),
+          y: snap
+            ? my < 0
+              ? -window.innerHeight - 500
+              : window.innerHeight + 500
+            : scale.get() === 1
+            ? 0
+            : y.get(),
           // x: mx > 800 ? 0 : x.get(),
           // y: my > -800 ? 0 : x.get(),
           immediate: down,
@@ -72,11 +71,10 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
             // if (zoom.scale > 1) return;
             viewRef?.current?.close();
           }, 300);
-        {
-          // axis: "y",
-          // bounds: { left: -500, right: 500, top: -500, bottom: 500 },
-          // rubberband: true,
-        }
+        // {
+        //   // axis: "y",
+        //   // rubberband: true,
+        // }
       },
       onPinch: ({ offset: [s, r], cancel }) => {
         const img = imgRef.current!;
@@ -116,7 +114,44 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         //   // immediate: wheeling,
         // });
       },
+      onDoubleClick: ({ down, event }) => {
+        // const scaleFactor = 1.1 ** -dy;
+        // const newScale = Math.min(Math.max(scale.get() * scaleFactor, 1), 4);
+        // const deltaX = (d1 - x.get()) * (1 - scaleFactor);
+        // const deltaY = (d2 - y.get()) * (1 - scaleFactor);
+        const target = imgRef?.current!;
+        const { left, top } = target.getBoundingClientRect();
+        const [clientX, clientY] = [event.clientX - left, event.clientY - top];
 
+        const newX = event.clientX - window.innerWidth / 2;
+        const newY = event.clientY - window.innerHeight / 2;
+        // const newX =
+        //   clientX - ((clientX - x.get()) / scale.get()) * scale.get();
+        // const newY =
+        //   clientY - ((clientY - y.get()) / scale.get()) * scale.get();
+        // setVisible(true);
+        const newScale = scale.get() >= 4 ? 1 : 4;
+        const offsetX =
+          (event.clientX - window.innerWidth / 2) * (1 - newScale);
+        const offsetY =
+          (event.clientY - window.innerHeight / 2) * (1 - newScale);
+
+        api.start({
+          x: parseInt(Math.floor(offsetX).toFixed(1)),
+          y: parseInt(Math.floor(offsetY).toFixed(1)),
+          scale: newScale,
+        });
+        // if (scale.get() >= 4) {
+        //   api.start({ scale: 1, x: 0, y: 0 });
+        // } else {
+        //   api.start({
+        //     scale: 4,
+        //     x: newX,
+        //     y: newY,
+        //     immediate: down,
+        //   });
+        // }
+      },
       // onWheel: ({ down, offset: [d1, d2] }) => {
       //   setVisible(true);
       //   // if (d2 > -100) return;
@@ -126,30 +161,105 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
       //   //   scale: d2,
       //   // }),
       // },
-      onWheel: ({ wheeling, offset: [d1, d2] }) => {
+      onWheel: ({
+        wheeling,
+        delta: [, dy],
+        offset: [d1, d2],
+        movement: m,
+        event,
+      }) => {
         if (scale.get() < 2) {
           api.start({ x: 0, y: 0 });
         }
         setVisible(true);
-        // if (d2 > -100) return;
-        // console.log(d2);
         // setscalevalue((s) => d2);
+        // const target2= currentTarget as HTMLDivElement;
+        // target2.clientX as WheelEvent;
+        // const target2 = event.currentTarget as HTMLDivElement;
+        // const wheelEvent = event as WheelEvent;
+        // const clientX = wheelEvent.clientX;
+        // const clientX = event.clientX;
+        // let xs = ,
+        //   ys = (event.clientY - y.get()) / scale.get();
+        // const { clientX, clientY } = event;
+        // console.log(clientX, clientY);
+        // console.log(d1, d2);
+        // api.start({
+        //   // scale: d2 < 0 ? scale.get() * 1.2 : scale.get() / 1.2,
+        //   scale: Math.min(
+        //     Math.max(
+        //       1,
+        //       parseInt(Math.floor(scale.get()).toFixed(1)) + d2 * -0.01
+        //     ),
+        //     4
+        //   ),
+        //   x: clientX - (clientX - (x.get() * scale.get()) / scale.get()),
+        //   // x: Math.floor(
+        //   //   event.clientX -
+        //   //     ((event.clientX - x.get()) / scale.get()) * scale.get()
+        //   // ),
+        //   // y: Math.floor(
+        //   //   event.clientY -
+        //   //     ((event.clientY - y.get()) / scale.get()) * scale.get()
+        //   // ),
+        //   // scale: Math.min(Math.max(1, scale.get() + d2 * -0.01), 4),
+        //   // scale: Math.min(Math.max(1, 4), 4),
+        //   // immediate: wheeling,
+        // });
+
+        // Calculate the scale factor based on the wheel delta
+        // const scaleFactor = Math.min(
+        //   Math.max(
+        //     1,
+        //     parseInt(Math.floor(scale.get()).toFixed(1)) + d2 * -0.01
+        //   ),
+        //   4
+        // );
+
+        // const newX =
+        //   clientX - (clientX - (x.get() * scale.get()) / scale.get());
+        // const newY =
+        //   clientY - (clientY - (y.get() * scale.get()) / scale.get());
+        // const scaleFactor = 1.1 ** -dy;
+        const scaleFactor = scale.get() - dy * 0.01;
+        const newScale = Math.min(Math.max(scale.get() * scaleFactor, 1), 4);
+        // const deltaX = (d1 - x.get()) * (1 - scaleFactor);
+        // const deltaY = (d2 - y.get()) * (1 - scaleFactor);
+        const target = imgRef?.current!;
+        const { left, top } = target.getBoundingClientRect();
+        const [clientX, clientY] = [event.clientX - left, event.clientY - top];
+
+        const newX = clientX - ((clientX - x.get()) / scale.get()) * newScale;
+        const newY = clientY - ((clientY - y.get()) / scale.get()) * newScale;
+
+        const offsetX =
+          (event.clientX - window.innerWidth / 2) * (1 - newScale);
+        const offsetY =
+          (event.clientY - window.innerHeight / 2) * (1 - newScale);
         api.start({
-          scale: Math.min(Math.max(1, scale.get() + d2 * -0.01), 4),
+          // scale: scaleFactor,
+          scale: Math.min(Math.max(scaleFactor, 1), 4),
+          // x: newX,
+          // y: newY,
+          // scale: Math.min(Math.max(scaleFactor, 1), 4),
+          x: offsetX,
+          y: offsetY,
+          // x: x.get() + deltaX,
+          // y: y.get() + deltaY,
           // immediate: wheeling,
         });
       },
+
       onWheelStart: (state) => {},
-      onWheelEnd: (state) => {
-        // if (scale.get() < 2) {
-        //   api.start({ x: 0, y: 0, scale: 1 });
-        // }
+      onWheelEnd: ({ wheeling }) => {
+        if (scale.get() <= 1.5) {
+          api.start({ x: 0, y: 0, scale: 1 });
+        }
       },
     },
     {
-      // ...sharedOptions,
       wheel: {
-        // axis: zoom.scale === 1 ? "y" : undefined,
+        axis: zoom.scale === 1 ? "y" : undefined,
         from: () => [0, 0],
         // rubberband: true,
       },
@@ -159,9 +269,18 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           scale.get() === 1 ? 0 : x.get(),
           scale.get() === 1 ? 0 : y.get(),
         ],
-        // rubberband: true,
+        bounds:
+          scale.get() === 1
+            ? {}
+            : {
+                // left: -imgRef.current?.clientWidth! - window?.innerWidth / 2,
+                // right: window?.innerWidth / 2 + imgRef.current?.clientWidth!,
+                // // right: imgRef.current?.clientWidth! + window?.innerWidth / 2,
+                // top: -imgRef.current?.clientHeight! - window?.innerHeight / 2,
+                // bottom: imgRef.current?.clientHeight! + window?.innerHeight / 2,
+              },
+        rubberband: true,
       },
-      // wheel: wheelOptions,
       pinch: {
         target: imgRef,
         from: () => [
@@ -270,15 +389,11 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
   //     target: viewRef,
   //   }
   // );
+
   return (
     <>
       <motion.dialog
         onPointerDown={(e) => {
-          // api.start(x,y)
-          // api.start({
-          //   x: 0,
-          //   y: 0,
-          // });
           if (scale.get() === 1) return;
           setcanDrag(true);
           setstart((prev) => ({
@@ -289,15 +404,15 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           // setstart((prev) => ({ ...prev, x: e.clientX, y: e.clientY }));
         }}
         onPointerUp={() => {
-          if (scale.get() > 1) return;
+          if (zoom.scale > 1) return;
           // setTimeout(() => {
-          //   api.start({ x: 0, y: 0, scale: 1 });
+          //   api.start({ x: 0, y: 0 });
           // }, 300);
-          // if (scale.get() === 1) return;
+          // if (zoom.scale === 1) return;
           if (canDrag) {
             setcanDrag(false);
           }
-          if (scale.get() === 1) {
+          if (zoom.scale === 1) {
             // setpoint((prev) => ({
             //   ...prev,
             //   x: 0,
@@ -312,6 +427,30 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
             // setpoint({ x: 0, y: -500 });
           }
         }}
+        // onPointerUp={() => {
+        //   if (scale.get() > 1) return;
+        //   // setTimeout(() => {
+        //   //   api.start({ x: 0, y: 0, scale: 1 });
+        //   // }, 300);
+        //   // if (scale.get() === 1) return;
+        //   if (canDrag) {
+        //     setcanDrag(false);
+        //   }
+        //   if (scale.get() === 1) {
+        //     // setpoint((prev) => ({
+        //     //   ...prev,
+        //     //   x: 0,
+        //     //   y: 0,
+        //     // }));
+        //   }
+        //   if (point.y < -400) {
+        //     // setpoint({ x: 0, y: -15000 });
+        //     // setTimeout(() => {
+        //     viewRef?.current?.close();
+        //     // }, 300);
+        //     // setpoint({ x: 0, y: -500 });
+        //   }
+        // }}
         onPointerEnter={() => {
           sethovered(true);
           setVisible(true);
@@ -342,21 +481,15 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         }}
         exit={{ opacity: 0 }}
         onClose={() => {
-          api.start({ scale: 1 });
-          setZoom({ scale: 1 });
-          // setpoint({ x: 0, y: 0 });
+          api.set({ x: 0, y: 0, scale: 1 });
         }}
-        onDoubleClick={() => {
-          setVisible(true);
-          // api.start({ scale: 4 });
-          // setZoom({ scale: 4 });
-          if (scale.get() === 4) {
-            // setZoom({ scale: 1 });
-            api.start({ scale: 1 });
-          } else {
-            api.start({ scale: 4 });
-          }
-        }}
+        // onDoubleClick={() => {
+        //   if (scale.get() === 4) {
+        //     api.start({ scale: 1 });
+        //   } else {
+        //     api.start({ scale: 4 });
+        //   }
+        // }}
         // onWheel={(e) => {
         //   if (!visible) {
         //     setVisible(true);
@@ -422,7 +555,6 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
               <div
                 style={{
                   transition: "all .3s ease-in",
-                  // transform: `scale(${1 / zoom.scale})`,
                   backgroundColor: "rgba(0 0 0/.35)",
                 }}
               ></div>
@@ -498,9 +630,14 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
               width: "100%",
               height: "100%",
               // cursor: zoom.scale > 1 ? "move" : "initial",
-              left: x,
-              top: y,
+              // left: x,
+              // top: y,
               scale,
+              x,
+              y,
+              // transformOrigin: " 0px 0px",
+              // transform: `translate3d(${x.get()}px, ${y.get()}px, 0) scale(${scale.get()})`,
+              transformOrigin: "center center",
               // x,
               // y,
               // scale: zoom.scale,
@@ -513,29 +650,16 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
             }}
             ref={imgRef}
           >
-            <Image
-              // draggable={!visible}
-              draggable={false}
-              style={{
-                touchAction: "none",
-                // position: "fixed",
-                // inset: "0",
-                // width: "100%",
-                // cursor: zoom.scale > 1 ? "move" : "initial",
-                // x,
-                // y,
-                // scale: zoom.scale,
-                // transition: canDrag ? "initial" : "transform 0.3s ease-in-out",
-                // cursor: visible
-                //   ? zoom.scale < 4
-                //     ? "zoom-in"
-                //     : "zoom-out"
-                //   : "initial",
-              }}
-              fill
-              src={view.src}
-              alt={view.name}
-            ></Image>
+            {view.src && (
+              <Image
+                style={{ touchAction: "none" }}
+                priority={false}
+                draggable={false}
+                fill
+                src={view.src}
+                alt={view.name}
+              ></Image>
+            )}
           </animated.div>
         </div>
       </motion.dialog>
