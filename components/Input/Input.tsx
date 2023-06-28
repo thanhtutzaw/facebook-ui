@@ -1,5 +1,5 @@
 import { HTMLAttributes, CSSProperties, ReactNode, RefObject } from "react";
-import s from "../styles/Home.module.scss";
+import s from "../../styles/Home.module.scss";
 
 interface Props {
   style?: CSSProperties;

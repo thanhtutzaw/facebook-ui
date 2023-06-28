@@ -97,6 +97,12 @@
     }
     &::backdrop {
         background-color: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transition: all 0.3s ease-in-out;
+    }
+    &[open]::backdrop {
+        opacity: 1;
+        transition: all 0.3s ease-in-out;
     }
 }
 .preview {
@@ -334,6 +340,7 @@
     padding-block: 0.7rem;
     background-color: rgb(241, 241, 241);
     z-index: 200;
+    box-shadow: 0 5px 12px rgb(136 135 135 / 50%);
     > button {
         font-size: 1rem;
         border: 0;
