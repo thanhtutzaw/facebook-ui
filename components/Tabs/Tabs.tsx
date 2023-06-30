@@ -1,52 +1,50 @@
 import dynamic from "next/dynamic";
 import { MouseEvent, useContext, useEffect, useState } from "react";
-import { AppContext } from "../context/AppContext";
-import styles from "../styles/Home.module.scss";
-import { Props } from "../types/interfaces";
-import { Home } from "./Sections/Home/Home";
+import { AppContext } from "../../context/AppContext";
+import { useActive } from "../../hooks/useActiveTab";
+import { Props } from "../../types/interfaces";
+import Home from "../Sections/Home";
+import styles from "../../styles/Home.module.scss";
 import t from "./Tabs.module.scss";
-import { useActive } from "../hooks/useActiveTab";
-const Friends = dynamic(() => import("./Sections/Friends/Friends"), {
+const Friends = dynamic(() => import("../Sections/Friends"), {
   ssr: false,
 });
-const Watch = dynamic(() => import("./Sections/Watch/watch"), { ssr: false });
-const Notifications = dynamic(
-  () => import("./Sections/Notifications/Notifications")
-);
-const Profile = dynamic(() => import("./Sections/Profile/Profile"), {
+const Watch = dynamic(() => import("../Sections/Watch"), { ssr: false });
+const Notifications = dynamic(() => import("../Sections/Notifications"));
+const Profile = dynamic(() => import("../Sections/Profile"), {
   ssr: false,
 });
-const Menu = dynamic(() => import("./Sections/Menu/menu"), { ssr: false });
+const Menu = dynamic(() => import("../Sections/Menu"), { ssr: false });
 
 export default function Tabs(props: Props) {
   const { indicatorRef } = props;
-  // style={{pointerEvents: preventClick ? 'none' : 'initial' }}
-
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { active } = useActive();
-  const { setpreventClick, headerContainerRef } = useContext(
-    AppContext
-  ) as Props;
+  const { setpreventClick } = useContext(AppContext) as Props;
 
   useEffect(() => {
-    if (active) {
-      window.location.hash = active === "/" ? "#home" : `#${active}`;
-      // window.location.hash = active !== "/" ? "#home" : `#${active}`;
-      // router.push({ hash: active === "/" ? "#home" : `#${active}` });
-    }
-    window.addEventListener("mouseup", () => {
+    if (!active) return;
+    window.location.hash = active === "/" ? "#home" : `#${active}`;
+  }, [active]);
+  useEffect(() => {
+    function dragStop() {
       setcanDrag(false);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active]); //here can darg
-  // if (!setpreventClick) return;
+      console.log("up");
+    }
+    window.addEventListener("mouseup", dragStop);
+    document.body.addEventListener("mouseup", dragStop);
 
+    return () => {
+      document.body.removeEventListener("mouseup", dragStop);
+      window.removeEventListener("mouseup", dragStop);
+    };
+  }, []);
   function dragStart(e: MouseEvent<HTMLDivElement>) {
-    // e.preventDefault();
     e.stopPropagation();
     const currentTarget = e.currentTarget;
     if (e.currentTarget.className == "Home_storyCard__3_T_R") return;
+    if (e.currentTarget.tagName == "BODY") return;
     // if (e.target.className == "Home_storyCard__3_T_R") return;
     setpos({
       left: currentTarget.scrollLeft,
@@ -74,7 +72,6 @@ export default function Tabs(props: Props) {
       const dx = e.clientX - pos.x;
       // const dy = e.clientY - pos.y;
       currentTarget.scrollLeft = pos.left - dx;
-      // if (setpreventClick === "undefined") return;
       setpreventClick?.(true);
     } else {
       setcanDrag(false);

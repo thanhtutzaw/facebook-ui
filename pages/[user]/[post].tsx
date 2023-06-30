@@ -3,14 +3,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import nookies from "nookies";
 import { useContext, useEffect, useRef, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
 import Input from "../../components/Input/Input";
 import MediaInput from "../../components/Input/MediaInput";
 import PhotoLayout from "../../components/Post/PhotoLayout";
-import { Select } from "../../components/Post/Select";
+import { SelectVisiblity } from "../../components/Post/SelectVisiblity";
 import { app, db, postToJSON } from "../../lib/firebase";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { updatePost } from "../../lib/firestore/post";
@@ -25,7 +25,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
-    const { email, uid } = token;
+    const { uid } = token;
     let expired = false;
     const mypostQuery = query(
       collection(db, `/users/${uid}/posts`),
@@ -43,7 +43,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       props: {
         expired,
         uid,
-        email,
         myPost: post,
       },
     };
@@ -53,7 +52,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       props: {
         expired: true,
         uid: "",
-        email: "",
         myPost: [],
       },
     };
@@ -63,7 +61,6 @@ export default function Page(props: {
   expired: boolean;
   uid: string;
   myPost: Post;
-  email: string;
 }) {
   const { uid, myPost, expired } = props;
   const router = useRouter();
@@ -74,6 +71,7 @@ export default function Page(props: {
   ]);
   const [deleteFile, setdeleteFile] = useState<Post["media"]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (expired) {
       router.push("/");
@@ -136,7 +134,6 @@ export default function Page(props: {
     files?.length,
     myPost.media?.length,
     myPost.visibility,
-    // value,
     visibility,
   ]);
   // useEffect(() => {
@@ -145,7 +142,6 @@ export default function Page(props: {
   //     history.pushState(null, document.title, location.hash);
   //   };
   // }, []);
-  const { viewRef } = useContext(PageContext) as PageProps;
   useEffect(() => {
     // setvalue(
     //   InputRef.current?.innerHTML
@@ -160,25 +156,35 @@ export default function Page(props: {
     //   // .replaceAll("<div><br><div>", "<br>")
     //   // .replaceAll("<br><div>", "<br>")!
     // );
+    // if (viewRef && viewRef.current?.open) {
+    //   window.history.pushState(null, document.title, router.asPath);
+    //   return;
+    // }
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
       // if (viewRef && viewRef.current?.open) {
       //   viewRef.current.close();
       // }
-      // if (viewRef && viewRef.current?.open) return;
       if (
-        as !== currentPath &&
-        // value ===
-        // InputRef.current?.innerHTML
-        //   .replaceAll("<div>", "")
-        //   .replaceAll("</div>", "")
-        //   .replace("<div>", "<br>")
-        //   .replaceAll("<div><br><div>", "<br>")
-        //   .replaceAll("<br><div>", "<br>")
-        //   .replace("</div>", "") ||
-        (visibility !== myPost.visibility ||
-          files?.length !== myPost.media?.length ||
-          deleteFile?.length !== 0)
+        (as !== currentPath &&
+          // value ===
+          // InputRef.current?.innerHTML
+          //   .replaceAll("<div>", "")
+          //   .replaceAll("</div>", "")
+          //   .replace("<div>", "<br>")
+          //   .replaceAll("<div><br><div>", "<br>")
+          //   .replaceAll("<br><div>", "<br>")
+          //   .replace("</div>", "") ||
+
+          // (visibility !== myPost.visibility ||
+          //   files?.length !== myPost.media?.length ||
+          //   deleteFile?.length !== 0)
+
+          InputRef.current?.innerHTML !== myPost.text) ||
+        visibility.toLowerCase() !== myPost.visibility?.toLowerCase() ||
+        files?.length !== myPost.media?.length ||
+        deleteFile?.length !== 0
+
         // value !== "" ||
         // deleteFile?.length !== 0
         // &&
@@ -209,10 +215,12 @@ export default function Page(props: {
     deleteFile?.length,
     files?.length,
     myPost.media?.length,
+    myPost.text,
     myPost.visibility,
     router,
     visibility,
   ]);
+
   const auth = getAuth(app);
   const [client, setClient] = useState(false);
   useEffect(() => {
@@ -316,7 +324,6 @@ export default function Page(props: {
         // }}
         dangerouslySetInnerHTML={{ __html: client ? text : "" }}
       ></Input>
-
       <PhotoLayout
         margin={router.query.edit ? true : false}
         deleteFile={deleteFile}
@@ -346,12 +353,12 @@ export default function Page(props: {
             files={files as File[]}
             fileRef={fileRef}
           />
-          <Select
+          <SelectVisiblity
+            defaultValue={myPost.visibility}
             disabled={router.query.edit ? false : true}
             onChange={(e) => {
               setVisibility(e.target.value);
             }}
-            visibility={visibility}
           />
         </div>
       ) : (

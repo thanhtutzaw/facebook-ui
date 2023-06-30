@@ -5,29 +5,24 @@ import {
   getDocs,
   orderBy,
   query,
-  where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useEffect, useRef } from "react";
 import Header from "../components/Header/Header";
-import Tabs from "../components/Tabs";
+import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
 import { AppProvider } from "../context/AppContext";
-import { useActive } from "../hooks/useActiveTab";
 import { app, db, postToJSON } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import styles from "../styles/Home.module.scss";
 import { Props } from "../types/interfaces";
-import style from "styled-jsx/style";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
-    // if (!token) return;
     const convertSecondsToTime = (seconds: number) => {
       const days = Math.floor(seconds / (3600 * 24));
       const hours = Math.floor((seconds % (3600 * 24)) / 3600);

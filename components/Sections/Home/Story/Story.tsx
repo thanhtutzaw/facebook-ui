@@ -3,8 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { InferGetServerSidePropsType } from "next";
 import Image from "next/image";
 import { MouseEvent, useEffect, useRef, useState } from "react";
-import { getServerSideProps } from "../../../pages";
-import styles from "../../../styles/Home.module.scss";
+import { getServerSideProps } from "../../../../pages";
+import styles from "../../../../styles/Home.module.scss";
+import Card from "./Card";
 // import { getServerSideProps } from "../../../pages/_app";
 type StoryProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 export default function Story({ email }: StoryProps) {
@@ -18,7 +19,6 @@ export default function Story({ email }: StoryProps) {
   useEffect(() => {
     function dragStop() {
       if (!email) return;
-      console.log("body mouseup");
       setdraggable(false);
       setprevPoint(Percentage!);
     }
@@ -126,11 +126,11 @@ export default function Story({ email }: StoryProps) {
         </div>
 
         <div className={styles.cardContainer}>
-          <div className={styles.storyCard}></div>
-          <div className={styles.storyCard}></div>
-          <div className={styles.storyCard}></div>
-          <div className={styles.storyCard}></div>
-          <div className={styles.storyCard}></div>
+          <Card />
+          <Card />
+          <Card />
+          <Card />
+          <Card />
         </div>
       </div>
     </div>

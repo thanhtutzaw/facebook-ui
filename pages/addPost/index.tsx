@@ -7,7 +7,7 @@ import BackHeader from "../../components/Header/BackHeader";
 import Input from "../../components/Input/Input";
 import MediaInput from "../../components/Input/MediaInput";
 import PhotoLayout from "../../components/Post/PhotoLayout";
-import { Select } from "../../components/Post/Select";
+import { SelectVisiblity } from "../../components/Post/SelectVisiblity";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { app } from "../../lib/firebase";
 import { addPost } from "../../lib/firestore/post";
@@ -303,11 +303,11 @@ export default function AddPost() {
           files={files as File[]}
           fileRef={fileRef!}
         />
-        <Select
+        <SelectVisiblity
+          defaultValue={visibility}
           onChange={(e) => {
             setVisibility(e.target.value);
           }}
-          visibility={visibility}
         />
       </div>
     </div>

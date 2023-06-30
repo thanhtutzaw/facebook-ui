@@ -38,6 +38,15 @@ export default function PhotoLayout(props: {
     "https://www.cvent-assets.com/brand-page-guestside-site/assets/images/venue-card-placeholder.png";
   const [view, setview] = useState({ src: "", name: "" });
   const { viewRef } = useContext(PageContext) as PageProps;
+  // useEffect(() => {
+  //   window.onpopstate = () => {
+  //     // if (viewRef?.current?.open) {
+  //     // history.pushState(null, document.title, location.href);
+  //     // alert("hety");
+
+  //     // }
+  //   };
+  // }, [viewRef]);
 
   // useEffect(() => {
   //   window.onpopstate = () => {

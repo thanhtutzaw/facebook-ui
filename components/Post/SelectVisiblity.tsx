@@ -1,18 +1,18 @@
 import { SelectHTMLAttributes } from "react";
 
-export function Select(
-  props: { visibility: string } & SelectHTMLAttributes<HTMLSelectElement>
+export function SelectVisiblity(
+  props: SelectHTMLAttributes<HTMLSelectElement>
 ) {
-  const { visibility } = props;
+  // const { visibility } = props;
   return (
     <select
       {...props}
-      aria-label="visibility"
-      title="Visibility"
-      defaultValue={visibility}
+      aria-label="Change visibility"
+      title="Who can view my post"
+      // defaultValue={visibility}
       tabIndex={-1}
     >
-      <option value="Pubilc" key="Public">
+      <option value="Public" key="all">
         Public
       </option>
       <option value="Friend" key="Friends">

@@ -4,17 +4,17 @@ import { InferGetServerSidePropsType } from "next";
 import Image from "next/image";
 import styles from "../../../styles/Home.module.scss";
 import Newfeed from "./Newfeed";
-import Story from "./Story";
 import { useContext } from "react";
 import { useRouter } from "next/router";
 import { getServerSideProps } from "../../../pages";
 import { AppContext } from "../../../context/AppContext";
 import { PageContext, PageProps } from "../../../context/PageContext";
+import Story from "./Story";
 // import { getServerSideProps } from "../../../pages/_app";
 type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
   tabIndex: number;
 };
-export function Home(props: Props) {
+export default function Home(props: Props) {
   const { tabIndex } = props;
   const router = useRouter();
   const { email, headerContainerRef } = useContext(AppContext) as Props;

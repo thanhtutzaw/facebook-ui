@@ -12,7 +12,6 @@ export default function Menu(props: MenuProps) {
   const { tabIndex } = props;
   const { navigateTab } = useActive();
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   return (
     <div className={s.container}>
       <button
