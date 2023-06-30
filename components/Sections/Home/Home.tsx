@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import { getServerSideProps } from "../../../pages";
 import { AppContext } from "../../../context/AppContext";
 import { PageContext, PageProps } from "../../../context/PageContext";
-import Story from "./Story";
+import Story from "./Story/Story";
 // import { getServerSideProps } from "../../../pages/_app";
 type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
   tabIndex: number;
