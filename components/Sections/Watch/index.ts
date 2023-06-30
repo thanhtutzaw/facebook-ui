@@ -1,1 +1,1 @@
-export { default } from "./Watch";
+export { default } from "./Watch.tsx";
