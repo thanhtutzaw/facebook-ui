@@ -3,18 +3,20 @@ import { MouseEvent, useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { useActive } from "../../hooks/useActiveTab";
 import { Props } from "../../types/interfaces";
-import Home from "../Sections/Home";
+import Home from "../Sections/Home/Home";
 import styles from "../../styles/Home.module.scss";
 import t from "./Tabs.module.scss";
-const Friends = dynamic(() => import("../Sections/Friends"), {
+const Friends = dynamic(() => import("../Sections/Friends/Friends"), {
   ssr: false,
 });
-const Watch = dynamic(() => import("../Sections/Watch"), { ssr: false });
-const Notifications = dynamic(() => import("../Sections/Notifications"));
-const Profile = dynamic(() => import("../Sections/Profile"), {
+const Watch = dynamic(() => import("../Sections/Watch/Watch"), { ssr: false });
+const Notifications = dynamic(
+  () => import("../Sections/Notifications/Notifications")
+);
+const Profile = dynamic(() => import("../Sections/Profile/Profile"), {
   ssr: false,
 });
-const Menu = dynamic(() => import("../Sections/Menu"), { ssr: false });
+const Menu = dynamic(() => import("../Sections/Menu/menu"), { ssr: false });
 
 export default function Tabs(props: Props) {
   const { indicatorRef } = props;
