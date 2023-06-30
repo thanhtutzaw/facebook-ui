@@ -29,8 +29,8 @@ export default function Menu(props: MenuProps) {
       </button>
 
       <button
-        aria-label="Logout Button"
-        title="Logout"
+        aria-label="Sign out Button"
+        title="Sign out"
         tabIndex={tabIndex}
         disabled={loading}
         className={`${s.item}`}
@@ -51,7 +51,7 @@ export default function Menu(props: MenuProps) {
           style={{ color: "#0070f3", fontWeight: "bold" }}
           icon={faSignOut}
         />
-        {loading ? "Logging out..." : "Logout"}
+        {loading ? "Signing out..." : "Sign out"}
       </button>
     </div>
   );

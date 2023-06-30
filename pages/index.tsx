@@ -88,7 +88,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // const allUser = allUsers.map(async (user) => {
     //   await getUserData(user.id, allUsers);
     // });
-    // console.log(sort);
     return {
       props: {
         expired,
@@ -140,45 +139,13 @@ export default function Home({
         // console.log("expired , user exist and pushed");
       }
     });
-    // if (expired) {
-    //   router.push("/");
-    //   console.log("expired , pushed in index");
-    // }
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
 
   // }, [active]);
 
-  // useEffect(() => {
-  //   if (headerContainerRef) {
-  //     router.push("/");
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [headerContainerRef]);
-
-  // if (!email || expired) return <Welcome email={""} expired={expired!} />;
-
   if (expired) return <Welcome expired={expired} />;
-  // if (expired && email) return <Welcome />;
-  // if (expired && auth.currentUser) return <Welcome />;
-  // if (!auth.currentUser)
-  //   return (
-  //     <div
-  //       style={{
-  //         alignContent: "center",
-  //         justifyItems: "center",
-  //         textAlign: "center",
-  //         height: "100vh",
-  //         userSelect: "none",
-  //         display: "grid",
-  //         justifyContent: "center",
-  //       }}
-  //     >
-  //       <p style={{ textAlign: "center", color: "gray" }}>Loading...</p>;
-  //     </div>
-  //   );
-
   return (
     <AppProvider
       expired={expired}

@@ -2,7 +2,6 @@ import { faGear, faSort } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useContext, useEffect, useRef, useState } from "react";
-// import { Props } from "../../../pages/index";
 import {
   Unsubscribe,
   collection,
@@ -18,22 +17,12 @@ import { db, postToJSON } from "../../../lib/firebase";
 import { Post as PostType, Props } from "../../../types/interfaces";
 import Post from "../../Post";
 import s from "./Profile.module.scss";
-import { SortDropdown } from "./SortDropdown";
+import SortDropdown from "./SortDropdown";
 export default function Profile() {
   const photoURL = "";
   const { myPost, email, sortedPost, setsortedPost } = useContext(
     AppContext
   ) as Props;
-  // const posts = [
-  //   {
-  //     id: "hello",
-  //     text: "foo barr",
-  //   },
-  //   {
-  //     id: "hello2",
-  //     text: "foo barr222",
-  //   },
-  // ];
   const {
     uid,
     selectMode: active,
@@ -124,7 +113,7 @@ export default function Profile() {
             </div>
           </button>
           <button
-            aria-label="post select mode"
+            aria-label="toggle select mode"
             aria-expanded={active}
             onClick={(e) => {
               setactive?.((prev: any) => !prev);

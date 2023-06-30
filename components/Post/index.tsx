@@ -1,14 +1,9 @@
-import {
-  faComment,
-  faShare,
-  faThumbsUp,
-} from "@fortawesome/free-solid-svg-icons";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { Post as PostType, Props } from "../../types/interfaces";
 import Content from "./Content";
-import styles from "./Post.module.scss";
 import { Footer } from "./Footer";
+import styles from "./Post.module.scss";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 
 interface PostProps {
@@ -17,7 +12,6 @@ interface PostProps {
   tabIndex: number;
 }
 export default function Post({ active, post, tabIndex }: PostProps) {
-  const [Bounce, setBounce] = useState(false);
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
@@ -77,10 +71,7 @@ export default function Post({ active, post, tabIndex }: PostProps) {
         post={post}
       />
 
-      <Footer
-        tabIndex={tabIndex}
-        Bounce={Bounce}
-      />
+      <Footer tabIndex={tabIndex} />
     </div>
   );
 }

@@ -379,8 +379,8 @@
 }
 
 .action {
-    border-bottom: 1px solid rgb(235, 235, 235);
     display: flex;
+    justify-content: flex-end;
     svg {
         font-size: 18px;
         color: rgb(39, 39, 39);

@@ -362,7 +362,7 @@ export default function Page(props: {
           />
         </div>
       ) : (
-        <Footer />
+        <Footer style={{ borderBottom: "1px solid rgb(235, 235, 235)" }} />
       )}
     </div>
   );

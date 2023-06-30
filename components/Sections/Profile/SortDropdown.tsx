@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import styles from "../../Post/Post.module.scss";
 import s from "./Profile.module.scss";
 import useEscape from "../../../hooks/useEscape";
-export function SortDropdown(props: {
+export default function SortDropdown(props: {
   sort: boolean;
   sortby: string;
   setSort: Function;

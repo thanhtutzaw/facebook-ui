@@ -1,25 +1,30 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import styles from "./Post.module.scss";
 import {
-  faThumbsUp,
   faComment,
   faShare,
+  faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { StyleHTMLAttributes } from "react";
+import styles from "./Post.module.scss";
 
-export function Footer(props: { tabIndex?: number; Bounce?: boolean }) {
-  const { tabIndex, Bounce } = props;
+export function Footer(
+  props: {
+    tabIndex?: number;
+  } & StyleHTMLAttributes<HTMLDivElement>
+) {
+  const { tabIndex } = props;
   return (
-    <div className={styles.action}>
+    <div {...props} className={styles.action}>
       <button tabIndex={tabIndex}>
-        <FontAwesomeIcon bounce={Bounce} icon={faThumbsUp} />
+        <FontAwesomeIcon icon={faThumbsUp} />
         <p>Like</p>
       </button>
       <button tabIndex={tabIndex}>
-        <FontAwesomeIcon icon={faComment} bounce={Bounce} />
+        <FontAwesomeIcon icon={faComment} />
         <p>Comment</p>
       </button>
       <button tabIndex={tabIndex}>
-        <FontAwesomeIcon icon={faShare} bounce={Bounce} />
+        <FontAwesomeIcon icon={faShare} />
         <p>Share</p>
       </button>
     </div>

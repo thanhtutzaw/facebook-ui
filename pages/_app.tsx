@@ -1,19 +1,18 @@
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+import { getAuth, onIdTokenChanged } from "firebase/auth";
+import { GetServerSideProps } from "next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import nookies from "nookies";
 import nProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { useEffect } from "react";
-import "../styles/globals.css";
-
-import { getAuth, onIdTokenChanged } from "firebase/auth";
-import nookies from "nookies";
 import { PageProvider } from "../context/PageContext";
 import { app } from "../lib/firebase";
-import { GetServerSideProps } from "next";
 import { verifyIdToken } from "../lib/firebaseAdmin";
+import "../styles/globals.css";
 import { Props } from "../types/interfaces";
 
 config.autoAddCss = false;
@@ -25,27 +24,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const token = await verifyIdToken(cookies.token);
     console.log(token.email + "in app.tsx");
     let expired = false;
-
-    // const getDate = (post: Post) => {
-    //   const date = new Timestamp(
-    //     post.createdAt.seconds,
-    //     post.createdAt.nanoseconds
-    //   );
-    //   return {
-    //     date,
-    //   };
-    // };
-    // .sort((a, b) => a.createdAt - b.createdAt);
-
-    // getting all users posts
-    // db/users/uid-JE0sy/posts/abc
-    // const data = doc.data() as Post;
-
-    // if (!myPost) {
-    //   return {
-    //     notFound: true,
-    //   };
-    // }
     return {
       props: {
         expired,
