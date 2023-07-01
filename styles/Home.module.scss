@@ -125,6 +125,7 @@
   justify-content: center;
   align-items: center;
   gap: 1rem;
+  padding-bottom: 2rem;
   .emailLoginLink {
     text-decoration: underline;
     color: var(--blue-origin) !important;
@@ -136,6 +137,8 @@
     justify-content: center;
     align-items: center;
     gap: 10px;
+    // border: 1px solid rgb(3, 3, 3);
+    // height: 300px;
   }
   .emailLogin {
     gap: 10px;
@@ -144,11 +147,12 @@
     background-color: rgb(0, 122, 246);
     border-radius: 50px;
     outline: none;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    // border: 1px solid rgba(0, 0, 0, 0.1);
     cursor: pointer;
     box-shadow: rgba(0, 0, 0, 0.12) 0px 2px 20px;
     word-break: break-word;
     white-space: nowrap;
+    will-change: padding;
     &:active:not(.emailForm) {
       scale: 1.1;
     }
@@ -160,52 +164,101 @@
     flex-direction: column;
     justify-content: center;
     gap: 1rem;
-
-    .passwordEye {
-      // display:none;
-      position: absolute;
-      // top: 10px;
-      top: 15%;
-      /* bottom: 50%; */
-      right: 1rem;
-      color: var(--blue-origin);
-      > div {
-        background-color: #e8e8e8;
-        padding: 10px;
-        border-radius: 1rem;
-        display: flex;
-        &:active {
-          // background-color: red;
-          background-color: #c6c6c6;
-        }
-        &:hover {
-          // background-color: red;
-        }
-      }
-    }
-    input {
+    // align-items: flex-end;
+    > * {
       padding: 0.8rem 1rem;
       border: 0;
       font-size: 1rem;
       border-radius: 1rem;
+      background-color: white;
+    }
+    .nextForm {
+      width: 100px;
+      margin-left: auto;
+      transition: all 0.3s ease-in-out;
       &:focus {
-        // outline: 3px solid rgb(150, 208, 255);
-        outline-color: var(--blue-origin);
-        box-shadow: 0 5px 2px cornflowerblue;
-        // outline: 0;
-        // outline-color: rgb(126, 126, 126);
-        // outline-color: rgb(126, 126, 126);
-        // border:1px solid var(--blue-origin)
-        // box-shadow: 0 3px 10px rgba(65, 65, 65, 0.37);
+        color: var(--blue-origin);
+        outline: 1px solid white;
+        outline-offset: 3px;
+      }
+    }
+    // border: 1px solid red;
+
+    input {
+      font-size: 1rem;
+      border: 0;
+      color: initial;
+      color: #7a7a7a;
+
+      // width: 100%;
+      &:focus {
+        color: initial;
+        // box-shadow: 0 0 5px rgb(69 69 69 / 50%);
+        // outline-color: var(--blue-origin);
+        // box-shadow: 0 5px 2px cornflowerblue;
       }
       &:focus-visible {
       }
     }
     .password {
-      position: relative;
-      input {
-        padding-right: 4rem;
+      // position: relative;
+      display: flex;
+      flex-direction: column;
+      /* flex: 1; */
+      gap: 10px;
+      transition: all 0.3s ease-in-out;
+      align-items: flex-end;
+      box-shadow: initial;
+      &:has(input:focus) {
+        outline: -webkit-focus-ring-color auto 1px;
+        box-shadow: 0 0 5px rgb(69 69 69 / 50%);
       }
+      &:has(input:focus) .passwordEye {
+        // width: fit-content;
+        width: 17%;
+        // align-items: flex-end;
+        // outline:1px solid black;
+      }
+      &:has(input:focus) .passwordEye > div {
+        // justify-content: center;
+      }
+      .passwordEye {
+        // position: absolute;
+        // top: 10px;
+        // top: 15%;
+        width: -webkit-fill-available;
+        width: 100%;
+
+        right: 1rem;
+        color: var(--blue-origin);
+        transition: all 0.3s ease-in-out;
+
+        > div {
+          background-color: #e8e8e8;
+          padding: 10px;
+          border-radius: 1rem;
+          display: flex;
+          &:active {
+            background-color: #c6c6c6;
+          }
+        }
+      }
+      input {
+        outline: 0;
+        &:focus {
+          outline: 0;
+          // align-items: initial;
+          // @extend .input-focused;
+          // display: none;
+        }
+        // &:focus {
+        //   align-items: initial;
+        // }
+        // padding-right: 4rem;
+      }
+      // .input-focused {
+      //   background-color: green;
+      // }
     }
   }
   .SecondaryloginBtn {

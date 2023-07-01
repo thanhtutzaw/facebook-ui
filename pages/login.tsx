@@ -4,7 +4,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, useEffect, useRef, useState } from "react";
 import { app } from "../lib/firebase";
 import { signin } from "../lib/signin";
 import styles from "../styles/Home.module.scss";
@@ -49,6 +49,8 @@ export default function Login() {
     //   setshowPassword(true);
     // }
   }
+  const emailRef = useRef<HTMLInputElement>(null);
+
   if (auth.currentUser)
     return <p style={{ textAlign: "center" }}>Loading ...</p>;
   return (
@@ -78,8 +80,9 @@ export default function Login() {
       or
       <button
         style={{
+          // height: !signup ? "1rem" : "10rem 7rem",
           padding: !signup ? "1rem" : "10rem 7rem",
-          transition: "padding .5s ease-in-out , scale .2s ease-in-out",
+          transition: "all .5s ease-in-out , scale .2s ease-in-out",
           scale: signup ? 1 : "initial",
         }}
         className={`${styles.loginBtn} ${styles.emailLogin}`}
@@ -99,21 +102,39 @@ export default function Login() {
             <motion.div
               className={styles.Loginlabel}
               key="label"
-              initial={{ opacity: 1, scale: 1 }}
-              animate={{ opacity: signup ? 0 : 1, scale: signup ? 1.3 : 1 }}
-              exit={{ opacity: 0, scale: 1 }}
+              initial={{
+                opacity: 1,
+                scale: 1,
+                height: "300px",
+                width: "300px",
+              }}
+              animate={{
+                opacity: signup ? 0 : 1,
+                scale: signup ? 1.3 : 1,
+                height: signup ? "300px" : "auto",
+                width: signup ? "500px" : "auto",
+              }}
+              exit={{ opacity: 0, scale: 1, height: "300px", width: "300px" }}
             >
               <SignupLabel />
             </motion.div>
           ) : (
             <motion.div
               key="label2"
+              transition={{
+                duration: 0.4,
+              }}
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: !signup ? 0 : 1, scale: !signup ? 0.5 : 1 }}
               exit={{ opacity: 0, scale: 0.5 }}
               className={styles.emailForm}
             >
-              <input placeholder="Email" type="email" />
+              <input
+                autoFocus
+                ref={emailRef}
+                placeholder="Email"
+                type="email"
+              />
               <div className={styles.password}>
                 <input
                   placeholder="Password"
@@ -151,6 +172,7 @@ export default function Login() {
                   </AnimatePresence>
                 </div>
               </div>
+              <button className={styles.nextForm}>Next</button>
             </motion.div>
           )}
         </AnimatePresence>
