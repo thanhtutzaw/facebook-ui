@@ -119,7 +119,7 @@ export default function Login() {
               <SignupLabel />
             </motion.div>
           ) : (
-            <motion.div
+            <motion.form
               key="label2"
               transition={{
                 duration: 0.4,
@@ -130,6 +130,7 @@ export default function Login() {
               className={styles.emailForm}
             >
               <input
+                required={true}
                 autoFocus
                 ref={emailRef}
                 placeholder="Email"
@@ -137,10 +138,13 @@ export default function Login() {
               />
               <div className={styles.password}>
                 <input
+                  required={true}
+                  id="password"
+                  name="password"
                   placeholder="Password"
                   type={showPassword ? "text" : "password"}
                 />
-                <div className={styles.passwordEye}>
+                <label htmlFor="password" className={styles.passwordEye}>
                   <AnimatePresence mode="wait">
                     {showPassword ? (
                       <motion.div
@@ -170,10 +174,12 @@ export default function Login() {
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
+                </label>
               </div>
-              <button className={styles.nextForm}>Next</button>
-            </motion.div>
+              <button type="submit" className={styles.nextForm}>
+                Next
+              </button>
+            </motion.form>
           )}
         </AnimatePresence>
       </button>
