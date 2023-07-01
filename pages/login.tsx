@@ -8,6 +8,8 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 import { app } from "../lib/firebase";
 import { signin } from "../lib/signin";
 import styles from "../styles/Home.module.scss";
+import NewAccount from "../components/Form/NewAccount";
+import Info from "../components/Form/Info";
 export default function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -40,15 +42,7 @@ export default function Login() {
       console.error(error);
     }
   };
-  const [showPassword, setshowPassword] = useState(false);
-  function togglePassword() {
-    setshowPassword(!showPassword);
-    // if (showPassword) {
-    //   setshowPassword(false);
-    // } else {
-    //   setshowPassword(true);
-    // }
-  }
+
   const emailRef = useRef<HTMLInputElement>(null);
 
   if (auth.currentUser)
@@ -84,9 +78,10 @@ export default function Login() {
           // minWidth: "346px",
           // maxWidth: "30vw",
           // height: !signup ? "1rem" : "10rem 7rem",
-          padding: !signup ? "1rem" : "10rem 7rem",
+          // padding: !signup ? "1rem" : "10rem 7rem",
+          padding: !signup ? "1rem" : "13rem 7rem",
           // width: !signup ? "auto" : "67vw",
-          transition: "all .5s ease-in-out , scale .2s ease-in-out",
+          transition: "padding .5s ease-in-out , scale .2s ease-in-out",
           scale: signup ? 1 : "initial",
         }}
         className={`${styles.loginBtn} ${styles.emailLogin}`}
@@ -131,77 +126,17 @@ export default function Login() {
           ) : (
             <motion.form
               key="label2"
-              transition={
-                {
-                  // duration: 0.4,
-                }
-              }
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: !signup ? 0 : 1, scale: !signup ? 0.5 : 1 }}
               exit={{ opacity: 0, scale: 0.5 }}
               className={styles.emailForm}
             >
-              <h2>Create New Account</h2>
-              <input
-                onKeyDown={(e) => {
-                  if (e.key === " ") {
-                    // e.stopPropagation();
-                  }
-                }}
-                required={true}
-                autoFocus
-                ref={emailRef}
-                placeholder="Email"
-                type="email"
-              />
-              <div className={styles.password}>
-                <input
-                  onKeyDown={(e) => {
-                    if (e.key === " ") {
-                      // e.stopPropagation();
-                    }
-                  }}
-                  required={true}
-                  id="password"
-                  name="password"
-                  placeholder="Password"
-                  type={showPassword ? "text" : "password"}
-                />
-                <label htmlFor="password" className={styles.passwordEye}>
-                  <AnimatePresence mode="wait">
-                    {showPassword ? (
-                      <motion.div
-                        key="label3"
-                        initial={{ opacity: 1 }}
-                        animate={{
-                          opacity: !showPassword ? 0 : 1,
-                        }}
-                        exit={{ opacity: 0 }}
-                        aria-label="showPassword"
-                        onClick={togglePassword}
-                      >
-                        <FontAwesomeIcon icon={faEye} />
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="label4"
-                        initial={{ opacity: 0 }}
-                        animate={{
-                          opacity: showPassword ? 0 : 1,
-                        }}
-                        exit={{ opacity: 0 }}
-                        aria-label="hidePassword"
-                        onClick={togglePassword}
-                      >
-                        <FontAwesomeIcon icon={faEyeSlash} />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </label>
+              <div className={styles.newAccount}>
+                <NewAccount emailRef={emailRef} />
               </div>
-              <button type="submit" className={styles.nextForm}>
-                Next
-              </button>
+              <div className={styles.userInfo}>
+                <Info emailRef={emailRef} />
+              </div>
             </motion.form>
           )}
         </AnimatePresence>

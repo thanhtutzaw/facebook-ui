@@ -138,7 +138,6 @@
     justify-content: center;
     align-items: center;
     gap: 10px;
-    // border: 1px solid rgb(3, 3, 3);
     // height: 300px;
   }
   .emailLogin {
@@ -167,29 +166,52 @@
   }
   .emailForm {
     height: auto;
-    padding-block: 1rem;
+    /* padding-block: 1rem; */
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     gap: 1rem;
-    // align-items: flex-end;
+    // width: 327px;
+
+    // min-width: 327px;
+    min-width: 320px;
+    // max-width: 327px;
+    max-width: 340px;
+    // max-width: 320px;
+    overflow: scroll;
+    border-radius: 1rem;
     h2 {
-      // margin-top: 0;
+      color: black;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 1.4rem;
     }
     > *:not(h2) {
-      padding: 0.8rem 1rem;
+      padding: 1rem;
+      background-color: white;
       border: 0;
       font-size: 0.9rem;
       font-size: 1rem;
       border-radius: 1rem;
-      background-color: white;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 320px;
     }
-    .nextForm {
-      width: 100px;
+    > div > *:not(h2) {
+      // padding: 0.8rem 1rem;
+    }
+    > div .nextForm {
+      // width: 100px;
       margin-left: auto;
       transition: all 0.1s ease-in-out;
       color: #222222;
-      color: var(--blue-origin);
+      padding: 0.5rem 1rem;
+      margin-top: 10px;
+      background-color: white;
+      border: 1px solid black;
+      font-size: 0.8rem;
+      margin-top: auto;
+      border-radius: 1rem;
+
       &:hover {
         // scale:.9;
         background-color: rgb(235, 235, 235);
@@ -198,28 +220,23 @@
         background-color: rgb(216, 216, 216);
         scale: 0.9;
       }
-      &:focus {
-        // color: var(--blue-origin);
-        // outline: 1px solid white;
-        // outline-offset: 3px;
-      }
     }
 
     input {
+      padding: 10px;
       font-size: 1rem;
       // font-size: 0.9rem;
       border: 0;
       color: initial;
       color: #7a7a7a;
-
-      // width: 100%;
+      border-bottom: 1px solid rgba(189, 189, 189, 0.5);
+      width: 100%;
       &:focus {
         color: initial;
-        // box-shadow: 0 0 5px rgb(69 69 69 / 50%);
-        // outline-color: var(--blue-origin);
-        // box-shadow: 0 5px 2px cornflowerblue;
       }
-      &:focus-visible {
+      &:focus-within {
+        border-bottom: 1px solid rgb(0, 0, 0);
+        outline: 0;
       }
     }
     .password {
@@ -231,20 +248,21 @@
       transition: all 0.3s ease-in-out;
       align-items: flex-end;
       box-shadow: initial;
-      &:has(input:focus) {
-        outline: -webkit-focus-ring-color auto 1px;
-        box-shadow: 0 0 5px rgb(69 69 69 / 50%);
+      &:has(input:focus) input {
+        border-bottom: 1px solid rgb(0, 0, 0);
+        outline: 0;
+        // border:0 0 1px solid black 0;
+        // outline: -webkit-focus-ring-color auto 1px;
+        // box-shadow: 0 0 5px rgb(69 69 69 / 50%);
       }
       &:has(input:focus) .passwordEye {
         // width: fit-content;
-        width: 17%;
+        width: 15%;
         // align-items: flex-end;
         // outline:1px solid black;
       }
-      &:has(input:focus) .passwordEye > div {
-        // justify-content: center;
-      }
       .passwordEye {
+        display: block;
         // position: absolute;
         // top: 10px;
         // top: 15%;
@@ -382,6 +400,7 @@
   line-height: 33px;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
     "Helvetica Neue", sans-serif;
+  overflow: hidden;
 }
 
 .grid {
