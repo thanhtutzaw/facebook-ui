@@ -95,6 +95,7 @@
     background-color: rgba(255, 255, 255);
     height: 100%;
     flex: 1;
+    // font-size: 1.05rem;
     font-size: 1.1rem;
     display: flex;
     justify-content: center;
@@ -153,6 +154,13 @@
     word-break: break-word;
     white-space: nowrap;
     will-change: padding;
+    -webkit-tap-highlight-color: transparent;
+    &:active {
+      // background-color: rgb(11, 118, 224);
+    }
+    &:focus {
+      // border:2px solid red;
+    }
     &:active:not(.emailForm) {
       scale: 1.1;
     }
@@ -165,9 +173,13 @@
     justify-content: center;
     gap: 1rem;
     // align-items: flex-end;
-    > * {
+    h2 {
+      // margin-top: 0;
+    }
+    > *:not(h2) {
       padding: 0.8rem 1rem;
       border: 0;
+      font-size: 0.9rem;
       font-size: 1rem;
       border-radius: 1rem;
       background-color: white;
@@ -175,16 +187,27 @@
     .nextForm {
       width: 100px;
       margin-left: auto;
-      transition: all 0.3s ease-in-out;
+      transition: all 0.1s ease-in-out;
+      color: #222222;
+      color: var(--blue-origin);
+      &:hover {
+        // scale:.9;
+        background-color: rgb(235, 235, 235);
+      }
+      &:active {
+        background-color: rgb(216, 216, 216);
+        scale: 0.9;
+      }
       &:focus {
-        color: var(--blue-origin);
-        outline: 1px solid white;
-        outline-offset: 3px;
+        // color: var(--blue-origin);
+        // outline: 1px solid white;
+        // outline-offset: 3px;
       }
     }
 
     input {
       font-size: 1rem;
+      // font-size: 0.9rem;
       border: 0;
       color: initial;
       color: #7a7a7a;
@@ -476,7 +499,7 @@
   background-color: rgb(230, 230, 230);
 }
 .loginBtn:active:has(> div.Loginlabel) {
-  outline: 4px solid #6aa6eb;
+  // outline: 4px solid #6aa6eb;
 }
 
 @keyframes card {

@@ -78,23 +78,33 @@ export default function Login() {
         {loading ? "Logging in..." : "Log in as Peter 1"}
       </button>
       or
-      <button
+      <div
         style={{
+          maxWidth: "95vw",
+          // minWidth: "346px",
+          // maxWidth: "30vw",
           // height: !signup ? "1rem" : "10rem 7rem",
           padding: !signup ? "1rem" : "10rem 7rem",
+          // width: !signup ? "auto" : "67vw",
           transition: "all .5s ease-in-out , scale .2s ease-in-out",
           scale: signup ? 1 : "initial",
         }}
         className={`${styles.loginBtn} ${styles.emailLogin}`}
-        disabled={Googleloading}
+        // disabled={Googleloading}
         // style={loginStyle}
-
+        onKeyDown={(e) => {
+          const key = e.code;
+          if (key === "Space" && signup && e.target !== e.currentTarget) {
+            e.preventDefault();
+          }
+        }}
         onClick={(e) => {
           if (!signup) {
             setsignup(true);
           }
           if (e.target !== e.currentTarget) return;
           setsignup((prev) => !prev);
+          // alert("clicked");
         }}
       >
         <AnimatePresence mode="wait">
@@ -121,15 +131,23 @@ export default function Login() {
           ) : (
             <motion.form
               key="label2"
-              transition={{
-                duration: 0.4,
-              }}
+              transition={
+                {
+                  // duration: 0.4,
+                }
+              }
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: !signup ? 0 : 1, scale: !signup ? 0.5 : 1 }}
               exit={{ opacity: 0, scale: 0.5 }}
               className={styles.emailForm}
             >
+              <h2>Create New Account</h2>
               <input
+                onKeyDown={(e) => {
+                  if (e.key === " ") {
+                    // e.stopPropagation();
+                  }
+                }}
                 required={true}
                 autoFocus
                 ref={emailRef}
@@ -138,6 +156,11 @@ export default function Login() {
               />
               <div className={styles.password}>
                 <input
+                  onKeyDown={(e) => {
+                    if (e.key === " ") {
+                      // e.stopPropagation();
+                    }
+                  }}
                   required={true}
                   id="password"
                   name="password"
@@ -182,7 +205,7 @@ export default function Login() {
             </motion.form>
           )}
         </AnimatePresence>
-      </button>
+      </div>
       <a className={styles.emailLoginLink}>Log in using Email</a>
       <a
         className="githublink"
@@ -193,6 +216,7 @@ export default function Login() {
         <span
           style={{
             color: "gray",
+            userSelect: "none",
           }}
         >
           Developed by{" "}
