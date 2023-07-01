@@ -167,7 +167,7 @@ export default function Login() {
             color: "gray",
           }}
         >
-          Developed by
+          Developed by{" "}
         </span>
         thanhtutzaw
       </a>

@@ -125,9 +125,9 @@
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  .emailLoginLink{
+  .emailLoginLink {
     text-decoration: underline;
-    color:var(--blue-origin) !important;
+    color: var(--blue-origin) !important;
     cursor: pointer;
     user-select: none;
   }
@@ -174,8 +174,12 @@
         padding: 10px;
         border-radius: 1rem;
         display: flex;
+        &:active {
+          // background-color: red;
+          background-color: #c6c6c6;
+        }
         &:hover {
-          background-color: red;
+          // background-color: red;
         }
       }
     }
@@ -187,6 +191,7 @@
       &:focus {
         // outline: 3px solid rgb(150, 208, 255);
         outline-color: var(--blue-origin);
+        box-shadow: 0 5px 2px cornflowerblue;
         // outline: 0;
         // outline-color: rgb(126, 126, 126);
         // outline-color: rgb(126, 126, 126);
@@ -226,6 +231,10 @@
 
     &:hover {
       background-color: var(--blue-origin);
+      color: white;
+    }
+    &:active {
+      background-color: #0c60c2;
       color: white;
     }
   }
@@ -414,7 +423,7 @@
 .action > button:active {
   background-color: rgb(230, 230, 230);
 }
-.loginBtn:active {
+.loginBtn:active:has(> div.Loginlabel) {
   outline: 4px solid #6aa6eb;
 }
 

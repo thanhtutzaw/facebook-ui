@@ -51,7 +51,8 @@ function SelectModal() {
         <span>{selectedId?.length}</span> Selected
       </h2>
       <button
-        disabled={loading}
+      draggable="false"
+        disabled={loading || selectedId?.length === 0}
         onClick={async () => {
           if (!uid || selectedId?.length === 0 || !selectedId) return;
           setLoading(true);

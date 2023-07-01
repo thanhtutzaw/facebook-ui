@@ -63,6 +63,11 @@ main {
   width              : auto !important;
   padding            : 0 1rem;
   font-size          : 1rem;
+  transition         : scale .2s ease-in-out;
+}
+
+.deleteBtn:active {
+  scale: .9;
 }
 
 .active {
