@@ -12,7 +12,7 @@ module.exports = {
     defaultLocale: 'en',
   },
   images: {
-    domains: ['upload.wikimedia.org','firebasestorage.googleapis.com', 'images.unsplash.com', 'cvent-assets.com', 'encrypted-tbn0.gstatic.com', 'www.femalefirst.co.uk'],
+    domains: ['www.cvent-assets.com', 'upload.wikimedia.org', 'firebasestorage.googleapis.com', 'images.unsplash.com', 'cvent-assets.com', 'encrypted-tbn0.gstatic.com', 'www.femalefirst.co.uk'],
   },
 
 }

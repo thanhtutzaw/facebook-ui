@@ -8,6 +8,7 @@ import { ViewModal } from "./ViewModal";
 
 import { PageContext, PageProps } from "../../context/PageContext";
 import Image from "next/image";
+import ImageWithFallback from "../ImageWithFallback";
 
 export default function PhotoLayout(props: {
   margin?: boolean;
@@ -34,8 +35,8 @@ export default function PhotoLayout(props: {
   } = props;
   // const placeholder = "https://via.placeholder.com/350x388";
 
-  const placeholder =
-    "https://www.cvent-assets.com/brand-page-guestside-site/assets/images/venue-card-placeholder.png";
+  // const placeholder =
+  //   "https://www.cvent-assets.com/brand-page-guestside-site/assets/images/venue-card-placeholder.png";
   const [view, setview] = useState({ src: "", name: "" });
   const { viewRef } = useContext(PageContext) as PageProps;
   // useEffect(() => {
@@ -186,7 +187,7 @@ export default function PhotoLayout(props: {
             borderRight: files?.length > 1 ? "1px solid rgb(209 209 209)" : "0",
           }}
         >
-          <Image
+          <ImageWithFallback
             priority
             // onError={(e) => {
             //   const img = e.currentTarget;
@@ -195,12 +196,16 @@ export default function PhotoLayout(props: {
             //   img.style.filter = "invert(1)";
             //   img.style.minHeight = media.length === 2 ? "196px" : "394px";
             // }}
+            media={media}
             width={700}
             height={394}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             src={media[0].url}
-            alt={media[0].name}
-            style={{ objectFit: "contain", height: "auto" }}
+            alt={media[0].name ?? "Not Found"}
+            style={{
+              objectFit: "contain",
+              height: "auto",
+            }}
           />
           {/* <img
             // onError={(e) => {
@@ -219,7 +224,7 @@ export default function PhotoLayout(props: {
       {media.length > 1 && (
         <div>
           {media[1] && (
-            <Image
+            <ImageWithFallback
               priority
               // onError={(e) => {
               //   const img = e.currentTarget;
@@ -228,11 +233,12 @@ export default function PhotoLayout(props: {
               //   img.style.filter = "invert(1)";
               //   img.style.minHeight = media.length === 2 ? "196px" : "394px";
               // }}
+              media={media}
               width={700}
               height={394}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               src={media[1].url}
-              alt={media[1].name}
+              alt={media[1].name ?? "Not Found"}
               style={{ objectFit: "contain", height: "auto", width: "auto" }}
             />
             // <img
@@ -255,7 +261,7 @@ export default function PhotoLayout(props: {
                 position: "relative",
               }}
             >
-              <Image
+              <ImageWithFallback
                 priority
                 // onError={(e) => {
                 //   const img = e.currentTarget;
@@ -264,13 +270,12 @@ export default function PhotoLayout(props: {
                 //   img.style.filter = "invert(1)";
                 //   img.style.minHeight = media.length === 2 ? "196px" : "394px";
                 // }}
-                // width={700}
+                media={media}
                 width={700}
                 height={394}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                // height={394}
                 src={media[2].url}
-                alt={media[2].name}
+                alt={media[2].name ?? "Not Found"}
                 style={{ objectFit: "contain", height: "100%" }}
               />
               {/* <img
