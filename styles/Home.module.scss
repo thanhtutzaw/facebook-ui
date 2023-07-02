@@ -200,24 +200,24 @@
       // padding: 0.8rem 1rem;
     }
     > div .nextForm {
-      // width: 100px;
       margin-left: auto;
       transition: all 0.1s ease-in-out;
-      color: #222222;
+      color: #222;
       padding: 0.5rem 1rem;
-      margin-top: 10px;
-      background-color: white;
-      border: 1px solid black;
-      font-size: 0.8rem;
+      background-color: var(--blue-origin);
+      /* background: #eaeaea; */
+      /* color: var(--blue-origin); */
+      border: 0;
+      color: white;
+      font-size: 0.9rem;
       margin-top: auto;
       border-radius: 1rem;
 
       &:hover {
-        // scale:.9;
-        background-color: rgb(235, 235, 235);
+        // background-color: rgb(235, 235, 235);
       }
       &:active {
-        background-color: rgb(216, 216, 216);
+        // background-color: rgb(216, 216, 216);
         scale: 0.9;
       }
     }
@@ -231,6 +231,7 @@
       color: #7a7a7a;
       border-bottom: 1px solid rgba(189, 189, 189, 0.5);
       width: 100%;
+      transition: border 0.3s ease-in;
       &:focus {
         color: initial;
       }
@@ -245,7 +246,7 @@
       flex-direction: column;
       /* flex: 1; */
       gap: 10px;
-      transition: all 0.3s ease-in-out;
+      transition: all 0.3s ease-in-out, border 0.3s ease-in;
       align-items: flex-end;
       box-shadow: initial;
       &:has(input:focus) input {

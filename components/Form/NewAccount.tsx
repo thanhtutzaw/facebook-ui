@@ -2,11 +2,16 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "../../styles/Home.module.scss";
-import { RefObject, useState } from "react";
-function NewAccount(props: { emailRef: RefObject<HTMLInputElement> }) {
+import { RefObject, useRef, useState } from "react";
+function NewAccount(props: {
+  Account?: { email: string; password: string };
+  title?: string;
+  setAccount?: Function;
+  emailRef?: RefObject<HTMLInputElement>;
+}) {
   const [showPassword, setshowPassword] = useState(false);
-
-  const { emailRef } = props;
+  // const accountRef = useRef({ email: "", password: "" });
+  const { title, emailRef, Account, setAccount } = props;
   function togglePassword() {
     setshowPassword(!showPassword);
     // if (showPassword) {
@@ -17,31 +22,56 @@ function NewAccount(props: { emailRef: RefObject<HTMLInputElement> }) {
   }
   return (
     <>
-      <h2>Create New Account</h2>
+      <h2>{title ?? "Create New Account"}</h2>
       <input
-        onKeyDown={(e) => {
-          if (e.key === " ") {
-            // e.stopPropagation();
-          }
+        // ref={accountRef.current.email}
+        onChange={(e) => {
+          setAccount?.({ ...Account, email: e.target.value });
+          // accountRef.current.email = e.target.value;
+          // if (e.key === " ") {
+          // e.stopPropagation();
+          // }
         }}
-        // required={true}
+        // ref={emailRef}
         autoFocus
-        ref={emailRef}
         placeholder="Email"
+        aria-invalid="false"
+        autoComplete="username"
+        id="email"
+        name="email"
         type="email"
-      />
+        dir="ltr"
+        inputMode="email"
+        aria-label="Email Address"
+        aria-errormessage="email-error"
+        maxLength={1000}
+        autoCorrect="off"
+        autoCapitalize="none"
+        spellCheck="false"
+        value={Account?.email}
+        // value={accountRef.current.email}
+      ></input>
       <div className={styles.password}>
         <input
-          onKeyDown={(e) => {
-            if (e.key === " ") {
-              // e.stopPropagation();
-            }
+          value={Account?.password}
+          onChange={(e) => {
+            setAccount?.({ ...Account, password: e.target.value });
+            // if (e.key === " ") {
+            // e.stopPropagation();
+            // }
           }}
-          //   required={true}
+          placeholder="Password"
+          autoComplete="current-password"
           id="password"
           name="password"
-          placeholder="Password"
           type={showPassword ? "text" : "password"}
+          dir="ltr"
+          inputMode="text"
+          aria-label="Password"
+          aria-errormessage="password-error"
+          maxLength={1000}
+          aria-invalid="true"
+          aria-describedby="password-helper-text"
         />
         <label htmlFor="password" className={styles.passwordEye}>
           <AnimatePresence mode="wait">

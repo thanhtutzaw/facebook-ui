@@ -5,11 +5,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { CSSProperties, useEffect, useRef, useState } from "react";
-import { app } from "../lib/firebase";
-import { signin } from "../lib/signin";
-import styles from "../styles/Home.module.scss";
-import NewAccount from "../components/Form/NewAccount";
-import Info from "../components/Form/Info";
+import { app } from "../../lib/firebase";
+import { signin } from "../../lib/signin";
+import styles from "../../styles/Home.module.scss";
+import NewAccount from "../../components/Form/NewAccount";
+import Info from "../../components/Form/Info";
+import Link from "next/link";
 export default function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -44,6 +45,7 @@ export default function Login() {
   };
 
   const emailRef = useRef<HTMLInputElement>(null);
+  const [Account, setAccount] = useState({ email: "", password: "" });
 
   if (auth.currentUser)
     return <p style={{ textAlign: "center" }}>Loading ...</p>;
@@ -97,6 +99,7 @@ export default function Login() {
           if (!signup) {
             setsignup(true);
           }
+          // if (Account.email !== "" || Account.password !== "") return;
           if (e.target !== e.currentTarget) return;
           setsignup((prev) => !prev);
           // alert("clicked");
@@ -132,7 +135,12 @@ export default function Login() {
               className={styles.emailForm}
             >
               <div className={styles.newAccount}>
-                <NewAccount emailRef={emailRef} />
+                <NewAccount
+                  key={signup ? "true" : "false"}
+                  Account={Account}
+                  setAccount={setAccount}
+                  emailRef={emailRef}
+                />
               </div>
               <div className={styles.userInfo}>
                 <Info emailRef={emailRef} />
@@ -141,7 +149,9 @@ export default function Login() {
           )}
         </AnimatePresence>
       </div>
-      <a className={styles.emailLoginLink}>Log in using Email</a>
+      <Link href="login/email" className={styles.emailLoginLink}>
+        Log in using Email
+      </Link>
       <a
         className="githublink"
         href="https://github.com/thanhtutzaw"
