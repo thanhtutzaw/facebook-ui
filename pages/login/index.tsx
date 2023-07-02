@@ -4,13 +4,18 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { CSSProperties, useEffect, useRef, useState } from "react";
+import { CSSProperties, ChangeEvent, useEffect, useRef, useState } from "react";
 import { app } from "../../lib/firebase";
 import { signin } from "../../lib/signin";
 import styles from "../../styles/Home.module.scss";
-import NewAccount from "../../components/Form/NewAccount";
-import Info from "../../components/Form/Info";
 import Link from "next/link";
+import Signup from "../../components/Signup";
+export type account = {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName?: string;
+};
 export default function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -45,8 +50,19 @@ export default function Login() {
   };
 
   const emailRef = useRef<HTMLInputElement>(null);
-  const [Account, setAccount] = useState({ email: "", password: "" });
-
+  const [Account, setAccount] = useState({
+    email: "test@gmail.com",
+    password: "",
+    firstName: "",
+    lastName: "",
+  });
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setAccount((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
   if (auth.currentUser)
     return <p style={{ textAlign: "center" }}>Loading ...</p>;
   return (
@@ -128,23 +144,32 @@ export default function Login() {
             </motion.div>
           ) : (
             <motion.form
+              onSubmit={(e) => {
+                e.preventDefault();
+                // alert(JSON.stringify(Account, null, 4));
+                console.table(Account);
+                setsignup(false);
+                e.currentTarget.reset();
+                // setAccount({
+                //   email: "",
+                //   password: "",
+                //   firstName: "",
+                //   lastName: "",
+                // });
+              }}
               key="label2"
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: !signup ? 0 : 1, scale: !signup ? 0.5 : 1 }}
               exit={{ opacity: 0, scale: 0.5 }}
               className={styles.emailForm}
             >
-              <div className={styles.newAccount}>
-                <NewAccount
-                  key={signup ? "true" : "false"}
-                  Account={Account}
-                  setAccount={setAccount}
-                  emailRef={emailRef}
-                />
-              </div>
-              <div className={styles.userInfo}>
-                <Info emailRef={emailRef} />
-              </div>
+              <Signup
+                handleChange={handleChange}
+                signup={signup}
+                Account={Account}
+                setAccount={setAccount}
+                emailRef={emailRef}
+              />
             </motion.form>
           )}
         </AnimatePresence>

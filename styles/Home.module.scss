@@ -174,10 +174,18 @@
     // min-width: 327px;
     min-width: 320px;
     // max-width: 327px;
-    max-width: 340px;
-    // max-width: 320px;
+    // max-width: 340px;
+    max-width: 320px;
     overflow: scroll;
+    // scroll-padding-left: 1rem;
+    // scroll-padding-right: 1rem;
+    scroll-behavior: smooth;
     border-radius: 1rem;
+    // scroll-snap-align: center;
+    scroll-snap-type: x mandatory;
+    > div {
+      scroll-snap-align: start;
+    }
     h2 {
       color: black;
       overflow: hidden;

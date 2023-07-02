@@ -2,8 +2,9 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "../../styles/Home.module.scss";
-import { RefObject, useRef, useState } from "react";
+import { ChangeEventHandler, RefObject, useRef, useState } from "react";
 function NewAccount(props: {
+  handleChange: ChangeEventHandler<HTMLInputElement>;
   Account?: { email: string; password: string };
   title?: string;
   setAccount?: Function;
@@ -11,7 +12,7 @@ function NewAccount(props: {
 }) {
   const [showPassword, setshowPassword] = useState(false);
   // const accountRef = useRef({ email: "", password: "" });
-  const { title, emailRef, Account, setAccount } = props;
+  const { handleChange, title, emailRef, Account, setAccount } = props;
   function togglePassword() {
     setshowPassword(!showPassword);
     // if (showPassword) {
@@ -25,13 +26,14 @@ function NewAccount(props: {
       <h2>{title ?? "Create New Account"}</h2>
       <input
         // ref={accountRef.current.email}
-        onChange={(e) => {
-          setAccount?.({ ...Account, email: e.target.value });
-          // accountRef.current.email = e.target.value;
-          // if (e.key === " ") {
-          // e.stopPropagation();
-          // }
-        }}
+        // onChange={(e) => {
+        //   // setAccount?.({ ...Account, email: e.target.value });
+        //   // accountRef.current.email = e.target.value;
+        //   // if (e.key === " ") {
+        //   // e.stopPropagation();
+        //   // }
+        // }}
+        onChange={handleChange}
         // ref={emailRef}
         autoFocus
         placeholder="Email"
@@ -48,18 +50,20 @@ function NewAccount(props: {
         autoCorrect="off"
         autoCapitalize="none"
         spellCheck="false"
-        value={Account?.email}
+        // value={Account?.email}
         // value={accountRef.current.email}
       ></input>
       <div className={styles.password}>
         <input
-          value={Account?.password}
-          onChange={(e) => {
-            setAccount?.({ ...Account, password: e.target.value });
-            // if (e.key === " ") {
-            // e.stopPropagation();
-            // }
-          }}
+          required
+          // value={Account?.password}
+          // onChange={(e) => {
+          //   // setAccount?.({ ...Account, password: e.target.value });
+          //   // if (e.key === " ") {
+          //   // e.stopPropagation();
+          //   // }
+          // }}
+          onChange={handleChange}
           placeholder="Password"
           autoComplete="current-password"
           id="password"
@@ -69,6 +73,7 @@ function NewAccount(props: {
           inputMode="text"
           aria-label="Password"
           aria-errormessage="password-error"
+          minLength={3}
           maxLength={1000}
           aria-invalid="true"
           aria-describedby="password-helper-text"

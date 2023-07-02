@@ -6,7 +6,7 @@ import s from "../../styles/Home.module.scss";
 function BackHeader(props: {
   style?: CSSProperties;
   selectMode?: boolean;
-  children: ReactNode;
+  children?: ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
 }) {
   const router = useRouter();
