@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import styles from "../../styles/Home.module.scss";
 import { ChangeEventHandler, RefObject, useRef, useState } from "react";
 function NewAccount(props: {
-  handleChange: ChangeEventHandler<HTMLInputElement>;
+  handleChange?: ChangeEventHandler<HTMLInputElement>;
   Account?: { email: string; password: string };
   title?: string;
   setAccount?: Function;
