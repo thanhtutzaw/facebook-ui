@@ -1,7 +1,7 @@
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
-import styles from "../../styles/Home.module.scss";
+import styles from "./index.module.scss";
 import { ChangeEventHandler, RefObject, useRef, useState } from "react";
 function NewAccount(props: {
   handleChange?: ChangeEventHandler<HTMLInputElement>;
@@ -118,9 +118,7 @@ function NewAccount(props: {
           </AnimatePresence>
         </label>
       </div>
-      <button type="submit" className={styles.nextForm}>
-        Next
-      </button>
+      
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
-import styles from "../../styles/Home.module.scss";
+import styles from "./index.module.scss";
 import { ChangeEventHandler, RefObject } from "react";
 import { account } from "../../pages/login";
 export default function Info(props: {
@@ -31,7 +31,6 @@ export default function Info(props: {
         minLength={3}
         maxLength={20}
       />
-      {/* <div className={styles.password}> */}
       <input
         // onChange={(e) => {
         //   // setAccount({...Account , lastName: e.target.value })

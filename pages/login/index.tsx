@@ -4,7 +4,15 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { CSSProperties, ChangeEvent, useEffect, useRef, useState } from "react";
+import {
+  CSSProperties,
+  ChangeEvent,
+  FormEvent,
+  FormEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { app } from "../../lib/firebase";
 import { signin } from "../../lib/signin";
 import styles from "../../styles/Home.module.scss";
@@ -62,6 +70,19 @@ export default function Login() {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+  };
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // alert(JSON.stringify(Account, null, 4));
+    console.table(Account);
+    setsignup(false);
+    e.currentTarget.reset();
+    // setAccount({
+    //   email: "",
+    //   password: "",
+    //   firstName: "",
+    //   lastName: "",
+    // });
   };
   if (auth.currentUser)
     return <p style={{ textAlign: "center" }}>Loading ...</p>;
@@ -143,34 +164,14 @@ export default function Login() {
               <SignupLabel />
             </motion.div>
           ) : (
-            <motion.form
-              onSubmit={(e) => {
-                e.preventDefault();
-                // alert(JSON.stringify(Account, null, 4));
-                console.table(Account);
-                setsignup(false);
-                e.currentTarget.reset();
-                // setAccount({
-                //   email: "",
-                //   password: "",
-                //   firstName: "",
-                //   lastName: "",
-                // });
-              }}
-              key="label2"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: !signup ? 0 : 1, scale: !signup ? 0.5 : 1 }}
-              exit={{ opacity: 0, scale: 0.5 }}
-              className={styles.emailForm}
-            >
-              <Signup
-                handleChange={handleChange}
-                signup={signup}
-                Account={Account}
-                setAccount={setAccount}
-                emailRef={emailRef}
-              />
-            </motion.form>
+            <Signup
+              handleSubmit={handleSubmit}
+              handleChange={handleChange}
+              signup={signup}
+              Account={Account}
+              setAccount={setAccount}
+              emailRef={emailRef}
+            />
           )}
         </AnimatePresence>
       </div>
@@ -263,7 +264,7 @@ function SignupLabel() {
       <p className="loginLabel">
         {/* {Googleloading ? "Signing in" : "Continue with Google"} */}
         {/* {Googleloading ? "Signing in" : "Sign up With Email"} */}
-        Sign up With Email
+        Sign up with Email
       </p>
     </>
   );

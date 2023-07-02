@@ -110,13 +110,13 @@ export default function PhotoLayout(props: {
                     width={700}
                     height={394}
                     priority
-                    onError={(e) => {
-                      const img = e.currentTarget;
-                      img.src = placeholder;
-                      img.alt = "Not Found !";
-                      img.style.filter = "invert(1)";
-                      img.style.minHeight = "394px";
-                    }}
+                    // onError={(e) => {
+                    //   const img = e.currentTarget;
+                    //   img.src = placeholder;
+                    //   img.alt = "Not Found !";
+                    //   img.style.filter = "invert(1)";
+                    //   img.style.minHeight = "394px";
+                    // }}
                     alt={file.name}
                     src={
                       !file.url ? URL.createObjectURL(file) : file.url
@@ -188,13 +188,13 @@ export default function PhotoLayout(props: {
         >
           <Image
             priority
-            onError={(e) => {
-              const img = e.currentTarget;
-              img.src = placeholder;
-              img.alt = "Not Found !";
-              img.style.filter = "invert(1)";
-              img.style.minHeight = media.length === 2 ? "196px" : "394px";
-            }}
+            // onError={(e) => {
+            //   const img = e.currentTarget;
+            //   img.src = placeholder;
+            //   img.alt = "Not Found !";
+            //   img.style.filter = "invert(1)";
+            //   img.style.minHeight = media.length === 2 ? "196px" : "394px";
+            // }}
             width={700}
             height={394}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -221,13 +221,13 @@ export default function PhotoLayout(props: {
           {media[1] && (
             <Image
               priority
-              onError={(e) => {
-                const img = e.currentTarget;
-                img.src = placeholder;
-                img.alt = "Not Found !";
-                img.style.filter = "invert(1)";
-                img.style.minHeight = media.length === 2 ? "196px" : "394px";
-              }}
+              // onError={(e) => {
+              //   const img = e.currentTarget;
+              //   img.src = placeholder;
+              //   img.alt = "Not Found !";
+              //   img.style.filter = "invert(1)";
+              //   img.style.minHeight = media.length === 2 ? "196px" : "394px";
+              // }}
               width={700}
               height={394}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -257,13 +257,13 @@ export default function PhotoLayout(props: {
             >
               <Image
                 priority
-                onError={(e) => {
-                  const img = e.currentTarget;
-                  img.src = placeholder;
-                  img.alt = "Not Found !";
-                  img.style.filter = "invert(1)";
-                  img.style.minHeight = media.length === 2 ? "196px" : "394px";
-                }}
+                // onError={(e) => {
+                //   const img = e.currentTarget;
+                //   img.src = placeholder;
+                //   img.alt = "Not Found !";
+                //   img.style.filter = "invert(1)";
+                //   img.style.minHeight = media.length === 2 ? "196px" : "394px";
+                // }}
                 // width={700}
                 width={700}
                 height={394}

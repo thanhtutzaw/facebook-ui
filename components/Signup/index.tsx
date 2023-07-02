@@ -1,17 +1,27 @@
-import React, { ChangeEventHandler } from "react";
-import NewAccount from "./NewAccount";
+import { motion } from "framer-motion";
+import { ChangeEventHandler, FormEventHandler } from "react";
+import styles from "./index.module.scss";
 import Info from "./Info";
-import styles from "../../styles/Home.module.css";
+import NewAccount from "./NewAccount";
 export default function Signup(props: {
+  handleSubmit: FormEventHandler<HTMLFormElement>;
   handleChange: ChangeEventHandler<HTMLInputElement>;
   signup: any;
   Account: any;
   setAccount: any;
   emailRef: any;
 }) {
-  const { handleChange, signup, Account, setAccount, emailRef } = props;
+  const { handleSubmit, handleChange, signup, Account, setAccount, emailRef } =
+    props;
   return (
-    <>
+    <motion.form
+      onSubmit={handleSubmit}
+      key="label2"
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: !signup ? 0 : 1, scale: !signup ? 0.5 : 1 }}
+      exit={{ opacity: 0, scale: 0.5 }}
+      className={styles.emailForm}
+    >
       <div className={styles.newAccount}>
         <NewAccount
           handleChange={handleChange}
@@ -20,6 +30,9 @@ export default function Signup(props: {
           setAccount={setAccount}
           emailRef={emailRef}
         />
+        <button type="submit" className={styles.nextForm}>
+          Next
+        </button>
       </div>
       <div className={styles.userInfo}>
         <Info
@@ -29,6 +42,6 @@ export default function Signup(props: {
           emailRef={emailRef}
         />
       </div>
-    </>
+    </motion.form>
   );
 }

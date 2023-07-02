@@ -129,19 +129,19 @@ export default function Home({
 
   const router = useRouter();
   const auth = getAuth(app);
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push("/login");
-      } else {
-        if (!expired) return;
-        router.push("/");
-        // console.log("expired , user exist and pushed");
-      }
-    });
-    return () => unsub();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth, expired]);
+    useEffect(() => {
+      const unsub = onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          router.push("/login");
+        } else {
+          if (!expired) return;
+          router.push("/");
+          // console.log("expired , user exist and pushed");
+        }
+      });
+      return () => unsub();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [auth, expired]);
 
   // }, [active]);
 
