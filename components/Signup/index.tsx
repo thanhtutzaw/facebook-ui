@@ -30,7 +30,16 @@ export default function Signup(props: {
           setAccount={setAccount}
           emailRef={emailRef}
         />
-        <button type="submit" className={styles.nextForm}>
+        <button
+          onClick={(e) => {
+            const nextElement =
+              e.currentTarget.parentElement?.nextElementSibling;
+            nextElement?.scrollIntoView({ block: "center" });
+            // console.log(nextElement);
+          }}
+          type="submit"
+          className={styles.nextForm}
+        >
           Next
         </button>
       </div>

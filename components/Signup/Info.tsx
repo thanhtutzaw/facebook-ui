@@ -24,7 +24,6 @@ export default function Info(props: {
             // e.stopPropagation();
           }
         }}
-        required
         id="firstName"
         name="firstName"
         placeholder="First Name"
@@ -42,17 +41,31 @@ export default function Info(props: {
         minLength={3}
         maxLength={20}
       />
-      {/* </div> */}
-      <button
-        // onClick={(e) => {
-        //   e.preventDefault();
-        //   alert("hey");
-        // }}
-        type="submit"
-        className={styles.nextForm}
-      >
-        Done
-      </button>
+      <div className={styles.backbtnContainer}>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            const previousElement =
+              e.currentTarget.parentElement?.parentElement
+                ?.previousElementSibling;
+            previousElement?.scrollIntoView({ block: "center" });
+          }}
+          // type="submit"
+          className={styles.nextForm}
+        >
+          Back
+        </button>
+        <button
+          // onClick={(e) => {
+          //   e.preventDefault();
+          //   alert("hey");
+          // }}
+          type="submit"
+          className={styles.nextForm}
+        >
+          Done
+        </button>
+      </div>
     </>
   );
 }

@@ -147,24 +147,17 @@
     background-color: rgb(0, 122, 246);
     border-radius: 50px;
     outline: none;
-    // border: 1px solid rgba(0, 0, 0, 0.1);
     cursor: pointer;
     box-shadow: rgba(0, 0, 0, 0.12) 0px 2px 20px;
     word-break: break-word;
     white-space: nowrap;
     will-change: padding;
     -webkit-tap-highlight-color: transparent;
-    &:active {
-      // background-color: rgb(11, 118, 224);
-    }
-    &:focus {
-      // border:2px solid red;
-    }
     &:active:not(.emailForm) {
       scale: 1.1;
     }
   }
-  
+
   .SecondaryloginBtn {
     display: flex;
     gap: 10px;
@@ -381,9 +374,9 @@
 .action > button:active {
   background-color: rgb(230, 230, 230);
 }
-.loginBtn:active:has(> div.Loginlabel) {
-  // outline: 4px solid #6aa6eb;
-}
+// .loginBtn:active:has(> div.Loginlabel) {
+//   // outline: 4px solid #6aa6eb;
+// }
 
 @keyframes card {
   0% {

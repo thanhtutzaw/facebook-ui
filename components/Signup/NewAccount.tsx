@@ -23,8 +23,16 @@ function NewAccount(props: {
   }
   return (
     <>
-      <h2>{title ?? "Create New Account"}</h2>
+      <h2
+        style={{
+          textAlign: title ? "center" : "initial",
+          marginTop: title ? "0" : "revert",
+        }}
+      >
+        {title ?? "Create New Account"}
+      </h2>
       <input
+        required
         // ref={accountRef.current.email}
         // onChange={(e) => {
         //   // setAccount?.({ ...Account, email: e.target.value });
@@ -73,7 +81,7 @@ function NewAccount(props: {
           inputMode="text"
           aria-label="Password"
           aria-errormessage="password-error"
-          minLength={3}
+          minLength={6}
           maxLength={1000}
           aria-invalid="true"
           aria-describedby="password-helper-text"
@@ -118,7 +126,6 @@ function NewAccount(props: {
           </AnimatePresence>
         </label>
       </div>
-      
     </>
   );
 }

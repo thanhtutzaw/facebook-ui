@@ -1,23 +1,18 @@
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { FirebaseError } from "firebase-admin";
+import {
+  fetchSignInMethodsForEmail,
+  getAuth,
+  onAuthStateChanged,
+} from "firebase/auth";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import {
-  CSSProperties,
-  ChangeEvent,
-  FormEvent,
-  FormEventHandler,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
+import Signup from "../../components/Signup";
 import { app } from "../../lib/firebase";
 import { signin } from "../../lib/signin";
 import styles from "../../styles/Home.module.scss";
-import Link from "next/link";
-import Signup from "../../components/Signup";
 export type account = {
   email: string;
   password: string;
@@ -41,15 +36,14 @@ export default function Login() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth]);
 
-  const email = "testuser@gmail.com";
-  const password = "111111";
+  // const email = "testuser@gmail.com";
+  // const password = "111111";
   const [signup, setsignup] = useState(false);
-  const loginStyle: CSSProperties = {};
   const handleTestUserSignin = () => {
     setLoading(true);
     try {
       setTimeout(() => {
-        signin(email, password);
+        signin("testuser@gmail.com", "111111");
       }, 700);
     } catch (error) {
       setLoading(false);
@@ -59,7 +53,7 @@ export default function Login() {
 
   const emailRef = useRef<HTMLInputElement>(null);
   const [Account, setAccount] = useState({
-    email: "test@gmail.com",
+    email: "",
     password: "",
     firstName: "",
     lastName: "",
@@ -71,12 +65,59 @@ export default function Login() {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // alert(JSON.stringify(Account, null, 4));
-    console.table(Account);
-    setsignup(false);
-    e.currentTarget.reset();
+    try {
+      const emailMethod = await fetchSignInMethodsForEmail(auth, Account.email);
+      const emailExist = emailMethod.length > 0;
+      // setemailExist(emailExist);
+      const name = document.getElementsByName("firstName")[0];
+
+      if (emailExist) {
+        try {
+          const signinError = (await signin(
+            Account.email,
+            Account.password
+          )) as FirebaseError;
+          if (signinError) {
+            alert(signinError.code);
+          }
+        } catch (error: any) {
+          alert(error.code);
+          console.error(error.code);
+        }
+      } else {
+        name.setAttribute("required", "true");
+        name.focus();
+        if (Account.firstName) {
+          // alert(JSON.stringify(Account, null, 4));
+        }
+      }
+    } catch (error: any) {
+      console.log(error.code);
+    }
+    // if (Account.firstName && !emailExist) {
+    //   alert(JSON.stringify(Account, null, 4));
+    // }
+    try {
+      // const UserCredential = await createUserWithEmailAndPassword(
+      //   auth,
+      //   Account.email,
+      //   Account.password
+      // );
+      // setsignup(false);
+    } catch (error: any) {
+      // console.log(error.code);
+      // if (error.code === "auth/email-already-in-use") {
+      //   const email = document.getElementsByName("email")[0];
+      //   email.focus();
+      // }
+      // setsignup(true);
+    }
+    // await updateProfile(UserCredential.user, {
+    //   displayName: Account.firstName + Account.lastName,
+    // });
+    // e.currentTarget.reset();
     // setAccount({
     //   email: "",
     //   password: "",
