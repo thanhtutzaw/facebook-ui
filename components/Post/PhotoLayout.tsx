@@ -239,7 +239,11 @@ export default function PhotoLayout(props: {
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               src={media[1].url}
               alt={media[1].name ?? "Not Found"}
-              style={{ objectFit: "contain", height: "auto", width: "auto" }}
+              style={{
+                objectFit: "contain",
+                aspectRatio: media.length < 2 ? "9/10;" : "16/9",
+                height: media.length < 3 ? "100%" : "auto",
+              }}
             />
             // <img
             //   // onError={(e) => {

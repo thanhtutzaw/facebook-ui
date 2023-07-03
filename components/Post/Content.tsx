@@ -6,7 +6,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { RefObject, useContext } from "react";
 import { AppContext } from "../../context/AppContext";
 import { Post, Props } from "../../types/interfaces";
@@ -103,7 +103,6 @@ export default function Content(props: {
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                // router.push(post.authorId?.toString());
                 router.push({
                   pathname: `${authorId}`,
                 });
@@ -205,7 +204,6 @@ export default function Content(props: {
             e.stopPropagation();
             e.preventDefault();
             setShowmore((prev: boolean) => !prev);
-            console.log(showmore);
           }
         }}
       >
@@ -235,7 +233,6 @@ export default function Content(props: {
             e.stopPropagation();
             e.preventDefault();
             setShowmore((prev: boolean) => !prev);
-            console.log(showmore);
           }
         }}
       />

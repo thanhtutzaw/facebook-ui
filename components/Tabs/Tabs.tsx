@@ -32,7 +32,6 @@ export default function Tabs(props: Props) {
   useEffect(() => {
     function dragStop() {
       setcanDrag(false);
-      console.log("up");
     }
     window.addEventListener("mouseup", dragStop);
     document.body.addEventListener("mouseup", dragStop);

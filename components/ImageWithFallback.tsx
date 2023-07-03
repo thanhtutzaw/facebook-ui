@@ -26,8 +26,8 @@ const ImageWithFallback = (
       onError={(e) => {
         setImgSrc(fallbackSrc);
         e.currentTarget.style.filter = "invert(1)";
-        e.currentTarget.style.minHeight =
-          media?.length === 2 ? "196px" : "394px";
+        // e.currentTarget.style.minHeight =
+        //   media?.length === 2 ? "196px" : "394px";
       }}
     />
   );
