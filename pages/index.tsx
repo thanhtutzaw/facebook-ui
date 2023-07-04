@@ -17,6 +17,7 @@ import { AppProvider } from "../context/AppContext";
 import { app, db, postToJSON } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import { Props } from "../types/interfaces";
+import email from "./login/email";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -129,23 +130,23 @@ export default function Home({
 
   const router = useRouter();
   const auth = getAuth(app);
-    useEffect(() => {
-      const unsub = onAuthStateChanged(auth, (user) => {
-        if (!user) {
-          router.push("/login");
-        } else {
-          if (!expired) return;
-          router.push("/");
-          // console.log("expired , user exist and pushed");
-        }
-      });
-      return () => unsub();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [auth, expired]);
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push("/login");
+      } else {
+        if (!expired) return;
+        router.push("/");
+        // console.log("expired , user exist and pushed");
+      }
+    });
+    return () => unsub();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth, expired]);
 
   // }, [active]);
 
-  if (expired) return <Welcome expired={expired} />;
+  if (expired && email) return <Welcome expired={expired} />;
   return (
     <AppProvider
       expired={expired}

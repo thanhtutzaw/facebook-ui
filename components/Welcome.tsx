@@ -1,5 +1,6 @@
 import router, { useRouter } from "next/router";
 import { useEffect } from "react";
+import { DevelopedByThanHtutZaw } from "./DevelopedByThanHtutZaw";
 
 export function Welcome({ expired }: { expired: boolean }) {
   const router = useRouter();
@@ -41,21 +42,7 @@ export function Welcome({ expired }: { expired: boolean }) {
       >
         Loading ...
       </p>
-      <a
-        className="githublink"
-        href="https://github.com/thanhtutzaw"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <span
-          style={{
-            color: "gray",
-          }}
-        >
-          Developed by{" "}
-        </span>
-        thanhtutzaw
-      </a>
+      <DevelopedByThanHtutZaw />
     </div>
   );
 }

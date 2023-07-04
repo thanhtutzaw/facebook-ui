@@ -15,9 +15,6 @@ export default function Info(props: {
     <>
       <h2>Account Info</h2>
       <input
-        // onChange={(e) => {
-        //   // setAccount({...Account  , firstName: e.target.value})
-        // }}
         onChange={handleChange}
         onKeyDown={(e) => {
           if (e.key === " ") {
@@ -29,7 +26,15 @@ export default function Info(props: {
         placeholder="First Name"
         minLength={3}
         maxLength={20}
-      />
+        type="text"
+        autoComplete="on"
+        spellCheck="false"
+        tabIndex={0}
+        aria-label="First name"
+        autoCapitalize="sentences"
+      ></input>
+      {/* <input id="middleName" name="middleName" placeholder="Middle Name" minLength={3} maxLength={20}> */}
+
       <input
         // onChange={(e) => {
         //   // setAccount({...Account , lastName: e.target.value })
@@ -43,6 +48,7 @@ export default function Info(props: {
       />
       <div className={styles.backbtnContainer}>
         <button
+          tabIndex={1}
           onClick={(e) => {
             e.preventDefault();
             const previousElement =
@@ -52,6 +58,7 @@ export default function Info(props: {
           }}
           // type="submit"
           className={styles.nextForm}
+          aria-label="back step"
         >
           Back
         </button>
@@ -60,8 +67,10 @@ export default function Info(props: {
           //   e.preventDefault();
           //   alert("hey");
           // }}
+          tabIndex={0}
           type="submit"
           className={styles.nextForm}
+          aria-label="final step"
         >
           Done
         </button>

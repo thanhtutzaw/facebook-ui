@@ -35,10 +35,10 @@ export default function Signup(props: {
             const nextElement =
               e.currentTarget.parentElement?.nextElementSibling;
             nextElement?.scrollIntoView({ block: "center" });
-            // console.log(nextElement);
           }}
           type="submit"
           className={styles.nextForm}
+          aria-label="next step"
         >
           Next
         </button>

@@ -13,6 +13,9 @@ import Signup from "../../components/Signup";
 import { app } from "../../lib/firebase";
 import { signin } from "../../lib/signin";
 import styles from "../../styles/Home.module.scss";
+import { DevelopedByThanHtutZaw } from "../../components/DevelopedByThanHtutZaw";
+import EmailIcon from "../../public/email.svg";
+import GoogleIcon from "../../public/google.svg";
 export type account = {
   email: string;
   password: string;
@@ -202,7 +205,17 @@ export default function Login() {
               }}
               exit={{ opacity: 0, scale: 1, height: "300px", width: "300px" }}
             >
-              <SignupLabel />
+              {/* <EmailIcon /> */}
+              {/* <div className="loginIcon"> */}
+              {/* <Image alt="Google-icon" src={GoogleIcon}></Image> */}
+              {/* </div> */}
+              {/* <GoogleLogo /> */}
+              <Image alt="email-logo" src={EmailIcon}></Image>
+              <p className="loginLabel">
+                {/* {Googleloading ? "Signing in" : "Continue with Google"} */}
+                {/* {Googleloading ? "Signing in" : "Sign up With Email"} */}
+                Sign up with Email
+              </p>
             </motion.div>
           ) : (
             <Signup
@@ -216,25 +229,10 @@ export default function Login() {
           )}
         </AnimatePresence>
       </div>
-      <Link href="login/email" className={styles.emailLoginLink}>
+      <Link tabIndex={-1} href="login/email" className={styles.emailLoginLink}>
         Log in using Email
       </Link>
-      <a
-        className="githublink"
-        href="https://github.com/thanhtutzaw"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <span
-          style={{
-            color: "gray",
-            userSelect: "none",
-          }}
-        >
-          Developed by{" "}
-        </span>
-        thanhtutzaw
-      </a>
+      <DevelopedByThanHtutZaw />
     </section>
   );
 }
@@ -270,7 +268,9 @@ function GoogleLogo() {
             fill="#fff"
           ></path>
         </mask>
-        <g mask="url(#google_icon_svg__svg-3910113092-a)">
+        <g
+        // mask="url(#google_icon_svg__svg-3910113092-a)"
+        >
           <path
             fillRule="evenodd"
             clipRule="evenodd"
@@ -288,25 +288,6 @@ function GoogleLogo() {
     </div>
   );
 }
-
 function SignupLabel() {
-  return (
-    <>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24px"
-        height="24px"
-        viewBox="0 0 24 24"
-        fill="#FFFFFF"
-      >
-        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
-        <path d="M0 0h24v24H0z" fill="none" />
-      </svg>
-      <p className="loginLabel">
-        {/* {Googleloading ? "Signing in" : "Continue with Google"} */}
-        {/* {Googleloading ? "Signing in" : "Sign up With Email"} */}
-        Sign up with Email
-      </p>
-    </>
-  );
+  return <></>;
 }

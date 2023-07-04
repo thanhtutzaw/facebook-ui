@@ -97,6 +97,7 @@ export default function Email() {
             style={{ width: "100%", textTransform: "uppercase" }}
             type="submit"
             className={s.nextForm}
+            aria-label="login"
           >
             {!loading ? "Login" : "Logging in"}
           </button>
