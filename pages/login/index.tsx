@@ -9,13 +9,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
+import { DevelopedByThanHtutZaw } from "../../components/DevelopedByThanHtutZaw";
 import Signup from "../../components/Signup";
+import useEscape from "../../hooks/useEscape";
 import { app } from "../../lib/firebase";
 import { signin } from "../../lib/signin";
-import styles from "../../styles/Home.module.scss";
-import { DevelopedByThanHtutZaw } from "../../components/DevelopedByThanHtutZaw";
 import EmailIcon from "../../public/email.svg";
-import GoogleIcon from "../../public/google.svg";
+import styles from "../../styles/Home.module.scss";
 export type account = {
   email: string;
   password: string;
@@ -38,7 +38,10 @@ export default function Login() {
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth]);
-
+  useEscape(() => {
+    if (!signup) return;
+    setsignup(false);
+  });
   // const email = "testuser@gmail.com";
   // const password = "111111";
   const [signup, setsignup] = useState(false);
@@ -154,7 +157,46 @@ export default function Login() {
         />
         {loading ? "Logging in..." : "Log in as Peter 1"}
       </button>
-      or
+      <AnimatePresence mode="wait" initial={false}>
+        {signup ? (
+          <motion.button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!signup) return;
+              setsignup(false);
+            }}
+            // key={"close"}
+            className={styles.closeSignup}
+            // transition={{ duration: 0.3, delay: 0.5 }}
+            initial={{ opacity: 0, bottom: "-90px" }}
+            animate={{
+              opacity: !signup ? 0 : 1,
+              bottom: signup ? "0px" : "-90px",
+            }}
+            exit={{ opacity: 0, bottom: "-90px" }}
+          >
+            {/* <FontAwesomeIcon icon={faX} /> */}
+            &times;
+          </motion.button>
+        ) : (
+          <motion.span
+            key={"or"}
+            className={styles.or}
+            style={{ position: "relative", top: "-80px" }}
+            // transition={{ delay: 1 }}
+            // transition={{ duration: 1, delay: 1 }}
+            initial={{ opacity: 1, top: "-80px" }}
+            animate={{
+              opacity: signup ? 0 : 1,
+              // top: signup ? "-80px" : "0px",
+              top: "0px",
+            }}
+            exit={{ opacity: 0, top: "-80px" }}
+          >
+            or
+          </motion.span>
+        )}
+      </AnimatePresence>
       <div
         style={{
           maxWidth: "95vw",
@@ -170,12 +212,12 @@ export default function Login() {
         className={`${styles.loginBtn} ${styles.emailLogin}`}
         // disabled={Googleloading}
         // style={loginStyle}
-        onKeyDown={(e) => {
-          const key = e.code;
-          if (key === "Space" && signup && e.target !== e.currentTarget) {
-            e.preventDefault();
-          }
-        }}
+        // onKeyDown={(e) => {
+        //   const key = e.code;
+        //   if (key === "Space" && signup && e.target !== e.currentTarget) {
+        //     e.preventDefault();
+        //   }
+        // }}
         onClick={(e) => {
           if (!signup) {
             setsignup(true);

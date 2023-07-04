@@ -127,6 +127,30 @@
   align-items: center;
   gap: 1rem;
   padding-bottom: 2rem;
+  .closeSignup {
+    opacity: 1;
+    background-color: var(--blue-origin);
+    border: 0;
+    padding: 0.5rem;
+    display: flex;
+    width: 45px;
+    justify-content: center;
+    align-items: center;
+    height: 45px;
+    // font-size: 1rem;
+    border-radius: 50%;
+    color: white;
+    position: relative;
+    opacity: 0;
+    font-size: 1.8rem;
+    &:active {
+      opacity: 0.5;
+    }
+  }
+  .or {
+    position: relative;
+    user-select: none;
+  }
   .emailLoginLink {
     text-decoration: underline;
     color: var(--blue-origin) !important;
@@ -157,7 +181,9 @@
       scale: 1.1;
     }
   }
-
+  .SecondaryloginBtn {
+    z-index: 100;
+  }
   .SecondaryloginBtn {
     display: flex;
     gap: 10px;

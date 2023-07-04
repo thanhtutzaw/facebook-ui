@@ -145,7 +145,7 @@ export default function Home({
   }, [auth, expired]);
 
   // }, [active]);
-
+  if (!email) return <></>;
   if (expired && email) return <Welcome expired={expired} />;
   return (
     <AppProvider
