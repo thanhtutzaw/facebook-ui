@@ -144,7 +144,8 @@
     opacity: 0;
     font-size: 1.8rem;
     &:active {
-      opacity: 0.5;
+      opacity: 0.5 !important;
+      transition: opacity 0.3s ease-in-out;
     }
   }
   .or {

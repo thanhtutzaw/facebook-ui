@@ -83,8 +83,8 @@ export async function deleteStorage(deleteFile: Media[]) {
     const file = deleteFile[i];
     const { url, type, name } = file;
     if (url && name) {
-      if (!url) return;
-      console.log(type);
+      // if (!url) return;
+      // console.log(type);
       const fileRef = ref(
         storageRef,
         `${type === "video/mp4" ? "videos" : "images"}/${name}`

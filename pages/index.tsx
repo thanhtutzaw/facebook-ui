@@ -1,7 +1,11 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {
+  DocumentData,
+  QueryDocumentSnapshot,
   collection,
   collectionGroup,
+  doc,
+  getDoc,
   getDocs,
   orderBy,
   query,
@@ -16,14 +20,16 @@ import { Welcome } from "../components/Welcome";
 import { AppProvider } from "../context/AppContext";
 import { app, db, postToJSON } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import { Props } from "../types/interfaces";
+import { Post, Props } from "../types/interfaces";
 import email from "./login/email";
+import { profile } from "console";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
+
     const convertSecondsToTime = (seconds: number) => {
       const days = Math.floor(seconds / (3600 * 24));
       const hours = Math.floor((seconds % (3600 * 24)) / 3600);
@@ -33,10 +39,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       return { days, hours, minutes, seconds: remainingSeconds };
     };
     console.log(convertSecondsToTime(token.exp));
-    const { email, uid } = token;
+    const { name:username, email, uid } = token;
     // console.log(token);
     let expired = false;
-
     const postQuery = query(
       collectionGroup(db, `posts`),
       // where(`visibility`, "!=", "Onlyme"),
@@ -45,7 +50,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     );
     const docSnap = await getDocs(postQuery);
     const posts = docSnap.docs.map((doc) => postToJSON(doc));
-
+    // console.log(posts);
     // const getDate = (post: Post) => {
     //   const date = new Timestamp(
     //     post.createdAt.seconds,
@@ -67,6 +72,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const myPostSnap = await getDocs(mypostQuery);
 
     const myPost = myPostSnap.docs.map((doc) => postToJSON(doc));
+    const profileQuery = doc(db, `/users/${uid}`);
+    const profileSnap = await getDoc(profileQuery);
+
+    const profile = profileSnap.data()?.profile;
+    // console.log(profile?.profile);
     // if (!myPost) {
     //   return {
     //     notFound: true,
@@ -97,7 +107,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         allUsers,
         posts,
         email,
+        username,
         myPost,
+        profile,
       },
     };
   } catch (error) {
@@ -112,7 +124,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         allUsers: [],
         posts: [],
         email: "",
+        username: "",
         myPost: [],
+        profile: null,
       },
     };
   }
@@ -123,7 +137,9 @@ export default function Home({
   allUsers,
   posts,
   email,
+  username,
   myPost,
+  profile,
 }: Props) {
   // props: InferGetServerSidePropsType<typeof getServerSideProps>
   const indicatorRef = useRef<HTMLDivElement>(null);
@@ -149,7 +165,9 @@ export default function Home({
   if (expired && email) return <Welcome expired={expired} />;
   return (
     <AppProvider
+      profile={profile}
       expired={expired}
+      username={username}
       uid={uid}
       allUsers={allUsers}
       posts={posts}

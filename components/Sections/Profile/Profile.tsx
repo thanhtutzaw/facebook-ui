@@ -13,16 +13,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { AppContext } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
-import { db, postToJSON } from "../../../lib/firebase";
+import { app, db, postToJSON } from "../../../lib/firebase";
 import { Post as PostType, Props } from "../../../types/interfaces";
 import Post from "../../Post";
 import s from "./Profile.module.scss";
 import SortDropdown from "./SortDropdown";
+import { getAuth } from "firebase/auth";
 export default function Profile() {
   const photoURL = "";
-  const { myPost, email, sortedPost, setsortedPost } = useContext(
-    AppContext
-  ) as Props;
+  const { username, profile, myPost, email, sortedPost, setsortedPost } =
+    useContext(AppContext) as Props;
   const {
     uid,
     selectMode: active,
@@ -68,7 +68,7 @@ export default function Profile() {
       setSort(false);
     }
   }, [active]);
-
+  // const auth = getAuth(app);
   return (
     <motion.div
       // transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
@@ -82,7 +82,9 @@ export default function Profile() {
           width={500}
           height={170}
           style={{ objectFit: "cover", width: "120px", height: "120px" }}
-          alt={email || "profile"}
+          alt={`${profile?.firstName ?? "Unknown"} ${
+            profile?.lastName ?? ""
+          }'s profile`}
           src={
             email === "testuser@gmail.com"
               ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
@@ -91,9 +93,26 @@ export default function Profile() {
               : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
           }
         />
-        <h3>{email === "testuser@gmail.com" ? "Peter 1" : email}</h3>
-        <p className={s.bio}>
-          Listen I didn&apos;t kill Mysterio. The drones did!
+        <h3 style={{ marginBottom: "18px" }}>
+          {email === "testuser@gmail.com" ? "Peter 1" : `${username}`}
+        </h3>
+        {/* <h3 style={{ marginBottom: "18px" }}>
+          {email === "testuser@gmail.com"
+            ? "Peter 1"
+            : `${profile?.firstName ?? "Unknown"} ${profile?.lastName ?? ""}`}
+        </h3> */}
+        <p
+          style={{
+            color: profile?.bio === "" ? "gray" : "initial",
+            marginTop: "0",
+          }}
+          className={s.bio}
+        >
+          {/* Listen I didn&apos;t kill Mysterio. The drones did! */}
+          {profile?.bio === ""
+            ? "No Bio Yet"
+            : profile?.bio ??
+              "Listen I didn&apos;t kill Mysterio. The drones did!"}
         </p>
       </div>
 

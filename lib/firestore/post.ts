@@ -10,17 +10,13 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { Post } from "../../types/interfaces";
-import { MutableRefObject } from "react";
 
 export async function addPost(
   uid: string,
   files: any[],
-  // text: string,
-  // text: MutableRefObject<string>,
-  text:string,
+  text: string,
   visibility: string
 ) {
-  // alert([uid, visibility, text]);
   const Ref = collection(db, `users/${uid}/posts`);
   const data = {
     text: text,
@@ -33,10 +29,6 @@ export async function addPost(
   try {
     console.log({ data });
     await addDoc(Ref, data);
-    // console.log(data.media);
-    // data.media.map((m) => {
-    //   console.log(m.url);
-    // });
   } catch (error: any) {
     alert("Adding Post Failed !" + error.message);
   }
@@ -53,7 +45,6 @@ export async function updatePost(
   const data = {
     ...myPost,
     text: text,
-    // media: files?.filter((file) => file.url),
     media: files,
     visibility: visibility,
     createdAt: new Timestamp(
@@ -64,7 +55,6 @@ export async function updatePost(
   };
   try {
     console.log({ data });
-    // console.log("updated post");
     await updateDoc(Ref, data);
   } catch (error: any) {
     alert("Adding Post Failed !" + error.message);

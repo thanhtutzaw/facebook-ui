@@ -1,5 +1,3 @@
-// import { User, getAuth } from "firebase/auth";
-// import { app } from "./firebase";
 
 // const renewToken = async (user: User) => {
 //   try {
@@ -9,7 +7,6 @@
 //     console.log("Error renewing token:", error);
 //   }
 // };
-// const auth = getAuth(app);
 
 // export const addTokenRenewalListener = () => {
 //   auth.onIdTokenChanged(async (user) => {

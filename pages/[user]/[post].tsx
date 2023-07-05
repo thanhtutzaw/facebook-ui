@@ -27,13 +27,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const token = await verifyIdToken(cookies.token);
     const { uid } = token;
     let expired = false;
-    const mypostQuery = query(
+    const postQuery = query(
       collection(db, `/users/${uid}/posts`),
       orderBy("createdAt", "desc")
     );
-    const myPostSnap = await getDocs(mypostQuery);
-    const myPost = myPostSnap.docs.map((doc) => postToJSON(doc));
-    const post = myPost.find((post: Post) => post.id === context.query.post);
+    const postSnap = await getDocs(postQuery);
+    const posts = postSnap.docs.map((doc) => postToJSON(doc));
+    const post = posts.find((post: Post) => post.id === context.query.post);
     if (!post) {
       return {
         notFound: true,
@@ -43,7 +43,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       props: {
         expired,
         uid,
-        myPost: post,
+        post,
       },
     };
   } catch (error) {
@@ -52,7 +52,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       props: {
         expired: true,
         uid: "",
-        myPost: [],
+        post: null,
       },
     };
   }
@@ -60,14 +60,21 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 export default function Page(props: {
   expired: boolean;
   uid: string;
-  myPost: Post;
+  post: Post;
 }) {
-  const { uid, myPost, expired } = props;
+  const { uid, post, expired } = props;
+  // const {
+  //   authorId,
+  // id,
+  // text,
+  // visibility,createdAt,
+  // updatedAt,
+  // media} = post;
   const router = useRouter();
-  const [visibility, setVisibility] = useState<string>(myPost.visibility!);
+  const [visibility, setVisibility] = useState(post.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
   const [files, setFiles] = useState<Post["media"] | File[]>([
-    ...(myPost.media ?? []),
+    ...(post.media ?? []),
   ]);
   const [deleteFile, setdeleteFile] = useState<Post["media"]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -79,13 +86,13 @@ export default function Page(props: {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expired]);
-  // const text = myPost.text
+  // const text = post.text
   //   .replace(/<br\s*\/?>/g, "\n")
   //   .replaceAll("<div>", "")
   //   .replaceAll("</div>", "")
   //   .replaceAll("&nbsp;", " ");
-  const text = myPost.text
-    ? myPost.text
+  const text = post.text
+    ? post.text
         .replaceAll("</div>", "")
         .replace("<div>", "<br>")
         .replaceAll("<div><br><div>", "<br>")
@@ -105,10 +112,10 @@ export default function Page(props: {
         //     .replaceAll("<div><br><div>", "<br>")
         //     .replaceAll("<br><div>", "<br>")
         //     .replace("</div>", "") ||
-        // (visibility !== myPost.visibility && window.location.href !== "/") ||
-        // files?.length !== myPost.media?.length
-        (window.location.href !== "/" && visibility !== myPost.visibility) ||
-        files?.length !== myPost.media?.length ||
+        // (visibility !== post.visibility && window.location.href !== "/") ||
+        // files?.length !== post.media?.length
+        (window.location.href !== "/" && visibility !== post.visibility) ||
+        files?.length !== post.media?.length ||
         // value !== "" ||
         deleteFile?.length !== 0
         // &&
@@ -132,8 +139,8 @@ export default function Page(props: {
   }, [
     deleteFile?.length,
     files?.length,
-    myPost.media?.length,
-    myPost.visibility,
+    post.media?.length,
+    post.visibility,
     visibility,
   ]);
   // useEffect(() => {
@@ -176,13 +183,13 @@ export default function Page(props: {
           //   .replaceAll("<br><div>", "<br>")
           //   .replace("</div>", "") ||
 
-          // (visibility !== myPost.visibility ||
-          //   files?.length !== myPost.media?.length ||
+          // (visibility !== post.visibility ||
+          //   files?.length !== post.media?.length ||
           //   deleteFile?.length !== 0)
 
-          InputRef.current?.innerHTML !== myPost.text) ||
-        visibility.toLowerCase() !== myPost.visibility?.toLowerCase() ||
-        files?.length !== myPost.media?.length ||
+          InputRef.current?.innerHTML !== post.text) ||
+        visibility.toLowerCase() !== post.visibility?.toLowerCase() ||
+        files?.length !== post.media?.length ||
         deleteFile?.length !== 0
 
         // value !== "" ||
@@ -214,9 +221,9 @@ export default function Page(props: {
   }, [
     deleteFile?.length,
     files?.length,
-    myPost.media?.length,
-    myPost.text,
-    myPost.visibility,
+    post.media?.length,
+    post.text,
+    post.visibility,
     router,
     visibility,
   ]);
@@ -247,16 +254,16 @@ export default function Page(props: {
             className={s.submit}
             onClick={async () => {
               const uid = auth.currentUser?.uid;
-              if (!uid || !myPost || !InputRef.current) return;
-              if (uid !== myPost.authorId) {
+              if (!uid || !post || !InputRef.current) return;
+              if (uid !== post.authorId) {
                 throw new Error("Unauthorized !");
               }
               if (
-                visibility.toLowerCase() === myPost.visibility?.toLowerCase() &&
+                visibility.toLowerCase() === post.visibility?.toLowerCase() &&
                 InputRef.current?.innerHTML
                   .replace(/\n/g, "<br>")
-                  .replaceAll("&nbsp;", " ") === myPost.text &&
-                files?.length === myPost.media?.length &&
+                  .replaceAll("&nbsp;", " ") === post.text &&
+                files?.length === post.media?.length &&
                 // value === "" &&
                 deleteFile?.length === 0
               )
@@ -290,8 +297,8 @@ export default function Page(props: {
                       (url) => `<a href="${url}">${url}</a>`
                     ),
                   newMedia,
-                  myPost.id?.toString()!,
-                  myPost,
+                  post.id?.toString()!,
+                  post,
                   visibility
                 );
                 router.replace("/", undefined, { scroll: false });
@@ -329,7 +336,7 @@ export default function Page(props: {
         deleteFile={deleteFile}
         setdeleteFile={setdeleteFile}
         uid={uid}
-        myPost={myPost}
+        myPost={post}
         edit={router.query.edit ? true : false}
         files={files}
         setFiles={setFiles}
@@ -354,7 +361,7 @@ export default function Page(props: {
             fileRef={fileRef}
           />
           <SelectVisiblity
-            defaultValue={myPost.visibility}
+            defaultValue={post.visibility}
             disabled={router.query.edit ? false : true}
             onChange={(e) => {
               setVisibility(e.target.value);

@@ -1,3 +1,6 @@
+import { Timestamp } from "firebase/firestore";
+import { ReactNode, RefObject } from "react";
+import { account } from "../pages/login";
 export type Media = {
   name: string;
   url: string;
@@ -5,17 +8,29 @@ export type Media = {
 };
 
 export interface Post {
-  authorId?: string | number;
+  authorId: string | number;
   id?: string | number;
   text: string;
-  visibility?: string;
-  createdAt: Timestamp;
+  visibility: string;
+  // createdAt: number | string | { seconds: number; nanoseconds: number };
+  // updatedAt: number | string | { seconds: number; nanoseconds: number };
+  createdAt:
+    | {
+        seconds: number;
+        nanoseconds: number;
+      }
+    | Timestamp;
+  updatedAt:
+    | {
+        seconds: number;
+        nanoseconds: number;
+      }
+    | Timestamp;
   media: Media[] | null;
 }
-import { Timestamp } from "firebase/firestore";
-import { ReactNode, RefObject } from "react";
+
 export interface Props {
-  
+  username?: string;
   selectedId?: string[];
   setSelectedId?: Function;
   children?: ReactNode;
@@ -35,6 +50,7 @@ export interface Props {
   myPost?: Post[];
   posts?: Post[];
   email?: string | null;
-  headerContainerRef?: React.RefObject<HTMLDivElement>;
-  indicatorRef?: React.RefObject<HTMLDivElement>;
+  headerContainerRef?: RefObject<HTMLDivElement>;
+  indicatorRef?: RefObject<HTMLDivElement>;
+  profile?: account["profile"] | null;
 }

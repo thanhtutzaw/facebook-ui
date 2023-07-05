@@ -110,7 +110,7 @@ export default function PhotoLayout(props: {
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     width={700}
                     height={394}
-                    priority
+                    // priority
                     // onError={(e) => {
                     //   const img = e.currentTarget;
                     //   img.src = placeholder;
@@ -188,7 +188,6 @@ export default function PhotoLayout(props: {
           }}
         >
           <ImageWithFallback
-            priority
             // onError={(e) => {
             //   const img = e.currentTarget;
             //   img.src = placeholder;
@@ -225,7 +224,6 @@ export default function PhotoLayout(props: {
         <div>
           {media[1] && (
             <ImageWithFallback
-              priority
               // onError={(e) => {
               //   const img = e.currentTarget;
               //   img.src = placeholder;
@@ -266,7 +264,6 @@ export default function PhotoLayout(props: {
               }}
             >
               <ImageWithFallback
-                priority
                 // onError={(e) => {
                 //   const img = e.currentTarget;
                 //   img.src = placeholder;

@@ -7,7 +7,8 @@ import { useRouter } from "next/router";
 export const AppContext = createContext<Props | null>(null);
 
 export function AppProvider(props: Props) {
-  const { uid, allUsers, posts, email, myPost, expired } = props;
+  const { username, profile, uid, allUsers, posts, email, myPost, expired } =
+    props;
   const { active, setActive } = useActive();
   const [preventClick, setpreventClick] = useState(false);
   const [showAction, setshowAction] = useState("");
@@ -86,7 +87,8 @@ export function AppProvider(props: Props) {
   return (
     <AppContext.Provider
       value={{
-
+        username,
+        profile,
         sortedPost,
         setsortedPost,
         selectedId,

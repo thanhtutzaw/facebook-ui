@@ -1,5 +1,6 @@
 import { FirebaseError } from "firebase-admin";
 import {
+  createUserWithEmailAndPassword,
   fetchSignInMethodsForEmail,
   getAuth,
   onAuthStateChanged,
@@ -16,20 +17,22 @@ import { app } from "../../lib/firebase";
 import { signin } from "../../lib/signin";
 import EmailIcon from "../../public/email.svg";
 import styles from "../../styles/Home.module.scss";
+import { addProfile } from "../../lib/profile";
 export type account = {
   email: string;
   password: string;
-  firstName: string;
-  lastName?: string;
+  profile: { firstName: string; lastName: string; bio: string };
 };
 export default function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [Googleloading, setGoogleloading] = useState(false);
+  const [adding, setadding] = useState(false);
+  // const [Googleloading, setGoogleloading] = useState(false);
   const auth = getAuth(app);
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
-      if (user) {
+      console.log(user, adding);
+      if (user && adding === false) {
         router.push("/");
       } else if (!user && router.pathname !== "/") {
         // router.push("/login");
@@ -37,7 +40,8 @@ export default function Login() {
     });
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth]);
+  }, [auth, adding]);
+  // }, [auth, adding]);
   useEscape(() => {
     if (!signup) return;
     setsignup(false);
@@ -61,8 +65,11 @@ export default function Login() {
   const [Account, setAccount] = useState({
     email: "",
     password: "",
-    firstName: "",
-    lastName: "",
+    profile: {
+      firstName: "",
+      lastName: "",
+      bio: "",
+    },
   });
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -73,16 +80,17 @@ export default function Login() {
   };
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const { email, password } = Account;
+    const { firstName, lastName } = Account.profile;
     try {
-      const emailMethod = await fetchSignInMethodsForEmail(auth, Account.email);
+      const emailMethod = await fetchSignInMethodsForEmail(auth, email);
       const emailExist = emailMethod.length > 0;
       // setemailExist(emailExist);
       const name = document.getElementsByName("firstName")[0];
-
       if (emailExist) {
         try {
           const signinError = (await signin(
-            Account.email,
+            email,
             Account.password
           )) as FirebaseError;
           if (signinError) {
@@ -95,11 +103,29 @@ export default function Login() {
       } else {
         name.setAttribute("required", "true");
         name.focus();
-        if (Account.firstName) {
+        if (firstName) {
           // alert(JSON.stringify(Account, null, 4));
+
+          const UserCredential = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            Account.password
+          );
+          setadding(true);
+          try {
+            await addProfile(UserCredential.user, Account.profile);
+            setadding(false);
+          } catch (error) {
+            console.error(error);
+          }
+          // const user = UserCredential.user;
+          // console.log(UserCredential);
+          // console.log(user.uid);
+          // const userInfo = { firstName: "first woro" };
         }
       }
     } catch (error: any) {
+      if (firstName) return;
       console.log(error.code);
     }
     // if (Account.firstName && !emailExist) {
@@ -108,7 +134,7 @@ export default function Login() {
     try {
       // const UserCredential = await createUserWithEmailAndPassword(
       //   auth,
-      //   Account.email,
+      //   email,
       //   Account.password
       // );
       // setsignup(false);
@@ -120,9 +146,7 @@ export default function Login() {
       // }
       // setsignup(true);
     }
-    // await updateProfile(UserCredential.user, {
-    //   displayName: Account.firstName + Account.lastName,
-    // });
+
     // e.currentTarget.reset();
     // setAccount({
     //   email: "",
@@ -200,32 +224,19 @@ export default function Login() {
       <div
         style={{
           maxWidth: "95vw",
-          // minWidth: "346px",
-          // maxWidth: "30vw",
-          // height: !signup ? "1rem" : "10rem 7rem",
-          // padding: !signup ? "1rem" : "10rem 7rem",
           padding: !signup ? "1rem" : "13rem 7rem",
-          // width: !signup ? "auto" : "67vw",
           transition: "padding .5s ease-in-out , scale .2s ease-in-out",
           scale: signup ? 1 : "initial",
         }}
         className={`${styles.loginBtn} ${styles.emailLogin}`}
         // disabled={Googleloading}
-        // style={loginStyle}
-        // onKeyDown={(e) => {
-        //   const key = e.code;
-        //   if (key === "Space" && signup && e.target !== e.currentTarget) {
-        //     e.preventDefault();
-        //   }
-        // }}
         onClick={(e) => {
           if (!signup) {
             setsignup(true);
           }
-          // if (Account.email !== "" || Account.password !== "") return;
+          // if (email !== "" || Account.password !== "") return;
           if (e.target !== e.currentTarget) return;
           setsignup((prev) => !prev);
-          // alert("clicked");
         }}
       >
         <AnimatePresence mode="wait">
@@ -271,6 +282,7 @@ export default function Login() {
           )}
         </AnimatePresence>
       </div>
+      <button>Add UserInfo</button>
       <Link tabIndex={-1} href="login/email" className={styles.emailLoginLink}>
         Log in using Email
       </Link>
@@ -329,7 +341,4 @@ function GoogleLogo() {
       </svg>
     </div>
   );
-}
-function SignupLabel() {
-  return <></>;
 }
