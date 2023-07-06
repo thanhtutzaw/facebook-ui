@@ -17,7 +17,6 @@ import { updatePost } from "../../lib/firestore/post";
 import { deleteStorage, uploadMedia } from "../../lib/storage";
 import s from "../../styles/Home.module.scss";
 import { Media, Post, Props } from "../../types/interfaces";
-import { PageContext, PageProps } from "../../context/PageContext";
 import { Footer } from "../../components/Post/Footer";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context

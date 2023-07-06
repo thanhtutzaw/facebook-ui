@@ -1,7 +1,7 @@
 import { faGear, faSort } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import { useContext, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 import {
   Unsubscribe,
   collection,
@@ -69,6 +69,14 @@ export default function Profile() {
     }
   }, [active]);
   // const auth = getAuth(app);
+  const [edit, setedit] = useState(false);
+  function toggleEdit() {
+    setedit((prev) => !prev);
+  }
+  const [newProfile, setnewProfile] = useState({ ...profile });
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
+    setnewProfile((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }
   return (
     <motion.div
       // transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
@@ -94,7 +102,13 @@ export default function Profile() {
           }
         />
         <h3 style={{ marginBottom: "18px" }}>
-          {email === "testuser@gmail.com" ? "Peter 1" : `${username}`}
+          {email === "testuser@gmail.com"
+            ? "Peter 1"
+            : `${
+                edit
+                  ? `${newProfile.firstName} ${newProfile.lastName}`
+                  : username
+              }`}
         </h3>
         {/* <h3 style={{ marginBottom: "18px" }}>
           {email === "testuser@gmail.com"
@@ -109,11 +123,85 @@ export default function Profile() {
           className={s.bio}
         >
           {/* Listen I didn&apos;t kill Mysterio. The drones did! */}
-          {profile?.bio === ""
+          {/* {edit
+            ? newProfile.bio
+            : profile?.bio === ""
             ? "No Bio Yet"
             : profile?.bio ??
-              "Listen I didn&apos;t kill Mysterio. The drones did!"}
+              "Listen I didn&apos;t kill Mysterio. The drones did!"} */}
+          {edit
+            ? newProfile.bio
+            : profile?.bio === ""
+            ? "No Bio Yet"
+            : profile?.bio}
         </p>
+        {!edit ? (
+          <motion.button
+            onClick={toggleEdit}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: !edit ? 1 : 0 }}
+            exit={{ opacity: 0 }}
+            className={s.editToggle}
+          >
+            Edit Profile
+          </motion.button>
+        ) : (
+          <motion.form
+            initial={{ opacity: 0 }}
+            animate={{ opacity: edit ? 1 : 0 }}
+            exit={{ opacity: 0 }}
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+            className={s.editProfile}
+          >
+            <div>
+              <input
+                onChange={handleChange}
+                defaultValue={newProfile?.firstName}
+                id="firstName"
+                name="firstName"
+                type="text"
+                placeholder="First Name"
+                autoComplete="on"
+                spellCheck="false"
+                tabIndex={0}
+                aria-label="First Name"
+                autoCapitalize="sentences"
+              />
+              <input
+                onChange={handleChange}
+                defaultValue={newProfile?.lastName}
+                id="lastName"
+                name="lastName"
+                type="text"
+                placeholder="Last Name"
+                autoComplete="on"
+                spellCheck="false"
+                tabIndex={0}
+                aria-label="Last Name"
+                autoCapitalize="sentences"
+              />
+              <input
+                onChange={handleChange}
+                defaultValue={newProfile?.bio}
+                id="bio"
+                name="bio"
+                type="text"
+                placeholder="Bio"
+                autoComplete="on"
+                spellCheck="false"
+                tabIndex={0}
+                aria-label="bio"
+                autoCapitalize="sentences"
+              />
+            </div>
+            <div>
+              <button onClick={toggleEdit}>Cancel</button>
+              <button type="submit">Update</button>
+            </div>
+          </motion.form>
+        )}
       </div>
 
       <div style={{ position: "relative" }} className={s.myPost}>

@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       return { days, hours, minutes, seconds: remainingSeconds };
     };
     console.log(convertSecondsToTime(token.exp));
-    const { name:username, email, uid } = token;
+    const { name: username, email, uid } = token;
     // console.log(token);
     let expired = false;
     const postQuery = query(
@@ -161,7 +161,7 @@ export default function Home({
   }, [auth, expired]);
 
   // }, [active]);
-  if (!email) return <></>;
+  // if (!email) return <></>;
   if (expired && email) return <Welcome expired={expired} />;
   return (
     <AppProvider

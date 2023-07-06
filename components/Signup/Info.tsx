@@ -1,9 +1,6 @@
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { AnimatePresence, motion } from "framer-motion";
-import styles from "./index.module.scss";
 import { ChangeEventHandler, RefObject } from "react";
 import { account } from "../../pages/login";
+import styles from "./index.module.scss";
 export default function Info(props: {
   handleChange: ChangeEventHandler<HTMLInputElement>;
   Account: account;
@@ -32,13 +29,9 @@ export default function Info(props: {
         tabIndex={0}
         aria-label="First name"
         autoCapitalize="sentences"
-      ></input>
-      {/* <input id="middleName" name="middleName" placeholder="Middle Name" minLength={3} maxLength={20}> */}
+      />
 
       <input
-        // onChange={(e) => {
-        //   // setAccount({...Account , lastName: e.target.value })
-        // }}
         onChange={handleChange}
         id="lastName"
         name="lastName"

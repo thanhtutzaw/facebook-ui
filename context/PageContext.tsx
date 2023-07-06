@@ -14,8 +14,6 @@ export interface PageProps {
 export const PageContext = createContext<PageProps | null>(null);
 
 export function PageProvider(props: PageProps) {
-  //   const { active, setActive } = useState;
-  //   const [active, setActive] = useState("I am global");
   const { active, setActive } = useActive();
   const fileRef = useRef<HTMLInputElement>(null);
   const viewRef = useRef<HTMLDialogElement>(null);

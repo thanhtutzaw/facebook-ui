@@ -282,7 +282,6 @@ export default function Login() {
           )}
         </AnimatePresence>
       </div>
-      <button>Add UserInfo</button>
       <Link tabIndex={-1} href="login/email" className={styles.emailLoginLink}>
         Log in using Email
       </Link>
