@@ -1,7 +1,14 @@
 import { faGear, faSort } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   Unsubscribe,
   collection,
@@ -19,6 +26,9 @@ import Post from "../../Post";
 import s from "./Profile.module.scss";
 import SortDropdown from "./SortDropdown";
 import { getAuth } from "firebase/auth";
+import { stringify } from "querystring";
+import { changeProfile } from "../../../lib/profile";
+import { account } from "../../../pages/login";
 export default function Profile() {
   const photoURL = "";
   const { username, profile, myPost, email, sortedPost, setsortedPost } =
@@ -73,9 +83,17 @@ export default function Profile() {
   function toggleEdit() {
     setedit((prev) => !prev);
   }
-  const [newProfile, setnewProfile] = useState({ ...profile });
+  const [newProfile, setnewProfile] = useState<account["profile"]>({ ...profile! });
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setnewProfile((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }
+  const auth = getAuth(app);
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    // alert(JSON.stringify(newProfile, null, 4));
+    // if(typeof Object.values(newProfile) === 'undefined' )return;
+    await changeProfile(auth.currentUser!, newProfile!, profile!);
+    router.replace("/", undefined, { scroll: false });
   }
   return (
     <motion.div
@@ -150,9 +168,7 @@ export default function Profile() {
             initial={{ opacity: 0 }}
             animate={{ opacity: edit ? 1 : 0 }}
             exit={{ opacity: 0 }}
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
+            onSubmit={handleSubmit}
             className={s.editProfile}
           >
             <div>
@@ -269,7 +285,9 @@ export default function Profile() {
             <Post active={active} key={post.id} post={post} tabIndex={1} />
           ))}
         </div>
-        <p style={{ textAlign: "center" }}>No more posts</p>
+        <p style={{ textAlign: "center", userSelect: "none" }}>
+          {sortedPost?.length === 0 ? "Empty Post" : "No more posts"}
+        </p>
       </div>
     </motion.div>
   );

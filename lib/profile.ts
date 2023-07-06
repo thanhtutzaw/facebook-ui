@@ -53,6 +53,7 @@ export async function changeProfile(
 
 async function updateName(
   user: User,
+  // setnewProfile((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   firstName: string,
   lastName: string
 ) {

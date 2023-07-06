@@ -150,6 +150,7 @@ export default function PhotoLayout(props: {
                       setFiles?.([...files.slice(0, i), ...files.slice(i + 1)]);
                       // setFiles(files.filter((_, index) => index !== i));
                       // setFiles(files.splice(i, 1));
+                      setview({ src: "", name: "" });
                     }}
                     aria-label="remove media"
                     tabIndex={-1}
