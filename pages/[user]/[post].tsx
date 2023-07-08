@@ -31,8 +31,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       orderBy("createdAt", "desc")
     );
     const postSnap = await getDocs(postQuery);
-    const posts = postSnap.docs.map((doc) => postToJSON(doc));
-    const post = posts.find((post: Post) => post.id === context.query.post);
+    const posts = await Promise.all(
+      postSnap.docs.map(async (doc) => await postToJSON(doc))
+    );
+    const post = posts.find((post) => post.id === context.query.post);
     if (!post) {
       return {
         notFound: true,

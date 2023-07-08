@@ -32,6 +32,7 @@ function NewAccount(props: {
         {title ?? "Create New Account"}
       </h2>
       <input
+        
         required
         // ref={accountRef.current.email}
         // onChange={(e) => {

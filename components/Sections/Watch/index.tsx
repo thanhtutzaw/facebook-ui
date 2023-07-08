@@ -1,5 +1,5 @@
 import React from "react";
-import s from "./Watch.module.scss";
+import s from "./index.module.scss";
 
 export default function Watch() {
   return (

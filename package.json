@@ -20,7 +20,7 @@
     "@use-gesture/react": "^10.2.27",
     "eslint": "8.29.0",
     "firebase": "^9.15.0",
-    "firebase-admin": "^11.4.1",
+    "firebase-admin": "^11.9.0",
     "framer-motion": "^10.12.16",
     "next": "^13.4.7",
     "nookies": "^2.5.2",

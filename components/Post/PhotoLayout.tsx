@@ -3,7 +3,7 @@ import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RefObject, useContext, useEffect, useRef, useState } from "react";
 import { Post } from "../../types/interfaces";
-import s from "./Post.module.scss";
+import s from "./index.module.scss";
 import { ViewModal } from "./ViewModal";
 
 import { PageContext, PageProps } from "../../context/PageContext";

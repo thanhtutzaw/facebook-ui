@@ -1,14 +1,6 @@
 import { faGear, faSort } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Image from "next/image";
-import {
-  ChangeEvent,
-  FormEvent,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { getAuth } from "firebase/auth";
 import {
   Unsubscribe,
   collection,
@@ -17,18 +9,24 @@ import {
   query,
 } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import { useRouter } from "next/router";
+import {
+  ChangeEvent,
+  FormEvent,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { AppContext } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
 import { app, db, postToJSON } from "../../../lib/firebase";
+import { changeProfile } from "../../../lib/profile";
 import { Post as PostType, Props } from "../../../types/interfaces";
 import Post from "../../Post";
-import s from "./Profile.module.scss";
-import SortDropdown from "./SortDropdown";
-import { getAuth } from "firebase/auth";
-import { stringify } from "querystring";
-import { changeProfile } from "../../../lib/profile";
-import { account } from "../../../pages/login";
+import s from "./index.module.scss";
+import SortDate from "./SortDate";
 export default function Profile() {
   const photoURL = "";
   const { username, profile, myPost, email, sortedPost, setsortedPost } =
@@ -67,7 +65,6 @@ export default function Profile() {
       unsub = onSnapshot(mypostQuery, (snapshot) => {
         setsortedPost?.(snapshot.docs.map((doc) => postToJSON(doc)));
       });
-      // const myPost = myPostSnap.docs.map((doc) => postToJSON(doc));
     }
     return () => {
       unsub;
@@ -78,12 +75,11 @@ export default function Profile() {
       setSort(false);
     }
   }, [active]);
-  // const auth = getAuth(app);
   const [edit, setedit] = useState(false);
   function toggleEdit() {
     setedit((prev) => !prev);
   }
-  const [newProfile, setnewProfile] = useState<account["profile"]>({ ...profile! });
+  const [newProfile, setnewProfile] = useState({ ...profile! });
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setnewProfile((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
@@ -91,8 +87,7 @@ export default function Profile() {
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     // alert(JSON.stringify(newProfile, null, 4));
-    // if(typeof Object.values(newProfile) === 'undefined' )return;
-    await changeProfile(auth.currentUser!, newProfile!, profile!);
+    await changeProfile(auth.currentUser!, newProfile, profile!);
     router.replace("/", undefined, { scroll: false });
   }
   return (
@@ -266,7 +261,7 @@ export default function Profile() {
         </h2>
         <AnimatePresence>
           {sort && (
-            <SortDropdown
+            <SortDate
               sort={sort}
               sortby={sortby}
               setsortby={setsortby}

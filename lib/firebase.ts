@@ -7,6 +7,8 @@ import {
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { Post } from "../types/interfaces";
+import { getUserData } from "./firebaseAdmin";
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -22,16 +24,18 @@ const db = getFirestore();
 const storage = getStorage(app);
 export { app, db, storage };
 
-export function postToJSON(doc: QueryDocumentSnapshot<DocumentData>) {
+export async function postToJSON(doc: QueryDocumentSnapshot<DocumentData>) {
   const data = doc.data() as Post;
   const createdAt = data.createdAt as Timestamp;
   const updatedAt = data.createdAt as Timestamp;
   const author = doc.ref.parent.parent!;
+  // const user = (await getUserData(author.id)) as UserRecord;
   if (typeof data?.updatedAt === "string") {
     return {
       ...data,
       media: data.media ?? [],
       authorId: author.id,
+      // autherName: user.displayName ?? "Unknown",
       id: doc.id,
       text: data.text,
       createdAt: createdAt.toJSON() || 0,
@@ -41,6 +45,7 @@ export function postToJSON(doc: QueryDocumentSnapshot<DocumentData>) {
       ...data,
       media: data.media ?? [],
       authorId: author.id,
+      // autherName: user.displayName ?? "Unknown",
       id: doc.id,
       text: data.text,
       createdAt: createdAt.toJSON() || 0,

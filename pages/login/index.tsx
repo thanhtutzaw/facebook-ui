@@ -71,13 +71,24 @@ export default function Login() {
       bio: "",
     },
   });
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async(e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
+    // if (e.target.tagName === "INPUT") {
+    //   return; // Ignore click event when typing in the input field
+    // }
+    
     setAccount((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+//     const emailMethod = await fetchSignInMethodsForEmail(auth, Account.email);
+// const emailExist = emailMethod.length > 0;
+// if(emailExist){
+//   const button = document.getElementsByTagName("button")[0] 
+//   button.textContent = "Sign in"
+// }
   };
+  const [emailLoading, setemailLoading] = useState(false)
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { email, password } = Account;
@@ -89,11 +100,13 @@ export default function Login() {
       const name = document.getElementsByName("firstName")[0];
       if (emailExist) {
         try {
+          setemailLoading(true)
           const signinError = (await signin(
             email,
             Account.password
           )) as FirebaseError;
           if (signinError) {
+            setemailLoading(false)
             alert(signinError.code);
           }
         } catch (error: any) {
@@ -222,26 +235,57 @@ export default function Login() {
         )}
       </AnimatePresence>
       <div
+        tabIndex={-1}
+        // role="button"
+        // aria-label="button"
         style={{
           maxWidth: "95vw",
-          padding: !signup ? "1rem" : "13rem 7rem",
+          padding: !signup ? "0" : "13rem 7rem",
           transition: "padding .5s ease-in-out , scale .2s ease-in-out",
           scale: signup ? 1 : "initial",
+          // minWidth:'260px'
         }}
         className={`${styles.loginBtn} ${styles.emailLogin}`}
-        // disabled={Googleloading}
-        onClick={(e) => {
-          if (!signup) {
-            setsignup(true);
+        // disabled={signup}
+        onKeyUp={(e) => {
+          // console.log(e.currentTarget.tagName);
+          if (e.code === "Space" || e.key === "Enter") {
+            e.currentTarget.click();
+            // alert("hey");
+            // if (e.currentTarget.tagName === "Input") {
+            //   e.stopPropagation();
+            //   e.preventDefault();
+            // }
           }
+        }}
+        onClick={(e) => {
+          // if (!signup) {
+          //   setsignup(true);
+          // }
+          // e.stopPropagation();
+          // e.preventDefault();
+          // if (e.target !== e.currentTarget) return;
+          // console.log("clicking");
           // if (email !== "" || Account.password !== "") return;
-          if (e.target !== e.currentTarget) return;
-          setsignup((prev) => !prev);
+          // if (e.target !== e.currentTarget && signup) return;
+          // setsignup((prev) => !prev);
         }}
       >
         <AnimatePresence mode="wait">
           {!signup ? (
-            <motion.div
+            <motion.button
+              onClick={(e) => {
+                if (!signup) {
+                  setsignup(true);
+                }
+                e.stopPropagation();
+                e.preventDefault();
+                // if (e.target !== e.currentTarget) return;
+                // console.log("clicking");
+                // if (email !== "" || Account.password !== "") return;
+                // if (e.target !== e.currentTarget && signup) return;
+                // setsignup((prev) => !prev);
+              }}
               className={styles.Loginlabel}
               key="label"
               initial={{
@@ -253,8 +297,8 @@ export default function Login() {
               animate={{
                 opacity: signup ? 0 : 1,
                 scale: signup ? 1.3 : 1,
-                height: signup ? "300px" : "auto",
-                width: signup ? "500px" : "auto",
+                height: signup ? "300px" : "100%",
+                width: signup ? "500px" : "100%",
               }}
               exit={{ opacity: 0, scale: 1, height: "300px", width: "300px" }}
             >
@@ -269,9 +313,10 @@ export default function Login() {
                 {/* {Googleloading ? "Signing in" : "Sign up With Email"} */}
                 Sign up with Email
               </p>
-            </motion.div>
+            </motion.button>
           ) : (
             <Signup
+              emailLoading={emailLoading}
               handleSubmit={handleSubmit}
               handleChange={handleChange}
               signup={signup}
@@ -282,7 +327,7 @@ export default function Login() {
           )}
         </AnimatePresence>
       </div>
-      <Link tabIndex={-1} href="login/email" className={styles.emailLoginLink}>
+      <Link href="login/email" className={styles.emailLoginLink}>
         Log in using Email
       </Link>
       <DevelopedByThanHtutZaw />

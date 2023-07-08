@@ -6,7 +6,7 @@ import { app } from "../../lib/firebase";
 import { deletePost } from "../../lib/firestore/post";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import styles from "./Post.module.scss";
+import styles from "./index.module.scss";
 function Actions(props: {
   showAction: string;
   authorId: string | number;

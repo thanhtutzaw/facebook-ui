@@ -9,12 +9,25 @@ export default function Signup(props: {
   signup: any;
   Account: any;
   setAccount: any;
+  emailLoading: boolean;
   emailRef: any;
 }) {
-  const { handleSubmit, handleChange, signup, Account, setAccount, emailRef } =
+  const {emailLoading, handleSubmit, handleChange, signup, Account, setAccount, emailRef } =
     props;
   return (
     <motion.form
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+      // onKeyDown={(e) => {
+      //   if (e.code === "Space") {
+      //     // alert("hey");
+      //     if (e.currentTarget.tagName === "Input") {
+      //       e.stopPropagation();
+      //       e.preventDefault();
+      //     }
+      //   }
+      // }}
       onSubmit={handleSubmit}
       key="label2"
       initial={{ opacity: 0, scale: 0.5 }}
@@ -40,7 +53,7 @@ export default function Signup(props: {
           className={styles.nextForm}
           aria-label="next step"
         >
-          Next
+          {emailLoading ? "Signing in..." : "Next"}
         </button>
       </div>
       <div className={styles.userInfo}>

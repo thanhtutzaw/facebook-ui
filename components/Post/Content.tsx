@@ -7,12 +7,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { RefObject, useContext } from "react";
+import { RefObject, useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { Post, Props } from "../../types/interfaces";
 import Actions from "./Actions";
 import PhotoLayout from "./PhotoLayout";
-import styles from "./Post.module.scss";
+import styles from "./index.module.scss";
+import { app } from "../../lib/firebase";
+import { getAuth } from "firebase/auth";
+import { auth } from "firebase-admin";
 export default function Content(props: {
   active: boolean;
   checked: boolean;
@@ -62,6 +65,17 @@ export default function Content(props: {
       : text;
 
   const production = process.env.NODE_ENV == "production" ? true : false;
+  // const [authorName, setauthorName] = useState("");
+  // useEffect(() => {
+  //   async function getUserData() {
+  //     if (typeof window === 'undefined') {
+  //     const user = await auth(app).getUser(authorId.toString());
+  //     setauthorName(user.displayName! ?? "");
+  //     }
+  //   }
+  //   getUserData();
+  // }, [authorId]);
+
   return (
     <span
       style={{
@@ -110,12 +124,16 @@ export default function Content(props: {
             >
               {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
                 ? "Peter 1"
-                : "Other User"}
+                : post.author?.name ?? "Unknown"}
             </p>
             <p suppressHydrationWarning>
               {new Timestamp(createdAt.seconds, createdAt.nanoseconds)
                 .toDate()
-                .toLocaleDateString()}
+                .toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
             </p>
             <p>{visibility}</p>
           </div>

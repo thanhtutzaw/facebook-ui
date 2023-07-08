@@ -157,17 +157,31 @@
     color: var(--blue-origin) !important;
     cursor: pointer;
     user-select: none;
+    &:focus-visible {
+      outline-color: var(--blue-origin);
+    }
   }
   .Loginlabel {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
+    border: 0;
+    border-radius: 50px;
+    // width:300px !important;
+    // height: 100% !important;
+    // width: 100% !important;
+    font-size: 1rem;
+    padding: 0;
+    background-color: rgb(209, 209, 209);
+    background-color: transparent;
+    color: white;
+
     // height: 300px;
   }
   .emailLogin {
     gap: 10px;
-    padding: 0.7rem;
+    // padding: 0.7rem;
     color: white;
     background-color: rgb(0, 122, 246);
     border-radius: 50px;
@@ -178,6 +192,16 @@
     white-space: nowrap;
     will-change: padding;
     -webkit-tap-highlight-color: transparent;
+    min-width: 260px;
+    &:has(.Loginlabel:focus) {
+      // background-color: red;
+      // outline: 1px solid black;
+      outline: 2px solid var(--blue-origin);
+      outline-offset: 2px;
+    }
+    &:focus-visible {
+      outline: 1px solid black;
+    }
     &:active:not(.emailForm) {
       scale: 1.1;
     }

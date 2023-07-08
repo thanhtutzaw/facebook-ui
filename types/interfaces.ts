@@ -6,8 +6,14 @@ export type Media = {
   url: string;
   type: string;
 };
+export type Author = {
+  name?: string;
+  photoURL?: string;
+};
 
 export interface Post {
+  // authorName?: string;
+  author: Author;
   authorId: string | number;
   id?: string | number;
   text: string;

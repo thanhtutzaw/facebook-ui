@@ -8,7 +8,7 @@ import Image from "next/image";
 import { useContext, useEffect, useRef, useState } from "react";
 import { setTimeout } from "timers";
 import { PageContext, PageProps } from "../../context/PageContext";
-import s from "./Post.module.scss";
+import s from "./index.module.scss";
 export function ViewModal(props: { view: { src: string; name: string } }) {
   const { view } = props;
   const { viewRef } = useContext(PageContext) as PageProps;

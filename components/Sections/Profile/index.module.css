@@ -1,0 +1,170 @@
+.container {
+  transition: transform 0.3s ease-in-out;
+  height: 0;
+}
+.container .info {
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  opacity: 1;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  padding-top: 1rem;
+  will-change: opacity;
+}
+.container .info:is(.active) * {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+.container .info:is(:not(.active)) * {
+  opacity: 1;
+  transition: opacity 0.5s ease-in;
+}
+.container .info > h3 {
+  padding: 0 1rem;
+  text-align: center;
+}
+.container .info .bio {
+  margin-top: 0;
+  font-size: 18px;
+  padding: 0 1rem;
+  text-align: center;
+}
+.container .info .editToggle {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  border-radius: 10px;
+  border: 0;
+  padding: 10px;
+  font-size: 18px;
+  background-color: rgb(238, 238, 238);
+}
+.container .info .editToggle:not(:active) {
+  transition: initial;
+}
+.container .info .editToggle:active {
+  opacity: 0.5 !important;
+  transition: initial;
+}
+.container .info .editProfile {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: 1;
+  cursor: default;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 1rem;
+}
+.container .info .editProfile > div {
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-inline: 1rem;
+}
+.container .info .editProfile button {
+  height: 50px;
+  background-color: transparent;
+  border: 1px solid rgb(180, 180, 180);
+  font-size: 1rem;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out, opacity 0.2s ease-in-out;
+}
+.container .info .editProfile button:nth-child(2) {
+  background-color: var(--blue-origin);
+  color: white;
+}
+.container .info .editProfile button:active {
+  opacity: 0.5;
+  transition: initial;
+}
+.container .info .editProfile button:first-child {
+  color: #f03547;
+  border-color: #f03547;
+}
+.container .info .editProfile button:first-child:hover {
+  color: white;
+  background-color: red;
+  border: 0;
+  outline: 0;
+}
+.container .info .editProfile button:first-child:active {
+  color: white;
+  background-color: red;
+  border: 0;
+  outline: 0;
+}
+.container .info .editProfile input {
+  border: 1px solid rgb(180, 180, 180);
+  outline: 0;
+  padding: 20px 10px;
+  border-radius: 10px;
+  font-size: 1rem;
+  justify-content: center;
+  display: flex;
+  transition: all 0.2s ease-in-out;
+}
+.container .info .editProfile input:focus {
+  border: 1px solid black;
+}
+.container .profile {
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.container .myPost {
+  padding-bottom: 1rem;
+}
+.container .myPost button:focus-visible {
+  outline: 2px solid var(--blue-origin);
+  border-radius: 100px;
+}
+.container .myPost .active {
+  background-color: gainsboro;
+  opacity: 0.7;
+}
+.container .myPost .active:hover {
+  color: black;
+}
+.container .myPost .header {
+  background-color: white;
+  padding: 1rem 0.8rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: default;
+}
+.container .myPost .header p {
+  margin: 0;
+  flex: 1;
+}
+.container .myPost .header > button {
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  font-size: 1rem;
+}
+.container .myPost .header > button > div {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  height: 45px;
+  width: 45px;
+  border-radius: 100px;
+  border: 0;
+  padding: 10px;
+  font-size: 1rem;
+  background-color: rgb(238, 238, 238);
+}
+.container .myPost .header > button > div:hover {
+  background-color: rgb(216, 216, 216);
+}
+.container .myPost .header > button > div:active {
+  opacity: 0.8;
+  scale: 0.9;
+}/*# sourceMappingURL=index.module.css.map */

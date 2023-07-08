@@ -1,4 +1,4 @@
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { IdTokenResult, getAuth, onAuthStateChanged } from "firebase/auth";
 import {
   DocumentData,
   QueryDocumentSnapshot,
@@ -23,12 +23,14 @@ import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import { Post, Props } from "../types/interfaces";
 import email from "./login/email";
 import { profile } from "console";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
   try {
     const cookies = nookies.get(context);
-    const token = await verifyIdToken(cookies.token);
+    const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
 
     const convertSecondsToTime = (seconds: number) => {
       const days = Math.floor(seconds / (3600 * 24));
@@ -40,6 +42,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     };
     console.log(convertSecondsToTime(token.exp));
     const { name: username, email, uid } = token;
+    console.log(token.email_verified);
     // console.log(token);
     let expired = false;
     const postQuery = query(
@@ -48,8 +51,29 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       // orderBy("visibility", "asc"),
       orderBy("createdAt", "desc")
     );
-    const docSnap = await getDocs(postQuery);
-    const posts = docSnap.docs.map((doc) => postToJSON(doc));
+    const postSnap = await getDocs(postQuery);
+    const posts = await Promise.all(
+      postSnap.docs.map(async (doc) => {
+        const post = await postToJSON(doc);
+        const user = (await getUserData(post.authorId)) as UserRecord;
+        const authorName = user?.displayName ?? "Unknown";
+        return {
+          ...post,
+          author: { name: authorName },
+        };
+      })
+    );
+    // const newPosts = await Promise.all(
+    //   posts.map(async (p) => {
+    //     const user = (await getUserData(p.authorId)) as UserRecord;
+    //     return {
+    //       ...p,
+    //       authorName: user?.displayName ?? "Unknown",
+    //     };
+    //   })
+    // );
+    console.log(posts);
+    // console.log(user?.displayName);
     // console.log(posts);
     // const getDate = (post: Post) => {
     //   const date = new Timestamp(
@@ -70,8 +94,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       orderBy("createdAt", "desc")
     );
     const myPostSnap = await getDocs(mypostQuery);
-
-    const myPost = myPostSnap.docs.map((doc) => postToJSON(doc));
+    // getUserData;
+    const myPost = await Promise.all(
+      myPostSnap.docs.map((doc) => postToJSON(doc))
+    );
     const profileQuery = doc(db, `/users/${uid}`);
     const profileSnap = await getDoc(profileQuery);
 
@@ -99,6 +125,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // const allUser = allUsers.map(async (user) => {
     //   await getUserData(user.id, allUsers);
     // });
+    // const user = await auth(app).getUser(post.toString());
+    // setauthorName(user.displayName! ?? "");
     return {
       props: {
         expired,
@@ -107,9 +135,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         allUsers,
         posts,
         email,
-        username,
+        username: username ?? "Unknown",
         myPost,
-        profile,
+        profile: profile ?? [],
       },
     };
   } catch (error) {

@@ -3,7 +3,7 @@ import { AppContext } from "../../context/AppContext";
 import { Post as PostType, Props } from "../../types/interfaces";
 import Content from "./Content";
 import { Footer } from "./Footer";
-import styles from "./Post.module.scss";
+import styles from "./index.module.scss";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
 
 interface PostProps {

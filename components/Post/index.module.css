@@ -13,12 +13,66 @@
 }
 
 .dialog {
+  touch-action: none;
+  opacity: 0;
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
   border: 0;
   padding: 0;
   height: 100%;
+}
+.dialog .indicator {
+  display: none;
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  z-index: 100;
+  z-index: 1000;
+  width: 150px;
+  height: 150px;
+  border: 1px solid white;
+}
+@media (hover: hover) and (pointer: fine) {
+  .dialog .indicator {
+    display: block;
+    visibility: visible;
+    pointer-events: initial;
+  }
+}
+.dialog .indicator > div {
+  position: absolute;
+  top: 0;
+  right: 0;
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  z-index: 100;
+  z-index: 1000;
+  width: 150px;
+  height: 150px;
+  border: 1px solid white;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.dialog .viewContainer {
+  height: 100%;
+  width: 100vw;
+  margin: 0;
+  margin-left: auto;
+  position: fixed;
+  left: 0;
+  inset: 0;
+}
+.dialog .closeDialog {
+  width: 40px;
+  height: 40px;
+  position: fixed;
+  z-index: 100;
 }
 .dialog .closeDialog:focus-visible {
   outline: 0;
@@ -30,15 +84,22 @@
   background-color: black;
   display: block;
   max-width: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  -o-object-fit: contain;
+     object-fit: contain;
   height: 100%;
+  margin: 0;
 }
 .dialog:focus-visible {
   outline: 0;
 }
 .dialog::backdrop {
   background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+}
+.dialog[open]::backdrop {
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
 }
 
 .preview {
@@ -47,12 +108,21 @@
   justify-content: center;
   align-items: center;
   color: white;
+  overflow: hidden;
+}
+.preview > div:not(:first-child) {
+  min-width: 50%;
 }
 .preview img {
   display: flex;
   aspect-ratio: 16/9;
   -o-object-fit: contain;
      object-fit: contain;
+  max-width: 100%;
+  margin: 0 auto;
+}
+.preview > div:not(:only-child) {
+  aspect-ratio: 9/10;
 }
 .preview > div:first-child {
   min-width: 50%;
@@ -164,7 +234,7 @@
 }
 .deletePhoto > *,
 .closeDialog > * {
-  color: var(--blue-origin);
+  color: red;
   opacity: 0.8;
 }
 .deletePhoto:active:not(.closeDialog),
@@ -195,6 +265,9 @@
   display: flex;
   flex: 1;
   gap: 0.5rem;
+}
+.header .authorInfo .name:is(:active, :hover) {
+  text-decoration: underline;
 }
 .header .authorInfo > div > p:not(:first-child) {
   color: #4e4e4e;
@@ -235,6 +308,7 @@
   padding-block: 0.7rem;
   background-color: rgb(241, 241, 241);
   z-index: 200;
+  box-shadow: 0 5px 12px rgba(136, 135, 135, 0.5);
 }
 .actions > button {
   font-size: 1rem;
@@ -264,6 +338,7 @@
 
 .action {
   display: flex;
+  justify-content: flex-end;
 }
 .action svg {
   font-size: 18px;
@@ -291,4 +366,4 @@
   .action > button:hover {
     background-color: rgb(207, 207, 207);
   }
-}/*# sourceMappingURL=Post.module.css.map */
+}/*# sourceMappingURL=index.module.css.map */

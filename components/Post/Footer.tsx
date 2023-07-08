@@ -5,7 +5,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { StyleHTMLAttributes } from "react";
-import styles from "./Post.module.scss";
+import styles from "./index.module.scss";
 
 export function Footer(
   props: {

@@ -1,3 +1,7 @@
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import { app } from "../lib/firebase";
+import { auth } from "firebase-admin";
+import { getAuth } from "firebase/auth";
 var admin = require("firebase-admin");
 // var serviceAccount = require("../secret.json");
 if (!admin.apps.length) {
@@ -34,10 +38,14 @@ export async function verifyIdToken(token: string) {
   }
 }
 export async function getUserData(uid: string) {
+  // if (!uid) return;
   try {
+    const admin = await import("firebase-admin");
     const userRecord = await admin.auth().getUser(uid);
-    const { displayName, photoURL } = userRecord;
-    return { displayName, photoURL };
+    // const displayName = userRecord.displayName!;
+    // const photoURL = userRecord.photoURL!;
+    return userRecord;
+
     // return uid;
     // if (userRecord) {
     //     return userRecord;
@@ -49,7 +57,7 @@ export async function getUserData(uid: string) {
     // console.log("Photo URL: " + photoURL);
     // console.log(userRecord)
   } catch (error) {
-    // console.error("Error retrieving user data:", error);
+    console.error("Error retrieving user data:", error);
     // return allUsers;
   }
 }
