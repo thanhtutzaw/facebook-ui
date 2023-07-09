@@ -24,16 +24,18 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
-    const { uid } = token;
+    // const { uid } = token;
     let expired = false;
     const postQuery = query(
-      collection(db, `/users/${uid}/posts`),
+      collection(db, `/users/${context.query.user}/posts`),
       orderBy("createdAt", "desc")
     );
     const postSnap = await getDocs(postQuery);
     const posts = await Promise.all(
       postSnap.docs.map(async (doc) => await postToJSON(doc))
     );
+    // console.log(context);
+    // console.log(context.query.post);
     const post = posts.find((post) => post.id === context.query.post);
     if (!post) {
       return {
@@ -43,7 +45,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     return {
       props: {
         expired,
-        uid,
         post,
       },
     };
@@ -52,18 +53,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     return {
       props: {
         expired: true,
-        uid: "",
         post: null,
       },
     };
   }
 };
-export default function Page(props: {
-  expired: boolean;
-  uid: string;
-  post: Post;
-}) {
-  const { uid, post, expired } = props;
+export default function Page(props: { expired: boolean; post: Post }) {
+  const { post, expired } = props;
   // const {
   //   authorId,
   // id,
@@ -237,6 +233,8 @@ export default function Page(props: {
   const [loading, setLoading] = useState(false);
 
   let newMedia: Post["media"] = [];
+  const isPostOwner = post.authorId === auth?.currentUser?.uid;
+  const canEdit = router.query.edit && isPostOwner;
   return (
     <div className="user">
       <BackHeader
@@ -245,8 +243,8 @@ export default function Page(props: {
           router.back();
         }}
       >
-        <h2 className={s.title}>{router.query.edit ? "Edit" : "Post"}</h2>
-        {router.query.edit && (
+        <h2 className={s.title}>{canEdit ? "Edit" : "Post"}</h2>
+        {canEdit && (
           <button
             tabIndex={1}
             aria-label="update post"
@@ -315,9 +313,9 @@ export default function Page(props: {
       <Input
         role="textbox"
         element={InputRef}
-        contentEditable={router.query.edit ? true : false}
+        contentEditable={canEdit ? true : false}
         style={{
-          cursor: router.query.edit ? "initial" : "default",
+          cursor: canEdit ? "initial" : "default",
         }}
         // onInput={(e) => {
         //   setvalue(
@@ -333,21 +331,20 @@ export default function Page(props: {
         dangerouslySetInnerHTML={{ __html: client ? text : "" }}
       ></Input>
       <PhotoLayout
-        margin={router.query.edit ? true : false}
+        margin={canEdit ? true : false}
         deleteFile={deleteFile}
         setdeleteFile={setdeleteFile}
-        uid={uid}
         myPost={post}
-        edit={router.query.edit ? true : false}
+        edit={canEdit ? true : false}
         files={files}
         setFiles={setFiles}
       />
-      {router.query.edit ? (
+      {canEdit ? (
         <div className={s.footer}>
           <button
             aria-label="upload media"
             title="Upload media"
-            disabled={router.query.edit ? false : true}
+            disabled={canEdit ? false : true}
             tabIndex={-1}
             onClick={() => {
               fileRef?.current?.click();
@@ -363,7 +360,7 @@ export default function Page(props: {
           />
           <SelectVisiblity
             defaultValue={post.visibility}
-            disabled={router.query.edit ? false : true}
+            disabled={canEdit ? false : true}
             onChange={(e) => {
               setVisibility(e.target.value);
             }}

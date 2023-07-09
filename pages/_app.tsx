@@ -14,6 +14,7 @@ import { app } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import "../styles/globals.css";
 import { Props } from "../types/interfaces";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 
 config.autoAddCss = false;
 export const getServerSideProps: GetServerSideProps<Props> = async (
@@ -21,12 +22,14 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 ) => {
   try {
     const cookies = nookies.get(context);
-    const token = await verifyIdToken(cookies.token);
-    console.log(token.email + "in app.tsx");
+    const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
+    // console.log(token.email + "in app.tsx");
     let expired = false;
+    console.log(token.uid);
     return {
       props: {
-        expired,
+        // expired,
+        uid: token.uid,
       },
     };
   } catch (error) {
@@ -36,7 +39,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // context.res.end();
     return {
       props: {
-        expired: true,
+        // expired: true,
+        uid: "",
       },
     };
   }
@@ -44,8 +48,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 export default function App({
   Component,
   pageProps,
-  expired,
-}: AppProps & { expired: boolean }) {
+  uid,
+}: AppProps & { uid: DecodedIdToken["uid"] }) {
   const router = useRouter();
   // useEffect(() => {
   //   if (expired) {
@@ -99,7 +103,7 @@ export default function App({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const auth = getAuth(app);
+  // const auth = getAuth(app);
   return (
     <>
       <Head>
@@ -113,7 +117,7 @@ export default function App({
         <link rel="icon" href="/logo.svg" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <PageProvider active={""} setActive={Function}>
+      <PageProvider uid={uid!} active={""} setActive={Function}>
         <main
           style={
             {

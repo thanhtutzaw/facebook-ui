@@ -6,6 +6,7 @@ import { Props } from "../../types/interfaces";
 import Home from "../Sections/Home/Home";
 import styles from "../../styles/Home.module.scss";
 import t from "./Tabs.module.scss";
+import { PageContext, PageProps } from "../../context/PageContext";
 const Friends = dynamic(() => import("../Sections/Friends/Friends"), {
   ssr: false,
 });
@@ -23,7 +24,7 @@ export default function Tabs(props: Props) {
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { active } = useActive();
-  const { setpreventClick } = useContext(AppContext) as Props;
+  const { setpreventClick } = useContext(PageContext) as PageProps;
 
   useEffect(() => {
     if (!active) return;

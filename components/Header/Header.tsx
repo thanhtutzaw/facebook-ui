@@ -18,6 +18,7 @@ import styles from "../../styles/Home.module.scss";
 import { Props } from "../../types/interfaces";
 import Navitems from "./Navitems";
 import SelectModal from "./SelectModal";
+import { PageContext, PageProps } from "../../context/PageContext";
 const Logo = () => {
   return (
     <div className={styles.logoContainer}>
@@ -40,13 +41,10 @@ export default function Header(props: any) {
   const { indicatorRef } = props;
   const { setActive } = useActive();
   const [width, setwidth] = useState<number>();
-  const {
-    expired,
-    setSelectedId,
-    selectMode,
-    setselectMode,
-    headerContainerRef,
-  } = useContext(AppContext) as Props;
+  const { selectMode, setselectMode, headerContainerRef } = useContext(
+    AppContext
+  ) as Props;
+  const { setSelectedId } = useContext(PageContext) as PageProps;
 
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];

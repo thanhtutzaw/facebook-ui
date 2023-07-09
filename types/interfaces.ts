@@ -37,15 +37,11 @@ export interface Post {
 
 export interface Props {
   username?: string;
-  selectedId?: string[];
-  setSelectedId?: Function;
+
   children?: ReactNode;
-  showAction?: string;
   setselectMode?: Function;
   selectMode?: boolean;
-  setshowAction?: Function;
-  preventClick?: boolean;
-  setpreventClick?: Function;
+  
   expired?: boolean;
   uid?: string;
   active?: string;

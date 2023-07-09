@@ -1,181 +1,155 @@
 .emailForm .backbtnContainer {
-  margin-top : auto;
-  display    : flex;
+  margin-top: auto;
+  display: flex;
   align-items: center;
-  width      : 100%;
-  /* flex    : 1; */
-  gap        : 10px;
+  width: 100%;
+  /* flex: 1; */
+  gap: 10px;
 }
-
-.emailForm .backbtnContainer>button {
+.emailForm .backbtnContainer > button {
   margin-left: initial;
-  flex       : 1;
+  flex: 1;
 }
-
-.emailForm .backbtnContainer>button:first-child {
+.emailForm .backbtnContainer > button:first-child {
   background: transparent;
-  color     : gray;
+  color: gray;
 }
-
-.emailForm .backbtnContainer>button:first-child:hover {
+.emailForm .backbtnContainer > button:first-child:hover {
   background-color: #e6e6e6;
 }
-
-.emailForm .backbtnContainer>button:first-child:is(:active, :focus-visible) {
+.emailForm .backbtnContainer > button:first-child:is(:active, :focus-visible) {
   background-color: #c6c6c6;
-  outline         : 0;
-  border          : 0;
+  outline: 0;
+  border: 0;
 }
-
 .emailForm .error {
-  margin       : 0px;
-  color        : red;
-  background   : #fbfbfb;
-  background   : rgb(255, 255, 255);
-  position     : absolute;
-  padding      : 1rem;
-  top          : -35%;
-  width        : 100%;
-  left         : 0;
+  margin: 0px;
+  color: red;
+  background: #fbfbfb;
+  background: rgb(255, 255, 255);
+  position: absolute;
+  padding: 1rem;
+  top: -35%;
+  width: 100%;
+  left: 0;
   border-radius: 1rem;
-  max-height   : 102px;
-  overflow     : scroll;
+  max-height: 102px;
+  overflow: scroll;
 }
-
 .emailForm:has(> div:only-child) {
-  justify-content : center;
-  align-items     : center;
-  height          : 100dvh;
-  display         : flex;
+  justify-content: center;
+  align-items: center;
+  height: 100dvh;
+  display: flex;
   background-color: white;
-  min-width       : 320px;
+  min-width: 320px;
 }
-
 .emailForm:has(> div:not(:only-child)) {
-  height          : auto;
-  display         : flex;
-  gap             : 1rem;
-  min-width       : 320px;
-  max-width       : 320px;
-  overflow        : scroll;
-  scroll-behavior : smooth;
-  border-radius   : 1rem;
+  height: auto;
+  display: flex;
+  gap: 1rem;
+  min-width: 320px;
+  max-width: 320px;
+  overflow: scroll;
+  scroll-behavior: smooth;
+  border-radius: 1rem;
   scroll-snap-type: x mandatory;
 }
-
-.emailForm>div {
+.emailForm > div {
   scroll-snap-align: start;
 }
-
 .emailForm h2 {
-  color        : black;
-  overflow     : hidden;
+  color: black;
+  overflow: hidden;
   text-overflow: ellipsis;
-  font-size    : 1.4rem;
+  font-size: 1.4rem;
 }
-
-.emailForm>*:not(h2) {
-  padding         : 1rem;
+.emailForm > *:not(h2) {
+  padding: 1rem;
   background-color: white;
-  border          : 0;
-  font-size       : 0.9rem;
-  font-size       : 1rem;
-  border-radius   : 1rem;
-  display         : flex;
-  flex-direction  : column;
-  gap             : 10px;
-  min-width       : 320px;
-  max-width       : 320px;
+  border: 0;
+  font-size: 0.9rem;
+  font-size: 1rem;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 320px;
+  max-width: 320px;
 }
-
-.emailForm>div .nextForm {
-  margin-left     : auto;
-  transition      : all 0.1s ease-in-out;
-  color           : #222;
-  padding         : 0.5rem 1rem;
+.emailForm > div .nextForm {
+  margin-left: auto;
+  transition: all 0.1s ease-in-out;
+  color: #222;
+  padding: 0.5rem 1rem;
   background-color: var(--blue-origin);
-  /* background   : #eaeaea; */
-  border          : 0;
-  color           : white;
-  font-size       : 0.9rem;
-  margin-top      : auto;
-  border-radius   : 1rem;
+  /* background: #eaeaea; */
+  border: 0;
+  color: white;
+  font-size: 0.9rem;
+  margin-top: auto;
+  border-radius: 1rem;
 }
-
-.emailForm>div .nextForm:focus-visible {
+.emailForm > div .nextForm:focus-visible {
   outline-offset: 2px;
-  outline       : 2px solid var(--blue-origin);
+  outline: 3px solid var(--blue-origin);
 }
-
-.emailForm>div .nextForm:active {
+.emailForm > div .nextForm:active {
   scale: 0.9;
 }
-
 .emailForm input {
-  padding      : 10px;
-  font-size    : 1rem;
-  border       : 0;
-  color        : initial;
-  color        : #7a7a7a;
+  padding: 10px;
+  font-size: 1rem;
+  border: 0;
+  color: initial;
+  color: #7a7a7a;
   border-bottom: 1px solid rgba(189, 189, 189, 0.5);
-  width        : 100%;
-  transition   : border 0.3s ease-in;
+  width: 100%;
+  transition: border 0.3s ease-in;
 }
-
 .emailForm input:focus {
   color: initial;
 }
-
 .emailForm input:focus-within {
   border-bottom: 1px solid rgb(0, 0, 0);
-  outline      : 0;
+  outline: 0;
 }
-
 .emailForm .password {
-  display       : flex;
+  display: flex;
   flex-direction: column;
-  /* flex       : 1; */
-  gap           : 10px;
-  transition    : all 0.3s ease-in-out, border 0.3s ease-in;
-  align-items   : flex-end;
-  box-shadow    : initial;
+  /* flex: 1; */
+  gap: 10px;
+  transition: all 0.3s ease-in-out, border 0.3s ease-in;
+  align-items: flex-end;
+  box-shadow: initial;
 }
-
 .emailForm .password:has(input:focus) input {
   border-bottom: 1px solid rgb(0, 0, 0);
-  outline      : 0;
+  outline: 0;
 }
-
 .emailForm .password:has(input:focus) .passwordEye {
   width: 15%;
 }
-
 .emailForm .password .passwordEye {
-  display   : block;
-  width     : -webkit-fill-available;
-  width     : 100%;
-  right     : 1rem;
-  color     : var(--blue-origin);
+  display: block;
+  width: -webkit-fill-available;
+  width: 100%;
+  right: 1rem;
+  color: var(--blue-origin);
   transition: all 0.3s ease-in-out;
 }
-
-.emailForm .password .passwordEye>div {
+.emailForm .password .passwordEye > div {
   background-color: #e8e8e8;
-  padding         : 10px;
-  border-radius   : 1rem;
-  display         : flex;
+  padding: 10px;
+  border-radius: 1rem;
+  display: flex;
 }
-
-.emailForm .password .passwordEye>div:active {
+.emailForm .password .passwordEye > div:active {
   background-color: #c6c6c6;
 }
-
 .emailForm .password input {
   outline: 0;
 }
-
 .emailForm .password input:focus {
   outline: 0;
-}
-
-/*# sourceMappingURL=index.module.css.map */
+}/*# sourceMappingURL=index.module.css.map */

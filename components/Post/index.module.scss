@@ -296,6 +296,10 @@
         background-color: rgb(207, 207, 207);
     }
     .authorInfo {
+        .name,
+        img {
+            cursor: pointer;
+        }
         .name {
             &:is(:active, :hover) {
                 text-decoration: underline;
@@ -372,6 +376,7 @@
     border: 0;
     background-color: thistle;
     background-color: rgb(221, 221, 221);
+    margin: initial !important;
 }
 
 .action {

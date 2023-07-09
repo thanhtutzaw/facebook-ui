@@ -273,11 +273,13 @@
   }
 }
 .userContent {
-  margin-block: 65px;
-  text-align: center;
+  padding:0 1rem;
+  // text-align: center;
   display: grid;
-  align-content: center;
-  color: gray;
+  // align-content: center;
+  // color: gray;
+  margin-top: 65px;
+  // height: calc(100vh - 65px);
 }
 .postContainer {
   & > div:last-child {
@@ -513,6 +515,12 @@
   top: 0;
   border-bottom: 1px solid rgb(235, 235, 235);
   z-index: 100;
+  .title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block !important;
+    width: 100px;
+  }
   svg {
     font-size: 1.2rem;
   }
@@ -568,12 +576,7 @@
     text-overflow: ellipsis;
   }
 }
-.title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block !important;
-  width: 100px;
-}
+
 .addPost {
   video,
   img {

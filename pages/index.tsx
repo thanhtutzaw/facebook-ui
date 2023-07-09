@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     };
     console.log(convertSecondsToTime(token.exp));
     const { name: username, email, uid } = token;
-    console.log(token.email_verified);
+    console.log("isVerify " + token.email_verified);
     // console.log(token);
     let expired = false;
     const postQuery = query(
@@ -56,7 +56,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       postSnap.docs.map(async (doc) => {
         const post = await postToJSON(doc);
         const user = (await getUserData(post.authorId)) as UserRecord;
-        const authorName = user?.displayName ?? "Unknown";
+        const authorName = user?.displayName ?? "Unknown User";
         return {
           ...post,
           author: { name: authorName },
@@ -72,7 +72,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     //     };
     //   })
     // );
-    console.log(posts);
+    // console.log(posts);
     // console.log(user?.displayName);
     // console.log(posts);
     // const getDate = (post: Post) => {

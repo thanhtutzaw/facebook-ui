@@ -1,12 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import React, { ReactNode, useContext } from "react";
+import { ReactNode, useContext } from "react";
+import { PageContext, PageProps } from "../../../context/PageContext";
 import s from "./Friends.module.scss";
-import { AppContext } from "../../../context/AppContext";
-import { Props } from "../../../types/interfaces";
 export default function Card(props: { children: ReactNode; f: any }) {
   const { f } = props;
-  const { preventClick } = useContext(AppContext) as Props;
+  const { preventClick } = useContext(PageContext) as PageProps;
   return (
     <Link
       scroll={false}

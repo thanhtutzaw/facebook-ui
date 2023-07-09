@@ -4,23 +4,27 @@ import { Post as PostType, Props } from "../../types/interfaces";
 import Content from "./Content";
 import { Footer } from "./Footer";
 import styles from "./index.module.scss";
-// type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
+import { PageContext, PageProps } from "../../context/PageContext";
+import { User } from "firebase/auth";
 
 interface PostProps {
+  auth?: User;
   active?: boolean;
+  profile: any;
   post: PostType;
-  tabIndex: number;
+  tabIndex?: number;
 }
-export default function Post({ active, post, tabIndex }: PostProps) {
+export default function Post({profile, auth, active, post, tabIndex }: PostProps) {
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
   const photoURL = "";
-  const {
-    active: tab,
-    showAction,
-    setshowAction,
-  } = useContext(AppContext) as Props;
+  // const {
+  //   // active: tab = "",
+  //   showAction,
+  //   setshowAction,
+  // } = useContext(AppContext) as Props;
+  const { showAction, setshowAction } = useContext(PageContext) as PageProps;
 
   useEffect(() => {
     if (active) {
@@ -30,18 +34,11 @@ export default function Post({ active, post, tabIndex }: PostProps) {
     }
   }, [active, checked, setshowAction, showAction]);
 
-  useEffect(() => {
-    if (tab !== "profile" || "") {
-      setshowAction?.("");
-    }
-    // if (tab !== "") {
-    //   setshowAction?.("");
-    // }
-  }, [setshowAction, tab]);
-  // var patt2 = new RegExp("<div>", "g");
-  // var patt3 = new RegExp("</div>", "g");
-  // var patt4 = new RegExp("<br>", "g");
-  // const replace = text.replace("<div>", "").replaceAll("</div><div>", "<br>");
+  // useEffect(() => {
+  //   if (tab !== "profile" || "") {
+  //     setshowAction?.("");
+  //   }
+  // }, [setshowAction, tab]);
   const [client, setclient] = useState(false);
   useEffect(() => {
     setclient(true);
@@ -59,9 +56,10 @@ export default function Post({ active, post, tabIndex }: PostProps) {
       }}
     >
       <Content
+        profile={profile!}
+        auth={auth!}
         active={active!}
         checked={checked}
-        photoURL={photoURL}
         client={client}
         uncheckRef={uncheckRef}
         setChecked={setChecked}

@@ -5,10 +5,13 @@ import useEscape from "../../hooks/useEscape";
 import { deleteMultiple } from "../../lib/firestore/post";
 import { Props } from "../../types/interfaces";
 import BackHeader from "./BackHeader";
+import { PageContext, PageProps } from "../../context/PageContext";
 
 function SelectModal() {
-  const { uid, selectedId, setSelectedId, selectMode, setselectMode } =
-    useContext(AppContext) as Props;
+  const { selectMode, setselectMode } = useContext(AppContext) as Props;
+  const { uid, selectedId, setSelectedId } = useContext(
+    PageContext
+  ) as PageProps;
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   useEscape(() => {
@@ -51,7 +54,7 @@ function SelectModal() {
         <span>{selectedId?.length}</span> Selected
       </h2>
       <button
-      draggable="false"
+        draggable="false"
         disabled={loading || selectedId?.length === 0}
         onClick={async () => {
           if (!uid || selectedId?.length === 0 || !selectedId) return;

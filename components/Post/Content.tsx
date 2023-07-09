@@ -4,22 +4,20 @@ import {
   faEllipsisH,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { User } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { RefObject, useContext, useEffect, useState } from "react";
-import { AppContext } from "../../context/AppContext";
-import { Post, Props } from "../../types/interfaces";
+import { RefObject, useContext } from "react";
+import { PageContext, PageProps } from "../../context/PageContext";
+import { Post } from "../../types/interfaces";
 import Actions from "./Actions";
 import PhotoLayout from "./PhotoLayout";
 import styles from "./index.module.scss";
-import { app } from "../../lib/firebase";
-import { getAuth } from "firebase/auth";
-import { auth } from "firebase-admin";
 export default function Content(props: {
+  profile: any;
   active: boolean;
   checked: boolean;
-  photoURL: string;
   client: boolean;
   uncheckRef: RefObject<HTMLButtonElement>;
   setChecked: Function;
@@ -27,11 +25,13 @@ export default function Content(props: {
   showmore: boolean;
   setShowmore: Function;
   post: Post;
+  auth: User;
 }) {
   const {
+    profile,
+    auth,
     active,
     checked,
-    photoURL,
     client,
     uncheckRef,
     setChecked,
@@ -40,16 +40,15 @@ export default function Content(props: {
     setShowmore,
     post,
   } = props;
-  const { authorId, id, text, visibility, createdAt } = post;
+  const { author, authorId, id, text, visibility, createdAt } = post;
   const {
     preventClick,
     selectedId,
     setSelectedId,
-    email,
     showAction,
     setshowAction,
     uid,
-  } = useContext(AppContext) as Props;
+  } = useContext(PageContext) as PageProps;
   const router = useRouter();
   const seemore =
     text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
@@ -64,18 +63,18 @@ export default function Content(props: {
       ? text.replaceAll("<div>", "<br>").substring(0, 50)
       : text;
 
-  const production = process.env.NODE_ENV == "production" ? true : false;
-  // const [authorName, setauthorName] = useState("");
-  // useEffect(() => {
-  //   async function getUserData() {
-  //     if (typeof window === 'undefined') {
-  //     const user = await auth(app).getUser(authorId.toString());
-  //     setauthorName(user.displayName! ?? "");
-  //     }
-  //   }
-  //   getUserData();
-  // }, [authorId]);
-
+  const production = process.env.NODE_ENV == "production";
+  // const production = process.env.NODE_ENV == "production" ? true : false;
+  const navigateToProfile = (e: React.MouseEvent) => {
+    // const event = e as MouseEventHandler<HTMLParagraphElement>;
+    e.stopPropagation();
+    e.preventDefault();
+    if (authorId === router.query.user) return;
+    router.push({
+      pathname: `${authorId}`,
+    });
+  };
+  console.log(author);
   return (
     <span
       style={{
@@ -95,9 +94,10 @@ export default function Content(props: {
       <div className={styles.header}>
         <div className={styles.authorInfo}>
           <Image
+            onClick={navigateToProfile}
             priority={false}
             className={styles.profile}
-            alt={email ?? " "}
+            alt={author?.name ? author?.name : "Unknown User"}
             width={200}
             height={200}
             style={{
@@ -106,25 +106,23 @@ export default function Content(props: {
             src={
               authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
                 ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
-                : photoURL
-                ? photoURL
+                : author?.photoURL
+                ? author?.photoURL
                 : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
             }
           />
           <div>
-            <p
-              className={styles.name}
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                router.push({
-                  pathname: `${authorId}`,
-                });
-              }}
-            >
+            <p className={styles.name} onClick={navigateToProfile}>
+              {/* {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
+                ? "Peter 1"
+                : profile
+                ? `${profile?.firstName} ${profile?.lastName}`
+                : `${post?.author?.name}`} */}
               {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
                 ? "Peter 1"
-                : post.author?.name ?? "Unknown"}
+                : `${post?.author?.name}`}
+              {/* ?? author.name */}
+              {/* {auth?.currentUser?.uid} */}
             </p>
             <p suppressHydrationWarning>
               {new Timestamp(createdAt.seconds, createdAt.nanoseconds)
@@ -140,7 +138,7 @@ export default function Content(props: {
         </div>
         {!active ? (
           <>
-            {uid === authorId && (
+            {auth?.uid == authorId && (
               <button
                 className={styles.dot}
                 aria-expanded={showAction !== ""}

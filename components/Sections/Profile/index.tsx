@@ -27,6 +27,7 @@ import { Post as PostType, Props } from "../../../types/interfaces";
 import Post from "../../Post";
 import s from "./index.module.scss";
 import SortDate from "./SortDate";
+import { PostList } from "../Home/PostList";
 export default function Profile() {
   const photoURL = "";
   const { username, profile, myPost, email, sortedPost, setsortedPost } =
@@ -269,20 +270,8 @@ export default function Profile() {
             />
           )}
         </AnimatePresence>
-        <div
-          style={{
-            willChange: "margin",
-            marginInline: active ? "2rem" : "initial",
-            transition: "margin .35s ease-in-out",
-          }}
-        >
-          {sortedPost?.map((post: PostType) => (
-            <Post active={active} key={post.id} post={post} tabIndex={1} />
-          ))}
-        </div>
-        <p style={{ textAlign: "center", userSelect: "none" }}>
-          {sortedPost?.length === 0 ? "Empty Post" : "No more posts"}
-        </p>
+
+        <PostList active={active!} posts={sortedPost!} tabIndex={1} />
       </div>
     </motion.div>
   );

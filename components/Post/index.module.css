@@ -266,6 +266,10 @@
   flex: 1;
   gap: 0.5rem;
 }
+.header .authorInfo .name,
+.header .authorInfo img {
+  cursor: pointer;
+}
 .header .authorInfo .name:is(:active, :hover) {
   text-decoration: underline;
 }
@@ -334,6 +338,7 @@
   border: 0;
   background-color: thistle;
   background-color: rgb(221, 221, 221);
+  margin: initial !important;
 }
 
 .action {

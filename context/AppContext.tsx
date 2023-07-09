@@ -7,14 +7,10 @@ import { useRouter } from "next/router";
 export const AppContext = createContext<Props | null>(null);
 
 export function AppProvider(props: Props) {
-  const { username, profile, uid, allUsers, posts, email, myPost, expired } =
-    props;
+  const { username, profile, uid, allUsers, posts, email, myPost } = props;
   const { active, setActive } = useActive();
-  const [preventClick, setpreventClick] = useState(false);
-  const [showAction, setshowAction] = useState("");
   const [selectMode, setselectMode] = useState(false);
   const headerContainerRef = useRef<HTMLDivElement>(null);
-  const [selectedId, setSelectedId] = useState([]);
   const [sortedPost, setsortedPost] = useState(myPost);
   const router = useRouter();
   // useEffect(() => {
@@ -91,13 +87,10 @@ export function AppProvider(props: Props) {
         profile,
         sortedPost,
         setsortedPost,
-        selectedId,
-        setSelectedId,
+        
         headerContainerRef,
         selectMode,
         setselectMode,
-        showAction,
-        setshowAction,
         active,
         setActive,
         uid,
@@ -105,8 +98,6 @@ export function AppProvider(props: Props) {
         posts,
         email,
         myPost,
-        preventClick,
-        setpreventClick,
       }}
     >
       {props.children}
