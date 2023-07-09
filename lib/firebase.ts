@@ -27,7 +27,7 @@ export { app, db, storage };
 export async function postToJSON(doc: QueryDocumentSnapshot<DocumentData>) {
   const data = doc.data() as Post;
   const createdAt = data.createdAt as Timestamp;
-  const updatedAt = data.createdAt as Timestamp;
+  const updatedAt = data.updatedAt as Timestamp;
   const author = doc.ref.parent.parent!;
   // const user = (await getUserData(author.id)) as UserRecord;
   if (typeof data?.updatedAt === "string") {
