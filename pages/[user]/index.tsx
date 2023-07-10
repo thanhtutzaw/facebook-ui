@@ -1,6 +1,8 @@
 import {
   collection,
   collectionGroup,
+  doc,
+  getDoc,
   getDocs,
   orderBy,
   query,
@@ -20,15 +22,34 @@ import { Footer } from "../../components/Post/Footer";
 import Image from "next/image";
 import email from "../login/email";
 import { PostList } from "../../components/Sections/Home/PostList";
+import { profile } from "console";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
+    const userQuery = doc(db, `users/${context.query.user}`);
+    const currentUser = await getDoc(userQuery);
+    console.log(currentUser.exists());
+
+    // const currentUser2 = await Promise.all(
+    //   currentUser.map(async (doc) => {
+    //     const data = doc.data();
+    //     // const author = (await getUserData(doc.id)) as UserRecord;
+    //     return {
+    //       id: doc.id,
+    //       ...data,
+    //       // ...(author ?? null),
+    //       // displayName: author.displayName!,
+    //       // photoURL: author.photoURL!,
+    //       // ...getUserData(doc.id),
+    //     };
+    //   })
+    // );
+    // context.res.
     const allUsersQuery = collectionGroup(db, `users`);
     const allUsersSnap = await getDocs(allUsersQuery);
     const allUsers = await Promise.all(
       allUsersSnap.docs.map(async (doc) => {
         const data = doc.data();
-        const author = (await getUserData(doc.id)) as UserRecord;
-        // const { displayName:string, photoURL:string } = author;
+        // const author = (await getUserData(doc.id)) as UserRecord;
         return {
           id: doc.id,
           ...data,
@@ -39,17 +60,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
       })
     );
-    // console.log(allUsers);
-    const user = allUsers.find((u) => u.id === context.query.user);
-    // const userRecord = await getUserData(u.id)
-    // console.log(user);
+    // const user = allUsers.find((u) => u.id === context.query.user);
+    const userId = context.query.user;
+    // const userId = context.query.post;
     const mypostQuery = query(
-      collection(db, `/users/${user?.id}/posts`),
+      collection(db, `/users/${userId}/posts`),
       orderBy("createdAt", "desc")
     );
     const myPostSnap = await getDocs(mypostQuery);
     // getUserData;
-    
 
     const myPost = await Promise.all(
       myPostSnap.docs.map(async (doc) => {
@@ -62,17 +81,24 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
       })
     );
-    if (!user) {
+    // if (!user) {
+    //   return {
+    //     notFound: true,
+    //   };
+    // }
+    console.log(currentUser.data());
+    if (currentUser.exists()) {
+      return {
+        props: {
+          user: currentUser.data(),
+          myPost,
+        },
+      };
+    } else {
       return {
         notFound: true,
       };
     }
-    return {
-      props: {
-        user,
-        myPost,
-      },
-    };
   } catch (error) {
     console.log("SSR Error " + error);
     return {
@@ -102,11 +128,6 @@ export default function Page({
         }}
         className={s.container}
       >
-        {/* <h2 className={s.title}>
-          {user.profile
-            ? `${user.profile?.firstName} ${user.profile?.lastName}`
-            : "Unknown User"}
-        </h2> */}
         <div className={`${s.info}`}>
           <Image
             priority={false}
@@ -118,9 +139,8 @@ export default function Page({
               profile?.lastName ?? ""
             }'s profile`}
             src={
-              user.photoURL
-                ? user.photoURL
-                : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+              profile?.photoURL ??
+              "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
             }
           />
           <h3 style={{ marginBottom: "18px" }}>
@@ -128,11 +148,6 @@ export default function Page({
               ? `${profile?.firstName} ${profile?.lastName}`
               : "Unknown User"}
           </h3>
-          {/* <h3 style={{ marginBottom: "18px" }}>
-          {email === "testuser@gmail.com"
-            ? "Peter 1"
-            : `${profile?.firstName ?? "Unknown"} ${profile?.lastName ?? ""}`}
-        </h3> */}
           <p
             style={{
               color: profile?.bio === "" ? "gray" : "initial",
@@ -140,24 +155,10 @@ export default function Page({
             }}
             className={s.bio}
           >
-            {/* Listen I didn&apos;t kill Mysterio. The drones did! */}
-            {/* {edit
-            ? newProfile.bio
-            : profile?.bio === ""
-            ? "No Bio Yet"
-            : profile?.bio ??
-              "Listen I didn&apos;t kill Mysterio. The drones did!"} */}
             {profile?.bio === "" ? "No Bio Yet" : profile?.bio}
           </p>
         </div>
         <PostList tabIndex={1} posts={myPost} profile={profile} />
-        {/* {myPost?.map((post: PostType) => (
-          // <Post key={post.id} post={post} tabIndex={1} />
-          <div key={post.id}>
-            <p>{post.text}</p>
-            <Footer />
-          </div>
-        ))} */}
       </div>
     </div>
   );

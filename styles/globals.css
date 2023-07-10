@@ -171,7 +171,6 @@ video {
 }
 
 .user :is(img, video) {
-  /* border: 1px solid red; */
   background-color: black;
   max-width       : 100%;
   margin          : 0 auto;

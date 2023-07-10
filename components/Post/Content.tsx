@@ -18,6 +18,7 @@ import { Post } from "../../types/interfaces";
 import Actions from "./Actions";
 import PhotoLayout from "./PhotoLayout";
 import styles from "./index.module.scss";
+import AuthorInfo from "./AuthorInfo";
 export default function Content(props: {
   profile: any;
   active: boolean;
@@ -95,74 +96,7 @@ export default function Content(props: {
         }
       }}
     >
-      <div className={styles.header}>
-        <div className={styles.authorInfo}>
-          <Image
-            onClick={navigateToProfile}
-            priority={false}
-            className={styles.profile}
-            alt={author?.name ? author?.name : "Unknown User"}
-            width={200}
-            height={200}
-            style={{
-              objectFit: "cover",
-            }}
-            src={
-              authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
-                ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
-                : author?.photoURL
-                ? author?.photoURL
-                : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-            }
-          />
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <p className={styles.name} onClick={navigateToProfile}>
-              {/* {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
-                ? "Peter 1"
-                : profile
-                ? `${profile?.firstName} ${profile?.lastName}`
-                : `${post?.author?.name}`} */}
-              {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
-                ? "Peter 1"
-                : `${post?.author?.name}`}
-            </p>
-            <div style={{ display: "flex", gap: "10px" }}>
-              <p suppressHydrationWarning>
-                {new Timestamp(createdAt.seconds, createdAt.nanoseconds)
-                  .toDate()
-                  .toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-              </p>
-              {visibility?.toLowerCase() === "public" && (
-                <p
-                  aria-label="Everyone can see this Post"
-                  title="Everyone can see this Post"
-                >
-                  <FontAwesomeIcon icon={faEarth} />
-                </p>
-              )}
-              {visibility?.toLowerCase() === "friend" && (
-                <p
-                  aria-label="Friends can see this Post"
-                  title="Friends can see this Post"
-                >
-                  <FontAwesomeIcon icon={faUserGroup} />
-                </p>
-              )}
-              {visibility?.toLowerCase() === "onlyme" && (
-                <p
-                  aria-label="Only you can see this Post"
-                  title="Only you can see this Post"
-                >
-                  <FontAwesomeIcon icon={faLock} />
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
+      <AuthorInfo navigateToProfile={navigateToProfile} post={post}>
         {!active ? (
           <>
             {auth?.uid == authorId && (
@@ -222,37 +156,13 @@ export default function Content(props: {
             )}
           </>
         )}
-      </div>
+      </AuthorInfo>
 
       <Actions
         showAction={showAction ?? ""}
         authorId={authorId!}
         id={id!.toString()}
       />
-      {/* <div
-        role="textbox"
-        contentEditable="false"
-        suppressContentEditableWarning={true}
-        className={styles.text}
-        // dangerouslySetInnerHTML={{ __html: text }}
-        // dangerouslySetInnerHTML={{
-        //   __html: client ? textContent + seemore : "",
-        // }}
-        onClick={(e) => {
-          const target = e.target as HTMLElement;
-          if (target.tagName === "A") {
-            e.stopPropagation();
-          }
-          if (target.tagName === "BUTTON") {
-            e.stopPropagation();
-            e.preventDefault();
-            setShowmore((prev: boolean) => !prev);
-          }
-        }}
-      >
-        {text}
-      </div> */}
-
       <div
         suppressHydrationWarning={true}
         role="textbox"
@@ -279,26 +189,6 @@ export default function Content(props: {
           }
         }}
       />
-
-      {/* {text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")} */}
-      {/* {text.match(/<br\s*[/]?>/gi)?.length} */}
-      {/* {text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 3 : Infinity)
-          ? text
-              .replace(/<br\s*\/?>/g, "\n")
-              .replaceAll("<div>", "\n")
-              .substring(0, text.length / text.match(/<br\s*[/]?>/gi)?.length!)
-          : text.replace(/<br\s*\/?>/g, "\n").replaceAll("<div>", "\n")} */}
-
-      {/* {text
-      .replace(/<br\s*\/?>/g, "\n")
-      .replaceAll("<div>", "")
-      .replaceAll("</div>", "")
-      .replaceAll("&nbsp;", " ")} */}
-      {/* <h5>{post.media?.length}</h5>
-      <li>{post.media?.[0]?.url}</li>
-      <li>{post.media?.[1]?.url}</li>
-      <li>{post.media?.[2]?.url}</li> */}
-      {/* <h5>{post.media?.length}</h5> */}
       <PhotoLayout files={post.media} preview />
     </span>
   );

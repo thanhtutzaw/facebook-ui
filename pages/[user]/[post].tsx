@@ -12,7 +12,7 @@ import MediaInput from "../../components/Input/MediaInput";
 import PhotoLayout from "../../components/Post/PhotoLayout";
 import { SelectVisiblity } from "../../components/Post/SelectVisiblity";
 import { app, db, postToJSON } from "../../lib/firebase";
-import { verifyIdToken } from "../../lib/firebaseAdmin";
+import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
 import { updatePost } from "../../lib/firestore/post";
 import { deleteStorage, uploadMedia } from "../../lib/storage";
 import s from "../../styles/Home.module.scss";
@@ -20,6 +20,8 @@ import { Media, Post, Props } from "../../types/interfaces";
 import { Footer } from "../../components/Post/Footer";
 import { auth } from "firebase-admin";
 import Image from "next/image";
+import AuthorInfo from "../../components/Post/AuthorInfo";
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -34,12 +36,22 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       orderBy("createdAt", "desc")
     );
     const postSnap = await getDocs(postQuery);
+
     const posts = await Promise.all(
-      postSnap.docs.map(async (doc) => await postToJSON(doc))
+      postSnap.docs.map(async (doc) => {
+        const post = await postToJSON(doc);
+        const user = (await getUserData(post.authorId)) as UserRecord;
+        const authorName = user?.displayName ?? "Unknown User";
+        return {
+          ...post,
+          author: { name: authorName },
+        };
+      })
     );
     // console.log(context);
     // console.log(context.query.post);
     const post = posts.find((post) => post.id === context.query.post);
+    console.log(post);
     if (!post) {
       return {
         notFound: true,
@@ -77,10 +89,10 @@ export default function Page(props: {
   // updatedAt,
   // media} = post;
   const router = useRouter();
-  const [visibility, setVisibility] = useState(post.visibility!);
+  const [visibility, setVisibility] = useState(post?.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
   const [files, setFiles] = useState<Post["media"] | File[]>([
-    ...(post.media ?? []),
+    ...(post?.media ?? []),
   ]);
   const [deleteFile, setdeleteFile] = useState<Post["media"]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -132,42 +144,42 @@ export default function Page(props: {
     post.visibility,
     visibility,
   ]);
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent | PopStateEvent) => {
-      if (
-        // value ===
-        //   input?.innerHTML
-        //     .replaceAll("<div>", "")
-        //     .replaceAll("</div>", "")
-        //     .replace("<div>", "<br>")
-        //     .replaceAll("<div><br><div>", "<br>")
-        //     .replaceAll("<br><div>", "<br>")
-        //     .replace("</div>", "") ||
-        // (visibility !== post.visibility && window.location.href !== "/") ||
-        // files?.length !== post.media?.length
-        (window.location.href !== "/" && visibility !== post.visibility) ||
-        files?.length !== post.media?.length ||
-        // value !== "" ||
-        deleteFile?.length !== 0
-        // &&
-        // value ===
-        //   InputRef.current?.innerHTML
-        //     .replaceAll("<div>", "")
-        //     .replaceAll("</div>", "")
-        //     .replace("<div>", "<br>")
-        //     .replaceAll("<div><br><div>", "<br>")
-        //     .replaceAll("<br><div>", "<br>")
-        //     .replace("</div>", "")
-      ) {
-        e.preventDefault();
-        e.returnValue = "";
-      }
-    };
-    // window.addEventListener("beforeunload", handleBeforeUnload);
-    // return () => {
-    //   window.removeEventListener("beforeunload", handleBeforeUnload);
-    // };
-  }, []);
+  // useEffect(() => {
+  //   const handleBeforeUnload = (e: BeforeUnloadEvent | PopStateEvent) => {
+  //     if (
+  //       // value ===
+  //       //   input?.innerHTML
+  //       //     .replaceAll("<div>", "")
+  //       //     .replaceAll("</div>", "")
+  //       //     .replace("<div>", "<br>")
+  //       //     .replaceAll("<div><br><div>", "<br>")
+  //       //     .replaceAll("<br><div>", "<br>")
+  //       //     .replace("</div>", "") ||
+  //       // (visibility !== post.visibility && window.location.href !== "/") ||
+  //       // files?.length !== post.media?.length
+  //       (window.location.href !== "/" && visibility !== post.visibility) ||
+  //       files?.length !== post.media?.length ||
+  //       // value !== "" ||
+  //       deleteFile?.length !== 0
+  //       // &&
+  //       // value ===
+  //       //   InputRef.current?.innerHTML
+  //       //     .replaceAll("<div>", "")
+  //       //     .replaceAll("</div>", "")
+  //       //     .replace("<div>", "<br>")
+  //       //     .replaceAll("<div><br><div>", "<br>")
+  //       //     .replaceAll("<br><div>", "<br>")
+  //       //     .replace("</div>", "")
+  //     ) {
+  //       e.preventDefault();
+  //       e.returnValue = "";
+  //     }
+  //   };
+  //   // window.addEventListener("beforeunload", handleBeforeUnload);
+  //   // return () => {
+  //   //   window.removeEventListener("beforeunload", handleBeforeUnload);
+  //   // };
+  // }, []);
   // useEffect(() => {
   //   window.onpopstate = () => {
   //     // alert("hey");
@@ -351,19 +363,7 @@ export default function Page(props: {
         )}
       </BackHeader>
       <div className={s.container}>
-        <Image
-          priority={false}
-          // className={s.profile}
-          width={500}
-          height={170}
-          style={{ objectFit: "cover", width: "120px", height: "120px" }}
-          alt={`${post.author?.name ?? "Unknown User"} 's profile`}
-          src={
-            post.author?.photoURL
-              ? post.author?.photoURL
-              : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-          }
-        />
+        <AuthorInfo post={post} />
         <Input
           role="textbox"
           element={InputRef}

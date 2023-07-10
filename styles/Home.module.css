@@ -621,9 +621,12 @@
   color: rgb(212, 212, 212);
 }
 
+.container {
+  margin-top: 65px;
+}
+
 .input {
   padding: 1rem;
-  margin-top: 65px;
   outline: 0;
   border: 0;
   cursor: default;
