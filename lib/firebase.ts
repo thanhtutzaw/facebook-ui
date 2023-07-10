@@ -38,7 +38,7 @@ export async function postToJSON(doc: QueryDocumentSnapshot<DocumentData>) {
       // autherName: user.displayName ?? "Unknown",
       id: doc.id,
       text: data.text,
-      createdAt: createdAt.toJSON() || 0,
+      createdAt: createdAt?.toJSON() || 0,
     };
   } else {
     return {
@@ -48,8 +48,8 @@ export async function postToJSON(doc: QueryDocumentSnapshot<DocumentData>) {
       // autherName: user.displayName ?? "Unknown",
       id: doc.id,
       text: data.text,
-      createdAt: createdAt.toJSON() || 0,
-      updatedAt: updatedAt.toJSON() || 0,
+      createdAt: createdAt?.toJSON() || 0,
+      updatedAt: updatedAt?.toJSON() || 0,
     };
   }
 }

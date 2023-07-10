@@ -43,6 +43,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     console.log(convertSecondsToTime(token.exp));
     const { name: username, email, uid } = token;
     console.log("isVerify " + token.email_verified);
+    // console.log();
     // console.log(token);
     let expired = false;
     const postQuery = query(
@@ -118,7 +119,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         return {
           id: doc.id,
           ...data,
-          ...getUserData(doc.id),
+          // ...getUserData(doc.id),
         };
       })
       .filter((users) => users.id !== uid);
@@ -190,7 +191,7 @@ export default function Home({
 
   // }, [active]);
   // if (!email) return <></>;
-  if (expired && email) return <Welcome expired={expired} />;
+  if (expired) return <Welcome expired={expired} />;
   return (
     <AppProvider
       profile={profile}

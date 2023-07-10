@@ -304,23 +304,25 @@
             &:is(:active, :hover) {
                 text-decoration: underline;
             }
+            font-weight: 500;
+            font-size: 18px;
         }
         user-select: none;
         display: flex;
         flex: 1;
         gap: 0.5rem;
-        > div > p:not(:first-child) {
+        // align-items: center;
+        > div > :last-child {
             color: #4e4e4e;
-            font-size: 15px;
+            font-size: 15px !important;
         }
         p {
             margin: 0;
             padding: 0;
-            font-size: 18px;
             line-height: 20px;
-        }
-        :first-child {
-            font-weight: 500;
+            > svg {
+                color: #a3a3a3;
+            }
         }
     }
 
@@ -377,6 +379,7 @@
     background-color: thistle;
     background-color: rgb(221, 221, 221);
     margin: initial !important;
+    margin-top: 2px !important;
 }
 
 .action {

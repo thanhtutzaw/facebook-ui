@@ -18,13 +18,16 @@ import { deleteStorage, uploadMedia } from "../../lib/storage";
 import s from "../../styles/Home.module.scss";
 import { Media, Post, Props } from "../../types/interfaces";
 import { Footer } from "../../components/Post/Footer";
+import { auth } from "firebase-admin";
+import Image from "next/image";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
-    // const { uid } = token;
+    const { uid } = token;
+    console.log(uid);
     let expired = false;
     const postQuery = query(
       collection(db, `/users/${context.query.user}/posts`),
@@ -44,6 +47,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     }
     return {
       props: {
+        uid,
         expired,
         post,
       },
@@ -52,14 +56,19 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     console.log("SSR Error " + error);
     return {
       props: {
+        uid: "",
         expired: true,
         post: null,
       },
     };
   }
 };
-export default function Page(props: { expired: boolean; post: Post }) {
-  const { post, expired } = props;
+export default function Page(props: {
+  uid: string;
+  expired: boolean;
+  post: Post;
+}) {
+  const { uid, post, expired } = props;
   // const {
   //   authorId,
   // id,
@@ -99,6 +108,31 @@ export default function Page(props: { expired: boolean; post: Post }) {
     InputRef.current?.focus();
   }, []);
   useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (
+        InputRef.current?.innerHTML !== post.text ||
+        visibility.toLowerCase() !== post.visibility?.toLowerCase() ||
+        files?.length !== post.media?.length ||
+        deleteFile?.length !== 0
+      ) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [
+    deleteFile?.length,
+    files?.length,
+    post.media?.length,
+    post.text,
+    post.visibility,
+    visibility,
+  ]);
+  useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent | PopStateEvent) => {
       if (
         // value ===
@@ -129,17 +163,11 @@ export default function Page(props: { expired: boolean; post: Post }) {
         e.returnValue = "";
       }
     };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [
-    deleteFile?.length,
-    files?.length,
-    post.media?.length,
-    post.visibility,
-    visibility,
-  ]);
+    // window.addEventListener("beforeunload", handleBeforeUnload);
+    // return () => {
+    //   window.removeEventListener("beforeunload", handleBeforeUnload);
+    // };
+  }, []);
   // useEffect(() => {
   //   window.onpopstate = () => {
   //     // alert("hey");
@@ -205,6 +233,7 @@ export default function Page(props: { expired: boolean; post: Post }) {
         if (confirm("Changes you made may not be saved.")) {
           return true;
         } else {
+          console.log(currentPath);
           window.history.pushState(null, document.title, currentPath);
           return false;
         }
@@ -233,8 +262,19 @@ export default function Page(props: { expired: boolean; post: Post }) {
   const [loading, setLoading] = useState(false);
 
   let newMedia: Post["media"] = [];
-  const isPostOwner = post.authorId === auth?.currentUser?.uid;
+  const isPostOwner = post?.authorId === uid;
   const canEdit = router.query.edit && isPostOwner;
+  // const { edit } = router.query;
+  useEffect(() => {
+    if (canEdit === false && router.query.edit) {
+      delete router.query.edit;
+      router.replace({
+        pathname: router.pathname,
+        query: router.query,
+      });
+    }
+  }, [canEdit, router]);
+
   return (
     <div className="user">
       <BackHeader
@@ -310,65 +350,80 @@ export default function Page(props: { expired: boolean; post: Post }) {
           </button>
         )}
       </BackHeader>
-      <Input
-        role="textbox"
-        element={InputRef}
-        contentEditable={canEdit ? true : false}
-        style={{
-          cursor: canEdit ? "initial" : "default",
-        }}
-        // onInput={(e) => {
-        //   setvalue(
-        //     e.currentTarget.innerHTML
-        //       .replaceAll("<div>", "")
-        //       .replaceAll("</div>", "")
-        //       .replace("<div>", "<br>")
-        //       .replaceAll("<div><br><div>", "<br>")
-        //       .replaceAll("<br><div>", "<br>")
-        //       .replace("</div>", "")
-        //   );
-        // }}
-        dangerouslySetInnerHTML={{ __html: client ? text : "" }}
-      ></Input>
-      <PhotoLayout
-        margin={canEdit ? true : false}
-        deleteFile={deleteFile}
-        setdeleteFile={setdeleteFile}
-        myPost={post}
-        edit={canEdit ? true : false}
-        files={files}
-        setFiles={setFiles}
-      />
-      {canEdit ? (
-        <div className={s.footer}>
-          <button
-            aria-label="upload media"
-            title="Upload media"
-            disabled={canEdit ? false : true}
-            tabIndex={-1}
-            onClick={() => {
-              fileRef?.current?.click();
-              console.log(files);
-            }}
-          >
-            <FontAwesomeIcon icon={faPhotoFilm} />
-          </button>
-          <MediaInput
-            setFiles={setFiles}
-            files={files as File[]}
-            fileRef={fileRef}
-          />
-          <SelectVisiblity
-            defaultValue={post.visibility}
-            disabled={canEdit ? false : true}
-            onChange={(e) => {
-              setVisibility(e.target.value);
-            }}
-          />
-        </div>
-      ) : (
-        <Footer style={{ borderBottom: "1px solid rgb(235, 235, 235)" }} />
-      )}
+      <div className={s.container}>
+        <Image
+          priority={false}
+          // className={s.profile}
+          width={500}
+          height={170}
+          style={{ objectFit: "cover", width: "120px", height: "120px" }}
+          alt={`${post.author?.name ?? "Unknown User"} 's profile`}
+          src={
+            post.author?.photoURL
+              ? post.author?.photoURL
+              : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+          }
+        />
+        <Input
+          role="textbox"
+          element={InputRef}
+          contentEditable={canEdit ? true : false}
+          style={{
+            cursor: canEdit ? "initial" : "default",
+          }}
+          // onInput={(e) => {
+          //   setvalue(
+          //     e.currentTarget.innerHTML
+          //       .replaceAll("<div>", "")
+          //       .replaceAll("</div>", "")
+          //       .replace("<div>", "<br>")
+          //       .replaceAll("<div><br><div>", "<br>")
+          //       .replaceAll("<br><div>", "<br>")
+          //       .replace("</div>", "")
+          //   );
+          // }}
+          dangerouslySetInnerHTML={{ __html: client ? text : "" }}
+        ></Input>
+        <PhotoLayout
+          margin={canEdit ? true : false}
+          deleteFile={deleteFile}
+          setdeleteFile={setdeleteFile}
+          myPost={post}
+          edit={canEdit ? true : false}
+          files={files}
+          setFiles={setFiles}
+        />
+        {canEdit ? (
+          <div className={s.footer}>
+            <button
+              aria-label="upload media"
+              title="Upload media"
+              disabled={canEdit ? false : true}
+              tabIndex={-1}
+              onClick={() => {
+                fileRef?.current?.click();
+                console.log(files);
+              }}
+            >
+              <FontAwesomeIcon icon={faPhotoFilm} />
+            </button>
+            <MediaInput
+              setFiles={setFiles}
+              files={files as File[]}
+              fileRef={fileRef}
+            />
+            <SelectVisiblity
+              defaultValue={post.visibility}
+              disabled={canEdit ? false : true}
+              onChange={(e) => {
+                setVisibility(e.target.value);
+              }}
+            />
+          </div>
+        ) : (
+          <Footer style={{ borderBottom: "1px solid rgb(235, 235, 235)" }} />
+        )}
+      </div>
     </div>
   );
 }

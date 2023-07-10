@@ -1,7 +1,11 @@
 import {
   faCircleCheck,
   faDotCircle,
+  faEarth,
   faEllipsisH,
+  faGlobe,
+  faLock,
+  faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { User } from "firebase/auth";
@@ -111,7 +115,7 @@ export default function Content(props: {
                 : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
             }
           />
-          <div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
             <p className={styles.name} onClick={navigateToProfile}>
               {/* {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
                 ? "Peter 1"
@@ -121,19 +125,42 @@ export default function Content(props: {
               {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
                 ? "Peter 1"
                 : `${post?.author?.name}`}
-              {/* ?? author.name */}
-              {/* {auth?.currentUser?.uid} */}
             </p>
-            <p suppressHydrationWarning>
-              {new Timestamp(createdAt.seconds, createdAt.nanoseconds)
-                .toDate()
-                .toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
-            </p>
-            <p>{visibility}</p>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <p suppressHydrationWarning>
+                {new Timestamp(createdAt.seconds, createdAt.nanoseconds)
+                  .toDate()
+                  .toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+              </p>
+              {visibility?.toLowerCase() === "public" && (
+                <p
+                  aria-label="Everyone can see this Post"
+                  title="Everyone can see this Post"
+                >
+                  <FontAwesomeIcon icon={faEarth} />
+                </p>
+              )}
+              {visibility?.toLowerCase() === "friend" && (
+                <p
+                  aria-label="Friends can see this Post"
+                  title="Friends can see this Post"
+                >
+                  <FontAwesomeIcon icon={faUserGroup} />
+                </p>
+              )}
+              {visibility?.toLowerCase() === "onlyme" && (
+                <p
+                  aria-label="Only you can see this Post"
+                  title="Only you can see this Post"
+                >
+                  <FontAwesomeIcon icon={faLock} />
+                </p>
+              )}
+            </div>
           </div>
         </div>
         {!active ? (
