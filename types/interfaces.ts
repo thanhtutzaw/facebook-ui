@@ -1,19 +1,20 @@
 import { Timestamp } from "firebase/firestore";
 import { ReactNode, RefObject } from "react";
 import { account } from "../pages/login";
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 export type Media = {
   name: string;
   url: string;
   type: string;
 };
-export type Author = {
-  name?: string;
-  photoURL?: string;
-};
+// export type Author = {
+//   name?: string;
+//   photoURL?: string;
+// };
 
 export interface Post {
   // authorName?: string;
-  author: Author;
+  author: UserRecord;
   authorId: string | number;
   id?: string | number;
   text: string;
@@ -41,7 +42,7 @@ export interface Props {
   children?: ReactNode;
   setselectMode?: Function;
   selectMode?: boolean;
-  
+
   expired?: boolean;
   uid?: string;
   active?: string;

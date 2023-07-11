@@ -133,6 +133,8 @@ export default function Profile() {
           style={{
             color: profile?.bio === "" ? "gray" : "initial",
             marginTop: "0",
+            userSelect:
+              profile?.bio === "" || !profile?.bio ? "none" : "initial",
           }}
           className={s.bio}
         >
@@ -145,7 +147,7 @@ export default function Profile() {
               "Listen I didn&apos;t kill Mysterio. The drones did!"} */}
           {edit
             ? newProfile.bio
-            : profile?.bio === ""
+            : profile?.bio === "" || !profile?.bio
             ? "No Bio Yet"
             : profile?.bio}
         </p>
@@ -271,7 +273,7 @@ export default function Profile() {
           )}
         </AnimatePresence>
 
-        <PostList active={active!} posts={sortedPost!} tabIndex={1} />
+        {/* <PostList active={active!} posts={sortedPost!} tabIndex={1} /> */}
       </div>
     </motion.div>
   );

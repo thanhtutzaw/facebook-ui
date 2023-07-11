@@ -33,7 +33,6 @@ export default function Content(props: {
   auth: User;
 }) {
   const {
-    profile,
     auth,
     active,
     checked,
@@ -46,14 +45,8 @@ export default function Content(props: {
     post,
   } = props;
   const { author, authorId, id, text, visibility, createdAt } = post;
-  const {
-    preventClick,
-    selectedId,
-    setSelectedId,
-    showAction,
-    setshowAction,
-    uid,
-  } = useContext(PageContext) as PageProps;
+  const { preventClick, selectedId, setSelectedId, showAction, setshowAction } =
+    useContext(PageContext) as PageProps;
   const router = useRouter();
   const seemore =
     text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
@@ -71,10 +64,13 @@ export default function Content(props: {
   const production = process.env.NODE_ENV == "production";
   // const production = process.env.NODE_ENV == "production" ? true : false;
   const navigateToProfile = (e: React.MouseEvent) => {
-    // const event = e as MouseEventHandler<HTMLParagraphElement>;
     e.stopPropagation();
     e.preventDefault();
-    if (authorId === router.query.user) return;
+    // alert(router.query.post);
+    const isViewingAuthorProfile =
+      authorId === router.query.user ||
+      (router.query.user && router.query.post);
+    if (isViewingAuthorProfile) return;
     router.push({
       pathname: `${authorId}`,
     });

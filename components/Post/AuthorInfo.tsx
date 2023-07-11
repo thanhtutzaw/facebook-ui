@@ -18,13 +18,13 @@ export default function AuthorInfo(props: {
   const { author, authorId, createdAt, visibility, updatedAt } = post;
   return (
     <div className={styles.header}>
-      {/* <h1>{author?.name}</h1> */}
+      {/* <h1>{author?.displayName}</h1> */}
       <div className={styles.authorInfo}>
         <Image
           onClick={navigateToProfile}
           priority={false}
           className={styles.profile}
-          alt={author?.name ? author?.name : "Unknown User"}
+          alt={author?.displayName ? author?.displayName : "Unknown User"}
           width={200}
           height={200}
           style={{
@@ -38,6 +38,7 @@ export default function AuthorInfo(props: {
               : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
           }
         />
+        {/* <h1>{JSON.stringify(post.author, null, 4)}</h1> */}
         <div
           style={{
             display: "flex",
@@ -48,7 +49,7 @@ export default function AuthorInfo(props: {
           <p className={styles.name} onClick={navigateToProfile}>
             {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
               ? "Peter 1"
-              : `${author?.name}`}
+              : `${author?.displayName}`}
           </p>
           <div
             style={{
@@ -57,7 +58,7 @@ export default function AuthorInfo(props: {
             }}
           >
             <p suppressHydrationWarning>
-              {new Timestamp(createdAt.seconds, createdAt.nanoseconds)
+              {new Timestamp(createdAt?.seconds, createdAt?.nanoseconds)
                 .toDate()
                 .toLocaleDateString("en-US", {
                   year: "numeric",

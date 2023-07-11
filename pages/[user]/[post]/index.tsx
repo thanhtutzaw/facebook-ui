@@ -1,27 +1,31 @@
 import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { getAuth } from "firebase/auth";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import {
+  DocumentData,
+  DocumentSnapshot,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import { GetServerSideProps } from "next";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useContext, useEffect, useRef, useState } from "react";
-import BackHeader from "../../components/Header/BackHeader";
-import Input from "../../components/Input/Input";
-import MediaInput from "../../components/Input/MediaInput";
-import PhotoLayout from "../../components/Post/PhotoLayout";
-import { SelectVisiblity } from "../../components/Post/SelectVisiblity";
-import { app, db, postToJSON } from "../../lib/firebase";
-import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
-import { updatePost } from "../../lib/firestore/post";
-import { deleteStorage, uploadMedia } from "../../lib/storage";
-import s from "../../styles/Home.module.scss";
-import { Media, Post, Props } from "../../types/interfaces";
-import { Footer } from "../../components/Post/Footer";
-import { auth } from "firebase-admin";
-import Image from "next/image";
-import AuthorInfo from "../../components/Post/AuthorInfo";
+import { useEffect, useRef, useState } from "react";
+import BackHeader from "../../../components/Header/BackHeader";
+import Input from "../../../components/Input/Input";
+import MediaInput from "../../../components/Input/MediaInput";
+import { Footer } from "../../../components/Post/Footer";
+import PhotoLayout from "../../../components/Post/PhotoLayout";
+import { SelectVisiblity } from "../../../components/Post/SelectVisiblity";
+import { app, db, postToJSON, userToJSON } from "../../../lib/firebase";
+import { getUserData, verifyIdToken } from "../../../lib/firebaseAdmin";
+import { updatePost } from "../../../lib/firestore/post";
+import { deleteStorage, uploadMedia } from "../../../lib/storage";
+import s from "../../../styles/Home.module.scss";
+import { Media, Post, Props } from "../../../types/interfaces";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import AuthorInfo from "../../../components/Post/AuthorInfo";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -31,63 +35,55 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const { uid } = token;
     console.log(uid);
     let expired = false;
-    const postQuery = query(
-      collection(db, `/users/${context.query.user}/posts`),
-      orderBy("createdAt", "desc")
-    );
-    const postSnap = await getDocs(postQuery);
+    const { user: authorId, post: postId } = context.query;
+    const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
+    const postSnap = await getDoc(postDoc);
+    // const newPost = await Promise.all(
+    //   postSnap
+    // )
 
-    const posts = await Promise.all(
-      postSnap.docs.map(async (doc) => {
-        const post = await postToJSON(doc);
-        const user = (await getUserData(post.authorId)) as UserRecord;
-        const authorName = user?.displayName ?? "Unknown User";
-        return {
-          ...post,
-          author: { name: authorName },
-        };
-      })
-    );
-    // console.log(context);
-    // console.log(context.query.post);
-    const post = posts.find((post) => post.id === context.query.post);
-    console.log(post);
-    if (!post) {
+    //     displayName: UserRecord?.displayName ?? "Unknown User",
+    //     photoURL: UserRecord?.photoURL ?? "",
+    if (postSnap.exists()) {
+      const post = await postToJSON(postSnap as DocumentSnapshot<DocumentData>);
+      const UserRecord = await getUserData(post.authorId);
+      const userJSON = userToJSON(UserRecord) as UserRecord;
+      const newPost = {
+        ...post,
+        author: {
+          ...userJSON,
+        },
+      };
+      console.log(newPost);
+      return {
+        props: {
+          uid,
+          expired,
+          post: newPost,
+        },
+      };
+    } else {
       return {
         notFound: true,
       };
     }
-    return {
-      props: {
-        uid,
-        expired,
-        post,
-      },
-    };
   } catch (error) {
     console.log("SSR Error " + error);
     return {
       props: {
         uid: "",
         expired: true,
-        post: null,
+        post: {},
       },
     };
   }
 };
-export default function Page(props: {
+export default function Post(props: {
   uid: string;
   expired: boolean;
   post: Post;
 }) {
   const { uid, post, expired } = props;
-  // const {
-  //   authorId,
-  // id,
-  // text,
-  // visibility,createdAt,
-  // updatedAt,
-  // media} = post;
   const router = useRouter();
   const [visibility, setVisibility] = useState(post?.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
@@ -144,48 +140,6 @@ export default function Page(props: {
     post.visibility,
     visibility,
   ]);
-  // useEffect(() => {
-  //   const handleBeforeUnload = (e: BeforeUnloadEvent | PopStateEvent) => {
-  //     if (
-  //       // value ===
-  //       //   input?.innerHTML
-  //       //     .replaceAll("<div>", "")
-  //       //     .replaceAll("</div>", "")
-  //       //     .replace("<div>", "<br>")
-  //       //     .replaceAll("<div><br><div>", "<br>")
-  //       //     .replaceAll("<br><div>", "<br>")
-  //       //     .replace("</div>", "") ||
-  //       // (visibility !== post.visibility && window.location.href !== "/") ||
-  //       // files?.length !== post.media?.length
-  //       (window.location.href !== "/" && visibility !== post.visibility) ||
-  //       files?.length !== post.media?.length ||
-  //       // value !== "" ||
-  //       deleteFile?.length !== 0
-  //       // &&
-  //       // value ===
-  //       //   InputRef.current?.innerHTML
-  //       //     .replaceAll("<div>", "")
-  //       //     .replaceAll("</div>", "")
-  //       //     .replace("<div>", "<br>")
-  //       //     .replaceAll("<div><br><div>", "<br>")
-  //       //     .replaceAll("<br><div>", "<br>")
-  //       //     .replace("</div>", "")
-  //     ) {
-  //       e.preventDefault();
-  //       e.returnValue = "";
-  //     }
-  //   };
-  //   // window.addEventListener("beforeunload", handleBeforeUnload);
-  //   // return () => {
-  //   //   window.removeEventListener("beforeunload", handleBeforeUnload);
-  //   // };
-  // }, []);
-  // useEffect(() => {
-  //   window.onpopstate = () => {
-  //     // alert("hey");
-  //     history.pushState(null, document.title, location.hash);
-  //   };
-  // }, []);
   useEffect(() => {
     // setvalue(
     //   InputRef.current?.innerHTML
@@ -266,7 +220,6 @@ export default function Page(props: {
     visibility,
   ]);
 
-  const auth = getAuth(app);
   const [client, setClient] = useState(false);
   useEffect(() => {
     setClient(true);
@@ -276,7 +229,6 @@ export default function Page(props: {
   let newMedia: Post["media"] = [];
   const isPostOwner = post?.authorId === uid;
   const canEdit = router.query.edit && isPostOwner;
-  // const { edit } = router.query;
   useEffect(() => {
     if (canEdit === false && router.query.edit) {
       delete router.query.edit;
@@ -286,7 +238,15 @@ export default function Page(props: {
       });
     }
   }, [canEdit, router]);
-
+  const auth = getAuth(app);
+  const navigateToProfile = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    // alert(router.query.post);
+    // const isViewingAuthorProfile = router.query.user && router.query.post;
+    // if (isViewingAuthorProfile) return;
+    router.push(`/${post?.authorId.toString()}`);
+  };
   return (
     <div className="user">
       <BackHeader
@@ -363,7 +323,7 @@ export default function Page(props: {
         )}
       </BackHeader>
       <div className={s.container}>
-        <AuthorInfo post={post} />
+        <AuthorInfo navigateToProfile={navigateToProfile} post={post} />
         <Input
           role="textbox"
           element={InputRef}

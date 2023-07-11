@@ -4,6 +4,35 @@
   /* --main-width : 500px; */
 }
 
+.goHome {
+  border       : 0;
+  border-radius: 1rem;
+
+  background        : transparent;
+  font-size         : 1rem;
+  /* background     : beige; */
+  display           : block;
+  /* width          : 121px; */
+  justify-content   : center;
+  text-align        : center;
+  margin            : 0 auo;
+  margin            : auto;
+  padding           : 0.5rem;
+  /* padding        : 1rem 0.5rem; */
+  border-radius     : 1rem;
+  color             : var;
+  /* align-items    : center; */
+  /* display        : flex; */
+  /* align-items    : center; */
+  /* justify-content: center; */
+  color             : var(--blue-origin);
+
+  &:focus-visible {
+    outline-color: var(--blue-origin);
+
+  }
+}
+
 /* @media only screen and (min-width:700px) {
   :root {
     --main-width: 700px;

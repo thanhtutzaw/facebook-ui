@@ -1,6 +1,6 @@
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import {
   collection,
-  collectionGroup,
   doc,
   getDoc,
   getDocs,
@@ -9,88 +9,42 @@ import {
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import BackHeader from "../../components/Header/BackHeader";
-import { db, postToJSON } from "../../lib/firebase";
-import { getUserData } from "../../lib/firebaseAdmin";
-import styles from "../../styles/Home.module.scss";
 import s from "../../components/Sections/Profile/index.module.scss";
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
-// import ErrorPage from "../_error";
-import ErrorPage from "next/error";
-import Post from "../../components/Post";
-import { Post as PostType } from "../../types/interfaces";
-import { Footer } from "../../components/Post/Footer";
+import { db, fethUserDoc, postToJSON, userToJSON } from "../../lib/firebase";
+import { getUserData } from "../../lib/firebaseAdmin";
 import Image from "next/image";
-import email from "../login/email";
 import { PostList } from "../../components/Sections/Home/PostList";
-import { profile } from "console";
+import { Post as PostType } from "../../types/interfaces";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    const userQuery = doc(db, `users/${context.query.user}`);
-    const currentUser = await getDoc(userQuery);
-    console.log(currentUser.exists());
+    const uid = context.query.user!;
 
-    // const currentUser2 = await Promise.all(
-    //   currentUser.map(async (doc) => {
-    //     const data = doc.data();
-    //     // const author = (await getUserData(doc.id)) as UserRecord;
-    //     return {
-    //       id: doc.id,
-    //       ...data,
-    //       // ...(author ?? null),
-    //       // displayName: author.displayName!,
-    //       // photoURL: author.photoURL!,
-    //       // ...getUserData(doc.id),
-    //     };
-    //   })
-    // );
-    // context.res.
-    const allUsersQuery = collectionGroup(db, `users`);
-    const allUsersSnap = await getDocs(allUsersQuery);
-    const allUsers = await Promise.all(
-      allUsersSnap.docs.map(async (doc) => {
-        const data = doc.data();
-        // const author = (await getUserData(doc.id)) as UserRecord;
-        return {
-          id: doc.id,
-          ...data,
-          // ...(author ?? null),
-          // displayName: author.displayName!,
-          // photoURL: author.photoURL!,
-          // ...getUserData(doc.id),
-        };
-      })
-    );
-    // const user = allUsers.find((u) => u.id === context.query.user);
-    const userId = context.query.user;
-    // const userId = context.query.post;
+    // const user = await fethUserDoc(uid);
+    // console.log(user);
+    const profileQuery = doc(db, `/users/${uid}`);
+    const user = await getDoc(profileQuery);
     const mypostQuery = query(
-      collection(db, `/users/${userId}/posts`),
+      collection(db, `/users/${uid}/posts`),
       orderBy("createdAt", "desc")
     );
     const myPostSnap = await getDocs(mypostQuery);
-    // getUserData;
-
     const myPost = await Promise.all(
       myPostSnap.docs.map(async (doc) => {
         const post = await postToJSON(doc);
-        const user = (await getUserData(post.authorId)) as UserRecord;
-        const authorName = user?.displayName ?? "Unknown User";
+        const UserRecord = (await getUserData(post.authorId)) as UserRecord;
+        const userJSON = userToJSON(UserRecord);
         return {
           ...post,
-          author: { name: authorName },
+          author: {
+            ...userJSON,
+          },
         };
       })
     );
-    // if (!user) {
-    //   return {
-    //     notFound: true,
-    //   };
-    // }
-    console.log(currentUser.data());
-    if (currentUser.exists()) {
+    if (user.exists()) {
       return {
         props: {
-          user: currentUser.data(),
+          user: user.data(),
           myPost,
         },
       };
@@ -109,7 +63,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 };
-export default function Page({
+export default function User({
   user,
   myPost,
 }: {

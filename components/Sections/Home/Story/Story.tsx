@@ -6,7 +6,6 @@ import { MouseEvent, useEffect, useRef, useState } from "react";
 import { getServerSideProps } from "../../../../pages";
 import styles from "../../../../styles/Home.module.scss";
 import Card from "./Card";
-// import { getServerSideProps } from "../../../pages/_app";
 type StoryProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 export default function Story({ email }: StoryProps) {
   const photoURL = "";

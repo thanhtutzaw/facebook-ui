@@ -15,6 +15,7 @@ import { verifyIdToken } from "../lib/firebaseAdmin";
 import "../styles/globals.css";
 import { Props } from "../types/interfaces";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
+import { Welcome } from "../components/Welcome";
 
 config.autoAddCss = false;
 export const getServerSideProps: GetServerSideProps<Props> = async (
@@ -28,18 +29,18 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     console.log(token.uid);
     return {
       props: {
-        // expired,
+        expired,
         uid: token.uid,
       },
     };
   } catch (error) {
-    console.log("SSR Error " + error);
+    console.log("SSR Error (expired in app.tsx) " + error);
     // context.res.writeHead(302, { Location: "/" });
     // context.res.writeHead(302, { Location: "/login" });
     // context.res.end();
     return {
       props: {
-        // expired: true,
+        expired: true,
         uid: "",
       },
     };
@@ -49,14 +50,15 @@ export default function App({
   Component,
   pageProps,
   uid,
-}: AppProps & { uid: DecodedIdToken["uid"] }) {
+  expired,
+}: AppProps & { uid: DecodedIdToken["uid"]; expired: boolean }) {
   const router = useRouter();
-  // useEffect(() => {
-  //   if (expired) {
-  //     router.push("/");
-  //     console.log("expired and pushed(_app.tsx)");
-  //   }
-  // }, [expired, router]);
+  useEffect(() => {
+    if (expired) {
+      router.push("/");
+      console.log("expired and pushed(_app.tsx)");
+    }
+  }, [expired, router]);
   useEffect(() => {
     const handleRouteStart = () => {
       nProgress.start();
@@ -103,7 +105,8 @@ export default function App({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  // const auth = getAuth(app);
+  if (expired) return <Welcome expired={expired} />;
+
   return (
     <>
       <Head>

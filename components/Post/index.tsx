@@ -14,7 +14,13 @@ interface PostProps {
   post: PostType;
   tabIndex?: number;
 }
-export default function Post({profile, auth, active, post, tabIndex }: PostProps) {
+export default function Post({
+  profile,
+  auth,
+  active,
+  post,
+  tabIndex,
+}: PostProps) {
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);

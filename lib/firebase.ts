@@ -1,8 +1,11 @@
 import { initializeApp } from "firebase/app";
 import {
   DocumentData,
+  DocumentSnapshot,
   QueryDocumentSnapshot,
   Timestamp,
+  doc,
+  getDoc,
   getFirestore,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
@@ -24,7 +27,14 @@ const db = getFirestore();
 const storage = getStorage(app);
 export { app, db, storage };
 
-export async function postToJSON(doc: QueryDocumentSnapshot<DocumentData>) {
+export async function fethUserDoc(uid: string | string[]) {
+  const userQuery = doc(db, `users/${uid}`);
+  const user = await getDoc(userQuery);
+  return user!;
+}
+export async function postToJSON(
+  doc: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>
+) {
   const data = doc.data() as Post;
   const createdAt = data.createdAt as Timestamp;
   const updatedAt = data.updatedAt as Timestamp;
@@ -52,4 +62,21 @@ export async function postToJSON(doc: QueryDocumentSnapshot<DocumentData>) {
       updatedAt: updatedAt?.toJSON() || 0,
     };
   }
+}
+
+export function userToJSON(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map((item: any) => userToJSON(item));
+  } else if (typeof obj === "object" && obj !== null) {
+    const modifiedObj = { ...obj };
+    for (const key in modifiedObj) {
+      if (Object.prototype.hasOwnProperty.call(modifiedObj, key)) {
+        modifiedObj[key] = userToJSON(modifiedObj[key]);
+      }
+    }
+    return modifiedObj;
+  } else if (obj === undefined) {
+    return null;
+  }
+  return obj;
 }

@@ -121,11 +121,7 @@ export default function Header(props: any) {
               display: "flex",
               width: "100%",
               height: "100%",
-              // borderBottom: "1px solid #e0e0e0",
-              // borderBottom: "1px solid #e6e6e6",
-              // boxShadow: "0px 1px 1px rgba(0, 0, 0, 0.12)",
               borderBottom: "1px solid #f0f0f0",
-              // boxShadow: "0 -6px 10px 5px rgba(0,0,0,0.5)",
             }}
           >
             {pages.map((page, index) => (

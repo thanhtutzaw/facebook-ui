@@ -15,7 +15,7 @@ type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 };
 export default function Newfeed(props: NewfeedProps) {
   const { tabIndex } = props;
-  const { posts , profile} = useContext(AppContext) as Props;
+  const { active, posts, profile } = useContext(AppContext) as Props;
   // const user = getAuth(app).currentUser;
   const [user, setuser] = useState<User | null>(null);
 
@@ -32,7 +32,14 @@ export default function Newfeed(props: NewfeedProps) {
 
   return (
     <div className={styles.postContainer}>
-      <PostList profile={profile} auth={user!} posts={posts!} tabIndex={tabIndex!} />
+      {active === "/" && (
+        <PostList
+          profile={profile}
+          auth={user!}
+          posts={posts!}
+          tabIndex={tabIndex!}
+        />
+      )}
     </div>
   );
 }

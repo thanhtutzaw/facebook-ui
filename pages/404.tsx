@@ -1,31 +1,32 @@
 import Link from "next/link";
-import BackHeader from "../components/Header/BackHeader";
 import s from "../styles/Home.module.scss";
-const ErrorPage = () => {
+function ErrorPage() {
   return (
     <div className="user">
-      {/* <BackHeader /> */}
       <div
         style={{
           textAlign: "center",
-          alignContent: "center",
-          height: "calc(100dvh - 65px)",
+          // alignContent: "center",
+          // height: "calc(100dvh - 65px)",
         }}
         className={s.userContent}
       >
-        <h3
+        <h1
           style={{
+            marginBottom: "0",
+
             fontWeight: "500",
           }}
         >
           404 - Couldn&apos;t find this Account
-        </h3>
-        <Link  tabIndex={-1 }href="/" style={{ background: "transparent" }}>
-          <button className="goHome">Go Home</button>
+        </h1>
+        <p>We can&apos;t find the page you are looking for</p>
+        <Link href="/" className="goHome">
+          Go Home
         </Link>
       </div>
     </div>
   );
-};
+}
 
 export default ErrorPage;

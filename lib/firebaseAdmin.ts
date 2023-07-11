@@ -45,7 +45,11 @@ export async function getUserData(uid: string) {
     // const displayName = userRecord.displayName!;
     // const photoURL = userRecord.photoURL!;
     return userRecord;
-
+    
+    // const displayName = modifiedUserRecord.displayName!;
+    // const photoURL = modifiedUserRecord.photoURL!;
+    // const modifiedUserRecord = replaceUndefinedWithNull(userRecord);
+    // return modifiedUserRecord;
     // return uid;
     // if (userRecord) {
     //     return userRecord;
