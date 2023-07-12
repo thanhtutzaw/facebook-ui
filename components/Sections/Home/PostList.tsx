@@ -29,6 +29,7 @@ export const PostList = memo(
         >
           {posts?.map((post: PostType) => (
             <Post
+            active={active}
               preventNavigate={preventNavigate}
               profile={profile}
               auth={auth!}
