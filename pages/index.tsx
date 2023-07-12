@@ -19,8 +19,9 @@ import { Welcome } from "../components/Welcome";
 import { AppProvider } from "../context/AppContext";
 import { app, db, fethUserDoc, postToJSON, userToJSON } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import { Props } from "../types/interfaces";
+import { Props, account } from "../types/interfaces";
 import Header from "../components/Header/Header";
+import { profile } from "console";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -38,6 +39,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     };
     console.log(convertSecondsToTime(token.exp));
     const { name: username, email, uid } = token;
+
+    const account = (await getUserData(uid as string))! as UserRecord;
+    const accountJSON = userToJSON(account);
     console.log("isVerify " + token.email_verified);
     // console.log(token);
     let expired = false;
@@ -70,12 +74,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // const myPost = await Promise.all(
     //   myPostSnap.docs.map((doc) => postToJSON(doc))
     // );
-    // const user = await fethUserDoc(uid);
-    // const profile = user.data()?.profile;
     const profileQuery = doc(db, `/users/${uid}`);
     const profileSnap = await getDoc(profileQuery);
-
-    const profile = profileSnap.data()?.profile;
+    const profileData = profileSnap.data()!;
+    const profile = profileData.profile as account["profile"];
     const allUsersQuery = collectionGroup(db, `users`);
     const allUsersSnap = await getDocs(allUsersQuery);
     const allUsers = allUsersSnap.docs
@@ -98,7 +100,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         email,
         username: username ?? "Unknown",
         // myPost,
-        profile: profile ?? null,
+        profile: profile! ?? null,
+        account: accountJSON ?? null,
       },
     };
   } catch (error) {
@@ -115,6 +118,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         email: "",
         username: "",
         profile: null,
+        account: null,
       },
     };
   }
@@ -127,6 +131,7 @@ export default function Home({
   email,
   username,
   profile,
+  account,
 }: Props) {
   // props: InferGetServerSidePropsType<typeof getServerSideProps>
   const indicatorRef = useRef<HTMLDivElement>(null);
@@ -152,13 +157,14 @@ export default function Home({
   if (expired) return <Welcome expired={expired} />;
   return (
     <AppProvider
-      profile={profile}
+      profile={profile!}
       expired={expired}
       username={username}
       uid={uid}
       allUsers={allUsers}
       posts={posts}
       email={email}
+      account={account}
     >
       <Header indicatorRef={indicatorRef} />
       <Tabs indicatorRef={indicatorRef} />

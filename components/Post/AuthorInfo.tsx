@@ -47,9 +47,10 @@ export default function AuthorInfo(props: {
           }}
         >
           <p className={styles.name} onClick={navigateToProfile}>
-            {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
+            {author?.displayName ?? "Unknow User"}
+            {/* {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
               ? "Peter 1"
-              : `${author?.displayName}`}
+              : `${author?.displayName}`} */}
           </p>
           <div
             style={{

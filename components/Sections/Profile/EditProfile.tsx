@@ -3,13 +3,15 @@ import { ChangeEventHandler, FormEventHandler, MouseEventHandler } from "react";
 import s from "./index.module.scss";
 import { account } from "../../../types/interfaces";
 function EditProfile(props: {
+  updating: boolean;
   edit: boolean;
   handleSubmit: FormEventHandler<HTMLFormElement>;
   handleChange: ChangeEventHandler<HTMLInputElement>;
   newProfile: account["profile"];
   toggleEdit: MouseEventHandler<HTMLButtonElement>;
 }) {
-  const { edit, handleSubmit, handleChange, newProfile, toggleEdit } = props;
+  const { updating, edit, handleSubmit, handleChange, newProfile, toggleEdit } =
+    props;
   if (!edit)
     return (
       <motion.button
@@ -36,10 +38,11 @@ function EditProfile(props: {
       onSubmit={handleSubmit}
       className={s.editProfile}
     >
+      {/* {JSON.stringify(newProfile, null, 4)} */}
       <div>
         <input
           onChange={handleChange}
-          defaultValue={newProfile?.firstName}
+          defaultValue={newProfile?.firstName ?? ""}
           id="firstName"
           name="firstName"
           type="text"
@@ -52,7 +55,7 @@ function EditProfile(props: {
         />
         <input
           onChange={handleChange}
-          defaultValue={newProfile?.lastName}
+          defaultValue={newProfile?.lastName ?? ""}
           id="lastName"
           name="lastName"
           type="text"
@@ -79,7 +82,9 @@ function EditProfile(props: {
       </div>
       <div>
         <button onClick={toggleEdit}>Cancel</button>
-        <button type="submit">Update</button>
+        <button disabled={updating} type="submit">
+          {updating ? "Updating..." : "Update"}
+        </button>
       </div>
     </motion.form>
   );

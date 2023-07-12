@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import { MouseEvent, useContext, useEffect, useState } from "react";
+import { MouseEvent, RefObject, useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { useActive } from "../../hooks/useActiveTab";
 import { Props } from "../../types/interfaces";
@@ -19,7 +19,9 @@ const Notifications = dynamic(
 );
 const Menu = dynamic(() => import("../Sections/Menu/menu"), { ssr: false });
 
-export default function Tabs(props: Props) {
+export default function Tabs(props: {
+  indicatorRef: RefObject<HTMLDivElement>;
+}) {
   const { indicatorRef } = props;
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });

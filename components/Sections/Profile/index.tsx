@@ -36,6 +36,7 @@ export default function Profile() {
     AppContext
   ) as Props;
   const {
+    account,
     uid,
     selectMode: active,
     setselectMode: setactive,
@@ -87,17 +88,33 @@ export default function Profile() {
   function toggleEdit() {
     setedit((prev) => !prev);
   }
-
-  const [newProfile, setnewProfile] = useState({ ...profile! });
+  const auth = getAuth(app);
+  const [newProfile, setnewProfile] = useState<account["profile"]>({
+    firstName: profile?.firstName ?? "",
+    lastName: profile?.lastName ?? "",
+    bio: profile?.bio ?? "",
+  });
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    setnewProfile((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setnewProfile((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   }
+  const [updating, setupdating] = useState(false);
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    setupdating(true);
+    try {
+      await changeProfile(auth.currentUser!, newProfile, profile!);
+      setupdating(false);
+    } catch (error) {
+      console.log("Update Profile Submit Error " + error);
+    }
     // alert(JSON.stringify(newProfile, null, 4));
-    // await changeProfile(auth.currentUser!, newProfile, profile!);
-    router.replace("/", undefined, { scroll: false });
+    // console.log({ newProfile:...newProfile });
+    // router.replace("/", undefined, { scroll: false });
   }
   return (
     <motion.div
@@ -107,6 +124,7 @@ export default function Profile() {
     >
       <ProfileInfo
         active={active!}
+        account={account!}
         profile={profile}
         email={email ?? "testUser@gmail.com"}
         photoURL={photoURL}
@@ -116,6 +134,7 @@ export default function Profile() {
         infoRef={infoRef}
       >
         <EditProfile
+          updating={updating}
           edit={edit}
           handleSubmit={handleSubmit}
           handleChange={handleChange}

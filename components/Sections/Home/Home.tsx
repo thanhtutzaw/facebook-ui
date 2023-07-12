@@ -10,10 +10,11 @@ import { getServerSideProps } from "../../../pages";
 import { AppContext } from "../../../context/AppContext";
 import { PageContext, PageProps } from "../../../context/PageContext";
 import Story from "./Story/Story";
-type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
-  tabIndex: number;
-};
-export default function Home(props: Props) {
+import { Props } from "../../../types/interfaces";
+// type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
+//   tabIndex: number;
+// };
+export default function Home(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const router = useRouter();
   const { sortedPost, active, email, headerContainerRef } = useContext(

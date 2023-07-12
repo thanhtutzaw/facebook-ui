@@ -4,7 +4,7 @@ import { UserRecord } from "firebase-admin/lib/auth/user-record";
 export type account = {
   email: string;
   password: string;
-  profile: { firstName: string; lastName: string; bio: string };
+  profile: { firstName: string | ""; lastName: string | ""; bio: string | "" };
 };
 export type Media = {
   name: string;
@@ -54,6 +54,6 @@ export interface Props {
   posts?: Post[];
   email?: string | null;
   headerContainerRef?: RefObject<HTMLDivElement>;
-  indicatorRef?: RefObject<HTMLDivElement>;
   profile?: account["profile"] | null;
+  account?: UserRecord | null;
 }

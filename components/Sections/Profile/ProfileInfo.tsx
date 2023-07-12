@@ -1,7 +1,10 @@
 import Image from "next/image";
 import s from "./index.module.scss";
 import { ReactNode, RefObject } from "react";
+import { account } from "../../../types/interfaces";
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 function ProfileInfo(props: {
+  account: UserRecord;
   infoRef?: RefObject<HTMLDivElement>;
   active: boolean;
   children?: ReactNode;
@@ -13,6 +16,7 @@ function ProfileInfo(props: {
   username: string;
 }) {
   const {
+    account,
     infoRef,
     active,
     children,
@@ -46,9 +50,7 @@ function ProfileInfo(props: {
       <h3>
         {edit
           ? `${newProfile.firstName ?? ""} ${newProfile.lastName ?? ""}`
-          : email === "testuser@gmail.com"
-          ? "Peter 1"
-          : username}
+          : account.displayName}
       </h3>
       {/* <h3 style={{ marginBottom: "18px" }}>
           {email === "testuser@gmail.com"

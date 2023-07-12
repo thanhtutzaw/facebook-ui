@@ -26,6 +26,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       collection(db, `/users/${uid}/posts`),
       orderBy("createdAt", "desc")
     );
+    const account = (await getUserData(uid as string))! as UserRecord;
+    const accountJSON = userToJSON(account);
+    console.log(account);
     const myPostSnap = await getDocs(mypostQuery);
     const myPost = await Promise.all(
       myPostSnap.docs.map(async (doc) => {
@@ -43,6 +46,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (user.exists()) {
       return {
         props: {
+          account: accountJSON ?? null,
           user: user.data(),
           myPost,
         },
@@ -56,6 +60,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     console.log("SSR Error " + error);
     return {
       props: {
+        account: null,
         user: [],
         myPost: [],
       },
@@ -63,9 +68,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 export default function UserProfile({
+  account,
   user,
   myPost,
 }: {
+  account: UserRecord;
   user: { profile: account["profile"] } & account & UserRecord;
   myPost: PostType[];
 }) {
@@ -102,10 +109,12 @@ export default function UserProfile({
               "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
             }
           />
+          {/* {JSON.stringify(account)} */}
           <h3 style={{ marginBottom: "18px" }}>
-            {profile
+            {account.displayName ?? "Unknown User"}
+            {/* {profile
               ? `${profile?.firstName} ${profile?.lastName}`
-              : "Unknown User"}
+              : "Unknown User"} */}
           </h3>
           <p
             style={{

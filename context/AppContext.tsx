@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 export const AppContext = createContext<Props | null>(null);
 
 export function AppProvider(props: Props) {
-  const { username, profile, uid, allUsers, posts, email } = props;
+  const { account, username, profile, uid, allUsers, posts, email } = props;
   const { active, setActive } = useActive();
   const [selectMode, setselectMode] = useState(false);
   const headerContainerRef = useRef<HTMLDivElement>(null);
@@ -96,6 +96,7 @@ export function AppProvider(props: Props) {
         allUsers,
         posts,
         email,
+        account,
       }}
     >
       {props.children}

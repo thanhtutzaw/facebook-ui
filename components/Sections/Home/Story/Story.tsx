@@ -6,8 +6,9 @@ import { MouseEvent, useEffect, useRef, useState } from "react";
 import { getServerSideProps } from "../../../../pages";
 import styles from "../../../../styles/Home.module.scss";
 import Card from "./Card";
-type StoryProps = InferGetServerSidePropsType<typeof getServerSideProps>;
-export default function Story({ email }: StoryProps) {
+import { Props } from "../../../../types/interfaces";
+// type StoryProps = InferGetServerSidePropsType<typeof getServerSideProps>;
+export default function Story({ email }: Props) {
   const photoURL = "";
   const fileInput = useRef<HTMLInputElement>(null);
   const [draggable, setdraggable] = useState(false);
