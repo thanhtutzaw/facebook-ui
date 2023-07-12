@@ -9,12 +9,14 @@ import { User } from "firebase/auth";
 
 interface PostProps {
   auth?: User;
+  preventNavigate?: boolean;
   active?: boolean;
   profile: any;
   post: PostType;
   tabIndex?: number;
 }
 export default function Post({
+  preventNavigate,
   profile,
   auth,
   active,
@@ -62,6 +64,7 @@ export default function Post({
       }}
     >
       <Content
+        preventNavigate={preventNavigate}
         profile={profile!}
         auth={auth!}
         active={active!}

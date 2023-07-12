@@ -1,7 +1,7 @@
 import { User, updateProfile } from "firebase/auth";
 import { doc, setDoc, updateDoc } from "firebase/firestore";
-import { account } from "../pages/login";
 import { db } from "./firebase";
+import { account } from "../types/interfaces";
 
 // export async function updateUserName(
 //   UserCredential: UserCredential,

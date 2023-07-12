@@ -32,14 +32,14 @@ export default function Newfeed(props: NewfeedProps) {
 
   return (
     <div className={styles.postContainer}>
-      {active === "/" && (
+      {/* {active === "/" && ( */}
         <PostList
           profile={profile}
           auth={user!}
           posts={posts!}
           tabIndex={tabIndex!}
         />
-      )}
+      // )}
     </div>
   );
 }

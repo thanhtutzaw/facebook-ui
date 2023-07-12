@@ -12,7 +12,6 @@ export function AppProvider(props: Props) {
   const [selectMode, setselectMode] = useState(false);
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const [sortedPost, setsortedPost] = useState(myPost);
-  const router = useRouter();
   // useEffect(() => {
   //   // if (expired && router.asPath !== "/") {
   //   if (expired) {
@@ -87,7 +86,7 @@ export function AppProvider(props: Props) {
         profile,
         sortedPost,
         setsortedPost,
-        
+
         headerContainerRef,
         selectMode,
         setselectMode,

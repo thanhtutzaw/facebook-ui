@@ -1,26 +1,22 @@
 import { Timestamp } from "firebase/firestore";
 import { ReactNode, RefObject } from "react";
-import { account } from "../pages/login";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
+export type account = {
+  email: string;
+  password: string;
+  profile: { firstName: string; lastName: string; bio: string };
+};
 export type Media = {
   name: string;
   url: string;
   type: string;
 };
-// export type Author = {
-//   name?: string;
-//   photoURL?: string;
-// };
-
 export interface Post {
-  // authorName?: string;
   author: UserRecord;
   authorId: string | number;
   id?: string | number;
   text: string;
   visibility: string;
-  // createdAt: number | string | { seconds: number; nanoseconds: number };
-  // updatedAt: number | string | { seconds: number; nanoseconds: number };
   createdAt:
     | {
         seconds: number;

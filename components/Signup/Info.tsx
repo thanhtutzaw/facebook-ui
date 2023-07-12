@@ -1,6 +1,6 @@
 import { ChangeEventHandler, RefObject } from "react";
-import { account } from "../../pages/login";
 import styles from "./index.module.scss";
+import { account } from "../../types/interfaces";
 export default function Info(props: {
   handleChange: ChangeEventHandler<HTMLInputElement>;
   Account: account;

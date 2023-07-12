@@ -98,7 +98,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         email,
         username: username ?? "Unknown",
         myPost,
-        profile: profile ?? [],
+        profile: profile ?? null,
       },
     };
   } catch (error) {

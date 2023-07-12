@@ -6,6 +6,7 @@ import { memo } from "react";
 
 export const PostList = memo(
   (props: {
+    preventNavigate?: boolean;
     active?: boolean;
     profile?: any;
     posts: PostType[];
@@ -14,7 +15,7 @@ export const PostList = memo(
   }) => {
     console.log("postList is rendering");
 
-    const { profile, auth, active, posts, tabIndex } = props;
+    const { preventNavigate,profile, auth, active, posts, tabIndex } = props;
 
     return (
       <>
@@ -28,6 +29,7 @@ export const PostList = memo(
         >
           {posts?.map((post: PostType) => (
             <Post
+              preventNavigate={preventNavigate}
               profile={profile}
               auth={auth!}
               tabIndex={tabIndex}

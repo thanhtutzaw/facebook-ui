@@ -1,5 +1,6 @@
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import {
+  DocumentData,
   collection,
   doc,
   getDoc,
@@ -14,15 +15,13 @@ import { db, fethUserDoc, postToJSON, userToJSON } from "../../lib/firebase";
 import { getUserData } from "../../lib/firebaseAdmin";
 import Image from "next/image";
 import { PostList } from "../../components/Sections/Home/PostList";
-import { Post as PostType } from "../../types/interfaces";
+import { Post as PostType, account } from "../../types/interfaces";
+import { useRouter } from "next/router";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;
 
-    // const user = await fethUserDoc(uid);
-    // console.log(user);
-    const profileQuery = doc(db, `/users/${uid}`);
-    const user = await getDoc(profileQuery);
+    const user = await fethUserDoc(uid);
     const mypostQuery = query(
       collection(db, `/users/${uid}/posts`),
       orderBy("createdAt", "desc")
@@ -67,13 +66,19 @@ export default function User({
   user,
   myPost,
 }: {
-  user: any;
+  user: { profile: account["profile"] } & account & UserRecord;
   myPost: PostType[];
 }) {
   const { profile } = user;
+  console.log(user);
+  const router = useRouter();
   return (
     <div className="user">
-      <BackHeader />
+      <BackHeader
+        onClick={() => {
+          router.push("/");
+        }}
+      />
       <div
         style={{
           marginTop: "65px",
@@ -93,7 +98,7 @@ export default function User({
               profile?.lastName ?? ""
             }'s profile`}
             src={
-              profile?.photoURL ??
+              user.photoURL ??
               "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
             }
           />
@@ -109,7 +114,7 @@ export default function User({
             }}
             className={s.bio}
           >
-            {profile?.bio === "" ? "No Bio Yet" : profile?.bio}
+            {profile?.bio === "" || !profile ? "No Bio Yet" : profile?.bio}
           </p>
         </div>
         <PostList tabIndex={1} posts={myPost} profile={profile} />

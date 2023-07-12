@@ -21,6 +21,7 @@ import styles from "./index.module.scss";
 import AuthorInfo from "./AuthorInfo";
 export default function Content(props: {
   profile: any;
+  preventNavigate?: boolean;
   active: boolean;
   checked: boolean;
   client: boolean;
@@ -33,6 +34,7 @@ export default function Content(props: {
   auth: User;
 }) {
   const {
+    preventNavigate,
     auth,
     active,
     checked,
@@ -44,7 +46,8 @@ export default function Content(props: {
     setShowmore,
     post,
   } = props;
-  const { author, authorId, id, text, visibility, createdAt } = post;
+  const {  author, authorId, id, text, visibility, createdAt } =
+    post;
   const { preventClick, selectedId, setSelectedId, showAction, setshowAction } =
     useContext(PageContext) as PageProps;
   const router = useRouter();
@@ -70,12 +73,12 @@ export default function Content(props: {
     const isViewingAuthorProfile =
       authorId === router.query.user ||
       (router.query.user && router.query.post);
-    if (isViewingAuthorProfile) return;
+    if (isViewingAuthorProfile || preventNavigate) return;
     router.push({
       pathname: `${authorId}`,
     });
   };
-  console.log(author);
+  // console.log(author);
   return (
     <span
       style={{

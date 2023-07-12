@@ -13,6 +13,7 @@
         align-items: center;
         background-color: white;
         padding-top: 1rem;
+        padding-bottom: 10px;
         will-change: opacity;
         &:is(.active) * {
             opacity: 0;
@@ -25,6 +26,8 @@
         > h3 {
             padding: 0 1rem;
             text-align: center;
+            cursor: default;
+            margin-bottom: 18px;
         }
         .bio {
             margin-top: 0;
@@ -80,7 +83,9 @@
                 border: 1px solid rgb(180, 180, 180);
                 font-size: 1rem;
                 border-radius: 10px;
-                transition: all 0.3s ease-in-out, opacity 0.2s ease-in-out;
+                transition:
+                    all 0.3s ease-in-out,
+                    opacity 0.2s ease-in-out;
                 &:nth-child(2) {
                     background-color: var(--blue-origin);
                     color: white;
@@ -150,8 +155,9 @@
             align-items: center;
             gap: 15px;
             cursor: default;
-            p {
+            h2 {
                 margin: 0;
+                display: flex;
                 flex: 1;
             }
             > button {

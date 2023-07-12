@@ -18,11 +18,8 @@ import { signin } from "../../lib/signin";
 import EmailIcon from "../../public/email.svg";
 import styles from "../../styles/Home.module.scss";
 import { addProfile } from "../../lib/profile";
-export type account = {
-  email: string;
-  password: string;
-  profile: { firstName: string; lastName: string; bio: string };
-};
+import { account } from "../../types/interfaces";
+
 export default function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -62,7 +59,7 @@ export default function Login() {
   };
 
   const emailRef = useRef<HTMLInputElement>(null);
-  const [Account, setAccount] = useState({
+  const [Account, setAccount] = useState<account>({
     email: "",
     password: "",
     profile: {
@@ -71,24 +68,24 @@ export default function Login() {
       bio: "",
     },
   });
-  const handleChange = async(e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     // if (e.target.tagName === "INPUT") {
     //   return; // Ignore click event when typing in the input field
     // }
-    
+
     setAccount((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-//     const emailMethod = await fetchSignInMethodsForEmail(auth, Account.email);
-// const emailExist = emailMethod.length > 0;
-// if(emailExist){
-//   const button = document.getElementsByTagName("button")[0] 
-//   button.textContent = "Sign in"
-// }
+    //     const emailMethod = await fetchSignInMethodsForEmail(auth, Account.email);
+    // const emailExist = emailMethod.length > 0;
+    // if(emailExist){
+    //   const button = document.getElementsByTagName("button")[0]
+    //   button.textContent = "Sign in"
+    // }
   };
-  const [emailLoading, setemailLoading] = useState(false)
+  const [emailLoading, setemailLoading] = useState(false);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { email, password } = Account;
@@ -100,13 +97,13 @@ export default function Login() {
       const name = document.getElementsByName("firstName")[0];
       if (emailExist) {
         try {
-          setemailLoading(true)
+          setemailLoading(true);
           const signinError = (await signin(
             email,
             Account.password
           )) as FirebaseError;
           if (signinError) {
-            setemailLoading(false)
+            setemailLoading(false);
             alert(signinError.code);
           }
         } catch (error: any) {

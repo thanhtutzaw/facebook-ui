@@ -16,7 +16,7 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
 export default function Home(props: Props) {
   const { tabIndex } = props;
   const router = useRouter();
-  const { email, headerContainerRef } = useContext(AppContext) as Props;
+  const { active, email, headerContainerRef } = useContext(AppContext) as Props;
   const { setuploadButtonClicked } = useContext(PageContext) as PageProps;
   return (
     <div
@@ -27,13 +27,12 @@ export default function Home(props: Props) {
         // const nav = document.getElementsByTagName("nav")[0];
 
         const header = headerContainerRef?.current;
-        if (!header) return;
-        if (!home) return;
+        if (!header || !home) return;
         // if (e.currentTarget.scrollTop >= 39) {
         // }
         // nav.style.position = "sticky";
-
-        if (e.currentTarget.scrollTop >= 60) {
+        if (active !== "/") return;
+        if (e.currentTarget.scrollTop > 60) {
           // console.log(home);
           // home.style.paddingTop = "55px";
           header.style.transform = "translateY(-60px)";
