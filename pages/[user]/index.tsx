@@ -62,7 +62,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 };
-export default function User({
+export default function UserProfile({
   user,
   myPost,
 }: {

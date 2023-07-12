@@ -16,7 +16,10 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
 export default function Home(props: Props) {
   const { tabIndex } = props;
   const router = useRouter();
-  const { active, email, headerContainerRef } = useContext(AppContext) as Props;
+  const { sortedPost, active, email, headerContainerRef } = useContext(
+    AppContext
+  ) as Props;
+  console.log(sortedPost);
   const { setuploadButtonClicked } = useContext(PageContext) as PageProps;
   return (
     <div

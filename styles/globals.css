@@ -151,6 +151,22 @@ body {
 
 }
 
+.copied {
+  border-radius       : 1rem;
+  position            : fixed;
+  inset               : 0;
+  max-width           : var(--main-width);
+  width               : 100px;
+  top                 : 727px;
+  /* bottom           : 1.1rem; */
+  margin              : 0 auto;
+  background          : gainsboro;
+  pointer-events      : none;
+  height              : 50px;
+  color               : #0070f3 !important;
+
+}
+
 a {
   color          : inherit;
   text-decoration: none;

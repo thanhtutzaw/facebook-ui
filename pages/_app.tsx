@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
     // console.log(token.email + "in app.tsx");
     let expired = false;
-    console.log(token.uid);
+    console.log(token.uid + " in app.tsx");
     return {
       props: {
         expired,

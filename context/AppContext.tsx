@@ -1,17 +1,17 @@
 import { useRef, useState, useEffect } from "react";
 import { createContext } from "react";
 import { useActive } from "../hooks/useActiveTab";
-import { Props } from "../types/interfaces";
+import { Post, Props } from "../types/interfaces";
 import { useRouter } from "next/router";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
 export const AppContext = createContext<Props | null>(null);
 
 export function AppProvider(props: Props) {
-  const { username, profile, uid, allUsers, posts, email, myPost } = props;
+  const { username, profile, uid, allUsers, posts, email } = props;
   const { active, setActive } = useActive();
   const [selectMode, setselectMode] = useState(false);
   const headerContainerRef = useRef<HTMLDivElement>(null);
-  const [sortedPost, setsortedPost] = useState(myPost);
+  const [sortedPost, setsortedPost] = useState<Post[]>([]);
   // useEffect(() => {
   //   // if (expired && router.asPath !== "/") {
   //   if (expired) {
@@ -96,7 +96,6 @@ export function AppProvider(props: Props) {
         allUsers,
         posts,
         email,
-        myPost,
       }}
     >
       {props.children}

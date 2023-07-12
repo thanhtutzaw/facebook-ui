@@ -29,10 +29,12 @@ import SortDate from "./SortDate";
 import { PostList } from "../Home/PostList";
 import ProfileInfo from "./ProfileInfo";
 import EditProfile from "./EditProfile";
+import Content from "./Content";
 export default function Profile() {
   const photoURL = "";
-  const { username, profile, myPost, email, sortedPost, setsortedPost } =
-    useContext(AppContext) as Props;
+  const { username, profile, email, sortedPost, setsortedPost } = useContext(
+    AppContext
+  ) as Props;
   const {
     uid,
     selectMode: active,
@@ -54,24 +56,28 @@ export default function Profile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setactive, tab, active]);
   const [sort, setSort] = useState(false);
-  const [sortby, setsortby] = useState("new");
+  const [loading, setLoading] = useState(false);
+  const [sortby, setsortby] = useState<"new" | "old">("new");
   useEffect(() => {
-    if (tab !== "profile" && !uid) return;
-    setsortedPost?.(myPost);
+    setLoading(true);
+    if (tab !== "profile") return;
+    if (!uid) return;
     let unsub: Unsubscribe;
-    if (sortby === "old") {
-      const mypostQuery = query(
-        collection(db, `/users/${uid}/posts`),
-        orderBy("createdAt", "asc")
+    const postQuery = query(
+      collection(db, `/users/${uid}/posts`),
+      orderBy("createdAt", sortby === "old" ? "asc" : "desc")
+    );
+    unsub = onSnapshot(postQuery, async (snapshot) => {
+      const post = await Promise.all(
+        snapshot.docs.map(async (doc) => await postToJSON(doc))
       );
-      unsub = onSnapshot(mypostQuery, (snapshot) => {
-        setsortedPost?.(snapshot.docs.map((doc) => postToJSON(doc)));
-      });
-    }
+      setsortedPost?.(post);
+      setLoading(false);
+    });
     return () => {
       unsub;
     };
-  }, [myPost, setsortedPost, sortby, tab, uid]);
+  }, [setsortedPost, sortby, tab, uid]);
   useEffect(() => {
     if (!active) {
       setSort(false);
@@ -81,7 +87,6 @@ export default function Profile() {
   function toggleEdit() {
     setedit((prev) => !prev);
   }
-  const auth = getAuth(app);
 
   const [newProfile, setnewProfile] = useState({ ...profile! });
 
@@ -91,7 +96,7 @@ export default function Profile() {
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     // alert(JSON.stringify(newProfile, null, 4));
-    await changeProfile(auth.currentUser!, newProfile, profile!);
+    // await changeProfile(auth.currentUser!, newProfile, profile!);
     router.replace("/", undefined, { scroll: false });
   }
   return (
@@ -118,63 +123,17 @@ export default function Profile() {
           toggleEdit={toggleEdit}
         />
       </ProfileInfo>
-
-      <div style={{ position: "relative" }} className={s.myPost}>
-        <header className={s.header}>
-          <h2>My Posts</h2>
-
-          <button
-            aria-expanded={sort}
-            onClick={() => {
-              setSort((prev) => !prev);
-            }}
-            aria-label="sort dropdown toggle"
-          >
-            <div>
-              <FontAwesomeIcon color="#0070f3" icon={faSort} />
-            </div>
-          </button>
-          <button
-            aria-label="toggle select mode"
-            aria-expanded={active}
-            onClick={(e) => {
-              setactive?.((prev: any) => !prev);
-              setSort(false);
-              if (!active) {
-                const parent =
-                  e.currentTarget.parentElement?.parentElement?.parentElement;
-                parent?.scrollIntoView({ behavior: "smooth" });
-              }
-            }}
-          >
-            <div>
-              <motion.span
-                transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-                animate={{ rotate: active ? 480 : 0 }}
-                style={{
-                  willChange: "transform",
-                  height: "20px",
-                  width: "20px",
-                  display: "flex",
-                }}
-              >
-                <FontAwesomeIcon color="#0070f3" icon={faGear} />
-              </motion.span>
-            </div>
-          </button>
-        </header>
-        <AnimatePresence>
-          {sort && (
-            <SortDate
-              sort={sort}
-              sortby={sortby}
-              setsortby={setsortby}
-              setSort={setSort}
-            />
-          )}
-        </AnimatePresence>
-        <PostList preventNavigate={true} active={active!} posts={sortedPost!} tabIndex={1} />
-      </div>
+      <Content
+        loading={loading}
+        tab={tab}
+        sort={sort}
+        setSort={setSort}
+        active={active!}
+        setactive={setactive!}
+        sortby={sortby}
+        setsortby={setsortby}
+        sortedPost={sortedPost! ?? []}
+      />
     </motion.div>
   );
 }

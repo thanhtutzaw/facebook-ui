@@ -15,7 +15,7 @@ type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 };
 export default function Newfeed(props: NewfeedProps) {
   const { tabIndex } = props;
-  const { active, posts, profile } = useContext(AppContext) as Props;
+  const { posts, profile } = useContext(AppContext) as Props;
   // const user = getAuth(app).currentUser;
   const [user, setuser] = useState<User | null>(null);
 

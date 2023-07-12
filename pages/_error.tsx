@@ -4,7 +4,6 @@ import s from "../styles/Home.module.scss";
 const ErrorPage = () => {
   return (
     <div className="user">
-      {/* <BackHeader /> */}
       <div
         style={{
           textAlign: "center",

@@ -14,13 +14,13 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useEffect, useRef } from "react";
-import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
 import { AppProvider } from "../context/AppContext";
 import { app, db, fethUserDoc, postToJSON, userToJSON } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import { Props } from "../types/interfaces";
+import Header from "../components/Header/Header";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -62,14 +62,14 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       })
     );
     console.log(posts);
-    const mypostQuery = query(
-      collection(db, `/users/${uid}/posts`),
-      orderBy("createdAt", "desc")
-    );
-    const myPostSnap = await getDocs(mypostQuery);
-    const myPost = await Promise.all(
-      myPostSnap.docs.map((doc) => postToJSON(doc))
-    );
+    // const mypostQuery = query(
+    //   collection(db, `/users/${uid}/posts`),
+    //   orderBy("createdAt", "desc")
+    // );
+    // const myPostSnap = await getDocs(mypostQuery);
+    // const myPost = await Promise.all(
+    //   myPostSnap.docs.map((doc) => postToJSON(doc))
+    // );
     // const user = await fethUserDoc(uid);
     // const profile = user.data()?.profile;
     const profileQuery = doc(db, `/users/${uid}`);
@@ -97,7 +97,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         posts,
         email,
         username: username ?? "Unknown",
-        myPost,
+        // myPost,
         profile: profile ?? null,
       },
     };
@@ -114,7 +114,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         posts: [],
         email: "",
         username: "",
-        myPost: [],
         profile: null,
       },
     };
@@ -127,7 +126,6 @@ export default function Home({
   posts,
   email,
   username,
-  myPost,
   profile,
 }: Props) {
   // props: InferGetServerSidePropsType<typeof getServerSideProps>
@@ -161,7 +159,6 @@ export default function Home({
       allUsers={allUsers}
       posts={posts}
       email={email}
-      myPost={myPost}
     >
       <Header indicatorRef={indicatorRef} />
       <Tabs indicatorRef={indicatorRef} />

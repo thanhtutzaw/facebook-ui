@@ -8,17 +8,20 @@ import {
   faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { User } from "firebase/auth";
+import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { RefObject, useContext } from "react";
+import { RefObject, useContext, useEffect, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { Post } from "../../types/interfaces";
-import Actions from "./Actions";
+import Actions from "./AdminDropDown";
 import PhotoLayout from "./PhotoLayout";
 import styles from "./index.module.scss";
 import AuthorInfo from "./AuthorInfo";
+import { app } from "../../lib/firebase";
+import AdminDropDown from "./AdminDropDown";
+import DropDown from "./DropDown";
 export default function Content(props: {
   profile: any;
   preventNavigate?: boolean;
@@ -46,22 +49,21 @@ export default function Content(props: {
     setShowmore,
     post,
   } = props;
-  const {  author, authorId, id, text, visibility, createdAt } =
-    post;
+  const { author, authorId, id, text, visibility, createdAt } = post;
   const { preventClick, selectedId, setSelectedId, showAction, setshowAction } =
     useContext(PageContext) as PageProps;
   const router = useRouter();
   const seemore =
-    text.match(/<br\s*[/]?>/gi)?.length! > 4 ||
-    text.match(/<div\s*[/]?>/gi)?.length! > 2
+    text?.match(/<br\s*[/]?>/gi)?.length! > 4 ||
+    text?.match(/<div\s*[/]?>/gi)?.length! > 2
       ? `<button  tabindex="-1" class="seeMore">${
           showmore ? "See Less" : "See more"
         }</button>`
       : "";
   const textContent =
-    text.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 3 : Infinity) ||
-    text.match("<span>")?.length! >= 2
-      ? text.replaceAll("<div>", "<br>").substring(0, 50)
+    text?.match(/<br\s*[/]?>/gi)?.length! >= (!showmore ? 3 : Infinity) ||
+    text?.match("<span>")?.length! >= 2
+      ? text?.replaceAll("<div>", "<br>").substring(0, 50)
       : text;
 
   const production = process.env.NODE_ENV == "production";
@@ -78,7 +80,14 @@ export default function Content(props: {
       pathname: `${authorId}`,
     });
   };
-  // console.log(author);
+  const [authUser, setauthUser] = useState<User | null>(null);
+  useEffect(() => {
+    const auth = getAuth(app);
+    onAuthStateChanged(auth, (user) => {
+      setauthUser(user);
+    });
+  }, []);
+  const isAdmin = authUser?.uid === authorId;
   return (
     <span
       style={{
@@ -98,23 +107,21 @@ export default function Content(props: {
       <AuthorInfo navigateToProfile={navigateToProfile} post={post}>
         {!active ? (
           <>
-            {auth?.uid == authorId && (
-              <button
-                className={styles.dot}
-                aria-expanded={showAction !== ""}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setshowAction?.(id?.toString());
+            <button
+              className={styles.dot}
+              aria-expanded={showAction !== ""}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setshowAction?.(id?.toString());
 
-                  if (showAction === id) {
-                    setshowAction?.("");
-                  }
-                }}
-              >
-                <FontAwesomeIcon icon={faEllipsisH} />
-              </button>
-            )}
+                if (showAction === id) {
+                  setshowAction?.("");
+                }
+              }}
+            >
+              <FontAwesomeIcon icon={faEllipsisH} />
+            </button>
           </>
         ) : (
           <>
@@ -157,11 +164,21 @@ export default function Content(props: {
         )}
       </AuthorInfo>
 
-      <Actions
-        showAction={showAction ?? ""}
-        authorId={authorId!}
-        id={id!.toString()}
-      />
+      {isAdmin ? (
+        <AdminDropDown
+          setshowAction={setshowAction!}
+          showAction={showAction ?? ""}
+          authorId={authorId!}
+          id={id?.toString()!}
+          />
+          ) : (
+            <DropDown
+            setshowAction={setshowAction!}
+          showAction={showAction ?? ""}
+          authorId={authorId.toString()!}
+          id={id?.toString()!}
+        />
+      )}
       <div
         suppressHydrationWarning={true}
         role="textbox"

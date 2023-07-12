@@ -138,6 +138,7 @@ export default function AddPost() {
           disabled={loading}
           type="submit"
           className={s.submit}
+          tabIndex={1}
           onClick={async () => {
             textRef.current?.focus();
             const uid = auth.currentUser?.uid;

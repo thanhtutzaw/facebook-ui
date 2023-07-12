@@ -11,6 +11,11 @@ export type Media = {
   url: string;
   type: string;
 };
+export interface SavedPost {
+  id: string | number;
+  authorId: string;
+  postId: string;
+}
 export interface Post {
   author: UserRecord;
   authorId: string | number;
@@ -46,7 +51,6 @@ export interface Props {
   allUsers?: any;
   sortedPost?: Post[];
   setsortedPost?: Function;
-  myPost?: Post[];
   posts?: Post[];
   email?: string | null;
   headerContainerRef?: RefObject<HTMLDivElement>;

@@ -1,4 +1,4 @@
-import { faSignOut, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faSave, faSignOut, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { useActive } from "../../../hooks/useActiveTab";
@@ -12,6 +12,7 @@ export default function Menu(props: MenuProps) {
   const { tabIndex } = props;
   const { navigateTab } = useActive();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   return (
     <div className={s.container}>
       <button
@@ -27,13 +28,28 @@ export default function Menu(props: MenuProps) {
         />
         View Profile
       </button>
+      <button
+        aria-label="Go to SavedPost"
+        title="Go to SavedPost"
+        tabIndex={tabIndex}
+        className={s.item}
+        onClick={() => {
+          router.push("/saved");
+        }}
+      >
+        <FontAwesomeIcon
+          style={{ color: "#0070f3", fontWeight: "bold" }}
+          icon={faSave}
+        />
+        Saved Post
+      </button>
 
       <button
         aria-label="Sign out Button"
         title="Sign out"
         tabIndex={tabIndex}
         disabled={loading}
-        className={`${s.item}`}
+        className={`${s.item} ${s.logoutBtn}`}
         onClick={() => {
           setLoading(true);
           try {

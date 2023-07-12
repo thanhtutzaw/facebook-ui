@@ -5,6 +5,7 @@ import {
   deleteDoc,
   doc,
   serverTimestamp,
+  setDoc,
   updateDoc,
   writeBatch,
 } from "firebase/firestore";
@@ -17,8 +18,9 @@ export async function addPost(
   text: string,
   visibility: string
 ) {
-  const Ref = collection(db, `users/${uid}/posts`);
+  const Ref = doc(collection(db, `users/${uid}/posts`));
   const data = {
+    id: Ref.id,
     text: text,
     // media: files.map((file) => ({ ...file, id: doc().id })),
     media: files,
@@ -28,7 +30,7 @@ export async function addPost(
   };
   try {
     console.log({ data });
-    await addDoc(Ref, data);
+    await setDoc(Ref, data);
   } catch (error: any) {
     alert("Adding Post Failed !" + error.message);
   }

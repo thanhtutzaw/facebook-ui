@@ -27,11 +27,6 @@ export default function Post({
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
   const photoURL = "";
-  // const {
-  //   // active: tab = "",
-  //   showAction,
-  //   setshowAction,
-  // } = useContext(AppContext) as Props;
   const { showAction, setshowAction } = useContext(PageContext) as PageProps;
 
   useEffect(() => {

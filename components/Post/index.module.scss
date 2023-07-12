@@ -182,7 +182,7 @@
     margin: 0.5rem 0;
     position: relative;
     cursor: default;
-    overflow: hidden;
+    // overflow: hidden;
     transition: all 0.3s ease-in-out;
     // aspect-ratio: 16/9;
     .dot {
@@ -290,8 +290,8 @@
     }
 }
 .header {
-   padding: 15px 0.8rem 6px;
-        margin: 0;
+    padding: 15px 0.8rem 6px;
+    margin: 0;
     display: flex;
     justify-content: space-between;
     &:has(.authorInfo:active) {
@@ -346,7 +346,7 @@
 .actions {
     display: flex;
     flex-direction: column;
-    width: 150px;
+    min-width: 150px;
     position: absolute;
     top: 55px;
     right: 1rem;
@@ -357,12 +357,14 @@
     z-index: 200;
     box-shadow: 0 5px 12px rgb(136 135 135 / 50%);
     > button {
+        color: rgb(35 35 35);
         font-size: 1rem;
         border: 0;
         display: flex;
         gap: 10px;
+        // margin: 0 auto;
         padding: 0.5rem 1rem;
-        color: rgb(39, 39, 39);
+        // color: rgb(39, 39, 39);
         transition: all 0.02s ease-in-out;
         &:hover {
             background-color: var(--blue-origin);

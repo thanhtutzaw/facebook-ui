@@ -7,12 +7,14 @@ import { deletePost } from "../../lib/firestore/post";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "./index.module.scss";
-function Actions(props: {
+import { CopyLink } from "./DropDown";
+function AdminDropDown(props: {
+  setshowAction: Function;
   showAction: string;
   authorId: string | number;
   id: string;
 }) {
-  const { authorId, id, showAction } = props;
+  const { setshowAction, authorId, id, showAction } = props;
   const auth = getAuth(app);
   const [loading, setLoading] = useState(false);
   return (
@@ -37,6 +39,13 @@ function Actions(props: {
           }}
           className={styles.actions}
         >
+          <CopyLink
+            showAction={showAction}
+            setshowAction={setshowAction}
+            authorId={authorId.toString()}
+            id={id.toString()}
+          />
+          
           <button
             onClick={async (e) => {
               e.preventDefault();
@@ -84,4 +93,4 @@ function Actions(props: {
   );
 }
 
-export default Actions;
+export default AdminDropDown;

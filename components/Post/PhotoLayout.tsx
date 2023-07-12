@@ -18,7 +18,7 @@ export default function PhotoLayout(props: {
   setdeleteFile?: Function;
   preview?: boolean;
   edit?: boolean;
-  myPost?: Post;
+  post?: Post;
   dummyRef?: RefObject<HTMLDivElement>;
 }) {
   const {
@@ -29,7 +29,7 @@ export default function PhotoLayout(props: {
     setFiles,
     preview = false,
     edit,
-    myPost,
+    post,
   } = props;
   // const placeholder = "https://via.placeholder.com/350x388";
 
@@ -101,7 +101,7 @@ export default function PhotoLayout(props: {
                     style={{ objectFit: "contain", height: "auto" }}
                   />
                 )}
-                {edit && myPost?.authorId === uid && (
+                {edit && post?.authorId === uid && (
                   <button
                     onClick={(e) => {
                       e.preventDefault();
@@ -141,7 +141,6 @@ export default function PhotoLayout(props: {
   const media = files as Post["media"];
 
   if (!files || !media) return <></>;
-  // const aspectRatio = myPost?.media?.length! <= 2 ? "initial" : "9/10";
   return (
     <div className={s.preview} style={{ objectFit: "contain" }}>
       {media[0] && (

@@ -348,7 +348,7 @@ export default function Post(props: {
           margin={canEdit ? true : false}
           deleteFile={deleteFile}
           setdeleteFile={setdeleteFile}
-          myPost={post}
+          post={post}
           edit={canEdit ? true : false}
           files={files}
           setFiles={setFiles}
