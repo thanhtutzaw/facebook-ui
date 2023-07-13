@@ -1,4 +1,8 @@
-import { faSave, faSignOut, faUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBookmark,
+  faSignOut,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { useActive } from "../../../hooks/useActiveTab";
@@ -39,7 +43,7 @@ export default function Menu(props: MenuProps) {
       >
         <FontAwesomeIcon
           style={{ color: "#0070f3", fontWeight: "bold" }}
-          icon={faSave}
+          icon={faBookmark}
         />
         Saved Post
       </button>

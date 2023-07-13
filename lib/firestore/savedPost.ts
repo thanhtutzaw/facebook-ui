@@ -5,6 +5,7 @@ import {
   doc,
   serverTimestamp,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { app, db } from "../../lib/firebase";
 
@@ -23,6 +24,7 @@ export async function addSavedPost(authorId: string, postId: string) {
   try {
     console.log({ data });
     await setDoc(Ref, data, { merge: true });
+    // await updateDoc(Ref, { savedPost: data });
   } catch (error: any) {
     alert("Adding Saved Post Failed !" + error.message);
   }

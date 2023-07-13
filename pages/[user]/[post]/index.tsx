@@ -5,8 +5,14 @@ import { getAuth } from "firebase/auth";
 import {
   DocumentData,
   DocumentSnapshot,
+  QueryDocumentSnapshot,
+  QuerySnapshot,
+  collection,
   doc,
   getDoc,
+  getDocs,
+  query,
+  where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -36,16 +42,36 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     console.log(uid);
     let expired = false;
     const { user: authorId, post: postId } = context.query;
-    const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
-    const postSnap = await getDoc(postDoc);
+    // const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
+    // console.log();
+    const isAdmin = uid === authorId;
+    const postDoc = isAdmin
+      ? query(
+          collection(db, `users/${authorId}/posts`),
+          where("id", "==", postId)
+        )
+      : query(
+          collection(db, `users/${authorId}/posts`),
+          where("id", "==", postId),
+          where("visibility", "in", ["Friend", "Public"])
+        );
+    const postSnap = await getDocs(postDoc);
+    // query(postDoc)
+    // postSnap.
+    // ,
+    //   where("visibility", "in", ["Friend", "Public"]),
+    // const postQuery = query(postDoc)
     // const newPost = await Promise.all(
     //   postSnap
     // )
 
     //     displayName: UserRecord?.displayName ?? "Unknown User",
     //     photoURL: UserRecord?.photoURL ?? "",
-    if (postSnap.exists()) {
-      const post = await postToJSON(postSnap as DocumentSnapshot<DocumentData>);
+    if (!postSnap.empty) {
+      const docPost = postSnap.docs.map((doc) => {
+        return doc;
+      });
+      const post = await postToJSON(docPost[0]);
       const UserRecord = await getUserData(post.authorId);
       const userJSON = userToJSON(UserRecord) as UserRecord;
       const newPost = {

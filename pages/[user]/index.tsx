@@ -7,6 +7,7 @@ import {
   getDocs,
   orderBy,
   query,
+  where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import BackHeader from "../../components/Header/BackHeader";
@@ -24,6 +25,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const user = await fethUserDoc(uid);
     const mypostQuery = query(
       collection(db, `/users/${uid}/posts`),
+      where("visibility", "in", ["Friend", "Public"]),
       orderBy("createdAt", "desc")
     );
     const account = (await getUserData(uid as string))! as UserRecord;

@@ -1,19 +1,11 @@
-import {
-  faCopy,
-  faEdit,
-  faSave,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBookmark, faCopy } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
-import router from "next/router";
-import { app } from "../../lib/firebase";
-import { deletePost } from "../../lib/firestore/post";
-import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import styles from "./index.module.scss";
+import { useEffect, useState } from "react";
+import { app } from "../../lib/firebase";
 import { addSavedPost } from "../../lib/firestore/savedPost";
-import link from "next/link";
+import styles from "./index.module.scss";
 function DropDown(props: {
   setshowAction: Function;
   showAction: string;
@@ -68,12 +60,12 @@ function DropDown(props: {
                 setLoading(false);
               } finally {
                 setLoading(false);
-                window.document.body.style.cursor = "initial";
+                // window.document.body.style.cursor = "initial";
               }
               // alert(JSON.stringify(savedPost));
             }}
           >
-            <FontAwesomeIcon icon={faSave} />
+            <FontAwesomeIcon icon={faBookmark} />
             Save Post
           </button>
         </motion.div>

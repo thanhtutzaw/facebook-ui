@@ -3,6 +3,7 @@ import {
   DocumentData,
   DocumentSnapshot,
   QueryDocumentSnapshot,
+  QuerySnapshot,
   Timestamp,
   doc,
   getDoc,

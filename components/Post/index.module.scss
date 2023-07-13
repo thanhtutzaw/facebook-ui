@@ -369,6 +369,10 @@
         padding: 0.5rem 1rem;
         // color: rgb(39, 39, 39);
         transition: all 0.02s ease-in-out;
+        // svg {
+        //     -webkit-text-fill-color: transparent !important;
+        //     -webkit-text-stroke: black !important; // can be any color
+        // }
         &:hover {
             background-color: var(--blue-origin);
             color: white;

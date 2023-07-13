@@ -9,6 +9,7 @@ import {
   getDocs,
   orderBy,
   query,
+  where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -21,7 +22,6 @@ import { app, db, fethUserDoc, postToJSON, userToJSON } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import { Props, account } from "../types/interfaces";
 import Header from "../components/Header/Header";
-import { profile } from "console";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -47,6 +47,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     let expired = false;
     const postQuery = query(
       collectionGroup(db, `posts`),
+      where("visibility", "in", ["Friend", "Public"]),
+
       // where(`visibility`, "!=", "Onlyme"),
       // orderBy("visibility", "asc"),
       orderBy("createdAt", "desc")
@@ -66,14 +68,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       })
     );
     console.log(posts);
-    // const mypostQuery = query(
-    //   collection(db, `/users/${uid}/posts`),
-    //   orderBy("createdAt", "desc")
-    // );
-    // const myPostSnap = await getDocs(mypostQuery);
-    // const myPost = await Promise.all(
-    //   myPostSnap.docs.map((doc) => postToJSON(doc))
-    // );
     const profileQuery = doc(db, `/users/${uid}`);
     const profileSnap = await getDoc(profileQuery);
     const profileData = profileSnap.data()!;
@@ -94,19 +88,16 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       props: {
         expired,
         uid,
-        // allUsers: allUser,
         allUsers,
         posts,
         email,
         username: username ?? "Unknown",
-        // myPost,
         profile: profile! ?? null,
         account: accountJSON ?? null,
       },
     };
   } catch (error) {
     console.log("SSR Error " + error);
-    // context.res.writeHead(302, { Location: "/" });
     // context.res.writeHead(302, { Location: "/login" });
     // context.res.end();
     return {
