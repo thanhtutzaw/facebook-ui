@@ -38,15 +38,17 @@ export async function changeProfile(
   const { firstName, lastName, bio } = NewProfile;
   try {
     if (bio !== originalProfile?.bio ?? "") {
-      console.log("updating bio");
       console.log({ ...NewProfile });
       try {
         await setDoc(Ref, {
           profile: {
             ...NewProfile,
             bio: NewProfile?.bio ?? "",
+            firstName: NewProfile?.firstName ?? "",
+            lastName: NewProfile?.lastName ?? "",
           },
         });
+        console.log(" bio Updated ");
       } catch (error) {
         console.log(error);
       }
@@ -57,9 +59,16 @@ export async function changeProfile(
       (originalProfile?.lastName ?? "") === lastName
     )
       return;
-    console.log("updating names");
     // console.log("update userName " + firstName ?? "", lastName ?? "");
+    await setDoc(Ref, {
+      profile: {
+        ...NewProfile,
+        firstName: firstName ?? "",
+        lastName: lastName ?? "",
+      },
+    });
     await updateName(user, firstName ?? "", lastName ?? "");
+    console.log(" names Updated");
   } catch (error) {
     console.error(error);
   }

@@ -5,8 +5,11 @@ import SortDate from "./SortDate";
 import { PostList } from "../Home/PostList";
 import { faSort, faGear } from "@fortawesome/free-solid-svg-icons";
 import { Post } from "../../../types/interfaces";
+import { RefObject } from "react";
 
 export default function Content(props: {
+  headerRef: RefObject<HTMLHeadElement>;
+  isSticky: boolean;
   tab: string;
   loading: boolean;
   sort: boolean;
@@ -18,6 +21,8 @@ export default function Content(props: {
   sortedPost: Post[];
 }) {
   const {
+    isSticky,
+    headerRef,
     loading,
     tab,
     sort,
@@ -36,7 +41,11 @@ export default function Content(props: {
       className={s.myPost}
     >
       {/* {JSON.stringify(sortedPost)} */}
-      <header className={s.header}>
+      <header
+        style={{ borderBottom: isSticky ? "1px solid #f1f1f1" : "initial" }}
+        ref={headerRef}
+        className={s.header}
+      >
         <h2>My Posts</h2>
 
         <button
@@ -60,9 +69,9 @@ export default function Content(props: {
             if (!active) {
               const parent =
                 e.currentTarget.parentElement?.parentElement?.parentElement;
-              parent?.scrollIntoView({
-                behavior: "smooth",
-              });
+              // parent?.scrollIntoView({
+              //   behavior: "smooth",
+              // });
             }
           }}
         >
@@ -87,17 +96,18 @@ export default function Content(props: {
             </motion.span>
           </div>
         </button>
+        <AnimatePresence>
+          {sort && (
+            <SortDate
+              sort={sort}
+              sortby={sortby}
+              setsortby={setsortby}
+              setSort={setSort}
+            />
+          )}
+        </AnimatePresence>
       </header>
-      <AnimatePresence>
-        {sort && (
-          <SortDate
-            sort={sort}
-            sortby={sortby}
-            setsortby={setsortby}
-            setSort={setSort}
-          />
-        )}
-      </AnimatePresence>
+
       {/* {tab === "profile" && (
         
       )} */}

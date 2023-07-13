@@ -8,12 +8,12 @@ function ProfileInfo(props: {
   infoRef?: RefObject<HTMLDivElement>;
   active: boolean;
   children?: ReactNode;
-  profile: any;
+  profile: account["profile"];
   email: string;
   photoURL: string;
   edit?: boolean;
-  newProfile?: any;
-  username: string;
+  newProfile?: account["profile"] | null;
+  // username: string;
 }) {
   const {
     account,
@@ -25,7 +25,7 @@ function ProfileInfo(props: {
     photoURL,
     edit,
     newProfile,
-    username,
+    // username,
   } = props;
 
   return (
@@ -49,7 +49,7 @@ function ProfileInfo(props: {
       />
       <h3>
         {edit
-          ? `${newProfile.firstName ?? ""} ${newProfile.lastName ?? ""}`
+          ? `${newProfile?.firstName ?? ""} ${newProfile?.lastName ?? ""}`
           : account.displayName}
       </h3>
       {/* <h3 style={{ marginBottom: "18px" }}>
@@ -73,7 +73,7 @@ function ProfileInfo(props: {
             : profile?.bio ??
               "Listen I didn&apos;t kill Mysterio. The drones did!"} */}
         {edit
-          ? newProfile.bio
+          ? newProfile?.bio
           : profile?.bio === "" || !profile?.bio
           ? "No Bio Yet"
           : profile?.bio}

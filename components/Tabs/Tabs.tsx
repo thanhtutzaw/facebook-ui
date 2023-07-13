@@ -1,12 +1,10 @@
 import dynamic from "next/dynamic";
 import { MouseEvent, RefObject, useContext, useEffect, useState } from "react";
-import { AppContext } from "../../context/AppContext";
-import { useActive } from "../../hooks/useActiveTab";
-import { Props } from "../../types/interfaces";
-import Home from "../Sections/Home/Home";
-import styles from "../../styles/Home.module.scss";
-import t from "./Tabs.module.scss";
 import { PageContext, PageProps } from "../../context/PageContext";
+import { useActive } from "../../hooks/useActiveTab";
+import styles from "../../styles/Home.module.scss";
+import Home from "../Sections/Home/Home";
+import t from "./Tabs.module.scss";
 const Friends = dynamic(() => import("../Sections/Friends/Friends"), {
   ssr: false,
 });
@@ -49,6 +47,8 @@ export default function Tabs(props: {
     const currentTarget = e.currentTarget;
     if (e.currentTarget.className == "Home_storyCard__3_T_R") return;
     if (e.currentTarget.tagName == "BODY") return;
+    const target = e.target as HTMLElement;
+    if (target.tagName == "INPUT" || "BUTTON" || "A") return;
     // if (e.target.className == "Home_storyCard__3_T_R") return;
     setpos({
       left: currentTarget.scrollLeft,

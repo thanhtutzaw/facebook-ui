@@ -46,6 +46,7 @@ export default function AuthorInfo(props: {
             gap: "4px",
           }}
         >
+          {/* {JSON.stringify(post)} */}
           <p className={styles.name} onClick={navigateToProfile}>
             {author?.displayName ?? "Unknow User"}
             {/* {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"

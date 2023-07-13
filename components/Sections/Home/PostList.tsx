@@ -1,7 +1,6 @@
 import { User, getAuth } from "firebase/auth";
 import { Post as PostType } from "../../../types/interfaces";
 import Post from "../../Post";
-import { app } from "../../../lib/firebase";
 import { memo } from "react";
 
 export const PostList = memo(
@@ -15,7 +14,7 @@ export const PostList = memo(
   }) => {
     console.log("postList is rendering");
 
-    const { preventNavigate,profile, auth, active, posts, tabIndex } = props;
+    const { preventNavigate, profile, auth, active, posts, tabIndex } = props;
 
     return (
       <>
@@ -29,7 +28,7 @@ export const PostList = memo(
         >
           {posts?.map((post: PostType) => (
             <Post
-            active={active}
+              active={active}
               preventNavigate={preventNavigate}
               profile={profile}
               auth={auth!}

@@ -20,7 +20,7 @@ import {
 } from "react";
 import { AppContext } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
-import { app, db, postToJSON } from "../../../lib/firebase";
+import { app, db, postToJSON, userToJSON } from "../../../lib/firebase";
 import { changeProfile } from "../../../lib/profile";
 import { Post as PostType, Props, account } from "../../../types/interfaces";
 import Post from "../../Post";
@@ -30,6 +30,8 @@ import { PostList } from "../Home/PostList";
 import ProfileInfo from "./ProfileInfo";
 import EditProfile from "./EditProfile";
 import Content from "./Content";
+import { getUserData } from "../../../lib/firebaseAdmin";
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 export default function Profile() {
   const photoURL = "";
   const { username, profile, email, sortedPost, setsortedPost } = useContext(
@@ -59,6 +61,24 @@ export default function Profile() {
   const [sort, setSort] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sortby, setsortby] = useState<"new" | "old">("new");
+  const auth = getAuth(app);
+  const [isSticky, setIsSticky] = useState(false);
+  const headerRef = useRef<HTMLHeadElement>(null);
+  useEffect(() => {
+    const profile = document.getElementById("profile");
+    const handleScroll = () => {
+      const header = headerRef?.current!;
+      const headerRect = header.getBoundingClientRect();
+
+      setIsSticky(headerRect.top <= 60);
+    };
+
+    profile?.addEventListener("scroll", handleScroll);
+
+    return () => {
+      profile?.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   useEffect(() => {
     setLoading(true);
     if (tab !== "profile") return;
@@ -69,16 +89,30 @@ export default function Profile() {
       orderBy("createdAt", sortby === "old" ? "asc" : "desc")
     );
     unsub = onSnapshot(postQuery, async (snapshot) => {
-      const post = await Promise.all(
-        snapshot.docs.map(async (doc) => await postToJSON(doc))
+      const posts = await Promise.all(
+        // snapshot.docs.map(async (doc) => )
+        snapshot.docs.map(async (doc) => {
+          const post = await postToJSON(doc);
+          // const UserRecord = (await getUserData(post.authorId)) as UserRecord;
+          // const userJSON = userToJSON(UserRecord);
+          const author = auth?.currentUser;
+          return {
+            ...post,
+            author: {
+              // ...userJSON,
+              // displayName:
+              ...author,
+            },
+          };
+        })
       );
-      setsortedPost?.(post);
+      setsortedPost?.(posts);
       setLoading(false);
     });
     return () => {
       unsub;
     };
-  }, [setsortedPost, sortby, tab, uid]);
+  }, [auth?.currentUser, setsortedPost, sortby, tab, uid]);
   useEffect(() => {
     if (!active) {
       setSort(false);
@@ -87,8 +121,8 @@ export default function Profile() {
   const [edit, setedit] = useState(false);
   function toggleEdit() {
     setedit((prev) => !prev);
+    setnewProfile(profile!);
   }
-  const auth = getAuth(app);
   const [newProfile, setnewProfile] = useState<account["profile"]>({
     firstName: profile?.firstName ?? "",
     lastName: profile?.lastName ?? "",
@@ -112,9 +146,9 @@ export default function Profile() {
     } catch (error) {
       console.log("Update Profile Submit Error " + error);
     }
-    // alert(JSON.stringify(newProfile, null, 4));
-    // console.log({ newProfile:...newProfile });
-    // router.replace("/", undefined, { scroll: false });
+    router.replace("/", undefined, { scroll: false });
+    setedit(false);
+    // e.currentTarget?.reset();
   }
   return (
     <motion.div
@@ -122,15 +156,16 @@ export default function Profile() {
       style={{ y: active ? -infoRef?.current?.clientHeight! : 0 }}
       className={s.container}
     >
+      {/* {JSON.stringify(profile)} */}
       <ProfileInfo
         active={active!}
         account={account!}
-        profile={profile}
+        profile={profile!}
         email={email ?? "testUser@gmail.com"}
         photoURL={photoURL}
         edit={edit}
         newProfile={newProfile}
-        username={username ?? "Peter 1"}
+        // username={username ?? "Peter 1"}
         infoRef={infoRef}
       >
         <EditProfile
@@ -143,6 +178,8 @@ export default function Profile() {
         />
       </ProfileInfo>
       <Content
+        isSticky={isSticky}
+        headerRef={headerRef}
         loading={loading}
         tab={tab}
         sort={sort}

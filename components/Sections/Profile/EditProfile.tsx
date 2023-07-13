@@ -26,6 +26,7 @@ function EditProfile(props: {
     );
   return (
     <motion.form
+      // key={"edit"}
       initial={{
         opacity: 0,
       }}
@@ -81,7 +82,15 @@ function EditProfile(props: {
         />
       </div>
       <div>
-        <button onClick={toggleEdit}>Cancel</button>
+        <button
+          onClick={(e) => {
+            toggleEdit(e);
+          }}
+          type="reset"
+          tabIndex={-1}
+        >
+          Cancel
+        </button>
         <button disabled={updating} type="submit">
           {updating ? "Updating..." : "Update"}
         </button>

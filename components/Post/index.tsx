@@ -56,6 +56,7 @@ export default function Post({
         border: checked ? "10px solid #0070f312" : "0px solid #0070f312",
         userSelect: active ? "none" : "initial",
         cursor: active ? "pointer" : "initial",
+        overflow: active ? "hidden" : "initial",
       }}
     >
       <Content

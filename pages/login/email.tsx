@@ -31,7 +31,6 @@ export default function Email() {
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const auth = getAuth(app);
   async function handleEmailLogin(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const email = new FormData(e.currentTarget).get("email")?.toString();
