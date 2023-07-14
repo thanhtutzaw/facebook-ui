@@ -15,7 +15,6 @@ export function AppProvider(props: Props) {
   // useEffect(() => {
   //   // if (expired && router.asPath !== "/") {
   //   if (expired) {
-  //     router.push("/");
   //     console.log("expired and pushed(AppContext)");
   //   }
   // }, [expired, router]);

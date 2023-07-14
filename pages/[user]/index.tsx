@@ -25,7 +25,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const user = await fethUserDoc(uid);
     const mypostQuery = query(
       collection(db, `/users/${uid}/posts`),
-      where("visibility", "in", ["Friend", "Public"]),
+    where("visibility", "in", ["Friend", "Public"]),
       orderBy("createdAt", "desc")
     );
     const account = (await getUserData(uid as string))! as UserRecord;

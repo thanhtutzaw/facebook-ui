@@ -60,7 +60,6 @@ export default function Menu(props: MenuProps) {
             setTimeout(() => {
               signout();
             }, 700);
-            // router.push("/login");
           } catch (error) {
             setLoading(false);
             console.error(error);

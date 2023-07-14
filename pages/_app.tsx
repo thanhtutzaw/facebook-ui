@@ -1,6 +1,6 @@
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
-import { getAuth, onIdTokenChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, onIdTokenChanged } from "firebase/auth";
 import { GetServerSideProps } from "next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
@@ -75,6 +75,21 @@ export default function App({
       router.events.off("routeChangeError", handleRouteDone);
     };
   }, [router.events]);
+  console.log(uid);
+  const auth = getAuth(app);
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push("/login");
+      } else {
+        if (!expired) return;
+        router.push("/");
+        // console.log("expired , user exist and pushed");
+      }
+    });
+    return () => unsub();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     const auth = getAuth(app);
     const unsubscribe = onIdTokenChanged(auth, async (user) => {
@@ -83,6 +98,7 @@ export default function App({
         // setuser(null);
         return;
       }
+      console.log(user.uid);
       try {
         // const token = await user.getIdToken(/* forceRefresh */ true);
         const token = await user.getIdToken();
@@ -106,7 +122,16 @@ export default function App({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   if (expired) return <Welcome expired={expired} />;
-
+  // if (
+  //   !auth?.currentUser?.uid &&
+  //   router.asPath !== "/" &&
+  //   router.asPath !== "/login"
+  // )
+  //   return (
+  //     <main>
+  //       <p style={{ textAlign: "center" }}>Redirecting to /login</p>
+  //     </main>
+  //   );
   return (
     <>
       <Head>

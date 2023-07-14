@@ -130,6 +130,7 @@ export default function Home({
   const router = useRouter();
   const auth = getAuth(app);
   useEffect(() => {
+    const auth = getAuth(app);
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) {
         router.push("/login");

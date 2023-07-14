@@ -39,22 +39,27 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
     const { uid } = token;
-    console.log(uid);
     let expired = false;
     const { user: authorId, post: postId } = context.query;
+
     // const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
     // console.log();
     const isAdmin = uid === authorId;
-    const postDoc = isAdmin
-      ? query(
-          collection(db, `users/${authorId}/posts`),
-          where("id", "==", postId)
-        )
-      : query(
-          collection(db, `users/${authorId}/posts`),
-          where("id", "==", postId),
-          where("visibility", "in", ["Friend", "Public"])
-        );
+    // const postDoc = isAdmin
+    //   ? query(
+    //       collection(db, `users/${authorId}/posts`),
+    //       where("id", "==", postId)
+    //     )
+    //   : query(
+    //       collection(db, `users/${authorId}/posts`),
+    //       where("id", "==", postId)
+    //       // where("visibility", "not-in", ["Friend", "Public"])
+    //     );
+    const postDoc = query(
+      collection(db, `users/${authorId}/posts`),
+      where("id", "==", postId)
+      // where("visibility", "not-in", ["Friend", "Public"])
+    );
     const postSnap = await getDocs(postDoc);
     // query(postDoc)
     // postSnap.
@@ -67,32 +72,32 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
     //     displayName: UserRecord?.displayName ?? "Unknown User",
     //     photoURL: UserRecord?.photoURL ?? "",
-    if (!postSnap.empty) {
-      const docPost = postSnap.docs.map((doc) => {
-        return doc;
-      });
-      const post = await postToJSON(docPost[0]);
-      const UserRecord = await getUserData(post.authorId);
-      const userJSON = userToJSON(UserRecord) as UserRecord;
-      const newPost = {
-        ...post,
-        author: {
-          ...userJSON,
-        },
-      };
-      console.log(newPost);
-      return {
-        props: {
-          uid,
-          expired,
-          post: newPost,
-        },
-      };
-    } else {
-      return {
-        notFound: true,
-      };
-    }
+    // if (!postSnap.empty) {
+    const docPost = postSnap.docs.map((doc) => {
+      return doc;
+    });
+    const post = await postToJSON(docPost[0]);
+    const UserRecord = await getUserData(post.authorId);
+    const userJSON = userToJSON(UserRecord) as UserRecord;
+    const newPost = {
+      ...post,
+      author: {
+        ...userJSON,
+      },
+    };
+    console.log(newPost);
+    return {
+      props: {
+        uid,
+        expired,
+        post: newPost,
+      },
+    };
+    // } else {
+    // return {
+    //   notFound: true,
+    // };
+    // }
   } catch (error) {
     console.log("SSR Error " + error);
     return {

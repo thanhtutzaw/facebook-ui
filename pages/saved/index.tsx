@@ -9,6 +9,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  updateDoc,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import BackHeader from "../../components/Header/BackHeader";
@@ -30,6 +31,7 @@ import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import nookies from "nookies";
+import { unSavePost } from "../../lib/firestore/savedPost";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -42,8 +44,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     //   collection(db, `/users/${uid}/posts`),
     //   orderBy("createdAt", "desc")
     // );
-
-    const savedPostQuery = collection(db, `/users/${uid}/savedPost`);
+    const savedPostQuery = doc(db, `/users/${uid}`);
+    const savedPostSnap = await getDoc(savedPostQuery);
+    // const profileData = profileSnap.data()!;
+    // const profile = profileData.profile as account["profile"];
+    // const savedPostQuery = collection(db, `/users/${uid}/savedPosts`);
     //   unsub = onSnapshot(savedPostQuery, async (snapshot) => {
     //     const post = snapshot.docs.map((doc) => {
     //       const data = doc.data() as SavedPost;
@@ -52,16 +57,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     //     setsavedPost(post);
     //     // setLoading(false);
     //   });
-    const savedPostSnap = await getDocs(savedPostQuery);
-    const savedPost = await Promise.all(
-      savedPostSnap.docs.map(async (doc) => {
-        // const post = await postToJSON(doc);
-        // const UserRecord = (await getUserData(post.authorId)) as UserRecord;
-        // const userJSON = userToJSON(UserRecord);
-        const data = doc.data() as SavedPost;
-        return { ...data };
-      })
-    );
+    // const savedPostSnap = await getDocs(savedPostQuery);
+    const savedPosts = savedPostSnap.data()!.savedPosts;
+    // const savedPost = await Promise.all(
+    //   savedPostSnap.docs.map(async (doc) => {
+    //     // const post = await postToJSON(doc);
+    //     // const UserRecord = (await getUserData(post.authorId)) as UserRecord;
+    //     // const userJSON = userToJSON(UserRecord);
+    //     const data = doc.data() as SavedPost;
+    //     // console.log(data);
+    //     // return { ...data };
+    //     return data;
+    //   })
+    // );
     // if (user.exists()) {
     //   return {
     //     props: {
@@ -77,7 +85,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // }
     return {
       props: {
-        savedPost,
+        savedPosts,
         uid,
       },
     };
@@ -93,10 +101,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function SavedPost(props: {
-  savedPost: SavedPost[];
+  savedPosts: SavedPost[];
   uid: string;
 }) {
-  const { savedPost, uid } = props;
+  const { savedPosts, uid } = props;
   const router = useRouter();
   // const [savedPost, setsavedPost] = useState<SavedPost[] | []>([]);
   const auth = getAuth(app);
@@ -131,10 +139,25 @@ export default function SavedPost(props: {
         }}
         className={s.container}
       >
+        {/* {JSON.stringify(savedPosts)} */}
         <ol>
-          {savedPost.map((s) => (
+          {savedPosts.map((s) => (
             <li key={s.id}>
               saved author {s.authorId}&apos;s postid {s.postId}
+              <button
+                onClick={async (e) => {
+                  // await unSavePost(s.id?.toString());
+                  // alert(s.id?.toString());
+                  const unsavedPost = savedPosts.filter(
+                    (savepost) => savepost.postId !== s.postId
+                  );
+                  // console.log(newArray);
+                  await unSavePost(unsavedPost)
+                  router.push("/saved", undefined, { scroll: false });
+                }}
+              >
+                Unsave
+              </button>
             </li>
           ))}
         </ol>

@@ -18,9 +18,40 @@ import { signin } from "../../lib/signin";
 import EmailIcon from "../../public/email.svg";
 import styles from "../../styles/Home.module.scss";
 import { addProfile } from "../../lib/profile";
-import { account } from "../../types/interfaces";
-
-export default function Login() {
+import { Props, account } from "../../types/interfaces";
+import { verifyIdToken } from "../../lib/firebaseAdmin";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
+import nookies from "nookies";
+import { GetServerSideProps } from "next";
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
+  try {
+    const cookies = nookies.get(context);
+    const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
+    // console.log(token.email + "in app.tsx");
+    let expired = false;
+    console.log(token.uid + " in app.tsx");
+    return {
+      props: {
+        expired,
+        uid: token.uid,
+      },
+    };
+  } catch (error) {
+    console.log("SSR Error (expired in app.tsx) " + error);
+    // context.res.writeHead(302, { Location: "/" });
+    // context.res.writeHead(302, { Location: "/login" });
+    // context.res.end();
+    return {
+      props: {
+        expired: true,
+        uid: "",
+      },
+    };
+  }
+};
+export default function Login({ uid }: { uid: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [adding, setadding] = useState(false);
@@ -29,10 +60,12 @@ export default function Login() {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       console.log(user, adding);
+      if (user) {
+        // router.push("/");
+      }
       if (user && adding === false) {
         router.push("/");
       } else if (!user && router.pathname !== "/") {
-        // router.push("/login");
       }
     });
     return () => unsub();
@@ -165,8 +198,7 @@ export default function Login() {
     //   lastName: "",
     // });
   };
-  if (auth.currentUser)
-    return <p style={{ textAlign: "center" }}>Loading ...</p>;
+  if (uid) return <p style={{ textAlign: "center" }}>Loading ...</p>;
   return (
     <section className={styles.login}>
       <button

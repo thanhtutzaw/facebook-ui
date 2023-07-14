@@ -22,7 +22,6 @@ export default function Email() {
     const auth = getAuth(app);
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        // router.push("/login");
       } else {
         router.push("/");
         // console.log("expired , user exist and pushed");

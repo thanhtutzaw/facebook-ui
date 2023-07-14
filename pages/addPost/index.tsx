@@ -118,7 +118,7 @@ export default function AddPost() {
       setuploadButtonClicked?.(false);
     }
   }, [fileRef, setuploadButtonClicked, uploadButtonClicked]);
-
+  if (!auth?.currentUser?.uid) return <p>Redirecting... to /login</p>;
   return (
     <div
       style={{
