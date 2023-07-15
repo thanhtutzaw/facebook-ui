@@ -163,7 +163,6 @@ export default function Content(props: {
           </>
         )}
       </AuthorInfo>
-
       {isAdmin ? (
         <AdminDropDown
           setshowAction={setshowAction!}
@@ -179,6 +178,7 @@ export default function Content(props: {
           id={id?.toString()!}
         />
       )}
+
       <div
         suppressHydrationWarning={true}
         role="textbox"

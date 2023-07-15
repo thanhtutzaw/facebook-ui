@@ -1,6 +1,22 @@
 .container {
     background-color: white;
     padding: 0 1rem;
+    > div:first-child {
+        > button:active {
+            animation: card 0.2s ease-in-out !important;
+        }
+        @keyframes card {
+            0% {
+                scale: 1;
+            }
+            50% {
+                scale: 0.95;
+            }
+            100% {
+                scale: 1;
+            }
+        }
+    }
     & > .action button {
         margin: 0 8px;
         padding: 10px;

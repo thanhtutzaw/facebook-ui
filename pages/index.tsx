@@ -72,17 +72,26 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const profileSnap = await getDoc(profileQuery);
     const profileData = profileSnap.data()!;
     const profile = profileData.profile as account["profile"];
-    const allUsersQuery = collectionGroup(db, `users`);
+
+    const allUsersQuery = query(
+      collection(db, `users`),
+      where("__name__", "!=", uid)
+    );
     const allUsersSnap = await getDocs(allUsersQuery);
-    const allUsers = allUsersSnap.docs
-      .map((doc) => {
+    const allUsers = await Promise.all(
+      allUsersSnap.docs.map(async (doc) => {
         const data = doc.data();
+        const account = (await getUserData(doc.id as string))! as UserRecord;
+        const accountJSON = userToJSON(account) as UserRecord;
         return {
           id: doc.id,
           ...data,
+          author: {
+            ...accountJSON,
+          },
         };
       })
-      .filter((users) => users.id !== uid);
+    );
 
     return {
       props: {

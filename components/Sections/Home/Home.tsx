@@ -36,7 +36,7 @@ export default function Home(props: { tabIndex: number }) {
         // }
         // nav.style.position = "sticky";
         if (active !== "/") return;
-        if (e.currentTarget.scrollTop > 60) {
+        if (e.currentTarget.scrollTop >= 60) {
           // console.log(home);
           // home.style.paddingTop = "55px";
           header.style.transform = "translateY(-60px)";

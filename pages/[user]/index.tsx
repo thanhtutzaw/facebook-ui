@@ -22,10 +22,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;
 
-    const user = await fethUserDoc(uid);
+    // const user = await fethUserDoc(uid);
+    const userQuery = doc(db, `users/${uid}`);
+    const user = await getDoc(userQuery);
     const mypostQuery = query(
       collection(db, `/users/${uid}/posts`),
-    where("visibility", "in", ["Friend", "Public"]),
+      where("visibility", "in", ["Friend", "Public"]),
       orderBy("createdAt", "desc")
     );
     const account = (await getUserData(uid as string))! as UserRecord;
@@ -103,9 +105,7 @@ export default function UserProfile({
             width={500}
             height={170}
             style={{ objectFit: "cover", width: "120px", height: "120px" }}
-            alt={`${profile?.firstName ?? "Unknown"} ${
-              profile?.lastName ?? ""
-            }'s profile`}
+            alt={`${account?.displayName ?? "Unknown User"}'s profile`}
             src={
               user.photoURL ??
               "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
@@ -113,7 +113,7 @@ export default function UserProfile({
           />
           {/* {JSON.stringify(account)} */}
           <h3 style={{ marginBottom: "18px" }}>
-            {account.displayName ?? "Unknown User"}
+            {account?.displayName ?? "Unknown User"}
             {/* {profile
               ? `${profile?.firstName} ${profile?.lastName}`
               : "Unknown User"} */}

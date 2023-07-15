@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import s from "./Friends.module.scss";
 import Card from "./Card";
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 interface RequestProps {
   f: any;
   tabIndex: number;

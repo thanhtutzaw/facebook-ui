@@ -44,7 +44,7 @@ export default function Profile() {
     setselectMode: setactive,
   } = useContext(AppContext) as Props;
   const { active: tab } = useActive();
-  const infoRef = useRef<HTMLDivElement>(null);
+const infoRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   useEffect(() => {
     if (tab !== "profile") {
@@ -167,7 +167,7 @@ export default function Profile() {
         newProfile={newProfile}
         // username={username ?? "Peter 1"}
         infoRef={infoRef}
-      >
+        >
         <EditProfile
           updating={updating}
           edit={edit}
@@ -175,9 +175,10 @@ export default function Profile() {
           handleChange={handleChange}
           newProfile={newProfile}
           toggleEdit={toggleEdit}
-        />
+          />
       </ProfileInfo>
       <Content
+          infoRef={infoRef}
         isSticky={isSticky}
         headerRef={headerRef}
         loading={loading}

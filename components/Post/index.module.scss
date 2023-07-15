@@ -6,7 +6,7 @@
     justify-content: center;
     align-items: center;
     gap: 2rem;
-    border-bottom: 1px solid rgb(235, 235, 235);
+    // border-bottom: 1px solid rgb(235, 235, 235);
     > div {
         background-color: black;
         display: flex;
@@ -179,6 +179,12 @@
     }
 }
 .post {
+    &:only-child {
+        .action {
+            // background-color: red;
+            border-bottom: 0;
+        }
+    }
     background-color: rgb(253, 253, 253);
     margin: 0.5rem 0;
     position: relative;
@@ -323,8 +329,12 @@
             margin: 0;
             padding: 0;
             line-height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             > svg {
                 color: #a3a3a3;
+                font-size: 13px;
             }
         }
     }
@@ -348,10 +358,12 @@
     display: flex;
     flex-direction: column;
     min-width: 150px;
-    // position: absolute;
+    position: absolute;
+    right: 1rem;
+    top: 60px;
     // top: 55px;
     // right: 1rem;
-    position: absolute;
+
     // top: 80px;
     // left: -296px;
     border-radius: 1rem;
@@ -374,6 +386,9 @@
         //     -webkit-text-fill-color: transparent !important;
         //     -webkit-text-stroke: black !important; // can be any color
         // }
+        > svg {
+            width: 20px;
+        }
         &:hover {
             background-color: var(--blue-origin);
             color: white;
@@ -397,6 +412,9 @@
 .action {
     display: flex;
     justify-content: flex-end;
+
+    border-top: 1px solid rgb(235, 235, 235);
+    // border-block: 1px solid rgb(235, 235, 235);
     svg {
         font-size: 18px;
         color: rgb(39, 39, 39);

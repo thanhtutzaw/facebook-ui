@@ -36,13 +36,17 @@ import { calcLength } from "framer-motion";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
+  // context.res.setHeader(
+  //   "Cache-Control",
+  //   "public, s-maxage=10, stale-while-revalidate=59"
+  // );
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
     const { uid } = token;
     let expired = false;
     const { user: authorId, post: postId } = context.query;
-
+    console.log(postId);
     // const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
     // console.log();
     const isAdmin = uid === authorId;
@@ -57,6 +61,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     //       // where("visibility", "not-in", ["Friend", "Public"])
     //     );
     const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
+    // console.log(posts);
+
     const posts = await getDoc(postDoc);
     const post = await postToJSON(posts as DocumentSnapshot<DocumentData>);
     const UserRecord = await getUserData(post.authorId);
@@ -112,46 +118,82 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // };
     // console.log({ newPost });
     // if(posts.data().)
-    if (posts.exists()) {
-      if (post.authorId !== uid && post.visibility === "Onlyme") {
-        return {
-          notFound: true,
-        };
-      }
-      return {
-        props: {
-          uid,
-          expired,
-          post: newPost,
-        },
-      };
-    } else {
-      return {
-        notFound: true,
-      };
-    }
+    // if (!posts.exists()) {
+    //   return {
+    //     notFound: true,
+    //   };
+    // }
+    // if (posts.) {
+    //   if (post.authorId !== uid && post.visibility === "Onlyme") {
+    //     // return {
+    //     //   notFound: true,
+    //     // };
+    //   } else {
+    //     return {
+    //       props: {
+    //         uid,
+    //         expired,
+    //         post: newPost,
+    //       },
+    //     };
+    //   }
+    // } else {
+    //   // return {
+    //   //   notFound: true,
+    //   // };
+    // }
     // } else {
     // return {
     //   notFound: true,
     // };
     // }
+    // if (post.authorId !== uid && post.visibility === "Onlyme") {
+    //     //     // return {
+    //     //     //   notFound: true,
+    //     //     // };
+    // if (postDoc.id !== postId) {
+    //   console.log("post not exist");
+    //   return {
+    //     notFound: true,
+    //   };
+    // }
+    // if (
+    //   posts.exists() &&
+    //   uid !== post.authorId &&
+    //   post.visibility === "Onlyme"
+    // ) {
+    //   console.log("onlyme");
+    //   return {
+    //     notFound: true,
+    //   };
+    // }
+    if (
+      !posts.exists() ||
+      (uid !== post.authorId && post.visibility === "Onlyme")
+    ) {
+      return {
+        notFound: true,
+      };
+    } else {
+      return {
+        props: {
+          uid,
+          post: newPost,
+        },
+      };
+    }
   } catch (error) {
     console.log("SSR Error " + error);
     return {
       props: {
         uid: "",
-        expired: true,
         post: {},
       },
     };
   }
 };
-export default function Post(props: {
-  uid: string;
-  expired: boolean;
-  post: Post;
-}) {
-  const { uid, post, expired } = props;
+export default function Post(props: { uid: string; post: Post }) {
+  const { uid, post } = props;
   const router = useRouter();
   const [visibility, setVisibility] = useState(post?.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
@@ -161,18 +203,6 @@ export default function Post(props: {
   const [deleteFile, setdeleteFile] = useState<Post["media"]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  // useEffect(() => {
-  //   if (expired) {
-  //     router.push("/");
-  //     console.log("expired and pushed(in user/post.tsx)");
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [expired]);
-  // const text = post.text
-  //   .replace(/<br\s*\/?>/g, "\n")
-  //   .replaceAll("<div>", "")
-  //   .replaceAll("</div>", "")
-  //   .replaceAll("&nbsp;", " ");
   const text = post.text
     ? post.text
         .replaceAll("</div>", "")
@@ -209,60 +239,16 @@ export default function Post(props: {
     visibility,
   ]);
   useEffect(() => {
-    // setvalue(
-    //   InputRef.current?.innerHTML
-    //     .replaceAll("<div>", "")
-    //     .replaceAll("</div>", "")
-    //     .replace("<div>", "<br>")
-    //     .replaceAll("<div><br><div>", "<br>")
-    //     .replaceAll("<br><div>", "<br>")
-    //     .replace("</div>", "")!
-    //   // .replaceAll("</div>", "")
-    //   // .replace("<div>", "<br>")
-    //   // .replaceAll("<div><br><div>", "<br>")
-    //   // .replaceAll("<br><div>", "<br>")!
-    // );
-    // if (viewRef && viewRef.current?.open) {
-    //   window.history.pushState(null, document.title, router.asPath);
-    //   return;
-    // }
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
       // if (viewRef && viewRef.current?.open) {
       //   viewRef.current.close();
       // }
       if (
-        (as !== currentPath &&
-          // value ===
-          // InputRef.current?.innerHTML
-          //   .replaceAll("<div>", "")
-          //   .replaceAll("</div>", "")
-          //   .replace("<div>", "<br>")
-          //   .replaceAll("<div><br><div>", "<br>")
-          //   .replaceAll("<br><div>", "<br>")
-          //   .replace("</div>", "") ||
-
-          // (visibility !== post.visibility ||
-          //   files?.length !== post.media?.length ||
-          //   deleteFile?.length !== 0)
-
-          InputRef.current?.innerHTML !== post.text) ||
+        (as !== currentPath && InputRef.current?.innerHTML !== post.text) ||
         visibility.toLowerCase() !== post.visibility?.toLowerCase() ||
         files?.length !== post.media?.length ||
         deleteFile?.length !== 0
-
-        // value !== "" ||
-        // deleteFile?.length !== 0
-        // &&
-        // value ===
-        //   InputRef.current?.innerHTML
-        //     .replaceAll("<div>", "")
-        //     .replaceAll("</div>", "")
-        //     .replace("<div>", "<br>")
-        //     .replaceAll("<div><br><div>", "<br>")
-        //     .replaceAll("<br><div>", "<br>")
-        //     .replace("</div>", ""))
-        // )
       ) {
         if (confirm("Changes you made may not be saved.")) {
           return true;
@@ -310,7 +296,6 @@ export default function Post(props: {
   const navigateToProfile = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    // alert(router.query.post);
     // const isViewingAuthorProfile = router.query.user && router.query.post;
     // if (isViewingAuthorProfile) return;
     router.push(`/${post?.authorId?.toString()}`);
@@ -399,17 +384,6 @@ export default function Post(props: {
           style={{
             cursor: canEdit ? "initial" : "default",
           }}
-          // onInput={(e) => {
-          //   setvalue(
-          //     e.currentTarget.innerHTML
-          //       .replaceAll("<div>", "")
-          //       .replaceAll("</div>", "")
-          //       .replace("<div>", "<br>")
-          //       .replaceAll("<div><br><div>", "<br>")
-          //       .replaceAll("<br><div>", "<br>")
-          //       .replace("</div>", "")
-          //   );
-          // }}
           dangerouslySetInnerHTML={{ __html: client ? text : "" }}
         ></Input>
         <PhotoLayout

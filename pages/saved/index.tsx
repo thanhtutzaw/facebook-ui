@@ -1,8 +1,5 @@
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
-import {
-  doc,
-  getDoc
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import BackHeader from "../../components/Header/BackHeader";
@@ -11,14 +8,12 @@ import s from "../../components/Sections/Profile/index.module.scss";
 import {
   app,
   db,
+  fethUserDoc,
   postToJSON,
-  userToJSON
+  userToJSON,
 } from "../../lib/firebase";
 import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
-import {
-  Post,
-  SavedPost
-} from "../../types/interfaces";
+import { Post, SavedPost } from "../../types/interfaces";
 // import console, { profile } from "console";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { getAuth } from "firebase/auth";
@@ -30,13 +25,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const { uid } = token;
 
-    // const user = await fethUserDoc(uid);
     // const mypostQuery = query(
     //   collection(db, `/users/${uid}/posts`),
     //   orderBy("createdAt", "desc")
     // );
-    const savedPostQuery = doc(db, `/users/${uid}`);
-    const savedPostSnap = await getDoc(savedPostQuery);
+    // const savedPostQuery = doc(db, `/users/${uid}`);
+    const user = await fethUserDoc(uid);
+
     // const profileData = profileSnap.data()!;
     // const profile = profileData.profile as account["profile"];
     // const savedPostQuery = collection(db, `/users/${uid}/savedPosts`);
@@ -49,7 +44,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     //     // setLoading(false);
     //   });
     // const savedPostSnap = await getDocs(savedPostQuery);
-    const savedPosts = savedPostSnap.data()!.savedPosts;
+    const savedPosts = user.data()!.savedPosts;
 
     const posts = await Promise.all(
       savedPosts.map(async (saved: SavedPost) => {
@@ -62,7 +57,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         const userJSON = userToJSON(UserRecord);
         return {
           ...post,
-          ...userJSON,
+          author: {
+            ...userJSON,
+          },
         };
       })
     );
@@ -109,28 +106,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function Page(props: { savedPosts: Post[]; uid: string }) {
-  const { savedPosts, uid } = props;
-  const router = useRouter();
-  // const [savedPost, setsavedPost] = useState<SavedPost[] | []>([]);
-  const auth = getAuth(app);
-  // const uid = auth?.currentUser?.uid ?? "";
-  // useEffect(() => {
-  //   // setLoading(true);
-  //   if (!uid) return;
-  //   let unsub: Unsubscribe;
-  //   const savedPostQuery = collection(db, `/users/${uid}/savedPost`);
-  //   unsub = onSnapshot(savedPostQuery, async (snapshot) => {
-  //     const post = snapshot.docs.map((doc) => {
-  //       const data = doc.data() as SavedPost;
-  //       return { ...data };
-  //     });
-  //     setsavedPost(post);
-  //     // setLoading(false);
-  //   });
-  //   return () => {
-  //     unsub;
-  //   };
-  // }, [uid]);
+  const { savedPosts } = props;
   return (
     <div className="user">
       <BackHeader>
@@ -144,7 +120,7 @@ export default function Page(props: { savedPosts: Post[]; uid: string }) {
         }}
         className={s.container}
       >
-        {JSON.stringify(savedPosts)}
+        {/* {JSON.stringify(savedPosts)} */}
         <PostList posts={savedPosts} />
         {/* saved author {s.authorId}&apos;s postid {s.postId} */}
         {/* <button

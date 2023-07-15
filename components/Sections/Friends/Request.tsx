@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import s from "./Friends.module.scss";
 import Card from "./Card";
 interface RequestProps {
-  f: string;
+  f: any;
   tabIndex: number;
 }
 export function Request(props: RequestProps) {

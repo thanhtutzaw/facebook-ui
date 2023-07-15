@@ -8,6 +8,7 @@ import { Post } from "../../../types/interfaces";
 import { RefObject } from "react";
 
 export default function Content(props: {
+  infoRef: RefObject<HTMLHeadElement>;
   headerRef: RefObject<HTMLHeadElement>;
   isSticky: boolean;
   tab: string;
@@ -21,6 +22,7 @@ export default function Content(props: {
   sortedPost: Post[];
 }) {
   const {
+    infoRef,
     isSticky,
     headerRef,
     loading,
@@ -42,7 +44,10 @@ export default function Content(props: {
     >
       {/* {JSON.stringify(sortedPost)} */}
       <header
-        style={{ borderBottom: isSticky ? "1px solid #f1f1f1" : "initial" }}
+        style={{
+          borderBottom: isSticky ? "1px solid #f1f1f1" : "initial",
+          // top: active ? infoRef?.current?.clientHeight! : 0,
+        }}
         ref={headerRef}
         className={s.header}
       >

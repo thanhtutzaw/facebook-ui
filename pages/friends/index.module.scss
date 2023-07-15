@@ -1,0 +1,33 @@
+.container {
+    // display: none;
+    ul {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        li {
+            list-style: none;
+            margin: 0;
+            a {
+                background: white;
+                padding: 1rem;
+                display: flex;
+                gap: 1rem;
+                img {
+                    margin: 0;
+                    border-radius: 100%;
+                }
+                &:active {
+                    opacity: 0.5;
+                }
+                &:hover {
+                    background-color: rgb(211, 211, 211);
+                    background-color: rgb(201, 201, 201);
+                }
+            }
+
+            &:not(:last-child) {
+                border-bottom: 1px solid rgb(235, 235, 235);
+            }
+        }
+    }
+}

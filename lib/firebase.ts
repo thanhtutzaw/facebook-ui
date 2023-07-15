@@ -38,28 +38,28 @@ export async function postToJSON(
 ) {
   // console.log("author?.id");
   const data = doc.data() as Post;
-  const createdAt = data.createdAt as Timestamp;
-  const updatedAt = data.updatedAt as Timestamp;
+  const createdAt = data?.createdAt as Timestamp;
+  const updatedAt = data?.updatedAt as Timestamp;
   const author = doc.ref.parent.parent!;
   // const user = (await getUserData(author.id)) as UserRecord;
   if (typeof data?.updatedAt === "string") {
     return {
       ...data,
-      media: data.media ?? [],
+      media: data?.media ?? [],
       authorId: author.id,
       // autherName: user.displayName ?? "Unknown",
       id: doc.id,
-      text: data.text,
+      text: data?.text,
       createdAt: createdAt?.toJSON() || 0,
     };
   } else {
     return {
       ...data,
-      media: data.media ?? [],
+      media: data?.media ?? [],
       authorId: author.id,
       // autherName: user.displayName ?? "Unknown",
       id: doc.id,
-      text: data.text,
+      text: data?.text,
       createdAt: createdAt?.toJSON() || 0,
       updatedAt: updatedAt?.toJSON() || 0,
     };

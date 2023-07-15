@@ -159,7 +159,8 @@ export default function PhotoLayout(props: {
             alt={media[0].name ?? "Not Found"}
             style={{
               // background: media[0].url ? "black" : "rgb(230, 230, 230)",
-              objectFit: "contain",
+              objectFit: "initial",
+              // objectFit: "contain",
               height: "auto",
             }}
           />

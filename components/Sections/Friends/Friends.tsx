@@ -4,6 +4,7 @@ import { Request } from "./Request";
 import { AddSuggestFriend } from "./AddSuggestFriend";
 import { Props } from "../../../types/interfaces";
 import { AppContext } from "../../../context/AppContext";
+import router from "next/router";
 interface FriendProps {
   tabIndex: number;
 }
@@ -17,7 +18,17 @@ export default function Friend(props: FriendProps) {
     <div className={s.container}>
       <div className={s.action}>
         <button tabIndex={tabIndex}>Suggestions</button>
-        <button tabIndex={tabIndex}>My Friends</button>
+        <button
+          aria-label="Go to my friends page"
+          title="Go to my friends page"
+          tabIndex={tabIndex}
+          className={s.item}
+          onClick={() => {
+            router.push("/friends");
+          }}
+        >
+          My Friends
+        </button>
       </div>
       <div className={s.request}>
         <h2 className={s.header}>
@@ -33,7 +44,7 @@ export default function Friend(props: FriendProps) {
           <p>People you may know</p>
         </h2>
         {Suggestions?.map((f: any, index: number) => (
-          <AddSuggestFriend key={index} f={f.id} tabIndex={tabIndex} />
+          <AddSuggestFriend key={index} f={f} tabIndex={tabIndex} />
         ))}
       </div>
     </div>
