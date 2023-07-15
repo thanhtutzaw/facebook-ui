@@ -170,10 +170,10 @@ export default function Content(props: {
           showAction={showAction ?? ""}
           authorId={authorId!}
           id={id?.toString()!}
-          />
-          ) : (
-            <DropDown
-            setshowAction={setshowAction!}
+        />
+      ) : (
+        <DropDown
+          setshowAction={setshowAction!}
           showAction={showAction ?? ""}
           authorId={authorId.toString()!}
           id={id?.toString()!}

@@ -216,10 +216,9 @@ video {
 }
 
 .user :is(img, video) {
-  background-color: black;
-  max-width       : 100%;
-  margin          : 0 auto;
-  object-fit      : cover;
+  max-width : 100%;
+  margin    : 0 auto;
+  object-fit: cover;
 }
 
 .seeMore {

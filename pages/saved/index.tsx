@@ -1,37 +1,28 @@
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import {
-  DocumentData,
-  Unsubscribe,
-  collection,
   doc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  orderBy,
-  query,
-  updateDoc,
+  getDoc
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import BackHeader from "../../components/Header/BackHeader";
+import { PostList } from "../../components/Sections/Home/PostList";
 import s from "../../components/Sections/Profile/index.module.scss";
 import {
   app,
   db,
-  fethUserDoc,
   postToJSON,
-  userToJSON,
+  userToJSON
 } from "../../lib/firebase";
 import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
-import Image from "next/image";
-import { PostList } from "../../components/Sections/Home/PostList";
-import { Post as PostType, SavedPost, account } from "../../types/interfaces";
-import { useRouter } from "next/router";
-import { profile } from "console";
-import { useEffect, useState } from "react";
-import { getAuth } from "firebase/auth";
+import {
+  Post,
+  SavedPost
+} from "../../types/interfaces";
+// import console, { profile } from "console";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
+import { getAuth } from "firebase/auth";
 import nookies from "nookies";
-import { unSavePost } from "../../lib/firestore/savedPost";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -59,6 +50,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     //   });
     // const savedPostSnap = await getDocs(savedPostQuery);
     const savedPosts = savedPostSnap.data()!.savedPosts;
+
+    const posts = await Promise.all(
+      savedPosts.map(async (saved: SavedPost) => {
+        const { authorId, postId } = saved;
+        const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
+        const posts = await getDoc(postDoc);
+        const post = await postToJSON(posts);
+        // console.log(post.authorId);
+        const UserRecord = (await getUserData(post.authorId)) as UserRecord;
+        const userJSON = userToJSON(UserRecord);
+        return {
+          ...post,
+          ...userJSON,
+        };
+      })
+    );
+    // console.log(posts);
     // const savedPost = await Promise.all(
     //   savedPostSnap.docs.map(async (doc) => {
     //     // const post = await postToJSON(doc);
@@ -85,7 +93,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // }
     return {
       props: {
-        savedPosts,
+        savedPosts: posts as Post[],
         uid,
       },
     };
@@ -100,10 +108,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-export default function SavedPost(props: {
-  savedPosts: SavedPost[];
-  uid: string;
-}) {
+export default function Page(props: { savedPosts: Post[]; uid: string }) {
   const { savedPosts, uid } = props;
   const router = useRouter();
   // const [savedPost, setsavedPost] = useState<SavedPost[] | []>([]);
@@ -139,28 +144,23 @@ export default function SavedPost(props: {
         }}
         className={s.container}
       >
-        {/* {JSON.stringify(savedPosts)} */}
-        <ol>
-          {savedPosts.map((s) => (
-            <li key={s.id}>
-              saved author {s.authorId}&apos;s postid {s.postId}
-              <button
+        {JSON.stringify(savedPosts)}
+        <PostList posts={savedPosts} />
+        {/* saved author {s.authorId}&apos;s postid {s.postId} */}
+        {/* <button
                 onClick={async (e) => {
                   // await unSavePost(s.id?.toString());
                   // alert(s.id?.toString());
-                  const unsavedPost = savedPosts.filter(
-                    (savepost) => savepost.postId !== s.postId
-                  );
-                  // console.log(newArray);
-                  await unSavePost(unsavedPost)
+                  // const unsavedPost = savedPosts.filter(
+                  //   (savepost) => savepost.postId !== s.postId
+                  // );
+                  // // console.log(newArray);
+                  // await unSavePost(unsavedPost);
                   router.push("/saved", undefined, { scroll: false });
                 }}
               >
                 Unsave
-              </button>
-            </li>
-          ))}
-        </ol>
+              </button> */}
         {/* <div className={`${s.info}`}>
           <Image
             priority={false}

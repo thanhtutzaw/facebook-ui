@@ -36,6 +36,7 @@ export async function fethUserDoc(uid: string | string[]) {
 export async function postToJSON(
   doc: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>
 ) {
+  // console.log("author?.id");
   const data = doc.data() as Post;
   const createdAt = data.createdAt as Timestamp;
   const updatedAt = data.updatedAt as Timestamp;

@@ -32,6 +32,7 @@ import s from "../../../styles/Home.module.scss";
 import { Media, Post, Props } from "../../../types/interfaces";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import AuthorInfo from "../../../components/Post/AuthorInfo";
+import { calcLength } from "framer-motion";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -55,12 +56,35 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     //       where("id", "==", postId)
     //       // where("visibility", "not-in", ["Friend", "Public"])
     //     );
-    const postDoc = query(
-      collection(db, `users/${authorId}/posts`),
-      where("id", "==", postId)
-      // where("visibility", "not-in", ["Friend", "Public"])
-    );
-    const postSnap = await getDocs(postDoc);
+    const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
+    const posts = await getDoc(postDoc);
+    const post = await postToJSON(posts as DocumentSnapshot<DocumentData>);
+    const UserRecord = await getUserData(post.authorId);
+    const userJSON = userToJSON(UserRecord) as UserRecord;
+    const newPost = {
+      ...post,
+      author: {
+        ...userJSON,
+      },
+    };
+    console.log(newPost);
+    // const postDoc = query(
+    //   collection(db, `users/${authorId}/posts`),
+    //   where("id", "==", postId)
+    //   // where("visibility", "in", ["Friend", "Public"])
+    // );
+    // const postDoc = query(
+    //   collection(db, `users/${authorId}/posts`),
+    //   where("id", "==", postId),
+    //   where("visibility", "in", ["Friend", "Public"])
+    // );
+    // const postSnap = await getDocs(postDoc);
+    // const newPost = await Promise.all(
+    //   postSnap.docs.map(async (post) => {
+    //     // console.log(post.data());
+    //     return await postToJSON(post);
+    //   })
+    // );
     // query(postDoc)
     // postSnap.
     // ,
@@ -73,26 +97,39 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     //     displayName: UserRecord?.displayName ?? "Unknown User",
     //     photoURL: UserRecord?.photoURL ?? "",
     // if (!postSnap.empty) {
-    const docPost = postSnap.docs.map((doc) => {
-      return doc;
-    });
-    const post = await postToJSON(docPost[0]);
-    const UserRecord = await getUserData(post.authorId);
-    const userJSON = userToJSON(UserRecord) as UserRecord;
-    const newPost = {
-      ...post,
-      author: {
-        ...userJSON,
-      },
-    };
-    console.log(newPost);
-    return {
-      props: {
-        uid,
-        expired,
-        post: newPost,
-      },
-    };
+    // const docPost = postSnap.docs.map((doc) => {
+    //   return doc;
+    // });
+    // console.log(docPost);
+    // const post = await postToJSON();
+    // const UserRecord = await getUserData(post.authorId);
+    // const userJSON = userToJSON(UserRecord) as UserRecord;
+    // const newPost = {
+    //   ...post,
+    //   author: {
+    //     ...userJSON,
+    //   },
+    // };
+    // console.log({ newPost });
+    // if(posts.data().)
+    if (posts.exists()) {
+      if (post.authorId !== uid && post.visibility === "Onlyme") {
+        return {
+          notFound: true,
+        };
+      }
+      return {
+        props: {
+          uid,
+          expired,
+          post: newPost,
+        },
+      };
+    } else {
+      return {
+        notFound: true,
+      };
+    }
     // } else {
     // return {
     //   notFound: true,
@@ -124,13 +161,13 @@ export default function Post(props: {
   const [deleteFile, setdeleteFile] = useState<Post["media"]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (expired) {
-      router.push("/");
-      console.log("expired and pushed(in user/post.tsx)");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expired]);
+  // useEffect(() => {
+  //   if (expired) {
+  //     router.push("/");
+  //     console.log("expired and pushed(in user/post.tsx)");
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [expired]);
   // const text = post.text
   //   .replace(/<br\s*\/?>/g, "\n")
   //   .replaceAll("<div>", "")
@@ -230,7 +267,7 @@ export default function Post(props: {
         if (confirm("Changes you made may not be saved.")) {
           return true;
         } else {
-          console.log(currentPath);
+          // console.log(currentPath);
           window.history.pushState(null, document.title, currentPath);
           return false;
         }
@@ -276,7 +313,7 @@ export default function Post(props: {
     // alert(router.query.post);
     // const isViewingAuthorProfile = router.query.user && router.query.post;
     // if (isViewingAuthorProfile) return;
-    router.push(`/${post?.authorId.toString()}`);
+    router.push(`/${post?.authorId?.toString()}`);
   };
   return (
     <div className="user">

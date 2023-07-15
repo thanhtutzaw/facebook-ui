@@ -13,17 +13,18 @@ Project is created with:
 
 ## Features
 :ballot_box_with_check:	Navigate Tabs by Dragging\
-:ballot_box_with_check:	Sign up with Email Password \
+:ballot_box_with_check:	Sign up with Email & Password \
 :ballot_box_with_check:	Sort Posts by createdAt\
-:ballot_box_with_check:	Dyanmic Routes ( user/post )\
-:ballot_box_with_check:	Fetch All Users Posts - SSR\
-:ballot_box_with_check:	Fetch User Record by AuthorId - SSR\
+:ballot_box_with_check:	Dyanmic Routes for Profile and Post \
+:ballot_box_with_check:	Fetch All Users Posts - SSR except Onlyme posts\
+:ballot_box_with_check:	Fetch User Record by AuthorId (author Name, PhotoURL)\
 :ballot_box_with_check:	Update User Profile (userName,bio) and Account displayName\
+:ballot_box_with_check: Creating new posts, liking/commenting on posts \
 :ballot_box_with_check:	Select and Delete Multiple Posts\
-:ballot_box_with_check:	User can save Favourite Post and Copy Post Url \
+:ballot_box_with_check:	User can save Favourite Post & can Copy Post Url \
 :ballot_box_with_check:	Upload Media (Store in Firebase Cloud Storage) \
-:ballot_box_with_check: Image Preview Layout and Zoom image
-:ballot_box_with_check:	Store id_token in cookies with [nookies](https://www.npmjs.com/package/nookies) for SSR userId
+:ballot_box_with_check: Image Preview Layout and Zoom \
+:ballot_box_with_check:	Store id_token in cookies with [nookies](https://www.npmjs.com/package/nookies) for SSR data fetching by uid
 
 ## User-Interface
 ![facebook-ui](https://github.com/thanhtutzaw/facebook-ui/assets/71011043/aebfa8bd-d6d4-4879-8074-023d83647ab4)

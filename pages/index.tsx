@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
     const account = (await getUserData(uid as string))! as UserRecord;
     const accountJSON = userToJSON(account);
-    console.log("isVerify " + token.email_verified);
+    // console.log("isVerify " + token.email_verified);
     // console.log(token);
     let expired = false;
     const postQuery = query(
@@ -67,7 +67,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         };
       })
     );
-    console.log(posts);
+    // console.log(posts);
     const profileQuery = doc(db, `/users/${uid}`);
     const profileSnap = await getDoc(profileQuery);
     const profileData = profileSnap.data()!;
