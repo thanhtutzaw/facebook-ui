@@ -6,6 +6,7 @@
     justify-content: center;
     align-items: center;
     gap: 2rem;
+    border-bottom: 1px solid rgb(235, 235, 235);
     > div {
         background-color: black;
         display: flex;
@@ -408,7 +409,7 @@
         height: 55px;
         border: none;
         background-color: white;
-        border-top: 1px solid #dfdfdf;
+        // border-top: 1px solid #dfdfdf;
         transition: background-color 0.2s ease;
     }
     p {
