@@ -81,7 +81,7 @@ export default function App({
     console.log(router.pathname);
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        if(router.pathname === "/login/email")return;
+        if (router.pathname === "/login/email") return;
         router.push("/login");
       } else {
         if (!expired) return;
@@ -101,14 +101,12 @@ export default function App({
         return;
       }
       try {
-        // const token = await user.getIdToken(/* forceRefresh */ true);
         const token = await user.getIdToken();
-        // setuser(user);
-        // Store the token in a cookie
         nookies.set(undefined, "token", token, {
           // maxAge: 30 * 24 * 60 * 60,
           maxAge: 55 * 60,
           path: "/",
+          httpOnly: true,
           secure: true,
           sameSite: "none",
         });
