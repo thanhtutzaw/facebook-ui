@@ -5,6 +5,7 @@ import { CSSProperties, MouseEventHandler, ReactNode } from "react";
 import s from "../../styles/Home.module.scss";
 function BackHeader(props: {
   style?: CSSProperties;
+  iconColor?: any;
   selectMode?: boolean;
   children?: ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
@@ -17,7 +18,12 @@ function BackHeader(props: {
     });
   return (
     <div style={props.style} className={s.backHeader}>
-      <button aria-label="back" onClick={handleClick}>
+      <button
+        style={{ color: props.iconColor }}
+        title="Back"
+        aria-label="Back Button"
+        onClick={handleClick}
+      >
         <FontAwesomeIcon icon={faArrowLeft} />
       </button>
       {props.children}

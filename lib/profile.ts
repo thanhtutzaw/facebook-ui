@@ -1,8 +1,7 @@
 import { User, updateProfile } from "firebase/auth";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "./firebase";
+import { doc, setDoc } from "firebase/firestore";
 import { account } from "../types/interfaces";
-import Profile from "../components/Sections/Profile";
+import { db } from "./firebase";
 
 // export async function updateUserName(
 //   UserCredential: UserCredential,
@@ -33,7 +32,6 @@ export async function changeProfile(
   NewProfile: account["profile"],
   originalProfile: account["profile"]
 ) {
-  console.log(user.uid);
   const Ref = doc(db, `users/${user.uid}`);
   const { firstName, lastName, bio } = NewProfile;
   try {
@@ -43,23 +41,21 @@ export async function changeProfile(
         await setDoc(Ref, {
           profile: {
             ...NewProfile,
-            bio: NewProfile?.bio ?? "",
-            firstName: NewProfile?.firstName ?? "",
-            lastName: NewProfile?.lastName ?? "",
+            bio: bio ?? "",
+            firstName: firstName ?? "",
+            lastName: lastName ?? "",
           },
         });
         console.log(" bio Updated ");
       } catch (error) {
         console.log(error);
       }
-      // console.log(firstName == originalProfile?.firstName! ?? "");
     }
     if (
       (originalProfile?.firstName ?? "") === firstName &&
       (originalProfile?.lastName ?? "") === lastName
     )
       return;
-    // console.log("update userName " + firstName ?? "", lastName ?? "");
     await setDoc(Ref, {
       profile: {
         ...NewProfile,
@@ -68,7 +64,7 @@ export async function changeProfile(
       },
     });
     await updateName(user, firstName ?? "", lastName ?? "");
-    console.log(" names Updated");
+    console.log("Names Updated");
   } catch (error) {
     console.error(error);
   }

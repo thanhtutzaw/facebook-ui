@@ -22,11 +22,9 @@ export default function Content(props: {
   sortedPost: Post[];
 }) {
   const {
-    infoRef,
     isSticky,
     headerRef,
     loading,
-    tab,
     sort,
     setSort,
     active,

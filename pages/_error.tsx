@@ -4,7 +4,7 @@ import s from "../styles/Home.module.scss";
 const ErrorPage = () => {
   return (
     <div className="user">
-      <div
+      {/* <div
         style={{
           textAlign: "center",
           alignContent: "center",
@@ -22,7 +22,7 @@ const ErrorPage = () => {
         <Link  tabIndex={-1 }href="/" style={{ background: "transparent" }}>
           <button className="goHome">Go Home</button>
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 };

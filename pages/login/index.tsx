@@ -162,8 +162,6 @@ export default function Login({ uid }: { uid: string }) {
             console.error(error);
           }
           // const user = UserCredential.user;
-          // console.log(UserCredential);
-          // console.log(user.uid);
           // const userInfo = { firstName: "first woro" };
         }
       }

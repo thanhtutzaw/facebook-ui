@@ -76,11 +76,12 @@ export default function App({
       router.events.off("routeChangeError", handleRouteDone);
     };
   }, [router.events]);
-  console.log(uid);
   const auth = getAuth(app);
   useEffect(() => {
+    console.log(router.pathname);
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) {
+        if(router.pathname === "/login/email")return;
         router.push("/login");
       } else {
         if (!expired) return;
@@ -99,7 +100,6 @@ export default function App({
         // setuser(null);
         return;
       }
-      console.log(user.uid);
       try {
         // const token = await user.getIdToken(/* forceRefresh */ true);
         const token = await user.getIdToken();
@@ -156,7 +156,8 @@ export default function App({
         >
           <>
             <Component {...pageProps} />
-            <ImageLargeView />
+
+            {auth.currentUser?.uid && <ImageLargeView />}
           </>
         </main>
       </PageProvider>

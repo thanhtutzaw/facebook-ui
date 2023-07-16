@@ -5,6 +5,9 @@ import BackHeader from "../../components/Header/BackHeader";
 import { signin } from "../../lib/signin";
 import { useRouter } from "next/router";
 import {
+  AuthError,
+  AuthErrorCodes,
+  EmailAuthProvider,
   ErrorFn,
   getAuth,
   onAuthStateChanged,
@@ -13,6 +16,7 @@ import {
 import { app } from "../../lib/firebase";
 import { motion } from "framer-motion";
 import { FirebaseError } from "firebase/app";
+import Link from "next/link";
 
 export default function Email() {
   const router = useRouter();
@@ -40,9 +44,8 @@ export default function Email() {
     // setloading(true)
     try {
       const error = (await signin(email, password)) as FirebaseError;
-
       if (error) {
-        seterror(`Error (${error.code})`);
+        seterror(error.code);
         console.error(error);
         setloading(false);
       } else {
@@ -53,9 +56,11 @@ export default function Email() {
     }
   }
   return (
-    <>
-      {/* <section className={s.login}> */}
-      <BackHeader style={{ border: "0", backgroundColor: "#ffffff36" }} />
+    <div className="emailLogin">
+      <BackHeader
+        iconColor={"white"}
+        style={{ border: "0", backgroundColor: "transparent" }}
+      />
       <motion.form
         className={`${s.emailForm}`}
         onSubmit={handleEmailLogin}
@@ -73,20 +78,33 @@ export default function Email() {
       >
         <div
           style={{
-            boxShadow: "0 5px 10px #a5a5a5",
+            boxShadow: "rgb(255 255 255 / 50%) 0px 5px 10px",
             position: "relative",
           }}
         >
           {error && (
-            <motion.h4
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: !error ? 0.5 : 1, opacity: !error ? 0 : 1 }}
-              exit={{ scale: 0.5, opacity: 0 }}
-              className={s.error}
-              style={{ margin: "0", color: "red" }}
-            >
-              {error}
-            </motion.h4>
+            <>
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: !error ? 0.5 : 1, opacity: !error ? 0 : 1 }}
+                exit={{ scale: 0.5, opacity: 0 }}
+                className={s.error}
+              >
+                <h4
+                  style={{ margin: "0", color: "red" }}
+                >{`Error (${error})`}</h4>
+                {error === AuthErrorCodes.USER_DELETED && (
+                  <Link
+                    style={{
+                      color: "var(--blue-origin)",
+                    }}
+                    href="/login"
+                  >
+                    Create New Account
+                  </Link>
+                )}
+              </motion.div>
+            </>
           )}
 
           <NewAccount title="Login with Email" />
@@ -102,6 +120,6 @@ export default function Email() {
         </div>
       </motion.form>
       {/* </section> */}
-    </>
+    </div>
   );
 }

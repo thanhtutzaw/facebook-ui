@@ -20,10 +20,10 @@ export function Footer(
     tabIndex?: number;
   } & StyleHTMLAttributes<HTMLDivElement>
 ) {
-  const { postId, tabIndex } = props;
+  const { postId, tabIndex , ...rests} = props;
   const { shareAction, setshareAction } = useContext(PageContext) as PageProps;
   return (
-    <div {...props} className={styles.action}>
+    <div {...rests} className={styles.action}>
       <button tabIndex={tabIndex}>
         <FontAwesomeIcon icon={faThumbsUp} />
         <p>Like</p>
@@ -74,7 +74,6 @@ export function Footer(
                 e.preventDefault();
                 e.stopPropagation();
                 alert(postId);
-                // savedPost.push({ authorId: authorId, postId: postId });
               }}
             >
               <FontAwesomeIcon icon={faShareFromSquare} />
@@ -84,7 +83,6 @@ export function Footer(
               onClick={async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                // savedPost.push({ authorId: authorId, postId: postId });
               }}
             >
               <FontAwesomeIcon icon={faPen} />

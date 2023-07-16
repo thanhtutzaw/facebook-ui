@@ -27,7 +27,6 @@ export function useUser() {
     // onAuthStateChanged(auth, async (user) => {
     //   if (user) {
     //     setuser(user);
-    //     const uid = user.uid;
     //   } else {
     //     setuser(null);
     //   }

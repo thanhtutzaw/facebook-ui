@@ -17,10 +17,7 @@ import { Props } from "../../../types/interfaces";
 export default function Home(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const router = useRouter();
-  const { sortedPost, active, email, headerContainerRef } = useContext(
-    AppContext
-  ) as Props;
-  console.log(sortedPost);
+  const { active, email, headerContainerRef } = useContext(AppContext) as Props;
   const { setuploadButtonClicked } = useContext(PageContext) as PageProps;
   return (
     <div

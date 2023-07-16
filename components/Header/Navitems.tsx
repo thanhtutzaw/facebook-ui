@@ -4,10 +4,12 @@ import styles from "../../styles/Home.module.scss";
 
 export default function Navitems(props: any) {
   const { active, setActive } = useActive();
-  const { icon, name, index } = props;
+  const { icon: TabIcon, name, index } = props;
   const router = useRouter();
+  let iconTitle = name === "/" ? "Home" : name;
   const TabName = name.toLowerCase();
   const activeClass = active === TabName ? styles.active : "";
+
   const changeTab = () => {
     setActive(TabName);
     window.location.hash = TabName === "/" ? "#home" : "#" + TabName;
@@ -23,15 +25,16 @@ export default function Navitems(props: any) {
         behavior: "smooth",
       });
       if (active !== "/") return;
-      // if (active !== "/" && tab.scrollTop >= 60) return;
-      console.log(tab.scrollTop);
+      if (tab.scrollTop >= 60) return;
       console.log("refreshing new data in Newsfeed");
       router.replace("/", undefined, { scroll: false });
     }
   };
   return (
     <div onClick={changeTab} className={`${styles.navItems} ${activeClass}`}>
-      <div>{icon}</div>
+      <div aria-label={iconTitle} title={iconTitle}>
+        {TabIcon}
+      </div>
     </div>
   );
 }
