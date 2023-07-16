@@ -106,7 +106,7 @@ export default function App({
           // maxAge: 30 * 24 * 60 * 60,
           maxAge: 55 * 60,
           path: "/",
-          httpOnly: true,
+          // httpOnly: true,
           secure: true,
           sameSite: "none",
         });
