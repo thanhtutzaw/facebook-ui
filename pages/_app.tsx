@@ -16,6 +16,7 @@ import "../styles/globals.css";
 import { Props } from "../types/interfaces";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { Welcome } from "../components/Welcome";
+import { ImageLargeView } from "../components/Post/ImageLargeView";
 
 config.autoAddCss = false;
 export const getServerSideProps: GetServerSideProps<Props> = async (
@@ -153,7 +154,10 @@ export default function App({
             }
           }
         >
-          <Component {...pageProps} />
+          <>
+            <Component {...pageProps} />
+            <ImageLargeView />
+          </>
         </main>
       </PageProvider>
     </>

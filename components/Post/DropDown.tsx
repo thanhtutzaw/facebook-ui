@@ -6,14 +6,13 @@ import { useEffect, useState } from "react";
 import { app } from "../../lib/firebase";
 import { addSavedPost } from "../../lib/firestore/savedPost";
 import styles from "./index.module.scss";
-function DropDown(props: {
+export default function DropDown(props: {
   setshowAction: Function;
   showAction: string;
   authorId: string;
   id: string;
 }) {
   const { setshowAction, authorId, id, showAction } = props;
-  const auth = getAuth(app);
   const [loading, setLoading] = useState(false);
   return (
     <AnimatePresence>
@@ -48,7 +47,6 @@ function DropDown(props: {
             onClick={async (e) => {
               e.preventDefault();
               e.stopPropagation();
-              // const savedPost = [];
               // savedPost.push({ authorId: authorId, postId: id });
 
               setLoading(true);
@@ -60,9 +58,7 @@ function DropDown(props: {
                 setLoading(false);
               } finally {
                 setLoading(false);
-                // window.document.body.style.cursor = "initial";
               }
-              // alert(JSON.stringify(savedPost));
             }}
           >
             <FontAwesomeIcon icon={faBookmark} />
@@ -73,8 +69,6 @@ function DropDown(props: {
     </AnimatePresence>
   );
 }
-
-export default DropDown;
 
 export function CopyLink(props: {
   setshowAction: Function;

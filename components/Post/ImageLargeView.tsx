@@ -4,14 +4,15 @@ import { animated, useSpring } from "@react-spring/web";
 import { useGesture } from "@use-gesture/react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { memo, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { setTimeout } from "timers";
 import { PageContext, PageProps } from "../../context/PageContext";
 import s from "./index.module.scss";
-import { ref } from "firebase/storage";
-export function ViewModal(props: { view: { src: string; name: string } }) {
-  const { view } = props;
-  const { viewRef } = useContext(PageContext) as PageProps;
+export function ImageLargeView(props: {
+  view?: { src: string; name: string };
+}) {
+  // const { view } = props;
+  const { viewRef, view, setview } = useContext(PageContext) as PageProps;
 
   const imgRef = useRef<HTMLImageElement>(null);
 
@@ -231,6 +232,17 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
     // console.log(scale);
     setdrag(false);
   }, [scale, x, y]);
+  useEffect(() => {
+    if (view.src) {
+      viewRef?.current?.showModal();
+    } else {
+      viewRef?.current?.close();
+      setview?.({});
+    }
+    // return () => {
+    //   setview?.({});
+    // };
+  }, [view.src, view.name, viewRef, setview]);
 
   return (
     <motion.dialog
@@ -246,7 +258,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
       initial={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
       animate={{
-        opacity: viewRef?.current?.open ? 1 : 0,
+        opacity: view.src ? 1 : 0,
       }}
       style={{ opacity: 0, transition: "all .2s ease-in-out" }}
       exit={{ opacity: 0 }}
@@ -254,6 +266,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         e.currentTarget.style.opacity = "0";
         api.set({ x: 0, y: 0, scale: 1 });
         setVisible(false);
+        setview?.({ src: "", name: "" });
       }}
       className={s.dialog}
       ref={viewRef}

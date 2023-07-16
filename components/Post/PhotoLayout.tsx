@@ -1,13 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { RefObject, useContext, useEffect, useRef, useState } from "react";
+import { RefObject, useContext } from "react";
 import { Post } from "../../types/interfaces";
 import s from "./index.module.scss";
-import { ViewModal } from "./ViewModal";
-
-import { PageContext, PageProps } from "../../context/PageContext";
 import Image from "next/image";
+import { PageContext, PageProps } from "../../context/PageContext";
 import ImageWithFallback from "../ImageWithFallback";
 
 export default function PhotoLayout(props: {
@@ -31,12 +29,7 @@ export default function PhotoLayout(props: {
     edit,
     post,
   } = props;
-  // const placeholder = "https://via.placeholder.com/350x388";
-
-  // const placeholder =
-  //   "https://www.cvent-assets.com/brand-page-guestside-site/assets/images/venue-card-placeholder.png";
-  const [view, setview] = useState({ src: "", name: "" });
-  const { uid, viewRef } = useContext(PageContext) as PageProps;
+  const { uid, setview } = useContext(PageContext) as PageProps;
   // useEffect(() => {
   //   window.onpopstate = () => {
   //     // if (viewRef?.current?.open) {
@@ -73,12 +66,10 @@ export default function PhotoLayout(props: {
               <div
                 onClick={() => {
                   if (file.type === "video/mp4") return;
-                  setview({
+                  setview?.({
                     src: !file.url ? URL.createObjectURL(file) : file.url,
                     name: file.name,
                   });
-                  if (!viewRef) return;
-                  viewRef.current?.showModal();
                 }}
                 key={i}
                 id={i.toString()}
@@ -122,9 +113,10 @@ export default function PhotoLayout(props: {
                       setFiles?.([...files.slice(0, i), ...files.slice(i + 1)]);
                       // setFiles(files.filter((_, index) => index !== i));
                       // setFiles(files.splice(i, 1));
-                      setview({ src: "", name: "" });
+                      setview?.({ src: "", name: "" });
                     }}
-                    aria-label="remove media"
+                    title="Remove media"
+                    aria-label="Remove media"
                     tabIndex={-1}
                     className={s.deletePhoto}
                   >
@@ -134,7 +126,6 @@ export default function PhotoLayout(props: {
               </div>
             ))}
         </div>
-        <ViewModal view={view} />
       </>
     );
   }
@@ -159,7 +150,7 @@ export default function PhotoLayout(props: {
             alt={media[0].name ?? "Not Found"}
             style={{
               // background: media[0].url ? "black" : "rgb(230, 230, 230)",
-              objectFit: "initial",
+              objectFit: !media[0].url ? "initial" : "cover",
               // objectFit: "contain",
               height: "auto",
             }}

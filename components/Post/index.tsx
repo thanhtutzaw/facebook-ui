@@ -73,8 +73,7 @@ export default function Post({
         setShowmore={setShowmore}
         post={post}
       />
-
-      <Footer tabIndex={tabIndex} />
+      <Footer postId={post.id?.toString()!} tabIndex={tabIndex} />
     </div>
   );
 }

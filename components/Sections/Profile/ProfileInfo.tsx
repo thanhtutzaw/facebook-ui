@@ -1,8 +1,10 @@
 import Image from "next/image";
 import s from "./index.module.scss";
-import { ReactNode, RefObject } from "react";
+import { ReactNode, RefObject, useContext, useState } from "react";
 import { account } from "../../../types/interfaces";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import { PageContext, PageProps } from "../../../context/PageContext";
+import { ImageLargeView } from "../../Post/ImageLargeView";
 function ProfileInfo(props: {
   account: UserRecord;
   infoRef?: RefObject<HTMLDivElement>;
@@ -27,10 +29,25 @@ function ProfileInfo(props: {
     newProfile,
     // username,
   } = props;
-
+  const { viewRef, setview } = useContext(PageContext) as PageProps;
+  // const view =
   return (
     <div ref={infoRef} className={`${s.info} ${active ? s.active : ""}`}>
+      {/* <ImageLargeView
+        // view={}
+      /> */}
       <Image
+        onClick={() => {
+          setview?.({
+            src: photoURL
+              ? photoURL
+              : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+            name: `${profile?.firstName ?? "Unknown"} ${
+              profile?.lastName ?? ""
+            }'s profile`,
+          });
+          // viewRef.current?.showModal();
+        }}
         priority={false}
         className={s.profile}
         width={500}
