@@ -15,8 +15,8 @@ export default function Content(props: {
   loading: boolean;
   sort: boolean;
   setSort: Function;
-  active: boolean;
-  setactive: Function;
+  selectMode: boolean;
+  setselectMode: Function;
   sortby: "new" | "old";
   setsortby: Function;
   sortedPost: Post[];
@@ -27,8 +27,8 @@ export default function Content(props: {
     loading,
     sort,
     setSort,
-    active,
-    setactive,
+    selectMode,
+    setselectMode,
     sortby,
     setsortby,
     sortedPost,
@@ -44,7 +44,7 @@ export default function Content(props: {
       <header
         style={{
           borderBottom: isSticky ? "1px solid #f1f1f1" : "initial",
-          // top: active ? infoRef?.current?.clientHeight! : 0,
+          // top: selectMode ? infoRef?.current?.clientHeight! : 0,
         }}
         ref={headerRef}
         className={s.header}
@@ -64,12 +64,12 @@ export default function Content(props: {
         </button>
         <button
           aria-label="toggle select mode"
-          aria-expanded={active}
+          aria-expanded={selectMode}
           onClick={(e) => {
-            setactive?.((prev: any) => !prev);
+            setselectMode?.((prev: any) => !prev);
             setSort(false);
 
-            if (!active) {
+            if (!selectMode) {
               const parent =
                 e.currentTarget.parentElement?.parentElement?.parentElement;
               // parent?.scrollIntoView({
@@ -86,7 +86,7 @@ export default function Content(props: {
                 stiffness: 100,
               }}
               animate={{
-                rotate: active ? 480 : 0,
+                rotate: selectMode ? 480 : 0,
               }}
               style={{
                 willChange: "transform",
@@ -119,7 +119,7 @@ export default function Content(props: {
       ) : (
         <PostList
           preventNavigate={true}
-          active={active!}
+          selectMode={selectMode!}
           posts={sortedPost!}
           tabIndex={1}
         />

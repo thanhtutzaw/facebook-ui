@@ -1,12 +1,13 @@
 import { User, getAuth } from "firebase/auth";
 import { Post as PostType } from "../../../types/interfaces";
 import Post from "../../Post";
-import { memo } from "react";
+import { memo, useContext, useEffect } from "react";
+import { PageContext, PageProps } from "../../../context/PageContext";
 
 export const PostList = memo(
   (props: {
     preventNavigate?: boolean;
-    active?: boolean;
+    selectMode?: boolean;
     profile?: any;
     posts: PostType[];
     tabIndex?: number;
@@ -14,21 +15,25 @@ export const PostList = memo(
   }) => {
     console.log("postList is rendering");
 
-    const { preventNavigate, profile, auth, active, posts, tabIndex } = props;
-
+    const { preventNavigate, profile, auth, selectMode, posts, tabIndex } =
+      props;
+    const { shareAction, setshareAction } = useContext(
+      PageContext
+    ) as PageProps;
+    
     return (
       <>
         <div
           style={{
             willChange: "margin",
-            marginInline: active ? "2rem" : "initial",
+            marginInline: selectMode ? "2rem" : "initial",
             transition: "margin .35s ease-in-out",
             backgroundColor: "#dadada",
           }}
         >
           {posts?.map((post: PostType) => (
             <Post
-              active={active}
+              selectMode={selectMode}
               preventNavigate={preventNavigate}
               profile={profile}
               auth={auth!}

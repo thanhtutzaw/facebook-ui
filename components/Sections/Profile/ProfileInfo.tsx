@@ -8,7 +8,7 @@ import { ImageLargeView } from "../../Post/ImageLargeView";
 function ProfileInfo(props: {
   account: UserRecord;
   infoRef?: RefObject<HTMLDivElement>;
-  active: boolean;
+  selectMode: boolean;
   children?: ReactNode;
   profile: account["profile"];
   email: string;
@@ -20,7 +20,7 @@ function ProfileInfo(props: {
   const {
     account,
     infoRef,
-    active,
+    selectMode,
     children,
     profile,
     email,
@@ -32,7 +32,7 @@ function ProfileInfo(props: {
   const { viewRef, setview } = useContext(PageContext) as PageProps;
   // const view =
   return (
-    <div ref={infoRef} className={`${s.info} ${active ? s.active : ""}`}>
+    <div ref={infoRef} className={`${s.info} ${selectMode ? s.active : ""}`}>
       {/* <ImageLargeView
         // view={}
       /> */}

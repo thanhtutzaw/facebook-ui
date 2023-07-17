@@ -44,7 +44,7 @@ export default function Profile() {
     setselectMode: setactive,
   } = useContext(AppContext) as Props;
   const { active: tab } = useActive();
-const infoRef = useRef<HTMLDivElement>(null);
+  const infoRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   useEffect(() => {
     if (tab !== "profile") {
@@ -99,8 +99,6 @@ const infoRef = useRef<HTMLDivElement>(null);
           return {
             ...post,
             author: {
-              // ...userJSON,
-              // displayName:
               ...author,
             },
           };
@@ -138,7 +136,6 @@ const infoRef = useRef<HTMLDivElement>(null);
   const [updating, setupdating] = useState(false);
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
     setupdating(true);
     try {
       await changeProfile(auth.currentUser!, newProfile, profile!);
@@ -158,16 +155,15 @@ const infoRef = useRef<HTMLDivElement>(null);
     >
       {/* {JSON.stringify(profile)} */}
       <ProfileInfo
-        active={active!}
+        selectMode={active!}
         account={account!}
         profile={profile!}
         email={email ?? "testUser@gmail.com"}
         photoURL={photoURL}
         edit={edit}
         newProfile={newProfile}
-        // username={username ?? "Peter 1"}
         infoRef={infoRef}
-        >
+      >
         <EditProfile
           updating={updating}
           edit={edit}
@@ -175,18 +171,18 @@ const infoRef = useRef<HTMLDivElement>(null);
           handleChange={handleChange}
           newProfile={newProfile}
           toggleEdit={toggleEdit}
-          />
+        />
       </ProfileInfo>
       <Content
-          infoRef={infoRef}
+        infoRef={infoRef}
         isSticky={isSticky}
         headerRef={headerRef}
         loading={loading}
         tab={tab}
         sort={sort}
         setSort={setSort}
-        active={active!}
-        setactive={setactive!}
+        selectMode={active!}
+        setselectMode={setactive!}
         sortby={sortby}
         setsortby={setsortby}
         sortedPost={sortedPost! ?? []}

@@ -83,25 +83,20 @@
         height: 40px;
         position: fixed;
         z-index: 100;
-        // background-color: white;
-        background-color: rgba(255, 255, 255, 0.19);
+        background-color: rgba(0, 0, 0, 0.4);
         box-shadow: initial;
         svg {
             color: white;
-            // opacity: 1;
         }
         &:focus-visible {
             outline: 0;
         }
         &:active {
-            // background-color: rgb(241, 241, 241);
             opacity: 0.8 !important;
         }
         @include mouse() {
             &:hover {
-                // background-color: rgb(228, 228, 228);
-                // background-color: rgb(241, 241, 241);
-                background-color: rgba(255, 255, 255, 0.562);
+                background-color: rgba(0, 0, 0, 0.6);
             }
         }
     }
@@ -407,6 +402,9 @@
         &:hover {
             background-color: var(--blue-origin);
             color: white;
+            svg {
+                color: white;
+            }
         }
         &:active {
             opacity: 0.5;

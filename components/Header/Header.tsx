@@ -19,6 +19,7 @@ import { Props } from "../../types/interfaces";
 import Navitems from "./Navitems";
 import SelectModal from "./SelectModal";
 import { PageContext, PageProps } from "../../context/PageContext";
+import router, { Router, useRouter } from "next/router";
 const Logo = () => {
   return (
     <div className={styles.logoContainer}>
@@ -66,7 +67,7 @@ export default function Header(props: any) {
       }
     };
   }, [selectMode, setSelectedId, setselectMode]);
-
+  const route = useRouter();
   return (
     <div ref={headerContainerRef} className={styles.headerContainer}>
       <header
@@ -80,7 +81,11 @@ export default function Header(props: any) {
         <Logo />
         {/* expired - {expired ? "true" : "false"} */}
         <div className={styles.action}>
-          <button title="Go to Messages" aria-label="Go to Messages">
+          <button
+            onClick={() => router.push("/chat")}
+            title="Go to Messages"
+            aria-label="Go to Messages"
+          >
             <FontAwesomeIcon
               style={{ color: "#0070f3", fontWeight: "bold" }}
               icon={faMessage}

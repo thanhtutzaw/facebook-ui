@@ -1,20 +1,11 @@
 import { SelectHTMLAttributes } from "react";
-import {
-  faCircleCheck,
-  faDotCircle,
-  faEarth,
-  faEllipsisH,
-  faGlobe,
-  faLock,
-  faUserGroup,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export function SelectVisiblity(
-  props: SelectHTMLAttributes<HTMLSelectElement>
+  props: {} & SelectHTMLAttributes<HTMLSelectElement>
 ) {
+  const { ...rests } = props;
   return (
     <select
-      {...props}
+      {...rests}
       aria-label="Change visibility"
       title="Who can view my post"
       tabIndex={-1}

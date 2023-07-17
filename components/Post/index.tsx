@@ -10,7 +10,7 @@ import { User } from "firebase/auth";
 interface PostProps {
   auth?: User;
   preventNavigate?: boolean;
-  active?: boolean;
+  selectMode?: boolean;
   profile: any;
   post: PostType;
   tabIndex?: number;
@@ -19,23 +19,22 @@ export default function Post({
   preventNavigate,
   profile,
   auth,
-  active,
+  selectMode,
   post,
   tabIndex,
 }: PostProps) {
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
-  const photoURL = "";
   const { showAction, setshowAction } = useContext(PageContext) as PageProps;
 
   useEffect(() => {
-    if (active) {
+    if (selectMode) {
       showAction && setshowAction?.("");
     } else {
       checked && setChecked(false);
     }
-  }, [active, checked, setshowAction, showAction]);
+  }, [selectMode, checked, setshowAction, showAction]);
 
   // useEffect(() => {
   //   if (tab !== "profile" || "") {
@@ -54,16 +53,16 @@ export default function Post({
         transition: "all 0.3s ease-in-out",
         borderRadius: checked ? "50px" : "0",
         border: checked ? "10px solid #0070f312" : "0px solid #0070f312",
-        userSelect: active ? "none" : "initial",
-        cursor: active ? "pointer" : "initial",
-        overflow: active ? "hidden" : "initial",
+        userSelect: selectMode ? "none" : "initial",
+        cursor: selectMode ? "pointer" : "initial",
+        overflow: selectMode ? "hidden" : "initial",
       }}
     >
       <Content
         preventNavigate={preventNavigate}
         profile={profile!}
         auth={auth!}
-        active={active!}
+        selectMode={selectMode!}
         checked={checked}
         client={client}
         uncheckRef={uncheckRef}
@@ -73,7 +72,7 @@ export default function Post({
         setShowmore={setShowmore}
         post={post}
       />
-      <Footer postId={post.id?.toString()!} tabIndex={tabIndex} />
+      <Footer post={post} tabIndex={tabIndex} />
     </div>
   );
 }

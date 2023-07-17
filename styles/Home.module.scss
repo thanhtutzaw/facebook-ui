@@ -542,6 +542,14 @@
     text-overflow: ellipsis;
     display: block !important;
     width: 100px;
+
+    margin-top: 0;
+    margin-bottom: 0;
+    flex: 1;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   svg {
     font-size: 1.2rem;
@@ -587,15 +595,6 @@
       outline: 2px solid var(--blue-origin);
       outline-offset: 2px;
     }
-  }
-  h2 {
-    margin-top: 0;
-    margin-bottom: 0;
-    flex: 1;
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 }
 

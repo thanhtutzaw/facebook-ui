@@ -6,12 +6,11 @@ import { deleteMultiple } from "../../lib/firestore/post";
 import { Props } from "../../types/interfaces";
 import BackHeader from "./BackHeader";
 import { PageContext, PageProps } from "../../context/PageContext";
-
+import s from "../../styles/Home.module.scss";
 function SelectModal() {
-  const { selectMode, setselectMode } = useContext(AppContext) as Props;
-  const { uid, selectedId, setSelectedId } = useContext(
-    PageContext
-  ) as PageProps;
+  const { uid, selectMode, setselectMode } = useContext(AppContext) as Props;
+  const { selectedId, setSelectedId } = useContext(PageContext) as PageProps;
+
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   useEscape(() => {
@@ -20,11 +19,8 @@ function SelectModal() {
     setSelectedId?.([]);
   });
   useEffect(() => {
-    const handleRouteStart = () => {
-      console.log("routestart");
-    };
+    const handleRouteStart = () => {};
     const handleRouteDone = () => {
-      console.log("routedone");
       setSelectedId?.([]);
       setselectMode?.(false);
     };
@@ -50,7 +46,7 @@ function SelectModal() {
         borderBottom: "4px solid rgb(235, 235, 235)",
       }}
     >
-      <h2>
+      <h2 className={s.title}>
         <span>{selectedId?.length}</span> Selected
       </h2>
       <button

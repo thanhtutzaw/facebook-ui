@@ -14,12 +14,32 @@ import { addPost } from "../../lib/firestore/post";
 import { uploadMedia } from "../../lib/storage";
 import s from "../../styles/Home.module.scss";
 import { Post } from "../../types/interfaces";
+import useLocalStorage from "../../hooks/useLocalStorage";
 export default function AddPost() {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
-  const [visibility, setVisibility] = useState("Public");
+  // const [visibility, setVisibility] = useState(
+  //   typeof window !== "undefined"
+  //     ? localStorage?.getItem("visibility") ?? "Public"
+  //     : "Public"
+  // );
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[] | Post["media"]>([]);
+  const [value, setvalue] = useState("");
+  const [visibility, setVisibility] = useState(value);
+  const { setLocal } = useLocalStorage("visibility", value);
+  // useEffect(() => {
+  //   const items = localStorage.getItem("visibility");
+  //   if (items) {
+  //     setVisibility(items);
+  //   }
+  // }, []);
+  useEffect(() => {
+    setvalue(localStorage.getItem("visibility")!);
+    const value = localStorage.getItem("visibility");
+    setVisibility(value!);
+  }, [visibility]);
+
   useEffect(() => {
     const input = textRef.current;
     input?.focus();
@@ -118,7 +138,7 @@ export default function AddPost() {
       setuploadButtonClicked?.(false);
     }
   }, [fileRef, setuploadButtonClicked, uploadButtonClicked]);
-  if (!auth?.currentUser?.uid) return <p>Redirecting... to /login</p>;
+  // if (!auth?.currentUser?.uid) return <p>Redirecting... to /login</p>;
   return (
     <div
       style={{
@@ -133,7 +153,23 @@ export default function AddPost() {
           router.back();
         }}
       >
-        <h2>Create Post</h2>
+        <div
+          style={{
+            display: "flex",
+            flex: "1",
+            overflow: "hidden",
+          }}
+        >
+          <h2
+            style={{
+              width: "initial",
+              flex: "initial",
+            }}
+            className={s.title}
+          >
+            Create Post
+          </h2>
+        </div>
         <button
           disabled={loading}
           type="submit"
@@ -305,9 +341,11 @@ export default function AddPost() {
           fileRef={fileRef!}
         />
         <SelectVisiblity
-          defaultValue={visibility}
+          value={visibility}
           onChange={(e) => {
             setVisibility(e.target.value);
+            setLocal(e.target.value);
+            console.log(e.target.value);
           }}
         />
       </div>

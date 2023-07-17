@@ -11,6 +11,7 @@ import { AppContext } from "../../../context/AppContext";
 import { PageContext, PageProps } from "../../../context/PageContext";
 import Story from "./Story/Story";
 import { Props } from "../../../types/interfaces";
+import style from "styled-jsx/style";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
 //   tabIndex: number;
 // };
@@ -18,9 +19,12 @@ export default function Home(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const router = useRouter();
   const { active, email, headerContainerRef } = useContext(AppContext) as Props;
-  const { setuploadButtonClicked } = useContext(PageContext) as PageProps;
+  const { shareAction, setuploadButtonClicked } = useContext(
+    PageContext
+  ) as PageProps;
   return (
     <div
+      // style={{ overflow: shareAction ? "hidden" : "initial" }}
       id="/"
       className={styles.home}
       onScroll={(e) => {

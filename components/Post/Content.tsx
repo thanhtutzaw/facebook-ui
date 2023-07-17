@@ -25,7 +25,7 @@ import DropDown from "./DropDown";
 export default function Content(props: {
   profile: any;
   preventNavigate?: boolean;
-  active: boolean;
+  selectMode: boolean;
   checked: boolean;
   client: boolean;
   uncheckRef: RefObject<HTMLButtonElement>;
@@ -39,7 +39,7 @@ export default function Content(props: {
   const {
     preventNavigate,
     auth,
-    active,
+    selectMode,
     checked,
     client,
     uncheckRef,
@@ -95,7 +95,7 @@ export default function Content(props: {
         pointerEvents: preventClick ? "none" : "initial",
       }}
       onClick={(e) => {
-        if (!active) {
+        if (!selectMode) {
           router.push({
             pathname: `${authorId}/${id?.toString()}`,
           });
@@ -105,7 +105,7 @@ export default function Content(props: {
       }}
     >
       <AuthorInfo navigateToProfile={navigateToProfile} post={post}>
-        {!active ? (
+        {!selectMode ? (
           <>
             <button
               className={styles.dot}
@@ -185,7 +185,6 @@ export default function Content(props: {
         contentEditable="false"
         suppressContentEditableWarning={true}
         className={styles.text}
-        // dangerouslySetInnerHTML={{ __html: textContent + seemore }}
         dangerouslySetInnerHTML={{
           __html: !production
             ? client

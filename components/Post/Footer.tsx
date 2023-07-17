@@ -10,36 +10,53 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
-import { StyleHTMLAttributes, useContext, useState } from "react";
+import {
+  RefObject,
+  StyleHTMLAttributes,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import styles from "./index.module.scss";
 import { PageContext, PageProps } from "../../context/PageContext";
+import { Post } from "../../types/interfaces";
 
 export function Footer(
   props: {
-    postId?: string;
+    post: Post;
     tabIndex?: number;
   } & StyleHTMLAttributes<HTMLDivElement>
 ) {
-  const { postId, tabIndex , ...rests} = props;
-  const { shareAction, setshareAction } = useContext(PageContext) as PageProps;
+  const { post, tabIndex, ...rests } = props;
+  const { id, authorId } = post;
+  const { dropdownRef, shareAction, setshareAction } = useContext(
+    PageContext
+  ) as PageProps;
+
   return (
     <div {...rests} className={styles.action}>
-      <button tabIndex={tabIndex}>
+      <button tabIndex={-1}>
         <FontAwesomeIcon icon={faThumbsUp} />
         <p>Like</p>
       </button>
-      <button tabIndex={tabIndex}>
+      <button tabIndex={-1} onClick={(e) => {}}>
         <FontAwesomeIcon icon={faComment} />
         <p>Comment</p>
       </button>
       <button
-        tabIndex={tabIndex}
+        style={
+          {
+            // overflow: "hidden",
+            // zIndex: shareAction === id ? "100" : "initial",
+          }
+        }
+        tabIndex={-1}
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          setshareAction?.(postId?.toString()!);
+          setshareAction?.(id?.toString()!);
 
-          if (shareAction === postId) {
+          if (shareAction === id) {
             setshareAction?.("");
           }
         }}
@@ -47,16 +64,45 @@ export function Footer(
         <FontAwesomeIcon icon={faShare} />
         <p>Share</p>
       </button>
+      {shareAction && (
+        <div
+          // onPointerMove={(e) => {
+          //   if (shareAction === id) {
+          //     e.preventDefault();
+          //     return;
+          //   }
+          // }}
+          // onScroll={(e) => {
+          //   if (shareAction === id) {
+          //     e.preventDefault();
+          //     return;
+          //   }
+          // }}
+          // onWheel={(e) => {
+          //   console.log(document.body.scrollTop);
+          //   e.preventDefault();
+          //   console.log("wheeling in backdrop");
+          //   return;
+          // }}
+          style={{
+            backgroundColor: "transparent",
+            position: "fixed",
+            inset: 0,
+            opacity: 0.3,
+          }}
+        />
+      )}
       <AnimatePresence>
-        {shareAction === postId && (
+        {shareAction === id && (
           <motion.div
-            key={postId}
+            ref={dropdownRef}
+            key={id}
             initial={{
               opacity: "0",
               scale: 0.8,
             }}
             animate={{
-              opacity: shareAction === postId ? 1 : 0,
+              opacity: shareAction === id ? 1 : 0,
               scale: 1,
             }}
             exit={{
@@ -73,7 +119,7 @@ export function Footer(
               onClick={async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                alert(postId);
+                alert(id);
               }}
             >
               <FontAwesomeIcon icon={faShareFromSquare} />
@@ -91,12 +137,6 @@ export function Footer(
           </motion.div>
         )}
       </AnimatePresence>
-      {/* <DropDown
-        setshareAction={setshareAction!}
-        shareAction={shareAction ?? ""}
-        // authorId={authorId.toString()!}
-        postId={postId?.toString()!}
-      /> */}
     </div>
   );
 }

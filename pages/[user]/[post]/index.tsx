@@ -423,7 +423,7 @@ export default function Post(props: { uid: string; post: Post }) {
             />
           </div>
         ) : (
-          <Footer style={{ borderBottom: "1px solid rgb(235, 235, 235)" }} />
+          <Footer post={post} style={{ borderBottom: "1px solid rgb(235, 235, 235)" }} />
         )}
       </div>
     </div>

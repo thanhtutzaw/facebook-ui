@@ -12,12 +12,21 @@ import {
 import { GetServerSideProps } from "next";
 import BackHeader from "../../components/Header/BackHeader";
 import s from "../../components/Sections/Profile/index.module.scss";
-import { db, fethUserDoc, postToJSON, userToJSON } from "../../lib/firebase";
+import {
+  app,
+  db,
+  fethUserDoc,
+  postToJSON,
+  userToJSON,
+} from "../../lib/firebase";
 import { getUserData } from "../../lib/firebaseAdmin";
 import Image from "next/image";
 import { PostList } from "../../components/Sections/Home/PostList";
 import { Post as PostType, account } from "../../types/interfaces";
 import { useRouter } from "next/router";
+import { useContext } from "react";
+import { PageContext, PageProps } from "../../context/PageContext";
+import { getAuth } from "firebase/auth";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;
@@ -83,6 +92,8 @@ export default function UserProfile({
   const { profile } = user;
   console.log(user);
   const router = useRouter();
+  const { uid, setview } = useContext(PageContext) as PageProps;
+  const auth = getAuth(app);
   return (
     <div className="user">
       <BackHeader
@@ -100,6 +111,14 @@ export default function UserProfile({
       >
         <div className={`${s.info}`}>
           <Image
+            onClick={() => {
+              setview?.({
+                src: user.photoURL
+                  ? user.photoURL
+                  : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+                name: `${account?.displayName ?? "Unknown User"}'s profile`,
+              });
+            }}
             priority={false}
             className={s.profile}
             width={500}
@@ -127,6 +146,16 @@ export default function UserProfile({
           >
             {profile?.bio === "" || !profile ? "No Bio Yet" : profile?.bio}
           </p>
+          {auth.currentUser?.uid !== account.uid && (
+            <button
+              onClick={() => {
+                router.push(`/chat/${account?.uid}`);
+              }}
+              className={s.editToggle}
+            >
+              Send Message
+            </button>
+          )}
         </div>
         <PostList tabIndex={1} posts={myPost} profile={profile} />
       </div>
