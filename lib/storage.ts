@@ -71,6 +71,7 @@ export async function uploadMedia(files: File[]) {
       media = uploadedFiles.filter((file) => file !== null) as Media[];
     })
     .catch((error) => {
+      alert(`Error uploading files: ${error}`);
       console.log("Error uploading files:", error);
       return null;
     });

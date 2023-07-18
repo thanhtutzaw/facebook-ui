@@ -7,6 +7,8 @@ import s from "./index.module.scss";
 import Image from "next/image";
 import { PageContext, PageProps } from "../../context/PageContext";
 import ImageWithFallback from "../ImageWithFallback";
+import { getAuth } from "firebase/auth";
+import { app } from "../../lib/firebase";
 
 export default function PhotoLayout(props: {
   margin?: boolean;
@@ -29,7 +31,8 @@ export default function PhotoLayout(props: {
     edit,
     post,
   } = props;
-  const { uid, setview } = useContext(PageContext) as PageProps;
+  const { setview } = useContext(PageContext) as PageProps;
+  const auth = getAuth(app);
   // useEffect(() => {
   //   window.onpopstate = () => {
   //     // if (viewRef?.current?.open) {
@@ -92,7 +95,7 @@ export default function PhotoLayout(props: {
                     style={{ objectFit: "contain", height: "auto" }}
                   />
                 )}
-                {edit && post?.authorId === uid && (
+                {edit && post?.authorId == auth?.currentUser?.uid && (
                   <button
                     onClick={(e) => {
                       e.preventDefault();

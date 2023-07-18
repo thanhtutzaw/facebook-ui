@@ -20,6 +20,7 @@ import {
 import styles from "./index.module.scss";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { Post } from "../../types/interfaces";
+import { useRouter } from "next/router";
 
 export function Footer(
   props: {
@@ -32,7 +33,7 @@ export function Footer(
   const { dropdownRef, shareAction, setshareAction } = useContext(
     PageContext
   ) as PageProps;
-
+  const router = useRouter();
   return (
     <div {...rests} className={styles.action}>
       <button tabIndex={-1}>
@@ -129,6 +130,7 @@ export function Footer(
               onClick={async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                router.push({ pathname: "/share", query: { id: id } });
               }}
             >
               <FontAwesomeIcon icon={faPen} />

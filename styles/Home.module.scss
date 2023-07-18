@@ -599,6 +599,7 @@
 }
 
 .addPost {
+  margin-block: 65px;
   video,
   img {
     background-color: black;
@@ -619,7 +620,7 @@
     padding: 1rem;
     cursor: text;
     // margin-top: 65px;
-    margin-block: 65px;
+    // margin-block: 65px;
     > div {
       outline: 0;
       border: 0;

@@ -33,6 +33,7 @@ import { Media, Post, Props } from "../../../types/interfaces";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import AuthorInfo from "../../../components/Post/AuthorInfo";
 import { calcLength } from "framer-motion";
+import FooterInput from "../../../components/Input/FooterInput";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -385,7 +386,7 @@ export default function Post(props: { uid: string; post: Post }) {
             cursor: canEdit ? "initial" : "default",
           }}
           dangerouslySetInnerHTML={{ __html: client ? text : "" }}
-        ></Input>
+        />
         <PhotoLayout
           margin={canEdit ? true : false}
           deleteFile={deleteFile}
@@ -396,34 +397,18 @@ export default function Post(props: { uid: string; post: Post }) {
           setFiles={setFiles}
         />
         {canEdit ? (
-          <div className={s.footer}>
-            <button
-              aria-label="upload media"
-              title="Upload media"
-              disabled={canEdit ? false : true}
-              tabIndex={-1}
-              onClick={() => {
-                fileRef?.current?.click();
-                console.log(files);
-              }}
-            >
-              <FontAwesomeIcon icon={faPhotoFilm} />
-            </button>
-            <MediaInput
-              setFiles={setFiles}
-              files={files as File[]}
-              fileRef={fileRef}
-            />
-            <SelectVisiblity
-              defaultValue={post.visibility}
-              disabled={canEdit ? false : true}
-              onChange={(e) => {
-                setVisibility(e.target.value);
-              }}
-            />
-          </div>
+          <FooterInput
+            fileRef={fileRef}
+            files={files}
+            setFiles={setFiles}
+            visibility={post.visibility}
+            setVisibility={setVisibility}
+          />
         ) : (
-          <Footer post={post} style={{ borderBottom: "1px solid rgb(235, 235, 235)" }} />
+          <Footer
+            post={post}
+            style={{ borderBottom: "1px solid rgb(235, 235, 235)" }}
+          />
         )}
       </div>
     </div>
