@@ -159,6 +159,6 @@ export default function UserProfile({
         </div>
         <PostList tabIndex={1} posts={myPost} profile={profile} />
       </div>
-    </div>
+  </div>
   );
 }

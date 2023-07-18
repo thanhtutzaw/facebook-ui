@@ -188,6 +188,12 @@
         color: white;
     }
 }
+.sharePostLink {
+    // border: 1px solid red !important;
+    a:hover .sharePostLink {
+        outline: 1px solid var(--blue-origin);
+    }
+}
 .post {
     &:only-child {
         .action {

@@ -15,6 +15,7 @@ import {
   StyleHTMLAttributes,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import styles from "./index.module.scss";
@@ -34,13 +35,22 @@ export function Footer(
     PageContext
   ) as PageProps;
   const router = useRouter();
+  const commentRef = useRef<HTMLDivElement>(null);
   return (
-    <div {...rests} className={styles.action}>
+    <div ref={commentRef} {...rests} className={styles.action}>
       <button tabIndex={-1}>
         <FontAwesomeIcon icon={faThumbsUp} />
         <p>Like</p>
       </button>
-      <button tabIndex={-1} onClick={(e) => {}}>
+      <button
+        tabIndex={-1}
+        onClick={(e) => {
+          router.push({
+            pathname: `${authorId}/${id?.toString()}`,
+            // hash: "comment",
+          });
+        }}
+      >
         <FontAwesomeIcon icon={faComment} />
         <p>Comment</p>
       </button>
@@ -130,7 +140,10 @@ export function Footer(
               onClick={async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                router.push({ pathname: "/share", query: { id: id } });
+                router.push({
+                  pathname: "/share",
+                  query: { author: authorId, id: id },
+                });
               }}
             >
               <FontAwesomeIcon icon={faPen} />

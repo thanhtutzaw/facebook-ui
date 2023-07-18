@@ -33,7 +33,7 @@ export default function Newfeed(props: NewfeedProps) {
   return (
     <div className={styles.postContainer}>
       <PostList
-        profile={profile}
+        // profile={profile}
         auth={user!}
         posts={posts!}
         tabIndex={tabIndex!}

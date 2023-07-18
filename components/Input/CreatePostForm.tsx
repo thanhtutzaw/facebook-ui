@@ -11,11 +11,13 @@ import Input from "./Input";
 import { getAuth } from "firebase/auth";
 import { app } from "../../lib/firebase";
 import useLocalStorage from "../../hooks/useLocalStorage";
-import { Post } from "../../types/interfaces";
+import { Post as PostTypes } from "../../types/interfaces";
 import s from "../../styles/Home.module.scss";
-export default function CreatePostForm(props: {
-  sharePost?: string | string[];
-}) {
+import Post from "../Post";
+import Link from "next/link";
+import error from "next/error";
+
+export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const { sharePost } = props;
   const dummyRef = useRef<HTMLDivElement>(null);
   const replace = useRef("");
@@ -23,7 +25,7 @@ export default function CreatePostForm(props: {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
-  const [files, setFiles] = useState<File[] | Post["media"]>([]);
+  const [files, setFiles] = useState<File[] | PostTypes["media"]>([]);
   const [value, setvalue] = useState("");
   const [visibility, setVisibility] = useState(value);
   const { setLocal } = useLocalStorage("visibility", value);
@@ -84,6 +86,11 @@ export default function CreatePostForm(props: {
       setuploadButtonClicked?.(false);
     }
   }, [fileRef, setuploadButtonClicked, uploadButtonClicked]);
+  const { setshareAction } = useContext(PageContext) as PageProps;
+  useEffect(() => {
+    setshareAction?.("");
+  }, [setshareAction]);
+  const { author, id } = router.query;
   return (
     <div
       style={{
@@ -124,7 +131,12 @@ export default function CreatePostForm(props: {
             textRef.current?.focus();
             const uid = auth.currentUser?.uid;
             if (!textRef.current || !uid) return;
-            if (textRef.current.innerHTML === "" && files?.length == 0) return;
+            if (
+              textRef.current.innerHTML === "" &&
+              !sharePost &&
+              files?.length == 0
+            )
+              return;
             // const text = textRef.current.innerHTML
             //   .replaceAll("</div>", "")
             //   .replace("<div>", "<br>")
@@ -159,11 +171,14 @@ export default function CreatePostForm(props: {
             try {
               setLoading(true);
               window.document.body.style.cursor = "wait";
-              const media = await uploadMedia(files as File[]);
-              // console.log(replace.current);
-              // console.log(textRef.current.innerHTML);
-              await addPost(uid, media, replace.current, visibility);
-              router.replace("/", undefined, { scroll: false });
+              // const media = await uploadMedia(files as File[]);
+              // await addPost(uid, media, replace.current, visibility);
+              // router.replace("/", undefined, { scroll: false });
+              const sharePost2 = {
+                author: sharePost?.authorId,
+                id: sharePost?.id,
+              };
+              console.log(sharePost2);
             } catch (error: any) {
               alert(error.message);
             } finally {
@@ -266,7 +281,11 @@ export default function CreatePostForm(props: {
         files={files!}
         edit={true}
       />
-      {sharePost && "Your are Sharing postId - " + sharePost}
+      {sharePost && (
+        <Link href={`${author}/${id}`}>
+          <Post shareMode={true} post={sharePost} />
+        </Link>
+      )}
       <FooterInput
         fileRef={fileRef!}
         files={files}

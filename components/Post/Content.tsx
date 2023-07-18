@@ -23,7 +23,7 @@ import { app } from "../../lib/firebase";
 import AdminDropDown from "./AdminDropDown";
 import DropDown from "./DropDown";
 export default function Content(props: {
-  profile: any;
+  shareMode?: boolean;
   preventNavigate?: boolean;
   selectMode: boolean;
   checked: boolean;
@@ -48,6 +48,7 @@ export default function Content(props: {
     showmore,
     setShowmore,
     post,
+    shareMode,
   } = props;
   const { author, authorId, id, text, visibility, createdAt } = post;
   const { preventClick, selectedId, setSelectedId, showAction, setshowAction } =
@@ -92,7 +93,7 @@ export default function Content(props: {
     <span
       style={{
         display: "block",
-        pointerEvents: preventClick ? "none" : "initial",
+        pointerEvents: preventClick || shareMode ? "none" : "initial",
       }}
       onClick={(e) => {
         if (!selectMode) {
@@ -174,7 +175,7 @@ export default function Content(props: {
         <DropDown
           setshowAction={setshowAction!}
           showAction={showAction ?? ""}
-          authorId={authorId.toString()!}
+          authorId={authorId?.toString()!}
           id={id?.toString()!}
         />
       )}

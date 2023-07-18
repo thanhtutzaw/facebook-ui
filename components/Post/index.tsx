@@ -1,27 +1,35 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { AppContext } from "../../context/AppContext";
-import { Post as PostType, Props } from "../../types/interfaces";
+import { User } from "firebase/auth";
+import {
+  CSSProperties,
+  HTMLAttributes,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { PageContext, PageProps } from "../../context/PageContext";
+import { Post as PostType } from "../../types/interfaces";
 import Content from "./Content";
 import { Footer } from "./Footer";
 import styles from "./index.module.scss";
-import { PageContext, PageProps } from "../../context/PageContext";
-import { User } from "firebase/auth";
 
 interface PostProps {
+  shareMode?: boolean;
   auth?: User;
   preventNavigate?: boolean;
   selectMode?: boolean;
-  profile: any;
   post: PostType;
   tabIndex?: number;
+  profile?: any;
 }
 export default function Post({
+  shareMode,
   preventNavigate,
-  profile,
   auth,
   selectMode,
   post,
   tabIndex,
+  profile
 }: PostProps) {
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
@@ -48,19 +56,22 @@ export default function Post({
   const [showmore, setShowmore] = useState(false);
   return (
     <div
-      className={styles.post}
+      className={`${styles.post}`}
       style={{
         transition: "all 0.3s ease-in-out",
         borderRadius: checked ? "50px" : "0",
         border: checked ? "10px solid #0070f312" : "0px solid #0070f312",
         userSelect: selectMode ? "none" : "initial",
-        cursor: selectMode ? "pointer" : "initial",
+        cursor: selectMode || shareMode ? "pointer" : "initial",
         overflow: selectMode ? "hidden" : "initial",
+
+        outline: shareMode ? "1px solid #e3e3e3" : "initial",
+        scale: shareMode ? ".9" : "initial",
+        pointerEvents: shareMode ? "none" : "initial",
       }}
     >
       <Content
         preventNavigate={preventNavigate}
-        profile={profile!}
         auth={auth!}
         selectMode={selectMode!}
         checked={checked}
@@ -71,6 +82,7 @@ export default function Post({
         showmore={showmore}
         setShowmore={setShowmore}
         post={post}
+        shareMode={shareMode}
       />
       <Footer post={post} tabIndex={tabIndex} />
     </div>

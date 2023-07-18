@@ -8,19 +8,18 @@ export const PostList = memo(
   (props: {
     preventNavigate?: boolean;
     selectMode?: boolean;
-    profile?: any;
     posts: PostType[];
     tabIndex?: number;
+    profile?:any;
     auth?: User;
   }) => {
     console.log("postList is rendering");
 
-    const { preventNavigate, profile, auth, selectMode, posts, tabIndex } =
-      props;
+    const {profile, preventNavigate, auth, selectMode, posts, tabIndex } = props;
     const { shareAction, setshareAction } = useContext(
       PageContext
     ) as PageProps;
-    
+
     return (
       <>
         <div
