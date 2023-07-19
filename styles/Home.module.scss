@@ -693,13 +693,16 @@
     }
   }
 }
+.addPost > a,
+.container > a {
+  -webkit-tap-highlight-color: rgba(0, 113, 243, 0.3);
+  display: flex;
+  width: 90%;
+  margin: 0 auto 1rem;
+}
 .container {
   margin-block: 65px;
-  // margin-top: 65px;
   // scroll-padding: 1rem;
-  >a{
-    margin-bottom: 1rem;
-  }
 }
 .input {
   padding: 1rem;

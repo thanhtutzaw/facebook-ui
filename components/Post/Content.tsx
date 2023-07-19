@@ -17,7 +17,7 @@ import { PageContext, PageProps } from "../../context/PageContext";
 import { Post as PostType } from "../../types/interfaces";
 import Actions from "./AdminDropDown";
 import PhotoLayout from "./PhotoLayout";
-import styles from "./index.module.scss";
+import s from "./index.module.scss";
 import AuthorInfo from "./AuthorInfo";
 import { app } from "../../lib/firebase";
 import AdminDropDown from "./AdminDropDown";
@@ -112,7 +112,7 @@ export default function Content(props: {
         {!selectMode ? (
           <>
             <button
-              className={styles.dot}
+              className={s.dot}
               aria-expanded={showAction !== ""}
               onClick={(e) => {
                 e.preventDefault();
@@ -133,7 +133,7 @@ export default function Content(props: {
               <button
                 aria-label="deselect post"
                 ref={uncheckRef}
-                className={styles.check}
+                className={s.check}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -167,6 +167,7 @@ export default function Content(props: {
           </>
         )}
       </AuthorInfo>
+      {/* {JSON.stringify(post, null, 4)} */}
       {isAdmin ? (
         <AdminDropDown
           setshowAction={setshowAction!}
@@ -182,13 +183,12 @@ export default function Content(props: {
           id={id?.toString()!}
         />
       )}
-
       <div
         suppressHydrationWarning={true}
         role="textbox"
         contentEditable="false"
         suppressContentEditableWarning={true}
-        className={styles.text}
+        className={s.text}
         dangerouslySetInnerHTML={{
           __html: !production
             ? client
@@ -229,6 +229,7 @@ export default function Content(props: {
       {post?.sharePost?.id && post.sharePost?.post === null && (
         <SharePostFallback />
       )}
+      {post.sharers && <p className={s.shareCount}>{post?.sharers?.length} shares</p>}
     </span>
   );
 }

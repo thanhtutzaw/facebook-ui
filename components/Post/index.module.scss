@@ -1,8 +1,8 @@
 @import "../../styles/mixins";
-.container{
-    >div{
+.container {
+    > div {
         // border:1px solid red !important;
-        margin: .5rem 0;
+        margin: 0.5rem 0;
     }
 }
 .media {
@@ -194,6 +194,18 @@
     }
 }
 .post {
+    .shareCount {
+        margin: 0;
+        /* margin-left: auto; */
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 0;
+        /* padding: 10px 4rem; */
+        padding-block: 5px;
+        padding-inline: 1rem;
+        /* padding-top: 0; */
+        font-size: 18px;
+    }
     width: 100%;
     > span > a:hover {
         // outline: rgb(136 136 136) solid 1px;

@@ -42,6 +42,7 @@ export interface sharedPost {
   media: Media[] | null;
 }
 export interface Post {
+  sharers?: string[];
   author: UserRecord;
   authorId: string | number;
   id?: string | number;

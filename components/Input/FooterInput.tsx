@@ -32,13 +32,22 @@ function FooterInput(props: {
         files={files as File[]}
         fileRef={fileRef}
       />
-      <SelectVisiblity
-        value={visibility}
-        onChange={(e) => {
-          setVisibility(e.target.value);
-          setLocal?.(e.target.value);
-        }}
-      />
+      {!setLocal ? (
+        <SelectVisiblity
+          defaultValue={visibility}
+          onChange={(e) => {
+            setVisibility(e.target.value);
+          }}
+        />
+      ) : (
+        <SelectVisiblity
+          value={visibility}
+          onChange={(e) => {
+            setVisibility(e.target.value);
+            setLocal?.(e.target.value);
+          }}
+        />
+      )}
     </div>
   );
 }

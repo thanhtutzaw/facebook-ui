@@ -85,6 +85,7 @@ export default function Post({
         post={post}
         shareMode={shareMode}
       />
+
       {!shareMode && <Footer post={post} tabIndex={tabIndex} />}
     </div>
   );

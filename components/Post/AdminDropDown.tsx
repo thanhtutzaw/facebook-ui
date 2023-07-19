@@ -45,7 +45,7 @@ function AdminDropDown(props: {
             authorId={authorId.toString()}
             id={id.toString()}
           />
-          
+
           <button
             onClick={async (e) => {
               e.preventDefault();
@@ -54,6 +54,7 @@ function AdminDropDown(props: {
                 pathname: `${authorId}/${id?.toString()}`,
                 query: { edit: true },
               });
+              setshowAction("");
             }}
           >
             <FontAwesomeIcon icon={faEdit} />

@@ -4,6 +4,7 @@ import {
   QuerySnapshot,
   Timestamp,
   addDoc,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -65,18 +66,37 @@ export async function addPost(
   text: string,
   files?: any[],
   sharePost?: { author: string; id: string }
+  // originalPost?: Post
 ) {
   const Ref = doc(collection(db, `users/${uid}/posts`));
-  const data = {
+  const post = {
     id: Ref.id,
     text: text,
     // media: files.map((file) => ({ ...file, id: doc().id })),
     media: files,
-    sharePost,
     visibility: visibility,
     createdAt: serverTimestamp(),
     updatedAt: "Invalid Date",
   };
+  let data;
+  const targetPostRef = doc(
+    db,
+    `users/${sharePost?.author}/posts/${sharePost?.id}`
+  );
+  const originalPost = await getDoc(targetPostRef);
+  if (sharePost) {
+    data = {
+      ...post,
+      sharePost,
+    };
+    // console.log();
+    await updateDoc(targetPostRef, {
+      ...originalPost.data(),
+      sharers: arrayUnion(uid),
+    });
+  } else {
+    data = { ...post };
+  }
   try {
     console.log({ data });
     await setDoc(Ref, data);
@@ -94,30 +114,25 @@ export async function updatePost(
 ) {
   const Ref = doc(db, `users/${uid}/posts/${id}`);
   let data;
+  const post = {
+    authorId: myPost.authorId,
+    text,
+    media: files,
+    visibility,
+    createdAt: new Timestamp(
+      myPost.createdAt.seconds,
+      myPost.createdAt.nanoseconds
+    ),
+    updatedAt: serverTimestamp(),
+  };
   if (myPost.sharePost) {
     data = {
-      authorId: myPost.authorId,
-      text,
+      ...post,
       sharePost: { author: myPost.sharePost?.author, id: myPost.sharePost?.id },
-      media: files,
-      visibility,
-      createdAt: new Timestamp(
-        myPost.createdAt.seconds,
-        myPost.createdAt.nanoseconds
-      ),
-      updatedAt: serverTimestamp(),
     };
   } else {
     data = {
-      authorId: myPost.authorId,
-      text,
-      media: files,
-      visibility,
-      createdAt: new Timestamp(
-        myPost.createdAt.seconds,
-        myPost.createdAt.nanoseconds
-      ),
-      updatedAt: serverTimestamp(),
+      ...post,
     };
   }
   try {

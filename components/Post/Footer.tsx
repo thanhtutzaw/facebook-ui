@@ -82,7 +82,7 @@ export function Footer(
         }}
       >
         <FontAwesomeIcon icon={faShare} />
-        <p>Share</p>
+        <p>Share </p>
       </button>
       {shareAction && (
         <div
@@ -148,8 +148,11 @@ export function Footer(
                     "",
                     [],
                     sharePost
+                    // post
                   );
                   router.replace("/", undefined, { scroll: false });
+                  setshareAction?.("");
+                  window.document.body.style.cursor = "initial";
                 } catch (error: any) {
                   alert(error.message);
                 }
@@ -166,6 +169,7 @@ export function Footer(
                   pathname: "/share",
                   query: { author: authorId, id: id },
                 });
+                setshareAction?.("");
               }}
             >
               <FontAwesomeIcon icon={faPen} />

@@ -171,20 +171,26 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
               setLoading(true);
               window.document.body.style.cursor = "wait";
               // await addPost(uid, media, replace.current, visibility);
-              // const media = await uploadMedia(files as File[]);
-              // const sharePost2 = {
-              //   author: sharePost?.authorId?.toString()!,
-              //   id: sharePost?.id?.toString()!,
-              // };
-              // console.log(sharePost2);
-              // await addPost(
-              //   uid,
-              //   visibility,
-              //   replace.current,
-              //   media,
-              //   sharePost && sharePost2
-              // );
-              // router.replace("/", undefined, { scroll: false });
+              const media = await uploadMedia(files as File[]);
+              const sharePost2 = {
+                author: sharePost?.authorId?.toString()!,
+                id: sharePost?.id?.toString()!,
+                sharer:[{id:uid}]
+              };
+              console.log(sharePost2);
+              if (sharePost) {
+                await addPost(
+                  uid,
+                  visibility,
+                  replace.current,
+                  media,
+                  sharePost2
+                );
+              } else {
+                await addPost(uid, visibility, replace.current, media);
+              }
+              router.replace("/", undefined, { scroll: false });
+              window.document.body.style.cursor = "initial";
             } catch (error: any) {
               alert(error.message);
             } finally {
