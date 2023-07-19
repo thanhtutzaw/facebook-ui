@@ -107,20 +107,27 @@ export default function Profile() {
               `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
             );
             const posts = await getDoc(postDoc);
-            const post = await postToJSON(
-              posts as DocumentSnapshot<DocumentData>
-            );
-            const author = auth?.currentUser;
-            const sharePost = {
-              ...post,
-              author: {
-                ...author,
-              },
-            };
-            return {
-              ...p,
-              sharePost: { ...p.sharePost, post: { ...sharePost } },
-            };
+            if (posts.exists()) {
+              const post = await postToJSON(
+                posts as DocumentSnapshot<DocumentData>
+              );
+              const author = auth?.currentUser;
+              const sharePost = {
+                ...post,
+                author: {
+                  ...author,
+                },
+              };
+              return {
+                ...p,
+                sharePost: { ...p.sharePost, post: { ...sharePost } },
+              };
+            } else {
+              return {
+                ...p,
+                sharePost: { ...p.sharePost, post: null },
+              };
+            }
           }
           return {
             ...p,

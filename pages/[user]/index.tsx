@@ -144,7 +144,7 @@ export default function UserProfile({
           >
             {profile?.bio === "" || !profile ? "No Bio Yet" : profile?.bio}
           </p>
-          {auth.currentUser?.uid !== account.uid && (
+          {auth.currentUser?.uid !== account?.uid && (
             <button
               onClick={() => {
                 router.push(`/chat/${account?.uid}`);

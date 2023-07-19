@@ -432,7 +432,6 @@ export default function Page(props: { uid: string; post: PostType }) {
         {post.sharePost?.post && (
           <>
             <Link
-              style={{ scale: ".9", display: "flex" }}
               onClick={(e) => {
                 e.stopPropagation();
               }}

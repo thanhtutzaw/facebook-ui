@@ -51,7 +51,7 @@ export default function AuthorInfo(props: {
             <span onClick={navigateToProfile}>
               {author?.displayName ?? "Unknow User"}
             </span>
-            {post.sharePost?.post && "shared a Post"}
+            {post.sharePost && <>&nbsp; shared a Post</>}
           </p>
           <div
             style={{
@@ -59,7 +59,7 @@ export default function AuthorInfo(props: {
               gap: "10px",
             }}
           >
-            <p suppressHydrationWarning>
+            <p className={styles.date} suppressHydrationWarning>
               {new Timestamp(createdAt?.seconds, createdAt?.nanoseconds)
                 .toDate()
                 .toLocaleDateString("en-US", {

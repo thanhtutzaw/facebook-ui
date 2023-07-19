@@ -1,5 +1,10 @@
 @import "../../styles/mixins";
-
+.container{
+    >div{
+        // border:1px solid red !important;
+        margin: .5rem 0;
+    }
+}
 .media {
     display: flex;
     flex-direction: column;
@@ -196,6 +201,9 @@
     }
     > span > a {
         -webkit-tap-highlight-color: rgba(0, 113, 243, 0.3);
+        display: flex;
+        width: 90%;
+        margin: 0 auto;
         margin-bottom: 1rem;
         &:active {
             opacity: 0.8;
@@ -253,6 +261,7 @@
         cursor: default;
         word-break: break-word;
         white-space: pre-line;
+        margin-block: 10px 20px;
         a {
             color: var(--blue-origin);
             &:hover {
@@ -327,6 +336,9 @@
         background-color: rgb(207, 207, 207);
     }
     .authorInfo {
+        .date {
+            color: dimgray;
+        }
         .name,
         img {
             cursor: pointer;
@@ -340,7 +352,7 @@
             }
             font-weight: 500;
             font-size: 18px;
-            gap: 8px;
+            // gap: 8px;
         }
         user-select: none;
         display: flex;
@@ -442,8 +454,9 @@
     display: flex;
     justify-content: flex-end;
     position: relative;
-    border-top: 1px solid rgb(235, 235, 235);
+    // border-top: 1px solid rgb(235, 235, 235);
     // border-block: 1px solid rgb(235, 235, 235);
+    border-top: 1px solid #dcdcdc;
     svg {
         font-size: 18px;
         color: rgb(39, 39, 39);

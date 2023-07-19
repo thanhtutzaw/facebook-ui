@@ -3,7 +3,7 @@ import { Post as PostType } from "../../../types/interfaces";
 import Post from "../../Post";
 import { memo, useContext, useEffect } from "react";
 import { PageContext, PageProps } from "../../../context/PageContext";
-
+import s from '../../Post/index.module.scss'
 export const PostList = memo(
   (props: {
     preventNavigate?: boolean;
@@ -23,6 +23,7 @@ export const PostList = memo(
     return (
       <>
         <div
+        className={s.container}
           style={{
             willChange: "margin",
             marginInline: selectMode ? "2rem" : "initial",

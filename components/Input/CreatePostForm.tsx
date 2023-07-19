@@ -288,7 +288,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
         edit={true}
       />
       {sharePost && (
-        <Link style={{ scale: ".9", display: "flex" }} href={`${author}/${id}`}>
+        <Link href={`${author}/${id}`}>
           <Post shareMode={true} post={sharePost} />
         </Link>
       )}

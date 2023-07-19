@@ -2,14 +2,21 @@ export default function SharePostFallback() {
   return (
     <div
       style={{
-        scale: ".9",
-        padding: "1.5rem 1rem",
+        padding: "0 1rem",
         backgroundColor: "#ededed",
-        marginBottom: "1rem",
+        overflow: "hidden",
       }}
     >
-      <h3>Post Unavailable</h3>
-      <p>This post is unavailable because it was deleted.</p>
+      <h3 style={{ fontWeight: "600", margin: "10px 0" }}>Post Unavailable</h3>
+      <p
+        style={{
+          color: "gray",
+          marginTop: "4px",
+          fontSize: "18px",
+        }}
+      >
+        This post is unavailable because it was deleted.
+      </p>
     </div>
   );
 }

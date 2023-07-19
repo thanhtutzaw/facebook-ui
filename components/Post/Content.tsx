@@ -215,7 +215,6 @@ export default function Content(props: {
       {post.sharePost?.post && (
         <>
           <Link
-            style={{ scale: ".9", display: "flex" }}
             onClick={(e) => {
               e.stopPropagation();
             }}
