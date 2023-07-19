@@ -2,6 +2,8 @@ import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {
+  DocumentData,
+  DocumentSnapshot,
   collection,
   collectionGroup,
   doc,
@@ -22,6 +24,7 @@ import { app, db, fethUserDoc, postToJSON, userToJSON } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import { Props, account } from "../types/interfaces";
 import Header from "../components/Header/Header";
+import { fetchPosts } from "../lib/firestore/post";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -54,6 +57,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       orderBy("createdAt", "desc")
     );
     const postSnap = await getDocs(postQuery);
+
+    // const post = await fetchPosts(postSnap);
     const posts = await Promise.all(
       postSnap.docs.map(async (doc) => {
         const post = await postToJSON(doc);
@@ -67,7 +72,37 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         };
       })
     );
-    // console.log(posts);
+    const newPosts = await Promise.all(
+      posts.map(async (p) => {
+        if (p.sharePost) {
+          const postDoc = doc(
+            db,
+            `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
+          );
+          const posts = await getDoc(postDoc);
+          const post = await postToJSON(
+            posts as DocumentSnapshot<DocumentData>
+          );
+          const UserRecord = await getUserData(post.authorId);
+          const userJSON = userToJSON(UserRecord);
+          const sharePost = {
+            ...post,
+            author: {
+              ...userJSON,
+            },
+          };
+          return {
+            ...p,
+            sharePost: { ...p.sharePost, post: { ...sharePost } },
+          };
+        }
+        return {
+          ...p,
+        };
+      })
+    );
+
+    // console.log(newPosts);
     const profileQuery = doc(db, `/users/${uid}`);
     const profileSnap = await getDoc(profileQuery);
     const profileData = profileSnap.data()!;
@@ -98,7 +133,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         expired,
         uid,
         allUsers,
-        posts,
+        posts: newPosts,
         email,
         username: username ?? "Unknown",
         profile: profile! ?? null,

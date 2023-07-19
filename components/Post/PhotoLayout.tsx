@@ -62,7 +62,8 @@ export default function PhotoLayout(props: {
       <>
         <div
           className={s.media}
-          style={{ marginBottom: margin ? "65px" : "initial" }}
+          // style={{ marginBottom: margin ? "65px" : "initial" }}
+          style={{ marginBottom: "initial" }}
         >
           {files &&
             files.map((file: any, i: number) => (

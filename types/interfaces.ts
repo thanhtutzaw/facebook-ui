@@ -16,12 +16,38 @@ export interface SavedPost {
   authorId: string;
   postId: string;
 }
+export interface sharePost {
+  id: string | number;
+  author: string;
+  postId: string;
+}
+export interface sharedPost {
+  author: UserRecord;
+  authorId: string | number;
+  id?: string | number;
+  text: string;
+  visibility: string;
+  createdAt:
+    | {
+        seconds: number;
+        nanoseconds: number;
+      }
+    | Timestamp;
+  updatedAt:
+    | {
+        seconds: number;
+        nanoseconds: number;
+      }
+    | Timestamp;
+  media: Media[] | null;
+}
 export interface Post {
   author: UserRecord;
   authorId: string | number;
   id?: string | number;
   text: string;
   visibility: string;
+  sharePost?: { author: string; id: string; post?: sharedPost };
   createdAt:
     | {
         seconds: number;

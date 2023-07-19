@@ -1,39 +1,29 @@
-import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { getAuth } from "firebase/auth";
 import {
   DocumentData,
   DocumentSnapshot,
-  QueryDocumentSnapshot,
-  QuerySnapshot,
-  collection,
   doc,
   getDoc,
-  getDocs,
-  query,
-  where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useEffect, useRef, useState } from "react";
 import BackHeader from "../../../components/Header/BackHeader";
+import FooterInput from "../../../components/Input/FooterInput";
 import Input from "../../../components/Input/Input";
-import MediaInput from "../../../components/Input/MediaInput";
+import Post from "../../../components/Post";
+import AuthorInfo from "../../../components/Post/AuthorInfo";
 import { Footer } from "../../../components/Post/Footer";
 import PhotoLayout from "../../../components/Post/PhotoLayout";
-import { SelectVisiblity } from "../../../components/Post/SelectVisiblity";
 import { app, db, postToJSON, userToJSON } from "../../../lib/firebase";
 import { getUserData, verifyIdToken } from "../../../lib/firebaseAdmin";
 import { updatePost } from "../../../lib/firestore/post";
 import { deleteStorage, uploadMedia } from "../../../lib/storage";
 import s from "../../../styles/Home.module.scss";
-import { Media, Post, Props } from "../../../types/interfaces";
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
-import AuthorInfo from "../../../components/Post/AuthorInfo";
-import { calcLength } from "framer-motion";
-import FooterInput from "../../../components/Input/FooterInput";
+import { Media, Post as PostType, Props } from "../../../types/interfaces";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -64,17 +54,63 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
     // console.log(posts);
 
-    const posts = await getDoc(postDoc);
-    const post = await postToJSON(posts as DocumentSnapshot<DocumentData>);
-    const UserRecord = await getUserData(post.authorId);
+    const postSnap = await getDoc(postDoc);
+    const postJSON = await postToJSON(
+      postSnap as DocumentSnapshot<DocumentData>
+    );
+    const UserRecord = await getUserData(postJSON.authorId);
     const userJSON = userToJSON(UserRecord) as UserRecord;
-    const newPost = {
-      ...post,
+    const post = {
+      ...postJSON,
       author: {
         ...userJSON,
       },
     };
-    console.log(newPost);
+    // const newPost = await Promise.all(
+    let newPost;
+    if (post.sharePost) {
+      const postDoc = doc(
+        db,
+        `users/${post.sharePost?.author}/posts/${post.sharePost?.id}`
+      );
+      const posts = await getDoc(postDoc);
+      const postJSON = await postToJSON(
+        posts as DocumentSnapshot<DocumentData>
+      );
+      const UserRecord = await getUserData(postJSON.authorId);
+      const userJSON = userToJSON(UserRecord);
+      const sharePost = {
+        ...postJSON,
+        author: {
+          ...userJSON,
+        },
+      };
+      newPost = {
+        ...post,
+        sharePost: { ...postJSON.sharePost, post: { ...sharePost } },
+      };
+    } else {
+      newPost = {
+        ...post,
+      };
+    }
+
+    if (
+      !postSnap.exists() ||
+      (uid !== post.authorId && post.visibility === "Onlyme")
+    ) {
+      return {
+        notFound: true,
+      };
+    } else {
+      return {
+        props: {
+          uid,
+          post: newPost,
+        },
+      };
+    }
+
     // const postDoc = query(
     //   collection(db, `users/${authorId}/posts`),
     //   where("id", "==", postId)
@@ -168,21 +204,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     //     notFound: true,
     //   };
     // }
-    if (
-      !posts.exists() ||
-      (uid !== post.authorId && post.visibility === "Onlyme")
-    ) {
-      return {
-        notFound: true,
-      };
-    } else {
-      return {
-        props: {
-          uid,
-          post: newPost,
-        },
-      };
-    }
   } catch (error) {
     console.log("SSR Error " + error);
     return {
@@ -193,15 +214,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     };
   }
 };
-export default function Post(props: { uid: string; post: Post }) {
+export default function Page(props: { uid: string; post: PostType }) {
   const { uid, post } = props;
   const router = useRouter();
   const [visibility, setVisibility] = useState(post?.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
-  const [files, setFiles] = useState<Post["media"] | File[]>([
+  const [files, setFiles] = useState<PostType["media"] | File[]>([
     ...(post?.media ?? []),
   ]);
-  const [deleteFile, setdeleteFile] = useState<Post["media"]>([]);
+  const [deleteFile, setdeleteFile] = useState<PostType["media"]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const text = post.text
@@ -281,7 +302,7 @@ export default function Post(props: { uid: string; post: Post }) {
   }, []);
   const [loading, setLoading] = useState(false);
 
-  let newMedia: Post["media"] = [];
+  let newMedia: PostType["media"] = [];
   const isPostOwner = post?.authorId === uid;
   const canEdit = router.query.edit && isPostOwner;
   useEffect(() => {
@@ -376,7 +397,10 @@ export default function Post(props: { uid: string; post: Post }) {
           </button>
         )}
       </BackHeader>
-      <div className={s.container}>
+      <div
+        style={{ marginBottom: canEdit ? "65px" : "0" }}
+        className={s.container}
+      >
         <AuthorInfo navigateToProfile={navigateToProfile} post={post} />
         <Input
           role="textbox"
@@ -396,6 +420,19 @@ export default function Post(props: { uid: string; post: Post }) {
           files={files}
           setFiles={setFiles}
         />
+        {post.sharePost?.post && (
+          <>
+            <Link
+              style={{ scale: ".9", display: "flex" }}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              href={`${post.sharePost?.post.authorId}/${post.sharePost?.post.id}`}
+            >
+              <Post shareMode={true} post={post.sharePost.post} />
+            </Link>
+          </>
+        )}
         {canEdit ? (
           <FooterInput
             fileRef={fileRef}

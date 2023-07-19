@@ -47,11 +47,11 @@ export default function AuthorInfo(props: {
           }}
         >
           {/* {JSON.stringify(post, null, 4)} */}
-          <p className={styles.name} onClick={navigateToProfile}>
-            {author?.displayName ?? "Unknow User"}
-            {/* {authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
-              ? "Peter 1"
-              : `${author?.displayName}`} */}
+          <p className={styles.name}>
+            <span onClick={navigateToProfile}>
+              {author?.displayName ?? "Unknow User"}
+            </span>
+            {post.sharePost?.post && "shared a Post"}
           </p>
           <div
             style={{

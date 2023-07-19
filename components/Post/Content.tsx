@@ -14,7 +14,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { RefObject, useContext, useEffect, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { Post } from "../../types/interfaces";
+import { Post as PostType } from "../../types/interfaces";
 import Actions from "./AdminDropDown";
 import PhotoLayout from "./PhotoLayout";
 import styles from "./index.module.scss";
@@ -22,6 +22,8 @@ import AuthorInfo from "./AuthorInfo";
 import { app } from "../../lib/firebase";
 import AdminDropDown from "./AdminDropDown";
 import DropDown from "./DropDown";
+import Post from ".";
+import Link from "next/link";
 export default function Content(props: {
   shareMode?: boolean;
   preventNavigate?: boolean;
@@ -33,7 +35,7 @@ export default function Content(props: {
   checkRef: RefObject<HTMLButtonElement>;
   showmore: boolean;
   setShowmore: Function;
-  post: Post;
+  post: PostType;
   auth: User;
 }) {
   const {
@@ -206,6 +208,24 @@ export default function Content(props: {
         }}
       />
       <PhotoLayout files={post.media} preview />
+      {/* {post.sharePost && 
+      // <Post post={post.sharePost}/>
+      } */}
+      {post.sharePost?.post && (
+        <>
+          <Link
+            style={{ scale: ".9", display: "flex" }}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            href={`${post.sharePost?.post.authorId}/${post.sharePost?.post.id}`}
+          >
+            {/* <span style={{ scale: ".9", display: "flex" }}> */}
+            <Post shareMode={true} post={post.sharePost.post} />
+            {/* </span> */}
+          </Link>
+        </>
+      )}
     </span>
   );
 }

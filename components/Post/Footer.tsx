@@ -22,6 +22,9 @@ import styles from "./index.module.scss";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { Post } from "../../types/interfaces";
 import { useRouter } from "next/router";
+import { addPost } from "../../lib/firestore/post";
+import { getAuth } from "firebase/auth";
+import { app } from "../../lib/firebase";
 
 export function Footer(
   props: {
@@ -36,6 +39,12 @@ export function Footer(
   ) as PageProps;
   const router = useRouter();
   const commentRef = useRef<HTMLDivElement>(null);
+  const auth = getAuth(app);
+  const [savedVisibility, setsavedVisibility] = useState("");
+  useEffect(() => {
+    setsavedVisibility(localStorage.getItem("visibility")!);
+  }, []);
+
   return (
     <div ref={commentRef} {...rests} className={styles.action}>
       <button tabIndex={-1}>
@@ -130,7 +139,20 @@ export function Footer(
               onClick={async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                alert(id);
+                const sharePost = { author: authorId.toString(), id: id! };
+                try {
+                  window.document.body.style.cursor = "wait";
+                  await addPost(
+                    auth?.currentUser?.uid!,
+                    savedVisibility,
+                    "",
+                    [],
+                    sharePost
+                  );
+                  router.replace("/", undefined, { scroll: false });
+                } catch (error: any) {
+                  alert(error.message);
+                }
               }}
             >
               <FontAwesomeIcon icon={faShareFromSquare} />

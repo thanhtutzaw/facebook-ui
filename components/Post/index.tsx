@@ -29,7 +29,7 @@ export default function Post({
   selectMode,
   post,
   tabIndex,
-  profile
+  profile,
 }: PostProps) {
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
@@ -66,8 +66,9 @@ export default function Post({
         overflow: selectMode ? "hidden" : "initial",
 
         outline: shareMode ? "1px solid #e3e3e3" : "initial",
-        scale: shareMode ? ".9" : "initial",
         pointerEvents: shareMode ? "none" : "initial",
+        // scale: shareMode ? ".9" : "initial",
+        // margin: shareMode ? "0 auto" : "initial",
       }}
     >
       <Content
@@ -84,7 +85,7 @@ export default function Post({
         post={post}
         shareMode={shareMode}
       />
-      <Footer post={post} tabIndex={tabIndex} />
+      {!shareMode && <Footer post={post} tabIndex={tabIndex} />}
     </div>
   );
 }

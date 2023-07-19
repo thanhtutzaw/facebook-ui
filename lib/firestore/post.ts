@@ -1,22 +1,70 @@
 import {
+  DocumentData,
+  DocumentSnapshot,
+  QuerySnapshot,
   Timestamp,
   addDoc,
   collection,
   deleteDoc,
   doc,
+  getDoc,
   serverTimestamp,
   setDoc,
   updateDoc,
   writeBatch,
 } from "firebase/firestore";
-import { db } from "../firebase";
+import { db, postToJSON, userToJSON } from "../firebase";
 import { Post } from "../../types/interfaces";
-
+import { getUserData } from "../firebaseAdmin";
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
+export async function fetchPosts(postSnap: QuerySnapshot<DocumentData>) {
+  // const posts = await Promise.all(
+  //   postSnap.docs.map(async (doc) => {
+  //     const post = await postToJSON(doc);
+  //     const UserRecord = (await getUserData(post.authorId)) as UserRecord;
+  //     const userJSON = userToJSON(UserRecord);
+  //     return {
+  //       ...post,
+  //       author: {
+  //         ...userJSON,
+  //       },
+  //     };
+  //   })
+  // );
+  // return await Promise.all(
+  //   posts.map(async (p) => {
+  //     if (p.sharePost) {
+  //       const postDoc = doc(
+  //         db,
+  //         `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
+  //       );
+  //       const posts = await getDoc(postDoc);
+  //       const post = await postToJSON(posts as DocumentSnapshot<DocumentData>);
+  //       const UserRecord = await getUserData(post.authorId);
+  //       const userJSON = userToJSON(UserRecord);
+  //       const sharePost = {
+  //         ...post,
+  //         author: {
+  //           ...userJSON,
+  //         },
+  //       };
+  //       return {
+  //         ...p,
+  //         sharePost: { ...p.sharePost, post: { ...sharePost } },
+  //       };
+  //     }
+  //     return {
+  //       ...p,
+  //     };
+  //   })
+  // );
+}
 export async function addPost(
   uid: string,
-  files: any[],
+  visibility: string,
   text: string,
-  visibility: string
+  files?: any[],
+  sharePost?: { author: string; id: string }
 ) {
   const Ref = doc(collection(db, `users/${uid}/posts`));
   const data = {
@@ -24,6 +72,7 @@ export async function addPost(
     text: text,
     // media: files.map((file) => ({ ...file, id: doc().id })),
     media: files,
+    sharePost,
     visibility: visibility,
     createdAt: serverTimestamp(),
     updatedAt: "Invalid Date",

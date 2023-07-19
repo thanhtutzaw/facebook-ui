@@ -171,14 +171,21 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
             try {
               setLoading(true);
               window.document.body.style.cursor = "wait";
-              // const media = await uploadMedia(files as File[]);
               // await addPost(uid, media, replace.current, visibility);
+              // const media = await uploadMedia(files as File[]);
+              // const sharePost2 = {
+              //   author: sharePost?.authorId?.toString()!,
+              //   id: sharePost?.id?.toString()!,
+              // };
+              // console.log(sharePost2);
+              // await addPost(
+              //   uid,
+              //   visibility,
+              //   replace.current,
+              //   media,
+              //   sharePost && sharePost2
+              // );
               // router.replace("/", undefined, { scroll: false });
-              const sharePost2 = {
-                author: sharePost?.authorId,
-                id: sharePost?.id,
-              };
-              console.log(sharePost2);
             } catch (error: any) {
               alert(error.message);
             } finally {
@@ -282,7 +289,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
         edit={true}
       />
       {sharePost && (
-        <Link href={`${author}/${id}`}>
+        <Link style={{ scale: ".9", display: "flex" }} href={`${author}/${id}`}>
           <Post shareMode={true} post={sharePost} />
         </Link>
       )}
