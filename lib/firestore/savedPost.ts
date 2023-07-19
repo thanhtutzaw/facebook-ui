@@ -59,8 +59,6 @@ export async function addSavedPost(authorId: string, postId: string) {
       alert("Post saved successfully!");
     }
     // try {
-    //   // console.log({ data });
-    //   // console.log({ ...data });
     //   // await updateDoc(Ref, { savedPost: { ...data } });
     //   // await setDoc(Ref, { ...data }, { merge: true });
     //   await addDoc(Ref, { ...data });
@@ -107,8 +105,6 @@ export async function unSavePost(newData: SavedPost[]) {
     // alert("Unsaved successfully!");
     // }
     // try {
-    //   // console.log({ data });
-    //   // console.log({ ...data });
     //   // await updateDoc(Ref, { savedPost: { ...data } });
     //   // await setDoc(Ref, { ...data }, { merge: true });
     //   await addDoc(Ref, { ...data });

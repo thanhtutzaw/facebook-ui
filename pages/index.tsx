@@ -46,7 +46,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const account = (await getUserData(uid as string))! as UserRecord;
     const accountJSON = userToJSON(account);
     // console.log("isVerify " + token.email_verified);
-    // console.log(token);
     let expired = false;
     const postQuery = query(
       collectionGroup(db, `posts`),
@@ -80,21 +79,28 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
             `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
           );
           const posts = await getDoc(postDoc);
-          const post = await postToJSON(
-            posts as DocumentSnapshot<DocumentData>
-          );
-          const UserRecord = await getUserData(post.authorId);
-          const userJSON = userToJSON(UserRecord);
-          const sharePost = {
-            ...post,
-            author: {
-              ...userJSON,
-            },
-          };
-          return {
-            ...p,
-            sharePost: { ...p.sharePost, post: { ...sharePost } },
-          };
+          if (posts.exists()) {
+            const post = await postToJSON(
+              posts as DocumentSnapshot<DocumentData>
+            );
+            const UserRecord = await getUserData(post.authorId);
+            const userJSON = userToJSON(UserRecord);
+            const sharePost = {
+              ...post,
+              author: {
+                ...userJSON,
+              },
+            };
+            return {
+              ...p,
+              sharePost: { ...p.sharePost, post: { ...sharePost } },
+            };
+          } else {
+            return {
+              ...p,
+              sharePost: { ...p.sharePost, post: null },
+            };
+          }
         }
         return {
           ...p,
@@ -102,7 +108,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       })
     );
 
-    // console.log(newPosts);
     const profileQuery = doc(db, `/users/${uid}`);
     const profileSnap = await getDoc(profileQuery);
     const profileData = profileSnap.data()!;

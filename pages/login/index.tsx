@@ -180,7 +180,6 @@ export default function Login({ uid }: { uid: string }) {
       // );
       // setsignup(false);
     } catch (error: any) {
-      // console.log(error.code);
       // if (error.code === "auth/email-already-in-use") {
       //   const email = document.getElementsByName("email")[0];
       //   email.focus();

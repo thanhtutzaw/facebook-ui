@@ -1,14 +1,16 @@
-import { faGear, faSort } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
 import {
+  DocumentData,
+  DocumentSnapshot,
   Unsubscribe,
   collection,
+  doc,
+  getDoc,
   onSnapshot,
   orderBy,
   query,
 } from "firebase/firestore";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 import {
   ChangeEvent,
@@ -22,16 +24,12 @@ import { AppContext } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
 import { app, db, postToJSON, userToJSON } from "../../../lib/firebase";
 import { changeProfile } from "../../../lib/profile";
-import { Post as PostType, Props, account } from "../../../types/interfaces";
-import Post from "../../Post";
-import s from "./index.module.scss";
-import SortDate from "./SortDate";
-import { PostList } from "../Home/PostList";
-import ProfileInfo from "./ProfileInfo";
-import EditProfile from "./EditProfile";
+import { Props, account } from "../../../types/interfaces";
 import Content from "./Content";
+import EditProfile from "./EditProfile";
+import ProfileInfo from "./ProfileInfo";
+import s from "./index.module.scss";
 import { getUserData } from "../../../lib/firebaseAdmin";
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
 export default function Profile() {
   const photoURL = "";
   const { username, profile, email, sortedPost, setsortedPost } = useContext(
@@ -90,11 +88,8 @@ export default function Profile() {
     );
     unsub = onSnapshot(postQuery, async (snapshot) => {
       const posts = await Promise.all(
-        // snapshot.docs.map(async (doc) => )
         snapshot.docs.map(async (doc) => {
           const post = await postToJSON(doc);
-          // const UserRecord = (await getUserData(post.authorId)) as UserRecord;
-          // const userJSON = userToJSON(UserRecord);
           const author = auth?.currentUser;
           return {
             ...post,
@@ -104,7 +99,35 @@ export default function Profile() {
           };
         })
       );
-      setsortedPost?.(posts);
+      const newPosts = await Promise.all(
+        posts.map(async (p) => {
+          if (p.sharePost) {
+            const postDoc = doc(
+              db,
+              `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
+            );
+            const posts = await getDoc(postDoc);
+            const post = await postToJSON(
+              posts as DocumentSnapshot<DocumentData>
+            );
+            const author = auth?.currentUser;
+            const sharePost = {
+              ...post,
+              author: {
+                ...author,
+              },
+            };
+            return {
+              ...p,
+              sharePost: { ...p.sharePost, post: { ...sharePost } },
+            };
+          }
+          return {
+            ...p,
+          };
+        })
+      );
+      setsortedPost?.(newPosts);
       setLoading(false);
     });
     return () => {

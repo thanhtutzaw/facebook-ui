@@ -24,6 +24,7 @@ import AdminDropDown from "./AdminDropDown";
 import DropDown from "./DropDown";
 import Post from ".";
 import Link from "next/link";
+import SharePostFallback from "./SharePostFallback";
 export default function Content(props: {
   shareMode?: boolean;
   preventNavigate?: boolean;
@@ -225,6 +226,9 @@ export default function Content(props: {
             {/* </span> */}
           </Link>
         </>
+      )}
+      {post?.sharePost?.id && post.sharePost?.post === null && (
+        <SharePostFallback />
       )}
     </span>
   );

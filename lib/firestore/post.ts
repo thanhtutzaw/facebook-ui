@@ -93,17 +93,33 @@ export async function updatePost(
   visibility: string
 ) {
   const Ref = doc(db, `users/${uid}/posts/${id}`);
-  const data = {
-    ...myPost,
-    text: text,
-    media: files,
-    visibility: visibility,
-    createdAt: new Timestamp(
-      myPost.createdAt.seconds,
-      myPost.createdAt.nanoseconds
-    ),
-    updatedAt: serverTimestamp(),
-  };
+  let data;
+  if (myPost.sharePost) {
+    data = {
+      authorId: myPost.authorId,
+      text,
+      sharePost: { author: myPost.sharePost?.author, id: myPost.sharePost?.id },
+      media: files,
+      visibility,
+      createdAt: new Timestamp(
+        myPost.createdAt.seconds,
+        myPost.createdAt.nanoseconds
+      ),
+      updatedAt: serverTimestamp(),
+    };
+  } else {
+    data = {
+      authorId: myPost.authorId,
+      text,
+      media: files,
+      visibility,
+      createdAt: new Timestamp(
+        myPost.createdAt.seconds,
+        myPost.createdAt.nanoseconds
+      ),
+      updatedAt: serverTimestamp(),
+    };
+  }
   try {
     console.log({ data });
     await updateDoc(Ref, data);

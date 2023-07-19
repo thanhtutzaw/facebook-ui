@@ -52,7 +52,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
         const posts = await getDoc(postDoc);
         const post = await postToJSON(posts);
-        // console.log(post.authorId);
         const UserRecord = (await getUserData(post.authorId)) as UserRecord;
         const userJSON = userToJSON(UserRecord);
         return {
@@ -63,14 +62,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
       })
     );
-    // console.log(posts);
     // const savedPost = await Promise.all(
     //   savedPostSnap.docs.map(async (doc) => {
     //     // const post = await postToJSON(doc);
     //     // const UserRecord = (await getUserData(post.authorId)) as UserRecord;
     //     // const userJSON = userToJSON(UserRecord);
     //     const data = doc.data() as SavedPost;
-    //     // console.log(data);
     //     // return { ...data };
     //     return data;
     //   })
@@ -130,7 +127,6 @@ export default function Page(props: { savedPosts: Post[]; uid: string }) {
                   // const unsavedPost = savedPosts.filter(
                   //   (savepost) => savepost.postId !== s.postId
                   // );
-                  // // console.log(newArray);
                   // await unSavePost(unsavedPost);
                   router.push("/saved", undefined, { scroll: false });
                 }}

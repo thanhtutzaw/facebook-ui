@@ -41,7 +41,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     );
     const account = (await getUserData(uid as string))! as UserRecord;
     const accountJSON = userToJSON(account);
-    console.log(account);
     const myPostSnap = await getDocs(mypostQuery);
     const myPost = await Promise.all(
       myPostSnap.docs.map(async (doc) => {
@@ -90,7 +89,6 @@ export default function UserProfile({
   myPost: PostType[];
 }) {
   const { profile } = user;
-  console.log(user);
   const router = useRouter();
   const { uid, setview } = useContext(PageContext) as PageProps;
   const auth = getAuth(app);
@@ -159,6 +157,6 @@ export default function UserProfile({
         </div>
         <PostList tabIndex={1} posts={myPost} profile={profile} />
       </div>
-  </div>
+    </div>
   );
 }

@@ -49,11 +49,9 @@ export default function PhotoLayout(props: {
   //     // if (!viewRef.current?.open) return;
   //     // viewRef.current.close();
   //     // if (exitWithoutSaving) {
-  //     //   console.log("back (exit without save)");
   //     //   // confirmModalRef.current?.close();
   //     //   // confirmModalRef?.current.showModal();
   //     // } else {
-  //     //   console.log("back (just close)");
   //     // }
   //   };
   // }, [viewRef]);

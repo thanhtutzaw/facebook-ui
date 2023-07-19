@@ -46,7 +46,6 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (input?.textContent || files?.length! > 0) {
         e.preventDefault();
-        console.log(e);
         e.returnValue = ""; // Chrome requires this line
       }
     };

@@ -28,9 +28,6 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
     const { uid } = token;
     let expired = false;
     const { author: authorId, id: postId } = context.query;
-    console.log(postId);
-    // const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
-    // console.log();
     const isAdmin = uid === authorId;
     // const postDoc = isAdmin
     //   ? query(
@@ -42,9 +39,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
     //       where("id", "==", postId)
     //       // where("visibility", "not-in", ["Friend", "Public"])
     //     );
-    console.log(authorId, postId);
     const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
-    // console.log(posts);
 
     const posts = await getDoc(postDoc);
     const post = await postToJSON(posts as DocumentSnapshot<DocumentData>);
@@ -81,7 +76,6 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
 };
 export default function Page(props: { post: Post }) {
   const { post } = props;
-  
 
   return <CreatePostForm sharePost={post} />;
 }

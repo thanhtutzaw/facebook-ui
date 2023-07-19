@@ -47,7 +47,7 @@ export interface Post {
   id?: string | number;
   text: string;
   visibility: string;
-  sharePost?: { author: string; id: string; post?: sharedPost };
+  sharePost?: { author: string; id: string; post?: sharedPost | null };
   createdAt:
     | {
         seconds: number;

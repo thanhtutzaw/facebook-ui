@@ -10,7 +10,6 @@ export function useUser() {
   const [user, setuser] = useState<User | null>(null);
   useEffect(() => {
     onIdTokenChanged(auth, async (user) => {
-      console.log("is this running");
       if (!user) {
         nookies.destroy(undefined, "token");
         setuser(null);

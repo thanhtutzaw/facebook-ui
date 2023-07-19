@@ -24,6 +24,7 @@ import { updatePost } from "../../../lib/firestore/post";
 import { deleteStorage, uploadMedia } from "../../../lib/storage";
 import s from "../../../styles/Home.module.scss";
 import { Media, Post as PostType, Props } from "../../../types/interfaces";
+import SharePostFallback from "../../../components/Post/SharePostFallback";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -37,9 +38,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const { uid } = token;
     let expired = false;
     const { user: authorId, post: postId } = context.query;
-    console.log(postId);
-    // const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
-    // console.log();
     const isAdmin = uid === authorId;
     // const postDoc = isAdmin
     //   ? query(
@@ -52,7 +50,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     //       // where("visibility", "not-in", ["Friend", "Public"])
     //     );
     const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
-    // console.log(posts);
 
     const postSnap = await getDoc(postDoc);
     const postJSON = await postToJSON(
@@ -74,24 +71,41 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         `users/${post.sharePost?.author}/posts/${post.sharePost?.id}`
       );
       const posts = await getDoc(postDoc);
-      const postJSON = await postToJSON(
-        posts as DocumentSnapshot<DocumentData>
-      );
-      const UserRecord = await getUserData(postJSON.authorId);
-      const userJSON = userToJSON(UserRecord);
-      const sharePost = {
-        ...postJSON,
-        author: {
-          ...userJSON,
-        },
-      };
-      newPost = {
-        ...post,
-        sharePost: { ...postJSON.sharePost, post: { ...sharePost } },
-      };
+
+      if (posts.exists()) {
+        const postJSON = await postToJSON(
+          posts as DocumentSnapshot<DocumentData>
+        );
+        const UserRecord = await getUserData(postJSON.authorId);
+        const userJSON = userToJSON(UserRecord);
+        const sharePost = {
+          ...postJSON,
+          author: {
+            ...userJSON,
+          },
+        };
+        newPost = {
+          ...post,
+          sharePost: {
+            id: post.sharePost.id,
+            author: post.sharePost.author,
+            post: { ...sharePost },
+          },
+        };
+      } else {
+        newPost = {
+          ...post,
+          sharePost: {
+            id: post.sharePost.id,
+            author: post.sharePost.author,
+            post: null,
+          },
+        };
+      }
     } else {
       newPost = {
         ...post,
+        // sharePost: { ...postJSON.sharePost },
       };
     }
 
@@ -124,7 +138,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // const postSnap = await getDocs(postDoc);
     // const newPost = await Promise.all(
     //   postSnap.docs.map(async (post) => {
-    //     // console.log(post.data());
     //     return await postToJSON(post);
     //   })
     // );
@@ -143,7 +156,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // const docPost = postSnap.docs.map((doc) => {
     //   return doc;
     // });
-    // console.log(docPost);
     // const post = await postToJSON();
     // const UserRecord = await getUserData(post.authorId);
     // const userJSON = userToJSON(UserRecord) as UserRecord;
@@ -153,7 +165,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     //     ...userJSON,
     //   },
     // };
-    // console.log({ newPost });
     // if(posts.data().)
     // if (!posts.exists()) {
     //   return {
@@ -189,7 +200,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     //     //     //   notFound: true,
     //     //     // };
     // if (postDoc.id !== postId) {
-    //   console.log("post not exist");
     //   return {
     //     notFound: true,
     //   };
@@ -199,7 +209,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     //   uid !== post.authorId &&
     //   post.visibility === "Onlyme"
     // ) {
-    //   console.log("onlyme");
     //   return {
     //     notFound: true,
     //   };
@@ -275,7 +284,6 @@ export default function Page(props: { uid: string; post: PostType }) {
         if (confirm("Changes you made may not be saved.")) {
           return true;
         } else {
-          // console.log(currentPath);
           window.history.pushState(null, document.title, currentPath);
           return false;
         }
@@ -369,6 +377,7 @@ export default function Page(props: { uid: string; post: PostType }) {
                   console.log("Error uploading and Deleting files:", error);
                   return null;
                 }
+                console.log(post.sharePost?.author);
                 await updatePost(
                   uid,
                   InputRef.current.innerHTML
@@ -432,6 +441,9 @@ export default function Page(props: { uid: string; post: PostType }) {
               <Post shareMode={true} post={post.sharePost.post} />
             </Link>
           </>
+        )}
+        {post?.sharePost?.id && post.sharePost?.post === null && (
+          <SharePostFallback />
         )}
         {canEdit ? (
           <FooterInput
