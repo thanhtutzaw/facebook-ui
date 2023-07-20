@@ -92,6 +92,10 @@ export default function Content(props: {
     });
   }, []);
   const isAdmin = authUser?.uid === authorId;
+
+  const [reaction, setReaction] = useState({
+    like: ["1a", "2d"],
+  });
   return (
     <span
       style={{
@@ -114,6 +118,7 @@ export default function Content(props: {
             <button
               className={s.dot}
               aria-expanded={showAction !== ""}
+              aria-label="open post option dropdown"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -229,7 +234,12 @@ export default function Content(props: {
       {post?.sharePost?.id && post.sharePost?.post === null && (
         <SharePostFallback />
       )}
-      {post.sharers && <p className={s.shareCount}>{post?.sharers?.length} shares</p>}
+      <div className={s.socialCount}>
+        <p className={s.shareCount}>{reaction.like.length} likes</p>
+        {post.sharers && (
+          <p className={s.shareCount}>{post?.sharers?.length} shares</p>
+        )}
+      </div>
     </span>
   );
 }

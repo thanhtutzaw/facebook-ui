@@ -194,6 +194,13 @@
     }
 }
 .post {
+    .socialCount {
+        display: flex;
+        justify-content: space-between;
+        padding-inline: 0.8rem;
+        color: dimgray;
+        padding-block: 5px;
+    }
     .shareCount {
         margin: 0;
         /* margin-left: auto; */
@@ -202,7 +209,7 @@
         padding-top: 0;
         /* padding: 10px 4rem; */
         padding-block: 5px;
-        padding-inline: 1rem;
+        // padding-inline: 1rem;
         /* padding-top: 0; */
         font-size: 18px;
     }
@@ -216,7 +223,7 @@
         display: flex;
         width: 90%;
         margin: 0 auto;
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
         &:active {
             opacity: 0.8;
         }
@@ -263,17 +270,17 @@
         white-space: initial;
     }
     .text {
-        padding: 10px 0.8rem 1rem;
-        padding: 6px 1rem 0;
         padding: 0 0.8rem;
-        margin: 0;
-        margin-block: 0.5rem 1rem;
-        // margin-block: 0.5rem 0;
-        outline: 0;
-        cursor: default;
-        word-break: break-word;
-        white-space: pre-line;
-        margin-block: 10px 20px;
+    margin: 0;
+    margin-block: 0.5rem 1rem;
+    outline: 0;
+    cursor: default;
+    word-break: break-word;
+    white-space: pre-line;
+    /* margin-block: 10px 20px; */
+    /* padding-bottom: 0; */
+    /* margin-bottom: 15px; */
+    margin-bottom: 0.5rem;
         a {
             color: var(--blue-origin);
             &:hover {

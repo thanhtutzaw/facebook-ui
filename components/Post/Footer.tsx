@@ -2,29 +2,25 @@ import {
   faComment,
   faPen,
   faShare,
-  faShareAlt,
-  faShareAltSquare,
   faShareFromSquare,
   faThumbsUp,
-  faUndo,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getAuth } from "firebase/auth";
 import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/router";
 import {
-  RefObject,
   StyleHTMLAttributes,
   useContext,
   useEffect,
   useRef,
   useState,
 } from "react";
-import styles from "./index.module.scss";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { Post } from "../../types/interfaces";
-import { useRouter } from "next/router";
-import { addPost } from "../../lib/firestore/post";
-import { getAuth } from "firebase/auth";
 import { app } from "../../lib/firebase";
+import { addPost } from "../../lib/firestore/post";
+import { Post } from "../../types/interfaces";
+import styles from "./index.module.scss";
 
 export function Footer(
   props: {
@@ -44,14 +40,46 @@ export function Footer(
   useEffect(() => {
     setsavedVisibility(localStorage.getItem("visibility")!);
   }, []);
-
+  const [reaction, setReaction] = useState({
+    like: ["1a", "2d"],
+  });
+  const [reactionAction, setreactionAction] = useState("");
   return (
-    <div ref={commentRef} {...rests} className={styles.action}>
-      <button tabIndex={-1}>
+    <div
+      // onMouseLeave={() => {
+      //   setTimeout(() => {
+      //     setreactionAction("");
+      //   }, 500);
+      //   // console.log("like");
+      // }}
+      ref={commentRef}
+      {...rests}
+      className={styles.action}
+    >
+      <button
+        onClick={() => {
+          // console.log(reaction.like.length);
+          console.log(reaction);
+        }}
+        onMouseEnter={() => {
+          setreactionAction(id?.toString()!);
+          // console.log("like");
+        }}
+        onMouseLeave={() => {
+          setTimeout(() => {
+            setreactionAction("");
+          }, 500);
+          // console.log("like");
+        }}
+        aria-label="React Post"
+        title="Like"
+        tabIndex={-1}
+      >
         <FontAwesomeIcon icon={faThumbsUp} />
-        <p>Like</p>
+        <p>Like </p>
       </button>
       <button
+        title="Comment"
         tabIndex={-1}
         onClick={(e) => {
           router.push({
@@ -71,6 +99,9 @@ export function Footer(
           }
         }
         tabIndex={-1}
+        aria-expanded={shareAction !== ""}
+        aria-label="open share options"
+        title="Share"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -84,6 +115,118 @@ export function Footer(
         <FontAwesomeIcon icon={faShare} />
         <p>Share </p>
       </button>
+      <AnimatePresence>
+        {reactionAction === id && (
+          <motion.div
+            onMouseEnter={() => {
+              setreactionAction(id?.toString()!);
+            }}
+            className={styles.actions}
+            initial={{
+              opacity: "0",
+              scale: 0.8,
+            }}
+            animate={{
+              opacity: reactionAction === id ? 1 : 0,
+              scale: 1,
+            }}
+            exit={{
+              opacity: "0",
+              scale: 0.8,
+            }}
+            transition={{
+              duration: 0.15,
+            }}
+            style={{
+              minWidth: "initial",
+              position: "absolute",
+              right: "initial",
+              left: "0px",
+              top: "-4rem",
+              margin: "0 1rem",
+            }}
+          >
+            <button
+              onMouseUp={() => {
+                alert("hey");
+              }}
+              onClick={async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <FontAwesomeIcon icon={faThumbsUp} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {reactionAction === id && (
+          <motion.div
+            ref={dropdownRef}
+            key={id}
+            initial={{
+              opacity: "0",
+              scale: 0.8,
+            }}
+            animate={{
+              opacity: shareAction === id ? 1 : 0,
+              scale: 1,
+            }}
+            exit={{
+              opacity: "0",
+              scale: 0.8,
+            }}
+            transition={{
+              duration: 0.15,
+            }}
+            className={styles.actions}
+            style={{ top: "-6rem", right: "1rem" }}
+          >
+            <button
+              onClick={async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const sharePost = { author: authorId.toString(), id: id! };
+                try {
+                  window.document.body.style.cursor = "wait";
+                  await addPost(
+                    auth?.currentUser?.uid!,
+                    savedVisibility,
+                    "",
+                    [],
+                    sharePost
+                    // post
+                  );
+                  router.replace("/", undefined, { scroll: false });
+                  setshareAction?.("");
+                  window.document.body.style.cursor = "initial";
+                } catch (error: any) {
+                  alert(error.message);
+                }
+              }}
+            >
+              <FontAwesomeIcon icon={faShareFromSquare} />
+              Share Now
+            </button>
+            <button
+              onClick={async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                router.push({
+                  pathname: "/share",
+                  query: { author: authorId, id: id },
+                });
+                setshareAction?.("");
+              }}
+            >
+              <FontAwesomeIcon icon={faPen} />
+              Write Post
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {shareAction && (
         <div
           // onPointerMove={(e) => {

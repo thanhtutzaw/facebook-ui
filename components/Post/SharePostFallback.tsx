@@ -2,7 +2,7 @@ export default function SharePostFallback() {
   return (
     <div
       style={{
-        padding: "0 1rem",
+        padding: "0 .8rem",
         backgroundColor: "#ededed",
         overflow: "hidden",
       }}
