@@ -8,6 +8,7 @@ import { Post } from "../../../types/interfaces";
 import { RefObject } from "react";
 
 export default function Content(props: {
+  error: any;
   infoRef: RefObject<HTMLHeadElement>;
   headerRef: RefObject<HTMLHeadElement>;
   isSticky: boolean;
@@ -22,6 +23,7 @@ export default function Content(props: {
   sortedPost: Post[];
 }) {
   const {
+    error,
     isSticky,
     headerRef,
     loading,
@@ -110,10 +112,7 @@ export default function Content(props: {
           )}
         </AnimatePresence>
       </header>
-
-      {/* {tab === "profile" && (
-        
-      )} */}
+      {error && <p>Unexpected Error Occured ! {error}</p>}
       {loading ? (
         <p style={{ textAlign: "center" }}>Loading</p>
       ) : (

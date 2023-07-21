@@ -25,6 +25,12 @@ import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import { Props, account } from "../types/interfaces";
 import Header from "../components/Header/Header";
 import { fetchPosts } from "../lib/firestore/post";
+// import QueryClient from "react-query/types/core";
+// import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -195,6 +201,8 @@ export default function Home({
 
   // }, [active]);
   // if (!email) return <></>;
+  const queryClient = new QueryClient();
+
   if (expired) return <Welcome expired={expired} />;
   return (
     <AppProvider
@@ -207,8 +215,11 @@ export default function Home({
       email={email}
       account={account}
     >
-      <Header indicatorRef={indicatorRef} />
-      <Tabs indicatorRef={indicatorRef} />
+      <QueryClientProvider client={queryClient}>
+        <Header indicatorRef={indicatorRef} />
+        <Tabs indicatorRef={indicatorRef} />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </AppProvider>
   );
 }

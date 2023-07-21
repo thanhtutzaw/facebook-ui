@@ -1,6 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import { ReactNode, RefObject } from "react";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import { User } from "firebase/auth";
 export type account = {
   email: string;
   password: string;
@@ -22,7 +23,7 @@ export interface sharePost {
   postId: string;
 }
 export interface sharedPost {
-  author: UserRecord;
+  author: UserRecord | User;
   authorId: string | number;
   id?: string | number;
   text: string;
@@ -43,7 +44,7 @@ export interface sharedPost {
 }
 export interface Post {
   sharers?: string[];
-  author: UserRecord;
+  author: UserRecord | User;
   authorId: string | number;
   id?: string | number;
   text: string;
