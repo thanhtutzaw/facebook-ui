@@ -23,6 +23,7 @@ export interface sharePost {
   postId: string;
 }
 export interface sharedPost {
+  like?: string[];
   author: UserRecord | User;
   authorId: string | number;
   id?: string | number;
@@ -43,6 +44,7 @@ export interface sharedPost {
   media: Media[] | null;
 }
 export interface Post {
+  like?: string[];
   sharers?: string[];
   author: UserRecord | User;
   authorId: string | number;

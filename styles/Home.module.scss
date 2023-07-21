@@ -621,7 +621,8 @@
   }
 
   .input {
-    padding: 1rem;
+    border: 5px solid green;
+    // padding: 1rem;
     cursor: text;
     // margin-top: 65px;
     // margin-block: 65px;
@@ -693,19 +694,20 @@
     }
   }
 }
-.addPost > a,
-.container > a {
-  -webkit-tap-highlight-color: rgba(0, 113, 243, 0.3);
-  display: flex;
-  width: 90%;
-  margin: 0 auto 1rem;
-}
+// .addPost > a,
+// .container > a {
+//   -webkit-tap-highlight-color: rgba(0, 113, 243, 0.3);
+//   display: flex;
+//   width: 90%;
+//   margin: 0 auto 1rem;
+// }
 .container {
   margin-block: 65px;
-  // scroll-padding: 1rem;
 }
 .input {
-  padding: 1rem;
+  // padding: 1rem;
+  padding: 0.5rem 0.8rem 0.8rem;
+
   outline: 0;
   border: 0;
   cursor: default;

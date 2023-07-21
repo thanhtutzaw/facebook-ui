@@ -3,19 +3,20 @@ import { Post as PostType } from "../../../types/interfaces";
 import Post from "../../Post";
 import { memo, useContext, useEffect } from "react";
 import { PageContext, PageProps } from "../../../context/PageContext";
-import s from '../../Post/index.module.scss'
+import s from "../../Post/index.module.scss";
 export const PostList = memo(
   (props: {
     preventNavigate?: boolean;
     selectMode?: boolean;
     posts: PostType[];
     tabIndex?: number;
-    profile?:any;
+    profile?: any;
     auth?: User;
   }) => {
     console.log("postList is rendering");
 
-    const {profile, preventNavigate, auth, selectMode, posts, tabIndex } = props;
+    const { profile, preventNavigate, auth, selectMode, posts, tabIndex } =
+      props;
     const { shareAction, setshareAction } = useContext(
       PageContext
     ) as PageProps;
@@ -23,7 +24,7 @@ export const PostList = memo(
     return (
       <>
         <div
-        className={s.container}
+          className={s.container}
           style={{
             willChange: "margin",
             marginInline: selectMode ? "2rem" : "initial",

@@ -16,6 +16,8 @@ import s from "../../styles/Home.module.scss";
 import Post from "../Post";
 import Link from "next/link";
 import error from "next/error";
+import { SharePreview } from "../Post/SharePreview";
+import { query } from "firebase/firestore";
 
 export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const { sharePost } = props;
@@ -175,7 +177,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
               const sharePost2 = {
                 author: sharePost?.authorId?.toString()!,
                 id: sharePost?.id?.toString()!,
-                sharer:[{id:uid}]
+                sharer: [{ id: uid }],
               };
               console.log(sharePost2);
               if (sharePost) {
@@ -293,10 +295,8 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
         files={files!}
         edit={true}
       />
-      {sharePost && (
-        <Link href={`${author}/${id}`}>
-          <Post shareMode={true} post={sharePost} />
-        </Link>
+      {router.query.author && (
+        <SharePreview query={router.query} post={sharePost!} />
       )}
       <FooterInput
         fileRef={fileRef!}

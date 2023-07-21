@@ -22,9 +22,10 @@ import AuthorInfo from "./AuthorInfo";
 import { app } from "../../lib/firebase";
 import AdminDropDown from "./AdminDropDown";
 import DropDown from "./DropDown";
-import Post from ".";
-import Link from "next/link";
 import SharePostFallback from "./SharePostFallback";
+import { SharePreview } from "./SharePreview";
+import { SocialCount } from "./SocialCount";
+import Input from "../Input/Input";
 export default function Content(props: {
   shareMode?: boolean;
   preventNavigate?: boolean;
@@ -93,9 +94,6 @@ export default function Content(props: {
   }, []);
   const isAdmin = authUser?.uid === authorId;
 
-  const [reaction, setReaction] = useState({
-    like: ["1a", "2d"],
-  });
   return (
     <span
       style={{
@@ -188,12 +186,7 @@ export default function Content(props: {
           id={id?.toString()!}
         />
       )}
-      <div
-        suppressHydrationWarning={true}
-        role="textbox"
-        contentEditable="false"
-        suppressContentEditableWarning={true}
-        className={s.text}
+      <Input
         dangerouslySetInnerHTML={{
           __html: !production
             ? client
@@ -212,34 +205,16 @@ export default function Content(props: {
             setShowmore((prev: boolean) => !prev);
           }
         }}
+        className={s.text}
+        suppressContentEditableWarning={true}
+        suppressHydrationWarning={true}
+        role="textbox"
+        contentEditable={false}
       />
       <PhotoLayout files={post.media} preview />
-      {/* {post.sharePost && 
-      // <Post post={post.sharePost}/>
-      } */}
-      {post.sharePost?.post && (
-        <>
-          <Link
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-            href={`${post.sharePost?.post.authorId}/${post.sharePost?.post.id}`}
-          >
-            {/* <span style={{ scale: ".9", display: "flex" }}> */}
-            <Post shareMode={true} post={post.sharePost.post} />
-            {/* </span> */}
-          </Link>
-        </>
-      )}
-      {post?.sharePost?.id && post.sharePost?.post === null && (
-        <SharePostFallback />
-      )}
-      <div className={s.socialCount}>
-        <p className={s.shareCount}>{reaction.like.length} likes</p>
-        {post.sharers && (
-          <p className={s.shareCount}>{post?.sharers?.length} shares</p>
-        )}
-      </div>
+      <SharePreview post={post} />
+
+      <SocialCount post={post} />
     </span>
   );
 }

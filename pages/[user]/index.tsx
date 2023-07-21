@@ -1,6 +1,7 @@
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import {
   DocumentData,
+  DocumentSnapshot,
   collection,
   doc,
   getDoc,
@@ -55,12 +56,49 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
       })
     );
+    const newPosts = await Promise.all(
+      myPost.map(async (p) => {
+        if (p.sharePost) {
+          const postDoc = doc(
+            db,
+            `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
+          );
+          const posts = await getDoc(postDoc);
+          if (posts.exists()) {
+            const post = await postToJSON(
+              posts as DocumentSnapshot<DocumentData>
+            );
+            const UserRecord = await getUserData(post.authorId);
+            const userJSON = userToJSON(UserRecord);
+            const sharePost = {
+              ...post,
+              author: {
+                ...userJSON,
+              },
+            };
+            return {
+              ...p,
+              sharePost: { ...p.sharePost, post: { ...sharePost } },
+            };
+          } else {
+            return {
+              ...p,
+              sharePost: { ...p.sharePost, post: null },
+            };
+          }
+        }
+        return {
+          ...p,
+        };
+      })
+    );
+
     if (user.exists()) {
       return {
         props: {
           account: accountJSON ?? null,
           user: user.data(),
-          myPost,
+          myPost: newPosts,
         },
       };
     } else {

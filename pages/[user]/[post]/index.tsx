@@ -7,24 +7,23 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useEffect, useRef, useState } from "react";
 import BackHeader from "../../../components/Header/BackHeader";
 import FooterInput from "../../../components/Input/FooterInput";
 import Input from "../../../components/Input/Input";
-import Post from "../../../components/Post";
 import AuthorInfo from "../../../components/Post/AuthorInfo";
 import { Footer } from "../../../components/Post/Footer";
 import PhotoLayout from "../../../components/Post/PhotoLayout";
+import { SharePreview } from "../../../components/Post/SharePreview";
+import { SocialCount } from "../../../components/Post/SocialCount";
 import { app, db, postToJSON, userToJSON } from "../../../lib/firebase";
 import { getUserData, verifyIdToken } from "../../../lib/firebaseAdmin";
 import { updatePost } from "../../../lib/firestore/post";
 import { deleteStorage, uploadMedia } from "../../../lib/storage";
 import s from "../../../styles/Home.module.scss";
 import { Media, Post as PostType, Props } from "../../../types/interfaces";
-import SharePostFallback from "../../../components/Post/SharePostFallback";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -36,7 +35,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
     const { uid } = token;
-    let expired = false;
     const { user: authorId, post: postId } = context.query;
     const isAdmin = uid === authorId;
     // const postDoc = isAdmin
@@ -63,7 +61,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         ...userJSON,
       },
     };
-    // const newPost = await Promise.all(
     let newPost;
     if (post.sharePost) {
       const postDoc = doc(
@@ -105,7 +102,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     } else {
       newPost = {
         ...post,
-        // sharePost: { ...postJSON.sharePost },
       };
     }
 
@@ -124,95 +120,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         },
       };
     }
-
-    // const postDoc = query(
-    //   collection(db, `users/${authorId}/posts`),
-    //   where("id", "==", postId)
-    //   // where("visibility", "in", ["Friend", "Public"])
-    // );
-    // const postDoc = query(
-    //   collection(db, `users/${authorId}/posts`),
-    //   where("id", "==", postId),
-    //   where("visibility", "in", ["Friend", "Public"])
-    // );
-    // const postSnap = await getDocs(postDoc);
-    // const newPost = await Promise.all(
-    //   postSnap.docs.map(async (post) => {
-    //     return await postToJSON(post);
-    //   })
-    // );
-    // query(postDoc)
-    // postSnap.
-    // ,
-    //   where("visibility", "in", ["Friend", "Public"]),
-    // const postQuery = query(postDoc)
-    // const newPost = await Promise.all(
-    //   postSnap
-    // )
-
-    //     displayName: UserRecord?.displayName ?? "Unknown User",
-    //     photoURL: UserRecord?.photoURL ?? "",
-    // if (!postSnap.empty) {
-    // const docPost = postSnap.docs.map((doc) => {
-    //   return doc;
-    // });
-    // const post = await postToJSON();
-    // const UserRecord = await getUserData(post.authorId);
-    // const userJSON = userToJSON(UserRecord) as UserRecord;
-    // const newPost = {
-    //   ...post,
-    //   author: {
-    //     ...userJSON,
-    //   },
-    // };
-    // if(posts.data().)
-    // if (!posts.exists()) {
-    //   return {
-    //     notFound: true,
-    //   };
-    // }
-    // if (posts.) {
-    //   if (post.authorId !== uid && post.visibility === "Onlyme") {
-    //     // return {
-    //     //   notFound: true,
-    //     // };
-    //   } else {
-    //     return {
-    //       props: {
-    //         uid,
-    //         expired,
-    //         post: newPost,
-    //       },
-    //     };
-    //   }
-    // } else {
-    //   // return {
-    //   //   notFound: true,
-    //   // };
-    // }
-    // } else {
-    // return {
-    //   notFound: true,
-    // };
-    // }
-    // if (post.authorId !== uid && post.visibility === "Onlyme") {
-    //     //     // return {
-    //     //     //   notFound: true,
-    //     //     // };
-    // if (postDoc.id !== postId) {
-    //   return {
-    //     notFound: true,
-    //   };
-    // }
-    // if (
-    //   posts.exists() &&
-    //   uid !== post.authorId &&
-    //   post.visibility === "Onlyme"
-    // ) {
-    //   return {
-    //     notFound: true,
-    //   };
-    // }
   } catch (error) {
     console.log("SSR Error " + error);
     return {
@@ -272,9 +179,6 @@ export default function Page(props: { uid: string; post: PostType }) {
   useEffect(() => {
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
-      // if (viewRef && viewRef.current?.open) {
-      //   viewRef.current.close();
-      // }
       if (
         (as !== currentPath && InputRef.current?.innerHTML !== post.text) ||
         visibility.toLowerCase() !== post.visibility?.toLowerCase() ||
@@ -326,9 +230,60 @@ export default function Page(props: { uid: string; post: PostType }) {
   const navigateToProfile = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    // const isViewingAuthorProfile = router.query.user && router.query.post;
-    // if (isViewingAuthorProfile) return;
     router.push(`/${post?.authorId?.toString()}`);
+  };
+  const updateHandler = async () => {
+    const uid = auth.currentUser?.uid;
+    if (!uid || !post || !InputRef.current) return;
+    if (uid !== post.authorId) {
+      throw new Error("Unauthorized !");
+    }
+    if (
+      visibility.toLowerCase() === post.visibility?.toLowerCase() &&
+      InputRef.current?.innerHTML
+        .replace(/\n/g, "<br>")
+        .replaceAll("&nbsp;", " ") === post.text &&
+      files?.length === post.media?.length &&
+      // value === "" &&
+      deleteFile?.length === 0
+    )
+      return;
+    setLoading(true);
+    try {
+      try {
+        const uploadedFiles = await uploadMedia(files as File[]);
+        newMedia = [
+          ...(files as Media[]),
+          ...(uploadedFiles.filter((file) => file !== null) as Media[]),
+        ].filter((file) => file?.url);
+        await deleteStorage(deleteFile!);
+      } catch (error) {
+        console.log("Error uploading and Deleting files:", error);
+        return null;
+      }
+      console.log(post.sharePost?.author);
+      await updatePost(
+        uid,
+        InputRef.current.innerHTML
+          .replaceAll("<div>", "")
+          .replaceAll("</div>", "")
+          .replace("<div>", "<br>")
+          .replaceAll("<div><br><div>", "<br>")
+          .replaceAll("<br><div>", "<br>")
+          .replace("</div>", "")
+          .replaceAll(
+            /(?:https?|ftp):\/\/[\n\S]+/g,
+            (url) => `<a href="${url}">${url}</a>`
+          ),
+        newMedia,
+        post.id?.toString()!,
+        post,
+        visibility
+      );
+      router.replace("/", undefined, { scroll: false });
+    } catch (error: any) {
+      alert(error.message);
+    }
   };
   return (
     <div className="user">
@@ -346,61 +301,7 @@ export default function Page(props: { uid: string; post: PostType }) {
             type="submit"
             disabled={loading}
             className={s.submit}
-            onClick={async () => {
-              const uid = auth.currentUser?.uid;
-              if (!uid || !post || !InputRef.current) return;
-              if (uid !== post.authorId) {
-                throw new Error("Unauthorized !");
-              }
-              if (
-                visibility.toLowerCase() === post.visibility?.toLowerCase() &&
-                InputRef.current?.innerHTML
-                  .replace(/\n/g, "<br>")
-                  .replaceAll("&nbsp;", " ") === post.text &&
-                files?.length === post.media?.length &&
-                // value === "" &&
-                deleteFile?.length === 0
-              )
-                return;
-              setLoading(true);
-              try {
-                try {
-                  const uploadedFiles = await uploadMedia(files as File[]);
-                  newMedia = [
-                    ...(files as Media[]),
-                    ...(uploadedFiles.filter(
-                      (file) => file !== null
-                    ) as Media[]),
-                  ].filter((file) => file?.url);
-                  await deleteStorage(deleteFile!);
-                } catch (error) {
-                  console.log("Error uploading and Deleting files:", error);
-                  return null;
-                }
-                console.log(post.sharePost?.author);
-                await updatePost(
-                  uid,
-                  InputRef.current.innerHTML
-                    .replaceAll("<div>", "")
-                    .replaceAll("</div>", "")
-                    .replace("<div>", "<br>")
-                    .replaceAll("<div><br><div>", "<br>")
-                    .replaceAll("<br><div>", "<br>")
-                    .replace("</div>", "")
-                    .replaceAll(
-                      /(?:https?|ftp):\/\/[\n\S]+/g,
-                      (url) => `<a href="${url}">${url}</a>`
-                    ),
-                  newMedia,
-                  post.id?.toString()!,
-                  post,
-                  visibility
-                );
-                router.replace("/", undefined, { scroll: false });
-              } catch (error: any) {
-                alert(error.message);
-              }
-            }}
+            onClick={updateHandler}
           >
             {loading ? "Saving..." : "Save"}
           </button>
@@ -429,21 +330,8 @@ export default function Page(props: { uid: string; post: PostType }) {
           files={files}
           setFiles={setFiles}
         />
-        {post.sharePost?.post && (
-          <>
-            <Link
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              href={`${post.sharePost?.post.authorId}/${post.sharePost?.post.id}`}
-            >
-              <Post shareMode={true} post={post.sharePost.post} />
-            </Link>
-          </>
-        )}
-        {post?.sharePost?.id && post.sharePost?.post === null && (
-          <SharePostFallback />
-        )}
+        <SharePreview post={post} />
+        <SocialCount post={post} />
         {canEdit ? (
           <FooterInput
             fileRef={fileRef}

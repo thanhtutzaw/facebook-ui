@@ -1,8 +1,18 @@
 @import "../../styles/mixins";
 .container {
     > div {
-        // border:1px solid red !important;
         margin: 0.5rem 0;
+    }
+}
+.sharePreview {
+    -webkit-tap-highlight-color: rgba(0, 113, 243, 0.3);
+    display: flex;
+    width: 95%;
+    margin: 0 auto;
+    margin-bottom: 0.5rem;
+    // margin: 0 auto 1rem;
+    &:active {
+        opacity: 0.8;
     }
 }
 .media {
@@ -78,7 +88,6 @@
         width: 100vw;
         margin: 0;
         margin-left: auto;
-        // background: red;
         position: fixed;
         left: 0;
         inset: 0;
@@ -149,17 +158,6 @@
     > div:not(:only-child) {
         aspect-ratio: 9/10;
     }
-    // &img:not(:nth-child(1)) {
-    //     aspect-ratio: 9/10;
-    //     border: 4px solid red !important;
-    // }
-    // img:is(:last-child):not(:nth-child(1)) {
-    //     border: 4px solid red !important;
-    // }
-    // img:first-child:not(:last-child),
-    // img:first-child:not(:last-child) ~ img {
-    //     border: 4px solid red !important;
-    // }
 
     & > div:first-child {
         min-width: 50%;
@@ -193,44 +191,26 @@
         color: white;
     }
 }
-.post {
-    .socialCount {
-        display: flex;
-        justify-content: space-between;
-        padding-inline: 0.8rem;
-        color: dimgray;
-        padding-block: 5px;
-    }
+.socialCount {
+    display: flex;
+    justify-content: space-between;
+    padding-inline: 0.8rem;
+    color: dimgray;
+    padding-block: 5px;
     .shareCount {
         margin: 0;
-        /* margin-left: auto; */
         display: flex;
         justify-content: flex-end;
         padding-top: 0;
-        /* padding: 10px 4rem; */
         padding-block: 5px;
-        // padding-inline: 1rem;
-        /* padding-top: 0; */
         font-size: 18px;
     }
+}
+.post {
     width: 100%;
-    > span > a:hover {
-        // outline: rgb(136 136 136) solid 1px;
-        // outline: rgb(224, 224, 224) solid 2px;
-    }
-    > span > a {
-        -webkit-tap-highlight-color: rgba(0, 113, 243, 0.3);
-        display: flex;
-        width: 90%;
-        margin: 0 auto;
-        margin-bottom: 0.5rem;
-        &:active {
-            opacity: 0.8;
-        }
-    }
+
     &:only-child {
         .action {
-            // background-color: red;
             border-bottom: 0;
         }
     }
@@ -271,16 +251,16 @@
     }
     .text {
         padding: 0 0.8rem;
-    margin: 0;
-    margin-block: 0.5rem 1rem;
-    outline: 0;
-    cursor: default;
-    word-break: break-word;
-    white-space: pre-line;
-    /* margin-block: 10px 20px; */
-    /* padding-bottom: 0; */
-    /* margin-bottom: 15px; */
-    margin-bottom: 0.5rem;
+        margin: 0;
+        margin-block: 0.5rem 1rem;
+        outline: 0;
+        cursor: default;
+        word-break: break-word;
+        white-space: pre-line;
+        /* margin-block: 10px 20px; */
+        /* padding-bottom: 0; */
+        /* margin-bottom: 15px; */
+        margin-bottom: 0.5rem;
         a {
             color: var(--blue-origin);
             &:hover {
@@ -426,11 +406,12 @@
     border-radius: 1rem;
     overflow: hidden;
     padding-block: 0.7rem;
-    background-color: rgb(241, 241, 241);
+    background-color: rgb(241, 241, 241) !important;
     z-index: 200;
     box-shadow: 0 5px 12px rgb(136 135 135 / 50%);
     > button {
-        color: rgb(35 35 35);
+        color: rgb(29, 8, 8);
+        background-color: rgb(241, 241, 241) !important;
         font-size: 1rem;
         border: 0;
         display: flex;
@@ -447,7 +428,7 @@
             width: 20px;
         }
         &:hover {
-            background-color: var(--blue-origin);
+            background-color: var(--blue-origin) !important;
             color: white;
             svg {
                 color: white;
@@ -455,6 +436,7 @@
         }
         &:active {
             opacity: 0.5;
+            border: 1px solid red !important;
         }
     }
 }
@@ -475,25 +457,60 @@
     position: relative;
     // border-top: 1px solid rgb(235, 235, 235);
     // border-block: 1px solid rgb(235, 235, 235);
-    border-top: 1px solid #dcdcdc;
+    border-top: 1px solid #e4e4e4;
+    .socialButton {
+        &:active {
+            opacity: 0.6;
+        }
+    }
     svg {
         font-size: 18px;
         color: rgb(39, 39, 39);
     }
-    > button {
+    // > * {
+    //     &:hover {
+    //         background-color: red !important;
+    //     }
+    // }
+    > div {
+        background-color: white !important;
         display: flex;
         flex: 1;
         justify-content: center;
         align-items: center;
         height: 55px;
         border: none;
-        background-color: white;
+        //
         // border-top: 1px solid #dfdfdf;
         transition: background-color 0.2s ease;
-        &:active {
-            opacity: 0.7;
+        // &:active {
+        //     opacity: 0.7;
+        // }
+        &:has(:hover) > button {
+            background-color: rgb(207, 207, 207) !important;
+            // outline: 1px solid var(--blue-origin) !important;
+            // outline-offset: -1px;
+        }
+        &:has(:active) > button {
+            opacity: 0.6;
+        }
+        > button {
+            display: flex;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+            height: 55px;
+            border: none;
+            background-color: white !important;
         }
     }
+
+    // > div {
+    //     &:has(button:active) {
+    //         // opacity: 0.5;
+    //     }
+    // }
+
     p {
         margin-left: 0.4rem;
         font-size: 16px !important;

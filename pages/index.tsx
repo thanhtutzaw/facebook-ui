@@ -22,7 +22,7 @@ import { Welcome } from "../components/Welcome";
 import { AppProvider } from "../context/AppContext";
 import { app, db, fethUserDoc, postToJSON, userToJSON } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import { Props, account } from "../types/interfaces";
+import { Post, Props, account } from "../types/interfaces";
 import Header from "../components/Header/Header";
 import { fetchPosts } from "../lib/firestore/post";
 // import QueryClient from "react-query/types/core";
@@ -69,16 +69,56 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         const post = await postToJSON(doc);
         const UserRecord = (await getUserData(post.authorId)) as UserRecord;
         const userJSON = userToJSON(UserRecord);
+
+        // if (!likeDoc.empty) {
+        //   console.log(likeDoc.docs.length);
+        //   // setlike(likeDoc.docs.length);
+        //   return likeDoc.docs.length;
+        // } else {
+        //   // setlike(0);
+        //   console.log("like empty");
+        // }
         return {
           ...post,
+          // like:[...like],
           author: {
             ...userJSON,
           },
         };
       })
     );
-    const newPosts = await Promise.all(
+    const withLike = (await Promise.all(
       posts.map(async (p) => {
+        if (p) {
+          const postRef = doc(db, `users/${p.authorId}/posts/${p.id}`);
+          const likeRef = collection(postRef, "likes");
+          const likeDoc = await getDocs(likeRef);
+          const like = likeDoc.docs.map((doc) => doc.data());
+          const data = {
+            ...p,
+            like: [...like],
+            // like: "hello",
+          };
+          console.log(data);
+          if (!likeDoc.empty) {
+            return data;
+            // return likeDoc.docs.length;
+          } else {
+            // setlike(0);
+            console.log("like empty");
+            return {
+              ...p,
+            };
+          }
+        }
+        // return {
+        //   ...p
+        // };
+      })
+    )) as Post[];
+    // console.log(withLike);
+    const newPosts = await Promise.all(
+      withLike.map(async (p) => {
         if (p.sharePost) {
           const postDoc = doc(
             db,

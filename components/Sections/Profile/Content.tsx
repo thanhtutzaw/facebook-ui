@@ -8,7 +8,7 @@ import { Post } from "../../../types/interfaces";
 import { RefObject } from "react";
 
 export default function Content(props: {
-  error: any;
+  error?: any;
   infoRef: RefObject<HTMLHeadElement>;
   headerRef: RefObject<HTMLHeadElement>;
   isSticky: boolean;
@@ -112,9 +112,13 @@ export default function Content(props: {
           )}
         </AnimatePresence>
       </header>
-      {error && <p>Unexpected Error Occured ! {error}</p>}
+
       {loading ? (
         <p style={{ textAlign: "center" }}>Loading</p>
+      ) : error ? (
+        <p style={{ textAlign: "center" }}>
+          Unexpected Error Occured ! {error.message}
+        </p>
       ) : (
         <PostList
           preventNavigate={true}

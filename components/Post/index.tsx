@@ -56,7 +56,6 @@ export default function Post({
   const [showmore, setShowmore] = useState(false);
   return (
     <div
-      key={post.id}
       className={`${styles.post}`}
       style={{
         transition: "all 0.3s ease-in-out",
