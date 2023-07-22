@@ -97,10 +97,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
               isLiked: isLiked.exists() ? true : false,
               // like: "hello",
             };
-            // return likeDoc.docs.length;
           } else {
-            // setlike(0);
-            console.log("like empty");
             return {
               ...p,
               isLiked: false,
@@ -112,8 +109,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         // };
       })
     )) as Post[];
-    // console.log(withLike);
-    const newPosts = await Promise.all(
+    const sharePosts = await Promise.all(
       withLike.map(async (p) => {
         if (p.sharePost) {
           const postDoc = doc(
@@ -149,7 +145,117 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         };
       })
     );
+    // const newPosts = (await Promise.all(
+    //   sharePosts.map(async (p) => {
+    //     if (p) {
+    //       const postRef = doc(db, `users/${p.authorId}/posts/${p.id}`);
+    //       const likeRef = collection(postRef, "likes");
+    //       const likeDoc = await getDocs(likeRef);
+    //       const likedByUser = doc(
+    //         db,
+    //         `users/${p.authorId}/posts/${p.id}/likes/${uid}`
+    //       );
+    //       const isLiked = await getDoc(likedByUser);
+    //       const like = likeDoc.docs.map((doc) => doc.data());
 
+    //       if (!likeDoc.empty) {
+    //         return {
+    //           ...p,
+    //           sharePosts: {
+    //             ...p.sharePost,
+    //             post: {
+    //               ...p.sharePost?.post,
+    //               like: [...like],
+    //               isLiked: isLiked.exists() ? true : false,
+    //             },
+    //           },
+    //         };
+    //       } else {
+    //         // setlike(0);
+    //         console.log("like empty");
+    //         return {
+    //           ...p,
+    //           sharePosts: {
+    //             ...p.sharePost,
+    //             post: {
+    //               ...p.sharePost?.post,
+    //               isLiked: false,
+    //             },
+    //           },
+    //         };
+    //       }
+    //     }
+    //     // return {
+    //     //   ...p,
+    //     // };
+    //   })
+    // )) as Post[];
+    const newPosts = (await Promise.all(
+      sharePosts.map(async (p) => {
+        if (p.sharePost?.post) {
+          const post = p.sharePost.post!;
+          const postRef = doc(db, `users/${post.authorId}/posts/${post.id}`);
+          const likeRef = collection(postRef, "likes");
+          const likeDoc = await getDocs(likeRef);
+          const likedByUser = doc(
+            db,
+            `users/${post.authorId}/posts/${post.id}/likes/${uid}`
+          );
+          const isLiked = await getDoc(likedByUser);
+          const like = likeDoc.docs.map((doc) => doc.data());
+
+          const shareData = {
+            ...p,
+            sharePost: {
+              ...p.sharePost,
+              post: {
+                ...post,
+                like: [...like],
+                isLiked: isLiked.exists() ? true : false,
+              },
+            },
+            // ...post,
+            // sharePost:{
+
+            // }
+            // sharePost: {
+            //   ...p.sharePost,
+            //   post: {
+            //     ...post,
+            //     like: [...like],
+            //     isLiked: isLiked.exists() ? true : false,
+            //   },
+            // },
+          };
+          console.log(shareData);
+          return shareData;
+
+          // if (!likeDoc.empty) {
+          //   return {
+          //     ...sharePosts,
+
+          //     sharePost: {
+          //       ...p.sharePost,
+          //       post: {
+          //         ...post,
+          //         like: [...like],
+          //         isLiked: isLiked.exists() ? true : false,
+          //       },
+          //     },
+          //   };
+          // } else {
+          //   return { ...post };
+          // }
+        }
+        return {
+          ...p,
+          // ...withLike,
+          // sharePost: {
+          //   ...sharePosts,
+          // },
+        };
+      })
+    )) as Post[];
     const profileQuery = doc(db, `/users/${uid}`);
     const profileSnap = await getDoc(profileQuery);
     const profileData = profileSnap.data()!;

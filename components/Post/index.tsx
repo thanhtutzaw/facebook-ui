@@ -54,6 +54,8 @@ export default function Post({
     setclient(true);
   }, []);
   const [showmore, setShowmore] = useState(false);
+  const [likeCount, setlikeCount] = useState(post.like?.length);
+
   return (
     <div
       className={`${styles.post}`}
@@ -72,6 +74,7 @@ export default function Post({
       }}
     >
       <Content
+        likeCount={likeCount!}
         preventNavigate={preventNavigate}
         auth={auth!}
         selectMode={selectMode!}
@@ -86,7 +89,14 @@ export default function Post({
         shareMode={shareMode}
       />
 
-      {!shareMode && <Footer post={post} tabIndex={tabIndex} />}
+      {!shareMode && (
+        <Footer
+          likeCount={likeCount!}
+          setlikeCount={setlikeCount}
+          post={post}
+          tabIndex={tabIndex}
+        />
+      )}
     </div>
   );
 }

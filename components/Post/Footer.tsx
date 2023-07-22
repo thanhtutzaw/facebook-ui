@@ -21,15 +21,25 @@ import { app, db } from "../../lib/firebase";
 import { addPost } from "../../lib/firestore/post";
 import { Post } from "../../types/interfaces";
 import styles from "./index.module.scss";
-import { addDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+} from "firebase/firestore";
 
 export function Footer(
   props: {
+    likeCount?: number;
+    setlikeCount?: Function;
     post: Post;
     tabIndex?: number;
   } & StyleHTMLAttributes<HTMLDivElement>
 ) {
-  const { post, tabIndex, ...rests } = props;
+  const { likeCount, setlikeCount, post, tabIndex, ...rests } = props;
   const { id, authorId } = post;
   const { dropdownRef, shareAction, setshareAction } = useContext(
     PageContext
@@ -41,15 +51,35 @@ export function Footer(
   useEffect(() => {
     setsavedVisibility(localStorage.getItem("visibility")!);
   }, []);
-  const [reaction, setReaction] = useState({
-    like: ["1a", "2d"],
-  });
+  // const [reaction, setReaction] = useState({
+  //   like: ["1a", "2d"],
+  // });
   const [reactionAction, setreactionAction] = useState("");
-  const like = post?.isLiked;
   const likeRef = doc(
     db,
     `users/${post.authorId}/posts/${post.id}/likes/${auth?.currentUser?.uid}`
   );
+  const [likeToggle, setlikeToggle] = useState(false);
+  useEffect(() => {
+    const likeCollectionRef = collection(
+      db,
+      `users/${post.authorId}/posts/${post.id}/likes`
+    );
+
+    async function getLikeCount() {
+      const isUserLikeThisPost = await getDoc(likeRef);
+      const likes = await getDocs(likeCollectionRef);
+      const likeCount = likes.docs.length;
+      if (isUserLikeThisPost.exists()) {
+        setlikeCount?.(likeCount);
+        setlikeToggle(true);
+      } else {
+        setlikeCount?.(likeCount);
+        setlikeToggle(false);
+      }
+    }
+    getLikeCount();
+  }, [post.authorId, post.id, likeToggle, post.isLiked, likeRef, setlikeCount]);
   return (
     <div
       // onMouseLeave={() => {
@@ -82,21 +112,23 @@ export function Footer(
               alert("Error : User Not Found . Sign up and Try Again ! ");
               return;
             }
-            if (like) {
+            setlikeToggle((prev) => !prev);
+            if (likeToggle) {
               await deleteDoc(likeRef);
             } else {
               await setDoc(likeRef, { uid });
             }
-            router.replace("/", undefined, { scroll: false });
+            // router.replace("/", undefined, { scroll: false });
           }}
           aria-expanded={reactionAction !== ""}
           aria-label="Like Post"
           title="Like"
           tabIndex={-1}
-          className={`${like ? styles.active : ""}`}
+          className={`${likeToggle ? styles.active : ""}`}
         >
           <FontAwesomeIcon icon={faThumbsUp} />
-          <p>{like ? "Liked" : "Like"} </p>
+          <p>{likeToggle ? "Liked" : "Like"} </p>
+          {/* {JSON.stringify(post.like)} */}
         </button>
         <AnimatePresence>
           {reactionAction === id && (

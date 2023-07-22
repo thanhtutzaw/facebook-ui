@@ -3,8 +3,10 @@ import { getAuth } from "firebase/auth";
 import {
   DocumentData,
   DocumentSnapshot,
+  collection,
   doc,
   getDoc,
+  getDocs,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -61,11 +63,36 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         ...userJSON,
       },
     };
+    let withLike;
+    const postRef = doc(db, `users/${post.authorId}/posts/${post.id}`);
+    const likeRef = collection(postRef, "likes");
+    const likeDoc = await getDocs(likeRef);
+    const likedByUser = doc(
+      db,
+      `users/${post.authorId}/posts/${post.id}/likes/${uid}`
+    );
+    const isLiked = await getDoc(likedByUser);
+    const like = likeDoc.docs.map((doc) => doc.data());
+
+    if (!likeDoc.empty) {
+      withLike = {
+        ...post,
+        like: [...like],
+        isLiked: isLiked.exists() ? true : false,
+        // like: "hello",
+      };
+    } else {
+      withLike = {
+        ...post,
+        isLiked: false,
+      };
+    }
+
     let newPost;
-    if (post.sharePost) {
+    if (withLike.sharePost) {
       const postDoc = doc(
         db,
-        `users/${post.sharePost?.author}/posts/${post.sharePost?.id}`
+        `users/${withLike.sharePost?.author}/posts/${withLike.sharePost?.id}`
       );
       const posts = await getDoc(postDoc);
 
@@ -82,26 +109,26 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
           },
         };
         newPost = {
-          ...post,
+          ...withLike,
           sharePost: {
-            id: post.sharePost.id,
-            author: post.sharePost.author,
+            id: withLike.sharePost.id,
+            author: withLike.sharePost.author,
             post: { ...sharePost },
           },
         };
       } else {
         newPost = {
-          ...post,
+          ...withLike,
           sharePost: {
-            id: post.sharePost.id,
-            author: post.sharePost.author,
+            id: withLike.sharePost.id,
+            author: withLike.sharePost.author,
             post: null,
           },
         };
       }
     } else {
       newPost = {
-        ...post,
+        ...withLike,
       };
     }
 
@@ -331,7 +358,7 @@ export default function Page(props: { uid: string; post: PostType }) {
           setFiles={setFiles}
         />
         <SharePreview post={post} />
-        <SocialCount post={post} />
+        <SocialCount likeCount={post.like?.length!} post={post} />
         {canEdit ? (
           <FooterInput
             fileRef={fileRef}

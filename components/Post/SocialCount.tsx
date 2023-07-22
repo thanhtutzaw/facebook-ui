@@ -4,8 +4,8 @@ import { db } from "../../lib/firebase";
 import { Post } from "../../types/interfaces";
 import s from "./index.module.scss";
 
-export function SocialCount(props: { post: Post }) {
-  const { post } = props;
+export function SocialCount(props: { post: Post; likeCount: number }) {
+  const { post, likeCount } = props;
   const [reaction, setReaction] = useState({
     like: ["1a", "2d"],
   });
@@ -28,19 +28,23 @@ export function SocialCount(props: { post: Post }) {
   // }, [post.authorId, post.id]);
 
   // if(likeDoc)
-  const like = post.like?.length ?? 0;
+  // const like = post.like?.length ?? 0;
   // const reactionCount = reaction.like.length ?? 0;
   // const reactionCount = posts.likes.length;
   const shareCount = post?.sharers?.length ?? 0;
   return (
     <div className={s.socialCount}>
-      {like !== 0 && (
+      {/* {JSON.stringify(post.sharePost?.post?.like)} */}
+      {/* {JSON.stringify(post.like)} */}
+      {likeCount !== 0 && post?.like && (
         <p className={s.shareCount}>
-          {like} {like <= 1 ? "like" : "likes"}
+          {/* {post.like?.length} */}
+          {likeCount} {likeCount <= 1 ? "like" : "likes"}
+          {/* {JSON.stringify(post.like?.length)} */}
         </p>
       )}
       {post.sharers && (
-        <p className={s.shareCount}>
+        <p style={{ marginLeft: "auto" }} className={s.shareCount}>
           {shareCount} {shareCount <= 1 ? "share" : "shares"}
         </p>
       )}

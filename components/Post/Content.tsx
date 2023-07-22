@@ -27,6 +27,7 @@ import { SharePreview } from "./SharePreview";
 import { SocialCount } from "./SocialCount";
 import Input from "../Input/Input";
 export default function Content(props: {
+  likeCount: number;
   shareMode?: boolean;
   preventNavigate?: boolean;
   selectMode: boolean;
@@ -41,6 +42,7 @@ export default function Content(props: {
   auth: User;
 }) {
   const {
+    likeCount,
     preventNavigate,
     auth,
     selectMode,
@@ -214,7 +216,7 @@ export default function Content(props: {
       <PhotoLayout files={post.media} preview />
       <SharePreview post={post} />
 
-      {(post.like || post.sharers) && <SocialCount post={post} />}
+      {(post.like || post.sharers) && <SocialCount likeCount={likeCount} post={post} />}
     </span>
   );
 }
