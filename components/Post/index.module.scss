@@ -462,6 +462,12 @@
         &:active {
             opacity: 0.6;
         }
+        .active {
+            color: var(--blue-origin);
+            svg {
+                color: var(--blue-origin);
+            }
+        }
     }
     svg {
         font-size: 18px;

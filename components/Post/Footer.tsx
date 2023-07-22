@@ -76,10 +76,12 @@ export function Footer(
         // }}
       >
         <button
-          style={{ color: like ? "var(--blue-origin)" : "initial" }}
           onClick={async () => {
             const uid = auth.currentUser?.uid;
-            if (!uid) return;
+            if (!uid) {
+              alert("Error : User Not Found . Sign up and Try Again ! ");
+              return;
+            }
             if (like) {
               await deleteDoc(likeRef);
             } else {
@@ -91,11 +93,9 @@ export function Footer(
           aria-label="Like Post"
           title="Like"
           tabIndex={-1}
+          className={`${like ? styles.active : ""}`}
         >
-          <FontAwesomeIcon
-            style={{ color: like ? "var(--blue-origin)" : "initial" }}
-            icon={faThumbsUp}
-          />
+          <FontAwesomeIcon icon={faThumbsUp} />
           <p>{like ? "Liked" : "Like"} </p>
         </button>
         <AnimatePresence>

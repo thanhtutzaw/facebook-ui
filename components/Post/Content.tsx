@@ -214,7 +214,7 @@ export default function Content(props: {
       <PhotoLayout files={post.media} preview />
       <SharePreview post={post} />
 
-      <SocialCount post={post} />
+      {(post.like || post.sharers) && <SocialCount post={post} />}
     </span>
   );
 }
