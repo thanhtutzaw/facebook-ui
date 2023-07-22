@@ -42,8 +42,10 @@ export interface sharedPost {
       }
     | Timestamp;
   media: Media[] | null;
+  isLiked: boolean;
 }
 export interface Post {
+  isLiked: boolean;
   like?: string[];
   sharers?: string[];
   author: UserRecord | User;
@@ -69,7 +71,6 @@ export interface Post {
 
 export interface Props {
   username?: string;
-
   children?: ReactNode;
   setselectMode?: Function;
   selectMode?: boolean;

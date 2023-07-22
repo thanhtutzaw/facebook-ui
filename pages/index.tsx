@@ -69,18 +69,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         const post = await postToJSON(doc);
         const UserRecord = (await getUserData(post.authorId)) as UserRecord;
         const userJSON = userToJSON(UserRecord);
-
-        // if (!likeDoc.empty) {
-        //   console.log(likeDoc.docs.length);
-        //   // setlike(likeDoc.docs.length);
-        //   return likeDoc.docs.length;
-        // } else {
-        //   // setlike(0);
-        //   console.log("like empty");
-        // }
         return {
           ...post,
-          // like:[...like],
           author: {
             ...userJSON,
           },
@@ -93,21 +83,27 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
           const postRef = doc(db, `users/${p.authorId}/posts/${p.id}`);
           const likeRef = collection(postRef, "likes");
           const likeDoc = await getDocs(likeRef);
+          const likedByUser = doc(
+            db,
+            `users/${p.authorId}/posts/${p.id}/likes/${uid}`
+          );
+          const isLiked = await getDoc(likedByUser);
           const like = likeDoc.docs.map((doc) => doc.data());
-          const data = {
-            ...p,
-            like: [...like],
-            // like: "hello",
-          };
-          console.log(data);
+
           if (!likeDoc.empty) {
-            return data;
+            return {
+              ...p,
+              like: [...like],
+              isLiked: isLiked.exists() ? true : false,
+              // like: "hello",
+            };
             // return likeDoc.docs.length;
           } else {
             // setlike(0);
             console.log("like empty");
             return {
               ...p,
+              isLiked: false,
             };
           }
         }

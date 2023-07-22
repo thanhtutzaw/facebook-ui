@@ -17,10 +17,11 @@ import {
   useState,
 } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { app } from "../../lib/firebase";
+import { app, db } from "../../lib/firebase";
 import { addPost } from "../../lib/firestore/post";
 import { Post } from "../../types/interfaces";
 import styles from "./index.module.scss";
+import { addDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 
 export function Footer(
   props: {
@@ -44,6 +45,11 @@ export function Footer(
     like: ["1a", "2d"],
   });
   const [reactionAction, setreactionAction] = useState("");
+  const like = post?.isLiked;
+  const likeRef = doc(
+    db,
+    `users/${post.authorId}/posts/${post.id}/likes/${auth?.currentUser?.uid}`
+  );
   return (
     <div
       // onMouseLeave={() => {
@@ -58,9 +64,6 @@ export function Footer(
     >
       <div
         className={styles.socialButton}
-        onClick={() => {
-          alert(auth.currentUser?.uid);
-        }}
         // onMouseEnter={() => {
         //   setreactionAction(id?.toString()!);
         //   // console.log("like");
@@ -73,17 +76,27 @@ export function Footer(
         // }}
       >
         <button
-          onClick={() => {
-            // console.log(reaction.like.length);
-            console.log(reaction);
+          style={{ color: like ? "var(--blue-origin)" : "initial" }}
+          onClick={async () => {
+            const uid = auth.currentUser?.uid;
+            if (!uid) return;
+            if (like) {
+              await deleteDoc(likeRef);
+            } else {
+              await setDoc(likeRef, { uid });
+            }
+            router.replace("/", undefined, { scroll: false });
           }}
           aria-expanded={reactionAction !== ""}
           aria-label="Like Post"
           title="Like"
           tabIndex={-1}
         >
-          <FontAwesomeIcon icon={faThumbsUp} />
-          <p>Like </p>
+          <FontAwesomeIcon
+            style={{ color: like ? "var(--blue-origin)" : "initial" }}
+            icon={faThumbsUp}
+          />
+          <p>{like ? "Liked" : "Like"} </p>
         </button>
         <AnimatePresence>
           {reactionAction === id && (
