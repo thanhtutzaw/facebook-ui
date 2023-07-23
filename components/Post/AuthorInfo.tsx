@@ -8,7 +8,7 @@ import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
 import styles from "./index.module.scss";
 import { MouseEventHandler, ReactNode } from "react";
-import { Post } from "../../types/interfaces";
+import { Post, account } from "../../types/interfaces";
 export default function AuthorInfo(props: {
   navigateToProfile?: MouseEventHandler;
   post: Post;
@@ -16,6 +16,7 @@ export default function AuthorInfo(props: {
 }) {
   const { children, navigateToProfile, post } = props;
   const { author, authorId, createdAt, visibility, updatedAt } = post;
+  const profile = author as account["profile"];
   return (
     <div className={styles.header}>
       {/* <h1>{author?.displayName}</h1> */}
@@ -24,7 +25,10 @@ export default function AuthorInfo(props: {
           onClick={navigateToProfile}
           priority={false}
           className={styles.profile}
-          alt={author?.displayName ? author?.displayName : "Unknown User"}
+          // alt={author?.displayName ? author?.displayName : "Unknown User"}
+          alt={`${profile?.firstName ?? "Unknow"} ${
+            profile?.lastName ?? "User"
+          }}`}
           width={200}
           height={200}
           style={{
@@ -49,7 +53,9 @@ export default function AuthorInfo(props: {
           {/* {JSON.stringify(post, null, 4)} */}
           <p className={styles.name}>
             <span onClick={navigateToProfile}>
-              {author?.displayName ?? "Unknow User"}
+              {/* {author ? "Unknow User"} */}
+              {profile?.firstName ?? "Unknow"} {profile?.lastName ?? "User"}
+              {/* {author?.displayName ?? "Unknow User"} */}
             </span>
             {post.sharePost && <>&nbsp; shared a Post</>}
           </p>

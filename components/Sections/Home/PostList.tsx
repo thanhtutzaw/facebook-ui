@@ -6,17 +6,29 @@ import { PageContext, PageProps } from "../../../context/PageContext";
 import s from "../../Post/index.module.scss";
 export const PostList = memo(
   (props: {
+    getMorePosts?: Function;
     preventNavigate?: boolean;
     selectMode?: boolean;
     posts: PostType[];
     tabIndex?: number;
     profile?: any;
     auth?: User;
+    postLoading?: boolean;
+    postEnd?: boolean;
   }) => {
     console.log("postList is rendering");
 
-    const { profile, preventNavigate, auth, selectMode, posts, tabIndex } =
-      props;
+    const {
+      getMorePosts,
+      postLoading,
+      postEnd,
+      profile,
+      preventNavigate,
+      auth,
+      selectMode,
+      posts,
+      tabIndex,
+    } = props;
     const { shareAction, setshareAction } = useContext(
       PageContext
     ) as PageProps;
@@ -44,14 +56,28 @@ export const PostList = memo(
             />
           ))}
         </div>
-        <p
-          style={{
-            textAlign: "center",
-            userSelect: "none",
-          }}
-        >
-          {posts?.length === 0 ? "Empty Post" : "No more posts"}
-        </p>
+
+        {!postLoading && !postEnd ? (
+          <button
+            className={s.loadMore}
+            onClick={async () => {
+              await getMorePosts?.();
+            }}
+          >
+            Load more
+          </button>
+        ) : postLoading ? (
+          <p>Loading...</p>
+        ) : (
+          <p
+            style={{
+              textAlign: "center",
+              userSelect: "none",
+            }}
+          >
+            {posts?.length === 0 ? "Empty Post" : "No more posts"}
+          </p>
+        )}
       </>
     );
   }

@@ -5,7 +5,12 @@ import { User } from "firebase/auth";
 export type account = {
   email: string;
   password: string;
-  profile: { firstName: string | ""; lastName: string | ""; bio: string | "" };
+  profile: {
+    firstName: string | "";
+    lastName: string | "";
+    bio: string | "";
+    photoURL?: string | "";
+  };
 };
 export type Media = {
   name: string;
@@ -48,7 +53,7 @@ export interface Post {
   isLiked: boolean;
   like?: string[];
   sharers?: string[];
-  author: UserRecord | User;
+  author: UserRecord | User | account["profile"];
   authorId: string | number;
   id?: string | number;
   text: string;
@@ -87,4 +92,8 @@ export interface Props {
   headerContainerRef?: RefObject<HTMLDivElement>;
   profile?: account["profile"] | null;
   account?: UserRecord | null;
+  setlimitedPosts?: Function;
+  getMorePosts?: Function;
+  postLoading?: boolean;
+  postEnd?: boolean;
 }

@@ -118,7 +118,6 @@ export function Footer(
             } else {
               await setDoc(likeRef, { uid });
             }
-            // router.replace("/", undefined, { scroll: false });
           }}
           aria-expanded={reactionAction !== ""}
           aria-label="Like Post"
@@ -127,8 +126,7 @@ export function Footer(
           className={`${likeToggle ? styles.active : ""}`}
         >
           <FontAwesomeIcon icon={faThumbsUp} />
-          <p>{likeToggle ? "Liked" : "Like"} </p>
-          {/* {JSON.stringify(post.like)} */}
+          <p>Like</p>
         </button>
         <AnimatePresence>
           {reactionAction === id && (

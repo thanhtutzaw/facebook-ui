@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -9,6 +10,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
   orderBy,
   query,
   where,
@@ -17,20 +19,15 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useEffect, useRef } from "react";
+import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
-import { AppProvider } from "../context/AppContext";
-import { app, db, fethUserDoc, postToJSON, userToJSON } from "../lib/firebase";
+import { AppProvider, LIMIT } from "../context/AppContext";
+import { app, db, postToJSON, userToJSON } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import { Post, Props, account } from "../types/interfaces";
-import Header from "../components/Header/Header";
-import { fetchPosts } from "../lib/firestore/post";
-// import QueryClient from "react-query/types/core";
-// import { QueryClient, QueryClientProvider } from "react-query";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -48,38 +45,34 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     };
     console.log(convertSecondsToTime(token.exp));
     const { name: username, email, uid } = token;
-
-    const account = (await getUserData(uid as string))! as UserRecord;
-    const accountJSON = userToJSON(account);
     // console.log("isVerify " + token.email_verified);
     let expired = false;
     const postQuery = query(
       collectionGroup(db, `posts`),
       where("visibility", "in", ["Friend", "Public"]),
-
-      // where(`visibility`, "!=", "Onlyme"),
-      // orderBy("visibility", "asc"),
-      orderBy("createdAt", "desc")
+      orderBy("createdAt", "desc"),
+      limit(LIMIT)
     );
     const postSnap = await getDocs(postQuery);
 
-    // const post = await fetchPosts(postSnap);
     const posts = await Promise.all(
       postSnap.docs.map(async (doc) => {
         const post = await postToJSON(doc);
-        const UserRecord = (await getUserData(post.authorId)) as UserRecord;
-        const userJSON = userToJSON(UserRecord);
+        // const UserRecord = (await getUserData(post.authorId)) as UserRecord;
+        // const author = userToJSON(UserRecord);
+
         return {
           ...post,
-          author: {
-            ...userJSON,
-          },
         };
       })
     );
     const withLike = (await Promise.all(
       posts.map(async (p) => {
         if (p) {
+          const profileQuery = doc(db, `/users/${p.authorId}`);
+          const profileSnap = await getDoc(profileQuery);
+          const profileData = profileSnap.data()!;
+          const profile = profileData.profile as account["profile"];
           const postRef = doc(db, `users/${p.authorId}/posts/${p.id}`);
           const likeRef = collection(postRef, "likes");
           const likeDoc = await getDocs(likeRef);
@@ -93,20 +86,18 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
           if (!likeDoc.empty) {
             return {
               ...p,
+              author: { ...profile },
               like: [...like],
               isLiked: isLiked.exists() ? true : false,
-              // like: "hello",
             };
           } else {
             return {
               ...p,
+              author: { ...profile },
               isLiked: false,
             };
           }
         }
-        // return {
-        //   ...p
-        // };
       })
     )) as Post[];
     const sharePosts = await Promise.all(
@@ -121,13 +112,16 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
             const post = await postToJSON(
               posts as DocumentSnapshot<DocumentData>
             );
-            const UserRecord = await getUserData(post.authorId);
-            const userJSON = userToJSON(UserRecord);
+
+            const profileQuery = doc(db, `/users/${post.authorId}`);
+            const profileSnap = await getDoc(profileQuery);
+            const profileData = profileSnap.data()!;
+            const profile = profileData.profile as account["profile"];
+            // const UserRecord = await getUserData(post.authorId);
+            // const userJSON = userToJSON(UserRecord);
             const sharePost = {
               ...post,
-              author: {
-                ...userJSON,
-              },
+              author: { ...profile },
             };
             return {
               ...p,
@@ -145,51 +139,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         };
       })
     );
-    // const newPosts = (await Promise.all(
-    //   sharePosts.map(async (p) => {
-    //     if (p) {
-    //       const postRef = doc(db, `users/${p.authorId}/posts/${p.id}`);
-    //       const likeRef = collection(postRef, "likes");
-    //       const likeDoc = await getDocs(likeRef);
-    //       const likedByUser = doc(
-    //         db,
-    //         `users/${p.authorId}/posts/${p.id}/likes/${uid}`
-    //       );
-    //       const isLiked = await getDoc(likedByUser);
-    //       const like = likeDoc.docs.map((doc) => doc.data());
-
-    //       if (!likeDoc.empty) {
-    //         return {
-    //           ...p,
-    //           sharePosts: {
-    //             ...p.sharePost,
-    //             post: {
-    //               ...p.sharePost?.post,
-    //               like: [...like],
-    //               isLiked: isLiked.exists() ? true : false,
-    //             },
-    //           },
-    //         };
-    //       } else {
-    //         // setlike(0);
-    //         console.log("like empty");
-    //         return {
-    //           ...p,
-    //           sharePosts: {
-    //             ...p.sharePost,
-    //             post: {
-    //               ...p.sharePost?.post,
-    //               isLiked: false,
-    //             },
-    //           },
-    //         };
-    //       }
-    //     }
-    //     // return {
-    //     //   ...p,
-    //     // };
-    //   })
-    // )) as Post[];
     const newPosts = (await Promise.all(
       sharePosts.map(async (p) => {
         if (p.sharePost?.post) {
@@ -214,45 +163,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
                 isLiked: isLiked.exists() ? true : false,
               },
             },
-            // ...post,
-            // sharePost:{
-
-            // }
-            // sharePost: {
-            //   ...p.sharePost,
-            //   post: {
-            //     ...post,
-            //     like: [...like],
-            //     isLiked: isLiked.exists() ? true : false,
-            //   },
-            // },
           };
-          console.log(shareData);
           return shareData;
-
-          // if (!likeDoc.empty) {
-          //   return {
-          //     ...sharePosts,
-
-          //     sharePost: {
-          //       ...p.sharePost,
-          //       post: {
-          //         ...post,
-          //         like: [...like],
-          //         isLiked: isLiked.exists() ? true : false,
-          //       },
-          //     },
-          //   };
-          // } else {
-          //   return { ...post };
-          // }
         }
         return {
           ...p,
-          // ...withLike,
-          // sharePost: {
-          //   ...sharePosts,
-          // },
         };
       })
     )) as Post[];
@@ -265,32 +180,33 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       collection(db, `users`),
       where("__name__", "!=", uid)
     );
-    const allUsersSnap = await getDocs(allUsersQuery);
-    const allUsers = await Promise.all(
-      allUsersSnap.docs.map(async (doc) => {
-        const data = doc.data();
-        const account = (await getUserData(doc.id as string))! as UserRecord;
-        const accountJSON = userToJSON(account) as UserRecord;
-        return {
-          id: doc.id,
-          ...data,
-          author: {
-            ...accountJSON,
-          },
-        };
-      })
-    );
-
+    // const allUsersSnap = await getDocs(allUsersQuery);
+    // const allUsers = await Promise.all(
+    //   allUsersSnap.docs.map(async (doc) => {
+    //     const data = doc.data();
+    //     const account = (await getUserData(doc.id as string))! as UserRecord;
+    //     const accountJSON = userToJSON(account) as UserRecord;
+    //     return {
+    //       id: doc.id,
+    //       ...data,
+    //       author: {
+    //         ...accountJSON,
+    //       },
+    //     };
+    //   })
+    // );
+    const currentAccount = (await getUserData(uid as string))! as UserRecord;
+    const currentUserData = userToJSON(currentAccount);
     return {
       props: {
         expired,
         uid,
-        allUsers,
+        allUsers: [],
         posts: newPosts,
         email,
         username: username ?? "Unknown",
         profile: profile! ?? null,
-        account: accountJSON ?? null,
+        account: currentUserData ?? null,
       },
     };
   } catch (error) {
@@ -323,7 +239,6 @@ export default function Home({
 }: Props) {
   // props: InferGetServerSidePropsType<typeof getServerSideProps>
   const indicatorRef = useRef<HTMLDivElement>(null);
-
   const router = useRouter();
   const auth = getAuth(app);
   useEffect(() => {
@@ -334,15 +249,11 @@ export default function Home({
       } else {
         if (!expired) return;
         router.push("/");
-        // console.log("expired , user exist and pushed");
       }
     });
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
-
-  // }, [active]);
-  // if (!email) return <></>;
   const queryClient = new QueryClient();
 
   if (expired) return <Welcome expired={expired} />;

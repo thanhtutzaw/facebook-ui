@@ -56,7 +56,7 @@ export default function Content(props: {
     post,
     shareMode,
   } = props;
-  const { author, authorId, id, text, visibility, createdAt } = post;
+  const { authorId, id, text } = post;
   const { preventClick, selectedId, setSelectedId, showAction, setshowAction } =
     useContext(PageContext) as PageProps;
   const router = useRouter();
@@ -74,11 +74,9 @@ export default function Content(props: {
       : text;
 
   const production = process.env.NODE_ENV == "production";
-  // const production = process.env.NODE_ENV == "production" ? true : false;
   const navigateToProfile = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    // alert(router.query.post);
     const isViewingAuthorProfile =
       authorId === router.query.user ||
       (router.query.user && router.query.post);
@@ -113,82 +111,94 @@ export default function Content(props: {
       }}
     >
       <AuthorInfo navigateToProfile={navigateToProfile} post={post}>
-        {!selectMode ? (
+        {!shareMode && (
           <>
-            <button
-              className={s.dot}
-              aria-expanded={showAction !== ""}
-              aria-label="open post option dropdown"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setshowAction?.(id?.toString());
-
-                if (showAction === id) {
-                  setshowAction?.("");
-                }
-              }}
-            >
-              <FontAwesomeIcon icon={faEllipsisH} />
-            </button>
-          </>
-        ) : (
-          <>
-            {checked ? (
-              <button
-                aria-label="deselect post"
-                ref={uncheckRef}
-                className={s.check}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setChecked(false);
-                  setSelectedId?.(
-                    selectedId?.filter(
-                      (selectedId: string) => selectedId !== id
-                    )
-                  );
-                }}
-              >
-                <FontAwesomeIcon icon={faCircleCheck} />
-              </button>
+            {!selectMode ? (
+              <>
+                <button
+                  className={s.dot}
+                  aria-expanded={showAction !== ""}
+                  aria-label="open post option dropdown"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (showAction === "") {
+                      setshowAction?.(id?.toString());
+                    } else {
+                      setshowAction?.("");
+                    }
+                  }}
+                >
+                  <FontAwesomeIcon icon={faEllipsisH} />
+                </button>
+              </>
             ) : (
-              <button
-                aria-label="select post"
-                style={{
-                  opacity: ".3",
-                }}
-                ref={checkRef}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setSelectedId?.([...selectedId!, id?.toString()]);
-                  setChecked(true);
-                }}
-              >
-                <FontAwesomeIcon icon={faDotCircle} />
-              </button>
+              <>
+                {checked ? (
+                  <button
+                    aria-label="deselect post"
+                    ref={uncheckRef}
+                    className={s.check}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setChecked(false);
+                      setSelectedId?.(
+                        selectedId?.filter(
+                          (selectedId: string) => selectedId !== id
+                        )
+                      );
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faCircleCheck} />
+                  </button>
+                ) : (
+                  <button
+                    aria-label="select post"
+                    style={{
+                      opacity: ".3",
+                    }}
+                    ref={checkRef}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setSelectedId?.([...selectedId!, id?.toString()]);
+                      setChecked(true);
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faDotCircle} />
+                  </button>
+                )}
+              </>
             )}
           </>
         )}
       </AuthorInfo>
       {/* {JSON.stringify(post, null, 4)} */}
-      {isAdmin ? (
-        <AdminDropDown
-          setshowAction={setshowAction!}
-          showAction={showAction ?? ""}
-          authorId={authorId!}
-          id={id?.toString()!}
-        />
-      ) : (
-        <DropDown
-          setshowAction={setshowAction!}
-          showAction={showAction ?? ""}
-          authorId={authorId?.toString()!}
-          id={id?.toString()!}
-        />
+      {!shareMode && (
+        <>
+          {isAdmin ? (
+            <AdminDropDown
+              setshowAction={setshowAction!}
+              showAction={showAction ?? ""}
+              authorId={authorId!}
+              id={id?.toString()!}
+            />
+          ) : (
+            <DropDown
+              setshowAction={setshowAction!}
+              showAction={showAction ?? ""}
+              authorId={authorId?.toString()!}
+              id={id?.toString()!}
+            />
+          )}
+        </>
       )}
       <Input
+        style={{
+          paddingTop: text === "" ? "0" : ".5rem",
+          marginBottom: text === "" ? ".5rem" : "1rem",
+        }}
         dangerouslySetInnerHTML={{
           __html: !production
             ? client
@@ -216,7 +226,9 @@ export default function Content(props: {
       <PhotoLayout files={post.media} preview />
       <SharePreview post={post} />
 
-      {(post.like || post.sharers) && <SocialCount likeCount={likeCount} post={post} />}
+      {(post.like || post.sharers) && (
+        <SocialCount likeCount={likeCount} post={post} />
+      )}
     </span>
   );
 }

@@ -43,7 +43,7 @@ export default function FriendChat(props: { account: UserRecord }) {
     <div className="user">
       <BackHeader>
         <div style={{ display: "flex", flex: "1", gap: ".5rem" }}>
-          <Link href={`/${account.uid}`}>
+          <Link href={`/${account?.uid}`}>
             <Image
               priority={false}
               alt={account?.displayName ? account?.displayName : "Unknown User"}
@@ -60,7 +60,7 @@ export default function FriendChat(props: { account: UserRecord }) {
                 margin: "0",
               }}
               src={
-                account.uid === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
+                account?.uid === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
                   ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
                   : account?.photoURL
                   ? account?.photoURL
@@ -75,9 +75,9 @@ export default function FriendChat(props: { account: UserRecord }) {
               alignItems: "center",
             }}
           >
-            <Link href={`/${account.uid}`}>
+            <Link href={`/${account?.uid}`}>
               <p style={{ marginTop: "-5px" }} className={s.title}>
-                {account.displayName}
+                {account?.displayName}
               </p>
             </Link>
           </div>

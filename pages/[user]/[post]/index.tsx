@@ -340,12 +340,14 @@ export default function Page(props: { uid: string; post: PostType }) {
       >
         <AuthorInfo navigateToProfile={navigateToProfile} post={post} />
         <Input
+          style={{
+            paddingTop: text === "" ? "0" : ".5rem",
+            marginBottom: text === "" ? ".5rem" : "1rem",
+            cursor: canEdit ? "initial" : "default",
+          }}
           role="textbox"
           element={InputRef}
           contentEditable={canEdit ? true : false}
-          style={{
-            cursor: canEdit ? "initial" : "default",
-          }}
           dangerouslySetInnerHTML={{ __html: client ? text : "" }}
         />
         <PhotoLayout

@@ -24,10 +24,12 @@ export default function Home(props: { tabIndex: number }) {
   ) as PageProps;
   return (
     <div
+    
       // style={{ overflow: shareAction ? "hidden" : "initial" }}
       id="/"
       className={styles.home}
       onScroll={(e) => {
+        console.log("scroll");
         const home = document.getElementById("/");
         // const nav = document.getElementsByTagName("nav")[0];
 

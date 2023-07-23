@@ -15,13 +15,12 @@ type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 };
 export default function Newfeed(props: NewfeedProps) {
   const { tabIndex } = props;
-  const { posts, profile } = useContext(AppContext) as Props;
-  // const user = getAuth(app).currentUser;
+  const { getMorePosts, posts, postLoading, postEnd } = useContext(
+    AppContext
+  ) as Props;
   const [user, setuser] = useState<User | null>(null);
 
   // const { id, authorId, text, visibility, createdAt } = posts;
-  // console.log(user?.email);
-  // console.log(user?.uid);
   useEffect(() => {
     const auth = getAuth(app);
     onAuthStateChanged(auth, (user) => {
@@ -33,7 +32,9 @@ export default function Newfeed(props: NewfeedProps) {
   return (
     <div className={styles.postContainer}>
       <PostList
-        // profile={profile}
+        getMorePosts={getMorePosts}
+        postLoading={postLoading}
+        postEnd={postEnd}
         auth={user!}
         posts={posts!}
         tabIndex={tabIndex!}

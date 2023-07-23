@@ -64,7 +64,6 @@
         // max-width: 320px;
     }
     &:has(> div:not(:only-child)) {
-        // background-color: red !important;
         height: auto;
         display: flex;
         gap: 1rem;

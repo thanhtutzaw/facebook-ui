@@ -22,7 +22,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
-
     const { uid } = token;
     const allUsersQuery = query(
       collection(db, `users`),
@@ -80,8 +79,8 @@ export default function Page(props: { acceptedFriends: any[] }) {
                 <Image
                   className={s.profile}
                   alt={"name"}
-                  width={80}
-                  height={80}
+                  width={50}
+                  height={50}
                   src={
                     "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
                   }

@@ -38,30 +38,11 @@ export async function verifyIdToken(token: string) {
   }
 }
 export async function getUserData(uid: string) {
-  // if (!uid) return;
   try {
     const admin = await import("firebase-admin");
     const userRecord = await admin.auth().getUser(uid);
-    // const displayName = userRecord.displayName!;
-    // const photoURL = userRecord.photoURL!;
     return userRecord;
-    
-    // const displayName = modifiedUserRecord.displayName!;
-    // const photoURL = modifiedUserRecord.photoURL!;
-    // const modifiedUserRecord = replaceUndefinedWithNull(userRecord);
-    // return modifiedUserRecord;
-    // return uid;
-    // if (userRecord) {
-    //     return userRecord;
-    // } else {
-    //     return allUsers;
-    // }
-    // return allUsers
-    // console.log("Display Name: " + displayName);
-    // console.log("Photo URL: " + photoURL);
-    // console.log(userRecord)
   } catch (error) {
     console.error("Error retrieving user data:", error);
-    // return allUsers;
   }
 }

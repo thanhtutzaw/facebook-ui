@@ -11,15 +11,15 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import router from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
+import { PageContext, PageProps } from "../../context/PageContext";
 import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
 import { Props } from "../../types/interfaces";
 import Navitems from "./Navitems";
 import SelectModal from "./SelectModal";
-import { PageContext, PageProps } from "../../context/PageContext";
-import router, { Router, useRouter } from "next/router";
 const Logo = () => {
   return (
     <div className={styles.logoContainer}>
@@ -29,7 +29,6 @@ const Logo = () => {
     </div>
   );
 };
-
 export const pages = [
   { name: "/", icon: <FontAwesomeIcon icon={faHome} /> },
   { name: "Friends", icon: <FontAwesomeIcon icon={faUserGroup} /> },
@@ -67,7 +66,6 @@ export default function Header(props: any) {
       }
     };
   }, [selectMode, setSelectedId, setselectMode]);
-  const route = useRouter();
   return (
     <div ref={headerContainerRef} className={styles.headerContainer}>
       <header
