@@ -23,7 +23,7 @@ import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
 import { AppProvider, LIMIT } from "../context/AppContext";
-import { app, db, postToJSON, userToJSON } from "../lib/firebase";
+import { app, db, getPostWithMoreInfo, postToJSON, userToJSON } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import { Post, Props, account } from "../types/interfaces";
 
@@ -53,124 +53,113 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       orderBy("createdAt", "desc"),
       limit(LIMIT)
     );
-    const postSnap = await getDocs(postQuery);
+    
+    const newPosts = await getPostWithMoreInfo(postQuery)
+    // const withLike = (await Promise.all(
+    //   posts.map(async (p) => {
+    //     if (p) {
+    //       const profileQuery = doc(db, `/users/${p.authorId}`);
+    //       const profileSnap = await getDoc(profileQuery);
+    //       const profileData = profileSnap.data()!;
+    //       const profile = profileData.profile as account["profile"];
+    //       const postRef = doc(db, `users/${p.authorId}/posts/${p.id}`);
+    //       const likeRef = collection(postRef, "likes");
+    //       const likeDoc = await getDocs(likeRef);
+    //       const likedByUser = doc(
+    //         db,
+    //         `users/${p.authorId}/posts/${p.id}/likes/${uid}`
+    //       );
+    //       const isLiked = await getDoc(likedByUser);
+    //       const like = likeDoc.docs.map((doc) => doc.data());
 
-    const posts = await Promise.all(
-      postSnap.docs.map(async (doc) => {
-        const post = await postToJSON(doc);
-        // const UserRecord = (await getUserData(post.authorId)) as UserRecord;
-        // const author = userToJSON(UserRecord);
+    //       if (!likeDoc.empty) {
+    //         return {
+    //           ...p,
+    //           author: { ...profile },
+    //           like: [...like],
+    //           isLiked: isLiked.exists() ? true : false,
+    //         };
+    //       } else {
+    //         return {
+    //           ...p,
+    //           author: { ...profile },
+    //           isLiked: false,
+    //         };
+    //       }
+    //     }
+    //   })
+    // )) as Post[];
+    // const sharePosts = await Promise.all(
+    //   withLike.map(async (p) => {
+    //     if (p.sharePost) {
+    //       const postDoc = doc(
+    //         db,
+    //         `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
+    //       );
+    //       const posts = await getDoc(postDoc);
+    //       if (posts.exists()) {
+    //         const post = await postToJSON(
+    //           posts as DocumentSnapshot<DocumentData>
+    //         );
 
-        return {
-          ...post,
-        };
-      })
-    );
-    const withLike = (await Promise.all(
-      posts.map(async (p) => {
-        if (p) {
-          const profileQuery = doc(db, `/users/${p.authorId}`);
-          const profileSnap = await getDoc(profileQuery);
-          const profileData = profileSnap.data()!;
-          const profile = profileData.profile as account["profile"];
-          const postRef = doc(db, `users/${p.authorId}/posts/${p.id}`);
-          const likeRef = collection(postRef, "likes");
-          const likeDoc = await getDocs(likeRef);
-          const likedByUser = doc(
-            db,
-            `users/${p.authorId}/posts/${p.id}/likes/${uid}`
-          );
-          const isLiked = await getDoc(likedByUser);
-          const like = likeDoc.docs.map((doc) => doc.data());
+    //         const profileQuery = doc(db, `/users/${post.authorId}`);
+    //         const profileSnap = await getDoc(profileQuery);
+    //         const profileData = profileSnap.data()!;
+    //         const profile = profileData.profile as account["profile"];
+    //         // const UserRecord = await getUserData(post.authorId);
+    //         // const userJSON = userToJSON(UserRecord);
+    //         const sharePost = {
+    //           ...post,
+    //           author: { ...profile },
+    //         };
+    //         return {
+    //           ...p,
+    //           sharePost: { ...p.sharePost, post: { ...sharePost } },
+    //         };
+    //       } else {
+    //         return {
+    //           ...p,
+    //           sharePost: { ...p.sharePost, post: null },
+    //         };
+    //       }
+    //     }
+    //     return {
+    //       ...p,
+    //     };
+    //   })
+    // );
+    // const newPosts = (await Promise.all(
+    //   sharePosts.map(async (p) => {
+    //     if (p.sharePost?.post) {
+    //       const post = p.sharePost.post!;
+    //       const postRef = doc(db, `users/${post.authorId}/posts/${post.id}`);
+    //       const likeRef = collection(postRef, "likes");
+    //       const likeDoc = await getDocs(likeRef);
+    //       const likedByUser = doc(
+    //         db,
+    //         `users/${post.authorId}/posts/${post.id}/likes/${uid}`
+    //       );
+    //       const isLiked = await getDoc(likedByUser);
+    //       const like = likeDoc.docs.map((doc) => doc.data());
 
-          if (!likeDoc.empty) {
-            return {
-              ...p,
-              author: { ...profile },
-              like: [...like],
-              isLiked: isLiked.exists() ? true : false,
-            };
-          } else {
-            return {
-              ...p,
-              author: { ...profile },
-              isLiked: false,
-            };
-          }
-        }
-      })
-    )) as Post[];
-    const sharePosts = await Promise.all(
-      withLike.map(async (p) => {
-        if (p.sharePost) {
-          const postDoc = doc(
-            db,
-            `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
-          );
-          const posts = await getDoc(postDoc);
-          if (posts.exists()) {
-            const post = await postToJSON(
-              posts as DocumentSnapshot<DocumentData>
-            );
-
-            const profileQuery = doc(db, `/users/${post.authorId}`);
-            const profileSnap = await getDoc(profileQuery);
-            const profileData = profileSnap.data()!;
-            const profile = profileData.profile as account["profile"];
-            // const UserRecord = await getUserData(post.authorId);
-            // const userJSON = userToJSON(UserRecord);
-            const sharePost = {
-              ...post,
-              author: { ...profile },
-            };
-            return {
-              ...p,
-              sharePost: { ...p.sharePost, post: { ...sharePost } },
-            };
-          } else {
-            return {
-              ...p,
-              sharePost: { ...p.sharePost, post: null },
-            };
-          }
-        }
-        return {
-          ...p,
-        };
-      })
-    );
-    const newPosts = (await Promise.all(
-      sharePosts.map(async (p) => {
-        if (p.sharePost?.post) {
-          const post = p.sharePost.post!;
-          const postRef = doc(db, `users/${post.authorId}/posts/${post.id}`);
-          const likeRef = collection(postRef, "likes");
-          const likeDoc = await getDocs(likeRef);
-          const likedByUser = doc(
-            db,
-            `users/${post.authorId}/posts/${post.id}/likes/${uid}`
-          );
-          const isLiked = await getDoc(likedByUser);
-          const like = likeDoc.docs.map((doc) => doc.data());
-
-          const shareData = {
-            ...p,
-            sharePost: {
-              ...p.sharePost,
-              post: {
-                ...post,
-                like: [...like],
-                isLiked: isLiked.exists() ? true : false,
-              },
-            },
-          };
-          return shareData;
-        }
-        return {
-          ...p,
-        };
-      })
-    )) as Post[];
+    //       const shareData = {
+    //         ...p,
+    //         sharePost: {
+    //           ...p.sharePost,
+    //           post: {
+    //             ...post,
+    //             like: [...like],
+    //             isLiked: isLiked.exists() ? true : false,
+    //           },
+    //         },
+    //       };
+    //       return shareData;
+    //     }
+    //     return {
+    //       ...p,
+    //     };
+    //   })
+    // )) as Post[];
     const profileQuery = doc(db, `/users/${uid}`);
     const profileSnap = await getDoc(profileQuery);
     const profileData = profileSnap.data()!;

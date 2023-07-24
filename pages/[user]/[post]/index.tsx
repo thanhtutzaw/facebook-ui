@@ -25,7 +25,12 @@ import { getUserData, verifyIdToken } from "../../../lib/firebaseAdmin";
 import { updatePost } from "../../../lib/firestore/post";
 import { deleteStorage, uploadMedia } from "../../../lib/storage";
 import s from "../../../styles/Home.module.scss";
-import { Media, Post as PostType, Props } from "../../../types/interfaces";
+import {
+  Media,
+  Post as PostType,
+  Props,
+  account,
+} from "../../../types/interfaces";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -38,7 +43,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const token = await verifyIdToken(cookies.token);
     const { uid } = token;
     const { user: authorId, post: postId } = context.query;
-    const isAdmin = uid === authorId;
     // const postDoc = isAdmin
     //   ? query(
     //       collection(db, `users/${authorId}/posts`),
@@ -55,12 +59,16 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const postJSON = await postToJSON(
       postSnap as DocumentSnapshot<DocumentData>
     );
-    const UserRecord = await getUserData(postJSON.authorId);
-    const userJSON = userToJSON(UserRecord) as UserRecord;
+    // const UserRecord = await getUserData(postJSON.authorId);
+    // const userJSON = userToJSON(UserRecord) as UserRecord;
+    const profileQuery = doc(db, `/users/${postJSON.authorId}`);
+    const profileSnap = await getDoc(profileQuery);
+    const profileData = profileSnap.data()!;
+    const authorProfile = profileData.profile as account["profile"];
     const post = {
       ...postJSON,
       author: {
-        ...userJSON,
+        ...authorProfile,
       },
     };
     let withLike;
@@ -100,12 +108,17 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         const postJSON = await postToJSON(
           posts as DocumentSnapshot<DocumentData>
         );
-        const UserRecord = await getUserData(postJSON.authorId);
-        const userJSON = userToJSON(UserRecord);
+        // const UserRecord = await getUserData(postJSON.authorId);
+        // const userJSON = userToJSON(UserRecord);
+        const profileQuery = doc(db, `/users/${postJSON.authorId}`);
+        const profileSnap = await getDoc(profileQuery);
+        const profileData = profileSnap.data()!;
+        const authorProfile = profileData.profile as account["profile"];
+
         const sharePost = {
           ...postJSON,
           author: {
-            ...userJSON,
+            ...authorProfile,
           },
         };
         newPost = {

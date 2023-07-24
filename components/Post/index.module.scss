@@ -8,6 +8,13 @@
     margin: 0 auto;
     display: flex;
     font-size: 1rem;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    border-radius: 10px;
+    border: 0;
+    padding: 10px;
+    font-size: 18px;
 }
 .container {
     > div {

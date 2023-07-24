@@ -1,4 +1,5 @@
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import {
   DocumentData,
   DocumentSnapshot,
@@ -11,47 +12,47 @@ import {
   where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
-import BackHeader from "../../components/Header/BackHeader";
-import s from "../../components/Sections/Profile/index.module.scss";
-import {
-  app,
-  db,
-  fethUserDoc,
-  postToJSON,
-  userToJSON,
-} from "../../lib/firebase";
-import { getUserData } from "../../lib/firebaseAdmin";
 import Image from "next/image";
-import { PostList } from "../../components/Sections/Home/PostList";
-import { Post as PostType, account } from "../../types/interfaces";
 import { useRouter } from "next/router";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
+import BackHeader from "../../components/Header/BackHeader";
+import { PostList } from "../../components/Sections/Home/PostList";
+import s from "../../components/Sections/Profile/index.module.scss";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { getAuth } from "firebase/auth";
+import { app, db, getProfileByUID, postToJSON } from "../../lib/firebase";
+import { Post as PostType, account } from "../../types/interfaces";
+import nookies from "nookies";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
+import { verifyIdToken } from "../../lib/firebaseAdmin";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;
-
+    const cookies = nookies.get(context);
+    const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
     // const user = await fethUserDoc(uid);
     const userQuery = doc(db, `users/${uid}`);
     const user = await getDoc(userQuery);
+    const userExist = user.exists();
     const mypostQuery = query(
       collection(db, `/users/${uid}/posts`),
       where("visibility", "in", ["Friend", "Public"]),
       orderBy("createdAt", "desc")
     );
-    const account = (await getUserData(uid as string))! as UserRecord;
-    const accountJSON = userToJSON(account);
+    // const account = (await getUserData(uid as string))! as UserRecord;
+    // const accountJSON = userToJSON(account);
+    // const accountProfile = await getProfileByUID(uid as string)
     const myPostSnap = await getDocs(mypostQuery);
     const myPost = await Promise.all(
       myPostSnap.docs.map(async (doc) => {
         const post = await postToJSON(doc);
-        const UserRecord = (await getUserData(post.authorId)) as UserRecord;
-        const userJSON = userToJSON(UserRecord);
+        // const UserRecord = (await getUserData(post.authorId)) as UserRecord;
+        // const userJSON = userToJSON(UserRecord);
+        const profile = await getProfileByUID(post.authorId);
+
         return {
           ...post,
           author: {
-            ...userJSON,
+            ...profile,
           },
         };
       })
@@ -68,12 +69,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             const post = await postToJSON(
               posts as DocumentSnapshot<DocumentData>
             );
-            const UserRecord = await getUserData(post.authorId);
-            const userJSON = userToJSON(UserRecord);
+            const profile = await getProfileByUID(post.authorId);
             const sharePost = {
               ...post,
               author: {
-                ...userJSON,
+                ...profile,
               },
             };
             return {
@@ -93,10 +93,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       })
     );
 
-    if (user.exists()) {
+    if (userExist) {
       return {
         props: {
-          account: accountJSON ?? null,
+          token,
+          // account: accountProfile ?? null,
           user: user.data(),
           myPost: newPosts,
         },
@@ -110,7 +111,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     console.log("SSR Error " + error);
     return {
       props: {
-        account: null,
+        token: null,
+        // account: null,
         user: [],
         myPost: [],
       },
@@ -118,18 +120,30 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 export default function UserProfile({
-  account,
+  token,
   user,
   myPost,
 }: {
-  account: UserRecord;
+  token: DecodedIdToken;
+  // account: account["profile"];
   user: { profile: account["profile"] } & account & UserRecord;
   myPost: PostType[];
 }) {
   const { profile } = user;
   const router = useRouter();
-  const { uid, setview } = useContext(PageContext) as PageProps;
+  const { setview } = useContext(PageContext) as PageProps;
   const auth = getAuth(app);
+  const userName = `${profile.firstName ?? "Unknow"} ${
+    profile.lastName ?? "User"
+  }`;
+  // const [authUser, setauthUser] = useState<User | null>(null);
+  // useEffect(() => {
+  //   const auth = getAuth(app);
+  //   onAuthStateChanged(auth, (user) => {
+  //     setauthUser(user);
+  //   });
+  // }, []);
+
   return (
     <div className="user">
       <BackHeader
@@ -152,7 +166,7 @@ export default function UserProfile({
                 src: user.photoURL
                   ? user.photoURL
                   : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-                name: `${account?.displayName ?? "Unknown User"}'s profile`,
+                name: `${userName}'s profile`,
               });
             }}
             priority={false}
@@ -160,15 +174,18 @@ export default function UserProfile({
             width={500}
             height={170}
             style={{ objectFit: "cover", width: "120px", height: "120px" }}
-            alt={`${account?.displayName ?? "Unknown User"}'s profile`}
+            alt={`${userName}'s profile`}
             src={
               user.photoURL ??
               "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
             }
           />
           {/* {JSON.stringify(account)} */}
+          {/* <h1>{router.query.user}</h1> <br /> */}
+          {/* {auth.currentUser?.uid} */}
+          {/* {uid} */}
           <h3 style={{ marginBottom: "18px" }}>
-            {account?.displayName ?? "Unknown User"}
+            {userName}
             {/* {profile
               ? `${profile?.firstName} ${profile?.lastName}`
               : "Unknown User"} */}
@@ -182,10 +199,10 @@ export default function UserProfile({
           >
             {profile?.bio === "" || !profile ? "No Bio Yet" : profile?.bio}
           </p>
-          {auth.currentUser?.uid !== account?.uid && (
+          {token.uid !== router.query.user && (
             <button
               onClick={() => {
-                router.push(`/chat/${account?.uid}`);
+                router.push(`/chat/${router.query.user}`);
               }}
               className={s.editToggle}
             >

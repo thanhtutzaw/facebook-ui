@@ -194,11 +194,14 @@ export default function Content(props: {
           )}
         </>
       )}
+      {/* <h1>{id}</h1> */}
       <Input
-        style={{
-          paddingTop: text === "" ? "0" : ".5rem",
-          marginBottom: text === "" ? ".5rem" : "1rem",
-        }}
+        style={
+          {
+            // paddingTop: text === "" ? "0" : ".5rem",
+            // marginBottom: text === "" ? ".5rem" : "1rem",
+          }
+        }
         dangerouslySetInnerHTML={{
           __html: !production
             ? client

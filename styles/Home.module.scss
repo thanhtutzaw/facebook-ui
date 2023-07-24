@@ -703,13 +703,14 @@
 .input {
   padding: 0 0.8rem;
   padding-top: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
   outline: 0;
   border: 0;
   cursor: default;
   white-space: pre-line;
   word-break: break-word;
   direction: ltr;
+
   a {
     color: var(--blue-origin) !important;
     cursor: default;
