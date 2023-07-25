@@ -51,7 +51,7 @@ export function AppProvider(props: Props) {
     // );
 
     // const finalPost = await getPostWithMoreInfo(newPosts);
-    const finalPost = await getPostWithMoreInfo(postQuery);
+    const finalPost = await getPostWithMoreInfo(postQuery, uid!);
     // const finalPost = (await Promise.all(
     //   sharePosts.map(async (p) => {
     //     if (p.sharePost?.post) {

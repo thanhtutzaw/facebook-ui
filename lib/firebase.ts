@@ -85,14 +85,17 @@ export function userToJSON(obj: any): any {
   }
   return obj;
 }
-const uid = getAuth(app).currentUser?.uid;
+// const uid = getAuth(app).currentUser?.uid;
 export async function getProfileByUID(id: string) {
   const profileQuery = doc(db, `/users/${id}`);
   const profileSnap = await getDoc(profileQuery);
   const profileData = profileSnap.data()!;
   return profileData.profile as account["profile"];
 }
-export async function getPostWithMoreInfo(postQuery: Query<DocumentData>) {
+export async function getPostWithMoreInfo(
+  postQuery: Query<DocumentData>,
+  uid: string
+) {
   const postSnap = await getDocs(postQuery);
 
   const originalPosts = await Promise.all(

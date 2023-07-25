@@ -54,7 +54,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       limit(LIMIT)
     );
     
-    const newPosts = await getPostWithMoreInfo(postQuery)
+    const newPosts = await getPostWithMoreInfo(postQuery,uid)
     // const withLike = (await Promise.all(
     //   posts.map(async (p) => {
     //     if (p) {

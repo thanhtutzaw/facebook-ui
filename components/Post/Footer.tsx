@@ -59,7 +59,7 @@ export function Footer(
     db,
     `users/${post.authorId}/posts/${post.id}/likes/${auth?.currentUser?.uid}`
   );
-  const [likeToggle, setlikeToggle] = useState(false);
+  const [likeToggle, setlikeToggle] = useState(post.isLiked);
   useEffect(() => {
     const likeCollectionRef = collection(
       db,
@@ -92,6 +92,8 @@ export function Footer(
       {...rests}
       className={styles.action}
     >
+      {/* {JSON.stringify(post)} */}
+
       <div
         className={styles.socialButton}
         // onMouseEnter={() => {
