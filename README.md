@@ -12,19 +12,19 @@ Project is created with:
 * [Font-Awesome](https://fontawesome.com) and [nprogress](https://www.npmjs.com/package/nprogress)
 
 ## Features
-:ballot_box_with_check:	Navigate Tabs by Dragging\
+:ballot_box_with_check:	Easily navigate between tabs by dragging \
 :ballot_box_with_check:	Sign up with Email & Password \
-:ballot_box_with_check:	Sort Posts by createdAt\
-:ballot_box_with_check:	Dyanmic Routes for Profile and Post \
-:ballot_box_with_check:	Fetch All Users Posts - SSR except Onlyme posts\
-:ballot_box_with_check:	Fetch User Record by AuthorId (author Name, PhotoURL)\
-:ballot_box_with_check:	Update User Profile (userName,bio) and Account displayName\
-:ballot_box_with_check: Creating new posts, liking/commenting on posts \
+:ballot_box_with_check:	Sort the posts by their creation time (createdAt)\
+:ballot_box_with_check:	Dyanmic Routes for Author Profile and Post \
+:ballot_box_with_check:	Fetch All posts using server-side rendering (SSR),excluding posts that are marked as "Onlyme" \
+:ballot_box_with_check:	Fetch Posts with author details , post like count , shared post and more \
+:ballot_box_with_check:	Allow users to update their profile by modifying their userName, bio, and Account displayName \
+:ballot_box_with_check: creating new posts, liking/commenting on existing posts, and sharing posts with others \
 :ballot_box_with_check:	Select and Delete Multiple Posts\
-:ballot_box_with_check:	User can save Favourite Post & can Copy Post Url \
-:ballot_box_with_check:	Upload Media (Store in Firebase Cloud Storage) \
-:ballot_box_with_check: Image Preview Layout and Zoom \
-:ballot_box_with_check:	Store id_token in cookies with [nookies](https://www.npmjs.com/package/nookies) for SSR data fetching by uid
+:ballot_box_with_check:	Users have the ability to save their favorite posts and copy post URLs \
+:ballot_box_with_check:	Implement media (photos and videos) upload functionality by leveraging the power of Firebase Cloud Storage \
+:ballot_box_with_check: Enable image preview layout and zoom capability for a better user experience \
+:ballot_box_with_check:	Store the id_token in cookies using [nookies](https://www.npmjs.com/package/nookies) to fetch SSR data with the stored userId
 
 ## User-Interface
 ![facebook-ui](https://github.com/thanhtutzaw/facebook-ui/assets/71011043/aebfa8bd-d6d4-4879-8074-023d83647ab4)
