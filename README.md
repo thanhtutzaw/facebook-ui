@@ -16,7 +16,7 @@ Project is created with:
 :ballot_box_with_check:	Sign up with Email & Password \
 :ballot_box_with_check:	Sort the posts by their creation time (createdAt)\
 :ballot_box_with_check:	Dyanmic Routes for Author Profile and Post \
-:ballot_box_with_check:	Fetch All posts using server-side rendering (SSR), excluding posts that are marked as "Onlyme" \
+:ballot_box_with_check:	Fetch All posts using server-side rendering (SSR), excluding posts that are marked as "Onlyme" and Get more posts with Infinite scrolling \
 :ballot_box_with_check:	Fetch Posts with author details , post like count , shared post and more \
 :ballot_box_with_check:	Allow users to update their profile by modifying their userName, bio, and Account displayName \
 :ballot_box_with_check: Creating new posts and Updating with customizable privacy \

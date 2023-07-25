@@ -61,6 +61,7 @@ export default function App({
     }
   }, [expired, router]);
   useEffect(() => {
+    // nProgress.start();
     const handleRouteStart = () => {
       nProgress.start();
     };

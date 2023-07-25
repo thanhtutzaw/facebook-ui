@@ -4,6 +4,7 @@ import Post from "../../Post";
 import { memo, useContext, useEffect } from "react";
 import { PageContext, PageProps } from "../../../context/PageContext";
 import s from "../../Post/index.module.scss";
+import Spinner from "../../Spinner";
 export const PostList = memo(
   (props: {
     getMorePosts?: Function;
@@ -56,18 +57,8 @@ export const PostList = memo(
             />
           ))}
         </div>
-
-        {!postLoading && !postEnd ? (
-          <button
-            className={s.loadMore}
-            onClick={async () => {
-              await getMorePosts?.();
-            }}
-          >
-            Load more
-          </button>
-        ) : postLoading ? (
-          <p>Loading...</p>
+        {!postLoading && !postEnd ? null : postLoading ? (
+          <Spinner />
         ) : (
           <p
             style={{

@@ -18,19 +18,29 @@ import style from "styled-jsx/style";
 export default function Home(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const router = useRouter();
-  const { active, email, headerContainerRef } = useContext(AppContext) as Props;
+  const { postEnd, getMorePosts, active, email, headerContainerRef } =
+    useContext(AppContext) as Props;
   const { shareAction, setuploadButtonClicked } = useContext(
     PageContext
   ) as PageProps;
   return (
     <div
-    
       // style={{ overflow: shareAction ? "hidden" : "initial" }}
       id="/"
       className={styles.home}
       onScroll={(e) => {
-        console.log("scroll");
         const home = document.getElementById("/");
+        if (
+          window.innerHeight + e.currentTarget.scrollTop + 1 >=
+            e.currentTarget.scrollHeight &&
+          !postEnd
+        ) {
+          getMorePosts?.();
+        }
+        // console.log(e.currentTarget.clientHeight);
+        // console.log(
+
+        // );
         // const nav = document.getElementsByTagName("nav")[0];
 
         const header = headerContainerRef?.current;

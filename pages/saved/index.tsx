@@ -22,28 +22,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
-
     const { uid } = token;
-
-    // const mypostQuery = query(
-    //   collection(db, `/users/${uid}/posts`),
-    //   orderBy("createdAt", "desc")
-    // );
-    // const savedPostQuery = doc(db, `/users/${uid}`);
     const user = await fethUserDoc(uid);
-
-    // const profileData = profileSnap.data()!;
-    // const profile = profileData.profile as account["profile"];
-    // const savedPostQuery = collection(db, `/users/${uid}/savedPosts`);
-    //   unsub = onSnapshot(savedPostQuery, async (snapshot) => {
-    //     const post = snapshot.docs.map((doc) => {
-    //       const data = doc.data() as SavedPost;
-    //       return { ...data };
-    //     });
-    //     setsavedPost(post);
-    //     // setLoading(false);
-    //   });
-    // const savedPostSnap = await getDocs(savedPostQuery);
     const savedPosts = user.data()!.savedPosts;
 
     const posts = await Promise.all(
@@ -62,29 +42,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
       })
     );
-    // const savedPost = await Promise.all(
-    //   savedPostSnap.docs.map(async (doc) => {
-    //     // const post = await postToJSON(doc);
-    //     // const UserRecord = (await getUserData(post.authorId)) as UserRecord;
-    //     // const userJSON = userToJSON(UserRecord);
-    //     const data = doc.data() as SavedPost;
-    //     // return { ...data };
-    //     return data;
-    //   })
-    // );
-    // if (user.exists()) {
-    //   return {
-    //     props: {
-    //       // user: user.data(),
-    //       uid,
-    //       myPost,
-    //     },
-    //   };
-    // } else {
-    //   return {
-    //     notFound: true,
-    //   };
-    // }
     return {
       props: {
         savedPosts: posts as Post[],
@@ -119,7 +76,6 @@ export default function Page(props: { savedPosts: Post[]; uid: string }) {
       >
         {/* {JSON.stringify(savedPosts)} */}
         <PostList posts={savedPosts} />
-        {/* saved author {s.authorId}&apos;s postid {s.postId} */}
         {/* <button
                 onClick={async (e) => {
                   // await unSavePost(s.id?.toString());
@@ -133,37 +89,6 @@ export default function Page(props: { savedPosts: Post[]; uid: string }) {
               >
                 Unsave
               </button> */}
-        {/* <div className={`${s.info}`}>
-          <Image
-            priority={false}
-            className={s.profile}
-            width={500}
-            height={170}
-            style={{ objectFit: "cover", width: "120px", height: "120px" }}
-            alt={`${profile?.firstName ?? "Unknown"} ${
-              profile?.lastName ?? ""
-            }'s profile`}
-            src={
-              user.photoURL ??
-              "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-            }
-          />
-          <h3 style={{ marginBottom: "18px" }}>
-            {profile
-              ? `${profile?.firstName} ${profile?.lastName}`
-              : "Unknown User"}
-          </h3>
-          <p
-            style={{
-              color: profile?.bio === "" ? "gray" : "initial",
-              marginTop: "0",
-            }}
-            className={s.bio}
-          >
-            {profile?.bio === "" || !profile ? "No Bio Yet" : profile?.bio}
-          </p>
-        </div> */}
-        {/* <PostList tabIndex={1} posts={myPost} profile={profile} /> */}
       </div>
     </div>
   );

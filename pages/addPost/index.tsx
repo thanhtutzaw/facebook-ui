@@ -1,35 +1,12 @@
-import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getAuth } from "firebase/auth";
-import { useRouter } from "next/router";
-import { useContext, useEffect, useRef, useState } from "react";
-import BackHeader from "../../components/Header/BackHeader";
-import Input from "../../components/Input/Input";
-import MediaInput from "../../components/Input/MediaInput";
-import PhotoLayout from "../../components/Post/PhotoLayout";
-import { SelectVisiblity } from "../../components/Post/SelectVisiblity";
-import { PageContext, PageProps } from "../../context/PageContext";
-import { app } from "../../lib/firebase";
-import { addPost } from "../../lib/firestore/post";
-import { uploadMedia } from "../../lib/storage";
-import s from "../../styles/Home.module.scss";
-import { Post } from "../../types/interfaces";
-import useLocalStorage from "../../hooks/useLocalStorage";
-import FooterInput from "../../components/Input/FooterInput";
 import CreatePostForm from "../../components/Input/CreatePostForm";
 export default function AddPost() {
   // const text = textRef.current?.innerHTML.replaceAll("<div>", "hello");
   // .replace(/<div>/g, "<br>")!
   // const [replacedStr, setReplacedStr] = useState(originalStr);
   // const [replacedStr, setReplacedStr] = useState("<h1>u</h1>");
+  return <CreatePostForm />;
 
   // const replace = str.replaceAll(/<div>/g, "<br>");
-  // useEffect(() => {
-  //   const element = textRef.current;
-  //   if (element) {
-  //     const replacedHTML = element.innerHTML.replace(/<div>/g, "<br>");
-  //   }
-  // }, [originalStr]);
 
   const handleInput = (e: {
     currentTarget: { innerHTML: any; textContent: string };
@@ -63,7 +40,5 @@ export default function AddPost() {
     // if (!textRef.current || textRef.current.textContent) return;
   };
 
-  // if (!auth?.currentUser?.uid) return <p>Redirecting... to /login</p>;
-  return <CreatePostForm />;
   //__html: content.replaceAll(/<\/?[^>]+(>|$)/gi, ""),
 }
