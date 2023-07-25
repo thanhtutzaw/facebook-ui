@@ -86,11 +86,11 @@ export function userToJSON(obj: any): any {
   return obj;
 }
 const uid = getAuth(app).currentUser?.uid;
-export async function getProfileByUID(id:string){
+export async function getProfileByUID(id: string) {
   const profileQuery = doc(db, `/users/${id}`);
-        const profileSnap = await getDoc(profileQuery);
-        const profileData = profileSnap.data()!;
-        return profileData.profile as account["profile"];
+  const profileSnap = await getDoc(profileQuery);
+  const profileData = profileSnap.data()!;
+  return profileData.profile as account["profile"];
 }
 export async function getPostWithMoreInfo(postQuery: Query<DocumentData>) {
   const postSnap = await getDocs(postQuery);
@@ -105,84 +105,113 @@ export async function getPostWithMoreInfo(postQuery: Query<DocumentData>) {
         const profileSnap = await getDoc(profileQuery);
         const profileData = profileSnap.data()!;
         const postAuthorProfile = profileData?.profile as account["profile"];
+
+        const likeRef = collection(
+          db,
+          `users/${p.authorId}/posts/${p.id}/likes`
+        );
+        const likeDoc = await getDocs(likeRef);
+        const like = likeDoc.docs.map((doc) => doc.data()) as [];
+        const likedByUserRef = doc(
+          db,
+          `users/${p.authorId}/posts/${p.id}/likes/${uid}`
+        );
+        const isLiked = await getDoc(likedByUserRef);
+        const originalPost = {
+          ...p,
+          author: { ...postAuthorProfile },
+          like: [...like],
+          sharePost: { ...p.sharePost, post: null },
+          isLiked: isLiked.exists() ? true : false,
+        };
         if (p.sharePost) {
           const sharedPostRef = doc(
             db,
             `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
           );
-          const sharedPost = await getDoc(sharedPostRef);
-          if (sharedPost.exists()) {
-            const post = await postToJSON(
-              sharedPost as DocumentSnapshot<DocumentData>
-            );
-            const likeRef = collection(
-              db,
-              `users/${post.authorId}/posts/${post.id}/likes`
-            );
-            const likeDoc = await getDocs(likeRef);
-            const like = likeDoc.docs.map((doc) => doc.data());
-            const likedByUser = doc(
-              db,
-              `users/${post.authorId}/posts/${post.id}/likes/${uid}`
-            );
-            const isLiked = await getDoc(likedByUser);
-            const profileQuery = doc(db, `/users/${post.authorId}`);
-            const profileSnap = await getDoc(profileQuery);
-            const profileData = profileSnap.data()!;
-            const sharePostProfile = profileData.profile as account["profile"];
-            // const sharePost = {
-            //   ...post,
-            //   author: { ...profile },
-            // };
-            const sharePost = {
-              ...post,
-              sharedPost: { ...post.sharePost },
-              like: [...like],
-              author: { ...sharePostProfile },
-              isLiked: isLiked.exists() ? true : false,
-            };
+          const shareDoc = await getDoc(sharedPostRef);
+          const isSharedPostAvailable = shareDoc.exists();
+
+          const sharedPost = await postToJSON(
+            shareDoc as DocumentSnapshot<DocumentData>
+          );
+          const SharedPostLikeRef = collection(
+            db,
+            `users/${sharedPost.authorId}/posts/${sharedPost.id}/likes`
+          );
+          const SharedPostLikeDoc = await getDocs(SharedPostLikeRef);
+          const sharelike = SharedPostLikeDoc.docs.map((doc) => doc.data());
+          const sharelikedByUser = doc(
+            db,
+            `users/${sharedPost.authorId}/posts/${sharedPost.id}/likes/${uid}`
+          );
+          const isSharePostLiked = await getDoc(sharelikedByUser);
+          const profileQuery = doc(db, `/users/${sharedPost.authorId}`);
+          const profileSnap = await getDoc(profileQuery);
+          const profileData = profileSnap.data()!;
+          const sharePostProfile = profileData.profile as account["profile"];
+          // const sharePost = {
+          //   ...post,
+          //   author: { ...profile },
+          // };
+
+          const sharePost = {
+            // sharedPost: { ...post.sharePost },
+            ...sharedPost,
+            author: { ...sharePostProfile },
+            like: [...sharelike],
+
+            // sharePost: { ...p.sharePost, post: null },
+            isLiked: isSharePostLiked.exists() ? true : false,
+          };
+          if (isSharedPostAvailable) {
             return {
-              ...p,
+              // ...p,
+              // like: [...like],
+              // isLiked: isLiked.exists() ? true : false,
+              ...originalPost,
+              like: [...like],
               author: { ...postAuthorProfile },
-              sharePost: { ...post.sharePost, post: { ...sharePost } },
+              isLiked: isLiked.exists() ? true : false,
+              sharePost: { ...p.sharePost, post: { ...sharePost } },
             };
           } else {
             return {
+              // ...originalPost,
+
               ...p,
+              like: [...like],
+              isLiked: isLiked.exists() ? true : false,
               author: { ...postAuthorProfile },
-              // author: { ...sharePostProfile },
               sharePost: { ...p.sharePost, post: null },
             };
           }
+          // else{
+          //   return {
+          //     // ...originalPost,
+          //     sharePost: { ...p.sharePost, post: null },
+          //   };
+          // }
         } else {
-          const likeRef = collection(
-            db,
-            `users/${p.authorId}/posts/${p.id}/likes`
-          );
-          const likeDoc = await getDocs(likeRef);
-          const like = likeDoc.docs.map((doc) => doc.data());
-          const likedByUserRef = doc(
-            db,
-            `users/${p.authorId}/posts/${p.id}/likes/${uid}`
-          );
-          const isLiked = await getDoc(likedByUserRef);
+          return { ...originalPost };
 
-          if (!likeDoc.empty) {
-            return {
-              ...p,
-              author: { ...postAuthorProfile },
-              like: [...like],
-              isLiked: isLiked.exists() ? true : false,
-              // sharePost: { ...p.sharePost, post: null }
-            };
-          } else {
-            return {
-              ...p,
-              author: { ...postAuthorProfile },
-              isLiked: false,
-              // sharePost: { ...p.sharePost, post: null }
-            };
-          }
+          // if (!likeDoc.empty) {
+          //   return {
+          //     ...p,
+          //     author: { ...postAuthorProfile },
+          //     like: [...like],
+          //     isLiked: isLiked.exists() ? true : false,
+          //     // sharePost: { ...p.sharePost, post: null }
+          //   };
+          // } else {
+          //   return {
+          //     ...p,
+          //     like: [...like],
+          //     author: { ...postAuthorProfile },
+          //     isLiked: false,
+          //     // sharePost: { ...p.sharePost, post: null }
+          //   };
+          // }
         }
       }
     })

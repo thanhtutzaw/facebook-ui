@@ -195,10 +195,11 @@ export default function Content(props: {
         </>
       )}
       {/* <h1>{id}</h1> */}
+      {/* {JSON.stringify(post.like)} */}
       <Input
         style={
           {
-            // paddingTop: text === "" ? "0" : ".5rem",
+            paddingTop: text === "" ? "0" : ".5rem",
             // marginBottom: text === "" ? ".5rem" : "1rem",
           }
         }

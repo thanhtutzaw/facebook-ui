@@ -355,7 +355,8 @@ export default function Page(props: { uid: string; post: PostType }) {
         <Input
           style={{
             paddingTop: text === "" ? "0" : ".5rem",
-            marginBottom: text === "" ? ".5rem" : "1rem",
+            marginBlock: text === "" ? ".5rem" : "1rem",
+            marginBottom: text === "" ? "1rem" : "1rem",
             cursor: canEdit ? "initial" : "default",
           }}
           role="textbox"

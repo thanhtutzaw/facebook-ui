@@ -9,7 +9,6 @@ export function SocialCount(props: { post: Post; likeCount: number }) {
   const [reaction, setReaction] = useState({
     like: ["1a", "2d"],
   });
-  // const [like, setlike] = useState(0);
   // useEffect(() => {
   //   async function getLike() {
   //     const postRef = doc(db, `users/${post.authorId}/posts/${post.id}`);
@@ -33,21 +32,26 @@ export function SocialCount(props: { post: Post; likeCount: number }) {
   // const reactionCount = posts.likes.length;
   const shareCount = post?.sharers?.length ?? 0;
   return (
-    <div className={s.socialCount}>
-      {/* {JSON.stringify(post.sharePost?.post?.like)} */}
-      {/* {JSON.stringify(post.like)} */}
-      {likeCount !== 0 && post?.like && (
-        <p className={s.shareCount}>
-          {/* {post.like?.length} */}
-          {likeCount} {likeCount <= 1 ? "like" : "likes"}
-          {/* {JSON.stringify(post.like?.length)} */}
-        </p>
-      )}
-      {post.sharers && (
-        <p style={{ marginLeft: "auto" }} className={s.shareCount}>
-          {shareCount} {shareCount <= 1 ? "share" : "shares"}
-        </p>
-      )}
-    </div>
+    <>
+      {shareCount || likeCount ? (
+        <div className={s.socialCount}>
+          {likeCount !== 0 && post?.like && (
+            <p className={s.shareCount}>
+              {/* {post.like?.length} */}
+              {likeCount} {likeCount <= 1 ? "like" : "likes"}
+              {/* {JSON.stringify(post.like)} */}
+            </p>
+          )}
+          {/* {likeCount !== 0 && post?.like && (
+        
+      )} */}
+          {post.sharers && (
+            <p style={{ marginLeft: "auto" }} className={s.shareCount}>
+              {shareCount} {shareCount <= 1 ? "share" : "shares"}
+            </p>
+          )}
+        </div>
+      ) : null}
+    </>
   );
 }

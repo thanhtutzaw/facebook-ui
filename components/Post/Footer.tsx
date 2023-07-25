@@ -126,6 +126,8 @@ export function Footer(
           className={`${likeToggle ? styles.active : ""}`}
         >
           <FontAwesomeIcon icon={faThumbsUp} />
+          {/* {likeToggle ? "true" : "false"} */}
+          {/* {likeCount} */}
           <p>Like</p>
         </button>
         <AnimatePresence>
