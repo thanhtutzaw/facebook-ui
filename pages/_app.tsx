@@ -1,6 +1,11 @@
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
-import { getAuth, onAuthStateChanged, onIdTokenChanged } from "firebase/auth";
+import {
+  User,
+  getAuth,
+  onAuthStateChanged,
+  onIdTokenChanged,
+} from "firebase/auth";
 import { GetServerSideProps } from "next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
@@ -8,7 +13,7 @@ import { useRouter } from "next/router";
 import nookies from "nookies";
 import nProgress from "nprogress";
 import "nprogress/nprogress.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { PageProvider } from "../context/PageContext";
 import { app } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
@@ -78,6 +83,13 @@ export default function App({
     };
   }, [router.events]);
   const auth = getAuth(app);
+  const [authUser, setauthUser] = useState<User | null>(null);
+  useEffect(() => {
+    const auth = getAuth(app);
+    onAuthStateChanged(auth, (user) => {
+      setauthUser(user);
+    });
+  }, []);
   useEffect(() => {
     console.log(router.pathname);
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -156,7 +168,7 @@ export default function App({
           <>
             <Component {...pageProps} />
 
-            {auth.currentUser?.uid && <ImageLargeView />}
+            {authUser?.uid && <ImageLargeView />}
           </>
         </main>
       </PageProvider>

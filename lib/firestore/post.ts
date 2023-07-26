@@ -79,21 +79,21 @@ export async function addPost(
     updatedAt: "Invalid Date",
   };
   let data;
-  const targetPostRef = doc(
+  const sharersRef = doc(
     db,
-    `users/${sharePost?.author}/posts/${sharePost?.id}`
+    `users/${sharePost?.author}/posts/${sharePost?.id}/shares/${uid}`
   );
-  const originalPost = await getDoc(targetPostRef);
+  // const originalPost = await getDoc(targetPostRef);
   if (sharePost) {
     data = {
       ...post,
       sharePost,
     };
-    // console.log();
-    await updateDoc(targetPostRef, {
-      ...originalPost.data(),
-      sharers: arrayUnion(uid),
-    });
+    await setDoc(sharersRef, { uid });
+    // await updateDoc(targetPostRef, {
+    //   ...originalPost.data(),
+    //   sharers: arrayUnion(uid),
+    // });
   } else {
     data = { ...post };
   }

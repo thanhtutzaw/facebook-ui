@@ -28,7 +28,7 @@ export interface sharePost {
   postId: string;
 }
 export interface sharedPost {
-  like?: string[];
+  like?: any;
   author: UserRecord | User;
   authorId: string | number;
   id?: string | number;
@@ -49,11 +49,13 @@ export interface sharedPost {
   media: Media[] | null;
   isLiked: boolean;
   isSaved: boolean;
+  shares?: any;
 }
 export interface Post {
   isSaved: boolean;
   isLiked: boolean;
-  like?: string[];
+  like?: any;
+  shares?: any;
   sharers?: string[];
   author: UserRecord | User | account["profile"];
   authorId: string | number;

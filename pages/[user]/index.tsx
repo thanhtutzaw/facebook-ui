@@ -118,7 +118,7 @@ export default function UserProfile({
   const { profile } = user;
   const router = useRouter();
   const { setview } = useContext(PageContext) as PageProps;
-  const userName = `${profile.firstName ?? "Unknow"} ${
+  const userName = `${profile.firstName ?? "Unknown"} ${
     profile.lastName ?? "User"
   }`;
 

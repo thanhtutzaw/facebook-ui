@@ -539,6 +539,11 @@
   top: 0;
   border-bottom: 1px solid rgb(235, 235, 235);
   z-index: 100;
+  h2,
+  .title {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
   .title {
     overflow: hidden;
     text-overflow: ellipsis;

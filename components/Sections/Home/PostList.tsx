@@ -57,6 +57,16 @@ export const PostList = memo(
             />
           ))}
         </div>
+        {!postLoading && posts?.length === 0 && (
+          <p
+            style={{
+              textAlign: "center",
+              userSelect: "none",
+            }}
+          >
+            No more posts
+          </p>
+        )}
         {!postLoading && !postEnd ? null : postLoading ? (
           <Spinner />
         ) : (

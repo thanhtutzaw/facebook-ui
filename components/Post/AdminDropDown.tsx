@@ -78,10 +78,10 @@ function AdminDropDown(props: {
               } catch (error: any) {
                 alert(error.message);
               } finally {
-                router.replace("/", undefined, {
-                  scroll: false,
-                });
-                // setshowAction?.("");
+                // router.replace("/", undefined, {
+                //   scroll: false,
+                // });
+                setshowAction?.("");
               }
             }}
           >

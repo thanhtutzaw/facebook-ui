@@ -101,7 +101,10 @@ export async function postInfo(p: Post, uid: string) {
 
     const likeRef = collection(db, `users/${p.authorId}/posts/${p.id}/likes`);
     const likeDoc = await getDocs(likeRef);
-    const like = likeDoc.docs.map((doc) => doc.data()) as [];
+    const like = likeDoc.docs.map((doc) => doc.data());
+    const shareRef = collection(db, `users/${p.authorId}/posts/${p.id}/shares`);
+    const shareDoc = await getDocs(shareRef);
+    const shares = shareDoc.docs.map((doc) => doc.data());
     const likedByUserRef = doc(
       db,
       `users/${p.authorId}/posts/${p.id}/likes/${uid}`
@@ -112,6 +115,7 @@ export async function postInfo(p: Post, uid: string) {
     const originalPost = {
       ...p,
       author: { ...postAuthorProfile },
+      shares: [...shares],
       like: [...like],
       sharePost: { ...p.sharePost, post: null },
       isLiked: isLiked.exists() ? true : false,
@@ -134,6 +138,12 @@ export async function postInfo(p: Post, uid: string) {
       );
       const SharedPostLikeDoc = await getDocs(SharedPostLikeRef);
       const sharelike = SharedPostLikeDoc.docs.map((doc) => doc.data());
+      const SharedPostShareRef = collection(
+        db,
+        `users/${sharedPost.authorId}/posts/${sharedPost.id}/shares`
+      );
+      const SharedPostShareDoc = await getDocs(SharedPostShareRef);
+      const shareShares = SharedPostShareDoc.docs.map((doc) => doc.data());
       const sharelikedByUser = doc(
         db,
         `users/${sharedPost.authorId}/posts/${sharedPost.id}/likes/${uid}`
@@ -147,12 +157,14 @@ export async function postInfo(p: Post, uid: string) {
         ...sharedPost,
         author: { ...sharePostProfile },
         like: [...sharelike],
+        shares: [...shareShares],
         isLiked: isSharePostLiked.exists() ? true : false,
       };
       if (isSharedPostAvailable) {
         return {
           ...originalPost,
           like: [...like],
+          shares: [...shares],
           author: { ...postAuthorProfile },
           isLiked: isLiked.exists() ? true : false,
           sharePost: { ...p.sharePost, post: { ...sharePost } },
@@ -162,6 +174,7 @@ export async function postInfo(p: Post, uid: string) {
           // ...originalPost,
           ...p,
           like: [...like],
+          shares: [...shares],
           isLiked: isLiked.exists() ? true : false,
           author: { ...postAuthorProfile },
           sharePost: { ...p.sharePost, post: null },

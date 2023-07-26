@@ -1,32 +1,22 @@
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
 import BackHeader from "../../components/Header/BackHeader";
 import { PostList } from "../../components/Sections/Home/PostList";
 import s from "../../components/Sections/Profile/index.module.scss";
 import {
-  app,
   db,
-  fethUserDoc,
   postInfo,
-  postToJSON,
-  userToJSON,
+  postToJSON
 } from "../../lib/firebase";
-import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
-import { Post, SavedPost } from "../../types/interfaces";
+import { verifyIdToken } from "../../lib/firebaseAdmin";
 // import console, { profile } from "console";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-import { getAuth } from "firebase/auth";
 import nookies from "nookies";
-import ProfileInfo from "../../components/Sections/Profile/ProfileInfo";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
     const { uid } = token;
-    // const user = await fethUserDoc(uid);
-    // const savedPosts = user.data()!.savedPost;
     const savedPosts = collection(db, `users/${uid}/savedPost`);
     const saved = await getDocs(savedPosts);
     const data = saved.docs.map((doc) => doc.data());

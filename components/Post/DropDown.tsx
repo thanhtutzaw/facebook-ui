@@ -7,6 +7,7 @@ import { app, db } from "../../lib/firebase";
 import { addSavedPost } from "../../lib/firestore/savedPost";
 import styles from "./index.module.scss";
 import { deleteDoc, doc } from "firebase/firestore";
+import { useRouter } from "next/router";
 export default function DropDown(props: {
   setshowAction: Function;
   showAction: string;
@@ -18,7 +19,7 @@ export default function DropDown(props: {
   const { uid, isSaved, setshowAction, authorId, id, showAction } = props;
   const [loading, setLoading] = useState(false);
   const [saveToggle, setsaveToggle] = useState(isSaved);
-
+  const router = useRouter();
   return (
     <AnimatePresence>
       {showAction === id && (
@@ -72,7 +73,13 @@ export default function DropDown(props: {
                 await deleteDoc(savedByUserRef);
                 // alert("Deleted Saved Post");
                 setsaveToggle(false);
+                if (router.pathname !== "/") {
+                  alert("hey");
+                  router.replace(router.asPath);
+                }
+                //   if()
               }
+              setshowAction("");
             }}
           >
             <FontAwesomeIcon icon={faBookmark} />

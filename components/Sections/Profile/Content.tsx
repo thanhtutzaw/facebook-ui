@@ -6,6 +6,7 @@ import { PostList } from "../Home/PostList";
 import { faSort, faGear } from "@fortawesome/free-solid-svg-icons";
 import { Post } from "../../../types/interfaces";
 import { RefObject } from "react";
+import Spinner from "../../Spinner";
 
 export default function Content(props: {
   error?: any;
@@ -23,6 +24,7 @@ export default function Content(props: {
   sortedPost: Post[];
 }) {
   const {
+    tab,
     error,
     isSticky,
     headerRef,
@@ -113,8 +115,9 @@ export default function Content(props: {
         </AnimatePresence>
       </header>
 
+      {/* {tab === "profile" && <Spinner />} */}
       {loading ? (
-        <p style={{ textAlign: "center" }}>Loading</p>
+        tab === "profile" && <Spinner />
       ) : error ? (
         <p style={{ textAlign: "center" }}>
           Unexpected Error Occured ! {error.message}

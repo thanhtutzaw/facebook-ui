@@ -26,7 +26,7 @@ export default function AuthorInfo(props: {
           priority={false}
           className={styles.profile}
           // alt={author?.displayName ? author?.displayName : "Unknown User"}
-          alt={`${profile?.firstName ?? "Unknow"} ${
+          alt={`${profile?.firstName ?? "Unknown"} ${
             profile?.lastName ?? "User"
           }}`}
           width={200}
@@ -53,12 +53,13 @@ export default function AuthorInfo(props: {
           {/* {JSON.stringify(post, null, 4)} */}
           <p className={styles.name}>
             <span onClick={navigateToProfile}>
-              {/* {author ? "Unknow User"} */}
-              {profile?.firstName ?? "Unknow"} {profile?.lastName ?? "User"}
-              {/* {author?.displayName ?? "Unknow User"} */}
+              {/* {author ? "Unknown User"} */}
+              {profile?.firstName ?? "Unknown"} {profile?.lastName ?? "User"}
+              {/* {author?.displayName ?? "Unknown User"} */}
             </span>
-            {post.sharePost && <>&nbsp; shared a Post</>}
+            {post.sharePost?.id && <>&nbsp; shared a Post</>}
           </p>
+          {/* {JSON.stringify(post.sharePost)} */}
           <div
             style={{
               display: "flex",

@@ -177,9 +177,9 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
               const sharePost2 = {
                 author: sharePost?.authorId?.toString()!,
                 id: sharePost?.id?.toString()!,
-                sharer: [{ id: uid }],
+                sharer: [{ id:  uid }],
               };
-              console.log(sharePost2);
+              // console.log(sharePost2);
               if (sharePost) {
                 await addPost(
                   uid,
