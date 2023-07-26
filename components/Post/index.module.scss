@@ -427,6 +427,9 @@
     background-color: rgb(241, 241, 241) !important;
     z-index: 200;
     box-shadow: 0 5px 12px rgb(136 135 135 / 50%);
+    .active {
+        color: var(--blue-origin);
+    }
     > button {
         color: rgb(29, 8, 8);
         background-color: rgb(241, 241, 241) !important;

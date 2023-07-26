@@ -3,17 +3,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { app } from "../../lib/firebase";
+import { app, db } from "../../lib/firebase";
 import { addSavedPost } from "../../lib/firestore/savedPost";
 import styles from "./index.module.scss";
+import { deleteDoc, doc } from "firebase/firestore";
 export default function DropDown(props: {
   setshowAction: Function;
   showAction: string;
   authorId: string;
   id: string;
+  uid: string;
+  isSaved: boolean;
 }) {
-  const { setshowAction, authorId, id, showAction } = props;
+  const { uid, isSaved, setshowAction, authorId, id, showAction } = props;
   const [loading, setLoading] = useState(false);
+  const [saveToggle, setsaveToggle] = useState(isSaved);
+
   return (
     <AnimatePresence>
       {showAction === id && (
@@ -43,26 +48,35 @@ export default function DropDown(props: {
             id={id.toString()}
           />
           <button
+            className={`${saveToggle ? styles.active : ""}`}
             disabled={loading}
             onClick={async (e) => {
               e.preventDefault();
               e.stopPropagation();
               // savedPost.push({ authorId: authorId, postId: id });
 
-              setLoading(true);
-              try {
+              if (!saveToggle) {
                 setLoading(true);
-                await addSavedPost(authorId, id);
-              } catch (error: any) {
-                alert(error.message);
-                setLoading(false);
-              } finally {
-                setLoading(false);
+                try {
+                  setLoading(true);
+                  await addSavedPost(authorId, id);
+                } catch (error: any) {
+                  alert(error.message);
+                  setLoading(false);
+                } finally {
+                  setLoading(false);
+                }
+                setsaveToggle(true);
+              } else {
+                const savedByUserRef = doc(db, `users/${uid}/savedPost/${id}`);
+                await deleteDoc(savedByUserRef);
+                // alert("Deleted Saved Post");
+                setsaveToggle(false);
               }
             }}
           >
             <FontAwesomeIcon icon={faBookmark} />
-            Save Post
+            {saveToggle ? "Unsave Post" : "Save Post"}
           </button>
         </motion.div>
       )}

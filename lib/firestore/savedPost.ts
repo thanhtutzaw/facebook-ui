@@ -28,35 +28,39 @@ export async function addSavedPost(authorId: string, postId: string) {
   const userRef = doc(db, `users/${uid}`);
   const authorRef = doc(db, `users/${authorId}`);
   const postRef = doc(db, `users/${authorId}/posts/${postId}`);
-
+  const Ref = doc(db, `users/${uid}/savedPost/${postId}`);
+  const data = {
+    // id: Ref.id,
+    authorId,
+    postId,
+  };
   try {
-    const userSnapshot = await getDoc(userRef);
+    // const userSnapshot = await getDoc(userRef);
     const authorSnapShot = await getDoc(authorRef);
     const postSnapshot = await getDoc(postRef);
-    console.log(postSnapshot?.exists());
-    if (!userSnapshot.exists()) {
-      alert("User does not exist.");
+    // console.log(postSnapshot?.exists());
+
+    if (!authorSnapShot.exists()) {
+      alert("Author does not exist.");
     } else if (!postSnapshot.exists()) {
       alert("Post does not exist.");
     } else {
-      const savedPosts = userSnapshot.data().savedPosts || [];
+      // const savedPosts = userSnapshot.data().savedPosts || [];
 
-      // Check if the post is already saved by the user
-      const isSaved = savedPosts.some(
-        (savedPost: any) => savedPost.postId === postId
-      );
-      console.log(userSnapshot.data());
-      if (isSaved) {
-        alert("Post already saved!");
-        return;
-      }
+      // // Check if the post is already saved by the user
+      // const isSaved = savedPosts.some(
+      //   (savedPost: any) => savedPost.postId === postId
+      // );
+      // if (isSaved) {
+      //   alert("Post already saved!");
+      //   return;
+      // }
 
       // // Add the post to the user's savedPosts array
-      await updateDoc(userRef, {
-        savedPosts: arrayUnion({ authorId, postId }),
-      });
-
-      alert("Post saved successfully!");
+      // await updateDoc(userRef, {
+      //   savedPosts: arrayUnion({ authorId, postId }),
+      // });
+      await setDoc(Ref, data);
     }
     // try {
     //   // await updateDoc(Ref, { savedPost: { ...data } });

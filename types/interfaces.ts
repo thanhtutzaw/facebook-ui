@@ -48,8 +48,10 @@ export interface sharedPost {
     | Timestamp;
   media: Media[] | null;
   isLiked: boolean;
+  isSaved: boolean;
 }
 export interface Post {
+  isSaved: boolean;
   isLiked: boolean;
   like?: string[];
   sharers?: string[];
