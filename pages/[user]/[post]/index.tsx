@@ -325,6 +325,8 @@ export default function Page(props: { uid: string; post: PostType }) {
       alert(error.message);
     }
   };
+
+  const [likeCount, setlikeCount] = useState(post.like?.length);
   return (
     <div className="user">
       <BackHeader
@@ -374,7 +376,7 @@ export default function Page(props: { uid: string; post: PostType }) {
           setFiles={setFiles}
         />
         <SharePreview post={post} />
-        <SocialCount likeCount={post.like?.length!} post={post} />
+        <SocialCount likeCount={likeCount!} post={post} />
         {canEdit ? (
           <FooterInput
             fileRef={fileRef}
@@ -385,6 +387,8 @@ export default function Page(props: { uid: string; post: PostType }) {
           />
         ) : (
           <Footer
+            likeCount={likeCount!}
+            setlikeCount={setlikeCount}
             post={post}
             style={{ borderBottom: "1px solid rgb(235, 235, 235)" }}
           />

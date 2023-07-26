@@ -1,13 +1,10 @@
+import { useQuery } from "@tanstack/react-query";
 import { User, getAuth } from "firebase/auth";
 import {
-  DocumentData,
-  DocumentSnapshot,
-  Unsubscribe,
   collection,
   doc,
   getDoc,
   getDocs,
-  onSnapshot,
   orderBy,
   query,
 } from "firebase/firestore";
@@ -24,16 +21,18 @@ import {
 } from "react";
 import { AppContext } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
-import { app, db, postToJSON, userToJSON } from "../../../lib/firebase";
+import {
+  app,
+  db,
+  getPostWithMoreInfo,
+  postToJSON,
+} from "../../../lib/firebase";
 import { changeProfile } from "../../../lib/profile";
 import { Post, Props, account } from "../../../types/interfaces";
 import Content from "./Content";
 import EditProfile from "./EditProfile";
 import ProfileInfo from "./ProfileInfo";
 import s from "./index.module.scss";
-import { useQuery } from "@tanstack/react-query";
-import { getUserData } from "../../../lib/firebaseAdmin";
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
 export default function Profile() {
   const photoURL = "";
   const { username, profile, email, sortedPost, setsortedPost } = useContext(
@@ -86,59 +85,60 @@ export default function Profile() {
     async function () {
       // Dont't fetch when current Tab is not profile
       console.log("fetching");
+
       const postQuery = query(
         collection(db, `/users/${uid}/posts`),
         orderBy("createdAt", sortby === "old" ? "asc" : "desc")
       );
-      const snapShot = await getDocs(postQuery);
-      const posts = (await Promise.all(
-        snapShot.docs.map(async (doc) => {
-          const post = await postToJSON(doc);
-          const author = auth?.currentUser as User;
-          return {
-            ...post,
-            author: {
-              ...author,
-            },
-          };
-        })
-      )) as Post[];
+      return await getPostWithMoreInfo(postQuery, uid! as string);
+      // const posts = (await Promise.all(
+      //   snapShot.docs.map(async (doc) => {
+      //     const post = await postToJSON(doc);
+      //     const author = auth?.currentUser as User;
+      //     return {
+      //       ...post,
+      //       author: {
+      //         ...author,
+      //       },
+      //     };
+      //   })
+      // )) as Post[];
 
-      return await Promise.all(
-        posts.map(async (p) => {
-          if (p.sharePost) {
-            const postDoc = doc(
-              db,
-              `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
-            );
-            const posts = await getDoc(postDoc);
-            if (posts.exists()) {
-              const post = await postToJSON(posts);
-              const author = auth?.currentUser as User;
-              const withAuthor = {
-                ...post,
-                author: {
-                  ...author,
-                },
-              };
-              return {
-                ...p,
-                sharePost: { ...p.sharePost, post: withAuthor },
-              };
-            } else {
-              return {
-                ...p,
-                sharePost: { ...p.sharePost, post: null },
-              };
-            }
-          }
-          return {
-            ...p,
-          };
-        })
-      );
+      // return await Promise.all(
+      //   posts.map(async (p) => {
+      //     if (p.sharePost) {
+      //       const postDoc = doc(
+      //         db,
+      //         `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
+      //       );
+      //       const posts = await getDoc(postDoc);
+      //       if (posts.exists()) {
+      //         const post = await postToJSON(posts);
+      //         const author = auth?.currentUser as User;
+      //         const withAuthor = {
+      //           ...post,
+      //           author: {
+      //             ...author,
+      //           },
+      //         };
+      //         return {
+      //           ...p,
+      //           sharePost: { ...p.sharePost, post: withAuthor },
+      //         };
+      //       } else {
+      //         return {
+      //           ...p,
+      //           sharePost: { ...p.sharePost, post: null },
+      //         };
+      //       }
+      //     }
+      //     return {
+      //       ...p,
+      //     };
+      //   })
+      // );
     },
-    [auth?.currentUser, sortby, uid]
+    [sortby, uid]
   );
   const { isLoading, error, data } = useQuery({
     queryKey: ["myPost"],

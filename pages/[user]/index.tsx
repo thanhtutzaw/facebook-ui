@@ -22,6 +22,7 @@ import { PageContext, PageProps } from "../../context/PageContext";
 import {
   db,
   fethUserDoc,
+  getPostWithMoreInfo,
   getProfileByUID,
   postToJSON,
 } from "../../lib/firebase";
@@ -43,55 +44,42 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       where("visibility", "in", ["Friend", "Public"]),
       orderBy("createdAt", "desc")
     );
-    const myPostSnap = await getDocs(mypostQuery);
-    const myPost = await Promise.all(
-      myPostSnap.docs.map(async (doc) => {
-        const post = await postToJSON(doc);
-        const profile = await getProfileByUID(post.authorId);
-
-        return {
-          ...post,
-          author: {
-            ...profile,
-          },
-        };
-      })
-    );
-    const newPosts = await Promise.all(
-      myPost.map(async (p) => {
-        if (p.sharePost) {
-          const postDoc = doc(
-            db,
-            `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
-          );
-          const posts = await getDoc(postDoc);
-          if (posts.exists()) {
-            const post = await postToJSON(
-              posts as DocumentSnapshot<DocumentData>
-            );
-            const profile = await getProfileByUID(post.authorId);
-            const sharePost = {
-              ...post,
-              author: {
-                ...profile,
-              },
-            };
-            return {
-              ...p,
-              sharePost: { ...p.sharePost, post: { ...sharePost } },
-            };
-          } else {
-            return {
-              ...p,
-              sharePost: { ...p.sharePost, post: null },
-            };
-          }
-        }
-        return {
-          ...p,
-        };
-      })
-    );
+    const myPost = await getPostWithMoreInfo(mypostQuery, uid! as string);
+    // const newPosts = await Promise.all(
+    //   myPost.map(async (p) => {
+    //     if (p.sharePost) {
+    //       const postDoc = doc(
+    //         db,
+    //         `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
+    //       );
+    //       const posts = await getDoc(postDoc);
+    //       if (posts.exists()) {
+    //         const post = await postToJSON(
+    //           posts as DocumentSnapshot<DocumentData>
+    //         );
+    //         const profile = await getProfileByUID(post.authorId);
+    //         const sharePost = {
+    //           ...post,
+    //           author: {
+    //             ...profile,
+    //           },
+    //         };
+    //         return {
+    //           ...p,
+    //           sharePost: { ...p.sharePost, post: { ...sharePost } },
+    //         };
+    //       } else {
+    //         return {
+    //           ...p,
+    //           sharePost: { ...p.sharePost, post: null },
+    //         };
+    //       }
+    //     }
+    //     return {
+    //       ...p,
+    //     };
+    //   })
+    // );
 
     if (userExist) {
       return {
@@ -99,7 +87,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           token,
           // account: accountProfile ?? null,
           user: user.data(),
-          myPost: newPosts,
+          myPost,
         },
       };
     } else {
