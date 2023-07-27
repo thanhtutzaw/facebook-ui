@@ -2,19 +2,30 @@ import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import {
   DocumentData,
   DocumentSnapshot,
+  Timestamp,
   collection,
+  collectionGroup,
   doc,
   getDoc,
   getDocs,
+  limit,
   orderBy,
   query,
+  startAfter,
   where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useContext } from "react";
+import {
+  MouseEventHandler,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import BackHeader from "../../components/Header/BackHeader";
 import { PostList } from "../../components/Sections/Home/PostList";
 import s from "../../components/Sections/Profile/index.module.scss";
@@ -28,6 +39,7 @@ import {
 } from "../../lib/firebase";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { Post as PostType, account } from "../../types/interfaces";
+import { LIMIT } from "../../context/AppContext";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;
@@ -42,7 +54,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const mypostQuery = query(
       collection(db, `/users/${uid}/posts`),
       where("visibility", "in", ["Friend", "Public"]),
-      orderBy("createdAt", "desc")
+      orderBy("createdAt", "desc"),
+      limit(LIMIT)
     );
     const myPost = await getPostWithMoreInfo(mypostQuery, uid! as string);
     // const newPosts = await Promise.all(
@@ -121,9 +134,53 @@ export default function UserProfile({
   const userName = `${profile.firstName ?? "Unknown"} ${
     profile.lastName ?? "User"
   }`;
+  const [limitedPosts, setlimitedPosts] = useState(myPost);
+  const [postLoading, setpostLoading] = useState(false);
+  const [postEnd, setPostEnd] = useState(false);
+  const getMorePosts = useCallback(
+    async function () {
+      setpostLoading(true);
+      const post = limitedPosts?.[limitedPosts?.length - 1]!;
+      const date = new Timestamp(
+        post.createdAt.seconds,
+        post.createdAt.nanoseconds
+      );
+      const mypostQuery = query(
+        collection(db, `/users/${router.query.user}/posts`),
+        where("visibility", "in", ["Friend", "Public"]),
+        orderBy("createdAt", "desc"),
+        startAfter(date),
+        limit(LIMIT)
+      );
+      const finalPost = await getPostWithMoreInfo(mypostQuery, token.uid!);
+      setlimitedPosts(limitedPosts?.concat(finalPost));
+      setpostLoading(false);
 
+      if (finalPost.length < LIMIT) {
+        setPostEnd(true);
+      }
+    },
+    [limitedPosts, router.query.user, token.uid]
+  );
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    async function handleScroll(e: Event) {
+      const target = e.currentTarget as HTMLElement;
+      if (
+        window.innerHeight + target.scrollTop + 1 >= target.scrollHeight &&
+        !postEnd
+      ) {
+        await getMorePosts();
+      }
+    }
+    const element = scrollRef.current?.parentElement!;
+    element.addEventListener("scroll", handleScroll);
+    return () => {
+      element.removeEventListener("scroll", handleScroll);
+    };
+  }, [getMorePosts, postEnd]);
   return (
-    <div className="user">
+    <div ref={scrollRef} className="user">
       <BackHeader
         onClick={() => {
           router.push("/");
@@ -179,7 +236,13 @@ export default function UserProfile({
             </button>
           )}
         </div>
-        <PostList tabIndex={1} posts={myPost} profile={profile} />
+        <PostList
+          postLoading={postLoading}
+          postEnd={postEnd}
+          tabIndex={1}
+          posts={limitedPosts}
+          profile={profile}
+        />
       </div>
     </div>
   );

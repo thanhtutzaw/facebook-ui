@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { createContext } from "react";
 import { useActive } from "../hooks/useActiveTab";
 import { Post, Props, account } from "../types/interfaces";
@@ -16,6 +16,7 @@ import {
   getDoc,
   DocumentData,
   DocumentSnapshot,
+  onSnapshot,
 } from "firebase/firestore";
 import { db, getPostWithMoreInfo, postToJSON } from "../lib/firebase";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
@@ -31,6 +32,23 @@ export function AppProvider(props: Props) {
   const [selectMode, setselectMode] = useState(false);
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const [sortedPost, setsortedPost] = useState<Post[]>([]);
+  const updatePost = (id: string) => {
+    setlimitedPosts(limitedPosts?.filter((post) => post.id !== id));
+  };
+  // useEffect(() => {
+  //   // Set up the real-time data listener
+  //   const postQuery = collection(db, `posts`);
+  //   const unsubscribe = postQuery.onSnapshot((snapshot) => {
+  //     const updatedData = snapshot.docs.map((doc) => doc.data());
+  //     setData(updatedData);
+  //   });
+
+  //   return () => {
+  //     // Unsubscribe from the listener when the component unmounts
+  //     unsubscribe();
+  //   };
+  // }, []);
+
   async function getMorePosts() {
     setpostLoading(true);
     const post = posts?.[posts?.length - 1]!;
@@ -94,6 +112,7 @@ export function AppProvider(props: Props) {
   return (
     <AppContext.Provider
       value={{
+        updatePost,
         username,
         profile,
         sortedPost,

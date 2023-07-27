@@ -8,13 +8,16 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "./index.module.scss";
 import { CopyLink } from "./DropDown";
+import { Post } from "../../types/interfaces";
 function AdminDropDown(props: {
+  updatePost: Function;
   setshowAction: Function;
   showAction: string;
   authorId: string | number;
   id: string;
+  post?: Post;
 }) {
-  const { setshowAction, authorId, id, showAction } = props;
+  const { updatePost, post, setshowAction, authorId, id, showAction } = props;
   const auth = getAuth(app);
   const [loading, setLoading] = useState(false);
   return (
@@ -72,9 +75,10 @@ function AdminDropDown(props: {
               setLoading(true);
               try {
                 await deletePost(auth.currentUser?.uid!, id!);
-                router.replace("/", undefined, {
-                  scroll: false,
-                });
+                // router.replace("/", undefined, {
+                //   scroll: false,
+                // });
+                setLoading(false);
               } catch (error: any) {
                 alert(error.message);
               } finally {
@@ -82,6 +86,8 @@ function AdminDropDown(props: {
                 //   scroll: false,
                 // });
                 setshowAction?.("");
+                if (loading) return;
+                updatePost(id);
               }
             }}
           >

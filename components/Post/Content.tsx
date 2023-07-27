@@ -27,6 +27,7 @@ import { SharePreview } from "./SharePreview";
 import { SocialCount } from "./SocialCount";
 import Input from "../Input/Input";
 export default function Content(props: {
+  updatePost: Function;
   likeCount: number;
   shareMode?: boolean;
   preventNavigate?: boolean;
@@ -42,6 +43,7 @@ export default function Content(props: {
   auth: User;
 }) {
   const {
+    updatePost,
     likeCount,
     preventNavigate,
     auth,
@@ -179,10 +181,12 @@ export default function Content(props: {
         <>
           {isAdmin ? (
             <AdminDropDown
+              updatePost={updatePost!}
               setshowAction={setshowAction!}
               showAction={showAction ?? ""}
               authorId={authorId!}
               id={id?.toString()!}
+              post={post}
             />
           ) : (
             <DropDown

@@ -79,6 +79,7 @@ export interface Post {
 }
 
 export interface Props {
+  updatePost?: Function;
   username?: string;
   children?: ReactNode;
   setselectMode?: Function;

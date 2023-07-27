@@ -1,11 +1,9 @@
 import { User } from "firebase/auth";
 import {
-  CSSProperties,
-  HTMLAttributes,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { Post as PostType } from "../../types/interfaces";
@@ -14,6 +12,7 @@ import { Footer } from "./Footer";
 import styles from "./index.module.scss";
 
 interface PostProps {
+  updatePost?: Function;
   shareMode?: boolean;
   auth?: User;
   preventNavigate?: boolean;
@@ -23,6 +22,7 @@ interface PostProps {
   profile?: any;
 }
 export default function Post({
+  updatePost,
   shareMode,
   preventNavigate,
   auth,
@@ -74,6 +74,7 @@ export default function Post({
       }}
     >
       <Content
+        updatePost={updatePost!}
         likeCount={likeCount!}
         preventNavigate={preventNavigate}
         auth={auth!}

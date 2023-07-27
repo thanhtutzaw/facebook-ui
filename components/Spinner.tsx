@@ -1,5 +1,5 @@
 import React from "react";
-
+import "nprogress/nprogress.css";
 function Spinner({ size = 30 }: { size?: any }) {
   return (
     <div style={{ marginTop: "2rem" }} id="nprogress">

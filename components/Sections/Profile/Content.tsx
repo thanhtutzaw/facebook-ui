@@ -131,8 +131,28 @@ export default function Content(props: {
             selectMode={selectMode!}
             posts={sortedPost!}
             tabIndex={1}
+            postLoading={hasNextPage}
           />
-          {hasNextPage && <Spinner />}
+          {/* { && <Spinner />} */}
+          {/* {!hasNextPage && sortedPost.length !== 0 ? (
+            <p
+              style={{
+                textAlign: "center",
+                userSelect: "none",
+              }}
+            >
+              No more posts
+            </p>
+          ) : (
+            <p
+              style={{
+                textAlign: "center",
+                userSelect: "none",
+              }}
+            >
+              Empty Post
+            </p>
+          )} */}
         </>
       )}
     </div>

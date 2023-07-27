@@ -7,7 +7,7 @@ import s from "../../Post/index.module.scss";
 import Spinner from "../../Spinner";
 export const PostList = memo(
   (props: {
-    getMorePosts?: Function;
+    updatePost?: Function;
     preventNavigate?: boolean;
     selectMode?: boolean;
     posts: PostType[];
@@ -20,7 +20,7 @@ export const PostList = memo(
     console.log("postList is rendering");
 
     const {
-      getMorePosts,
+      updatePost,
       postLoading,
       postEnd,
       profile,
@@ -47,6 +47,7 @@ export const PostList = memo(
         >
           {posts?.map((post: PostType) => (
             <Post
+              updatePost={updatePost}
               selectMode={selectMode}
               preventNavigate={preventNavigate}
               profile={profile}
@@ -57,14 +58,14 @@ export const PostList = memo(
             />
           ))}
         </div>
-        {!postLoading && posts?.length === 0 && (
+        {!postLoading && !postEnd && (
           <p
             style={{
               textAlign: "center",
               userSelect: "none",
             }}
           >
-            No more posts
+            {posts?.length === 0 ? "Empty Post" : "No more posts"}
           </p>
         )}
         {!postLoading && !postEnd ? null : postLoading ? (

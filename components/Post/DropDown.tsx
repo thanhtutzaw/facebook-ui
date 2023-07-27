@@ -58,6 +58,7 @@ export default function DropDown(props: {
 
               if (!saveToggle) {
                 setLoading(true);
+                setsaveToggle(true);
                 try {
                   setLoading(true);
                   await addSavedPost(authorId, id);
@@ -67,7 +68,6 @@ export default function DropDown(props: {
                 } finally {
                   setLoading(false);
                 }
-                setsaveToggle(true);
               } else {
                 const savedByUserRef = doc(db, `users/${uid}/savedPost/${id}`);
                 await deleteDoc(savedByUserRef);
@@ -77,7 +77,6 @@ export default function DropDown(props: {
                   alert("hey");
                   router.replace(router.asPath);
                 }
-                //   if()
               }
               setshowAction("");
             }}
