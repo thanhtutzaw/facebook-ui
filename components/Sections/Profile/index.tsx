@@ -1,12 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { User, getAuth } from "firebase/auth";
 import {
+  Timestamp,
   collection,
   doc,
   getDoc,
   getDocs,
+  limit,
   orderBy,
   query,
+  startAfter,
 } from "firebase/firestore";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
@@ -19,7 +22,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { AppContext } from "../../../context/AppContext";
+import { AppContext, LIMIT } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
 import {
   app,
@@ -33,9 +36,10 @@ import Content from "./Content";
 import EditProfile from "./EditProfile";
 import ProfileInfo from "./ProfileInfo";
 import s from "./index.module.scss";
+import Spinner from "../../Spinner";
 export default function Profile() {
   const photoURL = "";
-  const { username, profile, email, sortedPost, setsortedPost } = useContext(
+  const { username, profile, email, setsortedPost } = useContext(
     AppContext
   ) as Props;
   const {
@@ -82,69 +86,46 @@ export default function Profile() {
   }, []);
 
   const fetchMyPost = useCallback(
-    async function () {
+    async function (pageParam: Post | null = null) {
       // Dont't fetch when current Tab is not profile
       console.log("fetching");
 
-      const postQuery = query(
+      let postQuery = query(
         collection(db, `/users/${uid}/posts`),
-        orderBy("createdAt", sortby === "old" ? "asc" : "desc")
+        orderBy("createdAt", sortby === "old" ? "asc" : "desc"),
+        limit(LIMIT + 1)
+        // limit(LIMIT + 1)
       );
-      return await getPostWithMoreInfo(postQuery, uid! as string);
-      // const posts = (await Promise.all(
-      //   snapShot.docs.map(async (doc) => {
-      //     const post = await postToJSON(doc);
-      //     const author = auth?.currentUser as User;
-      //     return {
-      //       ...post,
-      //       author: {
-      //         ...author,
-      //       },
-      //     };
-      //   })
-      // )) as Post[];
-
-      // return await Promise.all(
-      //   posts.map(async (p) => {
-      //     if (p.sharePost) {
-      //       const postDoc = doc(
-      //         db,
-      //         `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
-      //       );
-      //       const posts = await getDoc(postDoc);
-      //       if (posts.exists()) {
-      //         const post = await postToJSON(posts);
-      //         const author = auth?.currentUser as User;
-      //         const withAuthor = {
-      //           ...post,
-      //           author: {
-      //             ...author,
-      //           },
-      //         };
-      //         return {
-      //           ...p,
-      //           sharePost: { ...p.sharePost, post: withAuthor },
-      //         };
-      //       } else {
-      //         return {
-      //           ...p,
-      //           sharePost: { ...p.sharePost, post: null },
-      //         };
-      //       }
-      //     }
-      //     return {
-      //       ...p,
-      //     };
-      //   })
-      // );
+      if (pageParam) {
+        // const post = pageParam as Post;
+        const date = new Timestamp(
+          pageParam.createdAt.seconds,
+          pageParam.createdAt.nanoseconds
+        );
+        // If a pageParam is provided, use it to start after the last document from the previous page
+        postQuery = query(postQuery, startAfter(date));
+        console.log(pageParam);
+      }
+      const posts = await getPostWithMoreInfo(postQuery, uid! as string);
+      const hasMore = posts.length > LIMIT;
+      if (hasMore) {
+        posts.pop();
+      }
+      return { posts, hasMore };
     },
     [sortby, uid]
   );
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["myPost"],
-    queryFn: async () => await fetchMyPost(),
-    enabled: tab === "profile",
-  });
+  const { fetchNextPage, isLoading, error, data, hasNextPage } =
+    useInfiniteQuery({
+      queryKey: ["myPost"],
+      queryFn: async ({ pageParam }) => await fetchMyPost(pageParam),
+      enabled: tab === "profile",
+      getNextPageParam: (lastPage) =>
+        lastPage.hasMore
+          ? lastPage.posts[lastPage.posts.length - 1]
+          : undefined,
+    });
+  // const [post, setpost] = useState(data!);
   useEffect(() => {
     if (!active) {
       setSort(false);
@@ -181,47 +162,67 @@ export default function Profile() {
     setedit(false);
     // e.currentTarget?.reset();
   }
+  // const pages = data?.pages.map((p) => p);
+  // const sortedPost = pages?.map((p) => p.posts! as any)! as Post[];
   return (
-    <motion.div
-      // transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-      style={{ y: active ? -infoRef?.current?.clientHeight! : 0 }}
-      className={s.container}
+    <div
+      id="profile"
+      onScroll={(e) => {
+        console.log(e.currentTarget.scrollTop);
+        if (
+          window.innerHeight + e.currentTarget.scrollTop + 1 >=
+          e.currentTarget.scrollHeight
+        ) {
+          // console.log("end");
+          if (hasNextPage) {
+            fetchNextPage();
+          }
+        }
+      }}
     >
-      {/* {JSON.stringify(profile)} */}
-      <ProfileInfo
-        selectMode={active!}
-        account={account!}
-        profile={profile!}
-        email={email ?? "testUser@gmail.com"}
-        photoURL={photoURL}
-        edit={edit}
-        newProfile={newProfile}
-        infoRef={infoRef}
+      <motion.div
+        // transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
+        style={{ y: active ? -infoRef?.current?.clientHeight! : 0 }}
+        className={s.container}
       >
-        <EditProfile
-          updating={updating}
+        {/* {JSON.stringify(profile)} */}
+        <ProfileInfo
+          selectMode={active!}
+          account={account!}
+          profile={profile!}
+          email={email ?? "testUser@gmail.com"}
+          photoURL={photoURL}
           edit={edit}
-          handleSubmit={handleSubmit}
-          handleChange={handleChange}
           newProfile={newProfile}
-          toggleEdit={toggleEdit}
+          infoRef={infoRef}
+        >
+          <EditProfile
+            updating={updating}
+            edit={edit}
+            handleSubmit={handleSubmit}
+            handleChange={handleChange}
+            newProfile={newProfile}
+            toggleEdit={toggleEdit}
+          />
+        </ProfileInfo>
+
+        <Content
+          error={error}
+          infoRef={infoRef}
+          isSticky={isSticky}
+          headerRef={headerRef}
+          loading={isLoading}
+          tab={tab}
+          sort={sort}
+          setSort={setSort}
+          selectMode={active!}
+          setselectMode={setactive!}
+          sortby={sortby}
+          setsortby={setsortby}
+          sortedPost={data?.pages.flatMap((p) => p.posts) ?? []}
+          hasNextPage={hasNextPage}
         />
-      </ProfileInfo>
-      <Content
-        error={error}
-        infoRef={infoRef}
-        isSticky={isSticky}
-        headerRef={headerRef}
-        loading={isLoading}
-        tab={tab}
-        sort={sort}
-        setSort={setSort}
-        selectMode={active!}
-        setselectMode={setactive!}
-        sortby={sortby}
-        setsortby={setsortby}
-        sortedPost={data! ?? []}
-      />
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }

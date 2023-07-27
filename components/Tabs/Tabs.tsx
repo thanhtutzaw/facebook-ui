@@ -110,9 +110,8 @@ export default function Tabs(props: {
         </div>
         <Watch />
       </div>
-      <div id="profile">
+      
         <Profile />
-      </div>
       <div id="notifications">
         <div className={t.header}>
           <h2>Notifications</h2>

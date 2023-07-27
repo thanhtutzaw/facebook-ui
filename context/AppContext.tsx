@@ -45,26 +45,8 @@ export function AppProvider(props: Props) {
       startAfter(date),
       limit(LIMIT)
     );
-    // const newPostsDoc = await getDocs(postQuery);
-    // const newPosts = await Promise.all(
-    //   newPostsDoc.docs.map(async (doc) => await postToJSON(doc))
-    // );
-
-    // const finalPost = await getPostWithMoreInfo(newPosts);
     const finalPost = await getPostWithMoreInfo(postQuery, uid!);
-    // const finalPost = (await Promise.all(
-    //   sharePosts.map(async (p) => {
-    //     if (p.sharePost?.post) {
-    //       const post = p.sharePost.post!;
 
-    //       return shareData;
-    //     }
-    //     return {
-    //       ...p,
-    //     };
-    //   })
-    // )) as Post[];
-    // setlimitedPosts({ ...limitedPosts, ...newPosts });
     setlimitedPosts(limitedPosts?.concat(finalPost));
     setpostLoading(false);
     if (finalPost.length < LIMIT) {

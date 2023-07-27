@@ -1,17 +1,14 @@
 import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { InferGetServerSidePropsType } from "next";
 import Image from "next/image";
-import styles from "../../../styles/Home.module.scss";
-import Newfeed from "./Newfeed";
-import { useContext } from "react";
 import { useRouter } from "next/router";
-import { getServerSideProps } from "../../../pages";
+import { useContext } from "react";
 import { AppContext } from "../../../context/AppContext";
 import { PageContext, PageProps } from "../../../context/PageContext";
-import Story from "./Story/Story";
+import styles from "../../../styles/Home.module.scss";
 import { Props } from "../../../types/interfaces";
-import style from "styled-jsx/style";
+import Newfeed from "./Newfeed";
+import Story from "./Story/Story";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
 //   tabIndex: number;
 // };

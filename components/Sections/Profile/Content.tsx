@@ -9,6 +9,7 @@ import { RefObject } from "react";
 import Spinner from "../../Spinner";
 
 export default function Content(props: {
+  hasNextPage?: boolean;
   error?: any;
   infoRef: RefObject<HTMLHeadElement>;
   headerRef: RefObject<HTMLHeadElement>;
@@ -24,6 +25,7 @@ export default function Content(props: {
   sortedPost: Post[];
 }) {
   const {
+    hasNextPage,
     tab,
     error,
     isSticky,
@@ -123,12 +125,15 @@ export default function Content(props: {
           Unexpected Error Occured ! {error.message}
         </p>
       ) : (
-        <PostList
-          preventNavigate={true}
-          selectMode={selectMode!}
-          posts={sortedPost!}
-          tabIndex={1}
-        />
+        <>
+          <PostList
+            preventNavigate={true}
+            selectMode={selectMode!}
+            posts={sortedPost!}
+            tabIndex={1}
+          />
+          {hasNextPage && <Spinner />}
+        </>
       )}
     </div>
   );
