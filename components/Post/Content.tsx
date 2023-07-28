@@ -58,7 +58,7 @@ export default function Content(props: {
     post,
     shareMode,
   } = props;
-  const { authorId, id, text } = post;
+  const { authorId, id, text, author, sharePost: share } = post;
   const { preventClick, selectedId, setSelectedId, showAction, setshowAction } =
     useContext(PageContext) as PageProps;
   const router = useRouter();
@@ -112,6 +112,7 @@ export default function Content(props: {
         }
       }}
     >
+      {/* {JSON.stringify(post.shares)} */}
       <AuthorInfo navigateToProfile={navigateToProfile} post={post}>
         {!shareMode && (
           <>
@@ -147,7 +148,7 @@ export default function Content(props: {
                       setChecked(false);
                       setSelectedId?.(
                         selectedId?.filter(
-                          (selectedId: string) => selectedId !== id
+                          (selectedId) => selectedId.post !== id
                         )
                       );
                     }}
@@ -164,7 +165,16 @@ export default function Content(props: {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      setSelectedId?.([...selectedId!, id?.toString()]);
+                      setSelectedId?.([
+                        ...selectedId!,
+                        {
+                          post: id?.toString()!,
+                          author: post.authorId.toString(),
+                          share: share?.id
+                            ? { post: share?.id, author: share?.author }
+                            : null,
+                        },
+                      ]);
                       setChecked(true);
                     }}
                   >
@@ -234,7 +244,7 @@ export default function Content(props: {
       <PhotoLayout files={post.media} preview />
       <SharePreview post={post} />
 
-      {(post.like || post.sharers) && (
+      {(post.like || post.shares) && (
         <SocialCount likeCount={likeCount} post={post} />
       )}
     </span>

@@ -57,8 +57,7 @@ export function SocialCount(props: { post: Post; likeCount: number }) {
               {/* {JSON.stringify(post.like)} */}
             </p>
           )}
-          {post.sharers ||
-            (post.shares && shareCount !== 0 && (
+          {post.shares && shareCount !== 0 && (
               <p
                 className={s.shareCount}
                 onClick={(e) => {
@@ -68,7 +67,7 @@ export function SocialCount(props: { post: Post; likeCount: number }) {
               >
                 {shareCount} {shareCount <= 1 ? "share" : "shares"}
               </p>
-            ))}
+            )}
         </div>
       ) : null}
     </>

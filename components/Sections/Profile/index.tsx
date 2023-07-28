@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { getAuth } from "firebase/auth";
 import {
   Timestamp,
@@ -146,6 +146,7 @@ export default function Profile() {
     router.replace("/", undefined, { scroll: false });
     setedit(false);
   }
+  const queryClient = useQueryClient();
   return (
     <div
       id="profile"
@@ -165,6 +166,13 @@ export default function Profile() {
         style={{ y: active ? -infoRef?.current?.clientHeight! : 0 }}
         className={s.container}
       >
+        {/* <button
+          onClick={() => {
+            queryClient.invalidateQueries({ queryKey: ["myPost", sortby] });
+          }}
+        >
+          Refresh
+        </button> */}
         <ProfileInfo
           selectMode={active!}
           account={account!}

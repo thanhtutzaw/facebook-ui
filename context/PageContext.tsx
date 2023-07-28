@@ -3,6 +3,14 @@ import { createContext } from "react";
 import { useActive } from "../hooks/useActiveTab";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
+export type selectedId = {
+  post: string;
+  author: string;
+  share: {
+    post: string | null;
+    author: string | null;
+  } | null;
+};
 export interface PageProps {
   dropdownRef?: RefObject<HTMLDivElement>;
   uploadButtonClicked?: boolean;
@@ -14,7 +22,7 @@ export interface PageProps {
   setActive: Function;
   shareAction?: string;
   showAction?: string;
-  selectedId?: string[];
+  selectedId?: selectedId[];
   setSelectedId?: Function;
   setshareAction?: Function;
   setshowAction?: Function;

@@ -55,8 +55,7 @@ export interface Post {
   isSaved: boolean;
   isLiked: boolean;
   like?: any;
-  shares?: any;
-  sharers?: string[];
+  shares?: {uid:string}[];
   author: UserRecord | User | account["profile"];
   authorId: string | number;
   id?: string | number;

@@ -66,13 +66,8 @@ export default function App({
     }
   }, [expired, router]);
   useEffect(() => {
-    // nProgress.start();
-    const handleRouteStart = () => {
-      nProgress.start();
-    };
-    const handleRouteDone = () => {
-      nProgress.done();
-    };
+    const handleRouteStart = () => nProgress?.start();
+    const handleRouteDone = () => nProgress?.done();
     router.events.on("routeChangeStart", handleRouteStart);
     router.events.on("routeChangeComplete", handleRouteDone);
     router.events.on("routeChangeError", handleRouteDone);

@@ -9,6 +9,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import styles from "./index.module.scss";
 import { CopyLink } from "./DropDown";
 import { Post } from "../../types/interfaces";
+import { useQueryClient } from "@tanstack/react-query";
+
 function AdminDropDown(props: {
   updatePost: Function;
   setshowAction: Function;
@@ -20,6 +22,7 @@ function AdminDropDown(props: {
   const { updatePost, post, setshowAction, authorId, id, showAction } = props;
   const auth = getAuth(app);
   const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
   return (
     <AnimatePresence>
       {showAction === id && (
@@ -74,20 +77,20 @@ function AdminDropDown(props: {
               }
               setLoading(true);
               try {
-                await deletePost(auth.currentUser?.uid!, id!);
-                // router.replace("/", undefined, {
-                //   scroll: false,
-                // });
+                await deletePost(auth.currentUser.uid, id!, post!);
+                queryClient.refetchQueries(["myPost"]);
+                queryClient.invalidateQueries(["myPost"]);
                 setLoading(false);
-              } catch (error: any) {
-                alert(error.message);
-              } finally {
-                // router.replace("/", undefined, {
-                //   scroll: false,
-                // });
                 setshowAction?.("");
                 if (loading) return;
                 updatePost(id);
+              } catch (error: any) {
+                console.error(error);
+                alert(error.message);
+                setLoading(false);
+              } finally {
+                setLoading(false);
+                setshowAction?.("");
               }
             }}
           >

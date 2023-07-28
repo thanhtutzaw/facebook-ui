@@ -18,6 +18,7 @@ import { db, postToJSON, userToJSON } from "../firebase";
 import { Post } from "../../types/interfaces";
 import { getUserData } from "../firebaseAdmin";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import { selectedId } from "../../context/PageContext";
 export async function fetchPosts(postSnap: QuerySnapshot<DocumentData>) {
   // const posts = await Promise.all(
   //   postSnap.docs.map(async (doc) => {
@@ -142,22 +143,72 @@ export async function updatePost(
     alert("Adding Post Failed !" + error.message);
   }
 }
-export async function deletePost(uid: string, postid: string | number) {
+export async function deletePost(
+  uid: string,
+  postid: string | number,
+  post: Post
+) {
   const Ref = doc(db, `users/${uid}/posts/${postid.toString()}`);
+  const exist = (await getDoc(Ref)).exists();
+  if (!exist) {
+    console.log("Delete Error : Data Not Found");
+    throw new Error("Delete Error : Data Not Found");
+  }
+  if (post.sharePost?.id) {
+    const id = post.sharePost.id;
+    const shareRef = doc(
+      db,
+      `users/${post.sharePost.author}/posts/${id}/shares/${uid}`
+    );
+    // console.log(
+    //   "Delete this sharedPost" +  + post.sharePost.post?.id
+    // );
+    await deleteDoc(shareRef);
+  }
   try {
     await deleteDoc(Ref);
   } catch (error: any) {
+    console.error(error);
     alert("Delete Failed !" + error.message);
   }
 }
-export async function deleteMultiple(uid: string, selctedId: string[]) {
+export async function deleteMultiple(uid: string, selctedId: selectedId[]) {
   const chunkSize = 10;
   const batch = writeBatch(db);
   for (let i = 0; i < selctedId.length; i += chunkSize) {
     const chunk = selctedId.slice(i, i + chunkSize);
+    // console.log(chunk);
     for (let j = 0; j < chunk.length; j++) {
-      const docRef = doc(db, `users/${uid}/posts/${chunk[j]}`);
-      batch.delete(docRef);
+      // const postId = chunk[j].post;
+      // const authorId = chunk[j].author;
+      // const sharePostId = chunk[j].share?.post ?? null;
+      // const shareauthorId = chunk[j].share?.author ?? null;
+      const { post, author, share } = chunk[j];
+
+      if (share?.author && share.post) {
+        const sharePostRef = doc(
+          db,
+          `users/${share?.author}/posts/${share?.post}/shares/${uid}`
+        );
+        batch.delete(sharePostRef);
+      }
+      const postRef = doc(db, `users/${author}/posts/${post}`);
+      batch.delete(postRef);
+      // console.log(post, author, share?.post, share?.author);
+      // console.table(chunk[j]);
+      // console.log(chunk[j]);
+      // console.log(selctedId);
+      // if (post.sharePost?.id) {
+      //   const id = post.sharePost.id;
+      //   const shareRef = doc(
+      //     db,
+      //     `users/${post.sharePost.author}/posts/${id}/shares/${uid}`
+      //   );
+      //   // console.log(
+      //   //   "Delete this sharedPost" +  + post.sharePost.post?.id
+      //   // );
+      //   await deleteDoc(shareRef);
+      // }
     }
   }
   try {

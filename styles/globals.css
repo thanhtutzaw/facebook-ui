@@ -3,15 +3,17 @@
   --main-width    : 700px;
   /* --main-width : 500px; */
 }
-.textOverflow{
+
+.textOverflow {
   max-width    : 55vw;
-width        : 100%;
-/* min-width : 100vw; */
-overflow     : hidden;
-text-overflow: ellipsis;
-flex         : 1 1;
-white-space  : nowrap;
+  width        : 100%;
+  /* min-width : 100vw; */
+  overflow     : hidden;
+  text-overflow: ellipsis;
+  flex         : 1 1;
+  white-space  : nowrap;
 }
+
 .goHome {
   border         : 0;
   border-radius  : 1rem;
@@ -61,9 +63,56 @@ main {
 
 }
 
-#nprogress .spinner-icon {
+#nprogress .spinner-icon,
+.loading .spinner-icon {
   border-top-color : #0070f3 !important;
   border-left-color: #0070f3 !important;
+}
+
+.loading {
+  pointer-events: none;
+}
+
+/* .loading .spinner {
+
+  display : block;
+  position: fixed;
+  z-index : 1031;
+  top     : 15px;
+  right   : 15px;
+
+} */
+
+.loading .spinner-icon {
+  width            : 18px;
+  height           : 18px;
+  box-sizing       : border-box;
+  border           : solid 2px transparent;
+  border-top-color : #0070f3;
+  border-left-color: #0070f3;
+  border-radius    : 50%;
+  -webkit-animation: nprogress-spinner 400ms linear infinite;
+  animation        : nprogress-spinner 400ms linear infinite;
+}
+
+@-webkit-keyframes nprogress-spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes nprogress-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .deleteBtn {

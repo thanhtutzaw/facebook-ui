@@ -6,9 +6,12 @@ import { deleteMultiple } from "../../lib/firestore/post";
 import { Props } from "../../types/interfaces";
 import BackHeader from "./BackHeader";
 import { PageContext, PageProps } from "../../context/PageContext";
+import { useQueryClient } from "@tanstack/react-query";
 import s from "../../styles/Home.module.scss";
 function SelectModal() {
-  const { uid, selectMode, setselectMode } = useContext(AppContext) as Props;
+  const { updatePost, uid, selectMode, setselectMode } = useContext(
+    AppContext
+  ) as Props;
   const { selectedId, setSelectedId } = useContext(PageContext) as PageProps;
 
   const router = useRouter();
@@ -33,6 +36,7 @@ function SelectModal() {
       router.events.off("routeChangeError", handleRouteDone);
     };
   }, [router.events, setSelectedId, setselectMode, loading]);
+  const queryClient = useQueryClient();
 
   return (
     <BackHeader
@@ -57,19 +61,26 @@ function SelectModal() {
           setLoading(true);
           try {
             await deleteMultiple(uid, selectedId);
-            setLoading(true);
+            queryClient.refetchQueries(["myPost"]);
+            queryClient.invalidateQueries(["myPost"]);
+
+            setLoading(false);
+            setSelectedId?.([]);
+            setselectMode?.(false);
+            // selectedId.map((s) => {
+            //   // updatePost?.(s.post);
+            // });
           } catch (error: any) {
             setLoading(false);
             alert(error.message);
           } finally {
-            setLoading(false);
-            if (router.asPath === "/#home") {
-              router.replace("/");
-              router.reload();
-            } else {
-              router.replace(router.asPath);
-            }
             setSelectedId?.([]);
+            // if (router.asPath === "/#home") {
+            //   router.replace("/");
+            //   router.reload();
+            // } else {
+            //   router.replace(router.asPath);
+            // }
           }
         }}
         className="deleteBtn"
