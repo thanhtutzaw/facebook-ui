@@ -152,11 +152,11 @@ export default function UserProfile({
         startAfter(date),
         limit(LIMIT)
       );
-      const finalPost = await getPostWithMoreInfo(mypostQuery, token.uid!);
-      setlimitedPosts(limitedPosts?.concat(finalPost));
+      const finalPost = await getPostWithMoreInfo(mypostQuery, token.uid!)!;
+      setlimitedPosts(limitedPosts?.concat(finalPost!));
       setpostLoading(false);
 
-      if (finalPost.length < LIMIT) {
+      if (finalPost?.length! < LIMIT) {
         setPostEnd(true);
       }
     },

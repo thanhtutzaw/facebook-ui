@@ -60,26 +60,26 @@ export default function Profile() {
   const auth = getAuth(app);
   const [isSticky, setIsSticky] = useState(false);
   const headerRef = useRef<HTMLHeadElement>(null);
-  useEffect(() => {
-    const profile = document.getElementById("profile");
-    const handleScroll = () => {
-      const header = headerRef?.current!;
-      const headerRect = header.getBoundingClientRect();
+  // useEffect(() => {
+  //   const profile = document.getElementById("profile");
+  //   const handleScroll = () => {
+  //     const header = headerRef?.current!;
+  //     const headerRect = header.getBoundingClientRect();
 
-      setIsSticky(headerRect.top <= 60);
-    };
+  //     setIsSticky(headerRect.top <= 60);
+  //   };
 
-    profile?.addEventListener("scroll", handleScroll);
+  //   profile?.addEventListener("scroll", handleScroll);
 
-    return () => {
-      profile?.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+  //   return () => {
+  //     profile?.removeEventListener("scroll", handleScroll);
+  //   };
+  // }, []);
 
   const fetchMyPost = useCallback(
     async function (pageParam: Post | null = null) {
       console.log("fetching");
-
+      if (!uid) return;
       let postQuery = query(
         collection(db, `/users/${uid}/posts`),
         orderBy("createdAt", sortby === "old" ? "asc" : "desc"),
@@ -93,6 +93,7 @@ export default function Profile() {
         postQuery = query(postQuery, startAfter(date));
       }
       const posts = await getPostWithMoreInfo(postQuery, uid! as string);
+      if (!posts) return;
       const hasMore = posts.length > LIMIT;
       if (hasMore) {
         posts.pop();
@@ -106,9 +107,10 @@ export default function Profile() {
       queryKey: ["myPost", sortby],
       queryFn: async ({ pageParam }) => await fetchMyPost(pageParam),
       enabled: tab === "profile",
+      keepPreviousData: true,
       getNextPageParam: (lastPage) =>
-        lastPage.hasMore
-          ? lastPage.posts[lastPage.posts.length - 1]
+        lastPage?.hasMore
+          ? lastPage.posts![lastPage?.posts?.length! - 1]
           : undefined,
     });
   useEffect(() => {
@@ -151,6 +153,13 @@ export default function Profile() {
     <div
       id="profile"
       onScroll={(e) => {
+        const handleScroll = () => {
+          const header = headerRef?.current!;
+          const headerRect = header.getBoundingClientRect();
+
+          setIsSticky(headerRect.top <= 60);
+        };
+        handleScroll();
         if (
           window.innerHeight + e.currentTarget.scrollTop + 1 >=
           e.currentTarget.scrollHeight
@@ -206,7 +215,7 @@ export default function Profile() {
           setselectMode={setactive!}
           sortby={sortby}
           setsortby={setsortby}
-          sortedPost={data?.pages.flatMap((p) => p.posts) ?? []}
+          sortedPost={data?.pages.flatMap((p) => p?.posts!) ?? []}
           hasNextPage={hasNextPage}
         />
       </motion.div>

@@ -3,15 +3,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
 import router from "next/router";
 import { app } from "../../lib/firebase";
-import { deletePost } from "../../lib/firestore/post";
+import { deleteMultiple, deletePost } from "../../lib/firestore/post";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "./index.module.scss";
 import { CopyLink } from "./DropDown";
 import { Post } from "../../types/interfaces";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import error from "next/error";
+import { auth } from "firebase-admin";
 
-function AdminDropDown(props: {
+export default function AdminDropDown(props: {
   updatePost: Function;
   setshowAction: Function;
   showAction: string;
@@ -22,7 +24,17 @@ function AdminDropDown(props: {
   const { updatePost, post, setshowAction, authorId, id, showAction } = props;
   const auth = getAuth(app);
   const [loading, setLoading] = useState(false);
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
+
+  // const deletePostMutation = useMutation({
+  //   mutationFn: async (data: any) => await deletePost(data),
+  //   onSuccess: (data) => {
+  //     queryClient.invalidateQueries(["myPost"]);
+  //     console.log("Delete Mutate Success " + data);
+  //     setLoading(false);
+  //     setshowAction?.("");
+  //   },
+  // });
   return (
     <AnimatePresence>
       {showAction === id && (
@@ -77,20 +89,21 @@ function AdminDropDown(props: {
               }
               setLoading(true);
               try {
-                await deletePost(auth.currentUser.uid, id!, post!);
-                queryClient.refetchQueries(["myPost"]);
-                queryClient.invalidateQueries(["myPost"]);
+                deletePost({ uid: auth.currentUser.uid, postid: id, post });
+                // queryClient.invalidateQueries(["myPost"]);
                 setLoading(false);
                 setshowAction?.("");
+                // deletePostMutation.mutate({
+                //   uid: auth.currentUser.uid,
+                //   postid: id!,
+                //   post,
+                // });
                 if (loading) return;
-                updatePost(id);
+                // updatePost(id);
               } catch (error: any) {
                 console.error(error);
                 alert(error.message);
                 setLoading(false);
-              } finally {
-                setLoading(false);
-                setshowAction?.("");
               }
             }}
           >
@@ -102,5 +115,3 @@ function AdminDropDown(props: {
     </AnimatePresence>
   );
 }
-
-export default AdminDropDown;

@@ -1,8 +1,19 @@
 import router, { useRouter } from "next/router";
 import { useEffect } from "react";
 import { DevelopedByThanHtutZaw } from "./DevelopedByThanHtutZaw";
+import {
+  faCircleExclamation,
+  faExclamationCircle,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export function Welcome({ expired }: { expired: boolean }) {
+export function Welcome({
+  expired,
+  postError = "",
+}: {
+  expired: boolean;
+  postError?: string;
+}) {
   const router = useRouter();
   useEffect(() => {
     if (expired) {
@@ -17,7 +28,7 @@ export function Welcome({ expired }: { expired: boolean }) {
       style={{
         opacity: "0",
         animation: "blink .8s forwards ease-in-out",
-        cursor: "wait",
+        cursor: postError ? "initial" : "wait",
         display: "grid",
         alignContent: "center",
         justifyItems: "center",
@@ -25,23 +36,45 @@ export function Welcome({ expired }: { expired: boolean }) {
         height: "100vh",
       }}
     >
-      <h2
-        style={{
-          userSelect: "none",
-        }}
-      >
-        Welcome Back 🎉
-      </h2>
-      <p
-        style={{
-          userSelect: "none",
-          // opacity: "0",
-          // animation: "blink 1s infinite ease-in-out",
-          color: "gray",
-        }}
-      >
-        Loading ...
-      </p>
+      {postError !== "" ? (
+        <>
+          <p className="error">
+            <FontAwesomeIcon icon={faCircleExclamation} />
+            {postError}
+          </p>
+          <p
+            style={{
+              marginTop: "auto",
+              color: "gray",
+              width: "90%",
+              // textAlign: "left",
+            }}
+          >
+            Apologies, our Firebase resources have reached their limit. Please
+            try again in 24 hours. Thank you for your understanding.
+          </p>
+        </>
+      ) : (
+        <>
+          <h2
+            style={{
+              userSelect: "none",
+            }}
+          >
+            Welcome Back 🎉
+          </h2>
+          <p
+            style={{
+              userSelect: "none",
+              // opacity: "0",
+              // animation: "blink 1s infinite ease-in-out",
+              color: "gray",
+            }}
+          >
+            Loading ...
+          </p>
+        </>
+      )}
       <DevelopedByThanHtutZaw />
     </div>
   );

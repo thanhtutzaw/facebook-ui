@@ -55,7 +55,7 @@ export interface Post {
   isSaved: boolean;
   isLiked: boolean;
   like?: any;
-  shares?: {uid:string}[];
+  shares?: { uid: string }[];
   author: UserRecord | User | account["profile"];
   authorId: string | number;
   id?: string | number;
@@ -78,6 +78,9 @@ export interface Post {
 }
 
 export interface Props {
+  postError?: string;
+  setlimitedPosts?: Function;
+  limitedPosts?: Post[];
   updatePost?: Function;
   username?: string;
   children?: ReactNode;
@@ -96,7 +99,6 @@ export interface Props {
   headerContainerRef?: RefObject<HTMLDivElement>;
   profile?: account["profile"] | null;
   account?: UserRecord | null;
-  setlimitedPosts?: Function;
   getMorePosts?: Function;
   postLoading?: boolean;
   postEnd?: boolean;

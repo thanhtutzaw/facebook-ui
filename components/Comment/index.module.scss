@@ -1,0 +1,43 @@
+.input {
+    background-color: rgb(234 234 234);
+    position: fixed;
+    bottom: 0;
+    padding: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    width: 100vw;
+    max-width: var(--main-width);
+    gap: 10px;
+    input,
+    button {
+        font-size: 1rem;
+        border-radius: 1rem;
+        border: 0;
+    }
+    button {
+        // min-width: 80px;
+        padding: 0.5rem 1rem;
+        background-color: var(--blue-origin);
+        color: white;
+        transition: all 0.1s ease-in-out;
+        &:hover {
+            background-color: #0269e2;
+        }
+        &:active {
+            opacity: 0.8;
+            scale: 0.9;
+            // background-color: rgb(240, 240, 240);
+        }
+    }
+    input {
+        padding: 0.5rem 1rem;
+        flex: 1;
+        min-width: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        &:focus-visible {
+            outline: 0;
+            outline: 1px solid var(--blue-origin);
+        }
+    }
+}

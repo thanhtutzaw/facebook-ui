@@ -1,7 +1,17 @@
 import { useState, useEffect } from "react";
 export function useActive() {
-  const [active, setActive] = useState("");
-  function navigateTab(targetTab: string) {
+  const [active, setActive] = useState<
+    "home" | "/" | "friends" | "watch" | "profile" | "notifications" | "menu"
+  >("/");
+  function navigateTab(
+    targetTab:
+      | "home"
+      | "friends"
+      | "watch"
+      | "profile"
+      | "notifications"
+      | "menu"
+  ) {
     setActive(targetTab);
     const target = document.getElementById(targetTab);
     target?.scrollIntoView();

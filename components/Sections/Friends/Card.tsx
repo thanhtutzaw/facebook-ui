@@ -4,9 +4,10 @@ import { ReactNode, useContext } from "react";
 import { PageContext, PageProps } from "../../../context/PageContext";
 import s from "./Friends.module.scss";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import { account } from "../../../types/interfaces";
 export default function Card(props: {
   children: ReactNode;
-  f: { id: string; author: UserRecord; profile: any };
+  f: { id: string; author: account["profile"] };
 }) {
   const { f } = props;
   const { preventClick } = useContext(PageContext) as PageProps;
@@ -24,12 +25,15 @@ export default function Card(props: {
           width={80}
           height={80}
           src={
+            f.author?.photoURL ??
             "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
           }
         />
         <div className={s.right}>
           <div className={s.info}>
-            <p>{f?.author?.displayName ?? f?.id ?? f}</p>
+            <p>{`${f.author?.firstName ?? f.id} ${
+              f.author?.lastName ?? ""
+            }`}</p>
             <p>1min</p>
           </div>
           {props.children}

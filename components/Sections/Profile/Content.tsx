@@ -4,9 +4,10 @@ import s from "./index.module.scss";
 import SortDate from "./SortDate";
 import { PostList } from "../Home/PostList";
 import { faSort, faGear } from "@fortawesome/free-solid-svg-icons";
-import { Post } from "../../../types/interfaces";
-import { RefObject } from "react";
+import { Post, Props } from "../../../types/interfaces";
+import { RefObject, useContext } from "react";
 import Spinner from "../../Spinner";
+import { AppContext } from "../../../context/AppContext";
 
 export default function Content(props: {
   hasNextPage?: boolean;
@@ -39,6 +40,7 @@ export default function Content(props: {
     setsortby,
     sortedPost,
   } = props;
+  const { updatePost } = useContext(AppContext) as Props;
   return (
     <div
       style={{
@@ -121,12 +123,13 @@ export default function Content(props: {
       {loading ? (
         tab === "profile" && <Spinner />
       ) : error ? (
-        <p style={{ textAlign: "center" }}>
+        <p className="error">
           Unexpected Error Occured ! {error.message}
         </p>
       ) : (
         <>
           <PostList
+            updatePost={updatePost}
             preventNavigate={true}
             selectMode={selectMode!}
             posts={sortedPost!}

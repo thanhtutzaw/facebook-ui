@@ -1,10 +1,10 @@
 import { initializeApp } from "firebase/app";
+import { AuthErrorCodes } from "firebase/auth";
 import {
   DocumentData,
   DocumentSnapshot,
   Query,
   QueryDocumentSnapshot,
-  QuerySnapshot,
   Timestamp,
   collection,
   doc,
@@ -14,9 +14,6 @@ import {
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { Post, account } from "../types/interfaces";
-import { getUserData } from "./firebaseAdmin";
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
-import { getAuth } from "firebase/auth";
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -194,9 +191,22 @@ export async function getPostWithMoreInfo(
   const originalPosts = await Promise.all(
     postSnap.docs.map(async (doc) => await postToJSON(doc))
   );
-  return (await Promise.all(
-    originalPosts.map(async (p) => {
-      return await postInfo(p, uid);
-    })
-  )) as Post[];
+
+  try {
+    return (await Promise.all(
+      originalPosts.map(async (p) => {
+        return await postInfo(p, uid);
+      })
+    )) as Post[];
+  } catch (error: any) {
+    if (error === AuthErrorCodes.QUOTA_EXCEEDED) {
+      console.log(AuthErrorCodes.QUOTA_EXCEEDED);
+      alert("Firebase Quota Exceeded. Please try again later.");
+      throw error;
+    }
+    if (error.code === "quota-exceeded") {
+      alert("Firebase Quota Exceeded. Please try again later.");
+      throw error;
+    }
+  }
 }

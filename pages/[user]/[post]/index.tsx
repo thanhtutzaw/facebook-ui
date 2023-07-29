@@ -24,6 +24,7 @@ import { deleteStorage, uploadMedia } from "../../../lib/storage";
 import s from "../../../styles/Home.module.scss";
 import { Media, Post as PostType, Props } from "../../../types/interfaces";
 import { Welcome } from "../../../components/Welcome";
+import CommentInput from "../../../components/Comment/Input";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -391,6 +392,7 @@ export default function Page(props: {
             style={{ borderBottom: "1px solid rgb(235, 235, 235)" }}
           />
         )}
+        <CommentInput />
       </div>
     </div>
   );

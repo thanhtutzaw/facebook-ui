@@ -30,7 +30,7 @@ import {
   getDocs,
   setDoc,
 } from "firebase/firestore";
-
+import { useQueryClient } from "@tanstack/react-query";
 export function Footer(
   props: {
     likeCount?: number;
@@ -78,8 +78,17 @@ export function Footer(
         setlikeToggle(false);
       }
     }
-    getLikeCount();
+    try {
+      getLikeCount();
+    } catch (error: any) {
+      if (error.code === "quota-exceeded") {
+        alert("Firebase Quota Exceeded. Please try again later.");
+        throw error;
+      }
+      console.error(error);
+    }
   }, [post.authorId, post.id, likeToggle, post.isLiked, likeRef, setlikeCount]);
+  // const queryClient = useQueryClient();
   return (
     <div
       // onMouseLeave={() => {
@@ -288,6 +297,7 @@ export function Footer(
                     );
                     router.replace("/", undefined, { scroll: false });
                     setshareAction?.("");
+                    // queryClient?.invalidateQueries(["myPost"]);
                     window.document.body.style.cursor = "initial";
                   } catch (error: any) {
                     alert(error.message);

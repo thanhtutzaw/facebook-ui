@@ -15,10 +15,12 @@ type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 };
 export default function Newfeed(props: NewfeedProps) {
   const { tabIndex } = props;
-  const { updatePost , posts, postLoading, postEnd } =
+  const {updatePost, posts, postLoading, postEnd } =
     useContext(AppContext) as Props;
   const [user, setuser] = useState<User | null>(null);
-
+// function updatePost(id:string) {
+//   console.log(id);
+// }
   // const { id, authorId, text, visibility, createdAt } = posts;
   useEffect(() => {
     const auth = getAuth(app);

@@ -1,10 +1,7 @@
 import {
   DocumentData,
-  DocumentSnapshot,
   QuerySnapshot,
   Timestamp,
-  addDoc,
-  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -14,11 +11,9 @@ import {
   updateDoc,
   writeBatch,
 } from "firebase/firestore";
-import { db, postToJSON, userToJSON } from "../firebase";
-import { Post } from "../../types/interfaces";
-import { getUserData } from "../firebaseAdmin";
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { selectedId } from "../../context/PageContext";
+import { Post } from "../../types/interfaces";
+import { db } from "../firebase";
 export async function fetchPosts(postSnap: QuerySnapshot<DocumentData>) {
   // const posts = await Promise.all(
   //   postSnap.docs.map(async (doc) => {
@@ -144,10 +139,13 @@ export async function updatePost(
   }
 }
 export async function deletePost(
-  uid: string,
-  postid: string | number,
-  post: Post
+  data: any
+  // postid: string | number,
+  // post: Post | null
 ) {
+  // console.log(uid);
+  const { uid, postid, post } = data;
+
   const Ref = doc(db, `users/${uid}/posts/${postid.toString()}`);
   const exist = (await getDoc(Ref)).exists();
   if (!exist) {

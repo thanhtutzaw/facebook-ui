@@ -67,7 +67,7 @@ function ProfileInfo(props: {
       <h3>
         {edit
           ? `${newProfile?.firstName ?? ""} ${newProfile?.lastName ?? ""}`
-          : account.displayName}
+          : account?.displayName}
       </h3>
       {/* <h3 style={{ marginBottom: "18px" }}>
           {email === "testuser@gmail.com"

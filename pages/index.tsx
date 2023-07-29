@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { AuthErrorCodes, getAuth, onAuthStateChanged } from "firebase/auth";
 import {
   DocumentData,
   DocumentSnapshot,
@@ -11,6 +11,7 @@ import {
   getDoc,
   getDocs,
   limit,
+  onSnapshot,
   orderBy,
   query,
   where,
@@ -18,16 +19,24 @@ import {
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
 import { AppProvider, LIMIT } from "../context/AppContext";
-import { app, db, getPostWithMoreInfo, postToJSON, userToJSON } from "../lib/firebase";
+import {
+  app,
+  db,
+  getPostWithMoreInfo,
+  postToJSON,
+  userToJSON,
+} from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import { Post, Props, account } from "../types/interfaces";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { FirebaseError } from "firebase/app";
+import error from "next/error";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -53,8 +62,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       orderBy("createdAt", "desc"),
       limit(LIMIT)
     );
-    
-    const newPosts = await getPostWithMoreInfo(postQuery,uid)
+
+    const newPosts = await getPostWithMoreInfo(postQuery, uid);
     // const withLike = (await Promise.all(
     //   posts.map(async (p) => {
     //     if (p) {
@@ -198,12 +207,19 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         account: currentUserData ?? null,
       },
     };
-  } catch (error) {
+  } catch (error: any) {
     console.log("SSR Error " + error);
+    // resource - exhausted;
+    console.log("Resource Error : " + error);
+    // console.log(resource-exhausted);
+
+    let postError = error.code === "resource-exhausted" ? error.message : "";
+    // AuthErrorCodes.QUOTA_EXCEEDED
     // context.res.writeHead(302, { Location: "/login" });
     // context.res.end();
     return {
       props: {
+        postError: postError,
         expired: true,
         uid: "",
         allUsers: [],
@@ -217,6 +233,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   }
 };
 export default function Home({
+  postError,
   expired,
   uid,
   allUsers,
@@ -243,18 +260,44 @@ export default function Home({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
-  // const queryClient = new QueryClient();
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: Infinity,
-      },
-    },
-  });
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: Infinity,
+          },
+        },
+      })
+  );
+  const [limitedPosts, setlimitedPosts] = useState(posts);
 
-  if (expired) return <Welcome expired={expired} />;
+  // useEffect(() => {
+  //   // const q = query(collection(db, "posts"), where("state", "==", "CA"));
+  //   const q = query(
+  //     collectionGroup(db, `posts`),
+  //     where("visibility", "in", ["Friend", "Public"]),
+  //     orderBy("createdAt", "desc"),
+  //     limit(LIMIT)
+  //   );
+  //   const unsubscribe = onSnapshot(q, (querySnapshot) => {
+  //     querySnapshot.forEach(async (doc) => {
+  //       // console.log(doc.data());
+  //       const p = await postToJSON(doc);
+  //       setlimitedPosts(limitedPosts?.concat(p));
+  //     });
+  //   });
+  //   return () => {
+  //     unsubscribe;
+  //   };
+  // }, [uid]);
+
+  if (expired) return <Welcome postError={postError} expired={expired} />;
   return (
     <AppProvider
+      postError={postError!}
+      limitedPosts={limitedPosts!}
+      setlimitedPosts={setlimitedPosts!}
       profile={profile!}
       expired={expired}
       username={username}

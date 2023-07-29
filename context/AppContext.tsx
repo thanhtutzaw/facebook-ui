@@ -18,14 +18,23 @@ import {
   DocumentSnapshot,
   onSnapshot,
 } from "firebase/firestore";
-import { db, getPostWithMoreInfo, postToJSON } from "../lib/firebase";
+import { db, getPostWithMoreInfo, postInfo, postToJSON } from "../lib/firebase";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
 export const AppContext = createContext<Props | null>(null);
 export const LIMIT = 10;
 
 export function AppProvider(props: Props) {
-  const { account, username, profile, uid, allUsers, posts, email } = props;
-  const [limitedPosts, setlimitedPosts] = useState(posts);
+  const {
+    setlimitedPosts,
+    limitedPosts,
+    account,
+    username,
+    profile,
+    uid,
+    allUsers,
+    posts,
+    email,
+  } = props;
   const [postLoading, setpostLoading] = useState(false);
   const [postEnd, setPostEnd] = useState(false);
   const { active, setActive } = useActive();
@@ -33,8 +42,9 @@ export function AppProvider(props: Props) {
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const [sortedPost, setsortedPost] = useState<Post[]>([]);
   const updatePost = (id: string) => {
-    setlimitedPosts(limitedPosts?.filter((post) => post.id !== id));
+    setlimitedPosts?.(limitedPosts?.filter((post) => post.id !== id));
   };
+
   // useEffect(() => {
   //   // Set up the real-time data listener
   //   const postQuery = collection(db, `posts`);
@@ -63,9 +73,9 @@ export function AppProvider(props: Props) {
       startAfter(date),
       limit(LIMIT)
     );
-    const finalPost = await getPostWithMoreInfo(postQuery, uid!);
+    const finalPost = (await getPostWithMoreInfo(postQuery, uid!)) ?? [];
 
-    setlimitedPosts(limitedPosts?.concat(finalPost));
+    setlimitedPosts?.(limitedPosts?.concat(finalPost));
     setpostLoading(false);
     if (finalPost.length < LIMIT) {
       setPostEnd(true);
