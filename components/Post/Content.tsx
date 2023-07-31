@@ -232,7 +232,7 @@ export default function Content(props: {
         contentEditable={false}
       />
       <PhotoLayout files={post.media} preview />
-      <SharePreview post={post} />
+      <SharePreview selectMode={selectMode} post={post} />
 
       {(post.like || post.shares) && (
         <SocialCount likeCount={likeCount} post={post} />

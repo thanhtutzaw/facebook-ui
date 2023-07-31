@@ -10,11 +10,10 @@ import {
   DocumentReference,
   Timestamp,
   deleteDoc,
-  doc,
 } from "firebase/firestore";
 import Image from "next/image";
-import { MouseEventHandler, ReactNode } from "react";
-import { db } from "../../lib/firebase";
+import { useRouter } from "next/router";
+import { MouseEventHandler, ReactNode, useState } from "react";
 import { Comment, Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
 export default function AuthorInfo(props: {
@@ -27,7 +26,8 @@ export default function AuthorInfo(props: {
 }) {
   const { commentRef, isAdmin, comment, children, navigateToProfile, post } =
     props;
-
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const router = useRouter();
   if (post) {
     const { author, authorId, createdAt, visibility } = post;
     const profile = author as account["profile"];
@@ -86,16 +86,16 @@ export default function AuthorInfo(props: {
       </div>
     );
   }
-  const { id, text, author, createdAt, authorId } = comment!;
-
+  const { author, createdAt, authorId } = comment!;
   return (
     <div className={styles.header}>
       <Author
-        // style={{ alignItems: "center" }}
         authorId={authorId}
         createdAt={createdAt}
         comment={comment!}
-        navigateToProfile={navigateToProfile}
+        navigateToProfile={() => {
+          router.push(`/${authorId.toString()}`);
+        }}
         profile={author}
       >
         {children}
@@ -103,22 +103,19 @@ export default function AuthorInfo(props: {
       {isAdmin && (
         <button
           onClick={async () => {
-            // console.log(comment?.id);
-            // console.log(commentRef.path);
-            // if (!comment?.id) {
-            //   alert("Delete Failed ! Comment id not found! ");
-            //   return;
-            // }
-
+            setDeleteLoading(true);
             try {
               await deleteDoc(commentRef!);
+              setDeleteLoading(false);
+              router.push(router.asPath);
             } catch (error: any) {
               console.error(error);
               alert(error.message);
+              setDeleteLoading(false);
             }
-            // console.log(commentRef.id);
           }}
           aria-label="Delete Comment"
+          disabled={deleteLoading}
         >
           <FontAwesomeIcon icon={faTrash} />
         </button>
@@ -146,7 +143,10 @@ function Author(props: {
     children,
   } = props;
   return (
-    <div className={styles.authorInfo}>
+    <div
+      style={{ userSelect: comment ? "initial" : "none" }}
+      className={styles.authorInfo}
+    >
       <Image
         onClick={navigateToProfile}
         priority={false}
@@ -176,8 +176,11 @@ function Author(props: {
           // flex: "1",
         }}
       >
-        <p className={styles.name}>
-          <span onClick={navigateToProfile}>
+        <p style={{ userSelect: "none" }} className={styles.name}>
+          <span
+            style={{ color: comment ? "rgb(46 46 46)" : "initial" }}
+            onClick={navigateToProfile}
+          >
             {profile?.firstName ?? post?.id ?? comment?.authorId}{" "}
             {profile?.lastName ?? ""}
           </span>

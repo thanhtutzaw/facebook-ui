@@ -1,16 +1,8 @@
-import {
-  faReply,
-  faReplyAll,
-  faShare,
-  faShareAlt,
-  faThumbsUp,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Timestamp, doc } from "firebase/firestore";
+import { db } from "../../lib/firebase";
 import { Comment, Post } from "../../types/interfaces";
 import AuthorInfo from "../Post/AuthorInfo";
 import s from "./index.module.scss";
-import { Timestamp, doc } from "firebase/firestore";
-import { db } from "../../lib/firebase";
 export default function Comment(props: {
   isAdmin: boolean;
   comments: Post["comments"] | [];

@@ -5,10 +5,11 @@ import SharePostFallback from "./SharePostFallback";
 import { Router } from "next/router";
 import s from "../../components/Post/index.module.scss";
 export function SharePreview(props: {
+  selectMode?: boolean;
   post: PostType;
   query?: Router["query"];
 }) {
-  const { post, query } = props;
+  const { selectMode, post, query } = props;
   // const author , id = query;
   const url = query
     ? `${query.author}/${query.id}`
@@ -19,10 +20,8 @@ export function SharePreview(props: {
     <>
       {post?.sharePost?.post || query ? (
         <Link
+          style={{ pointerEvents: selectMode ? "none" : "initial" }}
           tabIndex={-1}
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
           href={url}
           className={s.sharePreview}
         >

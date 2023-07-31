@@ -193,6 +193,7 @@ export function Footer(
           title="Comment"
           tabIndex={-1}
           onClick={(e) => {
+            if (router.asPath === `/${authorId}/${id?.toString()}`) return;
             router.push({
               pathname: `${authorId}/${id?.toString()}`,
               // hash: "comment",

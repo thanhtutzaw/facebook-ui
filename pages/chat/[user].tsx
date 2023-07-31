@@ -16,7 +16,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // const user = await getDoc(userQuery);
     const account = (await getUserData(uid as string))! as UserRecord;
     const accountJSON = userToJSON(account);
-    console.log(account);
+    // console.log(account);
     if (user.exists()) {
       return {
         props: {

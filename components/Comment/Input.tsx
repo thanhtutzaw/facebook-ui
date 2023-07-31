@@ -16,33 +16,45 @@ export default function CommentInput(props: {
     collection(db, `users/${authorId}/posts/${postId}/comments`)
   );
   const router = useRouter();
+  const [addLoading, setaddLoading] = useState(false);
   return (
     <div className={s.input}>
       <input
         onChange={(e) => {
           settext(e.target.value);
         }}
+        value={text}
         aria-label="Add Comment"
         placeholder="Add comment"
         type="text"
       />
       <button
-        onClick={() => {
-          console.log(postId);
+        onClick={async () => {
           if (!uid) {
             alert("User not Found ! Sign in and Try again !");
           }
-          setDoc(commentRef, {
-            id: commentRef.id,
-            authorId: uid,
-            text,
-            createdAt: serverTimestamp(),
-          });
-          router.replace(router.asPath, undefined, { scroll: false });
+          if (text === "") return;
+          try {
+            setaddLoading(true);
+            await setDoc(commentRef, {
+              id: commentRef.id,
+              authorId: uid,
+              text,
+              createdAt: serverTimestamp(),
+            });
+            router.replace(router.asPath, undefined, { scroll: false });
+            settext("");
+            setaddLoading(false);
+          } catch (error: any) {
+            console.log(error);
+            alert(error.message);
+            setaddLoading(false);
+          }
         }}
         aria-label="Submit Comment"
         tabIndex={1}
         type="submit"
+        disabled={addLoading}
       >
         <FontAwesomeIcon icon={faArrowAltCircleUp} />
       </button>

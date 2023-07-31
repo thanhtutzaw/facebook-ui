@@ -32,8 +32,8 @@
         overflow: auto;
         border: none;
         text-align: left;
-        height: 45px;
-        width: 45px;
+        // height: 45px;
+        // width: 45px;
         padding: 0.5rem;
         display: flex;
         align-items: center;
@@ -41,7 +41,10 @@
         color: rgb(245, 223, 223);
         background-color: transparent;
         border: 0;
-        font-size: 1rem;
+        // font-size: 1rem;
+        font-size: 18px;
+        width: 40px;
+        height: 40px;
         background-color: rgb(243, 243, 243);
       }
     }
@@ -470,7 +473,7 @@
 
 .postAction {
   padding: 5px 0.8rem 1rem;
-  gap: 1rem;
+  gap: 10px;
   align-items: center;
   display: flex;
   background-color: #fff;
@@ -479,7 +482,8 @@
   input {
     cursor: pointer;
     width: 100%;
-    font-size: calc(12px + 1.5vmin);
+    // font-size: calc(12px + 1.5vmin);
+    font-size: clamp(0.7em, 3vw, 1em);
     border-radius: 100px;
     border: 1px solid #b3b3b3;
     height: 40px;

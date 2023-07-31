@@ -117,10 +117,7 @@ export async function getProfileByUID(id: string) {
 }
 export async function postInfo(p: Post, uid: string) {
   if (p) {
-    const profileQuery = doc(db, `/users/${p.authorId}`);
-    const profileSnap = await getDoc(profileQuery);
-    const profileData = profileSnap.data()!;
-    const postAuthorProfile = profileData?.profile as account["profile"];
+    const postProfile = await getProfileByUID(p.authorId.toString());
 
     const likeRef = collection(db, `users/${p.authorId}/posts/${p.id}/likes`);
     const commentRef = query(
@@ -128,18 +125,15 @@ export async function postInfo(p: Post, uid: string) {
       orderBy("createdAt", "desc")
     );
     const commentDoc = await getDocs(commentRef);
-    const comments = await Promise.all(
+    const commentJSON = await Promise.all(
       commentDoc.docs.map(async (doc) => await commentToJSON(doc))
     );
 
-    const commentAuthor = await Promise.all(
-      comments.map(async (c) => {
+    const comments = await Promise.all(
+      commentJSON.map(async (c) => {
         const authorId = c.authorId;
-        const profileQuery = doc(db, `/users/${authorId}`);
-        const profileSnap = await getDoc(profileQuery);
-        const profileData = profileSnap.data()!;
-        const postAuthorProfile = profileData?.profile as account["profile"];
-        return { ...c, author: postAuthorProfile };
+        const commentProfile = await getProfileByUID(authorId);
+        return { ...c, author: commentProfile };
       })
     );
     console.log(comments);
@@ -157,8 +151,8 @@ export async function postInfo(p: Post, uid: string) {
     const isSaved = await getDoc(savedByUserRef);
     const originalPost = {
       ...p,
-      comments: [...commentAuthor],
-      author: { ...postAuthorProfile },
+      comments: [...comments],
+      author: { ...postProfile },
       shares: [...shares],
       like: [...like],
       sharePost: { ...p.sharePost, post: null },
@@ -173,9 +167,7 @@ export async function postInfo(p: Post, uid: string) {
       const shareDoc = await getDoc(sharedPostRef);
       const isSharedPostAvailable = shareDoc.exists();
 
-      const sharedPost = await postToJSON(
-        shareDoc as DocumentSnapshot<DocumentData>
-      );
+      const sharedPost = await postToJSON(shareDoc);
       const SharedPostLikeRef = collection(
         db,
         `users/${sharedPost.authorId}/posts/${sharedPost.id}/likes`
@@ -193,10 +185,11 @@ export async function postInfo(p: Post, uid: string) {
         `users/${sharedPost.authorId}/posts/${sharedPost.id}/likes/${uid}`
       );
       const isSharePostLiked = await getDoc(sharelikedByUser);
-      const profileQuery = doc(db, `/users/${sharedPost.authorId}`);
-      const profileSnap = await getDoc(profileQuery);
-      const profileData = profileSnap.data()!;
-      const sharePostProfile = profileData.profile as account["profile"];
+
+      const sharePostProfile = await getProfileByUID(
+        sharedPost.authorId.toString()
+      );
+
       const sharePost = {
         ...sharedPost,
         author: { ...sharePostProfile },
@@ -207,10 +200,10 @@ export async function postInfo(p: Post, uid: string) {
       if (isSharedPostAvailable) {
         return {
           ...originalPost,
-          comments: [...commentAuthor],
+          comments: [...comments],
           like: [...like],
           shares: [...shares],
-          author: { ...postAuthorProfile },
+          author: { ...postProfile },
           isLiked: isLiked.exists() ? true : false,
           sharePost: { ...p.sharePost, post: { ...sharePost } },
         };
@@ -218,11 +211,11 @@ export async function postInfo(p: Post, uid: string) {
         return {
           // ...originalPost,
           ...p,
-          comments: [...commentAuthor],
+          comments: [...comments],
           like: [...like],
           shares: [...shares],
           isLiked: isLiked.exists() ? true : false,
-          author: { ...postAuthorProfile },
+          author: { ...postProfile },
           sharePost: { ...p.sharePost, post: null },
         };
       }
