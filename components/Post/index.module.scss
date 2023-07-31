@@ -365,10 +365,12 @@
             // &:is(:active, :hover) {
             //     text-decoration: underline;
             // }
-            > span:is(:active, :hover) {
-                text-decoration: underline;
+            > span {
+                font-weight: 500;
+                &:is(:active, :hover) {
+                    text-decoration: underline;
+                }
             }
-            font-weight: 500;
             font-size: 18px;
             // gap: 8px;
         }
@@ -386,7 +388,7 @@
             padding: 0;
             line-height: 20px;
             display: flex;
-            justify-content: center;
+            /* justify-content: center; */
             align-items: center;
             > svg {
                 color: #a3a3a3;
@@ -395,7 +397,7 @@
         }
     }
 
-    button {
+    > button {
         width: 40px;
         height: 40px;
         font-size: 1rem;

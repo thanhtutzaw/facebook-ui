@@ -5,15 +5,18 @@ import {
   DocumentSnapshot,
   Query,
   QueryDocumentSnapshot,
+  QuerySnapshot,
   Timestamp,
   collection,
   doc,
   getDoc,
   getDocs,
   getFirestore,
+  orderBy,
+  query,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { Post, account } from "../types/interfaces";
+import { Comment, Post, account } from "../types/interfaces";
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -65,7 +68,30 @@ export async function postToJSON(
     };
   }
 }
-
+export async function commentToJSON(doc: QueryDocumentSnapshot<DocumentData>) {
+  const data = doc.data() as Comment;
+  const createdAt = data?.createdAt as Timestamp;
+  const updatedAt = data?.updatedAt as Timestamp;
+  const author = doc.ref.parent.parent?.parent.parent!;
+  if (typeof data?.updatedAt === "string") {
+    return {
+      ...data,
+      authorId: author.id,
+      id: doc.id,
+      text: data?.text,
+      createdAt: createdAt?.toJSON() || 0,
+    };
+  } else {
+    return {
+      ...data,
+      authorId: author.id,
+      id: doc.id,
+      text: data?.text,
+      createdAt: createdAt?.toJSON() || 0,
+      updatedAt: updatedAt?.toJSON() || 0,
+    };
+  }
+}
 export function userToJSON(obj: any): any {
   if (Array.isArray(obj)) {
     return obj.map((item: any) => userToJSON(item));
@@ -97,6 +123,26 @@ export async function postInfo(p: Post, uid: string) {
     const postAuthorProfile = profileData?.profile as account["profile"];
 
     const likeRef = collection(db, `users/${p.authorId}/posts/${p.id}/likes`);
+    const commentRef = query(
+      collection(db, `users/${p.authorId}/posts/${p.id}/comments`),
+      orderBy("createdAt", "desc")
+    );
+    const commentDoc = await getDocs(commentRef);
+    const comments = await Promise.all(
+      commentDoc.docs.map(async (doc) => await commentToJSON(doc))
+    );
+
+    const commentAuthor = await Promise.all(
+      comments.map(async (c) => {
+        const authorId = c.authorId;
+        const profileQuery = doc(db, `/users/${authorId}`);
+        const profileSnap = await getDoc(profileQuery);
+        const profileData = profileSnap.data()!;
+        const postAuthorProfile = profileData?.profile as account["profile"];
+        return { ...c, author: postAuthorProfile };
+      })
+    );
+    console.log(comments);
     const likeDoc = await getDocs(likeRef);
     const like = likeDoc.docs.map((doc) => doc.data());
     const shareRef = collection(db, `users/${p.authorId}/posts/${p.id}/shares`);
@@ -111,6 +157,7 @@ export async function postInfo(p: Post, uid: string) {
     const isSaved = await getDoc(savedByUserRef);
     const originalPost = {
       ...p,
+      comments: [...commentAuthor],
       author: { ...postAuthorProfile },
       shares: [...shares],
       like: [...like],
@@ -160,6 +207,7 @@ export async function postInfo(p: Post, uid: string) {
       if (isSharedPostAvailable) {
         return {
           ...originalPost,
+          comments: [...commentAuthor],
           like: [...like],
           shares: [...shares],
           author: { ...postAuthorProfile },
@@ -170,6 +218,7 @@ export async function postInfo(p: Post, uid: string) {
         return {
           // ...originalPost,
           ...p,
+          comments: [...commentAuthor],
           like: [...like],
           shares: [...shares],
           isLiked: isLiked.exists() ? true : false,

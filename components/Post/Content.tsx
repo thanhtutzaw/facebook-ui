@@ -1,31 +1,23 @@
 import {
   faCircleCheck,
   faDotCircle,
-  faEarth,
   faEllipsisH,
-  faGlobe,
-  faLock,
-  faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
-import { Timestamp } from "firebase/firestore";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { RefObject, useContext, useEffect, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { Post as PostType } from "../../types/interfaces";
-import Actions from "./AdminDropDown";
-import PhotoLayout from "./PhotoLayout";
-import s from "./index.module.scss";
-import AuthorInfo from "./AuthorInfo";
 import { app } from "../../lib/firebase";
+import { Post as PostType } from "../../types/interfaces";
+import Input from "../Input/Input";
 import AdminDropDown from "./AdminDropDown";
+import AuthorInfo from "./AuthorInfo";
 import DropDown from "./DropDown";
-import SharePostFallback from "./SharePostFallback";
+import PhotoLayout from "./PhotoLayout";
 import { SharePreview } from "./SharePreview";
 import { SocialCount } from "./SocialCount";
-import Input from "../Input/Input";
+import s from "./index.module.scss";
 export default function Content(props: {
   updatePost: Function;
   likeCount: number;
@@ -112,7 +104,6 @@ export default function Content(props: {
         }
       }}
     >
-      {/* {JSON.stringify(post.shares)} */}
       <AuthorInfo navigateToProfile={navigateToProfile} post={post}>
         {!shareMode && (
           <>
@@ -210,7 +201,6 @@ export default function Content(props: {
           )}
         </>
       )}
-      {/* <h1>{id}</h1> */}
       {/* {JSON.stringify(post.like)} */}
       <Input
         style={{

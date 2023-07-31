@@ -50,6 +50,7 @@ export interface sharedPost {
   isLiked: boolean;
   isSaved: boolean;
   shares?: any;
+  comments: Comment[];
 }
 export interface Post {
   isSaved: boolean;
@@ -75,6 +76,27 @@ export interface Post {
       }
     | Timestamp;
   media: Media[] | null;
+  comments: Comment[];
+}
+export interface Comment {
+  isLiked?: boolean;
+  like?: any;
+  author?: UserRecord | User | account["profile"];
+  authorId: string | number;
+  id?: string | number;
+  text: string;
+  createdAt:
+    | {
+        seconds: number;
+        nanoseconds: number;
+      }
+    | Timestamp;
+  updatedAt?:
+    | {
+        seconds: number;
+        nanoseconds: number;
+      }
+    | Timestamp;
 }
 
 export interface Props {

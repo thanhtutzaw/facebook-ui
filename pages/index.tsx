@@ -270,7 +270,10 @@ export default function Home({
         },
       })
   );
-  const [limitedPosts, setlimitedPosts] = useState(posts);
+  const [limitedPosts, setlimitedPosts] = useState(posts!);
+  useEffect(() => {
+    setlimitedPosts(posts!);
+  }, [posts]);
 
   // useEffect(() => {
   //   // const q = query(collection(db, "posts"), where("state", "==", "CA"));

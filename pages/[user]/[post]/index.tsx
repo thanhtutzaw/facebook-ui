@@ -9,6 +9,8 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useEffect, useRef, useState } from "react";
+import Comment from "../../../components/Comment";
+import CommentInput from "../../../components/Comment/Input";
 import BackHeader from "../../../components/Header/BackHeader";
 import FooterInput from "../../../components/Input/FooterInput";
 import Input from "../../../components/Input/Input";
@@ -17,14 +19,19 @@ import { Footer } from "../../../components/Post/Footer";
 import PhotoLayout from "../../../components/Post/PhotoLayout";
 import { SharePreview } from "../../../components/Post/SharePreview";
 import { SocialCount } from "../../../components/Post/SocialCount";
+import { Welcome } from "../../../components/Welcome";
 import { app, db, postInfo, postToJSON } from "../../../lib/firebase";
 import { verifyIdToken } from "../../../lib/firebaseAdmin";
 import { updatePost } from "../../../lib/firestore/post";
 import { deleteStorage, uploadMedia } from "../../../lib/storage";
 import s from "../../../styles/Home.module.scss";
-import { Media, Post as PostType, Props } from "../../../types/interfaces";
-import { Welcome } from "../../../components/Welcome";
-import CommentInput from "../../../components/Comment/Input";
+import {
+  Media,
+  Post as PostType,
+  Props,
+  account,
+} from "../../../types/interfaces";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -35,9 +42,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
-    const { uid } = token;
+    const { uid } = token as DecodedIdToken;
     const { user: authorId, post: postId } = context.query;
     let expired = false;
+    const isAdmin = authorId?.toString()! === uid;
     // const postDoc = isAdmin
     //   ? query(
     //       collection(db, `users/${authorId}/posts`),
@@ -51,7 +59,57 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
     const postSnap = await getDoc(postDoc);
     const p = await postToJSON(postSnap as DocumentSnapshot<DocumentData>);
-    const newPost = await postInfo(p, uid);
+     const newPost = await postInfo(p, uid);
+    // console.log(newPost?.comments);
+    // if (newPost?.comments) {
+    //   const newPost = (await postInfo(p, uid)) as PostType;
+    //   const withAuthor = await Promise.all(
+
+    //     newPost?.comments.map(async (c) => {
+    //   const authorId = c.authorId;
+    //   const commentprofileQuery = doc(db, `/users/${authorId}`);
+    //   const commentprofileSnap = await getDoc(commentprofileQuery);
+    //   const commentprofileData = commentprofileSnap.data()!;
+    //   const commentAuthorProfile =
+    //     commentprofileData?.profile as account["profile"];
+    //   if (c.authorId) {
+    //     return {
+    //       ...newPost,
+    //       comments: {
+    //         ...newPost.comments,
+    //         // author: commentAuthorProfile,
+    //       },
+    //     };
+    //   } else {
+    //     return {
+    //       ...newPost,
+    //       comments: {
+    //         ...newPost.comments,
+    //         // author: null,
+    //       },
+    //     };
+    //   }
+    // });
+    //   )
+    // }
+    // else {
+    //   withAuthor = {
+    //     ...newPost,
+    //     comments: { ...newPost?.comments, author: "hey" },
+    //   };
+    // }
+
+    // console.log(withAuthor);
+    // const comments = {
+    //   ...newPost,
+    //   comments: {
+    //     ...newPost?.comments,
+    //     author: newPost?.id,
+    //   },
+    // };
+
+    // console.log(withAuthor);
+
     // // const UserRecord = await getUserData(postJSON.authorId);
     // // const userJSON = userToJSON(UserRecord) as UserRecord;
     // const profileQuery = doc(db, `/users/${postJSON.authorId}`);
@@ -150,6 +208,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
           expired,
           uid,
           post: newPost,
+          isAdmin,
         },
       };
     }
@@ -160,6 +219,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         expired: true,
         uid: "",
         post: {},
+        isAdmin: false,
       },
     };
   }
@@ -168,8 +228,9 @@ export default function Page(props: {
   expired: boolean;
   uid: string;
   post: PostType;
+  isAdmin: boolean;
 }) {
-  const { expired, uid, post } = props;
+  const { isAdmin, expired, uid, post } = props;
   const router = useRouter();
   const [visibility, setVisibility] = useState(post?.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
@@ -326,6 +387,21 @@ export default function Page(props: {
 
   const [likeCount, setlikeCount] = useState(post.like?.length);
   if (expired) return <Welcome expired={expired} />;
+  // const comments = [
+  //   {
+  //     id: 1,
+  //     text: "testComment testComment testComment testComment testComment testComment testComment testComment testComment testCommenttestComment testComment testComment testComment testComment testComment testComment testComment testComment testComment  ",
+  //     authorId: "1",
+  //     createdAt: post.createdAt,
+  //   },
+  //   {
+  //     author: { firstName: "John", lastName: "Doe" },
+  //     id: 2,
+  //     text: "hello2",
+  //     authorId: "2",
+  //     createdAt: post.createdAt,
+  //   },
+  // ];
   return (
     <div className="user">
       <BackHeader
@@ -349,13 +425,14 @@ export default function Page(props: {
         )}
       </BackHeader>
       <div
-        style={{ marginBottom: canEdit ? "65px" : "0" }}
+        style={{ marginBottom: canEdit ? "65px" : "87px" }}
         className={s.container}
       >
         <AuthorInfo navigateToProfile={navigateToProfile} post={post} />
         <Input
           style={{
-            paddingTop: text === "" ? "0" : ".5rem",
+            paddingTop: "0",
+            // paddingTop: text === "" ? "0" : ".5rem",
             marginBlock: ".5rem",
             marginBottom: text === "" ? "1rem" : "1rem",
             cursor: canEdit ? "initial" : "default",
@@ -392,7 +469,17 @@ export default function Page(props: {
             style={{ borderBottom: "1px solid rgb(235, 235, 235)" }}
           />
         )}
-        <CommentInput />
+        {!canEdit && (
+          <>
+            {/* {JSON.stringify(post.comments)} */}
+            <Comment post={post} isAdmin={isAdmin} comments={post.comments} />
+            <CommentInput
+              uid={uid!}
+              authorId={post.authorId?.toString() ?? null}
+              postId={post.id?.toString()!}
+            />
+          </>
+        )}
       </div>
     </div>
   );
