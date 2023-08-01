@@ -32,7 +32,9 @@ export function SocialCount(props: { post: Post; likeCount: number }) {
   // const reactionCount = posts.likes.length;
   // const shareCount = post?.sharers?.length ?? 0;
   const shareCount = post.shares?.length ?? 0;
-  const commentCount = post.comments?.length ?? 0;
+  // const commentCount = post.comments?.length ?? 0;
+  // const commentCount = parseInt(post.commentCount?.toString()!) ?? 0;
+  const commentCount = post.commentCount?.toString()!;
   return (
     <>
       {shareCount || likeCount || commentCount ? (
@@ -50,11 +52,13 @@ export function SocialCount(props: { post: Post; likeCount: number }) {
               {/* {JSON.stringify(post.like)} */}
             </p>
           )}
-          {commentCount !== 0 && (
+          {/* {JSON.stringify(post.commentCount)} */}
+          {!commentCount || (
             <p className={s.shareCount} onClick={() => {}}>
               {/* <p style={{ margin: "auto" }} className={s.shareCount}> */}
               {/* {post.like?.length} */}
-              {commentCount} {commentCount <= 1 ? "comment" : "comments"}
+              {commentCount}{" "}
+              {parseInt(commentCount) <= 1 ? "comment" : "comments"}
               {/* {JSON.stringify(post.like)} */}
             </p>
           )}

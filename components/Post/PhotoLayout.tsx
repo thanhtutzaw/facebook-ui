@@ -1,14 +1,13 @@
-/* eslint-disable @next/next/no-img-element */
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { RefObject, useContext } from "react";
-import { Post } from "../../types/interfaces";
-import s from "./index.module.scss";
-import Image from "next/image";
-import { PageContext, PageProps } from "../../context/PageContext";
-import ImageWithFallback from "../ImageWithFallback";
 import { getAuth } from "firebase/auth";
+import Image from "next/image";
+import { RefObject, useContext } from "react";
+import { PageContext, PageProps } from "../../context/PageContext";
 import { app } from "../../lib/firebase";
+import { Post } from "../../types/interfaces";
+import ImageWithFallback from "../ImageWithFallback";
+import s from "./index.module.scss";
 
 export default function PhotoLayout(props: {
   margin?: boolean;

@@ -4,20 +4,22 @@ import { Comment, Post } from "../../types/interfaces";
 import AuthorInfo from "../Post/AuthorInfo";
 import s from "./index.module.scss";
 export default function Comment(props: {
-  isAdmin: boolean;
+  uid: string;
   comments: Post["comments"] | [];
   post: Post;
 }) {
-  const { post, comments, isAdmin } = props;
+  const { post, comments, uid } = props;
+  const { authorId, id: postId } = post;
+  const postRef = doc(db, `users/${authorId}/posts/${postId}`);
   return (
     <ul className={s.container}>
       {comments?.map((c) => (
-        <Card isAdmin={isAdmin} key={c.id} c={c} />
+        <Card uid={uid} key={c.id} c={c} />
       ))}
     </ul>
   );
-  function Card(props: { isAdmin: boolean; c: Comment }) {
-    const { isAdmin, c } = props;
+  function Card(props: { uid: string; c: Comment }) {
+    const { uid, c } = props;
     const { text, createdAt } = c;
     const commentRef = doc(
       db,
@@ -25,7 +27,12 @@ export default function Comment(props: {
     );
     return (
       <li className={s.item}>
-        <AuthorInfo commentRef={commentRef} isAdmin={isAdmin} comment={c}>
+        <AuthorInfo
+          postRef={postRef}
+          commentRef={commentRef}
+          isAdmin={uid === c.authorId}
+          comment={c}
+        >
           <p className={s.text}>{text}</p>
           {/* <Link href={"/" + authorId.toString()}>
         </Link> */}

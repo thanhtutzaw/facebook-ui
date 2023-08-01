@@ -3,15 +3,8 @@ import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { AuthErrorCodes, getAuth, onAuthStateChanged } from "firebase/auth";
 import {
-  DocumentData,
-  DocumentSnapshot,
-  collection,
   collectionGroup,
-  doc,
-  getDoc,
-  getDocs,
   limit,
-  onSnapshot,
   orderBy,
   query,
   where,
@@ -28,15 +21,13 @@ import {
   app,
   db,
   getPostWithMoreInfo,
-  postToJSON,
+  getProfileByUID,
   userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import { Post, Props, account } from "../types/interfaces";
+import { Props } from "../types/interfaces";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { FirebaseError } from "firebase/app";
-import error from "next/error";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -64,136 +55,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     );
 
     const newPosts = await getPostWithMoreInfo(postQuery, uid);
-    // const withLike = (await Promise.all(
-    //   posts.map(async (p) => {
-    //     if (p) {
-    //       const profileQuery = doc(db, `/users/${p.authorId}`);
-    //       const profileSnap = await getDoc(profileQuery);
-    //       const profileData = profileSnap.data()!;
-    //       const profile = profileData.profile as account["profile"];
-    //       const postRef = doc(db, `users/${p.authorId}/posts/${p.id}`);
-    //       const likeRef = collection(postRef, "likes");
-    //       const likeDoc = await getDocs(likeRef);
-    //       const likedByUser = doc(
-    //         db,
-    //         `users/${p.authorId}/posts/${p.id}/likes/${uid}`
-    //       );
-    //       const isLiked = await getDoc(likedByUser);
-    //       const like = likeDoc.docs.map((doc) => doc.data());
-
-    //       if (!likeDoc.empty) {
-    //         return {
-    //           ...p,
-    //           author: { ...profile },
-    //           like: [...like],
-    //           isLiked: isLiked.exists() ? true : false,
-    //         };
-    //       } else {
-    //         return {
-    //           ...p,
-    //           author: { ...profile },
-    //           isLiked: false,
-    //         };
-    //       }
-    //     }
-    //   })
-    // )) as Post[];
-    // const sharePosts = await Promise.all(
-    //   withLike.map(async (p) => {
-    //     if (p.sharePost) {
-    //       const postDoc = doc(
-    //         db,
-    //         `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
-    //       );
-    //       const posts = await getDoc(postDoc);
-    //       if (posts.exists()) {
-    //         const post = await postToJSON(
-    //           posts as DocumentSnapshot<DocumentData>
-    //         );
-
-    //         const profileQuery = doc(db, `/users/${post.authorId}`);
-    //         const profileSnap = await getDoc(profileQuery);
-    //         const profileData = profileSnap.data()!;
-    //         const profile = profileData.profile as account["profile"];
-    //         // const UserRecord = await getUserData(post.authorId);
-    //         // const userJSON = userToJSON(UserRecord);
-    //         const sharePost = {
-    //           ...post,
-    //           author: { ...profile },
-    //         };
-    //         return {
-    //           ...p,
-    //           sharePost: { ...p.sharePost, post: { ...sharePost } },
-    //         };
-    //       } else {
-    //         return {
-    //           ...p,
-    //           sharePost: { ...p.sharePost, post: null },
-    //         };
-    //       }
-    //     }
-    //     return {
-    //       ...p,
-    //     };
-    //   })
-    // );
-    // const newPosts = (await Promise.all(
-    //   sharePosts.map(async (p) => {
-    //     if (p.sharePost?.post) {
-    //       const post = p.sharePost.post!;
-    //       const postRef = doc(db, `users/${post.authorId}/posts/${post.id}`);
-    //       const likeRef = collection(postRef, "likes");
-    //       const likeDoc = await getDocs(likeRef);
-    //       const likedByUser = doc(
-    //         db,
-    //         `users/${post.authorId}/posts/${post.id}/likes/${uid}`
-    //       );
-    //       const isLiked = await getDoc(likedByUser);
-    //       const like = likeDoc.docs.map((doc) => doc.data());
-
-    //       const shareData = {
-    //         ...p,
-    //         sharePost: {
-    //           ...p.sharePost,
-    //           post: {
-    //             ...post,
-    //             like: [...like],
-    //             isLiked: isLiked.exists() ? true : false,
-    //           },
-    //         },
-    //       };
-    //       return shareData;
-    //     }
-    //     return {
-    //       ...p,
-    //     };
-    //   })
-    // )) as Post[];
-    const profileQuery = doc(db, `/users/${uid}`);
-    const profileSnap = await getDoc(profileQuery);
-    const profileData = profileSnap.data()!;
-    const profile = profileData.profile as account["profile"];
-
-    const allUsersQuery = query(
-      collection(db, `users`),
-      where("__name__", "!=", uid)
-    );
-    // const allUsersSnap = await getDocs(allUsersQuery);
-    // const allUsers = await Promise.all(
-    //   allUsersSnap.docs.map(async (doc) => {
-    //     const data = doc.data();
-    //     const account = (await getUserData(doc.id as string))! as UserRecord;
-    //     const accountJSON = userToJSON(account) as UserRecord;
-    //     return {
-    //       id: doc.id,
-    //       ...data,
-    //       author: {
-    //         ...accountJSON,
-    //       },
-    //     };
-    //   })
-    // );
-    const currentAccount = (await getUserData(uid as string))! as UserRecord;
+    const profile = await getProfileByUID(uid);
+    const currentAccount = (await getUserData(uid)) as UserRecord;
     const currentUserData = userToJSON(currentAccount);
     return {
       props: {
@@ -209,12 +72,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     };
   } catch (error: any) {
     console.log("SSR Error " + error);
-    // resource - exhausted;
-    console.log("Resource Error : " + error);
-    // console.log(resource-exhausted);
-
     let postError = error.code === "resource-exhausted" ? error.message : "";
-    // AuthErrorCodes.QUOTA_EXCEEDED
+    if (error.code === "resource-exhausted") {
+      console.log(AuthErrorCodes.QUOTA_EXCEEDED);
+      console.log("Resource Error : " + error);
+    }
     // context.res.writeHead(302, { Location: "/login" });
     // context.res.end();
     return {

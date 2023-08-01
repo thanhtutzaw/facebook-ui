@@ -10,24 +10,29 @@ import {
   DocumentReference,
   Timestamp,
   deleteDoc,
+  increment,
+  writeBatch,
 } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { MouseEventHandler, ReactNode, useState } from "react";
 import { Comment, Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
+import { db } from "../../lib/firebase";
 export default function AuthorInfo(props: {
   navigateToProfile?: MouseEventHandler;
   post?: Post;
   isAdmin?: boolean;
   commentRef?: DocumentReference<DocumentData>;
+  postRef?: any;
   comment?: Comment;
   children?: ReactNode;
 }) {
-  const { commentRef, isAdmin, comment, children, navigateToProfile, post } =
+  const {postRef, commentRef, isAdmin, comment, children, navigateToProfile, post } =
     props;
   const [deleteLoading, setDeleteLoading] = useState(false);
   const router = useRouter();
+  const batch = writeBatch(db);
   if (post) {
     const { author, authorId, createdAt, visibility } = post;
     const profile = author as account["profile"];
@@ -105,7 +110,12 @@ export default function AuthorInfo(props: {
           onClick={async () => {
             setDeleteLoading(true);
             try {
-              await deleteDoc(commentRef!);
+
+              batch.delete(commentRef!);
+              batch.update(postRef, {
+                commentCount: increment(-1),
+              });
+              await batch.commit();
               setDeleteLoading(false);
               router.push(router.asPath);
             } catch (error: any) {

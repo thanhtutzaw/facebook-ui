@@ -51,8 +51,10 @@ export interface sharedPost {
   isSaved: boolean;
   shares?: any;
   comments: Comment[];
+  commentCount?: string | number;
 }
 export interface Post {
+  commentCount?: string | number;
   isSaved: boolean;
   isLiked: boolean;
   like?: any;

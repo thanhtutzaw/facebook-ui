@@ -1,9 +1,14 @@
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { getAuth } from "firebase/auth";
 import {
   DocumentData,
   DocumentSnapshot,
+  collection,
   doc,
   getDoc,
+  getDocs,
+  orderBy,
+  query,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -20,18 +25,19 @@ import PhotoLayout from "../../../components/Post/PhotoLayout";
 import { SharePreview } from "../../../components/Post/SharePreview";
 import { SocialCount } from "../../../components/Post/SocialCount";
 import { Welcome } from "../../../components/Welcome";
-import { app, db, postInfo, postToJSON } from "../../../lib/firebase";
+import {
+  app,
+  commentToJSON,
+  db,
+  getProfileByUID,
+  postInfo,
+  postToJSON,
+} from "../../../lib/firebase";
 import { verifyIdToken } from "../../../lib/firebaseAdmin";
 import { updatePost } from "../../../lib/firestore/post";
 import { deleteStorage, uploadMedia } from "../../../lib/storage";
 import s from "../../../styles/Home.module.scss";
-import {
-  Media,
-  Post as PostType,
-  Props,
-  account,
-} from "../../../types/interfaces";
-import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
+import { Media, Post as PostType, Props } from "../../../types/interfaces";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -43,160 +49,36 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
     const { uid } = token as DecodedIdToken;
+    console.log(uid);
     const { user: authorId, post: postId } = context.query;
     let expired = false;
-    const isAdmin = authorId?.toString()! === uid;
-    // const postDoc = isAdmin
-    //   ? query(
-    //       collection(db, `users/${authorId}/posts`),
-    //       where("id", "==", postId)
-    //     )
-    //   : query(
-    //       collection(db, `users/${authorId}/posts`),
-    //       where("id", "==", postId)
-    //       // where("visibility", "not-in", ["Friend", "Public"])
-    //     );
-    const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
-    const postSnap = await getDoc(postDoc);
-    const p = await postToJSON(postSnap as DocumentSnapshot<DocumentData>);
+    
+
+    const postRef = doc(db, `users/${authorId}/posts/${postId}`);
+    const postDoc = await getDoc(postRef);
+    const p = await postToJSON(postDoc as DocumentSnapshot<DocumentData>);
     const newPost = await postInfo(p, uid);
-    // console.log(newPost?.comments);
-    // if (newPost?.comments) {
-    //   const newPost = (await postInfo(p, uid)) as PostType;
-    //   const withAuthor = await Promise.all(
-
-    //     newPost?.comments.map(async (c) => {
-    //   const authorId = c.authorId;
-    //   const commentprofileQuery = doc(db, `/users/${authorId}`);
-    //   const commentprofileSnap = await getDoc(commentprofileQuery);
-    //   const commentprofileData = commentprofileSnap.data()!;
-    //   const commentAuthorProfile =
-    //     commentprofileData?.profile as account["profile"];
-    //   if (c.authorId) {
-    //     return {
-    //       ...newPost,
-    //       comments: {
-    //         ...newPost.comments,
-    //         // author: commentAuthorProfile,
-    //       },
-    //     };
-    //   } else {
-    //     return {
-    //       ...newPost,
-    //       comments: {
-    //         ...newPost.comments,
-    //         // author: null,
-    //       },
-    //     };
-    //   }
-    // });
-    //   )
-    // }
-    // else {
-    //   withAuthor = {
-    //     ...newPost,
-    //     comments: { ...newPost?.comments, author: "hey" },
-    //   };
-    // }
-
-    // console.log(withAuthor);
-    // const comments = {
-    //   ...newPost,
-    //   comments: {
-    //     ...newPost?.comments,
-    //     author: newPost?.id,
-    //   },
-    // };
-
-    // console.log(withAuthor);
-
-    // // const UserRecord = await getUserData(postJSON.authorId);
-    // // const userJSON = userToJSON(UserRecord) as UserRecord;
-    // const profileQuery = doc(db, `/users/${postJSON.authorId}`);
-    // const profileSnap = await getDoc(profileQuery);
-    // const profileData = profileSnap.data()!;
-    // const authorProfile = profileData.profile as account["profile"];
-    // const post = {
-    //   ...postJSON,
-    //   author: {
-    //     ...authorProfile,
-    //   },
-    // };
-    // let withLike;
-    // const postRef = doc(db, `users/${post.authorId}/posts/${post.id}`);
-    // const likeRef = collection(postRef, "likes");
-    // const likeDoc = await getDocs(likeRef);
-    // const likedByUser = doc(
-    //   db,
-    //   `users/${post.authorId}/posts/${post.id}/likes/${uid}`
-    // );
-    // const isLiked = await getDoc(likedByUser);
-    // const like = likeDoc.docs.map((doc) => doc.data());
-
-    // if (!likeDoc.empty) {
-    //   withLike = {
-    //     ...post,
-    //     like: [...like],
-    //     isLiked: isLiked.exists() ? true : false,
-    //   };
-    // } else {
-    //   withLike = {
-    //     ...post,
-    //     isLiked: false,
-    //   };
-    // }
-
-    // let newPost;
-    // if (withLike.sharePost) {
-    //   const postDoc = doc(
-    //     db,
-    //     `users/${withLike.sharePost?.author}/posts/${withLike.sharePost?.id}`
-    //   );
-    //   const posts = await getDoc(postDoc);
-
-    //   if (posts.exists()) {
-    //     const postJSON = await postToJSON(
-    //       posts as DocumentSnapshot<DocumentData>
-    //     );
-    //     // const UserRecord = await getUserData(postJSON.authorId);
-    //     // const userJSON = userToJSON(UserRecord);
-    //     const profileQuery = doc(db, `/users/${postJSON.authorId}`);
-    //     const profileSnap = await getDoc(profileQuery);
-    //     const profileData = profileSnap.data()!;
-    //     const authorProfile = profileData.profile as account["profile"];
-
-    //     const sharePost = {
-    //       ...postJSON,
-    //       author: {
-    //         ...authorProfile,
-    //       },
-    //     };
-    //     newPost = {
-    //       ...withLike,
-    //       sharePost: {
-    //         id: withLike.sharePost.id,
-    //         author: withLike.sharePost.author,
-    //         post: { ...sharePost },
-    //       },
-    //     };
-    //   } else {
-    //     newPost = {
-    //       ...withLike,
-    //       sharePost: {
-    //         id: withLike.sharePost.id,
-    //         author: withLike.sharePost.author,
-    //         post: null,
-    //       },
-    //     };
-    //   }
-    // } else {
-    //   newPost = {
-    //     ...withLike,
-    //   };
-    // }
-
+    const commentRef = query(
+      collection(db, `users/${newPost.authorId}/posts/${newPost.id}/comments`),
+      orderBy("createdAt", "desc")
+    );
+    const commentDoc = await getDocs(commentRef);
+    const commentJSON = await Promise.all(
+      commentDoc.docs.map(async (doc) => await commentToJSON(doc))
+    );
+    const comments = await Promise.all(
+      commentJSON.map(async (c) => {
+        if (c.authorId) {
+          const author = await getProfileByUID(c.authorId?.toString());
+          return { ...c, author };
+        } else {
+          return { ...c, author: null };
+        }
+      })
+    );
+    const withComment = { ...newPost, comments };
     if (
-      !postSnap.exists() ||
+      !postDoc.exists() ||
       (uid !== p.authorId && p.visibility === "Onlyme")
     ) {
       return {
@@ -207,8 +89,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         props: {
           expired,
           uid,
-          post: newPost,
-          isAdmin,
+          post: withComment
         },
       };
     }
@@ -219,7 +100,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         expired: true,
         uid: "",
         post: {},
-        isAdmin: false,
       },
     };
   }
@@ -228,9 +108,8 @@ export default function Page(props: {
   expired: boolean;
   uid: string;
   post: PostType;
-  isAdmin: boolean;
 }) {
-  const { isAdmin, expired, uid, post } = props;
+  const { expired, uid, post } = props;
   const router = useRouter();
   const [visibility, setVisibility] = useState(post?.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
@@ -388,21 +267,7 @@ export default function Page(props: {
 
   const [likeCount, setlikeCount] = useState(post.like?.length);
   if (expired) return <Welcome expired={expired} />;
-  // const comments = [
-  //   {
-  //     id: 1,
-  //     text: "testComment testComment testComment testComment testComment testComment testComment testComment testComment testCommenttestComment testComment testComment testComment testComment testComment testComment testComment testComment testComment  ",
-  //     authorId: "1",
-  //     createdAt: post.createdAt,
-  //   },
-  //   {
-  //     author: { firstName: "John", lastName: "Doe" },
-  //     id: 2,
-  //     text: "hello2",
-  //     authorId: "2",
-  //     createdAt: post.createdAt,
-  //   },
-  // ];
+
   return (
     <div className="user">
       <BackHeader
@@ -471,8 +336,9 @@ export default function Page(props: {
         )}
         {!canEdit && (
           <>
-            <Comment post={post} isAdmin={isAdmin} comments={post.comments} />
+            <Comment post={post} uid={uid} comments={post.comments} />
             <CommentInput
+              post={post}
               uid={uid!}
               authorId={post.authorId?.toString() ?? null}
               postId={post.id?.toString()!}

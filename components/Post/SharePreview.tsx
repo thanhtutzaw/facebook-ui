@@ -10,10 +10,10 @@ export function SharePreview(props: {
   query?: Router["query"];
 }) {
   const { selectMode, post, query } = props;
-  // const author , id = query;
+  const sharePost = post.sharePost?.post!;
   const url = query
     ? `${query.author}/${query.id}`
-    : `/${post?.sharePost?.post?.authorId}/${post?.sharePost?.post?.id}`;
+    : `/${sharePost?.authorId}/${sharePost?.id}`;
   if (post?.sharePost?.id && post.sharePost?.post === null)
     return <SharePostFallback />;
   return (
@@ -26,7 +26,6 @@ export function SharePreview(props: {
           style={{ pointerEvents: selectMode ? "none" : "initial" }}
           tabIndex={-1}
           href={url}
-          prefetch={false}
           className={s.sharePreview}
         >
           <Post shareMode={true} post={query ? post : post?.sharePost?.post!} />
