@@ -47,8 +47,11 @@ export default function Tabs(props: {
     const currentTarget = e.currentTarget;
     if (e.currentTarget.className == "Home_storyCard__3_T_R") return;
     if (e.currentTarget.tagName == "BODY") return;
+
     const target = e.target as HTMLElement;
-    if (target.tagName == "INPUT" || "BUTTON" || "A") return;
+    if (target.tagName === "A") return;
+    // console.log(target.tagName);
+    // console.log("drag start");
     // if (e.target.className == "Home_storyCard__3_T_R") return;
     setpos({
       left: currentTarget.scrollLeft,

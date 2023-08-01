@@ -13,23 +13,25 @@ export function SharePreview(props: {
   // const author , id = query;
   const url = query
     ? `${query.author}/${query.id}`
-    : `${post?.sharePost?.post?.authorId}/${post?.sharePost?.post?.id}`;
+    : `/${post?.sharePost?.post?.authorId}/${post?.sharePost?.post?.id}`;
   if (post?.sharePost?.id && post.sharePost?.post === null)
     return <SharePostFallback />;
   return (
     <>
       {post?.sharePost?.post || query ? (
         <Link
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
           style={{ pointerEvents: selectMode ? "none" : "initial" }}
           tabIndex={-1}
           href={url}
+          prefetch={false}
           className={s.sharePreview}
         >
           <Post shareMode={true} post={query ? post : post?.sharePost?.post!} />
         </Link>
-      ) : (
-        <></>
-      )}
+      ) : null}
     </>
   );
 }

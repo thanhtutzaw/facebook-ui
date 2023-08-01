@@ -59,7 +59,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
     const postSnap = await getDoc(postDoc);
     const p = await postToJSON(postSnap as DocumentSnapshot<DocumentData>);
-     const newPost = await postInfo(p, uid);
+    const newPost = await postInfo(p, uid);
     // console.log(newPost?.comments);
     // if (newPost?.comments) {
     //   const newPost = (await postInfo(p, uid)) as PostType;
@@ -249,7 +249,8 @@ export default function Page(props: {
     : "";
   useEffect(() => {
     InputRef.current?.focus();
-  }, []);
+    setFiles(post.media);
+  }, [post.media]);
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (
@@ -432,7 +433,6 @@ export default function Page(props: {
         <Input
           style={{
             paddingTop: "0",
-            // paddingTop: text === "" ? "0" : ".5rem",
             marginBlock: ".5rem",
             marginBottom: text === "" ? "1rem" : "1rem",
             cursor: canEdit ? "initial" : "default",
@@ -471,7 +471,6 @@ export default function Page(props: {
         )}
         {!canEdit && (
           <>
-            {/* {JSON.stringify(post.comments)} */}
             <Comment post={post} isAdmin={isAdmin} comments={post.comments} />
             <CommentInput
               uid={uid!}
