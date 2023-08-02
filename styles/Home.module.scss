@@ -257,7 +257,9 @@
 // @media only screen and (min-width: 500px) {
 @media only screen and (hover: hover) and (pointer: fine) {
   .nav .navItems:hover > div {
-    background-color: rgb(199, 199, 199);
+    // background-color: rgb(199, 199, 199);
+    // background-color: rgb(243, 243, 243);
+    background-color: rgb(221, 221, 221);
   }
 
   .loginBtn:hover {

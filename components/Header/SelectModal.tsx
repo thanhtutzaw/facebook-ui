@@ -67,9 +67,9 @@ function SelectModal() {
             setLoading(false);
             setSelectedId?.([]);
             setselectMode?.(false);
-            // selectedId.map((s) => {
-            //   // updatePost?.(s.post);
-            // });
+            selectedId.map((s) => {
+              updatePost?.(s.post);
+            });
           } catch (error: any) {
             setLoading(false);
             alert(error.message);

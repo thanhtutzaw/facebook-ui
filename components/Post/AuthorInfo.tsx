@@ -186,9 +186,9 @@ function Author(props: {
           // flex: "1",
         }}
       >
-        <p style={{ userSelect: "none" }} className={styles.name}>
+        <p style={{flexWrap:'wrap', userSelect: "none" }} className={styles.name}>
           <span
-            style={{ color: comment ? "rgb(46 46 46)" : "initial" }}
+            style={{whiteSpace:'pre', color: comment ? "rgb(46 46 46)" : "initial" }}
             onClick={navigateToProfile}
           >
             {profile?.firstName ?? post?.id ?? comment?.authorId}{" "}

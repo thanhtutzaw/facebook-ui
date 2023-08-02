@@ -153,6 +153,7 @@ export async function postInfo(p: Post, uid: string) {
     isLiked: isLiked.exists() ? true : false,
     isSaved: isSaved.exists() ? true : false,
   };
+  console.log("posts with info are fetching");
   if (p.sharePost) {
     const sharedPostRef = doc(
       db,

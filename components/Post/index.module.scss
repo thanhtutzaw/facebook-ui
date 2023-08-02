@@ -392,7 +392,7 @@
             margin: 0;
             padding: 0;
             line-height: 20px;
-            display: flex;
+            // display: flex;
             /* justify-content: center; */
             align-items: center;
             > svg {
@@ -524,7 +524,8 @@
         //     opacity: 0.7;
         // }
         &:has(:hover) > button {
-            background-color: rgb(207, 207, 207) !important;
+            // background-color: rgb(207, 207, 207) !important;
+            background-color: rgb(221, 221, 221) !important;
             // outline: 1px solid var(--blue-origin) !important;
             // outline-offset: -1px;
         }

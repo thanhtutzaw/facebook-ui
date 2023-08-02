@@ -186,11 +186,12 @@ body {
 }
 
 body {
-  cursor          : initial;
-  display         : flex;
-  justify-content : center;
-  align-items     : center;
-  background-color: rgb(223, 223, 223);
+  cursor             : initial;
+  display            : flex;
+  justify-content    : center;
+  align-items        : center;
+  /* background-color: rgb(223, 223, 223); */
+  background-color   : rgb(231 231 231);
 }
 
 .copied {

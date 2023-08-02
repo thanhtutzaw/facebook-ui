@@ -99,7 +99,7 @@ export default function AdminDropDown(props: {
                 //   post,
                 // });
                 if (loading) return;
-                // updatePost(id);
+                updatePost(id);
               } catch (error: any) {
                 console.error(error);
                 alert(error.message);

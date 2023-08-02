@@ -1,10 +1,16 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
-import { AuthErrorCodes, getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  AuthErrorCodes,
+  Unsubscribe,
+  getAuth,
+  onAuthStateChanged,
+} from "firebase/auth";
 import {
   collectionGroup,
   limit,
+  onSnapshot,
   orderBy,
   query,
   where,
@@ -22,10 +28,12 @@ import {
   db,
   getPostWithMoreInfo,
   getProfileByUID,
+  postInfo,
+  postToJSON,
   userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import { Props } from "../types/interfaces";
+import { Post, Props } from "../types/interfaces";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 export const getServerSideProps: GetServerSideProps<Props> = async (
@@ -133,9 +141,32 @@ export default function Home({
       })
   );
   const [limitedPosts, setlimitedPosts] = useState(posts!);
+
   useEffect(() => {
-    setlimitedPosts(posts!);
-  }, [posts]);
+    let unsubscribe: Unsubscribe;
+    const postQuery = query(
+      collectionGroup(db, `posts`),
+      where("visibility", "in", ["Friend", "Public"]),
+      orderBy("createdAt", "desc"),
+      limit(LIMIT)
+    );
+    unsubscribe = onSnapshot(postQuery, async (snapshot) => {
+      const posts = (await Promise.all(
+        snapshot.docs.map(async (doc) => await postToJSON(doc))
+      )) as Post[];
+      const withInfo = (await Promise.all(
+        posts.map(async (p) => await postInfo(p, uid!))
+      )) as Post[];
+      setlimitedPosts(withInfo);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [uid]);
+
+  // useEffect(() => {
+  //   setlimitedPosts(posts!);
+  // }, [posts]);
 
   // useEffect(() => {
   //   // const q = query(collection(db, "posts"), where("state", "==", "CA"));

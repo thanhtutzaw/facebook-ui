@@ -131,8 +131,8 @@ export default function UserProfile({
   const { profile } = user;
   const router = useRouter();
   const { setview } = useContext(PageContext) as PageProps;
-  const userName = `${profile.firstName ?? "Unknown"} ${
-    profile.lastName ?? "User"
+  const userName = `${profile?.firstName ?? "Unknown"} ${
+    profile?.lastName ?? "User"
   }`;
   const [limitedPosts, setlimitedPosts] = useState(myPost);
   const [postLoading, setpostLoading] = useState(false);
@@ -198,8 +198,8 @@ export default function UserProfile({
           <Image
             onClick={() => {
               setview?.({
-                src: profile.photoURL
-                  ? profile.photoURL
+                src: profile?.photoURL
+                  ? profile?.photoURL
                   : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
                 name: `${userName}'s profile`,
               });

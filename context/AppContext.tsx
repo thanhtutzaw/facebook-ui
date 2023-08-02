@@ -42,7 +42,9 @@ export function AppProvider(props: Props) {
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const [sortedPost, setsortedPost] = useState<Post[]>([]);
   const updatePost = (id: string) => {
-    setlimitedPosts?.(limitedPosts?.filter((post) => post.id !== id));
+    console.log(id);
+    setlimitedPosts?.((prev: Post[]) => prev.filter((post) => post.id !== id));
+    console.log(limitedPosts);
   };
 
   // useEffect(() => {
