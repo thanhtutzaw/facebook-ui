@@ -14,55 +14,12 @@ import {
 import { selectedId } from "../../context/PageContext";
 import { Post } from "../../types/interfaces";
 import { db } from "../firebase";
-export async function fetchPosts(postSnap: QuerySnapshot<DocumentData>) {
-  // const posts = await Promise.all(
-  //   postSnap.docs.map(async (doc) => {
-  //     const post = await postToJSON(doc);
-  //     const UserRecord = (await getUserData(post.authorId)) as UserRecord;
-  //     const userJSON = userToJSON(UserRecord);
-  //     return {
-  //       ...post,
-  //       author: {
-  //         ...userJSON,
-  //       },
-  //     };
-  //   })
-  // );
-  // return await Promise.all(
-  //   posts.map(async (p) => {
-  //     if (p.sharePost) {
-  //       const postDoc = doc(
-  //         db,
-  //         `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
-  //       );
-  //       const posts = await getDoc(postDoc);
-  //       const post = await postToJSON(posts as DocumentSnapshot<DocumentData>);
-  //       const UserRecord = await getUserData(post.authorId);
-  //       const userJSON = userToJSON(UserRecord);
-  //       const sharePost = {
-  //         ...post,
-  //         author: {
-  //           ...userJSON,
-  //         },
-  //       };
-  //       return {
-  //         ...p,
-  //         sharePost: { ...p.sharePost, post: { ...sharePost } },
-  //       };
-  //     }
-  //     return {
-  //       ...p,
-  //     };
-  //   })
-  // );
-}
 export async function addPost(
   uid: string,
   visibility: string,
   text: string,
   files?: any[],
   sharePost?: { author: string; id: string }
-  // originalPost?: Post
 ) {
   const Ref = doc(collection(db, `users/${uid}/posts`));
   const post = {
@@ -79,17 +36,12 @@ export async function addPost(
     db,
     `users/${sharePost?.author}/posts/${sharePost?.id}/shares/${uid}`
   );
-  // const originalPost = await getDoc(targetPostRef);
   if (sharePost) {
     data = {
       ...post,
       sharePost,
     };
     await setDoc(sharersRef, { uid });
-    // await updateDoc(targetPostRef, {
-    //   ...originalPost.data(),
-    //   sharers: arrayUnion(uid),
-    // });
   } else {
     data = { ...post };
   }
@@ -138,12 +90,7 @@ export async function updatePost(
     alert("Adding Post Failed !" + error.message);
   }
 }
-export async function deletePost(
-  data: any
-  // postid: string | number,
-  // post: Post | null
-) {
-  // console.log(uid);
+export async function deletePost(data: any) {
   const { uid, postid, post } = data;
 
   const Ref = doc(db, `users/${uid}/posts/${postid.toString()}`);
@@ -193,9 +140,6 @@ export async function deleteMultiple(uid: string, selctedId: selectedId[]) {
       const postRef = doc(db, `users/${author}/posts/${post}`);
       batch.delete(postRef);
       // console.log(post, author, share?.post, share?.author);
-      // console.table(chunk[j]);
-      // console.log(chunk[j]);
-      // console.log(selctedId);
       // if (post.sharePost?.id) {
       //   const id = post.sharePost.id;
       //   const shareRef = doc(

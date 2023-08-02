@@ -12,6 +12,25 @@ export type account = {
     photoURL?: string | "";
   };
 };
+export type NotiTypes = {
+  content: string;
+  url: string;
+  id?: string | number;
+  type: string;
+  createdAt:
+    | {
+        seconds: number;
+        nanoseconds: number;
+      }
+    | Timestamp;
+  updatedAt:
+    | {
+        seconds: number;
+        nanoseconds: number;
+      }
+    | Timestamp;
+  photoURL: string;
+};
 export type Media = {
   name: string;
   url: string;

@@ -143,6 +143,7 @@ export default function Home({
   const [limitedPosts, setlimitedPosts] = useState(posts!);
 
   useEffect(() => {
+    // setlimitedPosts(posts!);
     let unsubscribe: Unsubscribe;
     const postQuery = query(
       collectionGroup(db, `posts`),

@@ -59,7 +59,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const p = await postToJSON(postDoc as DocumentSnapshot<DocumentData>);
     const newPost = await postInfo(p, uid);
     const commentRef = query(
-      collection(db, `users/${newPost.authorId}/posts/${newPost.id}/comments`),
+      collection(
+        db,
+        `users/${newPost?.authorId}/posts/${newPost?.id}/comments`
+      ),
       orderBy("createdAt", "desc")
     );
     const commentDoc = await getDocs(commentRef);

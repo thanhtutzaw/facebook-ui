@@ -19,7 +19,7 @@ import {
 import { PageContext, PageProps } from "../../context/PageContext";
 import { app, db } from "../../lib/firebase";
 import { addPost } from "../../lib/firestore/post";
-import { Post } from "../../types/interfaces";
+import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
 import {
   addDoc,
@@ -28,18 +28,21 @@ import {
   doc,
   getDoc,
   getDocs,
+  serverTimestamp,
   setDoc,
 } from "firebase/firestore";
 import { useQueryClient } from "@tanstack/react-query";
+import { type } from "os";
 export function Footer(
   props: {
     likeCount?: number;
     setlikeCount?: Function;
     post: Post;
+    profile?: account["profile"];
     tabIndex?: number;
   } & StyleHTMLAttributes<HTMLDivElement>
 ) {
-  const { likeCount, setlikeCount, post, tabIndex, ...rests } = props;
+  const { profile, likeCount, setlikeCount, post, tabIndex, ...rests } = props;
   const { id, authorId } = post;
   const { dropdownRef, shareAction, setshareAction } = useContext(
     PageContext
@@ -123,11 +126,29 @@ export function Footer(
               alert("Error : User Not Found . Sign up and Try Again ! ");
               return;
             }
+
             setlikeToggle((prev) => !prev);
             if (likeToggle) {
               await deleteDoc(likeRef);
             } else {
               await setDoc(likeRef, { uid });
+              if (post.authorId === uid) return;
+              // alert(`Notificaions: You are liking ${post.authorId}'s post ${post.id}`);
+              const url = `https://facebook-ui-zee.vercel.app/${post.authorId}/${post.id}`;
+              const notifRef = doc(
+                collection(db, `users/${post.authorId}/notifications`)
+              );
+              const profileName = `${profile?.firstName} ${profile?.lastName}`;
+              const data = {
+                type: "reaction",
+                content: `${profileName} like this Post`,
+                createdAt: serverTimestamp(),
+                photoURL:
+                  profile?.photoURL ??
+                  "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+                url,
+              };
+              await setDoc(notifRef, data);
             }
           }}
           aria-expanded={reactionAction !== ""}
@@ -137,8 +158,6 @@ export function Footer(
           className={`${likeToggle ? styles.active : ""}`}
         >
           <FontAwesomeIcon icon={faThumbsUp} />
-          {/* {likeToggle ? "true" : "false"} */}
-          {/* {likeCount} */}
           <p>Like</p>
         </button>
         <AnimatePresence>

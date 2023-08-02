@@ -148,7 +148,6 @@ export default function Profile() {
     router.replace("/", undefined, { scroll: false });
     setedit(false);
   }
-  const queryClient = useQueryClient();
   return (
     <div
       id="profile"

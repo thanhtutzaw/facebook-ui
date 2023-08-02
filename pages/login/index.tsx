@@ -128,13 +128,12 @@ export default function Login({ uid }: { uid: string }) {
       const emailExist = emailMethod.length > 0;
       // setemailExist(emailExist);
       const name = document.getElementsByName("firstName")[0];
+      console.log("submit");
+      await createUserWithEmailAndPassword(auth, email,password);
       if (emailExist) {
         try {
           setemailLoading(true);
-          const signinError = (await signin(
-            email,
-            Account.password
-          )) as FirebaseError;
+          const signinError = (await signin(email, password)) as FirebaseError;
           if (signinError) {
             setemailLoading(false);
             alert(signinError.code);
@@ -147,7 +146,7 @@ export default function Login({ uid }: { uid: string }) {
         name.setAttribute("required", "true");
         name.focus();
         if (firstName) {
-          // alert(JSON.stringify(Account, null, 4));
+          alert(JSON.stringify(Account, null, 4));
 
           const UserCredential = await createUserWithEmailAndPassword(
             auth,

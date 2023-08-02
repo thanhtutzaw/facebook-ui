@@ -1,18 +1,16 @@
 import { faArrowAltCircleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
-import s from "./index.module.scss";
-import { db } from "../../lib/firebase";
 import {
   collection,
   doc,
-  increment,
   serverTimestamp,
-  setDoc,
-  writeBatch,
+  writeBatch
 } from "firebase/firestore";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { db } from "../../lib/firebase";
 import { Post } from "../../types/interfaces";
+import s from "./index.module.scss";
 export default function CommentInput(props: {
   uid?: string;
   postId: string;

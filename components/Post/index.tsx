@@ -92,6 +92,7 @@ export default function Post({
 
       {!shareMode && (
         <Footer
+        profile={profile}
           likeCount={likeCount!}
           setlikeCount={setlikeCount}
           post={post}
