@@ -29,7 +29,8 @@ Project is created with:
 :ballot_box_with_check:	Store the id_token in cookies using [nookies](https://www.npmjs.com/package/nookies) to fetch SSR data with the stored userId
 
 ## User-Interface
-![facebook-ui](https://github.com/thanhtutzaw/facebook-ui/assets/71011043/aebfa8bd-d6d4-4879-8074-023d83647ab4)
+![facebook-ui](https://github.com/thanhtutzaw/facebook-ui/assets/71011043/22e082c7-81d0-47ff-a7b1-a1067167d6f5)
+
 
 ## Demo
 <img src="public/logo.svg" width="18" height="18" alt="logo" title="logo" />  [Facebook-ui-zee](https://facebook-ui-zee.vercel.app/)
