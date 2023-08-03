@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { getAuth } from "firebase/auth";
 import {
   Timestamp,
@@ -122,18 +122,25 @@ export default function Profile() {
   function toggleEdit() {
     setedit((prev) => !prev);
     setnewProfile(profile!);
+    // setnewProfile(newProfile!);
   }
   const [newProfile, setnewProfile] = useState<account["profile"]>({
     firstName: profile?.firstName ?? "",
     lastName: profile?.lastName ?? "",
     bio: profile?.bio ?? "",
+    photoURL:
+      profile?.photoURL ??
+      "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
   });
 
   function handleEditForm(e: ChangeEvent<HTMLInputElement>) {
+    const { type, value, name, files } = e.target;
     setnewProfile((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: type === "file" ? e.target.files?.[0] : value,
     }));
+    console.log(newProfile);
+    // console.log(type === "file");
   }
   const [updating, setupdating] = useState(false);
   async function editProfile(e: FormEvent<HTMLFormElement>) {
@@ -142,11 +149,11 @@ export default function Profile() {
     try {
       await changeProfile(auth.currentUser!, newProfile, profile!);
       setupdating(false);
+      setedit(false);
     } catch (error) {
-      console.log("Update Profile Submit Error " + error);
+      console.log("Update Profile Error: " + error);
     }
     router.replace("/", undefined, { scroll: false });
-    setedit(false);
   }
   return (
     <div
@@ -174,14 +181,9 @@ export default function Profile() {
         style={{ y: active ? -infoRef?.current?.clientHeight! : 0 }}
         className={s.container}
       >
-        {/* <button
-          onClick={() => {
-            queryClient.invalidateQueries({ queryKey: ["myPost", sortby] });
-          }}
-        >
-          Refresh
-        </button> */}
+        {/* {JSON.stringify(profile)} */}
         <ProfileInfo
+          handleChange={handleEditForm}
           selectMode={active!}
           account={account!}
           profile={profile!}

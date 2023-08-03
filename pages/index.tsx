@@ -33,7 +33,7 @@ import {
   userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import { Post, Props } from "../types/interfaces";
+import { Post, Props, account } from "../types/interfaces";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 export const getServerSideProps: GetServerSideProps<Props> = async (
@@ -63,7 +63,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     );
 
     const newPosts = await getPostWithMoreInfo(postQuery, uid);
-    const profile = await getProfileByUID(uid);
+    const profileData = await getProfileByUID(uid) as account["profile"];
+    const profile = {...profileData , photoURL:profileData.photoURL as string}
     const currentAccount = (await getUserData(uid)) as UserRecord;
     const currentUserData = userToJSON(currentAccount);
     return {

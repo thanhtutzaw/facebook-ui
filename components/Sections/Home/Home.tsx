@@ -15,7 +15,7 @@ import Story from "./Story/Story";
 export default function Home(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const router = useRouter();
-  const { postEnd, getMorePosts, active, email, headerContainerRef } =
+  const { profile, postEnd, getMorePosts, active, email, headerContainerRef } =
     useContext(AppContext) as Props;
   const { shareAction, setuploadButtonClicked } = useContext(
     PageContext
@@ -65,10 +65,9 @@ export default function Home(props: { tabIndex: number }) {
           height={170}
           style={{ width: "40px", height: "40px" }}
           src={
-            // "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-            email === "testuser@gmail.com"
-              ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
-              : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+            // "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg""
+            (profile?.photoURL as string) ??
+            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
           }
         />
         <input

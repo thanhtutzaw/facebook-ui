@@ -2,14 +2,15 @@ import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { InferGetServerSidePropsType } from "next";
 import Image from "next/image";
-import { MouseEvent, useEffect, useRef, useState } from "react";
+import { MouseEvent, useContext, useEffect, useRef, useState } from "react";
 import { getServerSideProps } from "../../../../pages";
 import styles from "../../../../styles/Home.module.scss";
 import Card from "./Card";
 import { Props } from "../../../../types/interfaces";
+import { AppContext } from "../../../../context/AppContext";
 // type StoryProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 export default function Story({ email }: Props) {
-  const photoURL = "";
+  const { profile } = useContext(AppContext) as Props;
   const fileInput = useRef<HTMLInputElement>(null);
   const [draggable, setdraggable] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
@@ -104,12 +105,16 @@ export default function Story({ email }: Props) {
               height={170}
               style={{ objectFit: "cover", width: "100%", height: "105px" }}
               alt={email || ""}
+              // src={
+              //   email === "testuser@gmail.com"
+              //     ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
+              //     : photoURL
+              //     ? photoURL
+              //     : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+              // }
               src={
-                email === "testuser@gmail.com"
-                  ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
-                  : photoURL
-                  ? photoURL
-                  : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+                (profile?.photoURL as string) ??
+                "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
               }
             />
           </div>

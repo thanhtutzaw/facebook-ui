@@ -28,8 +28,15 @@ export default function AuthorInfo(props: {
   comment?: Comment;
   children?: ReactNode;
 }) {
-  const {postRef, commentRef, isAdmin, comment, children, navigateToProfile, post } =
-    props;
+  const {
+    postRef,
+    commentRef,
+    isAdmin,
+    comment,
+    children,
+    navigateToProfile,
+    post,
+  } = props;
   const [deleteLoading, setDeleteLoading] = useState(false);
   const router = useRouter();
   const batch = writeBatch(db);
@@ -92,6 +99,7 @@ export default function AuthorInfo(props: {
     );
   }
   const { author, createdAt, authorId } = comment!;
+  const profile = author as account["profile"];
   return (
     <div className={styles.header}>
       <Author
@@ -101,7 +109,7 @@ export default function AuthorInfo(props: {
         navigateToProfile={() => {
           router.push(`/${authorId.toString()}`);
         }}
-        profile={author}
+        profile={profile}
       >
         {children}
       </Author>
@@ -110,7 +118,6 @@ export default function AuthorInfo(props: {
           onClick={async () => {
             setDeleteLoading(true);
             try {
-
               batch.delete(commentRef!);
               batch.update(postRef, {
                 commentCount: increment(-1),
@@ -136,7 +143,7 @@ export default function AuthorInfo(props: {
 
 function Author(props: {
   navigateToProfile: any;
-  profile: any;
+  profile: account["profile"];
   authorId: any;
   post?: any;
   createdAt: any;
@@ -170,10 +177,8 @@ function Author(props: {
           objectFit: "cover",
         }}
         src={
-          authorId === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
-            ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
-            : profile?.photoURL
-            ? profile?.photoURL
+          (profile?.photoURL as string)
+            ? (profile?.photoURL as string)
             : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
         }
       />
@@ -186,9 +191,15 @@ function Author(props: {
           // flex: "1",
         }}
       >
-        <p style={{flexWrap:'wrap', userSelect: "none" }} className={styles.name}>
+        <p
+          style={{ flexWrap: "wrap", userSelect: "none" }}
+          className={styles.name}
+        >
           <span
-            style={{whiteSpace:'pre', color: comment ? "rgb(46 46 46)" : "initial" }}
+            style={{
+              whiteSpace: "pre",
+              color: comment ? "rgb(46 46 46)" : "initial",
+            }}
             onClick={navigateToProfile}
           >
             {profile?.firstName ?? post?.id ?? comment?.authorId}{" "}

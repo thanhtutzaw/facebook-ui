@@ -9,7 +9,7 @@ export type account = {
     firstName: string | "";
     lastName: string | "";
     bio: string | "";
-    photoURL?: string | "";
+    photoURL: string | "" | File;
   };
 };
 export type NotiTypes = {

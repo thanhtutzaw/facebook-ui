@@ -25,7 +25,7 @@ export default function Card(props: {
           width={80}
           height={80}
           src={
-            f.author?.photoURL ??
+            f.author?.photoURL as string ??
             "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
           }
         />

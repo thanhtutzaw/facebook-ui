@@ -1,11 +1,20 @@
 import Image from "next/image";
 import s from "./index.module.scss";
-import { ReactNode, RefObject, useContext, useState } from "react";
+import {
+  ChangeEventHandler,
+  ReactNode,
+  RefObject,
+  useContext,
+  useRef,
+  useState,
+} from "react";
 import { account } from "../../../types/interfaces";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { PageContext, PageProps } from "../../../context/PageContext";
 import { ImageLargeView } from "../../Post/ImageLargeView";
+import { InputFiles } from "typescript";
 function ProfileInfo(props: {
+  handleChange: ChangeEventHandler<HTMLInputElement>;
   account: UserRecord;
   infoRef?: RefObject<HTMLDivElement>;
   selectMode: boolean;
@@ -18,6 +27,7 @@ function ProfileInfo(props: {
   // username: string;
 }) {
   const {
+    handleChange,
     account,
     infoRef,
     selectMode,
@@ -31,6 +41,20 @@ function ProfileInfo(props: {
   } = props;
   const { viewRef, setview } = useContext(PageContext) as PageProps;
   // const view =
+  const imgFileRef = useRef<HTMLInputElement>(null);
+
+  // email === "testuser@gmail.com"
+  //   ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
+  //   : photoURL
+  //   ? photoURL
+  //   : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+  const photo =
+    newProfile?.photoURL ??
+    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+  const file = newProfile?.photoURL as File;
+  const imageFile = file.type
+    ? URL.createObjectURL(file)!
+    : (newProfile?.photoURL! as string);
   return (
     <div ref={infoRef} className={`${s.info} ${selectMode ? s.active : ""}`}>
       {/* <ImageLargeView
@@ -56,14 +80,31 @@ function ProfileInfo(props: {
         alt={`${profile?.firstName ?? "Unknown"} ${
           profile?.lastName ?? ""
         }'s profile`}
-        src={
-          email === "testuser@gmail.com"
-            ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
-            : photoURL
-            ? photoURL
-            : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-        }
+        src={edit ? imageFile : (profile.photoURL as string)}
       />
+      {/* {JSON.stringify()} */}
+      {edit && (
+        <>
+          <input
+            style={{ visibility: "hidden", display: "none" }}
+            type="file"
+            accept="image/*"
+            ref={imgFileRef}
+            onChange={handleChange}
+            name="photoURL"
+          />
+          <button
+            title="Upload Profile Picture"
+            aria-label="Upload Profile Picture"
+            className={s.changePic}
+            onClick={() => {
+              imgFileRef?.current?.click();
+            }}
+          >
+            Choose image
+          </button>
+        </>
+      )}
       <h3>
         {edit
           ? `${newProfile?.firstName ?? ""} ${newProfile?.lastName ?? ""}`
@@ -94,7 +135,6 @@ function ProfileInfo(props: {
           : profile?.bio === "" || !profile?.bio
           ? "No Bio Yet"
           : profile?.bio}
-        {/* {profile?.bio ?? "No Bio Yet"} */}
       </p>
       {children}
     </div>

@@ -99,6 +99,7 @@ export default function Login({ uid }: { uid: string }) {
       firstName: "",
       lastName: "",
       bio: "",
+      photoURL:""
     },
   });
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -106,10 +107,18 @@ export default function Login({ uid }: { uid: string }) {
     // if (e.target.tagName === "INPUT") {
     //   return; // Ignore click event when typing in the input field
     // }
+    // setAccount((prev) => ({
+    //   ...prev,
+    //   [name]: type === "checkbox" ? checked : value,
+    // }));
 
     setAccount((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
+      profile: {
+        ...prev.profile,
+        [name]: type === "checkbox" ? checked : value,
+      },
     }));
     //     const emailMethod = await fetchSignInMethodsForEmail(auth, Account.email);
     // const emailExist = emailMethod.length > 0;
@@ -129,7 +138,7 @@ export default function Login({ uid }: { uid: string }) {
       // setemailExist(emailExist);
       const name = document.getElementsByName("firstName")[0];
       console.log("submit");
-      await createUserWithEmailAndPassword(auth, email,password);
+      // await createUserWithEmailAndPassword(auth, email, password);
       if (emailExist) {
         try {
           setemailLoading(true);
@@ -144,14 +153,13 @@ export default function Login({ uid }: { uid: string }) {
         }
       } else {
         name.setAttribute("required", "true");
-        name.focus();
         if (firstName) {
           alert(JSON.stringify(Account, null, 4));
 
           const UserCredential = await createUserWithEmailAndPassword(
             auth,
             email,
-            Account.password
+            password
           );
           setadding(true);
           try {
@@ -161,7 +169,8 @@ export default function Login({ uid }: { uid: string }) {
             console.error(error);
           }
           // const user = UserCredential.user;
-          // const userInfo = { firstName: "first woro" };
+        } else {
+          name.focus();
         }
       }
     } catch (error: any) {

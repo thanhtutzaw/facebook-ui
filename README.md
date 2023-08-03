@@ -26,7 +26,8 @@ Project is created with:
 :ballot_box_with_check:	Users have the ability to save their favorite posts \
 :ballot_box_with_check:	Implement media (photos and videos) upload functionality by leveraging the power of Firebase Cloud Storage \
 :ballot_box_with_check: Enable image preview layout and zoom capability for a better user experience \
-:ballot_box_with_check:	Store the id_token in cookies using [nookies](https://www.npmjs.com/package/nookies) to fetch SSR data with the stored userId
+:ballot_box_with_check:	Store the id_token in cookies using [nookies](https://www.npmjs.com/package/nookies) to fetch SSR data with the stored 
+:ballot_box_with_check:	Implemented update user profile picture and Notifications for post reaction
 
 ## User-Interface
 ![facebook-ui](https://github.com/thanhtutzaw/facebook-ui/assets/71011043/22e082c7-81d0-47ff-a7b1-a1067167d6f5)
