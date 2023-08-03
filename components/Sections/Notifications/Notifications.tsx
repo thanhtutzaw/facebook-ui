@@ -10,6 +10,7 @@ import { NotiTypes, Props } from "../../../types/interfaces";
 import Link from "next/link";
 import Image from "next/image";
 import { Timestamp } from "firebase/firestore";
+import { getMessage } from "../../../lib/firestore/notifications";
 function Notifications() {
   const { active: tab } = useActive();
   const { uid } = useContext(AppContext) as Props;
@@ -22,9 +23,11 @@ function Notifications() {
     );
     const notiDoc = await getDocs(notiQuery);
     return notiDoc.docs.map((doc) => {
+      const data = doc.data() as NotiTypes;
       return {
         id: doc.id,
         ...doc.data(),
+        ...getMessage(data.type, data.userName ?? ""),
       };
     }) as NotiTypes[];
   };
@@ -50,7 +53,7 @@ function Notifications() {
                 <Image
                   className={s.profile}
                   priority={false}
-                  alt={noti.content}
+                  alt={noti.message}
                   width={200}
                   height={200}
                   style={{
@@ -58,7 +61,7 @@ function Notifications() {
                   }}
                   src={noti.photoURL}
                 />
-                <p>{noti.content}</p>
+                <p>{noti.message}</p>
               </Link>
               <p className={s.date} suppressHydrationWarning>
                 {new Timestamp(

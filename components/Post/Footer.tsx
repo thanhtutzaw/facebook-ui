@@ -33,6 +33,7 @@ import {
 } from "firebase/firestore";
 import { useQueryClient } from "@tanstack/react-query";
 import { type } from "os";
+import { sendAppNoti } from "../../lib/firestore/notifications";
 export function Footer(
   props: {
     likeCount?: number;
@@ -126,29 +127,12 @@ export function Footer(
               alert("Error : User Not Found . Sign up and Try Again ! ");
               return;
             }
-
             setlikeToggle((prev) => !prev);
             if (likeToggle) {
               await deleteDoc(likeRef);
             } else {
               await setDoc(likeRef, { uid });
-              if (post.authorId === uid) return;
-              // alert(`Notificaions: You are liking ${post.authorId}'s post ${post.id}`);
-              const url = `https://facebook-ui-zee.vercel.app/${post.authorId}/${post.id}`;
-              const notifRef = doc(
-                collection(db, `users/${post.authorId}/notifications`)
-              );
-              const profileName = `${profile?.firstName} ${profile?.lastName}`;
-              const data = {
-                type: "reaction",
-                content: `${profileName} like this Post`,
-                createdAt: serverTimestamp(),
-                photoURL:
-                  profile?.photoURL ??
-                  "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-                url,
-              };
-              await setDoc(notifRef, data);
+              await sendAppNoti(uid, post, profile!, "reaction");
             }
           }}
           aria-expanded={reactionAction !== ""}

@@ -12,11 +12,14 @@ export type account = {
     photoURL: string | "" | File;
   };
 };
+export type notiContentTypes = "reaction" | "comment" | "share";
+
 export type NotiTypes = {
-  content: string;
+  message: string;
+  userName: string;
   url: string;
   id?: string | number;
-  type: string;
+  type: notiContentTypes;
   createdAt:
     | {
         seconds: number;

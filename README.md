@@ -18,16 +18,16 @@ Project is created with:
 :ballot_box_with_check:	Dyanmic Routes for Author Profile and Post \
 :ballot_box_with_check:	Fetch All posts using server-side rendering (SSR), excluding posts that are marked as "Onlyme" \
 :ballot_box_with_check: Get more posts with Infinite scrolling \
-:ballot_box_with_check:	Fetch Posts with author details , like count , shared post and more \
-:ballot_box_with_check:	Allow users to update their profile by modifying their userName, bio, and Account displayName \
+:ballot_box_with_check:	Fetch Posts with author details , reaction count , comments and shared post \
+:ballot_box_with_check:	Allow users to update their profile by modifying their userName, bio, and profile pictures\
 :ballot_box_with_check: Creating new posts and Updating with customizable privacy \
 :ballot_box_with_check: Liking/commenting on existing posts, and sharing posts with others \
-:ballot_box_with_check:	Select and Delete Multiple Posts\
+:ballot_box_with_check:	Select and Delete Multiple Posts \
 :ballot_box_with_check:	Users have the ability to save their favorite posts \
 :ballot_box_with_check:	Implement media (photos and videos) upload functionality by leveraging the power of Firebase Cloud Storage \
 :ballot_box_with_check: Enable image preview layout and zoom capability for a better user experience \
-:ballot_box_with_check:	Store the id_token in cookies using [nookies](https://www.npmjs.com/package/nookies) to fetch SSR data with the stored 
-:ballot_box_with_check:	Implemented update user profile picture and Notifications for post reaction
+:ballot_box_with_check:	Store the id_token in cookies with [nookies](https://www.npmjs.com/package/nookies) to fetch SSR data with the stored uid \
+:ballot_box_with_check:	Users will receive notifications when their posts are liked by other users
 
 ## User-Interface
 ![facebook-ui](https://github.com/thanhtutzaw/facebook-ui/assets/71011043/22e082c7-81d0-47ff-a7b1-a1067167d6f5)
