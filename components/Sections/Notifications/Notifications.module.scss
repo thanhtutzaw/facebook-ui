@@ -1,8 +1,7 @@
 .container {
     // padding:1rem ;
-background: white;
+    background: white;
     padding-bottom: 1rem;
-}
     .content {
         all: unset;
         list-style: none;
@@ -21,7 +20,7 @@ background: white;
             }
             a {
                 display: flex;
-                flex:1;
+                flex: 1;
                 gap: 0.5rem;
                 align-items: center;
             }
