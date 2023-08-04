@@ -55,7 +55,6 @@ export default function Profile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setactive, tab, active]);
   const [sort, setSort] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [sortby, setsortby] = useState<"new" | "old">("new");
   const auth = getAuth(app);
   const [isSticky, setIsSticky] = useState(false);

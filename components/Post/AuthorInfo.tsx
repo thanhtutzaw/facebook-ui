@@ -185,10 +185,7 @@ function Author(props: {
       <div
         style={{
           display: "flex",
-          // gap: "8px",
-          gap: "4px",
           flexDirection: "column",
-          // flex: "1",
         }}
       >
         <p

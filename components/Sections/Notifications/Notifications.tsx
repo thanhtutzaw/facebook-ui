@@ -61,7 +61,12 @@ function Notifications() {
                   }}
                   src={noti.photoURL}
                 />
-                <p>{noti.message}</p>
+                <p className={s.message}>
+                  <span className={s.userName}>
+                    {noti.userName ?? "Unknown User"}
+                  </span>{" "}
+                  {noti.message}
+                </p>
               </Link>
               <p className={s.date} suppressHydrationWarning>
                 {new Timestamp(

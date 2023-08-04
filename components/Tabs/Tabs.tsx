@@ -23,8 +23,8 @@ export default function Tabs(props: {
   const { indicatorRef } = props;
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
-  const { active } = useActive();
-  const { setpreventClick } = useContext(PageContext) as PageProps;
+  // const { active } = useActive();
+  const { setpreventClick, active } = useContext(PageContext) as PageProps;
 
   useEffect(() => {
     if (!active) return;

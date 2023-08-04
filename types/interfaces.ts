@@ -15,6 +15,7 @@ export type account = {
 export type notiContentTypes = "reaction" | "comment" | "share";
 
 export type NotiTypes = {
+  uid: string;
   message: string;
   userName: string;
   url: string;
@@ -135,7 +136,14 @@ export interface Props {
 
   expired?: boolean;
   uid?: string;
-  active?: string;
+  active?:
+    | "home"
+    | "/"
+    | "friends"
+    | "watch"
+    | "profile"
+    | "notifications"
+    | "menu";
   setActive?: Function;
   allUsers?: any;
   sortedPost?: Post[];

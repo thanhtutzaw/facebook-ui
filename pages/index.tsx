@@ -36,6 +36,7 @@ import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import { Post, Props, account } from "../types/interfaces";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { useActive } from "../hooks/useActiveTab";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -189,10 +190,12 @@ export default function Home({
   //     unsubscribe;
   //   };
   // }, [uid]);
-
+const { active, setActive } = useActive();
   if (expired) return <Welcome postError={postError} expired={expired} />;
   return (
     <AppProvider
+      active={active!}
+      setActive={setActive!}
       postError={postError!}
       limitedPosts={limitedPosts!}
       setlimitedPosts={setlimitedPosts!}

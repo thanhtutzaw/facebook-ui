@@ -76,7 +76,7 @@ export default function FriendChat(props: { account: UserRecord }) {
             }}
           >
             <Link href={`/${account?.uid}`}>
-              <p style={{ marginTop: "-5px" }} className={s.title}>
+              <p style={{ marginTop: "-7px" }} className={s.title}>
                 {account?.displayName}
               </p>
             </Link>

@@ -109,7 +109,6 @@ export async function getProfileByUID(id: string) {
   const profileQuery = doc(db, `/users/${id}`);
   const profileSnap = await getDoc(profileQuery);
   const profileData = profileSnap.data()!;
-  console.log(profileData.profile);
   return profileData?.profile ?? null;
 }
 export async function postInfo(p: Post, uid: string) {

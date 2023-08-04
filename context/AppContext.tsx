@@ -1,30 +1,24 @@
-import { useRef, useState, useEffect, useCallback } from "react";
-import { createContext } from "react";
-import { useActive } from "../hooks/useActiveTab";
-import { Post, Props, account } from "../types/interfaces";
 import {
-  query,
-  collectionGroup,
-  where,
-  orderBy,
-  limit,
-  startAfter,
-  getDocs,
   Timestamp,
-  collection,
-  doc,
-  getDoc,
-  DocumentData,
-  DocumentSnapshot,
-  onSnapshot,
+  collectionGroup,
+  limit,
+  orderBy,
+  query,
+  startAfter,
+  where
 } from "firebase/firestore";
-import { db, getPostWithMoreInfo, postInfo, postToJSON } from "../lib/firebase";
+import { createContext, useEffect, useRef, useState } from "react";
+import { useActive } from "../hooks/useActiveTab";
+import { db, getPostWithMoreInfo } from "../lib/firebase";
+import { Post, Props } from "../types/interfaces";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
 export const AppContext = createContext<Props | null>(null);
 export const LIMIT = 10;
 
 export function AppProvider(props: Props) {
   const {
+    active,
+    setActive,
     setlimitedPosts,
     limitedPosts,
     account,
@@ -37,7 +31,7 @@ export function AppProvider(props: Props) {
   } = props;
   const [postLoading, setpostLoading] = useState(false);
   const [postEnd, setPostEnd] = useState(false);
-  const { active, setActive } = useActive();
+  
   const [selectMode, setselectMode] = useState(false);
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const [sortedPost, setsortedPost] = useState<Post[]>([]);

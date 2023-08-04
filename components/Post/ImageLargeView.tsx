@@ -91,8 +91,6 @@ export function ImageLargeView(props: {
       onPinch: ({ movement: m, origin: [ox, oy], offset: [s, r], cancel }) => {
         const img = imgRef.current!;
         img.style.transition = "transform .1s ease-in-out";
-        // console.table(r);
-        // console.log(s, r);
         api.start({
           scale: Math.min(Math.max(1, s), 4),
         });
@@ -229,7 +227,6 @@ export function ImageLargeView(props: {
     }
   );
   useEffect(() => {
-    // console.log(scale);
     setdrag(false);
   }, [scale, x, y]);
   useEffect(() => {
@@ -239,9 +236,6 @@ export function ImageLargeView(props: {
       viewRef?.current?.close();
       setview?.({});
     }
-    // return () => {
-    //   setview?.({});
-    // };
   }, [view.src, view.name, viewRef, setview]);
 
   return (
@@ -276,23 +270,22 @@ export function ImageLargeView(props: {
           <>
             {visible && (
               <motion.div
-                initial={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                animate={{
-                  opacity: visible ? 1 : 0,
-                }}
-                exit={{ opacity: 0 }}
-                className={s.indicator}
+              // initial={{ opacity: 0 }}
+              // transition={{ duration: 0.3 }}
+              // animate={{
+              //   opacity: visible ? 1 : 0,
+              // }}
+              // exit={{ opacity: 0 }}
+              // className={s.indicator}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img draggable={false} src={view.src} alt={view.name}></img>
+                {/* <img draggable={false} src={view.src} alt={view.name}></img>
                 <div
                   style={{
                     transition: "all .3s ease-in",
                     backgroundColor: "rgba(0 0 0/.35)",
                   }}
-                ></div>
-                <animated.div
+                ></div> */}
+                {/* <animated.div
                   className={s.mask}
                   style={{
                     scale: 1 / scale.get(),
@@ -301,7 +294,6 @@ export function ImageLargeView(props: {
                     border: "2px solid white",
                   }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     draggable={false}
                     className={s.indicator}
@@ -311,7 +303,7 @@ export function ImageLargeView(props: {
                     src={view.src}
                     alt={view.name}
                   ></img>
-                </animated.div>
+                </animated.div> */}
               </motion.div>
             )}
             <div className={s.viewContainer}>
@@ -363,18 +355,6 @@ export function ImageLargeView(props: {
                   ></Image>
                 )}
               </animated.div>
-              {/* <h1
-            style={{
-              color: "var(--blue-origin)",
-              position: "fixed",
-              zIndex: "1000",
-              left: "0",
-              background: "white",
-              pointerEvents: "none",
-            }}
-          >
-            s:{scale.get()} ; x: {Math.floor(x.get())} y: {Math.floor(y.get())}
-          </h1> */}
             </div>
           </>
         )}

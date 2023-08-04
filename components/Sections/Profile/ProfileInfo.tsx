@@ -63,12 +63,12 @@ function ProfileInfo(props: {
       <Image
         onClick={() => {
           setview?.({
-            src: photoURL
-              ? photoURL
+            src: profile.photoURL
+              ? profile.photoURL
               : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
             name: `${profile?.firstName ?? "Unknown"} ${
               profile?.lastName ?? ""
-            }'s profile`,
+            }'s profile picture`,
           });
           // viewRef.current?.showModal();
         }}
