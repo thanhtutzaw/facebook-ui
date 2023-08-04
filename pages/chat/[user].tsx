@@ -1,12 +1,11 @@
-import { useRouter } from "next/router";
-import s from "../../styles/Home.module.scss";
-import BackHeader from "../../components/Header/BackHeader";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { GetServerSideProps } from "next";
+import BackHeader from "../../components/Header/BackHeader";
 import { fethUserDoc, userToJSON } from "../../lib/firebase";
 import { getUserData } from "../../lib/firebaseAdmin";
-import Image from "next/image";
-import Link from "next/link";
+import s from "../../styles/Home.module.scss";
+import ChatInput from "../../components/Chat/Input";
+import { ChatHeader } from "../../components/Chat/Header";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;
@@ -42,48 +41,15 @@ export default function FriendChat(props: { account: UserRecord }) {
   return (
     <div className="user">
       <BackHeader>
-        <div style={{ display: "flex", flex: "1", gap: ".5rem" }}>
-          <Link href={`/${account?.uid}`}>
-            <Image
-              priority={false}
-              alt={account?.displayName ? account?.displayName : "Unknown User"}
-              width={200}
-              height={200}
-              style={{
-                objectFit: "cover",
-                width: "38px",
-                height: "38px",
-                borderRadius: "50%",
-                border: "0",
-                backgroundColor: "rgb(221, 221, 221)",
-                marginTop: "2px !important",
-                margin: "0",
-              }}
-              src={
-                account?.uid === "rEvJE0sb1yVJxfHTbtn915TSfqJ2"
-                  ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
-                  : account?.photoURL
-                  ? account?.photoURL
-                  : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-              }
-            />
-          </Link>
-          <div
-            style={{
-              display: "flex",
-              flex: "1",
-              alignItems: "center",
-            }}
-          >
-            <Link href={`/${account?.uid}`}>
-              <p style={{ marginTop: "-7px" }} className={s.title}>
-                {account?.displayName}
-              </p>
-            </Link>
-          </div>
-        </div>
+        <ChatHeader account={account} />
       </BackHeader>
-      <div className={s.container}></div>
+
+      <div className={s.container}>
+      <div style={{textAlign:"center", position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,50%)'}}>
+        Coming Soon
+      </div>
+        <ChatInput />
+      </div>
     </div>
   );
 }

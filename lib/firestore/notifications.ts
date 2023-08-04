@@ -12,8 +12,7 @@ export async function sendAppNoti(
   if (authorId === uid) return;
   const url = `https://facebook-ui-zee.vercel.app/${authorId}/${id}`;
   const photoURL =
-    profile?.photoURL ??
-    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+    (profile?.photoURL as string);
   const notifRef = doc(collection(db, `users/${authorId}/notifications`));
   const userName = `${profile?.firstName} ${profile?.lastName}`;
   const data = {

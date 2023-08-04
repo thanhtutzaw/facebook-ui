@@ -13,12 +13,12 @@ export default function Navitems(props: any) {
   let iconTitle = name === "/" ? "Home" : name;
   const TabName = name.toLowerCase();
   const activeClass = active === TabName ? styles.active : "";
-  console.log(TabName, active);
   const changeTab = () => {
     setActive?.(TabName);
     window.location.hash = TabName === "/" ? "#home" : "#" + TabName;
     const tabs = document.getElementById("tabs")!;
     const tab = document.getElementById(TabName)!;
+    // const main = document.getElementsByTagName("main")[0]!;
     tabs.scrollTo({
       left: index * tabs.clientWidth,
       behavior: "smooth",

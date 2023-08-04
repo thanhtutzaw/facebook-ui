@@ -1,0 +1,63 @@
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import Image from "next/image";
+import Link from "next/link";
+import s from "../../styles/Home.module.scss";
+
+export function ChatHeader({ account }: { account: UserRecord }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flex: "1",
+        gap: ".5rem",
+      }}
+    >
+      <Link
+        style={{
+          display: "flex",
+        }}
+        href={`/${account?.uid}`}
+      >
+        <Image
+          priority={false}
+          alt={account?.displayName ? account?.displayName : "Unknown User"}
+          width={200}
+          height={200}
+          style={{
+            objectFit: "cover",
+            width: "38px",
+            height: "38px",
+            borderRadius: "50%",
+            border: "0",
+            backgroundColor: "rgb(221, 221, 221)",
+            marginTop: "2px !important",
+            margin: "0",
+          }}
+          src={
+            account?.photoURL
+              ? account?.photoURL
+              : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+          }
+        />
+      </Link>
+      <div
+        style={{
+          display: "flex",
+          flex: "1",
+          alignItems: "center",
+        }}
+      >
+        <Link href={`/${account?.uid}`}>
+          <p
+            style={{
+              marginTop: "-7px",
+            }}
+            className={s.title}
+          >
+            {account?.displayName}
+          </p>
+        </Link>
+      </div>
+    </div>
+  );
+}

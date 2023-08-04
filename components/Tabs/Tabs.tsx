@@ -87,9 +87,12 @@ export default function Tabs(props: {
   }
   return (
     <div
+      // style={{
+      //   height: active === "/" ? "initial" : "100dvh",
+      // }}
       id="tabs"
       role="tabs"
-      className={styles.content}
+      className={active === '/' ? styles.content : styles.acitveTab}
       onMouseDown={(e) => dragStart(e)}
       onMouseUp={(e) => dragStop(e)}
       onMouseMove={(e) => dragging(e)}

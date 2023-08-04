@@ -1,13 +1,13 @@
 @import "../styles/mixins";
-.sticky {
-  position: fixed;
-  width: 100%;
-  top: 0;
-}
+// .sticky {
+//   position: fixed;
+//   width: 100%;
+//   top: 0;
+// }
 
-.sticky + .content {
-  padding-top: 60px;
-}
+// .sticky + .content {
+//   padding-top: 60px;
+// }
 
 .headerContainer {
   transition:
@@ -15,6 +15,9 @@
     height 0.15s ease;
   will-change: height, transform;
   transform: translateY(0px);
+  position: sticky;
+  top: -60px;
+  z-index: 200;
   .header {
     max-width: var(--main-width);
     background-color: white;
@@ -101,7 +104,7 @@
     height: 100%;
     flex: 1;
     // font-size: 1.05rem;
-    font-size: 1.1rem;
+    font-size: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -125,7 +128,7 @@
 }
 
 .login {
-  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -277,7 +280,24 @@
   scroll-snap-type: x mandatory;
   overflow-x: scroll;
   scroll-behavior: smooth;
+  height: initial;
+  transition: height 0s;
+  & > div {
+    overflow-y: auto;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    max-width: var(--main-width);
+    min-width: 100%;
+  }
+}
+.acitveTab {
+  background-color: #dadada;
+  display: flex;
+  scroll-snap-type: x mandatory;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
   height: calc(100dvh - 60px);
+
   transition: height 0s;
   & > div {
     overflow-y: auto;

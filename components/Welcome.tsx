@@ -33,7 +33,7 @@ export function Welcome({
         alignContent: "center",
         justifyItems: "center",
         textAlign: "center",
-        height: "100vh",
+        height: "100dvh",
       }}
     >
       {postError !== "" ? (

@@ -64,8 +64,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     );
 
     const newPosts = await getPostWithMoreInfo(postQuery, uid);
-    const profileData = await getProfileByUID(uid) as account["profile"];
-    const profile = {...profileData , photoURL:profileData.photoURL as string}
+    const profileData = (await getProfileByUID(uid)) as account["profile"];
+    const profile = {
+      ...profileData,
+      photoURL: profileData.photoURL as string,
+    };
     const currentAccount = (await getUserData(uid)) as UserRecord;
     const currentUserData = userToJSON(currentAccount);
     return {
@@ -143,9 +146,11 @@ export default function Home({
       })
   );
   const [limitedPosts, setlimitedPosts] = useState(posts!);
+  useEffect(() => {
+    setlimitedPosts(posts!);
+  }, [posts]);
 
   useEffect(() => {
-    // setlimitedPosts(posts!);
     let unsubscribe: Unsubscribe;
     const postQuery = query(
       collectionGroup(db, `posts`),
@@ -190,7 +195,7 @@ export default function Home({
   //     unsubscribe;
   //   };
   // }, [uid]);
-const { active, setActive } = useActive();
+  const { active, setActive } = useActive();
   if (expired) return <Welcome postError={postError} expired={expired} />;
   return (
     <AppProvider

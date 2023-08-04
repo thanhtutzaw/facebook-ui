@@ -11,6 +11,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Timestamp } from "firebase/firestore";
 import { getMessage } from "../../../lib/firestore/notifications";
+import { useRouter } from "next/router";
 function Notifications() {
   const { active: tab } = useActive();
   const { uid } = useContext(AppContext) as Props;
@@ -27,7 +28,7 @@ function Notifications() {
       return {
         id: doc.id,
         ...doc.data(),
-        ...getMessage(data.type, data.userName ?? ""),
+        ...getMessage(data.type),
       };
     }) as NotiTypes[];
   };
@@ -37,6 +38,7 @@ function Notifications() {
     enabled: tab === "notifications",
     keepPreviousData: true,
   });
+  const router = useRouter();
   return (
     <div className={s.container}>
       {isLoading ? (
@@ -49,20 +51,41 @@ function Notifications() {
         <ul className={s.content}>
           {data?.map((noti) => (
             <li key={noti.id} className={s.item}>
-              <Link href={noti.url}>
+              <Link prefetch={false} href={noti.url}>
                 <Image
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    router.push(noti.uid ?? "");
+                  }}
                   className={s.profile}
                   priority={false}
-                  alt={noti.message}
+                  alt={noti.userName ?? "Unknown User"}
                   width={200}
                   height={200}
                   style={{
                     objectFit: "cover",
                   }}
-                  src={noti.photoURL}
+                  src={
+                    noti.photoURL ??
+                    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+                  }
                 />
                 <p className={s.message}>
-                  <span className={s.userName}>
+                  {/* <span>
+                    hello lremd dfsdfsd hfkdsfhello lremd dfsdfsd
+                    hfkdsfhellolremd dfsdfsd hfkdsfhello lremd dfsdfsd
+                    hfkdsfhello lremd dfsdfsd hfkdsfhello lremd dfsdfsd
+                    hfkdsfhello lremd dfsdfsd hfkdsf
+                  </span> */}
+                  <span
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      router.push(noti.uid ?? "");
+                    }}
+                    className={s.userName}
+                  >
                     {noti.userName ?? "Unknown User"}
                   </span>{" "}
                   {noti.message}
@@ -75,7 +98,7 @@ function Notifications() {
                 )
                   .toDate()
                   .toLocaleDateString("en-US", {
-                    year: "numeric",
+                    year: "2-digit",
                     month: "short",
                     day: "numeric",
                   })}

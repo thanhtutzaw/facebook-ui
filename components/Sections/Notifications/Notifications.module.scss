@@ -3,9 +3,10 @@
         all: unset;
         list-style: none;
         .item {
-            padding: 0.8rem;
+            padding: 0.8rem 1rem;
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
             background-color: white;
             &:hover {
                 background-color: #efefef;
@@ -13,21 +14,35 @@
             &:active {
                 background-color: #e0e0e0;
             }
-            a {
+            > a {
+                -webkit-tap-highlight-color: transparent;
                 display: flex;
                 flex: 1;
-                gap: 0.5rem;
+                align-items: center;
+                img {
+                    margin-bottom: auto;
+                }
                 .message {
+                    padding: 0 5px 0 8px;
                     margin: 0;
-                    margin-top: 5px;
+                    font-size: 18px;
+                    // margin: 5px 0;
+                    word-break: break-word;
+                    // margin: 5px 0;
+                    // margin: 10px 0;
                     .userName {
                         font-weight: 500;
                         &:hover {
                             text-decoration: underline;
                         }
                         &:active {
-                            opacity: 0.8;
+                            opacity: 0.5;
                         }
+                    }
+                }
+                @media only screen and (max-width: 600px) {
+                    .message {
+                        margin: 0;
                     }
                 }
             }
@@ -45,7 +60,7 @@
                 color: dimgray;
                 font-size: 16px;
                 margin: 0;
-                margin-top: 5px;
+                // margin-top: 10px;
             }
         }
     }

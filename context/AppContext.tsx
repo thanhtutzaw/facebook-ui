@@ -5,7 +5,7 @@ import {
   orderBy,
   query,
   startAfter,
-  where
+  where,
 } from "firebase/firestore";
 import { createContext, useEffect, useRef, useState } from "react";
 import { useActive } from "../hooks/useActiveTab";
@@ -31,7 +31,7 @@ export function AppProvider(props: Props) {
   } = props;
   const [postLoading, setpostLoading] = useState(false);
   const [postEnd, setPostEnd] = useState(false);
-  
+
   const [selectMode, setselectMode] = useState(false);
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const [sortedPost, setsortedPost] = useState<Post[]>([]);
