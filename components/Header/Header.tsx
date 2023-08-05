@@ -39,7 +39,7 @@ export const pages = [
 ];
 export default function Header(props: any) {
   const { indicatorRef } = props;
-  const { setActive } = useActive();
+  const { active, setActive } = useActive();
   const [width, setwidth] = useState<number>();
   const { selectMode, setselectMode, headerContainerRef } = useContext(
     AppContext
@@ -130,6 +130,8 @@ export default function Header(props: any) {
             {pages.map((page, index) => (
               <Navitems
                 key={page.name}
+                setActive={setActive}
+                active={active}
                 index={index}
                 name={page.name}
                 icon={page.icon}

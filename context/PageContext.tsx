@@ -35,8 +35,7 @@ export interface PageProps {
 export const PageContext = createContext<PageProps | null>(null);
 
 export function PageProvider(props: PageProps) {
-  const { uid } = props;
-  const { active, setActive } = useActive();
+  const { uid , active, setActive} = props;
   const [showAction, setshowAction] = useState("");
   const [shareAction, setshareAction] = useState("");
   const [selectedId, setSelectedId] = useState([]);

@@ -5,17 +5,20 @@ import { AppContext } from "../../context/AppContext";
 import { useContext, useEffect } from "react";
 import { Props } from "../../types/interfaces";
 
-export default function Navitems(props: any) {
-  const { active, setActive } = useContext(AppContext) as Props;
-  // const { setActive } = useActive();
-  const { icon: TabIcon, name, index } = props;
+export default function Navitems(props: {
+  active: Props["active"];
+  setActive: Function;
+  icon: JSX.Element;
+  name: string;
+  index: number;
+}) {
+  const { active, setActive, icon: TabIcon, name, index } = props;
   const router = useRouter();
   let iconTitle = name === "/" ? "Home" : name;
   const TabName = name.toLowerCase();
-  const activeClass = active === TabName ? styles.active : "";
   const changeTab = () => {
     setActive?.(TabName);
-    window.location.hash = TabName === "/" ? "#home" : "#" + TabName;
+    window.location.hash = TabName === "/" ? "#home" : `#${TabName}`;
     const tabs = document.getElementById("tabs")!;
     const tab = document.getElementById(TabName)!;
     // const main = document.getElementsByTagName("main")[0]!;
@@ -35,6 +38,8 @@ export default function Navitems(props: any) {
       router.replace("/", undefined, { scroll: false });
     }
   };
+  const activeClass = active === TabName ? styles.active : "";
+
   return (
     <div onClick={changeTab} className={`${styles.navItems} ${activeClass}`}>
       <div aria-label={iconTitle} title={iconTitle}>

@@ -2,6 +2,9 @@
     background-color: white;
     padding: 0 1rem;
     > div:first-child {
+        > button:first-child {
+            margin-left: 0;
+        }
         > button:active {
             animation: card 0.2s ease-in-out !important;
         }

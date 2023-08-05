@@ -39,7 +39,7 @@ function ProfileInfo(props: {
     newProfile,
     // username,
   } = props;
-  const { viewRef, setview } = useContext(PageContext) as PageProps;
+  const { setview } = useContext(PageContext) as PageProps;
   // const view =
   const imgFileRef = useRef<HTMLInputElement>(null);
 

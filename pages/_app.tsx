@@ -22,6 +22,7 @@ import { Props } from "../types/interfaces";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { Welcome } from "../components/Welcome";
 import { ImageLargeView } from "../components/Post/ImageLargeView";
+import { useActive } from "../hooks/useActiveTab";
 
 config.autoAddCss = false;
 export const getServerSideProps: GetServerSideProps<Props> = async (
@@ -128,6 +129,9 @@ export default function App({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const { active, setActive } = useActive();
+
   if (expired) return <Welcome expired={expired} />;
   // if (
   //   !auth?.currentUser?.uid &&
@@ -139,6 +143,7 @@ export default function App({
   //       <p style={{ textAlign: "center" }}>Redirecting to /login</p>
   //     </main>
   //   );
+
   return (
     <>
       <Head>
@@ -152,7 +157,7 @@ export default function App({
         <link rel="icon" href="/logo.svg" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <PageProvider uid={uid!} active={""} setActive={Function}>
+      <PageProvider uid={uid!} active={active} setActive={setActive}>
         <main
           style={
             {

@@ -4,11 +4,12 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useActive } from "../../../hooks/useActiveTab";
 import { signout } from "../../../lib/signout";
 import s from "../../Sections/Menu/menu.module.scss";
 import { useRouter } from "next/router";
+import { PageContext, PageProps } from "../../../context/PageContext";
 interface MenuProps {
   tabIndex: number;
 }
@@ -59,6 +60,7 @@ export default function Menu(props: MenuProps) {
           try {
             setTimeout(() => {
               signout();
+              // setActive?.("/");
             }, 700);
           } catch (error) {
             setLoading(false);

@@ -26,7 +26,6 @@ interface FriendProps {
 }
 export default function Friend(props: FriendProps) {
   const { tabIndex } = props;
-  // const { active: tab } = useContext(PageContext) as PageProps;
   const { active: tab } = useActive();
   const { uid } = useContext(AppContext) as Props;
 
