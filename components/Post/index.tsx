@@ -1,10 +1,5 @@
 import { User } from "firebase/auth";
-import {
-  useContext,
-  useEffect,
-  useRef,
-  useState
-} from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { Post as PostType } from "../../types/interfaces";
 import Content from "./Content";
@@ -54,7 +49,10 @@ export default function Post({
     setclient(true);
   }, []);
   const [showmore, setShowmore] = useState(false);
-  const [likeCount, setlikeCount] = useState(post.like?.length);
+  // const [likeCount, setlikeCount] = useState(post.like?.length);
+  const [likeCount, setlikeCount] = useState(
+    parseInt(post.likeCount?.toString()!)
+  );
 
   return (
     <div
@@ -92,7 +90,7 @@ export default function Post({
 
       {!shareMode && (
         <Footer
-        profile={profile}
+          profile={profile}
           likeCount={likeCount!}
           setlikeCount={setlikeCount}
           post={post}

@@ -115,8 +115,8 @@ export async function postInfo(p: Post, uid: string) {
   if (p.authorId) {
     const likeRef = collection(db, `users/${p.authorId}/posts/${p.id}/likes`);
 
-    const likeDoc = await getDocs(likeRef);
-    const like = likeDoc.docs.map((doc) => doc.data());
+    // const likeDoc = await getDocs(likeRef);
+    // const like = likeDoc.docs.map((doc) => doc.data());
     const shareRef = collection(db, `users/${p.authorId}/posts/${p.id}/shares`);
     const shareDoc = await getDocs(shareRef);
     const shares = shareDoc.docs.map((doc) => doc.data());
@@ -134,7 +134,7 @@ export async function postInfo(p: Post, uid: string) {
       // comments: [...comments],
       author: { ...postProfile },
       shares: [...shares],
-      like: [...like],
+      // like: [...like],
       sharePost: { ...p.sharePost, post: null },
       isLiked: isLiked.exists() ? true : false,
       isSaved: isSaved.exists() ? true : false,
@@ -182,7 +182,7 @@ export async function postInfo(p: Post, uid: string) {
         return {
           ...originalPost,
           // comments: [...comments],
-          like: [...like],
+          // like: [...like],
           shares: [...shares],
           author: { ...postProfile },
           isLiked: isLiked.exists() ? true : false,
@@ -193,7 +193,7 @@ export async function postInfo(p: Post, uid: string) {
           // ...originalPost,
           ...p,
           // comments: [...comments],
-          like: [...like],
+          // like: [...like],
           shares: [...shares],
           isLiked: isLiked.exists() ? true : false,
           author: { ...postProfile },

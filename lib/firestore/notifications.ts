@@ -4,22 +4,21 @@ import { db } from "../firebase";
 
 export async function sendAppNoti(
   uid: string,
-  post: Post,
+  receiptId: string | number,
   profile: account["profile"] | null,
-  type: notiContentTypes
+  type: notiContentTypes,
+  url: string
 ) {
-  const { authorId, id } = post;
-  if (authorId === uid) return;
-  const url = `https://facebook-ui-zee.vercel.app/${authorId}/${id}`;
-  const photoURL =
-    (profile?.photoURL as string);
-  const notifRef = doc(collection(db, `users/${authorId}/notifications`));
-  const userName = `${profile?.firstName} ${profile?.lastName}`;
+  const { firstName, lastName, photoURL } = profile!;
+  if (receiptId === uid) return;
+  // const url = ;
+  const notifRef = doc(collection(db, `users/${receiptId}/notifications`));
+  const userName = `${firstName} ${lastName}`;
   const data = {
     type,
     userName,
     createdAt: serverTimestamp(),
-    photoURL,
+    photoURL: photoURL as string,
     url,
     uid,
   };

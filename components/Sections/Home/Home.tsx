@@ -45,7 +45,7 @@ export default function Home(props: { tabIndex: number }) {
         // if (e.currentTarget.scrollTop >= 39) {
         // }
         // nav.style.position = "sticky";
-        if (active !== "/" && "home") return;
+        if (active !== "/") return;
         if (e.currentTarget.scrollTop >= 60) {
           header.style.transform = "translateY(-60px)";
           header.style.height = "60px";

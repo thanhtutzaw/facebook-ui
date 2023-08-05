@@ -1,16 +1,19 @@
 import { faArrowAltCircleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  DocumentData,
+  DocumentReference,
   collection,
   doc,
   serverTimestamp,
-  writeBatch
+  writeBatch,
 } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { db } from "../../lib/firebase";
 import { Post } from "../../types/interfaces";
 import s from "./index.module.scss";
+import { addComment } from "../../lib/firestore/comment";
 export default function CommentInput(props: {
   uid?: string;
   postId: string;
@@ -25,10 +28,36 @@ export default function CommentInput(props: {
   const router = useRouter();
   const [addLoading, setaddLoading] = useState(false);
   const postRef = doc(db, `users/${authorId}/posts/${postId}`);
-  const batch = writeBatch(db);
   const previousCommentCount = post?.comments.length ?? 0;
   return (
-    <form className={s.input}>
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault();
+        if (!uid) {
+          alert("User not Found ! Sign in and Try again !");
+          throw Error;
+        }
+        if (text === "") return;
+        try {
+          setaddLoading(true);
+          await addComment(
+            commentRef,
+            uid,
+            text,
+            postRef,
+            previousCommentCount
+          );
+          router.replace(router.asPath, undefined, { scroll: false });
+          settext("");
+          setaddLoading(false);
+        } catch (error: any) {
+          console.log(error);
+          alert(error.message);
+          setaddLoading(false);
+        }
+      }}
+      className={s.input}
+    >
       <input
         onChange={(e) => {
           settext(e.target.value);
@@ -39,32 +68,6 @@ export default function CommentInput(props: {
         type="text"
       />
       <button
-      onClick={async () => {
-          if (!uid) {
-            alert("User not Found ! Sign in and Try again !");
-          }
-          if (text === "") return;
-          try {
-            setaddLoading(true);
-            batch.set(commentRef, {
-              id: commentRef.id,
-              authorId: uid,
-              text,
-              createdAt: serverTimestamp(),
-            });
-            batch.update(postRef, {
-              commentCount: previousCommentCount + 1,
-            });
-            await batch.commit();
-            router.replace(router.asPath, undefined, { scroll: false });
-            settext("");
-            setaddLoading(false);
-          } catch (error: any) {
-            console.log(error);
-            alert(error.message);
-            setaddLoading(false);
-          }
-        }}
         aria-label="Submit Comment"
         tabIndex={1}
         type="submit"

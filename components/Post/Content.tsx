@@ -201,7 +201,6 @@ export default function Content(props: {
           )}
         </>
       )}
-      {/* {JSON.stringify(post.like)} */}
       <Input
         style={{
           paddingTop: text === "" ? "0" : ".5rem",

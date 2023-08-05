@@ -165,7 +165,7 @@ export default function Home({
       const withInfo = (await Promise.all(
         posts.map(async (p) => await postInfo(p, uid!))
       )) as Post[];
-      // setlimitedPosts(withInfo);
+      setlimitedPosts(withInfo);
       console.log(withInfo);
     });
     return () => {

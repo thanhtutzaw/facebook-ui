@@ -18,10 +18,13 @@ import {
 } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { app, db } from "../../lib/firebase";
-import { addPost } from "../../lib/firestore/post";
+import { addPost, dislikePost, likePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
 import {
+  DocumentData,
+  DocumentReference,
+  FieldValue,
   addDoc,
   collection,
   deleteDoc,
@@ -59,27 +62,30 @@ export function Footer(
   //   like: ["1a", "2d"],
   // });
   const [reactionAction, setreactionAction] = useState("");
+  const postRef = doc(db, `users/${authorId}/posts/${id}`);
   const likeRef = doc(
     db,
     `users/${post.authorId}/posts/${post.id}/likes/${auth?.currentUser?.uid}`
   );
-  const [likeToggle, setlikeToggle] = useState(post.isLiked);
+  const [isLiked, setisLiked] = useState(post.isLiked);
   useEffect(() => {
-    const likeCollectionRef = collection(
-      db,
-      `users/${post.authorId}/posts/${post.id}/likes`
-    );
+    // const likeCollectionRef = collection(
+    //   db,
+    //   `users/${post.authorId}/posts/${post.id}/likes`
+    // );
 
     async function getLikeCount() {
       const isUserLikeThisPost = await getDoc(likeRef);
-      const likes = await getDocs(likeCollectionRef);
-      const likeCount = likes.docs.length;
+      // const likes = await getDocs(likeCollectionRef);
+      // const likeCount = likes.docs.length;
+      const likeCount = post.likeCount;
+      console.log(likeCount);
       if (isUserLikeThisPost.exists()) {
         setlikeCount?.(likeCount);
-        setlikeToggle(true);
+        setisLiked(true);
       } else {
         setlikeCount?.(likeCount);
-        setlikeToggle(false);
+        setisLiked(false);
       }
     }
     try {
@@ -91,7 +97,7 @@ export function Footer(
       }
       console.error(error);
     }
-  }, [post.authorId, post.id, likeToggle, post.isLiked, likeRef, setlikeCount]);
+  }, [isLiked, likeRef, post.likeCount, setlikeCount]);
   // const queryClient = useQueryClient();
   return (
     <div
@@ -99,7 +105,6 @@ export function Footer(
       //   setTimeout(() => {
       //     setreactionAction("");
       //   }, 500);
-      //   // console.log("like");
       // }}
       ref={commentRef}
       {...rests}
@@ -111,13 +116,11 @@ export function Footer(
         className={styles.socialButton}
         // onMouseEnter={() => {
         //   setreactionAction(id?.toString()!);
-        //   // console.log("like");
         // }}
         // onMouseLeave={() => {
         //   setTimeout(() => {
         //     setreactionAction("");
         //   }, 500);
-        //   // console.log("like");
         // }}
       >
         <button
@@ -127,19 +130,26 @@ export function Footer(
               alert("Error : User Not Found . Sign up and Try Again ! ");
               return;
             }
-            setlikeToggle((prev) => !prev);
-            if (likeToggle) {
-              await deleteDoc(likeRef);
+
+            setisLiked((prev) => !prev);
+            if (isLiked) {
+              await dislikePost(postRef, likeRef);
             } else {
-              await setDoc(likeRef, { uid });
-              await sendAppNoti(uid, post, profile!, "reaction");
+              await likePost(postRef, likeRef, uid);
+              await sendAppNoti(
+                uid,
+                post.authorId,
+                profile!,
+                "reaction",
+                `${authorId}/${id}`
+              );
             }
           }}
           aria-expanded={reactionAction !== ""}
-          aria-label="Like Post"
+          aria-label="Like this Post"
           title="Like"
           tabIndex={-1}
-          className={`${likeToggle ? styles.active : ""}`}
+          className={`${isLiked ? styles.active : ""}`}
         >
           <FontAwesomeIcon icon={faThumbsUp} />
           <p>Like</p>

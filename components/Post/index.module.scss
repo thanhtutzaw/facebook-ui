@@ -216,7 +216,7 @@
     padding-inline: 0.8rem;
     color: dimgray;
     padding-block: 5px;
-    .shareCount {
+    > p{
         margin: 0;
         display: flex;
         // justify-content: flex-end;
@@ -473,10 +473,9 @@
     height: 38px;
     border-radius: 50%;
     border: 0;
-    background-color: thistle;
     background-color: rgb(221, 221, 221);
     margin: initial !important;
-    margin-top: 2px !important;
+    // margin-top: 2px !important;
 }
 
 .action {

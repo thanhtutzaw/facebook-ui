@@ -1,11 +1,13 @@
 import {
   DocumentData,
+  DocumentReference,
   QuerySnapshot,
   Timestamp,
   collection,
   deleteDoc,
   doc,
   getDoc,
+  increment,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -52,6 +54,7 @@ export async function addPost(
     alert("Adding Post Failed !" + error.message);
   }
 }
+
 export async function updatePost(
   uid: string,
   text: string,
@@ -87,7 +90,7 @@ export async function updatePost(
     console.log({ data });
     await updateDoc(Ref, data);
   } catch (error: any) {
-    alert("Adding Post Failed !" + error.message);
+    alert("Updating Post Failed !" + error.message);
   }
 }
 export async function deletePost(data: any) {
@@ -158,4 +161,29 @@ export async function deleteMultiple(uid: string, selctedId: selectedId[]) {
   } catch (error: any) {
     alert("Delete Failed !" + error.message);
   }
+}
+
+export async function likePost(
+  postRef: DocumentReference<DocumentData>,
+  likeRef: DocumentReference<DocumentData>,
+  uid: string
+) {
+  const batch = writeBatch(db);
+  batch.set(likeRef, { uid, createdAt: serverTimestamp() });
+  batch.update(postRef, {
+    likeCount: increment(1),
+  });
+  await batch.commit();
+}
+export async function dislikePost(
+  postRef: DocumentReference<DocumentData>,
+  likeRef: DocumentReference<DocumentData>
+) {
+  const batch = writeBatch(db);
+
+  batch.delete(likeRef);
+  batch.update(postRef, {
+    likeCount: increment(-1),
+  });
+  await batch.commit();
 }

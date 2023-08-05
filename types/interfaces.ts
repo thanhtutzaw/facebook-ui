@@ -75,8 +75,10 @@ export interface sharedPost {
   shares?: any;
   comments: Comment[];
   commentCount?: string | number;
+  likeCount?: string | number;
 }
 export interface Post {
+  likeCount?: string | number;
   commentCount?: string | number;
   isSaved: boolean;
   isLiked: boolean;

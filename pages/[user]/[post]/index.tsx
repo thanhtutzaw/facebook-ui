@@ -52,7 +52,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     console.log(uid);
     const { user: authorId, post: postId } = context.query;
     let expired = false;
-    
 
     const postRef = doc(db, `users/${authorId}/posts/${postId}`);
     const postDoc = await getDoc(postRef);
@@ -92,7 +91,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         props: {
           expired,
           uid,
-          post: withComment
+          post: withComment,
         },
       };
     }
@@ -268,7 +267,10 @@ export default function Page(props: {
     }
   };
 
-  const [likeCount, setlikeCount] = useState(post.like?.length);
+  // const [likeCount, setlikeCount] = useState(post.like?.length);
+  const [likeCount, setlikeCount] = useState(
+    parseInt(post.likeCount?.toString()!)
+  );
   if (expired) return <Welcome expired={expired} />;
 
   return (
@@ -320,7 +322,7 @@ export default function Page(props: {
           setFiles={setFiles}
         />
         <SharePreview post={post} />
-        <SocialCount likeCount={likeCount!} post={post} />
+        <SocialCount likeCount={likeCount} post={post} />
         {canEdit ? (
           <FooterInput
             fileRef={fileRef}
@@ -331,7 +333,7 @@ export default function Page(props: {
           />
         ) : (
           <Footer
-            likeCount={likeCount!}
+            likeCount={likeCount}
             setlikeCount={setlikeCount}
             post={post}
             style={{ borderBottom: "1px solid rgb(235, 235, 235)" }}

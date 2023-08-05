@@ -19,12 +19,13 @@ import { MouseEventHandler, ReactNode, useState } from "react";
 import { Comment, Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
 import { db } from "../../lib/firebase";
+import { deleteComment } from "../../lib/firestore/comment";
 export default function AuthorInfo(props: {
   navigateToProfile?: MouseEventHandler;
   post?: Post;
   isAdmin?: boolean;
   commentRef?: DocumentReference<DocumentData>;
-  postRef?: any;
+  postRef?: DocumentReference<DocumentData>;
   comment?: Comment;
   children?: ReactNode;
 }) {
@@ -39,7 +40,6 @@ export default function AuthorInfo(props: {
   } = props;
   const [deleteLoading, setDeleteLoading] = useState(false);
   const router = useRouter();
-  const batch = writeBatch(db);
   if (post) {
     const { author, authorId, createdAt, visibility } = post;
     const profile = author as account["profile"];
@@ -118,11 +118,10 @@ export default function AuthorInfo(props: {
           onClick={async () => {
             setDeleteLoading(true);
             try {
-              batch.delete(commentRef!);
-              batch.update(postRef, {
-                commentCount: increment(-1),
-              });
-              await batch.commit();
+              if (!commentRef || !postRef)
+                throw new Error("CommentRef and PostRef are required !");
+
+              await deleteComment(commentRef, postRef);
               setDeleteLoading(false);
               router.push(router.asPath);
             } catch (error: any) {
