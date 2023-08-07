@@ -216,7 +216,7 @@
     padding-inline: 0.8rem;
     color: dimgray;
     padding-block: 5px;
-    > p{
+    > p {
         margin: 0;
         display: flex;
         // justify-content: flex-end;
@@ -370,13 +370,14 @@
             // &:is(:active, :hover) {
             //     text-decoration: underline;
             // }
+            font-size: 18px;
+            margin-bottom: 2px;
             > span {
                 font-weight: 500;
                 &:is(:active, :hover) {
                     text-decoration: underline;
                 }
             }
-            font-size: 18px;
             // gap: 8px;
         }
         user-select: none;
