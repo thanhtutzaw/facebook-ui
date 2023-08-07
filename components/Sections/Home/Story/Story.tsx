@@ -124,7 +124,7 @@ export default function Story({ email }: Props) {
             ref={fileInput}
             type="file"
           />
-          <button tabIndex={-1}>
+          <button aria-label="Add Story" tabIndex={-1}>
             <FontAwesomeIcon icon={faAdd} />
           </button>
           <p>Create Story</p>

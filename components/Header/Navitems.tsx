@@ -42,7 +42,7 @@ export default function Navitems(props: {
 
   return (
     <div onClick={changeTab} className={`${styles.navItems} ${activeClass}`}>
-      <div aria-label={iconTitle} title={iconTitle}>
+      <div role="button" aria-label={iconTitle} title={iconTitle}>
         {TabIcon}
       </div>
     </div>

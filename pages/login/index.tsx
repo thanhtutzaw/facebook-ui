@@ -99,7 +99,7 @@ export default function Login({ uid }: { uid: string }) {
       firstName: "",
       lastName: "",
       bio: "",
-      photoURL:""
+      photoURL: "",
     },
   });
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -270,8 +270,6 @@ export default function Login({ uid }: { uid: string }) {
       </AnimatePresence>
       <div
         tabIndex={-1}
-        // role="button"
-        // aria-label="button"
         style={{
           maxWidth: "95vw",
           padding: !signup ? "0" : "13rem 7rem",

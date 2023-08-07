@@ -7,7 +7,6 @@ function Spinner({ size = 30 }: { size?: any }) {
       <div
         className="spinner"
         style={{ display: "flex", justifyContent: "center" }}
-        role="spinner"
       >
         <div
           style={{ width: `${size}px`, height: `${size}px` }}

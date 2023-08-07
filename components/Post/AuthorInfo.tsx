@@ -69,28 +69,28 @@ export default function AuthorInfo(props: {
                 })}
             </p>
             {visibility?.toLowerCase() === "public" && (
-              <p
-                aria-label="Everyone can see this Post"
+              <span
+                // aria-label="Everyone can see this Post"
                 title="Everyone can see this Post"
               >
                 <FontAwesomeIcon icon={faEarth} />
-              </p>
+              </span>
             )}
             {visibility?.toLowerCase() === "friend" && (
-              <p
-                aria-label="Friends can see this Post"
+              <span
+                // aria-label="Friends can see this Post"
                 title="Friends can see this Post"
               >
                 <FontAwesomeIcon icon={faUserGroup} />
-              </p>
+              </span>
             )}
             {visibility?.toLowerCase() === "onlyme" && (
-              <p
-                aria-label="Only you can see this Post"
+              <span
+                // aria-label="Only you can see this Post"
                 title="Only you can see this Post"
               >
                 <FontAwesomeIcon icon={faLock} />
-              </p>
+              </span>
             )}
           </div>
         </Author>

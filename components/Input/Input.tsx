@@ -19,6 +19,7 @@ export default function Input({
     <div
       {...props}
       aria-multiline="true"
+      aria-label="text"
       spellCheck="true"
       style={style}
       ref={element}

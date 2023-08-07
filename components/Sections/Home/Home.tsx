@@ -93,7 +93,7 @@ export default function Home(props: { tabIndex: number }) {
             router.push("addPost");
             setuploadButtonClicked?.(true);
           }}
-          tabIndex={tabIndex}
+          tabIndex={-1}
           className={styles.addMedia}
         >
           <FontAwesomeIcon color="#0070f3" icon={faPhotoFilm} />
