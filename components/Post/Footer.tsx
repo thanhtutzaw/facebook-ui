@@ -79,7 +79,7 @@ export function Footer(
       // const likes = await getDocs(likeCollectionRef);
       // const likeCount = likes.docs.length;
       const likeCount = post.likeCount;
-      console.log(likeCount);
+      // console.log(likeCount);
       if (isUserLikeThisPost.exists()) {
         setlikeCount?.(likeCount);
         setisLiked(true);
@@ -140,7 +140,7 @@ export function Footer(
                 uid,
                 post.authorId,
                 profile!,
-                "reaction",
+                "post_reaction",
                 `${authorId}/${id}`
               );
             }

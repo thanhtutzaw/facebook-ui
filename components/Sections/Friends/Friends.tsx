@@ -97,7 +97,6 @@ export default function Friend(props: FriendProps) {
       <div className={s.request}>
         <h2 className={s.header}>
           <p>Friends Requests</p>
-          {/* <p className={s.length}>{length}</p> */}
         </h2>
         {Requests.map((f, index) => (
           <Request key={index} f={f} tabIndex={tabIndex} />

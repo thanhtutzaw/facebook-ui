@@ -28,20 +28,20 @@ import {
   db,
   getPostWithMoreInfo,
   getProfileByUID,
-  postInfo,
-  postToJSON,
   userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import { Post, Props, account } from "../types/interfaces";
+import { Props, account } from "../types/interfaces";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useActive } from "../hooks/useActiveTab";
+import { profile } from "console";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
   try {
     const cookies = nookies.get(context);
+    console.log(cookies);
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
 
     const convertSecondsToTime = (seconds: number) => {
@@ -62,12 +62,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       orderBy("createdAt", "desc"),
       limit(LIMIT)
     );
-
-    const newPosts = await getPostWithMoreInfo(postQuery, uid);
+    const newPosts = await getPostWithMoreInfo(uid, postQuery);
     const profileData = (await getProfileByUID(uid)) as account["profile"];
     const profile = {
       ...profileData,
-      photoURL: profileData.photoURL as string,
+      photoURL: profileData.photoURL
+        ? profileData.photoURL
+        : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
     };
     const currentAccount = (await getUserData(uid)) as UserRecord;
     const currentUserData = userToJSON(currentAccount);
@@ -79,7 +80,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         posts: newPosts,
         email,
         username: username ?? "Unknown",
-        profile: profile! ?? null,
+        profile,
         account: currentUserData ?? null,
       },
     };
@@ -145,7 +146,7 @@ export default function Home({
         },
       })
   );
-  const [limitedPosts, setlimitedPosts] = useState(posts!);
+  const [limitedPosts, setlimitedPosts] = useState(posts ?? []);
   useEffect(() => {
     setlimitedPosts(posts!);
   }, [posts]);
@@ -159,23 +160,27 @@ export default function Home({
       limit(LIMIT)
     );
     unsubscribe = onSnapshot(postQuery, async (snapshot) => {
-      const posts = (await Promise.all(
-        snapshot.docs.map(async (doc) => await postToJSON(doc))
-      )) as Post[];
-      const withInfo = (await Promise.all(
-        posts.map(async (p) => await postInfo(p, uid!))
-      )) as Post[];
-      setlimitedPosts(withInfo);
-      console.log(withInfo);
+      const posts =
+        (await getPostWithMoreInfo(uid!, undefined, snapshot)) ?? [];
+      // const withInfo = (await Promise.all(
+      //   posts.map(async (p) => await postInfo(p, uid!))
+      // )) as Post[];
+      setlimitedPosts(posts);
     });
+    // unsubscribe = onSnapshot(postQuery, async (snapshot) => {
+    //   const posts = (await Promise.all(
+    //     snapshot.docs.map(async (doc) => await postToJSON(doc))
+    //   )) as Post[];
+    //   const withInfo = (await Promise.all(
+    //     posts.map(async (p) => await postInfo(p, uid!))
+    //   )) as Post[];
+    //   setlimitedPosts(withInfo);
+    //   console.log(withInfo);
+    // });
     return () => {
       unsubscribe();
     };
   }, [uid]);
-
-  // useEffect(() => {
-  //   setlimitedPosts(posts!);
-  // }, [posts]);
 
   // useEffect(() => {
   //   // const q = query(collection(db, "posts"), where("state", "==", "CA"));

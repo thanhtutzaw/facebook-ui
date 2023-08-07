@@ -91,7 +91,7 @@ export default function Profile() {
         );
         postQuery = query(postQuery, startAfter(date));
       }
-      const posts = await getPostWithMoreInfo(postQuery, uid! as string);
+      const posts = await getPostWithMoreInfo(uid!, postQuery);
       if (!posts) return;
       const hasMore = posts.length > LIMIT;
       if (hasMore) {

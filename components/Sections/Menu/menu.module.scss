@@ -4,15 +4,19 @@
     padding: 1rem;
     flex-direction: column;
     background: #f3f3f3;
-    height: 100vh;
+    min-height: calc(100dvh - 140px);
+    -webkit-tap-highlight-color: transparent;
+    > button {
+        gap: 0.5rem;
+    }
     > * {
         background-color: white;
         cursor: pointer;
-        height: 70px;
+        height: 65px;
         display: flex;
         align-items: center;
         padding: 0.5rem 1rem;
-        gap: 0.5rem;
+        //
         border-radius: 0.5rem;
     }
     button {
@@ -22,12 +26,118 @@
             height: 23px;
         }
     }
+    .switchAccountContainer {
+        margin-top: auto;
+        // height: auto;
+        /* height: 500px; */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0 inherit;
+        // padding-top: 0;
+        // padding-bottom: 0;
+        box-shadow: 0 2px 2px rgba(58, 58, 58, 0.171);
+        user-select: none;
+        overflow: hidden;
+        padding: 0;
+        button {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 100%;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            h2 {
+                flex: 1;
+                margin: 0;
+                /* font-size: 25px; */
+                white-space: nowrap;
+                /* overflow: hidden; */
+                text-overflow: ellipsis;
+                font-size: clamp(21px, 1vw, 20px);
+            }
+        }
+        footer {
+            width: 100%;
+        }
+        header,
+        .content > li {
+            padding-inline: 1rem;
+        }
+        .content {
+            all: unset;
+            display: flex;
+            flex-direction: column;
+            // gap: 0.5rem;
+            overflow: auto;
+            flex: 1;
+            width: 100%;
 
+            li {
+                list-style: none;
+                display: flex;
+                gap: 0.5rem;
+                flex-direction: row;
+                align-items: flex-start;
+                padding-block: 0.5rem;
+                font-size: clamp(18px, 1vw, 20px);
+                .info {
+                    flex: 1;
+                    p {
+                        width: 50vw;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                }
+                > button {
+                    color: rgb(0, 173, 0);
+                    margin: auto 0;
+                    background-color: transparent;
+                }
+                &:hover {
+                    background-color: darken($color: white, $amount: 10);
+                }
+                &:active {
+                    background-color: #eaeaea;
+                    background-color: darken($color: white, $amount: 5);
+                    // background-color: darken($color: white, $amount: 30);
+                }
+                img {
+                    margin: auto 0;
+                    width: 40px;
+                    height: 40px;
+                }
+                div > * {
+                    margin: 0;
+                }
+            }
+        }
+
+        // &:hover {
+        //     // background-color: darken($color: white, $amount: 23);
+        // }
+        // &:active {
+        //     // background-color: #eaeaea;
+        //     // background-color: darken($color: white, $amount: 30);
+        //     // opacity: 0.8;
+        // }
+    }
     .item {
+        box-shadow: 0 2px 2px rgba(58, 58, 58, 0.08);
         cursor: pointer;
         font-size: 18px;
         &:hover {
-            background-color: darken($color: white, $amount: 23);
+            // background-color: darken($color: white, $amount: 23);
+            background-color: #eaeaea;
         }
         &:active {
             // background-color: darken($color: white, $amount: 30);

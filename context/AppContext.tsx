@@ -69,7 +69,7 @@ export function AppProvider(props: Props) {
       startAfter(date),
       limit(LIMIT)
     );
-    const finalPost = (await getPostWithMoreInfo(postQuery, uid!)) ?? [];
+    const finalPost = (await getPostWithMoreInfo(uid!, postQuery)) ?? [];
 
     setlimitedPosts?.(limitedPosts?.concat(finalPost));
     setpostLoading(false);

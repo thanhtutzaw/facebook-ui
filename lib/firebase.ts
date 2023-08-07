@@ -5,6 +5,7 @@ import {
   DocumentSnapshot,
   Query,
   QueryDocumentSnapshot,
+  QuerySnapshot,
   Timestamp,
   collection,
   doc,
@@ -113,9 +114,12 @@ export async function getProfileByUID(id: string) {
 }
 export async function postInfo(p: Post, uid: string) {
   if (p.authorId) {
-    const likeRef = collection(db, `users/${p.authorId}/posts/${p.id}/likes`);
+    // const likeRef = doc(
+    //   collection(db, `users/${p.authorId}/posts/${p.id}/likes`)
+    // );
 
-    // const likeDoc = await getDocs(likeRef);
+    // const likeDoc = await getDoc(likeRef);
+    // console.log(likeDoc);
     // const like = likeDoc.docs.map((doc) => doc.data());
     const shareRef = collection(db, `users/${p.authorId}/posts/${p.id}/shares`);
     const shareDoc = await getDocs(shareRef);
@@ -131,6 +135,7 @@ export async function postInfo(p: Post, uid: string) {
     const postProfile = await getProfileByUID(p.authorId.toString());
     const originalPost = {
       ...p,
+      likeCount: p.likeCount ?? 0,
       // comments: [...comments],
       author: { ...postProfile },
       shares: [...shares],
@@ -149,12 +154,12 @@ export async function postInfo(p: Post, uid: string) {
       const isSharedPostAvailable = shareDoc.exists();
 
       const sharedPost = await postToJSON(shareDoc);
-      const SharedPostLikeRef = collection(
-        db,
-        `users/${sharedPost.authorId}/posts/${sharedPost.id}/likes`
-      );
-      const SharedPostLikeDoc = await getDocs(SharedPostLikeRef);
-      const sharelike = SharedPostLikeDoc.docs.map((doc) => doc.data());
+      // const SharedPostLikeRef = collection(
+      //   db,
+      //   `users/${sharedPost.authorId}/posts/${sharedPost.id}/likes`
+      // );
+      // const SharedPostLikeDoc = await getDocs(SharedPostLikeRef);
+      // const sharelike = SharedPostLikeDoc.docs.map((doc) => doc.data());
       const SharedPostShareRef = collection(
         db,
         `users/${sharedPost.authorId}/posts/${sharedPost.id}/shares`
@@ -173,8 +178,11 @@ export async function postInfo(p: Post, uid: string) {
 
       const sharePost = {
         ...sharedPost,
+        likeCount: sharedPost.likeCount ?? 0,
+        // likeCount: sharedPost?.likeCount,
+
         author: { ...sharePostProfile },
-        like: [...sharelike],
+        // like: [...sharelike],
         shares: [...shareShares],
         isLiked: isSharePostLiked.exists() ? true : false,
       };
@@ -206,30 +214,34 @@ export async function postInfo(p: Post, uid: string) {
   }
 }
 export async function getPostWithMoreInfo(
-  postQuery: Query<DocumentData>,
-  uid: string
+  uid: string,
+  postQuery?: Query<DocumentData>,
+  snapShot?: QuerySnapshot<DocumentData>
 ) {
-  const postSnap = await getDocs(postQuery);
+  // if(typeof postQuery === Query<DocumentData>)
+  const postSnap = postQuery ? await getDocs(postQuery as Query) : snapShot;
 
-  const originalPosts = await Promise.all(
-    postSnap.docs.map(async (doc) => await postToJSON(doc))
-  );
+  if (postSnap) {
+    const originalPosts = await Promise.all(
+      postSnap.docs.map(async (doc) => await postToJSON(doc))
+    );
 
-  try {
-    return (await Promise.all(
-      originalPosts.map(async (p) => {
-        return await postInfo(p, uid);
-      })
-    )) as Post[];
-  } catch (error: any) {
-    if (error === AuthErrorCodes.QUOTA_EXCEEDED) {
-      console.log(AuthErrorCodes.QUOTA_EXCEEDED);
-      alert("Firebase Quota Exceeded. Please try again later.");
-      throw error;
-    }
-    if (error.code === "quota-exceeded") {
-      alert("Firebase Quota Exceeded. Please try again later.");
-      throw error;
+    try {
+      return (await Promise.all(
+        originalPosts.map(async (p) => {
+          return await postInfo(p, uid);
+        })
+      )) as Post[];
+    } catch (error: any) {
+      if (error === AuthErrorCodes.QUOTA_EXCEEDED) {
+        console.log(AuthErrorCodes.QUOTA_EXCEEDED);
+        alert("Firebase Quota Exceeded. Please try again later.");
+        throw error;
+      }
+      if (error.code === "quota-exceeded") {
+        alert("Firebase Quota Exceeded. Please try again later.");
+        throw error;
+      }
     }
   }
 }

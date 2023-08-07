@@ -11,7 +11,6 @@ export async function sendAppNoti(
 ) {
   const { firstName, lastName, photoURL } = profile!;
   if (receiptId === uid) return;
-  // const url = ;
   const notifRef = doc(collection(db, `users/${receiptId}/notifications`));
   const userName = `${firstName} ${lastName}`;
   const data = {
@@ -27,7 +26,7 @@ export async function sendAppNoti(
 
 export const getMessage = (type: notiContentTypes) => {
   const messages: Record<notiContentTypes, string> = {
-    reaction: `reacted this post.`,
+    post_reaction: `reacted this post.`,
     comment: `commented on this post.`,
     share: `shared this post.`,
   };

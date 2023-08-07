@@ -12,7 +12,7 @@ export type account = {
     photoURL: string | "" | File;
   };
 };
-export type notiContentTypes = "reaction" | "comment" | "share";
+export type notiContentTypes = "post_reaction" | "comment" | "share";
 
 export type NotiTypes = {
   uid: string;
@@ -22,12 +22,6 @@ export type NotiTypes = {
   id?: string | number;
   type: notiContentTypes;
   createdAt:
-    | {
-        seconds: number;
-        nanoseconds: number;
-      }
-    | Timestamp;
-  updatedAt:
     | {
         seconds: number;
         nanoseconds: number;
@@ -75,10 +69,10 @@ export interface sharedPost {
   shares?: any;
   comments: Comment[];
   commentCount?: string | number;
-  likeCount?: string | number;
+  likeCount: string | number;
 }
 export interface Post {
-  likeCount?: string | number;
+  likeCount: string | number;
   commentCount?: string | number;
   isSaved: boolean;
   isLiked: boolean;

@@ -80,7 +80,12 @@ function ProfileInfo(props: {
         alt={`${profile?.firstName ?? "Unknown"} ${
           profile?.lastName ?? ""
         }'s profile`}
-        src={edit ? imageFile : (profile.photoURL as string)}
+        src={
+          edit
+            ? imageFile
+            : (profile?.photoURL as string) ??
+              "https://upload.wikimedia.org/wikipedia/commons/77c/Profile_avatar_placeholder_large.png"
+        }
       />
       {/* {JSON.stringify()} */}
       {edit && (

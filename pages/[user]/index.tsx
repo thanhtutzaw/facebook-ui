@@ -57,7 +57,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       orderBy("createdAt", "desc"),
       limit(LIMIT)
     );
-    const myPost = await getPostWithMoreInfo(mypostQuery, uid! as string);
+    const myPost = await getPostWithMoreInfo(uid as string, mypostQuery);
     // const newPosts = await Promise.all(
     //   myPost.map(async (p) => {
     //     if (p.sharePost) {
@@ -152,7 +152,7 @@ export default function UserProfile({
         startAfter(date),
         limit(LIMIT)
       );
-      const finalPost = await getPostWithMoreInfo(mypostQuery, token.uid!)!;
+      const finalPost = await getPostWithMoreInfo(token.uid!, mypostQuery)!;
       setlimitedPosts(limitedPosts?.concat(finalPost!));
       setpostLoading(false);
 
