@@ -29,10 +29,7 @@ import EditProfile from "./EditProfile";
 import ProfileInfo from "./ProfileInfo";
 import s from "./index.module.scss";
 export default function Profile() {
-  const photoURL = "";
-  const { username, profile, email, setsortedPost } = useContext(
-    AppContext
-  ) as Props;
+  const { profile } = useContext(AppContext) as Props;
   const {
     account,
     uid,
@@ -40,8 +37,15 @@ export default function Profile() {
     setselectMode: setactive,
   } = useContext(AppContext) as Props;
   const { active: tab } = useActive();
-  const infoRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const infoRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLHeadElement>(null);
+  const [sort, setSort] = useState(false);
+  const [sortby, setsortby] = useState<"new" | "old">("new");
+  const auth = getAuth(app);
+  const [isSticky, setIsSticky] = useState(false);
+  const [edit, setedit] = useState(false);
+
   useEffect(() => {
     if (tab !== "profile") {
       setactive?.(false);
@@ -54,26 +58,6 @@ export default function Profile() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setactive, tab, active]);
-  const [sort, setSort] = useState(false);
-  const [sortby, setsortby] = useState<"new" | "old">("new");
-  const auth = getAuth(app);
-  const [isSticky, setIsSticky] = useState(false);
-  const headerRef = useRef<HTMLHeadElement>(null);
-  // useEffect(() => {
-  //   const profile = document.getElementById("profile");
-  //   const handleScroll = () => {
-  //     const header = headerRef?.current!;
-  //     const headerRect = header.getBoundingClientRect();
-
-  //     setIsSticky(headerRect.top <= 60);
-  //   };
-
-  //   profile?.addEventListener("scroll", handleScroll);
-
-  //   return () => {
-  //     profile?.removeEventListener("scroll", handleScroll);
-  //   };
-  // }, []);
 
   const fetchMyPost = useCallback(
     async function (pageParam: Post | null = null) {
@@ -117,12 +101,11 @@ export default function Profile() {
       setSort(false);
     }
   }, [active]);
-  const [edit, setedit] = useState(false);
-  function toggleEdit() {
+  const toggleEdit = () => {
     setedit((prev) => !prev);
     setnewProfile(profile!);
     // setnewProfile(newProfile!);
-  }
+  };
   const [newProfile, setnewProfile] = useState<account["profile"]>({
     firstName: profile?.firstName ?? "",
     lastName: profile?.lastName ?? "",
@@ -132,7 +115,7 @@ export default function Profile() {
       "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
   });
 
-  function handleEditForm(e: ChangeEvent<HTMLInputElement>) {
+  const handleEditForm = (e: ChangeEvent<HTMLInputElement>) => {
     const { type, value, name, files } = e.target;
     setnewProfile((prev) => ({
       ...prev,
@@ -140,7 +123,7 @@ export default function Profile() {
     }));
     console.log(newProfile);
     // console.log(type === "file");
-  }
+  };
   const [updating, setupdating] = useState(false);
   async function editProfile(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -158,13 +141,9 @@ export default function Profile() {
     <div
       id="profile"
       onScroll={(e) => {
-        const handleScroll = () => {
-          const header = headerRef?.current!;
-          const headerRect = header.getBoundingClientRect();
-
-          setIsSticky(headerRect.top <= 60);
-        };
-        handleScroll();
+        const header = headerRef?.current!;
+        const headerRect = header.getBoundingClientRect();
+        setIsSticky(headerRect.top <= 60);
         if (
           window.innerHeight + e.currentTarget.scrollTop + 1 >=
           e.currentTarget.scrollHeight
@@ -186,8 +165,6 @@ export default function Profile() {
           selectMode={active!}
           account={account!}
           profile={profile!}
-          email={email ?? "testUser@gmail.com"}
-          photoURL={photoURL}
           edit={edit}
           newProfile={newProfile}
           infoRef={infoRef}

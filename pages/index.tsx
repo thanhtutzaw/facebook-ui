@@ -35,7 +35,6 @@ import { Props, account } from "../types/interfaces";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useActive } from "../hooks/useActiveTab";
-import { profile } from "console";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {

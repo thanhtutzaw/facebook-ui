@@ -15,8 +15,15 @@ import Story from "./Story/Story";
 export default function Home(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const router = useRouter();
-  const { profile, postEnd, getMorePosts, active, email, headerContainerRef } =
-    useContext(AppContext) as Props;
+  const {
+    fetchInfiniteData,
+    profile,
+    postEnd,
+    getMorePosts,
+    active,
+    email,
+    headerContainerRef,
+  } = useContext(AppContext) as Props;
   const { shareAction, setuploadButtonClicked } = useContext(
     PageContext
   ) as PageProps;
@@ -25,8 +32,10 @@ export default function Home(props: { tabIndex: number }) {
       // style={{ overflow: shareAction ? "hidden" : "initial" }}
       id="/"
       className={styles.home}
-      onScroll={(e) => {
-        const home = document.getElementById("/");
+      onScroll={async (e) => {
+        // const home = document.getElementById("/");
+
+        // await fetchInfiniteData?.(e, postEnd);
         if (
           window.innerHeight + e.currentTarget.scrollTop + 1 >=
             e.currentTarget.scrollHeight &&
@@ -35,13 +44,10 @@ export default function Home(props: { tabIndex: number }) {
           getMorePosts?.();
         }
         // console.log(e.currentTarget.clientHeight);
-        // console.log(
-
-        // );
         // const nav = document.getElementsByTagName("nav")[0];
 
         const header = headerContainerRef?.current;
-        if (!header || !home) return;
+        if (!header) return;
         // if (e.currentTarget.scrollTop >= 39) {
         // }
         // nav.style.position = "sticky";

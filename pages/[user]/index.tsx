@@ -40,6 +40,7 @@ import {
 import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { Post as PostType, account } from "../../types/interfaces";
 import { LIMIT } from "../../context/AppContext";
+import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;
@@ -162,23 +163,7 @@ export default function UserProfile({
     },
     [limitedPosts, router.query.user, token.uid]
   );
-  const scrollRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    async function handleScroll(e: Event) {
-      const target = e.currentTarget as HTMLElement;
-      if (
-        window.innerHeight + target.scrollTop + 1 >= target.scrollHeight &&
-        !postEnd
-      ) {
-        await getMorePosts();
-      }
-    }
-    const element = scrollRef.current?.parentElement!;
-    element.addEventListener("scroll", handleScroll);
-    return () => {
-      element.removeEventListener("scroll", handleScroll);
-    };
-  }, [getMorePosts, postEnd]);
+  const { scrollRef } = useInfiniteScroll(getMorePosts, postEnd, true);
   return (
     <div ref={scrollRef} className="user">
       <BackHeader

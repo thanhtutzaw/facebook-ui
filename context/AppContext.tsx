@@ -7,8 +7,13 @@ import {
   startAfter,
   where,
 } from "firebase/firestore";
-import { createContext, useEffect, useRef, useState } from "react";
-import { useActive } from "../hooks/useActiveTab";
+import {
+  UIEventHandler,
+  createContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { db, getPostWithMoreInfo } from "../lib/firebase";
 import { Post, Props } from "../types/interfaces";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
@@ -54,7 +59,23 @@ export function AppProvider(props: Props) {
   //     unsubscribe();
   //   };
   // }, []);
-
+  // async function fetchInfiniteData(e:UIEventHandler<HTMLDivElement, UIEvent>) {
+  //   const target = e.currentTarget;
+  //   if (
+  //     window.innerHeight + e.currentTarget.scrollTop + 1 >=
+  //     e.currentTarget.scrollHeight
+  //   )
+  //     return;
+  // }
+  async function fetchInfiniteData(e: UIEvent, postEnd: boolean | undefined) {
+    const target = e.currentTarget as HTMLDivElement;
+    if (
+      window.innerHeight + target.scrollTop + 1 >= target.scrollHeight &&
+      !postEnd
+    ) {
+      await getMorePosts?.();
+    }
+  }
   async function getMorePosts() {
     setpostLoading(true);
     const post = posts?.[posts?.length - 1]!;
@@ -118,6 +139,7 @@ export function AppProvider(props: Props) {
   return (
     <AppContext.Provider
       value={{
+        fetchInfiniteData,
         updatePost,
         username,
         profile,

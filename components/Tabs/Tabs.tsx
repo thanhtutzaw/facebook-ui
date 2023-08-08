@@ -105,7 +105,7 @@ export default function Tabs(props: {
     >
       <Home tabIndex={active === "/" ? 1 : -1} />
       <div id="friends" className={styles.tab}>
-        <div className={t.header}>
+        <div style={{paddingBottom:'0'}} className={t.header}>
           <h2>Friends</h2>
         </div>
         <Friends tabIndex={active === "friends" ? 1 : -1} />

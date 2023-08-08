@@ -56,7 +56,8 @@
             .profile {
                 width: 45px;
                 height: 45px;
-                border-radius: 50%;
+                border-radius: 100%;
+                object-fit: cover;
                 border: 0;
                 background-color: rgb(221, 221, 221);
             }

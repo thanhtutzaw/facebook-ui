@@ -12,7 +12,7 @@ import Image from "next/image";
 import { Timestamp } from "firebase/firestore";
 import { getMessage } from "../../../lib/firestore/notifications";
 import { useRouter } from "next/router";
-function Notifications() {
+export default function Notifications() {
   const { active: tab } = useActive();
   const { uid } = useContext(AppContext) as Props;
   const fetchNoti = async function () {
@@ -65,8 +65,6 @@ function Notifications() {
     </div>
   );
 }
-
-export default Notifications;
 function NotiItem({ noti }: { noti: NotiTypes }) {
   const router = useRouter();
   const { id, message, uid, url, photoURL, userName, createdAt } = noti;
@@ -84,9 +82,6 @@ function NotiItem({ noti }: { noti: NotiTypes }) {
           alt={userName ?? "Unknown User"}
           width={200}
           height={200}
-          style={{
-            objectFit: "cover",
-          }}
           src={
             photoURL ??
             "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"

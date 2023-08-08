@@ -1,8 +1,7 @@
-import { User, getAuth } from "firebase/auth";
+import { User } from "firebase/auth";
+import { memo } from "react";
 import { Post as PostType } from "../../../types/interfaces";
 import Post from "../../Post";
-import { memo, useContext, useEffect } from "react";
-import { PageContext, PageProps } from "../../../context/PageContext";
 import s from "../../Post/index.module.scss";
 import Spinner from "../../Spinner";
 export const PostList = memo(
@@ -30,9 +29,6 @@ export const PostList = memo(
       posts,
       tabIndex,
     } = props;
-    const { shareAction, setshareAction } = useContext(
-      PageContext
-    ) as PageProps;
 
     return (
       <>

@@ -1,12 +1,12 @@
+import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import { InferGetServerSidePropsType } from "next";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../../context/AppContext";
+import { app } from "../../../lib/firebase";
 import { getServerSideProps } from "../../../pages";
 import styles from "../../../styles/Home.module.scss";
 import { Props } from "../../../types/interfaces";
 import { PostList } from "./PostList";
-import { User, getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../../../lib/firebase";
 // type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 //   tabIndex: number;
 // };

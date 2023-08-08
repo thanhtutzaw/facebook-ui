@@ -1,5 +1,6 @@
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import {
   User,
   getAuth,
@@ -14,15 +15,14 @@ import nookies from "nookies";
 import nProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { useEffect, useState } from "react";
+import { ImageLargeView } from "../components/Post/ImageLargeView";
+import { Welcome } from "../components/Welcome";
 import { PageProvider } from "../context/PageContext";
+import { useActive } from "../hooks/useActiveTab";
 import { app } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import "../styles/globals.css";
 import { Props } from "../types/interfaces";
-import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-import { Welcome } from "../components/Welcome";
-import { ImageLargeView } from "../components/Post/ImageLargeView";
-import { useActive } from "../hooks/useActiveTab";
 
 config.autoAddCss = false;
 export const getServerSideProps: GetServerSideProps<Props> = async (
@@ -106,7 +106,6 @@ export default function App({
     const unsubscribe = onIdTokenChanged(auth, async (user) => {
       if (!user) {
         nookies.destroy(undefined, "token");
-        // setuser(null);
         return;
       }
       try {
@@ -133,16 +132,6 @@ export default function App({
   const { active, setActive } = useActive();
 
   if (expired) return <Welcome expired={expired} />;
-  // if (
-  //   !auth?.currentUser?.uid &&
-  //   router.asPath !== "/" &&
-  //   router.asPath !== "/login"
-  // )
-  //   return (
-  //     <main>
-  //       <p style={{ textAlign: "center" }}>Redirecting to /login</p>
-  //     </main>
-  //   );
 
   return (
     <>

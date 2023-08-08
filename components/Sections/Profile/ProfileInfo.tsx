@@ -1,18 +1,15 @@
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import Image from "next/image";
-import s from "./index.module.scss";
 import {
   ChangeEventHandler,
   ReactNode,
   RefObject,
   useContext,
   useRef,
-  useState,
 } from "react";
-import { account } from "../../../types/interfaces";
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { PageContext, PageProps } from "../../../context/PageContext";
-import { ImageLargeView } from "../../Post/ImageLargeView";
-import { InputFiles } from "typescript";
+import { account } from "../../../types/interfaces";
+import s from "./index.module.scss";
 function ProfileInfo(props: {
   handleChange: ChangeEventHandler<HTMLInputElement>;
   account: UserRecord;
@@ -20,11 +17,8 @@ function ProfileInfo(props: {
   selectMode: boolean;
   children?: ReactNode;
   profile: account["profile"];
-  email: string;
-  photoURL: string;
   edit?: boolean;
   newProfile?: account["profile"] | null;
-  // username: string;
 }) {
   const {
     handleChange,
@@ -33,11 +27,8 @@ function ProfileInfo(props: {
     selectMode,
     children,
     profile,
-    email,
-    photoURL,
     edit,
     newProfile,
-    // username,
   } = props;
   const { setview } = useContext(PageContext) as PageProps;
   // const view =

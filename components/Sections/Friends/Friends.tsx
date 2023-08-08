@@ -80,7 +80,7 @@ export default function Friend(props: FriendProps) {
   // const Suggestions = ["Captain America", "Iron Man", "Thor"];
   return (
     <div className={s.container}>
-      <div className={s.action}>
+      <div style={{paddingBottom:'10px'}} className={s.action}>
         <button tabIndex={tabIndex}>Suggestions</button>
         <button
           aria-label="Go to my friends page"

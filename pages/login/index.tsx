@@ -23,6 +23,7 @@ import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import nookies from "nookies";
 import { GetServerSideProps } from "next";
+import Spinner from "../../components/Spinner";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -203,165 +204,176 @@ export default function Login({ uid }: { uid: string }) {
     //   lastName: "",
     // });
   };
-  if (uid) return <p style={{ textAlign: "center" }}>Loading ...</p>;
+  // if (uid) return <p style={{ textAlign: "center" }}>Loading ...</p>;
   return (
     <section className={styles.login}>
-      <button
-        aria-label="Log in as Peter 1"
-        disabled={loading}
-        className={styles.SecondaryloginBtn}
-        onClick={handleTestUserSignin}
-      >
-        <Image
-          width={200}
-          height={170}
-          style={{
-            objectFit: "cover",
-            width: "30%",
-            height: "50px",
-            borderRadius: "100px",
-          }}
-          alt="testuser photo"
-          src={
-            "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
-          }
-        />
-        {loading ? "Logging in..." : "Log in as Peter 1"}
-      </button>
-      <AnimatePresence mode="wait" initial={false}>
-        {signup ? (
-          <motion.button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (!signup) return;
-              setsignup(false);
-            }}
-            // key={"close"}
-            className={styles.closeSignup}
-            // transition={{ duration: 0.3, delay: 0.5 }}
-            initial={{ opacity: 0, bottom: "-90px" }}
-            animate={{
-              opacity: !signup ? 0 : 1,
-              bottom: signup ? "0px" : "-90px",
-            }}
-            exit={{ opacity: 0, bottom: "-90px" }}
+      {uid ? (
+        <Spinner />
+      ) : (
+        <>
+          <button
+            aria-label="Log in as Peter 1"
+            disabled={loading}
+            className={styles.SecondaryloginBtn}
+            onClick={handleTestUserSignin}
           >
-            {/* <FontAwesomeIcon icon={faX} /> */}
-            &times;
-          </motion.button>
-        ) : (
-          <motion.span
-            key={"or"}
-            className={styles.or}
-            style={{ position: "relative", top: "-80px" }}
-            // transition={{ delay: 1 }}
-            // transition={{ duration: 1, delay: 1 }}
-            initial={{ opacity: 1, top: "-80px" }}
-            animate={{
-              opacity: signup ? 0 : 1,
-              // top: signup ? "-80px" : "0px",
-              top: "0px",
-            }}
-            exit={{ opacity: 0, top: "-80px" }}
-          >
-            or
-          </motion.span>
-        )}
-      </AnimatePresence>
-      <div
-        tabIndex={-1}
-        style={{
-          maxWidth: "95vw",
-          padding: !signup ? "0" : "13rem 7rem",
-          transition: "padding .5s ease-in-out , scale .2s ease-in-out",
-          scale: signup ? 1 : "initial",
-          // minWidth:'260px'
-        }}
-        className={`${styles.loginBtn} ${styles.emailLogin}`}
-        // disabled={signup}
-        onKeyUp={(e) => {
-          // console.log(e.currentTarget.tagName);
-          if (e.code === "Space" || e.key === "Enter") {
-            e.currentTarget.click();
-            // alert("hey");
-            // if (e.currentTarget.tagName === "Input") {
-            //   e.stopPropagation();
-            //   e.preventDefault();
-            // }
-          }
-        }}
-        onClick={(e) => {
-          // if (!signup) {
-          //   setsignup(true);
-          // }
-          // e.stopPropagation();
-          // e.preventDefault();
-          // if (e.target !== e.currentTarget) return;
-          // console.log("clicking");
-          // if (email !== "" || Account.password !== "") return;
-          // if (e.target !== e.currentTarget && signup) return;
-          // setsignup((prev) => !prev);
-        }}
-      >
-        <AnimatePresence mode="wait">
-          {!signup ? (
-            <motion.button
-              onClick={(e) => {
-                if (!signup) {
-                  setsignup(true);
-                }
-                e.stopPropagation();
-                e.preventDefault();
-                // if (e.target !== e.currentTarget) return;
-                // console.log("clicking");
-                // if (email !== "" || Account.password !== "") return;
-                // if (e.target !== e.currentTarget && signup) return;
-                // setsignup((prev) => !prev);
+            <Image
+              width={200}
+              height={170}
+              style={{
+                objectFit: "cover",
+                width: "30%",
+                height: "50px",
+                borderRadius: "100px",
               }}
-              className={styles.Loginlabel}
-              key="label"
-              initial={{
-                opacity: 1,
-                scale: 1,
-                height: "300px",
-                width: "300px",
-              }}
-              animate={{
-                opacity: signup ? 0 : 1,
-                scale: signup ? 1.3 : 1,
-                height: signup ? "300px" : "100%",
-                width: signup ? "500px" : "100%",
-              }}
-              exit={{ opacity: 0, scale: 1, height: "300px", width: "300px" }}
-            >
-              {/* <EmailIcon /> */}
-              {/* <div className="loginIcon"> */}
-              {/* <Image alt="Google-icon" src={GoogleIcon}></Image> */}
-              {/* </div> */}
-              {/* <GoogleLogo /> */}
-              <Image alt="email-logo" src={EmailIcon}></Image>
-              <p className="loginLabel">
-                {/* {Googleloading ? "Signing in" : "Continue with Google"} */}
-                {/* {Googleloading ? "Signing in" : "Sign up With Email"} */}
-                Sign up with Email
-              </p>
-            </motion.button>
-          ) : (
-            <Signup
-              emailLoading={emailLoading}
-              handleSubmit={handleSubmit}
-              handleChange={handleChange}
-              signup={signup}
-              Account={Account}
-              setAccount={setAccount}
-              emailRef={emailRef}
+              alt="testuser photo"
+              src={
+                "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
+              }
             />
-          )}
-        </AnimatePresence>
-      </div>
-      <Link href="login/email" className={styles.emailLoginLink}>
-        Log in using Email
-      </Link>
+            {loading ? "Logging in..." : "Log in as Peter 1"}
+          </button>
+          <AnimatePresence mode="wait" initial={false}>
+            {signup ? (
+              <motion.button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!signup) return;
+                  setsignup(false);
+                }}
+                // key={"close"}
+                className={styles.closeSignup}
+                // transition={{ duration: 0.3, delay: 0.5 }}
+                initial={{ opacity: 0, bottom: "-90px" }}
+                animate={{
+                  opacity: !signup ? 0 : 1,
+                  bottom: signup ? "0px" : "-90px",
+                }}
+                exit={{ opacity: 0, bottom: "-90px" }}
+              >
+                {/* <FontAwesomeIcon icon={faX} /> */}
+                &times;
+              </motion.button>
+            ) : (
+              <motion.span
+                key={"or"}
+                className={styles.or}
+                style={{ position: "relative", top: "-80px" }}
+                // transition={{ delay: 1 }}
+                // transition={{ duration: 1, delay: 1 }}
+                initial={{ opacity: 1, top: "-80px" }}
+                animate={{
+                  opacity: signup ? 0 : 1,
+                  // top: signup ? "-80px" : "0px",
+                  top: "0px",
+                }}
+                exit={{ opacity: 0, top: "-80px" }}
+              >
+                or
+              </motion.span>
+            )}
+          </AnimatePresence>
+          <div
+            tabIndex={-1}
+            style={{
+              maxWidth: "95vw",
+              padding: !signup ? "0" : "13rem 7rem",
+              transition: "padding .5s ease-in-out , scale .2s ease-in-out",
+              scale: signup ? 1 : "initial",
+              // minWidth:'260px'
+            }}
+            className={`${styles.loginBtn} ${styles.emailLogin}`}
+            // disabled={signup}
+            onKeyUp={(e) => {
+              // console.log(e.currentTarget.tagName);
+              if (e.code === "Space" || e.key === "Enter") {
+                e.currentTarget.click();
+                // alert("hey");
+                // if (e.currentTarget.tagName === "Input") {
+                //   e.stopPropagation();
+                //   e.preventDefault();
+                // }
+              }
+            }}
+            onClick={(e) => {
+              // if (!signup) {
+              //   setsignup(true);
+              // }
+              // e.stopPropagation();
+              // e.preventDefault();
+              // if (e.target !== e.currentTarget) return;
+              // console.log("clicking");
+              // if (email !== "" || Account.password !== "") return;
+              // if (e.target !== e.currentTarget && signup) return;
+              // setsignup((prev) => !prev);
+            }}
+          >
+            <AnimatePresence mode="wait">
+              {!signup ? (
+                <motion.button
+                  onClick={(e) => {
+                    if (!signup) {
+                      setsignup(true);
+                    }
+                    e.stopPropagation();
+                    e.preventDefault();
+                    // if (e.target !== e.currentTarget) return;
+                    // console.log("clicking");
+                    // if (email !== "" || Account.password !== "") return;
+                    // if (e.target !== e.currentTarget && signup) return;
+                    // setsignup((prev) => !prev);
+                  }}
+                  className={styles.Loginlabel}
+                  key="label"
+                  initial={{
+                    opacity: 1,
+                    scale: 1,
+                    height: "300px",
+                    width: "300px",
+                  }}
+                  animate={{
+                    opacity: signup ? 0 : 1,
+                    scale: signup ? 1.3 : 1,
+                    height: signup ? "300px" : "100%",
+                    width: signup ? "500px" : "100%",
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 1,
+                    height: "300px",
+                    width: "300px",
+                  }}
+                >
+                  {/* <EmailIcon /> */}
+                  {/* <div className="loginIcon"> */}
+                  {/* <Image alt="Google-icon" src={GoogleIcon}></Image> */}
+                  {/* </div> */}
+                  {/* <GoogleLogo /> */}
+                  <Image alt="email-logo" src={EmailIcon}></Image>
+                  <p className="loginLabel">
+                    {/* {Googleloading ? "Signing in" : "Continue with Google"} */}
+                    {/* {Googleloading ? "Signing in" : "Sign up With Email"} */}
+                    Sign up with Email
+                  </p>
+                </motion.button>
+              ) : (
+                <Signup
+                  emailLoading={emailLoading}
+                  handleSubmit={handleSubmit}
+                  handleChange={handleChange}
+                  signup={signup}
+                  Account={Account}
+                  setAccount={setAccount}
+                  emailRef={emailRef}
+                />
+              )}
+            </AnimatePresence>
+          </div>
+          <Link href="login/email" className={styles.emailLoginLink}>
+            Log in using Email
+          </Link>{" "}
+        </>
+      )}
       <DevelopedByThanHtutZaw />
     </section>
   );
