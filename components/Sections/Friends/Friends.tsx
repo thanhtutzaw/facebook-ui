@@ -38,8 +38,8 @@ export default function Friend(props: FriendProps) {
     // );
     const allUsersQuery = query(
       collection(db, `users`),
-      where("__name__", "!=", uid),
-      limit(6)
+      where("__name__", "!=", uid)
+      // limit(6)
     );
     // if (pageParam) {
     //   const date = new Timestamp(

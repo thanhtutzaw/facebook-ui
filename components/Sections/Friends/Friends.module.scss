@@ -58,6 +58,8 @@
             overflow: hidden;
             .profile {
                 border-radius: 100%;
+                object-fit: contain;
+                outline: 1px solid #8080802b;
             }
             p {
                 margin: 0;

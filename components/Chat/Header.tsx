@@ -1,7 +1,7 @@
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import Image from "next/image";
 import Link from "next/link";
-import s from "../../styles/Home.module.scss";
+import s from "./index.module.scss";
 
 export function ChatHeader({ account }: { account: UserRecord }) {
   return (
@@ -40,22 +40,9 @@ export function ChatHeader({ account }: { account: UserRecord }) {
           }
         />
       </Link>
-      <div
-        style={{
-          display: "flex",
-          flex: "1",
-          alignItems: "center",
-        }}
-      >
+      <div className={s.info}>
         <Link href={`/${account?.uid}`}>
-          <p
-            style={{
-              marginTop: "-7px",
-            }}
-            className={s.title}
-          >
-            {account?.displayName}
-          </p>
+          <p className={s.title}>{account?.displayName}</p>
         </Link>
       </div>
     </div>

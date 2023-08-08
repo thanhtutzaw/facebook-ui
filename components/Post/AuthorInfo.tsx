@@ -53,12 +53,7 @@ export default function AuthorInfo(props: {
           comment={comment!}
           createdAt={createdAt}
         >
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-            }}
-          >
+          <div className={styles.moreInfo}>
             <p className={styles.date} suppressHydrationWarning>
               {new Timestamp(createdAt?.seconds, createdAt?.nanoseconds)
                 .toDate()

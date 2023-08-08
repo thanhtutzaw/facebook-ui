@@ -359,9 +359,18 @@
         background-color: rgb(207, 207, 207);
     }
     .authorInfo {
-        .date {
-            color: dimgray;
+        .moreInfo {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            .date {
+                color: dimgray;
+            }
+            span {
+                display: flex;
+            }
         }
+
         .name,
         img {
             cursor: pointer;
@@ -378,24 +387,20 @@
                     text-decoration: underline;
                 }
             }
-            // gap: 8px;
         }
         user-select: none;
         display: flex;
         flex: 1;
         gap: 0.5rem;
-        // align-items: center;
         > div > :last-child {
             color: #4e4e4e;
             font-size: 15px !important;
         }
-        p {
+        p,
+        span {
             margin: 0;
             padding: 0;
             line-height: 20px;
-            // display: flex;
-            /* justify-content: center; */
-            align-items: center;
             > svg {
                 color: #a3a3a3;
                 font-size: 13px;
