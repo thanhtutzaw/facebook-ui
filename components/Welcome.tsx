@@ -13,7 +13,7 @@ export function Welcome({
   expired,
   postError = "",
 }: {
-  uid: string | undefined;
+  uid?: string | undefined;
   expired: boolean;
   postError?: string;
 }) {
