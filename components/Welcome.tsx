@@ -1,19 +1,15 @@
-import router, { useRouter } from "next/router";
-import { useEffect } from "react";
-import { DevelopedByThanHtutZaw } from "./DevelopedByThanHtutZaw";
 import {
-  faCircleExclamation,
-  faExclamationCircle,
+  faCircleExclamation
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Spinner from "./Spinner";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { DevelopedByThanHtutZaw } from "./DevelopedByThanHtutZaw";
 
 export function Welcome({
-  uid,
   expired,
   postError = "",
 }: {
-  uid?: string | undefined;
   expired: boolean;
   postError?: string;
 }) {
@@ -57,7 +53,7 @@ export function Welcome({
             try again in 24 hours. Thank you for your understanding.
           </p>
         </>
-      ) : uid ? (
+      ) : (
         <>
           <h2
             style={{
@@ -77,8 +73,6 @@ export function Welcome({
             Loading ...
           </p>
         </>
-      ) : (
-        <Spinner />
       )}
       <DevelopedByThanHtutZaw />
     </div>

@@ -111,6 +111,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   } catch (error) {
     console.log("SSR Error " + error);
+    context.res.writeHead(302, { Location: "/login" });
+    context.res.end();
     return {
       props: {
         token: null,
@@ -161,7 +163,7 @@ export default function UserProfile({
         setPostEnd(true);
       }
     },
-    [limitedPosts, router.query.user, token.uid]
+    [limitedPosts, router.query.user, token?.uid]
   );
   const { scrollRef } = useInfiniteScroll(getMorePosts, postEnd, true);
   return (
@@ -196,7 +198,7 @@ export default function UserProfile({
             style={{ objectFit: "cover", width: "120px", height: "120px" }}
             alt={`${userName}'s profile`}
             src={
-              (profile.photoURL as string) ??
+              (profile?.photoURL as string) ??
               "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
             }
           />
@@ -210,7 +212,7 @@ export default function UserProfile({
           >
             {profile?.bio === "" || !profile ? "No Bio Yet" : profile?.bio}
           </p>
-          {token.uid !== router.query.user && (
+          {token?.uid !== router.query.user && (
             <button
               onClick={() => {
                 router.push(`/chat/${router.query.user}`);

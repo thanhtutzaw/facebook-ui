@@ -179,9 +179,9 @@ export default function Home({
   }, [expired, router, uid]);
   const { active, setActive } = useActive();
 
-  if (expired)
-    return <Welcome uid={uid} postError={postError} expired={expired} />;
-  return (
+  if (expired && auth.currentUser?.uid)
+    return <Welcome postError={postError} expired={expired} />;
+  return uid ? (
     <AppProvider
       active={active!}
       setActive={setActive!}
@@ -203,5 +203,17 @@ export default function Home({
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </AppProvider>
+  ) : (
+    <div
+      style={{
+        display: "grid",
+        alignContent: "center",
+        justifyItems: "center",
+        textAlign: "center",
+        height: "100dvh",
+      }}
+    >
+      <Spinner style={{ margin: "0" }} />
+    </div>
   );
 }
