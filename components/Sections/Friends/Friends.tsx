@@ -1,26 +1,15 @@
-import React, { useEffect, useContext, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import router from "next/router";
+import { useContext } from "react";
+import { AppContext } from "../../../context/AppContext";
+import { useActive } from "../../../hooks/useActiveTab";
+import { db } from "../../../lib/firebase";
+import { Props } from "../../../types/interfaces";
+import Spinner from "../../Spinner";
+import { AddSuggestFriend } from "./AddSuggestFriend";
 import s from "./Friends.module.scss";
 import { Request } from "./Request";
-import { AddSuggestFriend } from "./AddSuggestFriend";
-import { Post, Props } from "../../../types/interfaces";
-import { AppContext, LIMIT } from "../../../context/AppContext";
-import router from "next/router";
-import {
-  query,
-  collection,
-  where,
-  Timestamp,
-  limit,
-  orderBy,
-  startAfter,
-  getDocs,
-} from "firebase/firestore";
-import { db, getPostWithMoreInfo } from "../../../lib/firebase";
-import { PageContext, PageProps } from "../../../context/PageContext";
-import { useQuery } from "@tanstack/react-query";
-import { useActive } from "../../../hooks/useActiveTab";
-import Spinner from "../../Spinner";
-import error from "next/error";
 interface FriendProps {
   tabIndex: number;
 }
@@ -48,8 +37,8 @@ export default function Friend(props: FriendProps) {
     //   );
     //   postQuery = query(postQuery, startAfter(date));
     // }
-    const allFriends = await getDocs(allUsersQuery);
-    return allFriends.docs.map((doc) => {
+    const allFriendsSnap = await getDocs(allUsersQuery);
+    return allFriendsSnap.docs.map((doc) => {
       return {
         id: doc.id,
         author: { ...doc.data().profile },
@@ -73,14 +62,13 @@ export default function Friend(props: FriendProps) {
   });
   const Requests = [
     { id: 1, author: { firstName: "Aunt May" } },
-
     { id: 2, author: { firstName: "Peter 2" } },
     { id: 3, author: { firstName: "Peter 3" } },
   ];
   // const Suggestions = ["Captain America", "Iron Man", "Thor"];
   return (
     <div className={s.container}>
-      <div style={{paddingBottom:'10px'}} className={s.action}>
+      <div style={{ paddingBottom: "10px" }} className={s.action}>
         <button tabIndex={tabIndex}>Suggestions</button>
         <button
           aria-label="Go to my friends page"
@@ -113,7 +101,7 @@ export default function Friend(props: FriendProps) {
           <p className="error">Unexpected Error Occured !</p>
         ) : (
           <>
-            {data?.map((f: any, index: number) => (
+            {data?.map((f: any) => (
               <AddSuggestFriend key={f.id} f={f} tabIndex={tabIndex} />
             ))}
           </>

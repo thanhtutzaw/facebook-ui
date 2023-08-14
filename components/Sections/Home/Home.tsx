@@ -53,12 +53,12 @@ export default function Home(props: { tabIndex: number }) {
         // nav.style.position = "sticky";
         if (active !== "/") return;
         if (e.currentTarget.scrollTop >= 60) {
-          header.style.transform = "translateY(-60px)";
-          header.style.height = "60px";
+          // header.style.transform = "translateY(-60px)";
+          // header.style.height = "60px";
         } else {
           // home.style.paddingTop = "0px";
-          header.style.transform = "translateY(0px)";
-          header.style.height = "120px";
+          // header.style.transform = "translateY(0px)";
+          // header.style.height = "120px";
         }
       }}
     >

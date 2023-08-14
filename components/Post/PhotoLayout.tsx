@@ -90,6 +90,9 @@ export default function PhotoLayout(props: {
                       //   ? URL.createObjectURL(file)
                       //   : file.url
                     }
+                    onError={(e) => {
+                      console.log("Image Error in PhotoLayout");
+                    }}
                     style={{ objectFit: "contain", height: "auto" }}
                   />
                 )}

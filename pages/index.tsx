@@ -35,12 +35,12 @@ import { Props, account } from "../types/interfaces";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useActive } from "../hooks/useActiveTab";
+import Spinner from "../components/Spinner";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
   try {
     const cookies = nookies.get(context);
-    console.log(cookies);
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
 
     const convertSecondsToTime = (seconds: number) => {
@@ -118,10 +118,11 @@ export default function Home({
   profile,
   account,
 }: Props) {
-  // props: InferGetServerSidePropsType<typeof getServerSideProps>
   const indicatorRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const auth = getAuth(app);
+  //firebasestorage.googleapis.com/v0/b/facebook-37f93.appspot.com/o/images%2FScreenshot%20(164).png?alt=media&token=d28d660f-5725-4fe5-a1b2-44f28bfd2348
+  //firebasestorage.googleapis.com/v0/b/facebook-37f93.appspot.com/o/images%2FScreenshot%20(164).png?alt=media&token=af725a0c-9d74-43d7-b1d6-e4e67b19270e
   useEffect(() => {
     const auth = getAuth(app);
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -166,42 +167,20 @@ export default function Home({
       // )) as Post[];
       setlimitedPosts(posts);
     });
-    // unsubscribe = onSnapshot(postQuery, async (snapshot) => {
-    //   const posts = (await Promise.all(
-    //     snapshot.docs.map(async (doc) => await postToJSON(doc))
-    //   )) as Post[];
-    //   const withInfo = (await Promise.all(
-    //     posts.map(async (p) => await postInfo(p, uid!))
-    //   )) as Post[];
-    //   setlimitedPosts(withInfo);
-    //   console.log(withInfo);
-    // });
     return () => {
       unsubscribe();
     };
   }, [uid]);
-
-  // useEffect(() => {
-  //   // const q = query(collection(db, "posts"), where("state", "==", "CA"));
-  //   const q = query(
-  //     collectionGroup(db, `posts`),
-  //     where("visibility", "in", ["Friend", "Public"]),
-  //     orderBy("createdAt", "desc"),
-  //     limit(LIMIT)
-  //   );
-  //   const unsubscribe = onSnapshot(q, (querySnapshot) => {
-  //     querySnapshot.forEach(async (doc) => {
-  //       // console.log(doc.data());
-  //       const p = await postToJSON(doc);
-  //       setlimitedPosts(limitedPosts?.concat(p));
-  //     });
-  //   });
-  //   return () => {
-  //     unsubscribe;
-  //   };
-  // }, [uid]);
+  useEffect(() => {
+    if (expired) return;
+    if (!uid) {
+      router.push("/login");
+    }
+  }, [expired, router, uid]);
   const { active, setActive } = useActive();
-  if (expired) return <Welcome postError={postError} expired={expired} />;
+
+  if (expired)
+    return <Welcome uid={uid} postError={postError} expired={expired} />;
   return (
     <AppProvider
       active={active!}

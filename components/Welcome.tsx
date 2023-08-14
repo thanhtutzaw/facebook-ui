@@ -6,11 +6,14 @@ import {
   faExclamationCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Spinner from "./Spinner";
 
 export function Welcome({
+  uid,
   expired,
   postError = "",
 }: {
+  uid: string | undefined;
   expired: boolean;
   postError?: string;
 }) {
@@ -54,7 +57,7 @@ export function Welcome({
             try again in 24 hours. Thank you for your understanding.
           </p>
         </>
-      ) : (
+      ) : uid ? (
         <>
           <h2
             style={{
@@ -74,6 +77,8 @@ export function Welcome({
             Loading ...
           </p>
         </>
+      ) : (
+        <Spinner />
       )}
       <DevelopedByThanHtutZaw />
     </div>

@@ -24,6 +24,7 @@ const ImageWithFallback = (
       {...rest}
       src={imgSrc}
       onError={(e) => {
+        console.log("Image Error in Fallback");
         setImgSrc(fallbackSrc);
         e.currentTarget.style.filter = "invert(1)";
         // e.currentTarget.style.minHeight =

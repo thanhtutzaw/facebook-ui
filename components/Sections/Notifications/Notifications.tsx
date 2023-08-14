@@ -12,6 +12,8 @@ import Image from "next/image";
 import { Timestamp } from "firebase/firestore";
 import { getMessage } from "../../../lib/firestore/notifications";
 import { useRouter } from "next/router";
+import ErrorBoundary from "../../ErrorBoundray";
+
 export default function Notifications() {
   const { active: tab } = useActive();
   const { uid } = useContext(AppContext) as Props;
@@ -22,8 +24,8 @@ export default function Notifications() {
       collection(db, `/users/${uid}/notifications`),
       orderBy("createdAt", "desc")
     );
-    const notiDoc = await getDocs(notiQuery);
-    return notiDoc.docs.map((doc) => {
+    const snapShot = await getDocs(notiQuery);
+    return snapShot.docs.map((doc) => {
       const data = doc.data() as NotiTypes;
       return {
         id: doc.id,
@@ -70,7 +72,12 @@ function NotiItem({ noti }: { noti: NotiTypes }) {
   const { id, message, uid, url, photoURL, userName, createdAt } = noti;
   return (
     <li className={s.item}>
-      <Link prefetch={false} href={`/${url}`}>
+      {/* <ErrorBoundary> */}
+      <Link
+        prefetch={false}
+        // href={`${url.match(/^[a-zA-Z]{1,}:\/\//) ? `/${url}` : `${url}`} `}
+        href={url}
+      >
         <Image
           onClick={(e) => {
             e.preventDefault();
@@ -101,6 +108,7 @@ function NotiItem({ noti }: { noti: NotiTypes }) {
           {message}
         </p>
       </Link>
+      {/* </ErrorBoundary> */}
       <p className={s.date} suppressHydrationWarning>
         {new Timestamp(createdAt?.seconds, createdAt?.nanoseconds)
           .toDate()
