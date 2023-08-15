@@ -86,6 +86,7 @@ export default function Post({
         setShowmore={setShowmore}
         post={post}
         shareMode={shareMode}
+        tabIndex={tabIndex}
       />
 
       {!shareMode && (

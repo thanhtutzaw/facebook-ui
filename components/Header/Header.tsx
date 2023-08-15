@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import router from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { RefObject, useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { useActive } from "../../hooks/useActiveTab";
@@ -37,8 +37,11 @@ export const pages = [
   { name: "Notifications", icon: <FontAwesomeIcon icon={faBell} /> },
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
-export default function Header(props: any) {
-  const { indicatorRef } = props;
+export default function Header(props: {
+  indicatorRef: RefObject<HTMLDivElement>;
+  tabIndex: number;
+}) {
+  const { indicatorRef, tabIndex } = props;
   const { active, setActive } = useActive();
   const [width, setwidth] = useState<number>();
   const { selectMode, setselectMode, headerContainerRef } = useContext(
@@ -77,9 +80,9 @@ export default function Header(props: any) {
         className={styles.header}
       >
         <Logo />
-        {/* expired - {expired ? "true" : "false"} */}
         <div className={styles.action}>
           <button
+            tabIndex={tabIndex}
             onClick={() => router.push("/chat")}
             title="Go to Messages"
             aria-label="Go to Messages"
@@ -90,6 +93,7 @@ export default function Header(props: any) {
             />
           </button>
           <button
+            tabIndex={tabIndex}
             title="Go to logout button"
             aria-label="go to logout button"
             onClick={() => {

@@ -77,6 +77,7 @@ export default function Home(props: { tabIndex: number }) {
           }
         />
         <input
+          tabIndex={-1}
           aria-label="Go to Add Post page"
           readOnly
           onFocus={(e) => {

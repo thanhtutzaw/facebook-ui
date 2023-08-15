@@ -198,7 +198,10 @@ export default function Home({
       account={account}
     >
       <QueryClientProvider client={queryClient}>
-        <Header indicatorRef={indicatorRef} />
+        <Header
+          tabIndex={active === "/" ? 1 : -1}
+          indicatorRef={indicatorRef}
+        />
         <Tabs indicatorRef={indicatorRef} />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>

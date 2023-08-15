@@ -1,23 +1,18 @@
-import { auth } from "firebase-admin";
-import router, { useRouter } from "next/router";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { getAuth } from "firebase/auth";
+import { useRouter } from "next/router";
+import { useContext, useEffect, useRef, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { uploadMedia } from "../../lib/storage";
+import useLocalStorage from "../../hooks/useLocalStorage";
+import { app } from "../../lib/firebase";
 import { addPost } from "../../lib/firestore/post";
+import { uploadMedia } from "../../lib/storage";
+import s from "../../styles/Home.module.scss";
+import { Post as PostTypes } from "../../types/interfaces";
 import BackHeader from "../Header/BackHeader";
 import PhotoLayout from "../Post/PhotoLayout";
+import { SharePreview } from "../Post/SharePreview";
 import FooterInput from "./FooterInput";
 import Input from "./Input";
-import { getAuth } from "firebase/auth";
-import { app } from "../../lib/firebase";
-import useLocalStorage from "../../hooks/useLocalStorage";
-import { Post as PostTypes } from "../../types/interfaces";
-import s from "../../styles/Home.module.scss";
-import Post from "../Post";
-import Link from "next/link";
-import error from "next/error";
-import { SharePreview } from "../Post/SharePreview";
-import { query } from "firebase/firestore";
 
 export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const { sharePost } = props;

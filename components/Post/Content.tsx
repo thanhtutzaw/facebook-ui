@@ -19,6 +19,7 @@ import { SharePreview } from "./SharePreview";
 import { SocialCount } from "./SocialCount";
 import s from "./index.module.scss";
 export default function Content(props: {
+  tabIndex?: number;
   updatePost: Function;
   likeCount: number;
   shareMode?: boolean;
@@ -35,6 +36,7 @@ export default function Content(props: {
   auth: User;
 }) {
   const {
+    tabIndex,
     updatePost,
     likeCount,
     preventNavigate,
@@ -110,6 +112,7 @@ export default function Content(props: {
             {!selectMode ? (
               <>
                 <button
+                  tabIndex={tabIndex}
                   className={s.dot}
                   aria-expanded={showAction !== ""}
                   aria-label="open post option dropdown"

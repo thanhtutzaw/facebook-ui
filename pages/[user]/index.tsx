@@ -1,13 +1,7 @@
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import {
-  DocumentData,
-  DocumentSnapshot,
   Timestamp,
   collection,
-  collectionGroup,
-  doc,
-  getDoc,
-  getDocs,
   limit,
   orderBy,
   query,
@@ -18,29 +12,16 @@ import { GetServerSideProps } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import {
-  MouseEventHandler,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useContext, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
 import { PostList } from "../../components/Sections/Home/PostList";
 import s from "../../components/Sections/Profile/index.module.scss";
+import { LIMIT } from "../../context/AppContext";
 import { PageContext, PageProps } from "../../context/PageContext";
-import {
-  db,
-  fethUserDoc,
-  getPostWithMoreInfo,
-  getProfileByUID,
-  postToJSON,
-} from "../../lib/firebase";
+import useInfiniteScroll from "../../hooks/useInfiniteScroll";
+import { db, fethUserDoc, getPostWithMoreInfo } from "../../lib/firebase";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { Post as PostType, account } from "../../types/interfaces";
-import { LIMIT } from "../../context/AppContext";
-import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;
@@ -181,7 +162,7 @@ export default function UserProfile({
         }}
         className={s.container}
       >
-        <div className={`${s.info}`}>
+        <div className={`${s.info}`} style={{ paddingBottom: "1rem" }}>
           <Image
             onClick={() => {
               setview?.({

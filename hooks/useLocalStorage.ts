@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-
 function useLocalStorage(key: string, value: string | undefined) {
   // const { key, value } = props;
   // useEffect(() => {
