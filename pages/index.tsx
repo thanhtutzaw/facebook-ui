@@ -179,8 +179,7 @@ export default function Home({
   }, [expired, router, uid]);
   const { active, setActive } = useActive();
 
-  if (expired && auth.currentUser?.uid)
-    return <Welcome postError={postError} expired={expired} />;
+  if (expired) return <Welcome postError={postError} expired={expired} />;
   return uid ? (
     <AppProvider
       active={active!}
