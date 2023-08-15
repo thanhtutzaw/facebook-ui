@@ -27,7 +27,8 @@
     display: flex;
     width: 95%;
     margin: 0 auto;
-    margin-bottom: 0.5rem;
+    // margin-bottom: 0.8rem;
+
     // margin: 0 auto 1rem;
     &:active {
         opacity: 0.8;
@@ -307,10 +308,6 @@
         //     background: linear-gradient(to bottom, transparent, white);
         // }
     }
-    .header {
-        padding: 15px 0.8rem 6px;
-        margin: 0;
-    }
     > p:active {
         background-color: rgb(207, 207, 207);
     }
@@ -351,7 +348,9 @@
     }
 }
 .header {
-    padding: 15px 0.8rem 6px;
+    // padding: 15px 0.8rem 6px;
+    // padding-bottom: 15px;
+    padding: 0.8rem;
     margin: 0;
     display: flex;
     justify-content: space-between;

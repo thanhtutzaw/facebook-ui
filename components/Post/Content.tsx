@@ -205,7 +205,8 @@ export default function Content(props: {
       )}
       <Input
         style={{
-          paddingTop: text === "" ? "0" : ".5rem",
+          marginBottom: text === "" ? "0" : ".8rem",
+          // paddingTop: text === "" ? "0" : ".5rem",
           // marginBottom: text === "" ? ".5rem" : "1rem",
         }}
         dangerouslySetInnerHTML={{

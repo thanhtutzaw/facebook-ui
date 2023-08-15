@@ -374,7 +374,7 @@ export default function Login({ uid }: { uid: string }) {
           </Link>{" "}
         </>
       )}
-      <DevelopedByThanHtutZaw />
+      <DevelopedByThanHtutZaw signup={signup}/>
     </section>
   );
 }

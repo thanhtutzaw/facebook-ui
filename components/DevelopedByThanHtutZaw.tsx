@@ -1,6 +1,10 @@
-export function DevelopedByThanHtutZaw({}) {
+export function DevelopedByThanHtutZaw({ signup }: { signup?: boolean }) {
   return (
     <a
+      style={{
+        transform: !signup ? "none" : "translateY(80px)",
+        transition: "transform .5s ease-in-out",
+      }}
       tabIndex={-1}
       className="githublink"
       href="https://github.com/thanhtutzaw"
