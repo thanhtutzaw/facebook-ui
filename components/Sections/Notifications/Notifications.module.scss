@@ -63,6 +63,28 @@
             }
             .content {
                 margin: 0;
+                position: relative;
+                padding-left: 8px;
+                // opacity: 0.5;
+                color: rgb(0, 0, 0, 0.5);
+                -webkit-line-clamp: 1;
+                display: -webkit-box;
+                text-overflow: ellipsis;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                &::before {
+                    content: "";
+                    position: absolute;
+                    // top: 50%;
+                    // transform: translateY(-50%);
+                    // left: -10px;
+                    top: 0px;
+                    left: 0px;
+                    width: 2px;
+                    height: 100%;
+                    width: 2px;
+                    background-color: rgba(0, 0, 0, 0.12);
+                }
             }
             .date,
             .dateDesktop {

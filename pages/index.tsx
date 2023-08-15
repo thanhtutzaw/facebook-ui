@@ -198,7 +198,7 @@ export default function Home({
     >
       <QueryClientProvider client={queryClient}>
         <Header
-          tabIndex={active === "/" ? 1 : -1}
+          tabIndex={active === "/" ? 0 : -1}
           indicatorRef={indicatorRef}
         />
         <Tabs indicatorRef={indicatorRef} />

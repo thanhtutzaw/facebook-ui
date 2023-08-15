@@ -21,11 +21,14 @@ export async function addPost(
   visibility: string,
   text: string,
   files?: any[],
-  sharePost?: { author: string; id: string }
+  sharePost?: { refId: string; author: string; id: string }
 ) {
-  const Ref = doc(collection(db, `users/${uid}/posts`));
+  // const Ref = doc(collection(db, `users/${uid}/posts`));
+  const Ref = !sharePost
+    ? doc(collection(db, `users/${uid}/posts`))
+    : doc(db, `users/${uid}/posts/${sharePost.refId}`);
   const post = {
-    id: Ref.id,
+    id: !sharePost ? Ref.id : sharePost.refId,
     text: text,
     // media: files.map((file) => ({ ...file, id: doc().id })),
     media: files,
@@ -49,7 +52,7 @@ export async function addPost(
   }
   try {
     console.log({ data });
-    await setDoc(Ref, data);
+    return await setDoc(Ref, data);
   } catch (error: any) {
     alert("Adding Post Failed !" + error.message);
   }
@@ -95,11 +98,10 @@ export async function updatePost(
 }
 export async function deletePost(data: any) {
   const { uid, postid, post } = data;
-
   const Ref = doc(db, `users/${uid}/posts/${postid.toString()}`);
   const exist = (await getDoc(Ref)).exists();
   if (!exist) {
-    console.log("Delete Error : Data Not Found");
+    alert("Delete Error : Data Not Found");
     throw new Error("Delete Error : Data Not Found");
   }
   if (post.sharePost?.id) {

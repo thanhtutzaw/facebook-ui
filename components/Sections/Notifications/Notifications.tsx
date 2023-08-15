@@ -58,7 +58,7 @@ export default function Notifications() {
       ) : data?.length === 0 ? (
         <p style={{ textAlign: "center" }}>Empty Notifications</p>
       ) : (
-        <ul >
+        <ul>
           {data?.map((noti) => (
             <NotiItem key={noti.id} noti={noti} />
           ))}
@@ -73,7 +73,6 @@ function NotiItem({ noti }: { noti: NotiTypes }) {
     noti;
   return (
     <li className={s.item}>
-      {/* <ErrorBoundary> */}
       <Link
         prefetch={false}
         // href={`${url.match(/^[a-zA-Z]{1,}:\/\//) ? `/${url}` : `${url}`} `}
@@ -95,7 +94,7 @@ function NotiItem({ noti }: { noti: NotiTypes }) {
             "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
           }
         />
-        <p className={s.message}>
+        <div className={s.message}>
           <span
             onClick={(e) => {
               e.preventDefault();
@@ -117,18 +116,17 @@ function NotiItem({ noti }: { noti: NotiTypes }) {
                 day: "numeric",
               })}
           </p>
-        </p>
+        </div>
       </Link>
-        <p className={s.dateDesktop} suppressHydrationWarning>
-          {new Timestamp(createdAt?.seconds, createdAt?.nanoseconds)
-            .toDate()
-            .toLocaleDateString("en-US", {
-              year: "2-digit",
-              month: "short",
-              day: "numeric",
-            })}
-        </p>
-      {/* </ErrorBoundary> */}
+      <p className={s.dateDesktop} suppressHydrationWarning>
+        {new Timestamp(createdAt?.seconds, createdAt?.nanoseconds)
+          .toDate()
+          .toLocaleDateString("en-US", {
+            year: "2-digit",
+            month: "short",
+            day: "numeric",
+          })}
+      </p>
     </li>
   );
 }

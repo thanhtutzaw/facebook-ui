@@ -12,7 +12,7 @@ export async function sendAppNoti(
 ) {
   const { firstName, lastName, photoURL } = profile!;
   const samePerson = receiptId.toString() === uid;
-  if (samePerson) return;
+  // if (samePerson) return;
   const notifRef = doc(collection(db, `users/${receiptId}/notifications`));
   const userName = `${firstName} ${lastName}`;
   const data = {
@@ -22,9 +22,10 @@ export async function sendAppNoti(
     photoURL: photoURL as string,
     url,
     uid,
-    content,
+    content: content ? content : "",
   };
   await setDoc(notifRef, data);
+  console.log("shareRef id " + data.url);
 }
 
 export const getMessage = (type: notiContentTypes) => {

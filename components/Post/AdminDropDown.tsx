@@ -89,7 +89,11 @@ export default function AdminDropDown(props: {
               }
               setLoading(true);
               try {
-                deletePost({ uid: auth.currentUser.uid, postid: id, post });
+                await deletePost({
+                  uid: auth.currentUser.uid,
+                  postid: id,
+                  post,
+                });
                 // queryClient.invalidateQueries(["myPost"]);
                 setLoading(false);
                 setshowAction?.("");
@@ -101,8 +105,8 @@ export default function AdminDropDown(props: {
                 if (loading) return;
                 updatePost(id);
               } catch (error: any) {
+                setshowAction?.("");
                 console.error(error);
-                alert(error.message);
                 setLoading(false);
               }
             }}

@@ -40,7 +40,6 @@ export default function Content(props: {
     updatePost,
     likeCount,
     preventNavigate,
-    auth,
     selectMode,
     checked,
     client,

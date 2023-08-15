@@ -103,12 +103,12 @@ export default function Tabs(props: {
         indicator.style.transform = `translateX(${scroll / 6}px)`;
       }}
     >
-      <Home tabIndex={active === "/" ? 1 : -1} />
+      <Home tabIndex={active === "/" ? 0 : -1} />
       <div id="friends" className={styles.tab}>
         <div style={{paddingBottom:'0'}} className={t.header}>
           <h2>Friends</h2>
         </div>
-        <Friends tabIndex={active === "friends" ? 1 : -1} />
+        <Friends tabIndex={active === "friends" ? 0 : -1} />
       </div>
       <div id="watch">
         <div className={t.header}>
@@ -128,7 +128,7 @@ export default function Tabs(props: {
         <div className={t.header}>
           <h2>Menu</h2>
         </div>
-        <Menu tabIndex={active === "menu" ? 1 : -1} />
+        <Menu tabIndex={active === "menu" ? 0 : -1} />
       </div>
     </div>
   );

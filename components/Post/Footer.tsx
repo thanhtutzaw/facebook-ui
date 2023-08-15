@@ -7,10 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
-import {
-  doc,
-  getDoc
-} from "firebase/firestore";
+import { collection, doc, getDoc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import {
@@ -36,7 +33,9 @@ export function Footer(
   } & StyleHTMLAttributes<HTMLDivElement>
 ) {
   const { profile, likeCount, setlikeCount, post, tabIndex, ...rests } = props;
-  const { id, authorId } = post;
+  const { id, author, authorId } = post;
+  const authorProfile = author as account["profile"];
+  const authorName = `${authorProfile.firstName} ${authorProfile.lastName}`;
   const { dropdownRef, shareAction, setshareAction } = useContext(
     PageContext
   ) as PageProps;
@@ -287,16 +286,27 @@ export function Footer(
                 onClick={async (e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  const sharePost = { author: authorId.toString(), id: id! };
+                  const uid = auth.currentUser?.uid;
+                  if (!uid) {
+                    alert("Error : User Not Found . Sign up and Try Again ! ");
+                    return;
+                  }
+                  const shareRef = doc(collection(db, `users/${uid}/posts`));
+                  const sharePost = {
+                    refId: shareRef.id,
+                    author: authorId.toString(),
+                    id: id!,
+                  };
                   try {
                     window.document.body.style.cursor = "wait";
-                    await addPost(
-                      auth?.currentUser?.uid!,
-                      savedVisibility,
-                      "",
-                      [],
-                      sharePost
-                      // post
+                    await addPost(uid, savedVisibility, "", [], sharePost);
+                    await sendAppNoti(
+                      uid,
+                      post?.authorId.toString()!,
+                      profile!,
+                      "share",
+                      `${uid}/${sharePost.refId}`,
+                      `${authorName} : ${post.text}`
                     );
                     router.replace("/", undefined, { scroll: false });
                     setshareAction?.("");

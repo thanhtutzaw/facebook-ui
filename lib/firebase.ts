@@ -44,7 +44,6 @@ export async function postToJSON(
   const createdAt = data?.createdAt as Timestamp;
   const updatedAt = data?.updatedAt as Timestamp;
   const author = doc.ref.parent.parent!;
-  // const user = (await getUserData(author.id)) as UserRecord;
   if (typeof data?.updatedAt === "string") {
     return {
       ...data,

@@ -2,7 +2,7 @@ import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useContext, useRef} from "react";
+import { useContext, useRef } from "react";
 import { AppContext } from "../../../context/AppContext";
 import { PageContext, PageProps } from "../../../context/PageContext";
 import styles from "../../../styles/Home.module.scss";
@@ -34,7 +34,6 @@ export default function Home(props: { tabIndex: number }) {
         const header = headerContainerRef?.current;
         if (!header) return;
         if (active !== "/") return;
-        console.log(currentScroll);
         const previousScroll = previousScrollRef.current;
         const scrollingDown = previousScroll < currentScroll;
         if (currentScroll >= 60) {

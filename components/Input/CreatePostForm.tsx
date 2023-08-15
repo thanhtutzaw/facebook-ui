@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import useLocalStorage from "../../hooks/useLocalStorage";
-import { app } from "../../lib/firebase";
+import { app, db } from "../../lib/firebase";
 import { addPost } from "../../lib/firestore/post";
 import { uploadMedia } from "../../lib/storage";
 import s from "../../styles/Home.module.scss";
@@ -13,6 +13,9 @@ import PhotoLayout from "../Post/PhotoLayout";
 import { SharePreview } from "../Post/SharePreview";
 import FooterInput from "./FooterInput";
 import Input from "./Input";
+import { doc, collection } from "firebase/firestore";
+import { sendAppNoti } from "../../lib/firestore/notifications";
+import { profile } from "console";
 
 export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const { sharePost } = props;
@@ -169,10 +172,13 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
               window.document.body.style.cursor = "wait";
               // await addPost(uid, media, replace.current, visibility);
               const media = await uploadMedia(files as File[]);
+              const shareRef = doc(collection(db, `users/${uid}/posts`));
+
               const sharePost2 = {
                 author: sharePost?.authorId?.toString()!,
                 id: sharePost?.id?.toString()!,
                 sharer: [{ id: uid }],
+                refId: shareRef.id,
               };
               // console.log(sharePost2);
               if (sharePost) {
@@ -183,6 +189,14 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
                   media,
                   sharePost2
                 );
+                // await sendAppNoti(
+                //   uid,
+                //   sharePost.sharePost?.post?.authorId.toString()!,
+                //   profile!,
+                //   "share",
+                //   `${uid}/${sharePost.refId}`,
+                //   `${authorName} : ${replace.current}`
+                // );
               } else {
                 await addPost(uid, visibility, replace.current, media);
               }
