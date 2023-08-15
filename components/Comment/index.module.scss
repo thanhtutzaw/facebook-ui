@@ -1,3 +1,4 @@
+
 .container {
     margin: 0;
     padding: 0;
@@ -18,9 +19,10 @@
         gap: 8px;
         padding-bottom: 0.5rem;
         .text {
-            font-size: 20px;
+            // font-size: 20px;
+            font-size: 18px;
             color: black;
-            margin: 2px 0;
+            // margin: 2px 0;
             /* flex: 1; */
             /* flex-wrap: nowrap; */
             word-break: break-all;

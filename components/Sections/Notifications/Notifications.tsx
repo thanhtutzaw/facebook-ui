@@ -58,7 +58,7 @@ export default function Notifications() {
       ) : data?.length === 0 ? (
         <p style={{ textAlign: "center" }}>Empty Notifications</p>
       ) : (
-        <ul className={s.content}>
+        <ul >
           {data?.map((noti) => (
             <NotiItem key={noti.id} noti={noti} />
           ))}
@@ -69,7 +69,8 @@ export default function Notifications() {
 }
 function NotiItem({ noti }: { noti: NotiTypes }) {
   const router = useRouter();
-  const { id, message, uid, url, photoURL, userName, createdAt } = noti;
+  const { id, content, message, uid, url, photoURL, userName, createdAt } =
+    noti;
   return (
     <li className={s.item}>
       {/* <ErrorBoundary> */}
@@ -106,18 +107,28 @@ function NotiItem({ noti }: { noti: NotiTypes }) {
             {userName ?? "Unknown User"}
           </span>{" "}
           {message}
+          {content && <p className={s.content}>{content ?? ""}</p>}
+          <p className={s.date} suppressHydrationWarning>
+            {new Timestamp(createdAt?.seconds, createdAt?.nanoseconds)
+              .toDate()
+              .toLocaleDateString("en-US", {
+                year: "2-digit",
+                month: "short",
+                day: "numeric",
+              })}
+          </p>
         </p>
       </Link>
+        <p className={s.dateDesktop} suppressHydrationWarning>
+          {new Timestamp(createdAt?.seconds, createdAt?.nanoseconds)
+            .toDate()
+            .toLocaleDateString("en-US", {
+              year: "2-digit",
+              month: "short",
+              day: "numeric",
+            })}
+        </p>
       {/* </ErrorBoundary> */}
-      <p className={s.date} suppressHydrationWarning>
-        {new Timestamp(createdAt?.seconds, createdAt?.nanoseconds)
-          .toDate()
-          .toLocaleDateString("en-US", {
-            year: "2-digit",
-            month: "short",
-            day: "numeric",
-          })}
-      </p>
     </li>
   );
 }

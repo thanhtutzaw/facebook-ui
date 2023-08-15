@@ -7,6 +7,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
+import {
+  doc,
+  getDoc
+} from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import {
@@ -18,25 +22,10 @@ import {
 } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { app, db } from "../../lib/firebase";
+import { sendAppNoti } from "../../lib/firestore/notifications";
 import { addPost, dislikePost, likePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
-import {
-  DocumentData,
-  DocumentReference,
-  FieldValue,
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  serverTimestamp,
-  setDoc,
-} from "firebase/firestore";
-import { useQueryClient } from "@tanstack/react-query";
-import { type } from "os";
-import { sendAppNoti } from "../../lib/firestore/notifications";
 export function Footer(
   props: {
     likeCount?: number;

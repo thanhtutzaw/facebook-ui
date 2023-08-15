@@ -8,11 +8,10 @@ import {
   where,
 } from "firebase/firestore";
 import {
-  UIEventHandler,
   createContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { db, getPostWithMoreInfo } from "../lib/firebase";
 import { Post, Props } from "../types/interfaces";

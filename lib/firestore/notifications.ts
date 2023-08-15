@@ -1,5 +1,5 @@
 import { collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { Post, account, notiContentTypes } from "../../types/interfaces";
+import { account, notiContentTypes } from "../../types/interfaces";
 import { db } from "../firebase";
 
 export async function sendAppNoti(
@@ -7,10 +7,12 @@ export async function sendAppNoti(
   receiptId: string | number,
   profile: account["profile"] | null,
   type: notiContentTypes,
-  url: string
+  url: string,
+  content?: string
 ) {
   const { firstName, lastName, photoURL } = profile!;
-  if (receiptId === uid) return;
+  const samePerson = receiptId.toString() === uid;
+  if (samePerson) return;
   const notifRef = doc(collection(db, `users/${receiptId}/notifications`));
   const userName = `${firstName} ${lastName}`;
   const data = {
@@ -20,6 +22,7 @@ export async function sendAppNoti(
     photoURL: photoURL as string,
     url,
     uid,
+    content,
   };
   await setDoc(notifRef, data);
 }

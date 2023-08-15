@@ -79,6 +79,7 @@ export default function PhotoLayout(props: {
                   <video controls src={URL.createObjectURL(file)} />
                 ) : (
                   <Image
+                    priority
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     width={700}
                     height={394}
@@ -146,6 +147,7 @@ export default function PhotoLayout(props: {
           }}
         >
           <ImageWithFallback
+            priority
             media={media}
             width={700}
             height={394}
@@ -165,6 +167,7 @@ export default function PhotoLayout(props: {
         <div>
           {media[1] && (
             <ImageWithFallback
+              priority
               media={media}
               width={700}
               height={394}
@@ -187,6 +190,7 @@ export default function PhotoLayout(props: {
               }}
             >
               <ImageWithFallback
+                priority
                 media={media}
                 width={700}
                 height={394}

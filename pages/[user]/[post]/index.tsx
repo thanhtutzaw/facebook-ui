@@ -37,7 +37,12 @@ import { verifyIdToken } from "../../../lib/firebaseAdmin";
 import { updatePost } from "../../../lib/firestore/post";
 import { deleteStorage, uploadMedia } from "../../../lib/storage";
 import s from "../../../styles/Home.module.scss";
-import { Media, Post as PostType, Props } from "../../../types/interfaces";
+import {
+  Media,
+  Post as PostType,
+  Props,
+  account,
+} from "../../../types/interfaces";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -57,6 +62,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const postDoc = await getDoc(postRef);
     const p = await postToJSON(postDoc as DocumentSnapshot<DocumentData>);
     const newPost = await postInfo(p, uid);
+    const profileData = (await getProfileByUID(uid)) as account["profile"];
+    const profile = {
+      ...profileData,
+      photoURL: profileData.photoURL
+        ? profileData.photoURL
+        : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+    };
     const commentRef = query(
       collection(
         db,
@@ -89,6 +101,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     } else {
       return {
         props: {
+          profile,
           expired,
           uid,
           post: withComment,
@@ -99,6 +112,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     console.log("SSR Error " + error);
     return {
       props: {
+        profile: null,
         expired: true,
         uid: "",
         post: {},
@@ -108,10 +122,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 };
 export default function Page(props: {
   expired: boolean;
+  profile: account["profile"];
   uid: string;
   post: PostType;
 }) {
-  const { expired, uid, post } = props;
+  const { profile, expired, uid, post } = props;
   const router = useRouter();
   const [visibility, setVisibility] = useState(post?.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
@@ -296,7 +311,11 @@ export default function Page(props: {
         )}
       </BackHeader>
       <div
-        style={{ marginBottom: canEdit ? "65px" : "87px" }}
+        style={{
+          scrollPadding: "5rem",
+          scrollMargin: "5rem",
+          marginBottom: canEdit ? "65px" : "130px",
+        }}
         className={s.container}
       >
         <AuthorInfo navigateToProfile={navigateToProfile} post={post} />
@@ -343,6 +362,7 @@ export default function Page(props: {
           <>
             <Comment post={post} uid={uid} comments={post.comments} />
             <CommentInput
+              profile={profile}
               post={post}
               uid={uid!}
               authorId={post.authorId?.toString() ?? null}

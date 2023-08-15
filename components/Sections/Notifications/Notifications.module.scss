@@ -2,7 +2,7 @@
     min-height: calc(100dvh - 140px);
     overflow: hidden;
     background-color: white;
-    .content {
+    ul {
         // all: unset;
         padding: 0;
         margin: 0;
@@ -61,11 +61,25 @@
                 border: 0;
                 background-color: rgb(221, 221, 221);
             }
-            .date {
+            .content {
+                margin: 0;
+            }
+            .date,
+            .dateDesktop {
                 color: dimgray;
                 font-size: 16px;
                 margin: 0;
                 // margin-top: 10px;
+            }
+            @media only screen and (max-width: 600px) {
+                .dateDesktop {
+                    display: none;
+                }
+            }
+            @media only screen and (min-width: 600px) {
+                .date {
+                    display: none;
+                }
             }
         }
     }

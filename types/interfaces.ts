@@ -19,6 +19,7 @@ export type NotiTypes = {
   message: string;
   userName: string;
   url: string;
+  content?: string;
   id?: string | number;
   type: notiContentTypes;
   createdAt:

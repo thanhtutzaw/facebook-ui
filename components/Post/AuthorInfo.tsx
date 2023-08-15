@@ -1,25 +1,16 @@
 import {
   faEarth,
   faLock,
-  faTrash,
   faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  DocumentData,
-  DocumentReference,
-  Timestamp,
-  deleteDoc,
-  increment,
-  writeBatch,
-} from "firebase/firestore";
+import { DocumentData, DocumentReference, Timestamp } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { MouseEventHandler, ReactNode, useState } from "react";
+import { CSSProperties, MouseEventHandler, ReactNode } from "react";
 import { Comment, Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
-import { db } from "../../lib/firebase";
-import { deleteComment } from "../../lib/firestore/comment";
+import Action from "../Comment/Action";
 export default function AuthorInfo(props: {
   navigateToProfile?: MouseEventHandler;
   post?: Post;
@@ -27,9 +18,11 @@ export default function AuthorInfo(props: {
   commentRef?: DocumentReference<DocumentData>;
   postRef?: DocumentReference<DocumentData>;
   comment?: Comment;
+  style?: CSSProperties;
   children?: ReactNode;
 }) {
   const {
+    style,
     postRef,
     commentRef,
     isAdmin,
@@ -38,7 +31,6 @@ export default function AuthorInfo(props: {
     navigateToProfile,
     post,
   } = props;
-  const [deleteLoading, setDeleteLoading] = useState(false);
   const router = useRouter();
   if (post) {
     const { author, authorId, createdAt, visibility } = post;
@@ -96,7 +88,7 @@ export default function AuthorInfo(props: {
   const { author, createdAt, authorId } = comment!;
   const profile = author as account["profile"];
   return (
-    <div className={styles.header}>
+    <div style={style} className={styles.header}>
       <Author
         authorId={authorId}
         createdAt={createdAt}
@@ -108,29 +100,7 @@ export default function AuthorInfo(props: {
       >
         {children}
       </Author>
-      {isAdmin && (
-        <button
-          onClick={async () => {
-            setDeleteLoading(true);
-            try {
-              if (!commentRef || !postRef)
-                throw new Error("CommentRef and PostRef are required !");
-
-              await deleteComment(commentRef, postRef);
-              setDeleteLoading(false);
-              router.push(router.asPath);
-            } catch (error: any) {
-              console.error(error);
-              alert(error.message);
-              setDeleteLoading(false);
-            }
-          }}
-          aria-label="Delete Comment"
-          disabled={deleteLoading}
-        >
-          <FontAwesomeIcon icon={faTrash} />
-        </button>
-      )}
+      {isAdmin && <Action postRef={postRef!} commentRef={commentRef!} />}
     </div>
   );
 }
@@ -139,7 +109,7 @@ function Author(props: {
   navigateToProfile: any;
   profile: account["profile"];
   authorId: any;
-  post?: any;
+  post?: Post;
   createdAt: any;
   comment: Comment;
   children?: ReactNode;
@@ -164,7 +134,7 @@ function Author(props: {
         className={styles.profile}
         alt={`${profile?.firstName ?? "Unknown"} ${
           profile?.lastName ?? "User"
-        }}`}
+        }`}
         width={200}
         height={200}
         style={{
@@ -193,7 +163,7 @@ function Author(props: {
             }}
             onClick={navigateToProfile}
           >
-            {profile?.firstName ?? post?.id ?? comment?.authorId}{" "}
+            {profile?.firstName ?? post?.authorId ?? comment?.authorId}{" "}
             {profile?.lastName ?? ""}
           </span>
           {post?.sharePost?.id && post && <>&nbsp; shared a Post</>}

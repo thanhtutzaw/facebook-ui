@@ -2,7 +2,7 @@ import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useContext } from "react";
+import { useContext, useRef} from "react";
 import { AppContext } from "../../../context/AppContext";
 import { PageContext, PageProps } from "../../../context/PageContext";
 import styles from "../../../styles/Home.module.scss";
@@ -10,55 +10,42 @@ import { Props } from "../../../types/interfaces";
 import Newfeed from "./Newfeed";
 import Story from "./Story/Story";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
-//   tabIndex: number;
 // };
 export default function Home(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const router = useRouter();
-  const {
-    fetchInfiniteData,
-    profile,
-    postEnd,
-    getMorePosts,
-    active,
-    email,
-    headerContainerRef,
-  } = useContext(AppContext) as Props;
-  const { shareAction, setuploadButtonClicked } = useContext(
-    PageContext
-  ) as PageProps;
+  const { profile, postEnd, getMorePosts, active, email, headerContainerRef } =
+    useContext(AppContext) as Props;
+  const { setuploadButtonClicked } = useContext(PageContext) as PageProps;
+  const previousScrollRef = useRef(0);
   return (
     <div
-      // style={{ overflow: shareAction ? "hidden" : "initial" }}
       id="/"
       className={styles.home}
       onScroll={async (e) => {
-        // const home = document.getElementById("/");
-
-        // await fetchInfiniteData?.(e, postEnd);
+        const currentScroll = e.currentTarget.scrollTop;
         if (
-          window.innerHeight + e.currentTarget.scrollTop + 1 >=
+          window.innerHeight + currentScroll + 1 >=
             e.currentTarget.scrollHeight &&
           !postEnd
         ) {
           getMorePosts?.();
         }
-        // console.log(e.currentTarget.clientHeight);
-        // const nav = document.getElementsByTagName("nav")[0];
-
         const header = headerContainerRef?.current;
         if (!header) return;
-        // if (e.currentTarget.scrollTop >= 39) {
-        // }
-        // nav.style.position = "sticky";
         if (active !== "/") return;
-        if (e.currentTarget.scrollTop >= 60) {
-          // header.style.transform = "translateY(-60px)";
-          // header.style.height = "60px";
-        } else {
-          // home.style.paddingTop = "0px";
-          // header.style.transform = "translateY(0px)";
-          // header.style.height = "120px";
+        console.log(currentScroll);
+        const previousScroll = previousScrollRef.current;
+        const scrollingDown = previousScroll < currentScroll;
+        if (currentScroll >= 60) {
+          previousScrollRef.current = currentScroll;
+          if (scrollingDown) {
+            header.style.transform = "translateY(-60px)";
+            header.style.height = "60px";
+          } else if (previousScroll > currentScroll + 25) {
+            header.style.transform = "translateY(0px)";
+            header.style.height = "120px";
+          }
         }
       }}
     >

@@ -1,7 +1,7 @@
 import { User } from "firebase/auth";
 import { useContext, useEffect, useRef, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { Post as PostType } from "../../types/interfaces";
+import { Post as PostType, account } from "../../types/interfaces";
 import Content from "./Content";
 import { Footer } from "./Footer";
 import styles from "./index.module.scss";
@@ -14,7 +14,7 @@ interface PostProps {
   selectMode?: boolean;
   post: PostType;
   tabIndex?: number;
-  profile?: any;
+  profile?: account["profile"];
 }
 export default function Post({
   updatePost,

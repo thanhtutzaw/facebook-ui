@@ -147,13 +147,7 @@ export default function App({
         <link rel="manifest" href="/manifest.json" />
       </Head>
       <PageProvider uid={uid!} active={active} setActive={setActive}>
-        <main
-          style={
-            {
-              // overflow: "hidden",
-            }
-          }
-        >
+        <main style={{ scrollPadding: "5rem", scrollMargin: "5rem" }}>
           <>
             <Component {...pageProps} />
 

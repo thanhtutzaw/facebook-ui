@@ -356,7 +356,8 @@
     display: flex;
     justify-content: space-between;
     &:has(.authorInfo:active) {
-        background-color: rgb(207, 207, 207);
+        // background-color: rgb(207, 207, 207);
+        background-color: #ededed;
     }
     .authorInfo {
         .moreInfo {
