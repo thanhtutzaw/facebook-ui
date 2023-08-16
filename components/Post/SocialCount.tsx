@@ -17,7 +17,7 @@ export function SocialCount(props: { post: Post; likeCount: number }) {
 
       {shareCount || likeCount || commentCount ? (
         <div className={s.socialCount}>
-          {likeCount !== 0 && likeCount && typeof likeCount !== "string" && (
+          {likeCount > 0 && likeCount && typeof likeCount !== "string" && (
             <p
               onClick={(e) => {
                 e.preventDefault();

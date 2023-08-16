@@ -32,6 +32,7 @@ export default function Newfeed(props: NewfeedProps) {
   
   return (
     <div className={styles.postContainer}>
+      {/* {JSON.stringify(posts)} */}
       <PostList
         profile={profile}
         updatePost={updatePost}

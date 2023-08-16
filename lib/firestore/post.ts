@@ -166,6 +166,7 @@ export async function deleteMultiple(uid: string, selctedId: selectedId[]) {
 }
 
 export async function likePost(
+  likeCount: number,
   postRef: DocumentReference<DocumentData>,
   likeRef: DocumentReference<DocumentData>,
   uid: string
@@ -173,11 +174,14 @@ export async function likePost(
   const batch = writeBatch(db);
   batch.set(likeRef, { uid, createdAt: serverTimestamp() });
   batch.update(postRef, {
-    likeCount: increment(1),
+    // likeCount: increment(1),
+    likeCount: likeCount + 1,
+    // likeCount:likeCount
   });
   await batch.commit();
 }
 export async function dislikePost(
+  likeCount: number,
   postRef: DocumentReference<DocumentData>,
   likeRef: DocumentReference<DocumentData>
 ) {
@@ -185,7 +189,9 @@ export async function dislikePost(
 
   batch.delete(likeRef);
   batch.update(postRef, {
-    likeCount: increment(-1),
+    // likeCount: increment(-1),
+    likeCount: likeCount - 1,
+    // likeCount:likeCount
   });
   await batch.commit();
 }

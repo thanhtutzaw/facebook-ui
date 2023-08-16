@@ -121,9 +121,9 @@ export function Footer(
 
             setisLiked((prev) => !prev);
             if (isLiked) {
-              await dislikePost(postRef, likeRef);
+              await dislikePost(likeCount ?? 0, postRef, likeRef);
             } else {
-              await likePost(postRef, likeRef, uid);
+              await likePost(likeCount ?? 0, postRef, likeRef, uid);
               await sendAppNoti(
                 uid,
                 post.authorId,

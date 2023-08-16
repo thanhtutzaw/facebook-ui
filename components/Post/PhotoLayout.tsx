@@ -8,6 +8,8 @@ import { app } from "../../lib/firebase";
 import { Post } from "../../types/interfaces";
 import ImageWithFallback from "../ImageWithFallback";
 import s from "./index.module.scss";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function PhotoLayout(props: {
   margin?: boolean;
@@ -21,7 +23,6 @@ export default function PhotoLayout(props: {
   dummyRef?: RefObject<HTMLDivElement>;
 }) {
   const {
-    margin,
     deleteFile,
     setdeleteFile,
     files,
@@ -54,6 +55,7 @@ export default function PhotoLayout(props: {
   //     // }
   //   };
   // }, [viewRef]);
+  const router = useRouter();
   if (!preview) {
     return (
       <>
@@ -79,6 +81,7 @@ export default function PhotoLayout(props: {
                   <video controls src={URL.createObjectURL(file)} />
                 ) : (
                   <Image
+                    id={`${file.url ? `media-${file.name}` : ""}`}
                     priority
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     width={700}
@@ -147,6 +150,15 @@ export default function PhotoLayout(props: {
           }}
         >
           <ImageWithFallback
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(
+                `${post?.authorId?.toString()}/${post?.id?.toString()}#media-${
+                  media[0].name ?? ""
+                }`
+              );
+            }}
+            // id={`${post?.authorId?.toString()}/${post?.id?.toString()}#media-${media[0].url}`}
             priority
             media={media}
             width={700}
@@ -158,7 +170,8 @@ export default function PhotoLayout(props: {
               // background: media[0].url ? "black" : "rgb(230, 230, 230)",
               objectFit: !media[0].url ? "initial" : "cover",
               // objectFit: "contain",
-              height: "auto",
+              // height: "auto",
+              height: "100%",
             }}
           />
         </div>
@@ -167,6 +180,15 @@ export default function PhotoLayout(props: {
         <div>
           {media[1] && (
             <ImageWithFallback
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(
+                  `${post?.authorId?.toString()}/${post?.id?.toString()}#media-${
+                    media[1].name ?? ""
+                  }`
+                );
+              }}
+              // id={`${post?.authorId}/${post?.id?.toString()}#media-${media[1].url}`}
               priority
               media={media}
               width={700}
@@ -190,6 +212,15 @@ export default function PhotoLayout(props: {
               }}
             >
               <ImageWithFallback
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(
+                    `${post?.authorId?.toString()}/${post?.id?.toString()}#media-${
+                      media[2].name ?? ""
+                    }`
+                  );
+                }}
+                // id={`${post?.authorId}/${post?.id?.toString()}#media-${media[2].url}`}
                 priority
                 media={media}
                 width={700}
@@ -199,7 +230,7 @@ export default function PhotoLayout(props: {
                 alt={media[2].name ?? "Not Found"}
                 style={{ objectFit: "contain", height: "100%" }}
               />
-              {files.length - 3 !== 0 && (
+              {files.length - 3 > 0 && (
                 <h2 className={s.backDrop}>+{files.length - 3}</h2>
               )}
             </div>

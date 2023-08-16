@@ -233,12 +233,13 @@ export default function Content(props: {
         role="textbox"
         contentEditable={false}
       />
-      <PhotoLayout files={post.media} preview />
+      <PhotoLayout post={post} files={post.media} preview />
       <SharePreview selectMode={selectMode} post={post} />
-
+      {/* {JSON.stringify(post.like)} */}
       {(post.like || post.shares) && (
         <SocialCount likeCount={likeCount} post={post} />
       )}
+      {/* {post.likeCount} */}
     </span>
   );
 }

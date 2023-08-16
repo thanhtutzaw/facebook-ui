@@ -36,7 +36,7 @@ export default function Comment(props: {
     );
 
     return (
-      <li className={s.item} id={`${c.id}`}>
+      <li className={s.item} id={`comment-${c.id}`}>
         <AuthorInfo
           postRef={postRef}
           commentRef={commentRef}

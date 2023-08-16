@@ -1,14 +1,15 @@
 import Image, { ImageProps } from "next/image";
-import { useState } from "react";
+import { HTMLAttributes, useState } from "react";
 import { Media } from "../types/interfaces";
 
 const ImageWithFallback = (
   props: {
+    id?: string;
     src: string;
     alt: string;
     // fallbackSrc: string;
     media?: Media[];
-  } & ImageProps
+  } & ImageProps & HTMLAttributes<HTMLImageElement>
 ) => {
   const { media, alt, src, ...rest } = props;
   const [imgSrc, setImgSrc] = useState(src);

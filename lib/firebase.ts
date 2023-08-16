@@ -52,6 +52,13 @@ export async function postToJSON(
       // autherName: user.displayName ?? "Unknown",
       id: doc.id,
       text: data?.text,
+      // liked:
+      //   [
+      //     {
+      //       ...(data.like ?? []),
+      //       createdAt: data.like?.createdAt?.toJSON() || 0,
+      //     },
+      //   ] ?? [],
       createdAt: createdAt?.toJSON() || 0,
     };
   } else {
@@ -62,6 +69,14 @@ export async function postToJSON(
       // autherName: user.displayName ?? "Unknown",
       id: doc.id,
       text: data?.text,
+      // liked:
+      //   [
+      //     {
+      //       ...(data.like ?? []),
+      //       createdAt: data.like?.createdAt?.toJSON() || 0,
+      //     },
+      //   ] ?? [],
+      // liked: [data.like ?? [], data.like?.createdAt?.toJSON() || 0] ?? [],
       createdAt: createdAt?.toJSON() || 0,
       updatedAt: updatedAt?.toJSON() || 0,
     };
@@ -113,13 +128,11 @@ export async function getProfileByUID(id: string) {
 }
 export async function postInfo(p: Post, uid: string) {
   if (p.authorId) {
-    // const likeRef = doc(
-    //   collection(db, `users/${p.authorId}/posts/${p.id}/likes`)
-    // );
+    const likeRef = collection(db, `users/${p.authorId}/posts/${p.id}/likes`);
 
-    // const likeDoc = await getDoc(likeRef);
-    // console.log(likeDoc);
-    // const like = likeDoc.docs.map((doc) => doc.data());
+    const likeDoc = await getDocs(likeRef);
+    console.log(likeDoc);
+    const like = likeDoc.docs.map((doc) => doc.data());
     const shareRef = collection(db, `users/${p.authorId}/posts/${p.id}/shares`);
     const shareDoc = await getDocs(shareRef);
     const shares = shareDoc.docs.map((doc) => doc.data());
@@ -231,6 +244,9 @@ export async function getPostWithMoreInfo(
           return await postInfo(p, uid);
         })
       )) as Post[];
+      // return (await Promise.all(
+      //   postSnap.docs.map(async (doc) => await postToJSON(doc))
+      // )) as Post[];
     } catch (error: any) {
       if (error === AuthErrorCodes.QUOTA_EXCEEDED) {
         console.log(AuthErrorCodes.QUOTA_EXCEEDED);
