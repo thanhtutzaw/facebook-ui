@@ -1,12 +1,10 @@
 import dynamic from "next/dynamic";
 import { MouseEvent, RefObject, useContext, useEffect, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
+import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
 import Home from "../Sections/Home/Home";
 import t from "./Tabs.module.scss";
-import { AppContext } from "../../context/AppContext";
-import { Props } from "../../types/interfaces";
-import { useActive } from "../../hooks/useActiveTab";
 const Friends = dynamic(() => import("../Sections/Friends/Friends"), {
   ssr: false,
 });
@@ -118,12 +116,8 @@ export default function Tabs(props: {
       </div>
 
       <Profile />
-      <div id="notifications">
-        <div className={t.header}>
-          <h2>Notifications</h2>
-        </div>
+      
         <Notifications />
-      </div>
       <div id="menu">
         <div className={t.header}>
           <h2>Menu</h2>

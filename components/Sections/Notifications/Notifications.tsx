@@ -1,9 +1,17 @@
 import React, { useContext, useEffect } from "react";
 import s from "./Notifications.module.scss";
+import t from "../../Tabs/Tabs.module.scss";
 import Spinner from "../../Spinner";
 import { useActive } from "../../../hooks/useActiveTab";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAfter,
+} from "firebase/firestore";
 import { db } from "../../../lib/firebase";
 import { AppContext } from "../../../context/AppContext";
 import { NotiTypes, Props } from "../../../types/interfaces";
@@ -12,20 +20,29 @@ import Image from "next/image";
 import { Timestamp } from "firebase/firestore";
 import { getMessage } from "../../../lib/firestore/notifications";
 import { useRouter } from "next/router";
-import ErrorBoundary from "../../ErrorBoundray";
-
+import useReactQueryInfiniteScroll from "../../../hooks/useReactQueryInfiniteScroll";
+import error from "next/error";
+const LIMIT = 10;
 export default function Notifications() {
   const { active: tab } = useActive();
   const { uid } = useContext(AppContext) as Props;
-  const fetchNoti = async function () {
+  const fetchNoti = async function (pageParam: NotiTypes | null = null) {
     console.log("fetching");
     if (!uid) return;
     let notiQuery = query(
       collection(db, `/users/${uid}/notifications`),
-      orderBy("createdAt", "desc")
+      orderBy("createdAt", "desc"),
+      limit(LIMIT + 1)
     );
+    if (pageParam) {
+      const date = new Timestamp(
+        pageParam.createdAt.seconds,
+        pageParam.createdAt.nanoseconds
+      );
+      notiQuery = query(notiQuery, startAfter(date));
+    }
     const snapShot = await getDocs(notiQuery);
-    return snapShot.docs.map((doc) => {
+    const data = snapShot.docs.map((doc) => {
       const data = doc.data() as NotiTypes;
       return {
         id: doc.id,
@@ -33,37 +50,59 @@ export default function Notifications() {
         ...getMessage(data.type),
       };
     }) as NotiTypes[];
+    const hasMore = data.length > LIMIT;
+    if (hasMore) {
+      data.pop();
+      console.log(data.length);
+    }
+    return { data, hasMore };
   };
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["notifications"],
-    queryFn: async () => await fetchNoti(),
-    enabled: tab === "notifications",
-    keepPreviousData: true,
-  });
+
   const queryClient = useQueryClient();
   const previousQuery = queryClient.getQueryData([
     "notifications",
   ]) as NotiTypes[];
-  useEffect(() => {
-    console.log(data?.length);
-    console.log(previousQuery?.length);
-  }, [data, previousQuery?.length]);
-
+  const { data, hasNextPage, isLoading, fetchNextPage, error } =
+    useReactQueryInfiniteScroll(fetchNoti, tab === "notifications");
+  // useEffect(() => {
+  //   console.log(data?.length);
+  //   console.log(previousQuery?.length);
+  // }, [data, previousQuery?.length]);
+  const noti = data?.pages.flatMap((n) => n?.data ?? []);
   return (
-    <div className={s.container}>
-      {isLoading ? (
-        <Spinner />
-      ) : error ? (
-        <p>Unexpected Error </p>
-      ) : data?.length === 0 ? (
-        <p style={{ textAlign: "center" }}>Empty Notifications</p>
-      ) : (
-        <ul>
-          {data?.map((noti) => (
-            <NotiItem key={noti.id} noti={noti} />
-          ))}
-        </ul>
-      )}
+    <div
+      id="notifications"
+      onScroll={(e) => {
+        if (
+          window.innerHeight + e.currentTarget.scrollTop + 1 >=
+          e.currentTarget.scrollHeight
+        ) {
+          if (hasNextPage) {
+            console.log("fetch more Noti");
+            fetchNextPage();
+          }
+        }
+      }}
+    >
+      <div className={t.header}>
+        <h2>Notifications</h2>
+      </div>
+      <div className={s.container}>
+        {isLoading ? (
+          <Spinner />
+        ) : error ? (
+          <p>Unexpected Error </p>
+        ) : noti?.length === 0 ? (
+          <p style={{ textAlign: "center" }}>Empty Notifications</p>
+        ) : (
+          <ul>
+            {noti?.map((n) => (
+              <NotiItem key={n.id} noti={n} />
+            ))}
+          </ul>
+        )}
+        {hasNextPage && <Spinner style={{ marginBlock: "1rem" }} />}
+      </div>
     </div>
   );
 }

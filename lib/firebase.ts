@@ -128,11 +128,11 @@ export async function getProfileByUID(id: string) {
 }
 export async function postInfo(p: Post, uid: string) {
   if (p.authorId) {
-    const likeRef = collection(db, `users/${p.authorId}/posts/${p.id}/likes`);
+    // const likeRef = collection(db, `users/${p.authorId}/posts/${p.id}/likes`);
 
-    const likeDoc = await getDocs(likeRef);
-    console.log(likeDoc);
-    const like = likeDoc.docs.map((doc) => doc.data());
+    // const likeDoc = await getDocs(likeRef);
+    // console.log(likeDoc);
+    // const like = likeDoc.docs.map((doc) => doc.data());
     const shareRef = collection(db, `users/${p.authorId}/posts/${p.id}/shares`);
     const shareDoc = await getDocs(shareRef);
     const shares = shareDoc.docs.map((doc) => doc.data());

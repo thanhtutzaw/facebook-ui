@@ -118,8 +118,6 @@ export default function Content(props: {
           )}
         </AnimatePresence>
       </header>
-
-      {/* {tab === "profile" && <Spinner />} */}
       {loading ? (
         tab === "profile" && <Spinner />
       ) : error ? (
