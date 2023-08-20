@@ -19,15 +19,6 @@ export default function Signup(props: {
       onClick={(e) => {
         e.stopPropagation();
       }}
-      // onKeyDown={(e) => {
-      //   if (e.code === "Space") {
-      //     // alert("hey");
-      //     if (e.currentTarget.tagName === "Input") {
-      //       e.stopPropagation();
-      //       e.preventDefault();
-      //     }
-      //   }
-      // }}
       onSubmit={handleSubmit}
       key="label2"
       initial={{ opacity: 0, scale: 0.5 }}

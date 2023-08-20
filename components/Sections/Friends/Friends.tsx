@@ -20,46 +20,35 @@ export default function Friend(props: FriendProps) {
 
   const fetchAllUsers = async () => {
     if (!uid) return;
-    // let postQuery = query(
-    //   collection(db, `/users/${uid}/posts`),
-    //   orderBy("createdAt", sortby === "old" ? "asc" : "desc"),
-    //   limit(LIMIT + 1)
-    // );
     const allUsersQuery = query(
       collection(db, `users`),
       where("__name__", "!=", uid)
-      // limit(6)
     );
-    // if (pageParam) {
-    //   const date = new Timestamp(
-    //     pageParam.createdAt.seconds,
-    //     pageParam.createdAt.nanoseconds
-    //   );
-    //   postQuery = query(postQuery, startAfter(date));
-    // }
-    const allFriendsSnap = await getDocs(allUsersQuery);
-    return allFriendsSnap.docs.map((doc) => {
-      return {
-        id: doc.id,
-        author: { ...doc.data().profile },
-      };
-    });
-    // if (!posts) return;
-    // const hasMore = posts.length > LIMIT;
-    // if (hasMore) {
-    //   posts.pop();
-    // }
+    try {
+      const allFriendsSnap = await getDocs(allUsersQuery);
+      return allFriendsSnap.docs.map((doc) => {
+        if (doc.data()) {
+          return {
+            id: doc.id,
+            author: { ...doc.data().profile },
+          };
+        } else {
+          return [];
+        }
+      });
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to fetch users");
+    }
   };
   const { isLoading, error, data } = useQuery({
     queryKey: ["allUsers"],
     queryFn: async () => await fetchAllUsers(),
     enabled: tab === "friends",
-    // keepPreviousData: true,
-    // getNextPageParam: (lastPage) =>
-    //   lastPage?.hasMore
-    //     ? lastPage.posts![lastPage?.posts?.length! - 1]
-    //     : undefined,
+    // placeholderData: [],
   });
+  const friends = data ?? [];
+
   const Requests = [
     { id: 1, author: { firstName: "Aunt May" } },
     { id: 2, author: { firstName: "Peter 2" } },
@@ -94,14 +83,13 @@ export default function Friend(props: FriendProps) {
         <h2 className={s.header}>
           <p>People you may know</p>
         </h2>
-        {/* {JSON.stringify(data?.data)} */}
         {isLoading ? (
           <Spinner />
         ) : error ? (
           <p className="error">Unexpected Error Occured !</p>
         ) : (
           <>
-            {data?.map((f: any) => (
+            {friends?.map((f: any) => (
               <AddSuggestFriend key={f.id} f={f} tabIndex={tabIndex} />
             ))}
           </>

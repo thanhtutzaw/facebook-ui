@@ -1,10 +1,6 @@
-import React, { useContext, useEffect } from "react";
-import s from "./Notifications.module.scss";
-import t from "../../Tabs/Tabs.module.scss";
-import Spinner from "../../Spinner";
-import { useActive } from "../../../hooks/useActiveTab";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import {
+  Timestamp,
   collection,
   getDocs,
   limit,
@@ -12,22 +8,25 @@ import {
   query,
   startAfter,
 } from "firebase/firestore";
-import { db } from "../../../lib/firebase";
-import { AppContext } from "../../../context/AppContext";
-import { NotiTypes, Props } from "../../../types/interfaces";
-import Link from "next/link";
 import Image from "next/image";
-import { Timestamp } from "firebase/firestore";
-import { getMessage } from "../../../lib/firestore/notifications";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import useReactQueryInfiniteScroll from "../../../hooks/useReactQueryInfiniteScroll";
+import { useContext, useEffect } from "react";
+import { AppContext } from "../../../context/AppContext";
+import { useActive } from "../../../hooks/useActiveTab";
+import { db } from "../../../lib/firebase";
+import { getMessage } from "../../../lib/firestore/notifications";
+import { NotiTypes, Props } from "../../../types/interfaces";
+import Spinner from "../../Spinner";
+import t from "../../Tabs/Tabs.module.scss";
+import s from "./Notifications.module.scss";
 import error from "next/error";
 const LIMIT = 10;
 export default function Notifications() {
   const { active: tab } = useActive();
   const { uid } = useContext(AppContext) as Props;
   const fetchNoti = async function (pageParam: NotiTypes | null = null) {
-    console.log("fetching");
+    console.log("fetching noti");
     if (!uid) return;
     let notiQuery = query(
       collection(db, `/users/${uid}/notifications`),
@@ -42,7 +41,7 @@ export default function Notifications() {
       notiQuery = query(notiQuery, startAfter(date));
     }
     const snapShot = await getDocs(notiQuery);
-    const data = snapShot.docs.map((doc) => {
+    const noti = snapShot.docs.map((doc) => {
       const data = doc.data() as NotiTypes;
       return {
         id: doc.id,
@@ -50,36 +49,38 @@ export default function Notifications() {
         ...getMessage(data.type),
       };
     }) as NotiTypes[];
-    const hasMore = data.length > LIMIT;
+    const hasMore = noti.length > LIMIT;
     if (hasMore) {
-      data.pop();
-      console.log(data.length);
+      noti.pop();
     }
-    return { data, hasMore };
+    return { noti, hasMore };
   };
 
-  const queryClient = useQueryClient();
-  const previousQuery = queryClient.getQueryData([
-    "notifications",
-  ]) as NotiTypes[];
-  const { data, hasNextPage, isLoading, fetchNextPage, error } =
-    useReactQueryInfiniteScroll(fetchNoti, tab === "notifications");
-  // useEffect(() => {
-  //   console.log(data?.length);
-  //   console.log(previousQuery?.length);
-  // }, [data, previousQuery?.length]);
-  const noti = data?.pages.flatMap((n) => n?.data ?? []);
+  const { fetchNextPage, hasNextPage, isLoading, error, data } =
+    useInfiniteQuery({
+      queryKey: ["notifications"],
+      queryFn: async ({ pageParam }) => {
+        // console.log(pageParam);
+        return await fetchNoti(pageParam);
+      },
+      enabled: tab === "notifications",
+      keepPreviousData: true,
+      getNextPageParam: (lastPage) =>
+        lastPage?.hasMore
+          ? lastPage.noti![lastPage?.noti?.length! - 1]
+          : undefined,
+    });
+
+  const noti = data?.pages.flatMap((page) => page?.noti ?? []);
   return (
     <div
       id="notifications"
-      onScroll={(e) => {
-        if (
-          window.innerHeight + e.currentTarget.scrollTop + 1 >=
-          e.currentTarget.scrollHeight
-        ) {
+      onScroll={async (e) => {
+        const target = e.currentTarget as HTMLElement;
+        if (window.innerHeight + target.scrollTop + 1 >= target.scrollHeight) {
           if (hasNextPage) {
-            console.log("fetch more Noti");
-            fetchNextPage();
+            console.log("fetch more data");
+            await fetchNextPage();
           }
         }
       }}
@@ -89,7 +90,7 @@ export default function Notifications() {
       </div>
       <div className={s.container}>
         {isLoading ? (
-          <Spinner />
+          <Spinner fullScreen />
         ) : error ? (
           <p>Unexpected Error </p>
         ) : noti?.length === 0 ? (

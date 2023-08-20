@@ -9,10 +9,13 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { CSSProperties, MouseEventHandler, ReactNode } from "react";
 import { Comment, Post, account } from "../../types/interfaces";
-import styles from "./index.module.scss";
 import Action from "../Comment/Action";
+import styles from "./index.module.scss";
+type layoutTypes = "row" | "column";
+
 export default function AuthorInfo(props: {
   navigateToProfile?: MouseEventHandler;
+  profile?: account["profile"];
   post?: Post;
   isAdmin?: boolean;
   commentRef?: DocumentReference<DocumentData>;
@@ -20,8 +23,11 @@ export default function AuthorInfo(props: {
   comment?: Comment;
   style?: CSSProperties;
   children?: ReactNode;
+  layout?:layoutTypes;
 }) {
   const {
+    layout,
+    profile,
     style,
     postRef,
     commentRef,
@@ -33,17 +39,15 @@ export default function AuthorInfo(props: {
   } = props;
   const router = useRouter();
   if (post) {
-    const { author, authorId, createdAt, visibility } = post;
+    const { author, createdAt, visibility } = post;
     const profile = author as account["profile"];
     return (
       <div className={styles.header}>
         <Author
           navigateToProfile={navigateToProfile}
           profile={profile}
-          authorId={authorId}
           post={post}
           comment={comment!}
-          createdAt={createdAt}
         >
           <div className={styles.moreInfo}>
             <p className={styles.date} suppressHydrationWarning>
@@ -56,26 +60,17 @@ export default function AuthorInfo(props: {
                 })}
             </p>
             {visibility?.toLowerCase() === "public" && (
-              <span
-                // aria-label="Everyone can see this Post"
-                title="Everyone can see this Post"
-              >
+              <span title="Everyone can see this Post">
                 <FontAwesomeIcon icon={faEarth} />
               </span>
             )}
             {visibility?.toLowerCase() === "friend" && (
-              <span
-                // aria-label="Friends can see this Post"
-                title="Friends can see this Post"
-              >
+              <span title="Friends can see this Post">
                 <FontAwesomeIcon icon={faUserGroup} />
               </span>
             )}
             {visibility?.toLowerCase() === "onlyme" && (
-              <span
-                // aria-label="Only you can see this Post"
-                title="Only you can see this Post"
-              >
+              <span title="Only you can see this Post">
                 <FontAwesomeIcon icon={faLock} />
               </span>
             )}
@@ -85,18 +80,31 @@ export default function AuthorInfo(props: {
       </div>
     );
   }
-  const { author, createdAt, authorId } = comment!;
-  const profile = author as account["profile"];
+  if (comment) {
+    const { author, authorId } = comment;
+    const profile = author as account["profile"];
+    return (
+      <div style={style} className={styles.header}>
+        <Author
+          comment={comment!}
+          navigateToProfile={() => {
+            router.push(`/${authorId.toString()}`);
+          }}
+          profile={profile}
+        >
+          {children}
+        </Author>
+        {isAdmin && <Action postRef={postRef!} commentRef={commentRef!} />}
+      </div>
+    );
+  }
   return (
     <div style={style} className={styles.header}>
       <Author
-        authorId={authorId}
-        createdAt={createdAt}
-        comment={comment!}
-        navigateToProfile={() => {
-          router.push(`/${authorId.toString()}`);
-        }}
+        layout={layout}
         profile={profile}
+        comment={comment!}
+        navigateToProfile={navigateToProfile}
       >
         {children}
       </Author>
@@ -104,22 +112,19 @@ export default function AuthorInfo(props: {
     </div>
   );
 }
-
-function Author(props: {
-  navigateToProfile: any;
-  profile: account["profile"];
-  authorId: any;
+export function Author(props: {
+  navigateToProfile?: MouseEventHandler<HTMLImageElement>;
+  profile?: account["profile"];
   post?: Post;
-  createdAt: any;
+  layout?: layoutTypes;
   comment: Comment;
   children?: ReactNode;
 }) {
   const {
+    layout = "column",
     navigateToProfile,
     profile,
     post,
-    authorId,
-    createdAt,
     comment,
     children,
   } = props;
@@ -128,49 +133,68 @@ function Author(props: {
       style={{ userSelect: comment ? "initial" : "none" }}
       className={styles.authorInfo}
     >
-      <Image
-        onClick={navigateToProfile}
-        priority={false}
-        className={styles.profile}
-        alt={`${profile?.firstName ?? "Unknown"} ${
-          profile?.lastName ?? "User"
-        }`}
-        width={200}
-        height={200}
-        style={{
-          objectFit: "cover",
-        }}
-        src={
-          (profile?.photoURL as string)
-            ? (profile?.photoURL as string)
-            : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-        }
-      />
+      <Avatar navigateToProfile={navigateToProfile} profile={profile} />
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
+          margin: " auto 0",
+          flexDirection: layout,
+          flex: " 1",
+          wordBreak: "break-word"
         }}
       >
         <p
-          style={{ flexWrap: "wrap", userSelect: "none" }}
+          style={{
+            flex: "1",
+            flexWrap: "wrap",
+            userSelect: "none",
+            marginBottom: children ? "2px" : "initial",
+          }}
           className={styles.name}
         >
           <span
             style={{
-              whiteSpace: "pre",
+              // whiteSpace: "pre",
               color: comment ? "rgb(46 46 46)" : "initial",
+              fontSize: !children ? "18px" : "inherit",
+              fontWeight: children ? "500" : "initial",
             }}
             onClick={navigateToProfile}
           >
             {profile?.firstName ?? post?.authorId ?? comment?.authorId}{" "}
             {profile?.lastName ?? ""}
           </span>
-          {post?.sharePost?.id && post && <>&nbsp; shared a Post</>}
+          {post?.sharePost?.id && <>&nbsp; shared a Post</>}
         </p>
-
         {children}
       </div>
     </div>
+  );
+}
+
+export function Avatar({
+  navigateToProfile,
+  profile,
+}: {
+  navigateToProfile?: MouseEventHandler<HTMLImageElement>;
+  profile?: account["profile"];
+}) {
+  return (
+    <Image
+      onClick={navigateToProfile}
+      priority={false}
+      className={styles.profile}
+      alt={`${profile?.firstName ?? "Unknown"} ${profile?.lastName ?? "User"}`}
+      width={200}
+      height={200}
+      style={{
+        objectFit: "cover",
+      }}
+      src={
+        (profile?.photoURL as string)
+          ? (profile?.photoURL as string)
+          : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+      }
+    />
   );
 }

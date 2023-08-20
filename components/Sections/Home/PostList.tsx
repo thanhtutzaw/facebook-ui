@@ -11,7 +11,7 @@ export const PostList = memo(
     selectMode?: boolean;
     posts: PostType[];
     tabIndex?: number;
-    profile?: any;
+    profile: any;
     auth?: User;
     postLoading?: boolean;
     postEnd?: boolean;
@@ -49,7 +49,7 @@ export const PostList = memo(
               profile={profile}
               auth={auth!}
               tabIndex={tabIndex}
-              key={post.id}
+              key={post?.id ?? ""}
               post={post}
             />
           ))}

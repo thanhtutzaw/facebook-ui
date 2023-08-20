@@ -5,13 +5,16 @@ import { db } from "../../lib/firebase";
 import { Comment, Post } from "../../types/interfaces";
 import AuthorInfo from "../Post/AuthorInfo";
 import s from "./index.module.scss";
+import Spinner from "../Spinner";
 
 export default function Comment(props: {
+  commentEnd?: boolean;
+  commentLoading?: boolean;
   uid: string;
   comments: Post["comments"] | [];
   post: Post;
 }) {
-  const { post, comments, uid } = props;
+  const { commentEnd, commentLoading, post, comments, uid } = props;
   const { authorId, id: postId } = post;
   const postRef = doc(db, `users/${authorId}/posts/${postId}`);
   const router = useRouter();
@@ -25,6 +28,13 @@ export default function Comment(props: {
       {comments?.map((c) => (
         <Card client={client} uid={uid} key={c.id} c={c} />
       ))}
+      {/* {commentLoading && !commentEnd && <Spinner style={{ margin: "0" }} />} */}
+
+      {!commentLoading && !commentEnd ? null : commentLoading ? (
+        <Spinner style={{ margin: "0" }} />
+      ) : (
+        <></>
+      )}
     </ul>
   );
   function Card(props: { client: boolean; uid: string; c: Comment }) {

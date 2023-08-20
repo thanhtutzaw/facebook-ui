@@ -23,27 +23,25 @@ import { app } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import "../styles/globals.css";
 import { Props } from "../types/interfaces";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 config.autoAddCss = false;
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
   try {
-    const cookies = nookies.get(context);
-    const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
+    // const cookies = nookies.get(context);
+    // const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
     // console.log(token.email + "in app.tsx");
+    // console.log(token + "in app.tsx");
     let expired = false;
-    // console.log(token.uid + " in app.tsx");
     return {
       props: {
         expired,
-        uid: token.uid,
       },
     };
   } catch (error) {
     console.log("SSR Error (expired in app.tsx) " + error);
     // context.res.writeHead(302, { Location: "/" });
-    // context.res.writeHead(302, { Location: "/login" });
     // context.res.end();
     return {
       props: {
@@ -101,6 +99,7 @@ export default function App({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  // const [token, setToken] = useState(null)
   useEffect(() => {
     const auth = getAuth(app);
     const unsubscribe = onIdTokenChanged(auth, async (user) => {
@@ -130,7 +129,16 @@ export default function App({
   }, []);
 
   const { active, setActive } = useActive();
-
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: Infinity,
+          },
+        },
+      })
+  );
   if (expired) return <Welcome expired={expired} />;
 
   return (
@@ -146,15 +154,14 @@ export default function App({
         <link rel="icon" href="/logo.svg" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <PageProvider uid={uid!} active={active} setActive={setActive}>
-        <main style={{ scrollPadding: "5rem", scrollMargin: "5rem" }}>
-          <>
+      <QueryClientProvider client={queryClient}>
+        <PageProvider uid={uid!} active={active} setActive={setActive}>
+          <main style={{ scrollPadding: "5rem", scrollMargin: "5rem" }}>
             <Component {...pageProps} />
-
             {authUser?.uid && <ImageLargeView />}
-          </>
-        </main>
-      </PageProvider>
+          </main>
+        </PageProvider>
+      </QueryClientProvider>
     </>
   );
 }

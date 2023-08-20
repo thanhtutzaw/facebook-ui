@@ -1,7 +1,14 @@
+import { DocumentData } from "@google-cloud/firestore";
 import { getAuth } from "firebase/auth";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import {
+  DocumentReference,
+  deleteDoc,
+  doc,
+  getDoc,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
 import { app, db } from "../../lib/firebase";
-import { SavedPost } from "../../types/interfaces";
 
 export async function addSavedPost(authorId: string, postId: string) {
   const uid = getAuth(app).currentUser?.uid;
@@ -15,6 +22,7 @@ export async function addSavedPost(authorId: string, postId: string) {
   const data = {
     authorId,
     postId,
+    createdAt: serverTimestamp(),
   };
   try {
     const authorSnapShot = await getDoc(authorRef);
@@ -29,19 +37,22 @@ export async function addSavedPost(authorId: string, postId: string) {
     }
   } catch (error: any) {
     alert("Adding Saved Post Failed !" + error.message);
+    throw Error;
   }
 }
-export async function unSavePost(newData: SavedPost[]) {
+export async function unSavePost(ref: DocumentReference<DocumentData>) {
   const uid = getAuth(app).currentUser?.uid;
   if (!uid) {
     alert("Auth User Required.");
     return;
   }
   try {
-    await updateDoc(doc(db, `/users/${uid}`), {
-      savedPosts: newData,
-    });
+    await deleteDoc(ref);
+    // await updateDoc(doc(db, `/users/${uid}`), {
+    //   savedPosts: newData,
+    // });
   } catch (error: any) {
     alert("Unsave Post Failed !" + error.message);
+    throw Error;
   }
 }

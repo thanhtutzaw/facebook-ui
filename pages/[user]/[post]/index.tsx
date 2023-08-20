@@ -3,17 +3,20 @@ import { getAuth } from "firebase/auth";
 import {
   DocumentData,
   DocumentSnapshot,
+  Timestamp,
   collection,
   doc,
   getDoc,
   getDocs,
+  limit,
   orderBy,
   query,
+  startAfter,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Comment from "../../../components/Comment";
 import CommentInput from "../../../components/Comment/Input";
 import BackHeader from "../../../components/Header/BackHeader";
@@ -25,6 +28,7 @@ import PhotoLayout from "../../../components/Post/PhotoLayout";
 import { SharePreview } from "../../../components/Post/SharePreview";
 import { SocialCount } from "../../../components/Post/SocialCount";
 import { Welcome } from "../../../components/Welcome";
+import useInfiniteScroll from "../../../hooks/useInfiniteScroll";
 import {
   app,
   commentToJSON,
@@ -43,6 +47,7 @@ import {
   Props,
   account,
 } from "../../../types/interfaces";
+export const Comment_LIMIT = 10;
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -74,7 +79,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         db,
         `users/${newPost?.authorId}/posts/${newPost?.id}/comments`
       ),
-      orderBy("createdAt", "desc")
+      orderBy("createdAt", "desc"),
+      limit(Comment_LIMIT + 1)
     );
     const commentDoc = await getDocs(commentRef);
     const commentJSON = await Promise.all(
@@ -281,15 +287,53 @@ export default function Page(props: {
       alert(error.message);
     }
   };
-
-  // const [likeCount, setlikeCount] = useState(post.like?.length);
   const [likeCount, setlikeCount] = useState(
     parseInt(post.likeCount?.toString()!)
   );
-  if (expired) return <Welcome expired={expired} />;
+  const [limitedComments, setlimitedComments] = useState(post.comments);
+  const [commentEnd, setcommentEnd] = useState(false);
+  const [commentLoading, setcommentLoading] = useState(false);
+  const fetchMoreComment = useCallback(
+    async function () {
+      setcommentLoading(true);
+      const comment = limitedComments?.[limitedComments?.length - 1]!;
+      const date = new Timestamp(
+        comment.createdAt.seconds,
+        comment.createdAt.nanoseconds
+      );
+      const commentRef = query(
+        collection(db, `users/${post?.authorId}/posts/${post?.id}/comments`),
+        orderBy("createdAt", "desc"),
+        startAfter(date),
+        limit(Comment_LIMIT)
+      );
+      const commentDoc = await getDocs(commentRef);
+      const commentJSON = await Promise.all(
+        commentDoc.docs.map(async (doc) => await commentToJSON(doc))
+      );
+      const newComment = await Promise.all(
+        commentJSON.map(async (c) => {
+          if (c.authorId) {
+            const author = await getProfileByUID(c.authorId?.toString());
+            return { ...c, author };
+          } else {
+            return { ...c, author: null };
+          }
+        })
+      );
+      setlimitedComments(limitedComments.concat(newComment));
+      setcommentLoading(false);
 
+      if (newComment?.length! < Comment_LIMIT) {
+        setcommentEnd(true);
+      }
+    },
+    [limitedComments, post?.authorId, post?.id]
+  );
+  const { scrollRef } = useInfiniteScroll(fetchMoreComment, commentEnd, true);
+  if (expired) return <Welcome expired={expired} />;
   return (
-    <div className="user">
+    <div className="user" ref={scrollRef}>
       <BackHeader
         onClick={() => {
           InputRef.current?.focus();
@@ -312,8 +356,8 @@ export default function Page(props: {
       </BackHeader>
       <div
         style={{
-          scrollPadding: "5rem",
-          scrollMargin: "5rem",
+          // scrollPadding: "5rem",
+          // scrollMargin: "5rem",
           marginBottom: canEdit ? "65px" : "130px",
         }}
         className={s.container}
@@ -321,9 +365,9 @@ export default function Page(props: {
         <AuthorInfo navigateToProfile={navigateToProfile} post={post} />
         <Input
           style={{
-            paddingTop: "0",
-            marginBlock: ".5rem",
-            marginBottom: text === "" ? "1rem" : "1rem",
+            // paddingTop: "0",
+            // marginBlock: ".5rem",
+            marginBottom: text === "" ? "0" : ".8rem",
             cursor: canEdit ? "initial" : "default",
           }}
           role="textbox"
@@ -360,7 +404,13 @@ export default function Page(props: {
         )}
         {!canEdit && (
           <>
-            <Comment post={post} uid={uid} comments={post.comments} />
+            <Comment
+              commentLoading={commentLoading}
+              commentEnd={commentEnd}
+              post={post}
+              uid={uid}
+              comments={limitedComments}
+            />
             <CommentInput
               profile={profile}
               post={post}

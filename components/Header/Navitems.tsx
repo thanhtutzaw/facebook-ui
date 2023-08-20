@@ -1,8 +1,5 @@
 import { useRouter } from "next/router";
-import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
-import { AppContext } from "../../context/AppContext";
-import { useContext, useEffect } from "react";
 import { Props } from "../../types/interfaces";
 
 export default function Navitems(props: {

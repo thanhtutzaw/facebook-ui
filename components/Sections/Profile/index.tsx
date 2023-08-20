@@ -180,6 +180,7 @@ export default function Profile() {
         </ProfileInfo>
 
         <Content
+          profile={profile!}
           error={error}
           infoRef={infoRef}
           isSticky={isSticky}

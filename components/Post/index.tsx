@@ -39,41 +39,23 @@ export default function Post({
     }
   }, [selectMode, checked, setshowAction, showAction]);
 
-  // useEffect(() => {
-  //   if (tab !== "profile" || "") {
-  //     setshowAction?.("");
-  //   }
-  // }, [setshowAction, tab]);
   const [client, setclient] = useState(false);
   useEffect(() => {
     setclient(true);
   }, []);
   const [showmore, setShowmore] = useState(false);
-  // const [likeCount, setlikeCount] = useState(post.like?.length);
   const [likeCount, setlikeCount] = useState(
-    parseInt(post.likeCount?.toString()!)
+    parseInt(post?.likeCount?.toString()! ?? "")
   );
-
+  if (!post) return <></>;
+  const postClass = `${styles.item} ${checked ? styles.checked : ""} ${
+    selectMode ? styles.selected : ""
+  } ${shareMode ? styles.share : ""}`;
   return (
-    <div
-      className={`${styles.post}`}
-      style={{
-        transition: "all 0.3s ease-in-out",
-        borderRadius: checked ? "50px" : "0",
-        border: checked ? "10px solid #0070f312" : "0px solid #0070f312",
-        userSelect: selectMode ? "none" : "initial",
-        cursor: selectMode || shareMode ? "pointer" : "initial",
-        overflow: selectMode ? "hidden" : "initial",
-
-        outline: shareMode ? "1px solid #e3e3e3" : "initial",
-        pointerEvents: shareMode ? "none" : "initial",
-        // scale: shareMode ? ".9" : "initial",
-        // margin: shareMode ? "0 auto" : "initial",
-      }}
-    >
+    <div className={postClass}>
       <Content
         updatePost={updatePost!}
-        likeCount={likeCount!}
+        likeCount={likeCount ?? 0}
         preventNavigate={preventNavigate}
         auth={auth!}
         selectMode={selectMode!}
@@ -88,7 +70,6 @@ export default function Post({
         shareMode={shareMode}
         tabIndex={tabIndex}
       />
-
       {!shareMode && (
         <Footer
           profile={profile}

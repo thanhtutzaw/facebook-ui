@@ -1,4 +1,3 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import {
@@ -121,8 +120,6 @@ export default function Home({
   const indicatorRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const auth = getAuth(app);
-  //firebasestorage.googleapis.com/v0/b/facebook-37f93.appspot.com/o/images%2FScreenshot%20(164).png?alt=media&token=d28d660f-5725-4fe5-a1b2-44f28bfd2348
-  //firebasestorage.googleapis.com/v0/b/facebook-37f93.appspot.com/o/images%2FScreenshot%20(164).png?alt=media&token=af725a0c-9d74-43d7-b1d6-e4e67b19270e
   useEffect(() => {
     const auth = getAuth(app);
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -136,20 +133,14 @@ export default function Home({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            staleTime: Infinity,
-          },
-        },
-      })
-  );
+  
   const [limitedPosts, setlimitedPosts] = useState(posts ?? []);
-  useEffect(() => {
-    setlimitedPosts(posts!);
-  }, [posts]);
+  // useEffect(() => {
+  //   // const lastestPost = limitedPosts.concat(posts!);
+  //   if (posts?.length ?? 0 > 0) return;
+  //   setlimitedPosts(posts!);
+  //   // setlimitedPosts([{ ...limitedPosts },  posts!]);
+  // }, [posts]);
 
   useEffect(() => {
     let unsubscribe: Unsubscribe;
@@ -157,7 +148,7 @@ export default function Home({
       collectionGroup(db, `posts`),
       where("visibility", "in", ["Friend", "Public"]),
       orderBy("createdAt", "desc"),
-      limit(LIMIT)
+      limit(limitedPosts.length)
     );
     unsubscribe = onSnapshot(postQuery, async (snapshot) => {
       const posts =
@@ -166,11 +157,12 @@ export default function Home({
       //   posts.map(async (p) => await postInfo(p, uid!))
       // )) as Post[];
       setlimitedPosts(posts);
+      console.log("updated posts");
     });
     return () => {
       unsubscribe();
     };
-  }, [uid]);
+  }, [limitedPosts.length, uid]);
   useEffect(() => {
     if (expired) return;
     if (!uid) {
@@ -196,26 +188,16 @@ export default function Home({
       email={email}
       account={account}
     >
-      <QueryClientProvider client={queryClient}>
+      
         <Header
           tabIndex={active === "/" ? 0 : -1}
           indicatorRef={indicatorRef}
         />
         <Tabs indicatorRef={indicatorRef} />
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
+        {/* <ReactQueryDevtools initialIsOpen={true} /> */}
+      {/* </QueryClientProvider> */}
     </AppProvider>
   ) : (
-    <div
-      style={{
-        display: "grid",
-        alignContent: "center",
-        justifyItems: "center",
-        textAlign: "center",
-        height: "100dvh",
-      }}
-    >
-      <Spinner style={{ margin: "0" }} />
-    </div>
+    <Spinner fullScreen style={{ margin: "0" }} />
   );
 }

@@ -1,21 +1,20 @@
 import {
   DocumentData,
   DocumentReference,
-  QuerySnapshot,
   Timestamp,
   collection,
   deleteDoc,
   doc,
   getDoc,
-  increment,
+  getDocs,
   serverTimestamp,
   setDoc,
   updateDoc,
   writeBatch,
 } from "firebase/firestore";
 import { selectedId } from "../../context/PageContext";
-import { Post } from "../../types/interfaces";
-import { db } from "../firebase";
+import { Post, likes } from "../../types/interfaces";
+import { db, getProfileByUID } from "../firebase";
 export async function addPost(
   uid: string,
   visibility: string,
@@ -179,6 +178,28 @@ export async function likePost(
     // likeCount:likeCount
   });
   await batch.commit();
+}
+export async function fetchLikedUsers(p: Post) {
+  const likeRef = collection(db, `users/${p.authorId}/posts/${p.id}/likes`);
+  try {
+    const likeDoc = await getDocs(likeRef);
+    const likes = likeDoc.docs.map((doc) => doc.data()) as likes;
+    // const withAuthor = {...likes , {author:await getProfileByUID(likes.uid)}}
+    const withAuthor = await Promise.all(
+      likes.map(async (l) => {
+        if (l.uid) {
+          const author = await getProfileByUID(l.uid?.toString());
+          return { ...l, author };
+        } else {
+          return { ...l, author: null };
+        }
+      })
+    );
+    return withAuthor;
+  } catch (error) {
+    console.log(error);
+    throw Error;
+  }
 }
 export async function dislikePost(
   likeCount: number,

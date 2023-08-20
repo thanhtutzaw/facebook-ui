@@ -56,10 +56,6 @@ export default function Info(props: {
           Back
         </button>
         <button
-          // onClick={(e) => {
-          //   e.preventDefault();
-          //   alert("hey");
-          // }}
           tabIndex={0}
           type="submit"
           className={styles.nextForm}

@@ -288,11 +288,6 @@ export default function Login({ uid }: { uid: string }) {
               // console.log(e.currentTarget.tagName);
               if (e.code === "Space" || e.key === "Enter") {
                 e.currentTarget.click();
-                // alert("hey");
-                // if (e.currentTarget.tagName === "Input") {
-                //   e.stopPropagation();
-                //   e.preventDefault();
-                // }
               }
             }}
             onClick={(e) => {

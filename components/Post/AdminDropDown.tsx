@@ -1,17 +1,14 @@
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
-import router from "next/router";
-import { app } from "../../lib/firebase";
-import { deleteMultiple, deletePost } from "../../lib/firestore/post";
-import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import styles from "./index.module.scss";
-import { CopyLink } from "./DropDown";
+import router from "next/router";
+import { useState } from "react";
+import { app } from "../../lib/firebase";
+import { deletePost } from "../../lib/firestore/post";
 import { Post } from "../../types/interfaces";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import error from "next/error";
-import { auth } from "firebase-admin";
+import { CopyLink } from "./DropDown";
+import styles from "./index.module.scss";
 
 export default function AdminDropDown(props: {
   updatePost: Function;
@@ -24,7 +21,6 @@ export default function AdminDropDown(props: {
   const { updatePost, post, setshowAction, authorId, id, showAction } = props;
   const auth = getAuth(app);
   const [loading, setLoading] = useState(false);
-  // const queryClient = useQueryClient();
 
   // const deletePostMutation = useMutation({
   //   mutationFn: async (data: any) => await deletePost(data),

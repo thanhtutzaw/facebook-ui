@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { app, db } from "../../lib/firebase";
-import { addSavedPost } from "../../lib/firestore/savedPost";
+import { addSavedPost, unSavePost } from "../../lib/firestore/savedPost";
 import styles from "./index.module.scss";
 import { deleteDoc, doc } from "firebase/firestore";
 import { useRouter } from "next/router";
@@ -54,8 +54,6 @@ export default function DropDown(props: {
             onClick={async (e) => {
               e.preventDefault();
               e.stopPropagation();
-              // savedPost.push({ authorId: authorId, postId: id });
-
               if (!saveToggle) {
                 setLoading(true);
                 setsaveToggle(true);
@@ -70,11 +68,9 @@ export default function DropDown(props: {
                 }
               } else {
                 const savedByUserRef = doc(db, `users/${uid}/savedPost/${id}`);
-                await deleteDoc(savedByUserRef);
-                // alert("Deleted Saved Post");
+                await unSavePost(savedByUserRef);
                 setsaveToggle(false);
                 if (router.pathname !== "/") {
-                  alert("hey");
                   router.replace(router.asPath);
                 }
               }

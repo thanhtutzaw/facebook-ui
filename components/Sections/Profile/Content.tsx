@@ -10,6 +10,7 @@ import Spinner from "../../Spinner";
 import { AppContext } from "../../../context/AppContext";
 
 export default function Content(props: {
+  profile:any;
   hasNextPage?: boolean;
   error?: any;
   infoRef: RefObject<HTMLHeadElement>;
@@ -26,6 +27,7 @@ export default function Content(props: {
   sortedPost: Post[];
 }) {
   const {
+    profile,
     hasNextPage,
     tab,
     error,
@@ -121,12 +123,11 @@ export default function Content(props: {
       {loading ? (
         tab === "profile" && <Spinner />
       ) : error ? (
-        <p className="error">
-          Unexpected Error Occured ! {error.message}
-        </p>
+        <p className="error">Unexpected Error Occured ! {error.message}</p>
       ) : (
         <>
           <PostList
+            profile={profile!}
             updatePost={updatePost}
             preventNavigate={true}
             selectMode={selectMode!}

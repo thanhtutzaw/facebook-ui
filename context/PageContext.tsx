@@ -1,6 +1,8 @@
 import { useRef, useState, ReactNode, RefObject, useEffect } from "react";
 import { createContext } from "react";
 import { useActive } from "../hooks/useActiveTab";
+import { useQueryClient, QueryClient } from "@tanstack/react-query";
+
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
 export type selectedId = {
@@ -12,8 +14,12 @@ export type selectedId = {
   } | null;
 };
 export interface PageProps {
+  queryClient?: QueryClient;
+  postError?: string;
   dropdownRef?: RefObject<HTMLDivElement>;
+  // togglereactionList?: boolean;
   uploadButtonClicked?: boolean;
+  // settogglereactionList?: Function;
   setuploadButtonClicked?: Function;
   viewRef?: RefObject<HTMLDialogElement>;
   fileRef?: RefObject<HTMLInputElement>;
@@ -35,7 +41,9 @@ export interface PageProps {
 export const PageContext = createContext<PageProps | null>(null);
 
 export function PageProvider(props: PageProps) {
-  const { uid , active, setActive} = props;
+  const { uid, active, setActive } = props;
+  const queryClient = useQueryClient();
+  console.log("page level" + uid);
   const [showAction, setshowAction] = useState("");
   const [shareAction, setshareAction] = useState("");
   const [selectedId, setSelectedId] = useState([]);
@@ -59,6 +67,7 @@ export function PageProvider(props: PageProps) {
   return (
     <PageContext.Provider
       value={{
+        queryClient,
         dropdownRef,
         preventClick,
         setpreventClick,

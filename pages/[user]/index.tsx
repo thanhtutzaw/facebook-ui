@@ -121,7 +121,7 @@ export default function UserProfile({
   const [limitedPosts, setlimitedPosts] = useState(myPost);
   const [postLoading, setpostLoading] = useState(false);
   const [postEnd, setPostEnd] = useState(false);
-  const getMorePosts = useCallback(
+  const fetchMorePosts = useCallback(
     async function () {
       setpostLoading(true);
       const post = limitedPosts?.[limitedPosts?.length - 1]!;
@@ -146,7 +146,7 @@ export default function UserProfile({
     },
     [limitedPosts, router.query.user, token?.uid]
   );
-  const { scrollRef } = useInfiniteScroll(getMorePosts, postEnd, true);
+  const { scrollRef } = useInfiniteScroll(fetchMorePosts, postEnd, true);
   return (
     <div ref={scrollRef} className="user">
       <BackHeader

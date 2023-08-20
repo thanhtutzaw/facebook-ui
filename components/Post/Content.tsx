@@ -88,7 +88,6 @@ export default function Content(props: {
     });
   }, []);
   const isAdmin = authUser?.uid === authorId;
-
   return (
     <span
       style={{
@@ -179,7 +178,6 @@ export default function Content(props: {
           </>
         )}
       </AuthorInfo>
-      {/* {JSON.stringify(post, null, 4)} */}
       {!shareMode && (
         <>
           {isAdmin ? (

@@ -33,29 +33,29 @@ export function Footer(
   } & StyleHTMLAttributes<HTMLDivElement>
 ) {
   const { profile, likeCount, setlikeCount, post, tabIndex, ...rests } = props;
-  const { id, author, authorId } = post;
-  const authorProfile = author as account["profile"];
-  const authorName = `${authorProfile.firstName} ${authorProfile.lastName}`;
-  const { dropdownRef, shareAction, setshareAction } = useContext(
-    PageContext
-  ) as PageProps;
   const router = useRouter();
   const commentRef = useRef<HTMLDivElement>(null);
-  const auth = getAuth(app);
   const [savedVisibility, setsavedVisibility] = useState("");
+  const [reactionAction, setreactionAction] = useState("");
+  const { queryClient } = useContext(PageContext) as PageProps;
   useEffect(() => {
     setsavedVisibility(localStorage.getItem("visibility")!);
   }, []);
-  // const [reaction, setReaction] = useState({
-  //   like: ["1a", "2d"],
-  // });
-  const [reactionAction, setreactionAction] = useState("");
+  const [isLiked, setisLiked] = useState(post.isLiked);
+
+  const { dropdownRef, shareAction, setshareAction } = useContext(
+    PageContext
+  ) as PageProps;
+  const { id, author, authorId } = post;
+  const authorProfile = author as account["profile"];
+  const authorName = `${authorProfile.firstName} ${authorProfile.lastName}`;
+
+  const auth = getAuth(app);
   const postRef = doc(db, `users/${authorId}/posts/${id}`);
   const likeRef = doc(
     db,
     `users/${post.authorId}/posts/${post.id}/likes/${auth?.currentUser?.uid}`
   );
-  const [isLiked, setisLiked] = useState(post.isLiked);
   useEffect(() => {
     // const likeCollectionRef = collection(
     //   db,
@@ -67,7 +67,6 @@ export function Footer(
       // const likes = await getDocs(likeCollectionRef);
       // const likeCount = likes.docs.length;
       const likeCount = post.likeCount;
-      // console.log(likeCount);
       if (isUserLikeThisPost.exists()) {
         setlikeCount?.(likeCount);
         setisLiked(true);
@@ -80,12 +79,18 @@ export function Footer(
       getLikeCount();
     } catch (error: any) {
       if (error.code === "quota-exceeded") {
+        // setpostError()
+
         alert("Firebase Quota Exceeded. Please try again later.");
         throw error;
       }
       console.error(error);
     }
   }, [isLiked, likeRef, post.likeCount, setlikeCount]);
+  // const [reaction, setReaction] = useState({
+  //   like: ["1a", "2d"],
+  // });
+  const [likeLoading, setLikeLoading] = useState(false);
   // const queryClient = useQueryClient();
   return (
     <div
@@ -98,8 +103,6 @@ export function Footer(
       {...rests}
       className={styles.action}
     >
-      {/* {JSON.stringify(post)} */}
-
       <div
         className={styles.socialButton}
         // onMouseEnter={() => {
@@ -112,16 +115,20 @@ export function Footer(
         // }}
       >
         <button
+          style={{ pointerEvents: likeLoading ? "none" : "initial" }}
           onClick={async () => {
             const uid = auth.currentUser?.uid;
             if (!uid) {
               alert("Error : User Not Found . Sign up and Try Again ! ");
               return;
             }
-
             setisLiked((prev) => !prev);
+            queryClient?.refetchQueries(["myPost"]);
+            queryClient?.invalidateQueries(["myPost"]);
+            setLikeLoading(true);
             if (isLiked) {
               await dislikePost(likeCount ?? 0, postRef, likeRef);
+              setLikeLoading(false);
             } else {
               await likePost(likeCount ?? 0, postRef, likeRef, uid);
               await sendAppNoti(
@@ -131,6 +138,7 @@ export function Footer(
                 "post_reaction",
                 `${authorId}/${id}`
               );
+              setLikeLoading(false);
             }
           }}
           aria-expanded={reactionAction !== ""}
@@ -174,9 +182,6 @@ export function Footer(
               }}
             >
               <button
-                onMouseUp={() => {
-                  alert("hey");
-                }}
                 onClick={async (e) => {
                   e.preventDefault();
                   e.stopPropagation();

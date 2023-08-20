@@ -2,6 +2,16 @@ import { Timestamp } from "firebase/firestore";
 import { ReactNode, RefObject } from "react";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { User } from "firebase/auth";
+export type likes = {
+  uid: string | number;
+  createdAt:
+    | {
+        seconds: number;
+        nanoseconds: number;
+      }
+    | Timestamp;
+  author?: UserRecord | User | account["profile"];
+}[];
 export type account = {
   email: string;
   password: string;

@@ -115,13 +115,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      // border: 1px solid;
     }
     &:active > div {
       background-color: rgb(199, 199, 199);
       opacity: 0.8;
-      scale: 0.88;
-      border-radius: 2rem;
+      scale: 1;
+      border-radius: 0;
       transition: scale 0.05s ease-in-out;
     }
   }
@@ -261,9 +260,11 @@
 // @media only screen and (min-width: 500px) {
 @media only screen and (hover: hover) and (pointer: fine) {
   .nav .navItems:hover > div {
-    // background-color: rgb(199, 199, 199);
-    // background-color: rgb(243, 243, 243);
     background-color: rgb(221, 221, 221);
+  }
+  .nav .navItems:active > div {
+    scale: 0.88;
+    border-radius: 2rem;
   }
 
   .loginBtn:hover {

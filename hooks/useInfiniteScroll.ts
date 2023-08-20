@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 
 function useInfiniteScroll(
-  getMore: Function,
-  postEnd: boolean,
+  fetchMoreData: Function,
+  hasMore: boolean,
   scrollParent = false
 ) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -11,9 +11,9 @@ function useInfiniteScroll(
       const target = e.currentTarget as HTMLElement;
       if (
         window.innerHeight + target.scrollTop + 1 >= target.scrollHeight &&
-        !postEnd
+        !hasMore
       ) {
-        await getMore();
+        await fetchMoreData();
       }
     }
     const element = scrollParent
@@ -23,7 +23,7 @@ function useInfiniteScroll(
     return () => {
       element.removeEventListener("scroll", handleScroll);
     };
-  }, [getMore, postEnd, scrollParent]);
+  }, [fetchMoreData, hasMore, scrollParent]);
   return { scrollRef };
 }
 

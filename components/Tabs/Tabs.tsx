@@ -1,5 +1,13 @@
 import dynamic from "next/dynamic";
-import { MouseEvent, RefObject, useContext, useEffect, useState } from "react";
+import {
+  ElementType,
+  HTMLAttributeAnchorTarget,
+  MouseEvent,
+  RefObject,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
@@ -32,6 +40,7 @@ export default function Tabs(props: {
     window.location.hash = active === "/" ? "#home" : `#${active}`;
   }, [active]);
   useEffect(() => {
+    if (!canDrag) return;
     function dragStop() {
       setcanDrag(false);
     }
@@ -42,7 +51,7 @@ export default function Tabs(props: {
       document.body.removeEventListener("mouseup", dragStop);
       window.removeEventListener("mouseup", dragStop);
     };
-  }, []);
+  }, [canDrag]);
   function dragStart(e: MouseEvent<HTMLDivElement>) {
     e.stopPropagation();
     const currentTarget = e.currentTarget;
@@ -50,9 +59,14 @@ export default function Tabs(props: {
     if (e.currentTarget.tagName == "BODY") return;
 
     const target = e.target as HTMLElement;
-    if (target.tagName === "A") return;
-    // console.log(target.tagName);
-    // console.log("drag start");
+    const tagName = target.tagName.toLowerCase() as ElementType;
+    console.log(currentTarget);
+    if (
+      tagName === "a" ||
+      tagName === "dialog" ||
+      target.parentElement?.tagName === "DIALOG"
+    )
+      return;
     // if (e.target.className == "Home_storyCard__3_T_R") return;
     setpos({
       left: currentTarget.scrollLeft,
@@ -91,7 +105,10 @@ export default function Tabs(props: {
       id="tabs"
       // className={active === '/' ? styles.content : styles.acitveTab}
       className={styles.content}
-      onMouseDown={(e) => dragStart(e)}
+      onMouseDown={(e) => {
+        dragStart(e);
+        // alert("hety");
+      }}
       onMouseUp={(e) => dragStop(e)}
       onMouseMove={(e) => dragging(e)}
       onScroll={(e) => {
@@ -103,7 +120,7 @@ export default function Tabs(props: {
     >
       <Home tabIndex={active === "/" ? 0 : -1} />
       <div id="friends" className={styles.tab}>
-        <div style={{paddingBottom:'0'}} className={t.header}>
+        <div style={{ paddingBottom: "0" }} className={t.header}>
           <h2>Friends</h2>
         </div>
         <Friends tabIndex={active === "friends" ? 0 : -1} />
@@ -116,8 +133,8 @@ export default function Tabs(props: {
       </div>
 
       <Profile />
-      
-        <Notifications />
+
+      <Notifications />
       <div id="menu">
         <div className={t.header}>
           <h2>Menu</h2>
