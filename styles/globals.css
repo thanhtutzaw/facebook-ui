@@ -1,6 +1,7 @@
 :root {
   --blue-origin   : #0070f3;
   --main-width    : 700px;
+  --padding-inline:clamp(0.5rem, 2vw, 0.8rem);
   /* --main-width : 500px; */
 }
 
@@ -94,16 +95,6 @@ main {
 .error svg {
   font-size: 25px;
 }
-
-/* .loading .spinner {
-
-  display : block;
-  position: fixed;
-  z-index : 1031;
-  top     : 15px;
-  right   : 15px;
-
-} */
 
 .loading .spinner-icon {
   width            : 18px;

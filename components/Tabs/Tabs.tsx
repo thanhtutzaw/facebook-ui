@@ -32,7 +32,6 @@ export default function Tabs(props: {
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { setpreventClick } = useContext(PageContext) as PageProps;
-  // const { active } = useContext(AppContext) as Props;
   const { active } = useActive();
 
   useEffect(() => {
