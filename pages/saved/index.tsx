@@ -34,8 +34,8 @@ type savedPostTypes = {
   postId: string;
   createdAt: Timestamp;
 };
+const LIMIT = 10;
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const LIMIT = 10;
   try {
     const cookies = nookies.get(context);
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
@@ -90,12 +90,12 @@ export default function Page(props: {
   }, [savedPosts]);
 
   useEffect(() => {
-    if (limitedPosts.length <= 0) return;
+    // if (limitedPosts.length <= 0) return;
     let unsubscribe: Unsubscribe;
     const savedPostsQuery = query(
       collection(db, `users/${uid}/savedPost`),
       orderBy("createdAt", "desc"),
-      limit(limitedPosts.length)
+      limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
     );
     unsubscribe = onSnapshot(savedPostsQuery, async (snapshot) => {
       // const saved = await getDocs(savedPostsQuery);

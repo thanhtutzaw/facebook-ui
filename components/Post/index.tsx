@@ -1,7 +1,7 @@
 import { User } from "firebase/auth";
 import { useContext, useEffect, useRef, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { Post as PostType, account } from "../../types/interfaces";
+import { Post as PostType, account, likes } from "../../types/interfaces";
 import Content from "./Content";
 import { Footer } from "./Footer";
 import styles from "./index.module.scss";
@@ -47,6 +47,7 @@ export default function Post({
   const [likeCount, setlikeCount] = useState(
     parseInt(post?.likeCount?.toString()! ?? "")
   );
+  const [Likes, setLikes] = useState<likes | []>([]);
   if (!post) return <></>;
   const postClass = `${styles.item} ${checked ? styles.checked : ""} ${
     selectMode ? styles.selected : ""
@@ -54,6 +55,8 @@ export default function Post({
   return (
     <div className={postClass}>
       <Content
+      Likes={Likes}
+      setLikes={setLikes}
         updatePost={updatePost!}
         likeCount={likeCount ?? 0}
         preventNavigate={preventNavigate}
@@ -72,6 +75,7 @@ export default function Post({
       />
       {!shareMode && (
         <Footer
+        setLikes={setLikes}
           profile={profile}
           likeCount={likeCount!}
           setlikeCount={setlikeCount}

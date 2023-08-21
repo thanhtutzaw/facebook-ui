@@ -26,13 +26,14 @@ import styles from "./index.module.scss";
 export function Footer(
   props: {
     likeCount?: number;
+    setLikes?: Function;
     setlikeCount?: Function;
     post: Post;
     profile?: account["profile"];
     tabIndex?: number;
   } & StyleHTMLAttributes<HTMLDivElement>
 ) {
-  const { profile, likeCount, setlikeCount, post, tabIndex, ...rests } = props;
+  const {setLikes, profile, likeCount, setlikeCount, post, tabIndex, ...rests } = props;
   const router = useRouter();
   const commentRef = useRef<HTMLDivElement>(null);
   const [savedVisibility, setsavedVisibility] = useState("");
@@ -127,9 +128,11 @@ export function Footer(
             queryClient?.invalidateQueries(["myPost"]);
             setLikeLoading(true);
             if (isLiked) {
+              setLikes?.([])
               await dislikePost(likeCount ?? 0, postRef, likeRef);
               setLikeLoading(false);
             } else {
+              setLikes?.([])
               await likePost(likeCount ?? 0, postRef, likeRef, uid);
               await sendAppNoti(
                 uid,

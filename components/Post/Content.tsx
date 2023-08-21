@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import { RefObject, useContext, useEffect, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { app } from "../../lib/firebase";
-import { Post as PostType } from "../../types/interfaces";
+import { Post as PostType, likes } from "../../types/interfaces";
 import Input from "../Input/Input";
 import AdminDropDown from "./AdminDropDown";
 import AuthorInfo from "./AuthorInfo";
@@ -19,6 +19,8 @@ import { SharePreview } from "./SharePreview";
 import { SocialCount } from "./SocialCount";
 import s from "./index.module.scss";
 export default function Content(props: {
+  Likes?: likes;
+  setLikes: Function;
   tabIndex?: number;
   updatePost: Function;
   likeCount: number;
@@ -36,6 +38,7 @@ export default function Content(props: {
   auth: User;
 }) {
   const {
+    Likes,setLikes,
     tabIndex,
     updatePost,
     likeCount,
@@ -235,7 +238,7 @@ export default function Content(props: {
       <SharePreview selectMode={selectMode} post={post} />
       {/* {JSON.stringify(post.like)} */}
       {(post.like || post.shares) && (
-        <SocialCount likeCount={likeCount} post={post} />
+        <SocialCount Likes={Likes} setLikes={setLikes} likeCount={likeCount} post={post} />
       )}
       {/* {post.likeCount} */}
     </span>

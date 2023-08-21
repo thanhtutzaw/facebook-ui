@@ -11,46 +11,41 @@ import Spinner from "../Spinner";
 import AuthorInfo from "./AuthorInfo";
 
 export function LikedUsers({
-  post,
+  loading,
   Likes,
-  setLikes,
-  likeCount,
   settogglereactionList,
 }: {
-  likeCount: number;
-  post: Post;
+  loading: boolean;
   Likes: likes;
-  setLikes: Function;
   settogglereactionList: Function;
 }) {
-  const [loading, setloading] = useState(false);
-  useEffect(() => {
-    async function getLikes() {
-      setloading(true);
-      if (Likes.length > 0) return;
-      // if (likeCount > Likes.length) return;
-      try {
-        setloading(false);
-        console.log("fetching likes");
+  // useEffect(() => {
+  //   async function getLikes() {
+  //     setloading(true);
+  //     if (Likes.length > 0) return;
+  //     // if (likeCount > Likes.length) return;
+  //     try {
+  //       setloading(false);
+  //       console.log("fetching likes");
 
-        setLikes(await fetchLikedUsers(post));
-      } catch (error) {
-        console.log(error);
-        setloading(false);
-      }
-    }
-    getLikes();
-    return () => {
-      // setLikes([]);
-    };
-  }, [Likes, likeCount, post, setLikes]);
+  //       setLikes(await fetchLikedUsers(post));
+  //     } catch (error) {
+  //       console.log(error);
+  //       setloading(false);
+  //     }
+  //   }
+  //   getLikes();
+  //   return () => {
+  //     // setLikes([]);
+  //   };
+  // }, [Likes, likeCount, post, setLikes]);
   const router = useRouter();
   return (
     <>
       <header>
         <p>
           Who reacted this post{" "}
-          {`${Likes.length > 0 && loading ? Likes.length : "0"}`}
+          {`${Likes.length > 0 && !loading ? Likes.length : "0"}`}
         </p>
         <motion.button
           onClick={(e) => {
@@ -64,7 +59,7 @@ export function LikedUsers({
           <FontAwesomeIcon icon={faClose} />
         </motion.button>
       </header>
-      {loading ? (
+      {!loading ? (
         Likes.length > 0 ? (
           <div>
             {Likes.map((l) => (

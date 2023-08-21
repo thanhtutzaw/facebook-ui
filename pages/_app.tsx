@@ -46,7 +46,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     return {
       props: {
         expired: true,
-        uid: "",
       },
     };
   }
@@ -54,7 +53,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 export default function App({
   Component,
   pageProps,
-  uid,
   expired,
 }: AppProps & { uid: DecodedIdToken["uid"]; expired: boolean }) {
   const router = useRouter();
@@ -155,7 +153,7 @@ export default function App({
         <link rel="manifest" href="/manifest.json" />
       </Head>
       <QueryClientProvider client={queryClient}>
-        <PageProvider uid={uid!} active={active} setActive={setActive}>
+        <PageProvider active={active} setActive={setActive}>
           <main style={{ scrollPadding: "5rem", scrollMargin: "5rem" }}>
             <Component {...pageProps} />
             {authUser?.uid && <ImageLargeView />}

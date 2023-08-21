@@ -3,8 +3,14 @@ import { useEffect, useRef, useState } from "react";
 import { Post, likes } from "../../types/interfaces";
 import { LikedUsers } from "./LikedUsers";
 import s from "./index.module.scss";
-export function SocialCount(props: { post: Post; likeCount: number }) {
-  const { post, likeCount } = props;
+import { fetchLikedUsers } from "../../lib/firestore/post";
+export function SocialCount(props: {
+  post: Post;
+  likeCount: number;
+  Likes?: likes;
+  setLikes: Function;
+}) {
+  const { post, likeCount, Likes, setLikes } = props;
   // const [reaction, setReaction] = useState({
   //   like: ["1a", "2d"],
   // });
@@ -16,30 +22,29 @@ export function SocialCount(props: { post: Post; likeCount: number }) {
   const SocialDialog = useRef<HTMLDialogElement>(null);
   const [togglereactionList, settogglereactionList] = useState(false);
   useEffect(() => {
-    console.log(SocialDialog.current?.open);
     togglereactionList
       ? SocialDialog.current?.showModal()
       : setTimeout(() => {
           SocialDialog.current?.close();
         }, 1000);
   }, [togglereactionList]);
-  const [Likes, setLikes] = useState<likes | []>([]);
+
+  const [loading, setloading] = useState(false);
 
   return (
     <>
-      {/* {JSON.stringify(Likes)} */}
-
       {shareCount || likeCount || commentCount ? (
         <div className={s.socialCount}>
           {likeCount > 0 && likeCount && typeof likeCount !== "string" && (
             <p
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 settogglereactionList?.(true);
-                // SocialDialog.current?.showModal();
-                // if (SocialDialog.current?.open) return;
-                // SocialDialog.current?.showModal();
+                if (Likes?.length ?? 0 > 0) return;
+                setloading(true);
+                setLikes(await fetchLikedUsers(post));
+                setloading(false);
               }}
             >
               {likeCount} {likeCount <= 1 ? "like" : "likes"}
@@ -67,10 +72,8 @@ export function SocialCount(props: { post: Post; likeCount: number }) {
           console.log("animation exited");
         }}
       >
-        {/* {togglereactionList && ( */}
         <motion.dialog
           key={post.id}
-          // open={togglereactionList}
           exit={{ y: 300 }}
           initial={{ opacity: 1, y: 300 }}
           transition={{ duration: 0.5 }}
@@ -94,29 +97,26 @@ export function SocialCount(props: { post: Post; likeCount: number }) {
           }}
         >
           <AnimatePresence mode="wait">
-            {togglereactionList && (
-              <motion.div
-                // exit={{ opacity: 0, y: 300 }}
-                // initial={{ opacity: 0, y: 300 }}
-                // transition={{ duration: 0.2 }}
-                animate={
-                  {
-                    // opacity: togglereactionList ? 1 : 0,
-                    // y: !togglereactionList ? 300 : 0,
-                  }
+            {/* {Likes.length > 0 && ( */}
+            <motion.div
+              // exit={{ opacity: 0, y: 300 }}
+              // initial={{ opacity: 0, y: 300 }}
+              // transition={{ duration: 0.2 }}
+              animate={
+                {
+                  // opacity: togglereactionList ? 1 : 0,
+                  // y: !togglereactionList ? 300 : 0,
                 }
-                className={s.reactionContainer}
-              >
-                <LikedUsers
-                  settogglereactionList={settogglereactionList}
-                  likeCount={likeCount}
-                  key={post.id}
-                  post={post}
-                  Likes={Likes}
-                  setLikes={setLikes}
-                />
-              </motion.div>
-            )}
+              }
+              className={s.reactionContainer}
+            >
+              <LikedUsers
+                settogglereactionList={settogglereactionList}
+                loading={loading}
+                key={post.id}
+                Likes={Likes!}
+              />
+            </motion.div>
           </AnimatePresence>
         </motion.dialog>
       </AnimatePresence>

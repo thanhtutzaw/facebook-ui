@@ -148,7 +148,7 @@ export default function Home({
       collectionGroup(db, `posts`),
       where("visibility", "in", ["Friend", "Public"]),
       orderBy("createdAt", "desc"),
-      limit(limitedPosts.length)
+      limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
     );
     unsubscribe = onSnapshot(postQuery, async (snapshot) => {
       const posts =

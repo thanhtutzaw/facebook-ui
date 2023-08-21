@@ -17,9 +17,7 @@ export interface PageProps {
   queryClient?: QueryClient;
   postError?: string;
   dropdownRef?: RefObject<HTMLDivElement>;
-  // togglereactionList?: boolean;
   uploadButtonClicked?: boolean;
-  // settogglereactionList?: Function;
   setuploadButtonClicked?: Function;
   viewRef?: RefObject<HTMLDialogElement>;
   fileRef?: RefObject<HTMLInputElement>;
@@ -32,7 +30,7 @@ export interface PageProps {
   setSelectedId?: Function;
   setshareAction?: Function;
   setshowAction?: Function;
-  uid: DecodedIdToken["uid"];
+  // uid: DecodedIdToken["uid"];
   preventClick?: boolean;
   view?: any;
   setview?: Function;
@@ -41,9 +39,8 @@ export interface PageProps {
 export const PageContext = createContext<PageProps | null>(null);
 
 export function PageProvider(props: PageProps) {
-  const { uid, active, setActive } = props;
+  const { active, setActive } = props;
   const queryClient = useQueryClient();
-  console.log("page level" + uid);
   const [showAction, setshowAction] = useState("");
   const [shareAction, setshareAction] = useState("");
   const [selectedId, setSelectedId] = useState([]);
@@ -75,7 +72,6 @@ export function PageProvider(props: PageProps) {
         setview,
         selectedId,
         setSelectedId,
-        uid,
         shareAction,
         showAction,
         setshowAction,
