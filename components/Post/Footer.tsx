@@ -29,7 +29,7 @@ export function Footer(
     setLikes?: Function;
     setlikeCount?: Function;
     post: Post;
-    profile?: account["profile"];
+    profile: account["profile"];
     tabIndex?: number;
   } & StyleHTMLAttributes<HTMLDivElement>
 ) {

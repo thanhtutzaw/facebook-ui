@@ -7,7 +7,7 @@ import { fetchLikedUsers } from "../../lib/firestore/post";
 export function SocialCount(props: {
   post: Post;
   likeCount: number;
-  Likes?: likes;
+  Likes: likes;
   setLikes: Function;
 }) {
   const { post, likeCount, Likes, setLikes } = props;

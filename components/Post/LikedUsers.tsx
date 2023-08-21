@@ -45,7 +45,7 @@ export function LikedUsers({
       <header>
         <p>
           Who reacted this post{" "}
-          {`${Likes.length > 0 && !loading ? Likes.length : "0"}`}
+          {`${Likes?.length > 0 && !loading ? Likes.length : "0"}`}
         </p>
         <motion.button
           onClick={(e) => {
@@ -60,7 +60,7 @@ export function LikedUsers({
         </motion.button>
       </header>
       {!loading ? (
-        Likes.length > 0 ? (
+        Likes?.length > 0 ? (
           <div>
             {Likes.map((l) => (
               <Link href={l.uid.toString()} key={l.uid.toString()}>

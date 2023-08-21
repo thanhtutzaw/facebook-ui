@@ -55,8 +55,8 @@ export default function Post({
   return (
     <div className={postClass}>
       <Content
-      Likes={Likes}
-      setLikes={setLikes}
+        Likes={Likes}
+        setLikes={setLikes}
         updatePost={updatePost!}
         likeCount={likeCount ?? 0}
         preventNavigate={preventNavigate}
@@ -75,8 +75,8 @@ export default function Post({
       />
       {!shareMode && (
         <Footer
-        setLikes={setLikes}
-          profile={profile}
+          setLikes={setLikes}
+          profile={profile!}
           likeCount={likeCount!}
           setlikeCount={setlikeCount}
           post={post}

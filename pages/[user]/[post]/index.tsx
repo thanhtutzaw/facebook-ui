@@ -46,6 +46,7 @@ import {
   Post as PostType,
   Props,
   account,
+  likes,
 } from "../../../types/interfaces";
 export const Comment_LIMIT = 10;
 export const getServerSideProps: GetServerSideProps<Props> = async (
@@ -330,6 +331,7 @@ export default function Page(props: {
     },
     [limitedComments, post?.authorId, post?.id]
   );
+  const [Likes, setLikes] = useState<likes | []>([]);
   const { scrollRef } = useInfiniteScroll(fetchMoreComment, commentEnd, true);
   if (expired) return <Welcome expired={expired} />;
   return (
@@ -385,7 +387,12 @@ export default function Page(props: {
           setFiles={setFiles}
         />
         <SharePreview post={post} />
-        <SocialCount likeCount={likeCount} post={post} />
+        <SocialCount
+          Likes={Likes}
+          setLikes={setLikes}
+          likeCount={likeCount}
+          post={post}
+        />
         {canEdit ? (
           <FooterInput
             fileRef={fileRef}
@@ -396,6 +403,7 @@ export default function Page(props: {
           />
         ) : (
           <Footer
+            profile={profile}
             likeCount={likeCount}
             setlikeCount={setlikeCount}
             post={post}

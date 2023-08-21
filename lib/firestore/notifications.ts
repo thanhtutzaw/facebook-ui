@@ -25,7 +25,6 @@ export async function sendAppNoti(
     content: content ? content : "",
   };
   await setDoc(notifRef, data);
-  console.log("shareRef id " + data.url);
 }
 
 export const getMessage = (type: notiContentTypes) => {

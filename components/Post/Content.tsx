@@ -19,7 +19,7 @@ import { SharePreview } from "./SharePreview";
 import { SocialCount } from "./SocialCount";
 import s from "./index.module.scss";
 export default function Content(props: {
-  Likes?: likes;
+  Likes: likes;
   setLikes: Function;
   tabIndex?: number;
   updatePost: Function;
