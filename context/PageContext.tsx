@@ -1,10 +1,7 @@
 import { useRef, useState, ReactNode, RefObject, useEffect } from "react";
 import { createContext } from "react";
-import { useActive } from "../hooks/useActiveTab";
 import { useQueryClient, QueryClient } from "@tanstack/react-query";
 
-import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-// const AppContext = createContext<{ user: User | null }>({ user: null });
 export type selectedId = {
   post: string;
   author: string;
@@ -30,7 +27,6 @@ export interface PageProps {
   setSelectedId?: Function;
   setshareAction?: Function;
   setshowAction?: Function;
-  // uid: DecodedIdToken["uid"];
   preventClick?: boolean;
   view?: any;
   setview?: Function;

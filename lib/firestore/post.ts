@@ -7,6 +7,9 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
+  orderBy,
+  query,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -180,11 +183,14 @@ export async function likePost(
   await batch.commit();
 }
 export async function fetchLikedUsers(p: Post) {
-  const likeRef = collection(db, `users/${p.authorId}/posts/${p.id}/likes`);
+  const likeRef = query(
+    collection(db, `users/${p.authorId}/posts/${p.id}/likes`),
+    orderBy("createdAt", "desc"),
+    limit(10)
+  );
   try {
     const likeDoc = await getDocs(likeRef);
     const likes = likeDoc.docs.map((doc) => doc.data()) as likes;
-    // const withAuthor = {...likes , {author:await getProfileByUID(likes.uid)}}
     const withAuthor = await Promise.all(
       likes.map(async (l) => {
         if (l.uid) {

@@ -98,11 +98,10 @@ export default function SwitchAccount(props: {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="logo.svg" alt={a.email} />
             <div className={s.info}>
-              {/* <p>{a.uid}</p> */}
+              <p>{a.email}</p>
               <p>
-                {a.email} {a.default ? "(Default)" : ""}
+                {a.password} {a.default ? "(Default)" : ""}
               </p>
-              <p>{a.password}</p>
             </div>
             {email === a.email && (
               <button title="Current Account">

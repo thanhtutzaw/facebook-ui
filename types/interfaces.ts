@@ -161,7 +161,6 @@ export interface Props {
   profile?: account["profile"] | null;
   account?: UserRecord | null;
   getMorePosts?: Function;
-  fetchInfiniteData?: Function;
   postLoading?: boolean;
   postEnd?: boolean;
 }

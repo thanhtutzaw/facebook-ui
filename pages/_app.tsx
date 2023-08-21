@@ -1,5 +1,6 @@
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import {
   User,
@@ -7,7 +8,6 @@ import {
   onAuthStateChanged,
   onIdTokenChanged,
 } from "firebase/auth";
-import { GetServerSideProps } from "next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -20,48 +20,45 @@ import { Welcome } from "../components/Welcome";
 import { PageProvider } from "../context/PageContext";
 import { useActive } from "../hooks/useActiveTab";
 import { app } from "../lib/firebase";
-import { verifyIdToken } from "../lib/firebaseAdmin";
-import "../styles/globals.css";
-import { Props } from "../types/interfaces";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "../styles/globals.css";
 config.autoAddCss = false;
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context
-) => {
-  try {
-    // const cookies = nookies.get(context);
-    // const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
-    // console.log(token.email + "in app.tsx");
-    // console.log(token + "in app.tsx");
-    let expired = false;
-    return {
-      props: {
-        expired,
-      },
-    };
-  } catch (error) {
-    console.log("SSR Error (expired in app.tsx) " + error);
-    // context.res.writeHead(302, { Location: "/" });
-    // context.res.end();
-    return {
-      props: {
-        expired: true,
-      },
-    };
-  }
-};
+// export const getServerSideProps: GetServerSideProps<Props> = async (
+//   context
+// ) => {
+//   try {
+//     // const cookies = nookies.get(context);
+//     // const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
+//     let expired = false;
+//     return {
+//       props: {
+//         expired,
+//       },
+//     };
+//   } catch (error) {
+//     console.log("SSR Error (expired in app.tsx) " + error);
+//     // context.res.writeHead(302, { Location: "/" });
+//     // context.res.end();
+//     return {
+//       props: {
+//         expired: true,
+//       },
+//     };
+//   }
+// };
 export default function App({
   Component,
   pageProps,
   expired,
 }: AppProps & { uid: DecodedIdToken["uid"]; expired: boolean }) {
   const router = useRouter();
-  useEffect(() => {
-    if (expired) {
-      router.push("/");
-      console.log("expired and pushed(_app.tsx)");
-    }
-  }, [expired, router]);
+  // useEffect(() => {
+  //   if (expired) {
+  //     router.push("/");
+  //     console.log("expired and pushed(_app.tsx)");
+  //   }
+  // }, [expired, router]);
   useEffect(() => {
     const handleRouteStart = () => nProgress?.start();
     const handleRouteDone = () => nProgress?.done();
@@ -83,7 +80,6 @@ export default function App({
     });
   }, []);
   useEffect(() => {
-    console.log(router.pathname);
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) {
         if (router.pathname === "/login/email") return;
@@ -97,7 +93,6 @@ export default function App({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  // const [token, setToken] = useState(null)
   useEffect(() => {
     const auth = getAuth(app);
     const unsubscribe = onIdTokenChanged(auth, async (user) => {
@@ -123,9 +118,7 @@ export default function App({
     return () => {
       unsubscribe();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   const { active, setActive } = useActive();
   const [queryClient] = useState(
     () =>
@@ -148,7 +141,6 @@ export default function App({
           name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no"
         />
-
         <link rel="icon" href="/logo.svg" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
@@ -159,6 +151,7 @@ export default function App({
             {authUser?.uid && <ImageLargeView />}
           </main>
         </PageProvider>
+        <ReactQueryDevtools initialIsOpen={true} />
       </QueryClientProvider>
     </>
   );

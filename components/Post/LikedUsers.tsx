@@ -1,6 +1,14 @@
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Timestamp } from "firebase/firestore";
+import {
+  Timestamp,
+  Unsubscribe,
+  collection,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,15 +17,22 @@ import { fetchLikedUsers } from "../../lib/firestore/post";
 import { Post, account, likes } from "../../types/interfaces";
 import Spinner from "../Spinner";
 import AuthorInfo from "./AuthorInfo";
+import { db, getProfileByUID } from "../../lib/firebase";
 
 export function LikedUsers({
   loading,
   Likes,
   settogglereactionList,
+  togglereactionList,
+  post,
+  setLikes,
 }: {
+  post: Post;
   loading: boolean;
+  setLikes: Function;
   Likes: likes;
   settogglereactionList: Function;
+  togglereactionList: boolean;
 }) {
   // useEffect(() => {
   //   async function getLikes() {
@@ -39,6 +54,33 @@ export function LikedUsers({
   //     // setLikes([]);
   //   };
   // }, [Likes, likeCount, post, setLikes]);
+
+  useEffect(() => {
+    if (!togglereactionList) return;
+    const likeRef = query(
+      collection(db, `users/${post.authorId}/posts/${post.id}/likes`),
+      orderBy("createdAt", "desc"),
+      limit(10)
+    );
+    let unsubscribe: Unsubscribe;
+    unsubscribe = onSnapshot(likeRef, async (snapshot) => {
+      const likes = snapshot.docs.map((doc) => doc.data()) as likes;
+      const withAuthor = await Promise.all(
+        likes.map(async (l) => {
+          if (l.uid) {
+            const author = await getProfileByUID(l.uid?.toString());
+            return { ...l, author };
+          } else {
+            return { ...l, author: null };
+          }
+        })
+      );
+      console.log("updatedLIkes");
+      setLikes(withAuthor);
+    });
+    return () => unsubscribe();
+  }, [Likes.length, post.authorId, post.id, setLikes, togglereactionList]);
+
   const router = useRouter();
   return (
     <>
@@ -86,6 +128,7 @@ export function LikedUsers({
                 </AuthorInfo>
               </Link>
             ))}
+            {/* <Spinner style={{ marginTop: "10px" }} /> */}
           </div>
         ) : (
           <></>

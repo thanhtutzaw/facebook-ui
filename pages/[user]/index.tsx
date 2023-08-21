@@ -29,10 +29,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
     const user = await fethUserDoc(uid);
     const userExist = user.exists();
-
-    // const account = (await getUserData(uid as string))! as UserRecord;
-    // const accountJSON = userToJSON(account);
-    // const accountProfile = await getProfileByUID(uid as string)
     const mypostQuery = query(
       collection(db, `/users/${uid}/posts`),
       where("visibility", "in", ["Friend", "Public"]),
@@ -80,7 +76,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       return {
         props: {
           token,
-          // account: accountProfile ?? null,
           user: user.data(),
           myPost,
         },

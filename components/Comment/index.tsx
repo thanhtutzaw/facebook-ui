@@ -1,5 +1,5 @@
 import { Timestamp, doc } from "firebase/firestore";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { db } from "../../lib/firebase";
 import { Comment, Post } from "../../types/interfaces";
@@ -8,13 +8,14 @@ import s from "./index.module.scss";
 import Spinner from "../Spinner";
 
 export default function Comment(props: {
+  hasMore?: boolean;
   commentEnd?: boolean;
   commentLoading?: boolean;
   uid: string;
   comments: Post["comments"] | [];
   post: Post;
 }) {
-  const { commentEnd, commentLoading, post, comments, uid } = props;
+  const { hasMore, commentEnd, commentLoading, post, comments, uid } = props;
   const { authorId, id: postId } = post;
   const postRef = doc(db, `users/${authorId}/posts/${postId}`);
   const router = useRouter();
@@ -30,6 +31,11 @@ export default function Comment(props: {
       ))}
       {/* {commentLoading && !commentEnd && <Spinner style={{ margin: "0" }} />} */}
 
+      {/* {!commentLoading && !commentEnd ? null : commentEnd ? (
+        
+      ) : (
+        <></>
+      )} */}
       {!commentLoading && !commentEnd ? null : commentLoading ? (
         <Spinner style={{ margin: "0" }} />
       ) : (

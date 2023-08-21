@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 function useInfiniteScroll(
-  fetchMoreData: Function,
+  fetchMoreData: () => Promise<void>,
   hasMore: boolean,
   scrollParent = false
 ) {

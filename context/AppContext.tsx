@@ -66,15 +66,15 @@ export function AppProvider(props: Props) {
   //   )
   //     return;
   // }
-  async function fetchInfiniteData(e: UIEvent, postEnd: boolean | undefined) {
-    const target = e.currentTarget as HTMLDivElement;
-    if (
-      window.innerHeight + target.scrollTop + 1 >= target.scrollHeight &&
-      !postEnd
-    ) {
-      await getMorePosts?.();
-    }
-  }
+  // async function fetchInfiniteData(e: UIEvent, postEnd: boolean | undefined) {
+  //   const target = e.currentTarget as HTMLDivElement;
+  //   if (
+  //     window.innerHeight + target.scrollTop + 1 >= target.scrollHeight &&
+  //     !postEnd
+  //   ) {
+  //     await getMorePosts?.();
+  //   }
+  // }
   async function getMorePosts() {
     setpostLoading(true);
     const post = posts?.[posts?.length - 1]!;
@@ -138,7 +138,6 @@ export function AppProvider(props: Props) {
   return (
     <AppContext.Provider
       value={{
-        fetchInfiniteData,
         updatePost,
         username,
         profile,

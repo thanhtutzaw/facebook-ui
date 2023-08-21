@@ -1,14 +1,4 @@
 @import "../styles/mixins";
-// .sticky {
-//   position: fixed;
-//   width: 100%;
-//   top: 0;
-// }
-
-// .sticky + .content {
-//   padding-top: 60px;
-// }
-
 .headerContainer {
   transition:
     transform 0.18s ease,
@@ -25,8 +15,6 @@
     transition: background-color 0.2s ease-in-out;
     .action {
       display: flex;
-      // margin-right: 0.8rem;
-      // gap: 0.8rem;
       gap: 0.7rem;
       margin-right: 0.7rem;
       > button {
@@ -35,8 +23,6 @@
         overflow: auto;
         border: none;
         text-align: left;
-        // height: 45px;
-        // width: 45px;
         padding: 0.5rem;
         display: flex;
         align-items: center;
@@ -44,7 +30,6 @@
         color: rgb(245, 223, 223);
         background-color: transparent;
         border: 0;
-        // font-size: 1rem;
         font-size: 18px;
         width: 40px;
         height: 40px;

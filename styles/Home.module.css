@@ -1,17 +1,10 @@
-.sticky {
-  position: fixed;
-  width: 100%;
-  top: 0;
-}
-
-.sticky + .content {
-  padding-top: 60px;
-}
-
 .headerContainer {
   transition: transform 0.18s ease, height 0.15s ease;
   will-change: height, transform;
   transform: translateY(0px);
+  position: sticky;
+  top: -60px;
+  z-index: 200;
 }
 .headerContainer .header {
   max-width: var(--main-width);
@@ -30,8 +23,6 @@
   overflow: auto;
   border: none;
   text-align: left;
-  height: 45px;
-  width: 45px;
   padding: 0.5rem;
   display: flex;
   align-items: center;
@@ -39,7 +30,9 @@
   color: rgb(245, 223, 223);
   background-color: transparent;
   border: 0;
-  font-size: 1rem;
+  font-size: 18px;
+  width: 40px;
+  height: 40px;
   background-color: rgb(243, 243, 243);
 }
 
@@ -93,7 +86,7 @@
   background-color: rgb(255, 255, 255);
   height: 100%;
   flex: 1;
-  font-size: 1.1rem;
+  font-size: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -109,19 +102,18 @@
 .nav .navItems:active > div {
   background-color: rgb(199, 199, 199);
   opacity: 0.8;
-  scale: 0.88;
-  border-radius: 2rem;
+  scale: 1;
+  border-radius: 0;
   transition: scale 0.05s ease-in-out;
 }
 
 .login {
-  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  padding-bottom: 2rem;
 }
 .login .closeSignup {
   opacity: 1;
@@ -186,6 +178,7 @@
   will-change: padding;
   -webkit-tap-highlight-color: transparent;
   min-width: 260px;
+  z-index: 100;
 }
 .login .emailLogin:has(.Loginlabel:focus) {
   outline: 2px solid var(--blue-origin);
@@ -229,7 +222,11 @@
 
 @media only screen and (hover: hover) and (pointer: fine) {
   .nav .navItems:hover > div {
-    background-color: rgb(199, 199, 199);
+    background-color: rgb(221, 221, 221);
+  }
+  .nav .navItems:active > div {
+    scale: 0.88;
+    border-radius: 2rem;
   }
   .loginBtn:hover {
     background-color: #1c7ff3;
@@ -255,12 +252,33 @@
   min-width: 100%;
 }
 
+.acitveTab {
+  background-color: #dadada;
+  display: flex;
+  scroll-snap-type: x mandatory;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+  height: calc(100dvh - 60px);
+  transition: height 0s;
+}
+.acitveTab > div {
+  overflow-y: auto;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  max-width: var(--main-width);
+  min-width: 100%;
+}
+
 .userContent {
   padding: 0 1rem;
   display: grid;
   margin-top: 65px;
 }
 
+.postContainer > div,
+.postContainer > div > div {
+  margin: 0.5rem 0;
+}
 .postContainer > div:last-child {
   margin-bottom: 2rem;
 }
@@ -414,7 +432,7 @@
 }
 .postAction {
   padding: 5px 0.8rem 1rem;
-  gap: 1rem;
+  gap: 10px;
   align-items: center;
   display: flex;
   background-color: #fff;
@@ -424,7 +442,7 @@
 .postAction input {
   cursor: pointer;
   width: 100%;
-  font-size: calc(12px + 1.5vmin);
+  font-size: clamp(0.7em, 3vw, 1em);
   border-radius: 100px;
   border: 1px solid #b3b3b3;
   height: 40px;
@@ -482,11 +500,23 @@
   border-bottom: 1px solid rgb(235, 235, 235);
   z-index: 100;
 }
+.backHeader h2,
+.backHeader .title {
+  margin-top: 0;
+  margin-bottom: 0;
+}
 .backHeader .title {
   overflow: hidden;
   text-overflow: ellipsis;
   display: block !important;
   width: 100px;
+  margin-top: 0;
+  margin-bottom: 0;
+  flex: 1;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .backHeader svg {
   font-size: 1.2rem;
@@ -528,16 +558,14 @@
   outline: 2px solid var(--blue-origin);
   outline-offset: 2px;
 }
-.backHeader h2 {
-  margin-top: 0;
-  margin-bottom: 0;
-  flex: 1;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
+.addPost > .input {
+  padding-top: 1rem;
 }
 
+.addPost {
+  margin-block: 65px;
+}
 .addPost video,
 .addPost img {
   background-color: black;
@@ -555,7 +583,6 @@
      object-fit: contain;
 }
 .addPost .input {
-  padding: 1rem;
   cursor: text;
 }
 .addPost .input > div {
@@ -622,11 +649,12 @@
 }
 
 .container {
-  margin-top: 65px;
+  margin-block: 65px;
 }
 
 .input {
-  padding: 1rem;
+  padding: 0 0.8rem;
+  margin-bottom: 0.8rem;
   outline: 0;
   border: 0;
   cursor: default;
@@ -636,13 +664,19 @@
 }
 .input a {
   color: var(--blue-origin) !important;
+  cursor: default;
+}
+.input a:hover {
   text-decoration: underline;
-  pointer-events: none;
-  cursor: text;
+  cursor: pointer;
 }
 .input > div {
   outline: 0;
   border: 0;
+}
+.input[contentEditable=true] a {
+  cursor: text;
+  pointer-events: none;
 }
 
 .card {

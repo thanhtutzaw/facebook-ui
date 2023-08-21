@@ -242,6 +242,30 @@
         }
     }
 }
+.reactionDialog[open]::backdrop {
+    opacity: 0;
+    animation: fadeIn 0.5s forwards ease-in-out;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.reactionDialog[close]::backdrop {
+    opacity: 0;
+    animation: fadeOut 0.5s ease-in-out;
+}
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
 .reactionDialog {
     font-size: 16px;
     width: clamp(500px, 20vw, 100vw);
@@ -450,7 +474,8 @@
     }
 }
 .header {
-    padding: 15px 0.8rem;
+    // padding: 15px 0.8rem;
+    padding: clamp(0.5rem, 2vw, 0.8rem);
     margin: 0;
     display: flex;
     justify-content: space-between;

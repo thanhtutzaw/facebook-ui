@@ -1,6 +1,24 @@
 .container {
   background-color: white;
   padding: 0 1rem;
+  padding-bottom: 0.5rem;
+}
+.container > div:first-child > button:first-child {
+  margin-left: 0;
+}
+.container > div:first-child > button:active {
+  animation: card 0.2s ease-in-out !important;
+}
+@keyframes card {
+  0% {
+    scale: 1;
+  }
+  50% {
+    scale: 0.95;
+  }
+  100% {
+    scale: 1;
+  }
 }
 .container > .action button {
   margin: 0 8px;
@@ -12,7 +30,7 @@
   height: 50px;
   border: 0;
   border-radius: 10px;
-  font-size: 18px;
+  font-size: clamp(16px, 2.1vw, 20px);
 }
 .container .request .header,
 .container .suggest .header {
@@ -44,6 +62,9 @@
 .container .request .card .profile,
 .container .suggest .card .profile {
   border-radius: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  outline: 1px solid rgba(128, 128, 128, 0.168627451);
 }
 .container .request .card p,
 .container .suggest .card p {
@@ -58,7 +79,6 @@
 }
 .container .request .card .right .info,
 .container .suggest .card .right .info {
-  gap: 18px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -82,4 +102,9 @@
 .container .suggest .card .right .action .primary {
   background-color: var(--blue-origin);
   color: white;
+}
+.container .request .card .right .action :not(.primary):focus-visible,
+.container .suggest .card .right .action :not(.primary):focus-visible {
+  outline: 0 !important;
+  border: 1px solid var(--blue-origin) !important;
 }/*# sourceMappingURL=Friends.module.css.map */

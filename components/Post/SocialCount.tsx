@@ -26,7 +26,7 @@ export function SocialCount(props: {
       ? SocialDialog.current?.showModal()
       : setTimeout(() => {
           SocialDialog.current?.close();
-        }, 1000);
+        }, 200);
   }, [togglereactionList]);
 
   const [loading, setloading] = useState(false);
@@ -74,19 +74,19 @@ export function SocialCount(props: {
       >
         <motion.dialog
           key={post.id}
-          exit={{ y: 300 }}
-          initial={{ opacity: 1, y: 300 }}
-          transition={{ duration: 0.5 }}
+          exit={{ y: 800 }}
+          initial={{ opacity: 1, y: 800 }}
+          transition={{ duration: 0.2 }}
           animate={{
             // opacity: togglereactionList ? 1 : 0,
-            y: !togglereactionList ? 300 : 0,
+            y: !togglereactionList ? 800 : 0,
           }}
           className={s.reactionDialog}
           ref={SocialDialog}
           onClose={(e) => {
             settogglereactionList?.(false);
 
-            // e.currentTarget.style.opacity = "0";
+            e.currentTarget.style.opacity = "0";
             // e.currentTarget.style.transform = "translateY(400px)";
           }}
           onMouseDown={(e) => {
@@ -97,14 +97,11 @@ export function SocialCount(props: {
           }}
         >
           <AnimatePresence mode="wait">
-            {/* {Likes.length > 0 && ( */}
             <motion.div
               // exit={{ opacity: 0, y: 300 }}
               // initial={{ opacity: 0, y: 300 }}
-              // transition={{ duration: 0.2 }}
               animate={
                 {
-                  // opacity: togglereactionList ? 1 : 0,
                   // y: !togglereactionList ? 300 : 0,
                 }
               }
@@ -114,7 +111,10 @@ export function SocialCount(props: {
                 settogglereactionList={settogglereactionList}
                 loading={loading}
                 key={post.id}
+                post={post!}
+                setLikes={setLikes!}
                 Likes={Likes!}
+                togglereactionList={togglereactionList}
               />
             </motion.div>
           </AnimatePresence>

@@ -81,7 +81,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         `users/${newPost?.authorId}/posts/${newPost?.id}/comments`
       ),
       orderBy("createdAt", "desc"),
-      limit(Comment_LIMIT + 1)
+      limit(Comment_LIMIT)
     );
     const commentDoc = await getDocs(commentRef);
     const commentJSON = await Promise.all(
@@ -358,8 +358,6 @@ export default function Page(props: {
       </BackHeader>
       <div
         style={{
-          // scrollPadding: "5rem",
-          // scrollMargin: "5rem",
           marginBottom: canEdit ? "65px" : "130px",
         }}
         className={s.container}
@@ -367,8 +365,6 @@ export default function Page(props: {
         <AuthorInfo navigateToProfile={navigateToProfile} post={post} />
         <Input
           style={{
-            // paddingTop: "0",
-            // marginBlock: ".5rem",
             marginBottom: text === "" ? "0" : ".8rem",
             cursor: canEdit ? "initial" : "default",
           }}
@@ -413,6 +409,7 @@ export default function Page(props: {
         {!canEdit && (
           <>
             <Comment
+              // hasMore={hasMore}
               commentLoading={commentLoading}
               commentEnd={commentEnd}
               post={post}

@@ -32,7 +32,6 @@ import {
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import { Props, account } from "../types/interfaces";
 
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useActive } from "../hooks/useActiveTab";
 import Spinner from "../components/Spinner";
 export const getServerSideProps: GetServerSideProps<Props> = async (
@@ -187,15 +186,12 @@ export default function Home({
       posts={posts}
       email={email}
       account={account}
-    >
-      
+    >      
         <Header
           tabIndex={active === "/" ? 0 : -1}
           indicatorRef={indicatorRef}
         />
         <Tabs indicatorRef={indicatorRef} />
-        {/* <ReactQueryDevtools initialIsOpen={true} /> */}
-      {/* </QueryClientProvider> */}
     </AppProvider>
   ) : (
     <Spinner fullScreen style={{ margin: "0" }} />

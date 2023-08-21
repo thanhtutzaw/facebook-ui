@@ -4,6 +4,10 @@
   /* --main-width : 500px; */
 }
 
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .textOverflow {
   max-width    : 55vw;
   width        : 100%;
