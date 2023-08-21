@@ -365,7 +365,7 @@ export default function Page(props: {
         <AuthorInfo navigateToProfile={navigateToProfile} post={post} />
         <Input
           style={{
-            marginBottom: text === "" ? "0" : ".8rem",
+            marginBottom: text === "" ? "0" : "1rem",
             cursor: canEdit ? "initial" : "default",
           }}
           role="textbox"

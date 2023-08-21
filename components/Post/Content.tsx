@@ -38,7 +38,8 @@ export default function Content(props: {
   auth: User;
 }) {
   const {
-    Likes,setLikes,
+    Likes,
+    setLikes,
     tabIndex,
     updatePost,
     likeCount,
@@ -206,7 +207,7 @@ export default function Content(props: {
       )}
       <Input
         style={{
-          marginBottom: text === "" ? "0" : ".8rem",
+          marginBottom: text === "" ? "0" : "5px",
           // paddingTop: text === "" ? "0" : ".5rem",
           // marginBottom: text === "" ? ".5rem" : "1rem",
         }}
@@ -237,9 +238,12 @@ export default function Content(props: {
       <PhotoLayout post={post} files={post.media} preview />
       <SharePreview selectMode={selectMode} post={post} />
       {/* {JSON.stringify(post.like)} */}
-      {(post.like || post.shares) && (
-        <SocialCount Likes={Likes} setLikes={setLikes} likeCount={likeCount} post={post} />
-      )}
+        <SocialCount
+          Likes={Likes}
+          setLikes={setLikes}
+          likeCount={likeCount}
+          post={post}
+        />
       {/* {post.likeCount} */}
     </span>
   );

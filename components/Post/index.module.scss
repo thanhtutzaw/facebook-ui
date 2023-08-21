@@ -214,7 +214,8 @@
 .socialCount {
     display: flex;
     justify-content: space-between;
-    padding-inline: 0.8rem;
+    // padding-inline: 0.8rem;
+    padding-inline: clamp(0.5rem, 2vw, 0.8rem);
     color: dimgray;
     padding-block: 5px;
     gap: 2vw;
@@ -300,7 +301,8 @@
         header {
             font-size: clamp(18px, 3vw, 23px);
 
-            padding-inline: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            padding-inline: clamp(0.5rem, 2vw, 0.8rem);
             display: flex;
             flex-wrap: wrap;
             font-weight: 500;
@@ -308,7 +310,6 @@
             top: 0;
             background-color: white;
             border-bottom: 1px solid rgb(243, 243, 243);
-            padding: 0.4rem 0.8rem;
             p {
                 padding: 0;
                 margin: 0;
@@ -517,7 +518,7 @@
         user-select: none;
         display: flex;
         flex: 1;
-        gap: 0.5rem;
+        gap: 5px;
         > div > :last-child {
             color: #4e4e4e;
             font-size: 15px !important;
@@ -601,8 +602,10 @@
     }
 }
 .profile {
-    width: 38px;
-    height: 38px;
+    // width: 38px;
+    width: 45px;
+    // height: 38px;
+    height: 45px;
     border-radius: 50%;
     border: 0;
     background-color: rgb(221, 221, 221);

@@ -107,7 +107,6 @@ export default function Tabs(props: {
       className={styles.content}
       onMouseDown={(e) => {
         dragStart(e);
-        // alert("hety");
       }}
       onMouseUp={(e) => dragStop(e)}
       onMouseMove={(e) => dragging(e)}

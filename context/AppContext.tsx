@@ -7,12 +7,7 @@ import {
   startAfter,
   where,
 } from "firebase/firestore";
-import {
-  createContext,
-  useEffect,
-  useRef,
-  useState
-} from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import { db, getPostWithMoreInfo } from "../lib/firebase";
 import { Post, Props } from "../types/interfaces";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
@@ -44,6 +39,10 @@ export function AppProvider(props: Props) {
     setlimitedPosts?.((prev: Post[]) => prev.filter((post) => post.id !== id));
     console.log(limitedPosts);
   };
+  useEffect(() => {
+    console.log(posts);
+    console.log(limitedPosts);
+  }, []);
 
   // useEffect(() => {
   //   // Set up the real-time data listener
@@ -151,7 +150,7 @@ export function AppProvider(props: Props) {
         setActive,
         uid,
         allUsers,
-        posts: limitedPosts,
+        posts: limitedPosts ?? posts,
         setlimitedPosts,
         postLoading,
         postEnd,

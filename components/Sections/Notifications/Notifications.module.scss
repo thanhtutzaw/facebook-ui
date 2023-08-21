@@ -3,6 +3,8 @@
     overflow: hidden;
     background-color: white;
     padding-bottom: 1rem;
+    display: grid;
+    align-content: center;
     ul {
         // all: unset;
         padding: 0;
@@ -76,9 +78,6 @@
                 &::before {
                     content: "";
                     position: absolute;
-                    // top: 50%;
-                    // transform: translateY(-50%);
-                    // left: -10px;
                     top: 0px;
                     left: 0px;
                     width: 2px;

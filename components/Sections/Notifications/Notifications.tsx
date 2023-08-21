@@ -40,27 +40,34 @@ export default function Notifications() {
       );
       notiQuery = query(notiQuery, startAfter(date));
     }
-    const snapShot = await getDocs(notiQuery);
-    const noti = snapShot.docs.map((doc) => {
-      const data = doc.data() as NotiTypes;
-      return {
-        id: doc.id,
-        ...doc.data(),
-        ...getMessage(data.type),
-      };
-    }) as NotiTypes[];
-    const hasMore = noti.length > LIMIT;
-    if (hasMore) {
-      noti.pop();
+
+    try {
+      const snapShot = await getDocs(notiQuery);
+      // if (snapShot.empty) {
+      //   throw Error;
+      // }
+      const noti = snapShot.docs.map((doc) => {
+        const data = doc.data() as NotiTypes;
+        return {
+          id: doc.id,
+          ...doc.data(),
+          ...getMessage(data.type),
+        };
+      }) as NotiTypes[];
+      const hasMore = noti.length > LIMIT;
+      if (hasMore) {
+        noti.pop();
+      }
+      return { noti, hasMore };
+    } catch (error) {
+      console.error(error);
     }
-    return { noti, hasMore };
   };
 
   const { fetchNextPage, hasNextPage, isLoading, error, data } =
     useInfiniteQuery({
       queryKey: ["notifications"],
       queryFn: async ({ pageParam }) => {
-        // console.log(pageParam);
         return await fetchNoti(pageParam);
       },
       enabled: tab === "notifications",
@@ -72,6 +79,29 @@ export default function Notifications() {
     });
 
   const noti = data?.pages.flatMap((page) => page?.noti ?? []);
+  useEffect(() => {
+    // if (!togglereactionList) return;
+    let notiQuery = query(
+      collection(db, `/users/${uid}/notifications`),
+      orderBy("createdAt", "desc"),
+      limit(LIMIT + 1)
+    );
+    // let unsubscribe: Unsubscribe;
+    // unsubscribe = onSnapshot(notiQuery, async (snapshot) => {
+    //   const notis = snapshot.docs.map((doc) => doc.data()) as NotiTypes;
+    //   const withAuthor = await Promise.all(
+    //     likes.map(async (l) => {
+    //       if (l.uid) {
+    //         const author = await getProfileByUID(l.uid?.toString());
+    //         return { ...l, author };
+    //       } else {
+    //         return { ...l, author: null };
+    //       }
+    //     })
+    //   );
+    console.log("updatedNoti");
+    // setLikes(withAuthor);
+  }, [uid]);
   return (
     <div
       id="notifications"
@@ -90,24 +120,26 @@ export default function Notifications() {
       </div>
       <div className={s.container}>
         {isLoading ? (
-          <Spinner fullScreen />
+          <Spinner />
         ) : error ? (
-          <p>Unexpected Error </p>
+          <p style={{ textAlign: "center", color: "red" }}>
+            Unexpected Error !
+          </p>
         ) : noti?.length === 0 ? (
           <p style={{ textAlign: "center" }}>Empty Notifications</p>
         ) : (
           <ul>
             {noti?.map((n) => (
-              <NotiItem key={n.id} noti={n} />
+              <Noti key={n.id} noti={n} />
             ))}
           </ul>
         )}
-        {hasNextPage && <Spinner style={{ marginBlock: "1rem" }} />}
+        {hasNextPage && !error && <Spinner style={{ marginBlock: "1rem" }} />}
       </div>
     </div>
   );
 }
-function NotiItem({ noti }: { noti: NotiTypes }) {
+function Noti({ noti }: { noti: NotiTypes }) {
   const router = useRouter();
   const { id, content, message, uid, url, photoURL, userName, createdAt } =
     noti;

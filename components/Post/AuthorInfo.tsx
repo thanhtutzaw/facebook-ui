@@ -23,7 +23,7 @@ export default function AuthorInfo(props: {
   comment?: Comment;
   style?: CSSProperties;
   children?: ReactNode;
-  layout?:layoutTypes;
+  layout?: layoutTypes;
 }) {
   const {
     layout,
@@ -140,7 +140,8 @@ export function Author(props: {
           margin: " auto 0",
           flexDirection: layout,
           flex: " 1",
-          wordBreak: "break-word"
+          wordBreak: "break-word",
+          gap: "2px",
         }}
       >
         <p

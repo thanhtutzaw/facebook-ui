@@ -12,14 +12,14 @@ import {
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { fetchLikedUsers } from "../../lib/firestore/post";
+import { useEffect } from "react";
+import { db, getProfileByUID } from "../../lib/firebase";
 import { Post, account, likes } from "../../types/interfaces";
 import Spinner from "../Spinner";
 import AuthorInfo from "./AuthorInfo";
-import { db, getProfileByUID } from "../../lib/firebase";
 
 export function LikedUsers({
+  count,
   loading,
   Likes,
   settogglereactionList,
@@ -27,6 +27,7 @@ export function LikedUsers({
   post,
   setLikes,
 }: {
+  count: number;
   post: Post;
   loading: boolean;
   setLikes: Function;
@@ -87,7 +88,8 @@ export function LikedUsers({
       <header>
         <p>
           Who reacted this post{" "}
-          {`${Likes?.length > 0 && !loading ? Likes.length : "0"}`}
+          {/* {`${Likes?.length > 0 && !loading ? Likes.length : "0"}`} */}
+          {count ?? 0}
         </p>
         <motion.button
           onClick={(e) => {

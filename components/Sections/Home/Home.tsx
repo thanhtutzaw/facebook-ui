@@ -44,6 +44,9 @@ export default function Home(props: { tabIndex: number }) {
           } else if (previousScroll > currentScroll + 25) {
             header.style.transform = "translateY(0px)";
             header.style.height = "120px";
+          } else {
+            header.style.transform = "translateY(0px)";
+            header.style.height = "120px";
           }
         }
       }}
