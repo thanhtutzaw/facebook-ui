@@ -296,8 +296,14 @@ export default function Page(props: {
   const [commentLoading, setcommentLoading] = useState(false);
   const fetchMoreComment = useCallback(
     async function () {
-      setcommentLoading(true);
+      console.log("fetching more comment");
+      if (limitedComments.length > Comment_LIMIT) {
+        setcommentLoading(true);
+      } else {
+        setcommentLoading(false);
+      }
       const comment = limitedComments?.[limitedComments?.length - 1]!;
+      if (!comment) return;
       const date = new Timestamp(
         comment.createdAt.seconds,
         comment.createdAt.nanoseconds
@@ -324,8 +330,8 @@ export default function Page(props: {
       );
       setlimitedComments(limitedComments.concat(newComment));
       setcommentLoading(false);
-
-      if (newComment?.length! < Comment_LIMIT) {
+      console.log(limitedComments.length, Comment_LIMIT);
+      if (limitedComments?.length! < Comment_LIMIT) {
         setcommentEnd(true);
       }
     },
@@ -365,7 +371,7 @@ export default function Page(props: {
         <AuthorInfo navigateToProfile={navigateToProfile} post={post} />
         <Input
           style={{
-            marginBottom: text === "" ? "0" : "1rem",
+            // marginBottom: text === "" ? "0" : "1rem",
             cursor: canEdit ? "initial" : "default",
           }}
           role="textbox"

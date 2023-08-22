@@ -56,7 +56,6 @@ export interface sharePost {
   postId: string;
 }
 export interface sharedPost {
-  like?: any;
   author: UserRecord | User;
   authorId: string | number;
   id?: string | number;
@@ -87,7 +86,6 @@ export interface Post {
   commentCount?: string | number;
   isSaved: boolean;
   isLiked: boolean;
-  like?: any;
   shares?: { uid: string }[];
   author: UserRecord | User | account["profile"];
   authorId: string | number;
@@ -140,7 +138,6 @@ export interface Props {
   children?: ReactNode;
   setselectMode?: Function;
   selectMode?: boolean;
-
   expired?: boolean;
   uid?: string;
   active?:

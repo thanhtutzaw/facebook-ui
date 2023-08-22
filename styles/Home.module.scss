@@ -722,9 +722,9 @@
 .input {
   // padding: 0 0.8rem;
   padding: 0 var(--padding-inline);
-  // padding-top: 0.5rem;
-  // margin-bottom: 0.8rem;
-  margin-bottom: 5px;
+  // padding-bottom: 0.8rem;
+  // margin-bottom: 5px;
+  margin-bottom: var(--padding-inline);
   outline: 0;
   border: 0;
   cursor: default;

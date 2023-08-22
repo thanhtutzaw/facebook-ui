@@ -1,8 +1,9 @@
 :root {
-  --blue-origin   : #0070f3;
-  --main-width    : 700px;
-  --padding-inline:clamp(0.5rem, 2vw, 0.8rem);
-  /* --main-width : 500px; */
+  --blue-origin      : #0070f3;
+  --main-width       : 700px;
+  /* --padding-inline:clamp(0.5rem, 2vw, 0.8rem); */
+  --padding-inline   : clamp(0.5rem, 1vw, 0.8rem);
+  /* --main-width    : 500px; */
 }
 
 * {

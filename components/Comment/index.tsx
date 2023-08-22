@@ -23,7 +23,7 @@ export default function Comment(props: {
   useEffect(() => {
     setclient(true);
   }, []);
-
+  if (comments.length === 0) return <></>;
   return (
     <ul className={s.container}>
       {comments?.map((c) => (

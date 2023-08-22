@@ -1,4 +1,3 @@
-
 .container {
     margin: 0;
     padding: 0;
@@ -36,24 +35,19 @@
         > * {
             padding: 0 0.8rem;
             &:first-child {
-                padding: 0.5rem 0.8rem !important;
+                padding: 0.5rem var(--padding-inline) !important;
             }
         }
         .actions {
-            // margin-top: 5px;
             display: flex;
             align-items: center;
             gap: 10px;
             .replayBtn {
                 background-color: transparent;
-                // padding:0;
             }
             > button {
-                // background-color: rgb(221, 221, 221);
-                // color: black;
                 background-color: #eee;
                 color: #2a2a2a;
-                // padding: 0.5rem 1rem;
                 padding: 5px 10px;
                 display: flex;
                 gap: 5px;
@@ -73,7 +67,7 @@
     border-top: 1px solid #dfdfdf;
     position: fixed;
     bottom: 0;
-    padding: 0.8rem;
+    padding: 0.8rem var(--padding-inline);
     display: flex;
     justify-content: space-between;
     width: 100vw;

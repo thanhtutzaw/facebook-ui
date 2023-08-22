@@ -206,11 +206,13 @@ export default function Content(props: {
         </>
       )}
       <Input
-        style={{
-          marginBottom: text === "" ? "0" : "5px",
-          // paddingTop: text === "" ? "0" : ".5rem",
-          // marginBottom: text === "" ? ".5rem" : "1rem",
-        }}
+        style={
+          {
+            // marginBottom: text === "" ? "0" : "5px",
+            // paddingTop: text === "" ? "0" : ".5rem",
+            // marginBottom: text === "" ? ".5rem" : "1rem",
+          }
+        }
         dangerouslySetInnerHTML={{
           __html: !production
             ? client
@@ -238,12 +240,12 @@ export default function Content(props: {
       <PhotoLayout post={post} files={post.media} preview />
       <SharePreview selectMode={selectMode} post={post} />
       {/* {JSON.stringify(post.like)} */}
-        <SocialCount
-          Likes={Likes}
-          setLikes={setLikes}
-          likeCount={likeCount}
-          post={post}
-        />
+      <SocialCount
+        Likes={Likes}
+        setLikes={setLikes}
+        likeCount={likeCount}
+        post={post}
+      />
       {/* {post.likeCount} */}
     </span>
   );

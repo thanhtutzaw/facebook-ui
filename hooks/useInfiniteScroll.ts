@@ -14,6 +14,7 @@ function useInfiniteScroll(
         !hasMore
       ) {
         await fetchMoreData();
+        console.log(hasMore, scrollParent);
       }
     }
     const element = scrollParent
