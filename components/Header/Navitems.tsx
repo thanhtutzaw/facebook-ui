@@ -1,6 +1,8 @@
 import { useRouter } from "next/router";
 import styles from "../../styles/Home.module.scss";
 import { Props } from "../../types/interfaces";
+import { useContext } from "react";
+import { AppContext } from "../../context/AppContext";
 
 export default function Navitems(props: {
   active: Props["active"];
@@ -9,6 +11,8 @@ export default function Navitems(props: {
   name: string;
   index: number;
 }) {
+  const { UnReadNotiCount } = useContext(AppContext) as Props;
+
   const { active, setActive, icon: TabIcon, name, index } = props;
   const router = useRouter();
   let iconTitle = name === "/" ? "Home" : name;
@@ -40,7 +44,12 @@ export default function Navitems(props: {
   return (
     <div onClick={changeTab} className={`${styles.navItems} ${activeClass}`}>
       <div role="button" aria-label={iconTitle} title={iconTitle}>
-        {TabIcon}
+        {TabIcon}{" "}
+        <span style={{color:'red'}}>
+          {TabName === "notifications" &&
+            parseInt(UnReadNotiCount!.toString()) > 0 &&
+            UnReadNotiCount}
+        </span>
       </div>
     </div>
   );

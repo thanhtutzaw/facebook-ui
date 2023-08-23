@@ -87,7 +87,7 @@ export interface Post {
   isSaved: boolean;
   isLiked: boolean;
   // shares?: { uid: string }[];
-  shareCount?:string | number;
+  shareCount?: string | number;
   author: UserRecord | User | account["profile"];
   authorId: string | number;
   id?: string | number;
@@ -131,6 +131,7 @@ export interface Comment {
 }
 
 export interface Props {
+  UnReadNotiCount?: number | string;
   postError?: string;
   setlimitedPosts?: Function;
   limitedPosts?: Post[];

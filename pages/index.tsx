@@ -7,7 +7,10 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import {
+  collection,
   collectionGroup,
+  doc,
+  getDoc,
   getDocs,
   limit,
   onSnapshot,
@@ -174,11 +177,34 @@ export default function Home({
       router.push("/login");
     }
   }, [expired, router, uid]);
+  const [UnReadNotiCount, setUnReadNotiCount] = useState(0)
+  useEffect(() => {
+    let lastPull;
+    const userDoc = doc(db, `users/${uid}`);
+
+    const unsubscribe = onSnapshot(userDoc, async(doc) => {
+      lastPull = doc.data()?.lastPullTimestamp;
+
+      const notiQuery = query(
+        collection(db, `/users/${uid}/notifications`),
+        where("createdAt", ">", lastPull)
+      );
+
+      const notiCollection = await getDocs(notiQuery);
+      setUnReadNotiCount(notiCollection.size);
+    });
+
+    return () => {
+      unsubscribe(); // Clean up the listener when the component unmounts
+    };
+  }, [uid]);
+
   const { active, setActive } = useActive();
 
   if (expired) return <Welcome postError={postError} expired={expired} />;
   return uid ? (
     <AppProvider
+      UnReadNotiCount={UnReadNotiCount}
       active={active!}
       setActive={setActive!}
       postError={postError!}

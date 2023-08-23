@@ -2,11 +2,14 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   Timestamp,
   collection,
+  doc,
   getDocs,
   limit,
   orderBy,
   query,
+  serverTimestamp,
   startAfter,
+  updateDoc,
 } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
@@ -20,7 +23,6 @@ import { NotiTypes, Props } from "../../../types/interfaces";
 import Spinner from "../../Spinner";
 import t from "../../Tabs/Tabs.module.scss";
 import s from "./Notifications.module.scss";
-import error from "next/error";
 const LIMIT = 10;
 export default function Notifications() {
   const { active: tab } = useActive();
@@ -33,6 +35,8 @@ export default function Notifications() {
       orderBy("createdAt", "desc"),
       limit(LIMIT + 1)
     );
+    const userDoc = doc(db, `users/${uid}`);
+    await updateDoc(userDoc, { lastPullTimestamp: serverTimestamp() });
     if (pageParam) {
       const date = new Timestamp(
         pageParam.createdAt.seconds,
