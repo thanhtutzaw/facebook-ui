@@ -22,7 +22,7 @@ import {
 import { PageContext, PageProps } from "../../context/PageContext";
 import { app, db } from "../../lib/firebase";
 import { sendAppNoti } from "../../lib/firestore/notifications";
-import { addPost, dislikePost, likePost } from "../../lib/firestore/post";
+import { addPost, unlikePost, likePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
 import { debounce } from "../../lib/debounce";
@@ -59,7 +59,9 @@ export const Footer = (
   ) as PageProps;
   const { id, author, authorId } = post;
   const authorProfile = author as account["profile"];
-  const authorName = `${authorProfile.firstName} ${authorProfile.lastName}`;
+  const authorName = `${authorProfile?.firstName ?? "Unknow"} ${
+    authorProfile?.lastName ?? "User"
+  }`;
 
   const auth = getAuth(app);
   const postRef = doc(db, `users/${authorId}/posts/${id}`);
@@ -156,7 +158,7 @@ export const Footer = (
             if (isLiked) {
               // setisLiked(false);
               setLikes?.([]);
-              await dislikePost(likeCount ?? 0, postRef, likeRef);
+              await unlikePost(likeCount ?? 0, postRef, likeRef);
               setLikeLoading(false);
               // setlikeCount?.(parseInt(post.likeCount.toString()) - 1);
             } else {

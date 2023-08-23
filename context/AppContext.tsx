@@ -24,7 +24,6 @@ export function AppProvider(props: Props) {
     username,
     profile,
     uid,
-    allUsers,
     posts,
     email,
   } = props;
@@ -149,7 +148,6 @@ export function AppProvider(props: Props) {
         active,
         setActive,
         uid,
-        allUsers,
         posts: limitedPosts ?? posts,
         setlimitedPosts,
         postLoading,

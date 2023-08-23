@@ -76,7 +76,7 @@ export interface sharedPost {
   media: Media[] | null;
   isLiked: boolean;
   isSaved: boolean;
-  shares?: any;
+  // shares?: any;
   comments: Comment[];
   commentCount?: string | number;
   likeCount: string | number;
@@ -86,7 +86,8 @@ export interface Post {
   commentCount?: string | number;
   isSaved: boolean;
   isLiked: boolean;
-  shares?: { uid: string }[];
+  // shares?: { uid: string }[];
+  shareCount?:string | number;
   author: UserRecord | User | account["profile"];
   authorId: string | number;
   id?: string | number;

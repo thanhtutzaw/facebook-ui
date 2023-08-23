@@ -10,6 +10,7 @@ import { useContext, useState } from "react";
 import { AppContext } from "../../../context/AppContext";
 import { Props } from "../../../types/interfaces";
 import s from "../../Sections/Menu/menu.module.scss";
+import Image from "next/image";
 
 export default function SwitchAccount(props: {
   setLoading: any;
@@ -95,8 +96,7 @@ export default function SwitchAccount(props: {
             }}
             key={i}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="logo.svg" alt={a.email} />
+            <Image width={30} height={30} src="logo.svg" alt={a.email} />
             <div className={s.info}>
               <p>{a.email}</p>
               <p>

@@ -131,23 +131,28 @@ export async function postInfo(p: Post, uid: string) {
     console.log("returning postInfo");
     const shareRef = collection(db, `users/${p.authorId}/posts/${p.id}/shares`);
     const shareDoc = await getDocs(shareRef);
-    const shares = shareDoc.docs.map((doc) => doc.data());
+    const shareCount = shareDoc.size ?? 0;
+    console.log(shareCount);
+    // const shares = shareDoc.docs.map((doc) => doc.data());
     const likedByUserRef = doc(
       db,
       `users/${p.authorId}/posts/${p.id}/likes/${uid}`
     );
-    const isLiked = await getDoc(likedByUserRef);
     const savedByUserRef = doc(db, `users/${uid}/savedPost/${p.id}`);
-    const isSaved = await getDoc(savedByUserRef);
+    // const isLiked = await getDoc(likedByUserRef);
+    // const isSaved = await getDoc(savedByUserRef);
+    // const postProfile = await getProfileByUID(p.authorId.toString());
 
-    const postProfile = await getProfileByUID(p.authorId.toString());
+    const [isLiked, isSaved, postProfile] = await Promise.all([
+      getDoc(likedByUserRef),
+      getDoc(savedByUserRef),
+      getProfileByUID(p.authorId.toString()),
+    ]);
     const originalPost = {
       ...p,
       likeCount: p.likeCount ?? 0,
-      // comments: [...comments],
       author: { ...postProfile },
-      shares: [...shares],
-      // like: [...like],
+      shareCount,
       sharePost: { ...p.sharePost, post: null },
       isLiked: isLiked.exists() ? true : false,
       isSaved: isSaved.exists() ? true : false,
@@ -173,7 +178,7 @@ export async function postInfo(p: Post, uid: string) {
         `users/${sharedPost.authorId}/posts/${sharedPost.id}/shares`
       );
       const SharedPostShareDoc = await getDocs(SharedPostShareRef);
-      const shareShares = SharedPostShareDoc.docs.map((doc) => doc.data());
+      // const shareShares = SharedPostShareDoc.docs.map((doc) => doc.data());
       const sharelikedByUser = doc(
         db,
         `users/${sharedPost.authorId}/posts/${sharedPost.id}/likes/${uid}`
@@ -187,30 +192,23 @@ export async function postInfo(p: Post, uid: string) {
       const sharePost = {
         ...sharedPost,
         likeCount: sharedPost.likeCount ?? 0,
-        // likeCount: sharedPost?.likeCount,
-
         author: { ...sharePostProfile },
-        // like: [...sharelike],
-        shares: [...shareShares],
+        shareCount: SharedPostShareDoc.size ?? 0,
+        // shares: [...shareShares],
         isLiked: isSharePostLiked.exists() ? true : false,
       };
       if (isSharedPostAvailable) {
         return {
           ...originalPost,
-          // comments: [...comments],
-          // like: [...like],
-          shares: [...shares],
+          shareCount: shareCount,
           author: { ...postProfile },
           isLiked: isLiked.exists() ? true : false,
           sharePost: { ...p.sharePost, post: { ...sharePost } },
         };
       } else {
         return {
-          // ...originalPost,
           ...p,
-          // comments: [...comments],
-          // like: [...like],
-          shares: [...shares],
+          shareCount: shareCount,
           isLiked: isLiked.exists() ? true : false,
           author: { ...postProfile },
           sharePost: { ...p.sharePost, post: null },

@@ -8,6 +8,7 @@ import {
 } from "firebase/auth";
 import {
   collectionGroup,
+  getDocs,
   limit,
   onSnapshot,
   orderBy,
@@ -27,6 +28,7 @@ import {
   db,
   getPostWithMoreInfo,
   getProfileByUID,
+  postToJSON,
   userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
@@ -59,21 +61,30 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       orderBy("createdAt", "desc"),
       limit(LIMIT)
     );
-    const newPosts = await getPostWithMoreInfo(uid, postQuery);
-    const profileData = (await getProfileByUID(uid)) as account["profile"];
+    // const posts = await getDocs(postQuery);
+
+    // const newPosts = await Promise.all(
+    //   posts.docs.map(async (doc) => await postToJSON(doc))
+    // );
+    // const newPosts = await getPostWithMoreInfo(uid, postQuery);
+    // const profileData = (await getProfileByUID(uid)) as account["profile"];
+    // const currentAccount = (await getUserData(uid)) as UserRecord;
+    const [newPosts, profileData, currentAccount] = await Promise.all([
+      getPostWithMoreInfo(uid, postQuery),
+      getProfileByUID(uid),
+      getUserData(uid),
+    ]);
     const profile = {
       ...profileData,
       photoURL: profileData.photoURL
         ? profileData.photoURL
         : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
     };
-    const currentAccount = (await getUserData(uid)) as UserRecord;
     const currentUserData = userToJSON(currentAccount);
     return {
       props: {
-        expired,
+        expired: false,
         uid,
-        allUsers: [],
         posts: newPosts,
         email,
         username: username ?? "Unknown",
@@ -95,7 +106,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         postError: postError,
         expired: true,
         uid: "",
-        allUsers: [],
         posts: [],
         email: "",
         username: "",
@@ -109,7 +119,6 @@ export default function Home({
   postError,
   expired,
   uid,
-  allUsers,
   posts,
   email,
   username,
@@ -152,9 +161,6 @@ export default function Home({
     unsubscribe = onSnapshot(postQuery, async (snapshot) => {
       const posts =
         (await getPostWithMoreInfo(uid!, undefined, snapshot)) ?? [];
-      // const withInfo = (await Promise.all(
-      //   posts.map(async (p) => await postInfo(p, uid!))
-      // )) as Post[];
       setlimitedPosts(posts);
       console.log("updated posts");
     });
@@ -182,7 +188,6 @@ export default function Home({
       expired={expired}
       username={username}
       uid={uid}
-      allUsers={allUsers}
       posts={posts}
       email={email}
       account={account}

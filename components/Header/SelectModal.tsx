@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import useEscape from "../../hooks/useEscape";
-import { deleteMultiple } from "../../lib/firestore/post";
+import { deleteMultiplePost } from "../../lib/firestore/post";
 import { Props } from "../../types/interfaces";
 import BackHeader from "./BackHeader";
 import { PageContext, PageProps } from "../../context/PageContext";
@@ -60,7 +60,7 @@ function SelectModal() {
           if (!uid || selectedId?.length === 0 || !selectedId) return;
           setLoading(true);
           try {
-            await deleteMultiple(uid, selectedId);
+            await deleteMultiplePost(uid, selectedId);
             queryClient.refetchQueries(["myPost"]);
             queryClient.invalidateQueries(["myPost"]);
 

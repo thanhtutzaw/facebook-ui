@@ -14,7 +14,10 @@ export function SocialCount(props: {
   // const [reaction, setReaction] = useState({
   //   like: ["1a", "2d"],
   // });
-  const shareCount = post.shares?.length ?? 0;
+  // const shareCount = post.shares?.length ?? 0;
+  const shareCount = parseInt(
+    (post.shareCount?.toString() as string) ?? 0
+  ) as number;
   const commentCount = parseInt(
     (post.commentCount?.toString() as string) ?? 0
   ) as number;
@@ -57,7 +60,7 @@ export function SocialCount(props: {
                 {commentCount} {commentCount <= 1 ? "comment" : "comments"}
               </p>
             )}
-            {post.shares && shareCount !== 0 && (
+            {shareCount !== 0 && (
               <p
                 onClick={(e) => {
                   e.preventDefault();

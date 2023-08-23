@@ -59,7 +59,6 @@ export async function addPost(
     alert("Adding Post Failed !" + error.message);
   }
 }
-
 export async function updatePost(
   uid: string,
   text: string,
@@ -124,7 +123,7 @@ export async function deletePost(data: any) {
     alert("Delete Failed !" + error.message);
   }
 }
-export async function deleteMultiple(uid: string, selctedId: selectedId[]) {
+export async function deleteMultiplePost(uid: string, selctedId: selectedId[]) {
   const chunkSize = 10;
   const batch = writeBatch(db);
   for (let i = 0; i < selctedId.length; i += chunkSize) {
@@ -166,7 +165,6 @@ export async function deleteMultiple(uid: string, selctedId: selectedId[]) {
     alert("Delete Failed !" + error.message);
   }
 }
-
 export async function likePost(
   likeCount: number,
   postRef: DocumentReference<DocumentData>,
@@ -207,7 +205,7 @@ export async function fetchLikedUsers(p: Post) {
     throw Error;
   }
 }
-export async function dislikePost(
+export async function unlikePost(
   likeCount: number,
   postRef: DocumentReference<DocumentData>,
   likeRef: DocumentReference<DocumentData>
