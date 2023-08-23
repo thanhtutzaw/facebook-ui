@@ -1,23 +1,14 @@
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
-import { GetServerSideProps } from "next";
-import BackHeader from "../../components/Header/BackHeader";
-import s from "./index.module.scss";
-import { db, postToJSON, userToJSON } from "../../lib/firebase";
-import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
-import { Post, SavedPost } from "../../types/interfaces";
-// import console, { profile } from "console";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-import nookies from "nookies";
-import Link from "next/link";
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { GetServerSideProps } from "next";
 import Image from "next/image";
+import Link from "next/link";
+import nookies from "nookies";
+import BackHeader from "../../components/Header/BackHeader";
+import { db, userToJSON } from "../../lib/firebase";
+import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
+import s from "./index.module.scss";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -72,6 +63,7 @@ export default function Page(props: { acceptedFriends: any[] }) {
         }}
         className={s.container}
       >
+        {/* {JSON.stringify(acceptedFriends)} */}
         <ul>
           {acceptedFriends.map((friend) => (
             <li key={friend.id} aria-label="Go to Friends Profile">
@@ -82,6 +74,7 @@ export default function Page(props: { acceptedFriends: any[] }) {
                   width={50}
                   height={50}
                   src={
+                    friend.author.photoURL ??
                     "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
                   }
                 />

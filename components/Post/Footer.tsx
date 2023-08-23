@@ -11,7 +11,9 @@ import { collection, doc, getDoc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import {
+  MouseEventHandler,
   StyleHTMLAttributes,
+  memo,
   useContext,
   useEffect,
   useRef,
@@ -23,7 +25,8 @@ import { sendAppNoti } from "../../lib/firestore/notifications";
 import { addPost, dislikePost, likePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
-export function Footer(
+import { debounce } from "../../lib/debounce";
+export const Footer = (
   props: {
     likeCount?: number;
     setLikes?: Function;
@@ -32,19 +35,26 @@ export function Footer(
     profile: account["profile"];
     tabIndex?: number;
   } & StyleHTMLAttributes<HTMLDivElement>
-) {
-  const {setLikes, profile, likeCount, setlikeCount, post, tabIndex, ...rests } = props;
+) => {
+  const {
+    setLikes,
+    profile,
+    likeCount,
+    setlikeCount,
+    post,
+    tabIndex,
+    ...rests
+  } = props;
   const router = useRouter();
   const commentRef = useRef<HTMLDivElement>(null);
   const [savedVisibility, setsavedVisibility] = useState("");
   const [reactionAction, setreactionAction] = useState("");
-  const { queryClient } = useContext(PageContext) as PageProps;
   useEffect(() => {
     setsavedVisibility(localStorage.getItem("visibility")!);
   }, []);
   const [isLiked, setisLiked] = useState(post.isLiked);
 
-  const { dropdownRef, shareAction, setshareAction } = useContext(
+  const { queryClient, dropdownRef, shareAction, setshareAction } = useContext(
     PageContext
   ) as PageProps;
   const { id, author, authorId } = post;
@@ -64,6 +74,10 @@ export function Footer(
     // );
 
     async function getLikeCount() {
+      const likeRef = doc(
+        db,
+        `users/${post.authorId}/posts/${post.id}/likes/${auth?.currentUser?.uid}`
+      );
       const isUserLikeThisPost = await getDoc(likeRef);
       // const likes = await getDocs(likeCollectionRef);
       // const likeCount = likes.docs.length;
@@ -77,22 +91,31 @@ export function Footer(
       }
     }
     try {
+      console.log("getting like count");
       getLikeCount();
     } catch (error: any) {
       if (error.code === "quota-exceeded") {
-        // setpostError()
-
         alert("Firebase Quota Exceeded. Please try again later.");
         throw error;
       }
       console.error(error);
     }
-  }, [isLiked, likeRef, post.likeCount, setlikeCount]);
+  }, [
+    auth?.currentUser?.uid,
+    post.authorId,
+    post.id,
+    post.likeCount,
+    setlikeCount,
+  ]);
   // const [reaction, setReaction] = useState({
   //   like: ["1a", "2d"],
   // });
+  useEffect(() => {
+    // console.log("footer rendering");
+  }, []);
+
   const [likeLoading, setLikeLoading] = useState(false);
-  // const queryClient = useQueryClient();
+  // const debounceLikeUnlike = useRef(debounce(handleLikeUnlike(), 1000)).current;
   return (
     <div
       // onMouseLeave={() => {
@@ -116,23 +139,30 @@ export function Footer(
         // }}
       >
         <button
+          disabled={likeLoading}
           style={{ pointerEvents: likeLoading ? "none" : "initial" }}
+          // onClick={async () => await handleLikeUnlike()}
           onClick={async () => {
             const uid = auth.currentUser?.uid;
             if (!uid) {
               alert("Error : User Not Found . Sign up and Try Again ! ");
               return;
             }
+            setlikeCount?.(post.likeCount);
             setisLiked((prev) => !prev);
             queryClient?.refetchQueries(["myPost"]);
             queryClient?.invalidateQueries(["myPost"]);
             setLikeLoading(true);
             if (isLiked) {
-              setLikes?.([])
+              // setisLiked(false);
+              setLikes?.([]);
               await dislikePost(likeCount ?? 0, postRef, likeRef);
               setLikeLoading(false);
+              // setlikeCount?.(parseInt(post.likeCount.toString()) - 1);
             } else {
-              setLikes?.([])
+              // setlikeCount?.(parseInt(post.likeCount.toString()));
+              // setisLiked(true);
+              setLikes?.([]);
               await likePost(likeCount ?? 0, postRef, likeRef, uid);
               await sendAppNoti(
                 uid,
@@ -415,4 +445,8 @@ export function Footer(
       </AnimatePresence> */}
     </div>
   );
-}
+
+  async function handleLikeUnlike() {}
+};
+// );
+// Footer.displayName = "Footer";

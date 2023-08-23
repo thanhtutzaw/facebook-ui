@@ -132,7 +132,7 @@ export default function Home({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
-  
+
   const [limitedPosts, setlimitedPosts] = useState(posts ?? []);
   // useEffect(() => {
   //   // const lastestPost = limitedPosts.concat(posts!);
@@ -186,12 +186,9 @@ export default function Home({
       posts={posts}
       email={email}
       account={account}
-    >      
-        <Header
-          tabIndex={active === "/" ? 0 : -1}
-          indicatorRef={indicatorRef}
-        />
-        <Tabs indicatorRef={indicatorRef} />
+    >
+      <Header tabIndex={active === "/" ? 0 : -1} indicatorRef={indicatorRef} />
+      <Tabs indicatorRef={indicatorRef} />
     </AppProvider>
   ) : (
     <Spinner fullScreen style={{ margin: "0" }} />

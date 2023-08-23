@@ -205,38 +205,40 @@ export default function Content(props: {
           )}
         </>
       )}
-      <Input
-        style={
-          {
-            // marginBottom: text === "" ? "0" : "5px",
-            // paddingTop: text === "" ? "0" : ".5rem",
-            // marginBottom: text === "" ? ".5rem" : "1rem",
+      {text !== "" && (
+        <Input
+          style={
+            {
+              // marginBottom: text === "" ? "0" : "5px",
+              // paddingTop: text === "" ? "0" : ".5rem",
+              // marginBottom: text === "" ? ".5rem" : "1rem",
+            }
           }
-        }
-        dangerouslySetInnerHTML={{
-          __html: !production
-            ? client
-              ? textContent + seemore
-              : ""
-            : textContent + seemore,
-        }}
-        onClick={(e) => {
-          const target = e.target as HTMLElement;
-          if (target.tagName === "A") {
-            e.stopPropagation();
-          }
-          if (target.tagName === "BUTTON") {
-            e.stopPropagation();
-            e.preventDefault();
-            setShowmore((prev: boolean) => !prev);
-          }
-        }}
-        className={s.text}
-        suppressContentEditableWarning={true}
-        suppressHydrationWarning={true}
-        role="textbox"
-        contentEditable={false}
-      />
+          dangerouslySetInnerHTML={{
+            __html: !production
+              ? client
+                ? textContent + seemore
+                : ""
+              : textContent + seemore,
+          }}
+          onClick={(e) => {
+            const target = e.target as HTMLElement;
+            if (target.tagName === "A") {
+              e.stopPropagation();
+            }
+            if (target.tagName === "BUTTON") {
+              e.stopPropagation();
+              e.preventDefault();
+              setShowmore((prev: boolean) => !prev);
+            }
+          }}
+          className={s.text}
+          suppressContentEditableWarning={true}
+          suppressHydrationWarning={true}
+          role="textbox"
+          contentEditable={false}
+        />
+      )}
       <PhotoLayout post={post} files={post.media} preview />
       <SharePreview selectMode={selectMode} post={post} />
       {/* {JSON.stringify(post.like)} */}

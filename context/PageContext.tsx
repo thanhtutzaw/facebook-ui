@@ -1,6 +1,14 @@
-import { useRef, useState, ReactNode, RefObject, useEffect } from "react";
+import {
+  useRef,
+  useState,
+  ReactNode,
+  RefObject,
+  useEffect,
+  MutableRefObject,
+} from "react";
 import { createContext } from "react";
 import { useQueryClient, QueryClient } from "@tanstack/react-query";
+import { User } from "firebase/auth";
 
 export type selectedId = {
   post: string;
@@ -11,6 +19,7 @@ export type selectedId = {
   } | null;
 };
 export interface PageProps {
+  currentUser:User | null;
   queryClient?: QueryClient;
   postError?: string;
   dropdownRef?: RefObject<HTMLDivElement>;
@@ -27,20 +36,22 @@ export interface PageProps {
   setSelectedId?: Function;
   setshareAction?: Function;
   setshowAction?: Function;
-  preventClick?: boolean;
   view?: any;
   setview?: Function;
+  // preventClick?: MutableRefObject<boolean>;
+  preventClick?: boolean;
   setpreventClick?: Function;
 }
 export const PageContext = createContext<PageProps | null>(null);
 
 export function PageProvider(props: PageProps) {
-  const { active, setActive } = props;
+  const { active, setActive , currentUser } = props;
   const queryClient = useQueryClient();
   const [showAction, setshowAction] = useState("");
   const [shareAction, setshareAction] = useState("");
   const [selectedId, setSelectedId] = useState([]);
   const [preventClick, setpreventClick] = useState(false);
+  // const preventClick = useRef(false);
   const [view, setview] = useState({ src: "", name: "" });
   const fileRef = useRef<HTMLInputElement>(null);
   const viewRef = useRef<HTMLDialogElement>(null);
@@ -60,6 +71,7 @@ export function PageProvider(props: PageProps) {
   return (
     <PageContext.Provider
       value={{
+        currentUser,
         queryClient,
         dropdownRef,
         preventClick,

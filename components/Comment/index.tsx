@@ -79,15 +79,7 @@ export default function Comment(props: {
                   day: "numeric",
                 })}
             </p>
-            {/* {createdAt} */}
-            {/* <button>
-              <FontAwesomeIcon icon={faThumbsUp} />
-              Like
-            </button> */}
-            <button className={s.replayBtn}>
-              {/* <FontAwesomeIcon icon={faShare} /> */}
-              Reply
-            </button>
+            <button className={s.replayBtn}>Reply</button>
           </div>
         </AuthorInfo>
       </li>

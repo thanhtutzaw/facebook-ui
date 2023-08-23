@@ -178,9 +178,9 @@ export async function likePost(
   batch.update(postRef, {
     // likeCount: increment(1),
     likeCount: likeCount + 1,
-    // likeCount:likeCount
   });
   await batch.commit();
+  console.log("liked post");
 }
 export async function fetchLikedUsers(p: Post) {
   const likeRef = query(
@@ -212,13 +212,14 @@ export async function dislikePost(
   postRef: DocumentReference<DocumentData>,
   likeRef: DocumentReference<DocumentData>
 ) {
+  if (likeCount <= 0) return;
   const batch = writeBatch(db);
 
   batch.delete(likeRef);
   batch.update(postRef, {
     // likeCount: increment(-1),
-    likeCount: likeCount - 1,
-    // likeCount:likeCount
+    likeCount: likeCount > 0 ? likeCount - 1 : likeCount,
   });
   await batch.commit();
+  console.log("unliked post");
 }

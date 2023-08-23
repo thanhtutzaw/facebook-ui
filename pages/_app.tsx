@@ -23,30 +23,34 @@ import { app } from "../lib/firebase";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "../styles/globals.css";
+import { GetServerSideProps } from "next";
+import { Props } from "../types/interfaces";
+import { verifyIdToken } from "../lib/firebaseAdmin";
 config.autoAddCss = false;
-// export const getServerSideProps: GetServerSideProps<Props> = async (
-//   context
-// ) => {
-//   try {
-//     // const cookies = nookies.get(context);
-//     // const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
-//     let expired = false;
-//     return {
-//       props: {
-//         expired,
-//       },
-//     };
-//   } catch (error) {
-//     console.log("SSR Error (expired in app.tsx) " + error);
-//     // context.res.writeHead(302, { Location: "/" });
-//     // context.res.end();
-//     return {
-//       props: {
-//         expired: true,
-//       },
-//     };
-//   }
-// };
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
+  try {
+    const cookies = nookies.get(context);
+    const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
+    console.log(token.uid);
+    let expired = false;
+    return {
+      props: {
+        expired,
+      },
+    };
+  } catch (error) {
+    console.log("SSR Error (expired in app.tsx) " + error);
+    // context.res.writeHead(302, { Location: "/" });
+    // context.res.end();
+    return {
+      props: {
+        expired: true,
+      },
+    };
+  }
+};
 export default function App({
   Component,
   pageProps,
@@ -93,11 +97,13 @@ export default function App({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const [currentUser, setcurrentUser] = useState<User | null>(null);
   useEffect(() => {
     const auth = getAuth(app);
     const unsubscribe = onIdTokenChanged(auth, async (user) => {
       if (!user) {
         nookies.destroy(undefined, "token");
+        setcurrentUser(null);
         return;
       }
       try {
@@ -110,6 +116,8 @@ export default function App({
           secure: true,
           sameSite: "none",
         });
+        // console.log(user);
+        setcurrentUser(user);
       } catch (error) {
         console.log("Error refreshing ID token:", error);
       }
@@ -145,7 +153,11 @@ export default function App({
         <link rel="manifest" href="/manifest.json" />
       </Head>
       <QueryClientProvider client={queryClient}>
-        <PageProvider active={active} setActive={setActive}>
+        <PageProvider
+          currentUser={currentUser}
+          active={active}
+          setActive={setActive}
+        >
           <main style={{ scrollPadding: "5rem", scrollMargin: "5rem" }}>
             <Component {...pageProps} />
             {authUser?.uid && <ImageLargeView />}

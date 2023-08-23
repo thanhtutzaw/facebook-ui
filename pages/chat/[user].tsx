@@ -6,6 +6,8 @@ import { getUserData } from "../../lib/firebaseAdmin";
 import s from "../../styles/Home.module.scss";
 import ChatInput from "../../components/Chat/Input";
 import { ChatHeader } from "../../components/Chat/Header";
+import { useContext } from "react";
+import { PageContext, PageProps } from "../../context/PageContext";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;
@@ -38,6 +40,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 export default function FriendChat(props: { account: UserRecord }) {
   const { account } = props;
+  const { currentUser } = useContext(PageContext) as PageProps;
+
   return (
     <div className="user">
       <BackHeader>
@@ -45,10 +49,19 @@ export default function FriendChat(props: { account: UserRecord }) {
       </BackHeader>
 
       <div className={s.container}>
-      <div style={{textAlign:"center", position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,50%)'}}>
-        Coming Soon
-      </div>
-        <ChatInput />
+        <div
+          style={{
+            textAlign: "center",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%,50%)",
+          }}
+        >
+          Coming Soon
+          
+        </div>
+        <ChatInput currentUser={currentUser} />
       </div>
     </div>
   );

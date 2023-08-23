@@ -128,7 +128,7 @@ export async function getProfileByUID(id: string) {
 }
 export async function postInfo(p: Post, uid: string) {
   if (p.authorId) {
-    
+    console.log("returning postInfo");
     const shareRef = collection(db, `users/${p.authorId}/posts/${p.id}/shares`);
     const shareDoc = await getDocs(shareRef);
     const shares = shareDoc.docs.map((doc) => doc.data());

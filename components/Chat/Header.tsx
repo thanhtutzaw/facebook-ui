@@ -5,13 +5,7 @@ import s from "./index.module.scss";
 
 export function ChatHeader({ account }: { account: UserRecord }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        flex: "1",
-        gap: ".5rem",
-      }}
-    >
+    <div className={s.chatHeader}>
       <Link
         style={{
           display: "flex",

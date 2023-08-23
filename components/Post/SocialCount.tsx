@@ -29,6 +29,8 @@ export function SocialCount(props: {
         }, 200);
   }, [togglereactionList]);
 
+  useEffect(() => {}, [likeCount]);
+
   const [loading, setloading] = useState(false);
   if (shareCount > 0 || likeCount > 0 || commentCount > 0)
     return (

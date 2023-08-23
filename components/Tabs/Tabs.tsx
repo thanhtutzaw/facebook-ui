@@ -31,7 +31,9 @@ export default function Tabs(props: {
   const { indicatorRef } = props;
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
-  const { setpreventClick } = useContext(PageContext) as PageProps;
+  const { preventClick, setpreventClick } = useContext(
+    PageContext
+  ) as PageProps;
   const { active } = useActive();
 
   useEffect(() => {
@@ -59,7 +61,7 @@ export default function Tabs(props: {
 
     const target = e.target as HTMLElement;
     const tagName = target.tagName.toLowerCase() as ElementType;
-    console.log(currentTarget);
+    // console.log(target);
     if (
       tagName === "a" ||
       tagName === "dialog" ||
@@ -94,9 +96,13 @@ export default function Tabs(props: {
       // const dy = e.clientY - pos.y;
       currentTarget.scrollLeft = pos.left - dx;
       setpreventClick?.(true);
+      // if (!preventClick) return;
+      // preventClick.current = true;
     } else {
       setcanDrag(false);
       setpreventClick?.(false);
+      // if (!preventClick) return;
+      // preventClick.current = false;
     }
   }
   return (
