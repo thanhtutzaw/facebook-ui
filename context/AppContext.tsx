@@ -17,11 +17,9 @@ export const LIMIT = 10;
 export function AppProvider(props: Props) {
   const {
     active,
-    setActive,
     setlimitedPosts,
     limitedPosts,
     account,
-    username,
     profile,
     uid,
     posts,
@@ -41,6 +39,10 @@ export function AppProvider(props: Props) {
   useEffect(() => {
     console.log(posts);
     console.log(limitedPosts);
+  }, []);
+  const [client, setClient] = useState(false);
+  useEffect(() => {
+    setClient(true);
   }, []);
 
   // useEffect(() => {
@@ -137,7 +139,7 @@ export function AppProvider(props: Props) {
     <AppContext.Provider
       value={{
         updatePost,
-        username,
+        // username,
         profile,
         sortedPost,
         setsortedPost,
@@ -145,10 +147,8 @@ export function AppProvider(props: Props) {
         headerContainerRef,
         selectMode,
         setselectMode,
-        active,
-        setActive,
         uid,
-        posts: limitedPosts ?? posts,
+        posts: client ? limitedPosts : posts,
         setlimitedPosts,
         postLoading,
         postEnd,

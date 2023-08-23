@@ -12,11 +12,9 @@ import {
   getDoc,
   getDocs,
   getFirestore,
-  orderBy,
-  query,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { Comment, Post, account } from "../types/interfaces";
+import { Comment, Post } from "../types/interfaces";
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -132,7 +130,7 @@ export async function postInfo(p: Post, uid: string) {
     const shareRef = collection(db, `users/${p.authorId}/posts/${p.id}/shares`);
     const shareDoc = await getDocs(shareRef);
     const shareCount = shareDoc.size ?? 0;
-    console.log(shareCount);
+    // console.log(shareCount);
     // const shares = shareDoc.docs.map((doc) => doc.data());
     const likedByUserRef = doc(
       db,
@@ -177,17 +175,17 @@ export async function postInfo(p: Post, uid: string) {
         db,
         `users/${sharedPost.authorId}/posts/${sharedPost.id}/shares`
       );
-      const SharedPostShareDoc = await getDocs(SharedPostShareRef);
       // const shareShares = SharedPostShareDoc.docs.map((doc) => doc.data());
       const sharelikedByUser = doc(
         db,
         `users/${sharedPost.authorId}/posts/${sharedPost.id}/likes/${uid}`
       );
-      const isSharePostLiked = await getDoc(sharelikedByUser);
-
-      const sharePostProfile = await getProfileByUID(
-        sharedPost.authorId.toString()
-      );
+      const [isSharePostLiked, sharePostProfile, SharedPostShareDoc] =
+        await Promise.all([
+          getDoc(sharelikedByUser),
+          getProfileByUID(sharedPost.authorId.toString()),
+          getDocs(SharedPostShareRef),
+        ]);
 
       const sharePost = {
         ...sharedPost,

@@ -1,5 +1,5 @@
 import { User } from "firebase/auth";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { Post as PostType } from "../../../types/interfaces";
 import Post from "../../Post";
 import s from "../../Post/index.module.scss";
@@ -16,7 +16,10 @@ export const PostList = memo(
     postLoading?: boolean;
     postEnd?: boolean;
   }) => {
-    console.log("postList is rendering");
+    // console.log("postList is rendering");
+    useEffect(() => {
+      console.log("postList is rendering");
+    }, []);
 
     const {
       updatePost,

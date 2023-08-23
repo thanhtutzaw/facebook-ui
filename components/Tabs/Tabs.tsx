@@ -61,7 +61,6 @@ export default function Tabs(props: {
 
     const target = e.target as HTMLElement;
     const tagName = target.tagName.toLowerCase() as ElementType;
-    // console.log(target);
     if (
       tagName === "a" ||
       tagName === "dialog" ||

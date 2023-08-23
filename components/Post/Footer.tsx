@@ -112,6 +112,7 @@ export const Footer = (
   // const [reaction, setReaction] = useState({
   //   like: ["1a", "2d"],
   // });
+  // console.log("footer rendering");
   useEffect(() => {
     // console.log("footer rendering");
   }, []);

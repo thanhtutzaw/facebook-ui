@@ -5,12 +5,12 @@ import SortDate from "./SortDate";
 import { PostList } from "../Home/PostList";
 import { faSort, faGear } from "@fortawesome/free-solid-svg-icons";
 import { Post, Props } from "../../../types/interfaces";
-import { RefObject, useContext } from "react";
+import { RefObject, useContext, useEffect } from "react";
 import Spinner from "../../Spinner";
 import { AppContext } from "../../../context/AppContext";
 
 export default function Content(props: {
-  profile:any;
+  profile: any;
   hasNextPage?: boolean;
   error?: any;
   infoRef: RefObject<HTMLHeadElement>;
@@ -43,6 +43,10 @@ export default function Content(props: {
     sortedPost,
   } = props;
   const { updatePost } = useContext(AppContext) as Props;
+  // useEffect(() => {
+  //   console.log("profile rendering");
+  // }, []);
+
   return (
     <div
       style={{
@@ -135,7 +139,6 @@ export default function Content(props: {
             tabIndex={1}
             postLoading={hasNextPage}
           />
-          {/* { && <Spinner />} */}
           {/* {!hasNextPage && sortedPost.length !== 0 ? (
             <p
               style={{

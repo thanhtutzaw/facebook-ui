@@ -29,8 +29,8 @@ import EditProfile from "./EditProfile";
 import ProfileInfo from "./ProfileInfo";
 import s from "./index.module.scss";
 export default function Profile() {
-  const { profile } = useContext(AppContext) as Props;
   const {
+    profile,
     account,
     uid,
     selectMode: active,

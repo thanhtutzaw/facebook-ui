@@ -1,13 +1,11 @@
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { InferGetServerSidePropsType } from "next";
 import Image from "next/image";
 import { MouseEvent, useContext, useEffect, useRef, useState } from "react";
-import { getServerSideProps } from "../../../../pages";
-import styles from "../../../../styles/Home.module.scss";
-import Card from "./Card";
-import { Props } from "../../../../types/interfaces";
 import { AppContext } from "../../../../context/AppContext";
+import styles from "../../../../styles/Home.module.scss";
+import { Props } from "../../../../types/interfaces";
+import Card from "./Card";
 // type StoryProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 export default function Story({ email }: Props) {
   const { profile } = useContext(AppContext) as Props;
@@ -94,10 +92,7 @@ export default function Story({ email }: Props) {
         }}
         className={styles.storyCards}
       >
-        <div
-          // onClick={() => fileInput.current?.click()}
-          className={`${styles.storyCard} ${styles.addStory}`}
-        >
+        <div className={`${styles.storyCard} ${styles.addStory}`}>
           <div className={styles.storyProfile}>
             <Image
               priority={true}
