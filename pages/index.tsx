@@ -74,30 +74,30 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // const profileData = (await getProfileByUID(uid)) as account["profile"];
     // const currentAccount = (await getUserData(uid)) as UserRecord;
 
-    // const [newPosts, profileData, currentAccount] = await Promise.all([
-    //   getPostWithMoreInfo(uid, postQuery),
-    //   getProfileByUID(uid),
-    //   getUserData(uid),
-    // ]);
-    // const profile = {
-    //   ...profileData,
-    //   photoURL: profileData.photoURL
-    //     ? profileData.photoURL
-    //     : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-    // };
-    // const currentUserData = userToJSON(currentAccount);
+    const [newPosts, profileData, currentAccount] = await Promise.all([
+      getPostWithMoreInfo(uid, postQuery),
+      getProfileByUID(uid),
+      getUserData(uid),
+    ]);
+    const profile = {
+      ...profileData,
+      photoURL: profileData.photoURL
+        ? profileData.photoURL
+        : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+    };
+    const currentUserData = userToJSON(currentAccount);
     return {
       props: {
         expired: false,
         uid,
-        // posts: newPosts,
-        posts: [],
+        posts: newPosts,
         email,
         username: username ?? "Unknown",
-        // profile,
-        // account: currentUserData ?? null,
-        profile: null,
-        account: null,
+        profile,
+        account: currentUserData ?? null,
+        // posts: [],
+        // profile: null,
+        // account: null,
       },
     };
   } catch (error: any) {
@@ -151,31 +151,31 @@ export default function Home({
   }, [auth, expired]);
 
   const [limitedPosts, setlimitedPosts] = useState(posts ?? []);
-  // useEffect(() => {
-  //   // const lastestPost = limitedPosts.concat(posts!);
-  //   if (posts?.length ?? 0 > 0) return;
-  //   setlimitedPosts(posts!);
-  //   // setlimitedPosts([{ ...limitedPosts },  posts!]);
-  // }, [posts]);
+  useEffect(() => {
+    // const lastestPost = limitedPosts.concat(posts!);
+    if (posts?.length ?? 0 > 0) return;
+    setlimitedPosts(posts!);
+    // setlimitedPosts([{ ...limitedPosts },  posts!]);
+  }, [posts]);
 
-  // useEffect(() => {
-  //   let unsubscribe: Unsubscribe;
-  //   const postQuery = query(
-  //     collectionGroup(db, `posts`),
-  //     where("visibility", "in", ["Friend", "Public"]),
-  //     orderBy("createdAt", "desc"),
-  //     limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
-  //   );
-  //   unsubscribe = onSnapshot(postQuery, async (snapshot) => {
-  //     const posts =
-  //       (await getPostWithMoreInfo(uid!, undefined, snapshot)) ?? [];
-  //     setlimitedPosts(posts);
-  //     console.log("updated posts");
-  //   });
-  //   return () => {
-  //     unsubscribe();
-  //   };
-  // }, [limitedPosts.length, uid]);
+  useEffect(() => {
+    let unsubscribe: Unsubscribe;
+    const postQuery = query(
+      collectionGroup(db, `posts`),
+      where("visibility", "in", ["Friend", "Public"]),
+      orderBy("createdAt", "desc"),
+      limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
+    );
+    unsubscribe = onSnapshot(postQuery, async (snapshot) => {
+      const posts =
+        (await getPostWithMoreInfo(uid!, undefined, snapshot)) ?? [];
+      setlimitedPosts(posts);
+      console.log("updated posts");
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [limitedPosts.length, uid]);
   useEffect(() => {
     if (expired) return;
     if (!uid) {
@@ -187,7 +187,7 @@ export default function Home({
     useState<Props["lastPullTimestamp"]>(undefined);
   useEffect(() => {
     if (!uid) return;
-    let unsubscribeNotifications: Unsubscribe;
+    // let unsubscribeNotifications: Unsubscribe;
     const fetchNotiCount = async () => {
       const userDoc = doc(db, `users/${uid}`);
       try {
