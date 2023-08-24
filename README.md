@@ -1,6 +1,6 @@
 <div  align="center">
 <img src="public/logo.svg" width="100" height="100" alt="logo" title="logo" /></div>
-<h1 align="center" >Facebook - SSR Web Application with Nextjs and Firebase</h1>
+<h1 align="center" >Facebook - SSR Web Application with Next.js and Firebase</h1>
 <br />
 
 Project is created with:
@@ -42,7 +42,7 @@ Project is created with:
 
 To run this project, install it locally using npm:
 
-```
+```bash
 git clone https://github.com/thanhtutzaw/facebook-ui.git
 cd facebook-ui
 cp .env.local.example .env.local

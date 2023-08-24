@@ -16,6 +16,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "lib/firebaseAuth.JS", "lib/firebase.ts", "pages/[user]/500.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "lib/firebaseAuth.JS", "lib/firebase.ts", "pages/[user]/500.js", "next.config.js"],
   "exclude": ["node_modules"]
 }
