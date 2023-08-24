@@ -26,7 +26,9 @@ import s from "./Notifications.module.scss";
 const LIMIT = 10;
 export default function Notifications() {
   const { active: tab } = useActive();
-  const { uid } = useContext(AppContext) as Props;
+  const { uid, lastPullTimestamp, UnReadNotiCount } = useContext(
+    AppContext
+  ) as Props;
   const fetchNoti = async function (pageParam: NotiTypes | null = null) {
     console.log("fetching noti");
     if (!uid) return;
@@ -52,10 +54,28 @@ export default function Notifications() {
       // }
       const noti = snapShot.docs.map((doc) => {
         const data = doc.data() as NotiTypes;
+        // console.log(data.createdAt.);
+        const date = data.createdAt as Timestamp;
+        // console.log();
+        const createdDate = date.toDate().getTime();
+        const lastTime = lastPullTimestamp as Timestamp;
+        const lastPull = lastTime.toDate().getTime();
+        // console.log(createdDate);
+        // console.log(lastPullTimestamp);
+
+        // const lastPull = new Timestamp(
+        //   lastPullTimestamp?.nanoseconds!,
+        //   lastPullTimestamp?.seconds!
+        // )
+        //   .toDate()
+        //   .getTime();
+        // console.log(lastPull);
+        // console.log("hasRead", );
         return {
           id: doc.id,
           ...doc.data(),
           ...getMessage(data.type),
+          hasRead: createdDate < lastPull,
         };
       }) as NotiTypes[];
       const hasMore = noti.length > LIMIT;
@@ -145,10 +165,24 @@ export default function Notifications() {
 }
 function Noti({ noti }: { noti: NotiTypes }) {
   const router = useRouter();
-  const { id, content, message, uid, url, photoURL, userName, createdAt } =
-    noti;
+  const {
+    hasRead,
+    id,
+    content,
+    message,
+    uid,
+    url,
+    photoURL,
+    userName,
+    createdAt,
+  } = noti;
   return (
-    <li className={s.item}>
+    <li
+      style={{
+        backgroundColor: !hasRead ? "rgb(228 228 228 / 50%)" : "initial",
+      }}
+      className={s.item}
+    >
       <Link
         prefetch={false}
         // href={`${url.match(/^[a-zA-Z]{1,}:\/\//) ? `/${url}` : `${url}`} `}

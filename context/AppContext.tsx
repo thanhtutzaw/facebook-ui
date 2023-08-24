@@ -16,6 +16,7 @@ export const LIMIT = 10;
 
 export function AppProvider(props: Props) {
   const {
+    lastPullTimestamp,
     UnReadNotiCount,
     active,
     setlimitedPosts,
@@ -139,6 +140,7 @@ export function AppProvider(props: Props) {
   return (
     <AppContext.Provider
       value={{
+        lastPullTimestamp,
         updatePost,
         UnReadNotiCount,
         profile,

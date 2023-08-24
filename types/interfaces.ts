@@ -25,6 +25,7 @@ export type account = {
 export type notiContentTypes = "post_reaction" | "comment" | "share";
 
 export type NotiTypes = {
+  hasRead?: boolean;
   uid: string;
   message: string;
   userName: string;
@@ -162,4 +163,16 @@ export interface Props {
   getMorePosts?: Function;
   postLoading?: boolean;
   postEnd?: boolean;
+  lastPullTimestamp?:
+    | {
+        seconds: number;
+        nanoseconds: number;
+      }
+    | Timestamp;
+  updatedAt?:
+    | {
+        seconds: number;
+        nanoseconds: number;
+      }
+    | Timestamp;
 }

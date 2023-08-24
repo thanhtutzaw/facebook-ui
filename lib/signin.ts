@@ -9,7 +9,7 @@ export async function signin(email: string, password: string) {
       email,
       password
     );
-    const user = userCredential.user;
+    // const user = userCredential.user;
     return null;
   } catch (error: any) {
     // const errorMessage = error.message;

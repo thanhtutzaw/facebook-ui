@@ -178,7 +178,10 @@ export default function Home({
     }
   }, [expired, router, uid]);
   const [UnReadNotiCount, setUnReadNotiCount] = useState(0);
+  const [lastPullTimestamp, setlastPullTimestamp] =
+    useState<Props["lastPullTimestamp"]>(undefined);
   useEffect(() => {
+    if (!uid) return;
     if (UnReadNotiCount === 10) return;
     let unsubscribeNotifications: Unsubscribe;
     const fetchNotiCount = async () => {
@@ -186,6 +189,7 @@ export default function Home({
       try {
         const doc = await getDoc(userDoc);
         const lastPull = doc.data()?.lastPullTimestamp;
+        setlastPullTimestamp(lastPull);
         const notiQuery = query(
           collection(db, `/users/${uid}/notifications`),
           where("createdAt", ">", lastPull)
@@ -209,6 +213,7 @@ export default function Home({
   if (expired) return <Welcome postError={postError} expired={expired} />;
   return uid ? (
     <AppProvider
+      lastPullTimestamp={lastPullTimestamp}
       UnReadNotiCount={UnReadNotiCount}
       active={active!}
       setActive={setActive!}
