@@ -36,7 +36,7 @@ export default function Notifications() {
       limit(LIMIT + 1)
     );
     const userDoc = doc(db, `users/${uid}`);
-    await updateDoc(userDoc, { lastPullTimestamp: serverTimestamp() });
+    // await updateDoc(userDoc, { lastPullTimestamp: serverTimestamp() });
     if (pageParam) {
       const date = new Timestamp(
         pageParam.createdAt.seconds,

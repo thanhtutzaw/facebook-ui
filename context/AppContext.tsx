@@ -41,10 +41,10 @@ export function AppProvider(props: Props) {
     console.log(posts);
     console.log(limitedPosts);
   }, []);
-  const [client, setClient] = useState(false);
-  useEffect(() => {
-    setClient(true);
-  }, []);
+  // const [client, setClient] = useState(false);
+  // useEffect(() => {
+  //   setClient(true);
+  // }, []);
 
   // useEffect(() => {
   //   // Set up the real-time data listener
@@ -149,7 +149,8 @@ export function AppProvider(props: Props) {
         selectMode,
         setselectMode,
         uid,
-        posts: client ? limitedPosts : posts,
+        posts: limitedPosts,
+        limitedPosts,
         setlimitedPosts,
         postLoading,
         postEnd,

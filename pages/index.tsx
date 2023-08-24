@@ -177,21 +177,29 @@ export default function Home({
       router.push("/login");
     }
   }, [expired, router, uid]);
-  const [UnReadNotiCount, setUnReadNotiCount] = useState(0)
+  const [UnReadNotiCount, setUnReadNotiCount] = useState(0);
   useEffect(() => {
     let lastPull;
     const userDoc = doc(db, `users/${uid}`);
 
-    const unsubscribe = onSnapshot(userDoc, async(doc) => {
+    const unsubscribe = onSnapshot(userDoc, async (doc) => {
       lastPull = doc.data()?.lastPullTimestamp;
 
       const notiQuery = query(
         collection(db, `/users/${uid}/notifications`),
         where("createdAt", ">", lastPull)
       );
-
-      const notiCollection = await getDocs(notiQuery);
-      setUnReadNotiCount(notiCollection.size);
+      const unsubscribeNotifications = onSnapshot(
+        notiQuery,
+        (querySnapshot) => {
+          setUnReadNotiCount(querySnapshot.size);
+        }
+      );
+      return () => {
+        unsubscribeNotifications(); // Clean up the listener for notifications
+      };
+      // const notiCollection = await getDocs(notiQuery);
+      // setUnReadNotiCount(notiCollection.size);
     });
 
     return () => {

@@ -44,12 +44,13 @@ export default function Navitems(props: {
   return (
     <div onClick={changeTab} className={`${styles.navItems} ${activeClass}`}>
       <div role="button" aria-label={iconTitle} title={iconTitle}>
-        {TabIcon}{" "}
-        <span style={{color:'red'}}>
+        <div style={{ position: "relative" }}>
+          {TabIcon}
           {TabName === "notifications" &&
-            parseInt(UnReadNotiCount!.toString()) > 0 &&
-            UnReadNotiCount}
-        </span>
+            parseInt(UnReadNotiCount!.toString()) > 0 && (
+              <span className={styles.badge}>{UnReadNotiCount}</span>
+            )}
+        </div>
       </div>
     </div>
   );

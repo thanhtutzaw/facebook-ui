@@ -1,6 +1,6 @@
 .container {
     background-color: white;
-    padding: 0 1rem;
+    padding: 0 ;
     padding-bottom: 0.5rem;
     > div:first-child {
         > button:first-child {
@@ -38,6 +38,7 @@
     .request,
     .suggest {
         .header {
+            padding-inline: 1rem;
             background-color: rgb(255, 255, 255);
             overflow: auto;
             gap: 20px;
@@ -59,6 +60,8 @@
             align-items: center;
             gap: 0.5rem;
             overflow: hidden;
+            padding-inline: 2px;
+            margin-inline: 1rem;
             .profile {
                 border-radius: 100%;
                 object-fit: cover;
