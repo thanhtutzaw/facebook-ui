@@ -179,33 +179,30 @@ export default function Home({
   }, [expired, router, uid]);
   const [UnReadNotiCount, setUnReadNotiCount] = useState(0);
   useEffect(() => {
-    let lastPull;
-    const userDoc = doc(db, `users/${uid}`);
-
-    const unsubscribe = onSnapshot(userDoc, async (doc) => {
-      lastPull = doc.data()?.lastPullTimestamp;
-
-      const notiQuery = query(
-        collection(db, `/users/${uid}/notifications`),
-        where("createdAt", ">", lastPull)
-      );
-      const unsubscribeNotifications = onSnapshot(
-        notiQuery,
-        (querySnapshot) => {
+    if (UnReadNotiCount === 10) return;
+    let unsubscribeNotifications: Unsubscribe;
+    const fetchNotiCount = async () => {
+      const userDoc = doc(db, `users/${uid}`);
+      try {
+        const doc = await getDoc(userDoc);
+        const lastPull = doc.data()?.lastPullTimestamp;
+        const notiQuery = query(
+          collection(db, `/users/${uid}/notifications`),
+          where("createdAt", ">", lastPull)
+        );
+        unsubscribeNotifications = onSnapshot(notiQuery, (querySnapshot) => {
           setUnReadNotiCount(querySnapshot.size);
-        }
-      );
-      return () => {
-        unsubscribeNotifications(); // Clean up the listener for notifications
-      };
-      // const notiCollection = await getDocs(notiQuery);
-      // setUnReadNotiCount(notiCollection.size);
-    });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchNotiCount();
 
     return () => {
-      unsubscribe(); // Clean up the listener when the component unmounts
+      unsubscribeNotifications();
     };
-  }, [uid]);
+  }, [UnReadNotiCount, uid]);
 
   const { active, setActive } = useActive();
 

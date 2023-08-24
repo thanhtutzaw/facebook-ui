@@ -130,16 +130,11 @@ export async function postInfo(p: Post, uid: string) {
     const shareRef = collection(db, `users/${p.authorId}/posts/${p.id}/shares`);
     const shareDoc = await getDocs(shareRef);
     const shareCount = shareDoc.size ?? 0;
-    // console.log(shareCount);
-    // const shares = shareDoc.docs.map((doc) => doc.data());
     const likedByUserRef = doc(
       db,
       `users/${p.authorId}/posts/${p.id}/likes/${uid}`
     );
     const savedByUserRef = doc(db, `users/${uid}/savedPost/${p.id}`);
-    // const isLiked = await getDoc(likedByUserRef);
-    // const isSaved = await getDoc(savedByUserRef);
-    // const postProfile = await getProfileByUID(p.authorId.toString());
 
     const [isLiked, isSaved, postProfile] = await Promise.all([
       getDoc(likedByUserRef),
@@ -165,17 +160,10 @@ export async function postInfo(p: Post, uid: string) {
       const isSharedPostAvailable = shareDoc.exists();
 
       const sharedPost = await postToJSON(shareDoc);
-      // const SharedPostLikeRef = collection(
-      //   db,
-      //   `users/${sharedPost.authorId}/posts/${sharedPost.id}/likes`
-      // );
-      // const SharedPostLikeDoc = await getDocs(SharedPostLikeRef);
-      // const sharelike = SharedPostLikeDoc.docs.map((doc) => doc.data());
       const SharedPostShareRef = collection(
         db,
         `users/${sharedPost.authorId}/posts/${sharedPost.id}/shares`
       );
-      // const shareShares = SharedPostShareDoc.docs.map((doc) => doc.data());
       const sharelikedByUser = doc(
         db,
         `users/${sharedPost.authorId}/posts/${sharedPost.id}/likes/${uid}`
@@ -192,7 +180,6 @@ export async function postInfo(p: Post, uid: string) {
         likeCount: sharedPost.likeCount ?? 0,
         author: { ...sharePostProfile },
         shareCount: SharedPostShareDoc.size ?? 0,
-        // shares: [...shareShares],
         isLiked: isSharePostLiked.exists() ? true : false,
       };
       if (isSharedPostAvailable) {
@@ -222,7 +209,6 @@ export async function getPostWithMoreInfo(
   postQuery?: Query<DocumentData>,
   snapShot?: QuerySnapshot<DocumentData>
 ) {
-  // if(typeof postQuery === Query<DocumentData>)
   const postSnap = postQuery ? await getDocs(postQuery as Query) : snapShot;
 
   if (postSnap) {
