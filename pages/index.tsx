@@ -72,27 +72,31 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // const newPosts = await getPostWithMoreInfo(uid, postQuery);
     // const profileData = (await getProfileByUID(uid)) as account["profile"];
     // const currentAccount = (await getUserData(uid)) as UserRecord;
-    const [newPosts, profileData, currentAccount] = await Promise.all([
-      getPostWithMoreInfo(uid, postQuery),
-      getProfileByUID(uid),
-      getUserData(uid),
-    ]);
-    const profile = {
-      ...profileData,
-      photoURL: profileData.photoURL
-        ? profileData.photoURL
-        : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-    };
-    const currentUserData = userToJSON(currentAccount);
+
+    // const [newPosts, profileData, currentAccount] = await Promise.all([
+    //   getPostWithMoreInfo(uid, postQuery),
+    //   getProfileByUID(uid),
+    //   getUserData(uid),
+    // ]);
+    // const profile = {
+    //   ...profileData,
+    //   photoURL: profileData.photoURL
+    //     ? profileData.photoURL
+    //     : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+    // };
+    // const currentUserData = userToJSON(currentAccount);
     return {
       props: {
         expired: false,
         uid,
-        posts: newPosts,
+        // posts: newPosts,
+        posts: [],
         email,
         username: username ?? "Unknown",
-        profile,
-        account: currentUserData ?? null,
+        // profile,
+        // account: currentUserData ?? null,
+        profile: null,
+        account: null,
       },
     };
   } catch (error: any) {
@@ -153,24 +157,24 @@ export default function Home({
   //   // setlimitedPosts([{ ...limitedPosts },  posts!]);
   // }, [posts]);
 
-  useEffect(() => {
-    let unsubscribe: Unsubscribe;
-    const postQuery = query(
-      collectionGroup(db, `posts`),
-      where("visibility", "in", ["Friend", "Public"]),
-      orderBy("createdAt", "desc"),
-      limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
-    );
-    unsubscribe = onSnapshot(postQuery, async (snapshot) => {
-      const posts =
-        (await getPostWithMoreInfo(uid!, undefined, snapshot)) ?? [];
-      setlimitedPosts(posts);
-      console.log("updated posts");
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, [limitedPosts.length, uid]);
+  // useEffect(() => {
+  //   let unsubscribe: Unsubscribe;
+  //   const postQuery = query(
+  //     collectionGroup(db, `posts`),
+  //     where("visibility", "in", ["Friend", "Public"]),
+  //     orderBy("createdAt", "desc"),
+  //     limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
+  //   );
+  //   unsubscribe = onSnapshot(postQuery, async (snapshot) => {
+  //     const posts =
+  //       (await getPostWithMoreInfo(uid!, undefined, snapshot)) ?? [];
+  //     setlimitedPosts(posts);
+  //     console.log("updated posts");
+  //   });
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, [limitedPosts.length, uid]);
   useEffect(() => {
     if (expired) return;
     if (!uid) {
