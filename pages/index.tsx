@@ -10,6 +10,7 @@ import {
   collection,
   collectionGroup,
   doc,
+  getCountFromServer,
   getDoc,
   getDocs,
   limit,
@@ -186,7 +187,6 @@ export default function Home({
     useState<Props["lastPullTimestamp"]>(undefined);
   useEffect(() => {
     if (!uid) return;
-    if (UnReadNotiCount === 10) return;
     let unsubscribeNotifications: Unsubscribe;
     const fetchNotiCount = async () => {
       const userDoc = doc(db, `users/${uid}`);
@@ -194,22 +194,29 @@ export default function Home({
         const doc = await getDoc(userDoc);
         const lastPull = doc.data()?.lastPullTimestamp;
         setlastPullTimestamp(lastPull);
+        // listening notifications
         const notiQuery = query(
           collection(db, `/users/${uid}/notifications`),
           where("createdAt", ">", lastPull)
         );
-        unsubscribeNotifications = onSnapshot(notiQuery, (querySnapshot) => {
-          setUnReadNotiCount(querySnapshot.size);
-        });
+        // console.log((await getCountFromServer(notiQuery)).data().count); // testing get only count without fetching big-datas
+        const count = (await getCountFromServer(notiQuery)).data().count;
+        // testing get only count without fetching big-datas
+        setUnReadNotiCount(count); // getting unRead noti count
+        // unsubscribeNotifications = onSnapshot(notiQuery, (querySnapshot) => {
+        //   console.log(querySnapshot.docs.map((doc) => doc.data()));
+        //   if (UnReadNotiCount === 10) return;
+        //   setUnReadNotiCount(querySnapshot.size); // getting unRead noti count
+        // });
       } catch (error) {
         console.log(error);
       }
     };
     fetchNotiCount();
 
-    return () => {
-      unsubscribeNotifications();
-    };
+    // return () => {
+    //   unsubscribeNotifications();
+    // };
   }, [UnReadNotiCount, uid]);
 
   const { active, setActive } = useActive();
