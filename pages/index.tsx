@@ -149,7 +149,6 @@ export default function Home({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
-
   const [limitedPosts, setlimitedPosts] = useState(posts ?? []);
   useEffect(() => {
     // const lastestPost = limitedPosts.concat(posts!);
@@ -187,7 +186,7 @@ export default function Home({
     useState<Props["lastPullTimestamp"]>(undefined);
   useEffect(() => {
     if (!uid) return;
-    // let unsubscribeNotifications: Unsubscribe;
+    let unsubscribeNotifications: Unsubscribe;
     const fetchNotiCount = async () => {
       const userDoc = doc(db, `users/${uid}`);
       try {
@@ -199,24 +198,22 @@ export default function Home({
           collection(db, `/users/${uid}/notifications`),
           where("createdAt", ">", lastPull)
         );
-        // console.log((await getCountFromServer(notiQuery)).data().count); // testing get only count without fetching big-datas
-        const count = (await getCountFromServer(notiQuery)).data().count;
+        // const count = (await getCountFromServer(notiQuery)).data().count;
         // testing get only count without fetching big-datas
-        setUnReadNotiCount(count); // getting unRead noti count
-        // unsubscribeNotifications = onSnapshot(notiQuery, (querySnapshot) => {
-        //   console.log(querySnapshot.docs.map((doc) => doc.data()));
-        //   if (UnReadNotiCount === 10) return;
-        //   setUnReadNotiCount(querySnapshot.size); // getting unRead noti count
-        // });
+        if (UnReadNotiCount >= 11) return;
+        unsubscribeNotifications = onSnapshot(notiQuery, (querySnapshot) => {
+          console.log(querySnapshot.docs.map((doc) => doc.data()));
+          setUnReadNotiCount(querySnapshot.size); // getting unRead noti count
+          // setUnReadNotiCount(count); // getting unRead noti count
+        });
       } catch (error) {
         console.log(error);
       }
     };
     fetchNotiCount();
-
-    // return () => {
-    //   unsubscribeNotifications();
-    // };
+    return () => {
+      unsubscribeNotifications();
+    };
   }, [UnReadNotiCount, uid]);
 
   const { active, setActive } = useActive();

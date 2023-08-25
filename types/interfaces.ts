@@ -155,7 +155,7 @@ export interface Props {
   allUsers?: any;
   sortedPost?: Post[];
   setsortedPost?: Function;
-  posts?: Post[];
+  posts: Post[] | null;
   email?: string | null;
   headerContainerRef?: RefObject<HTMLDivElement>;
   profile?: account["profile"] | null;

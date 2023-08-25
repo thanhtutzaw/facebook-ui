@@ -36,42 +36,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       limit(LIMIT)
     );
     const myPost = await getPostWithMoreInfo(uid as string, mypostQuery);
-    // const newPosts = await Promise.all(
-    //   myPost.map(async (p) => {
-    //     if (p.sharePost) {
-    //       const postDoc = doc(
-    //         db,
-    //         `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
-    //       );
-    //       const posts = await getDoc(postDoc);
-    //       if (posts.exists()) {
-    //         const post = await postToJSON(
-    //           posts as DocumentSnapshot<DocumentData>
-    //         );
-    //         const profile = await getProfileByUID(post.authorId);
-    //         const sharePost = {
-    //           ...post,
-    //           author: {
-    //             ...profile,
-    //           },
-    //         };
-    //         return {
-    //           ...p,
-    //           sharePost: { ...p.sharePost, post: { ...sharePost } },
-    //         };
-    //       } else {
-    //         return {
-    //           ...p,
-    //           sharePost: { ...p.sharePost, post: null },
-    //         };
-    //       }
-    //     }
-    //     return {
-    //       ...p,
-    //     };
-    //   })
-    // );
-
     if (userExist) {
       return {
         props: {
@@ -142,6 +106,8 @@ export default function UserProfile({
     [limitedPosts, router.query.user, token?.uid]
   );
   const { scrollRef } = useInfiniteScroll(fetchMorePosts, postEnd, true);
+  const bio = profile?.bio === "" || !profile ? "No Bio Yet" : profile?.bio;
+  const otherUser = token?.uid !== router.query.user;
   return (
     <div ref={scrollRef} className="user">
       <BackHeader
@@ -186,9 +152,9 @@ export default function UserProfile({
             }}
             className={s.bio}
           >
-            {profile?.bio === "" || !profile ? "No Bio Yet" : profile?.bio}
+            {bio}
           </p>
-          {token?.uid !== router.query.user && (
+          {otherUser && (
             <button
               onClick={() => {
                 router.push(`/chat/${router.query.user}`);

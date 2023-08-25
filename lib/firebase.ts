@@ -14,7 +14,7 @@ import {
   getFirestore,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { Comment, Post } from "../types/interfaces";
+import { Comment, Post, account } from "../types/interfaces";
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -47,16 +47,8 @@ export async function postToJSON(
       ...data,
       media: data?.media ?? [],
       authorId: author.id,
-      // autherName: user.displayName ?? "Unknown",
       id: doc.id,
       text: data?.text,
-      // liked:
-      //   [
-      //     {
-      //       ...(data.like ?? []),
-      //       createdAt: data.like?.createdAt?.toJSON() || 0,
-      //     },
-      //   ] ?? [],
       createdAt: createdAt?.toJSON() || 0,
     };
   } else {
@@ -64,17 +56,8 @@ export async function postToJSON(
       ...data,
       media: data?.media ?? [],
       authorId: author.id,
-      // autherName: user.displayName ?? "Unknown",
       id: doc.id,
       text: data?.text,
-      // liked:
-      //   [
-      //     {
-      //       ...(data.like ?? []),
-      //       createdAt: data.like?.createdAt?.toJSON() || 0,
-      //     },
-      //   ] ?? [],
-      // liked: [data.like ?? [], data.like?.createdAt?.toJSON() || 0] ?? [],
       createdAt: createdAt?.toJSON() || 0,
       updatedAt: updatedAt?.toJSON() || 0,
     };
@@ -119,10 +102,9 @@ export function userToJSON(obj: any): any {
   return obj;
 }
 export async function getProfileByUID(id: string) {
-  const profileQuery = doc(db, `/users/${id}`);
-  const profileSnap = await getDoc(profileQuery);
-  const profileData = profileSnap.data()!;
-  return profileData?.profile ?? null;
+  const userDoc = await fethUserDoc(id);
+  const profileData = userDoc.data()!;
+  return (profileData?.profile as account["profile"]) ?? null;
 }
 export async function postInfo(p: Post, uid: string) {
   if (p.authorId) {
@@ -203,6 +185,7 @@ export async function postInfo(p: Post, uid: string) {
       return { ...originalPost };
     }
   }
+  return null;
 }
 export async function getPostWithMoreInfo(
   uid: string,
@@ -212,19 +195,16 @@ export async function getPostWithMoreInfo(
   const postSnap = postQuery ? await getDocs(postQuery as Query) : snapShot;
 
   if (postSnap) {
-    const originalPosts = await Promise.all(
+    const postJSON = await Promise.all(
       postSnap.docs.map(async (doc) => await postToJSON(doc))
     );
 
     try {
       return (await Promise.all(
-        originalPosts.map(async (p) => {
+        postJSON.map(async (p) => {
           return await postInfo(p, uid);
         })
       )) as Post[];
-      // return (await Promise.all(
-      //   postSnap.docs.map(async (doc) => await postToJSON(doc))
-      // )) as Post[];
     } catch (error: any) {
       if (error === AuthErrorCodes.QUOTA_EXCEEDED) {
         console.log(AuthErrorCodes.QUOTA_EXCEEDED);
@@ -235,6 +215,8 @@ export async function getPostWithMoreInfo(
         alert("Firebase Quota Exceeded. Please try again later.");
         throw error;
       }
+      return null;
     }
   }
+  return null;
 }

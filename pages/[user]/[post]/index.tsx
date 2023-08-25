@@ -415,7 +415,6 @@ export default function Page(props: {
         {!canEdit && (
           <>
             <Comment
-              // hasMore={hasMore}
               commentLoading={commentLoading}
               commentEnd={commentEnd}
               post={post}
