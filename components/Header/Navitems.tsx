@@ -49,7 +49,7 @@ export default function Navitems(props: {
           {TabName === "notifications" && notiCount > 0 && (
             <>
               <span className={styles.badge}>
-                {Math.max(notiCount, 9)}
+                {Math.min(notiCount, 9)}
                 {notiCount > 9 && "+"}
               </span>
             </>
