@@ -196,11 +196,13 @@ export default function Home({
         // listening notifications
         const notiQuery = query(
           collection(db, `/users/${uid}/notifications`),
-          where("createdAt", ">", lastPull)
+          where("createdAt", ">", lastPull),
+          limit(10)
         );
         // const count = (await getCountFromServer(notiQuery)).data().count;
         // testing get only count without fetching big-datas
-        if (UnReadNotiCount >= 10) return;
+        // if (UnReadNotiCount >= 10) return;
+        console.log("noti listening realtime - unRead" + UnReadNotiCount);
         unsubscribeNotifications = onSnapshot(notiQuery, (querySnapshot) => {
           console.log(querySnapshot.docs.map((doc) => doc.data()));
           setUnReadNotiCount(querySnapshot.size); // getting unRead noti count
