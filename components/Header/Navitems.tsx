@@ -40,16 +40,18 @@ export default function Navitems(props: {
     }
   };
   const activeClass = active === TabName ? styles.active : "";
-
+  const notiCount = parseInt(UnReadNotiCount!.toString());
   return (
     <div onClick={changeTab} className={`${styles.navItems} ${activeClass}`}>
       <div role="button" aria-label={iconTitle} title={iconTitle}>
         <div style={{ position: "relative" }}>
           {TabIcon}
-          {TabName === "notifications" &&
-            parseInt(UnReadNotiCount!.toString()) > 0 && (
-              <span className={styles.badge}>{UnReadNotiCount}</span>
-            )}
+          {TabName === "notifications" && notiCount > 0 && (
+            <>
+              <span className={styles.badge}>{Math.max(notiCount, 9)}</span>
+              {notiCount >= 9 && "+"}
+            </>
+          )}
         </div>
       </div>
     </div>

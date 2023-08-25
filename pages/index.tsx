@@ -200,7 +200,7 @@ export default function Home({
         );
         // const count = (await getCountFromServer(notiQuery)).data().count;
         // testing get only count without fetching big-datas
-        if (UnReadNotiCount >= 11) return;
+        if (UnReadNotiCount >= 10) return;
         unsubscribeNotifications = onSnapshot(notiQuery, (querySnapshot) => {
           console.log(querySnapshot.docs.map((doc) => doc.data()));
           setUnReadNotiCount(querySnapshot.size); // getting unRead noti count
