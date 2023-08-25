@@ -215,8 +215,8 @@ export async function getPostWithMoreInfo(
         alert("Firebase Quota Exceeded. Please try again later.");
         throw error;
       }
-      return null;
+      // return null;
     }
   }
-  return null;
+  // return null;
 }

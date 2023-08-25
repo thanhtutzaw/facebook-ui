@@ -151,7 +151,7 @@ export function AppProvider(props: Props) {
         selectMode,
         setselectMode,
         uid,
-        posts: limitedPosts!,
+        posts: limitedPosts! ,
         limitedPosts,
         setlimitedPosts,
         postLoading,

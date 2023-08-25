@@ -23,6 +23,7 @@ export type account = {
   };
 };
 export type notiContentTypes = "post_reaction" | "comment" | "share";
+export type author = UserRecord | User | account["profile"] | null;
 
 export type NotiTypes = {
   hasRead?: boolean;
@@ -89,7 +90,7 @@ export interface Post {
   isLiked: boolean;
   // shares?: { uid: string }[];
   shareCount?: string | number;
-  author: UserRecord | User | account["profile"];
+  author: author;
   authorId: string | number;
   id?: string | number;
   text: string;
@@ -113,7 +114,7 @@ export interface Post {
 export interface Comment {
   isLiked?: boolean;
   like?: any;
-  author?: UserRecord | User | account["profile"];
+  author?: author;
   authorId: string | number;
   id?: string | number;
   text: string;
@@ -155,7 +156,7 @@ export interface Props {
   allUsers?: any;
   sortedPost?: Post[];
   setsortedPost?: Function;
-  posts: Post[] | null;
+  posts?: Post[];
   email?: string | null;
   headerContainerRef?: RefObject<HTMLDivElement>;
   profile?: account["profile"] | null;
