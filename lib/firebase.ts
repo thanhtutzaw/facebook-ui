@@ -108,7 +108,7 @@ export async function getProfileByUID(id: string) {
 }
 export async function postInfo(p: Post, uid: string) {
   if (p.authorId) {
-    console.log("returning postInfo");
+    // console.log("returning postInfo");
     const shareRef = collection(db, `users/${p.authorId}/posts/${p.id}/shares`);
     const shareDoc = await getDocs(shareRef);
     const shareCount = shareDoc.size ?? 0;
@@ -132,7 +132,7 @@ export async function postInfo(p: Post, uid: string) {
       isLiked: isLiked.exists() ? true : false,
       isSaved: isSaved.exists() ? true : false,
     };
-    console.log("posts with info are fetching");
+    // console.log("posts with info are fetching");
     if (p.sharePost) {
       const sharedPostRef = doc(
         db,
@@ -193,7 +193,7 @@ export async function getPostWithMoreInfo(
   snapShot?: QuerySnapshot<DocumentData>
 ) {
   const postSnap = postQuery ? await getDocs(postQuery as Query) : snapShot;
-
+  console.log("posts are fetched");
   if (postSnap) {
     const postJSON = await Promise.all(
       postSnap.docs.map(async (doc) => await postToJSON(doc))

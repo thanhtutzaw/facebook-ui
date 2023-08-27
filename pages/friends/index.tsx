@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         const accountJSON = userToJSON(account) as UserRecord;
         return {
           id: doc.id,
-          ...data,
+          // ...data,
           author: {
             ...accountJSON,
           },

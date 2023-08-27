@@ -208,7 +208,7 @@ export default function Login({ uid }: { uid: string }) {
   return (
     <section className={styles.login}>
       {uid ? (
-        <Spinner />
+        <Spinner fullScreen />
       ) : (
         <>
           <button
@@ -369,7 +369,7 @@ export default function Login({ uid }: { uid: string }) {
           </Link>{" "}
         </>
       )}
-      <DevelopedByThanHtutZaw signup={signup}/>
+      <DevelopedByThanHtutZaw signup={signup} />
     </section>
   );
 }

@@ -1,10 +1,12 @@
 import React, { CSSProperties } from "react";
 import "nprogress/nprogress.css";
 function Spinner({
+  navBar = true,
   fullScreen = false,
   size = 30,
   style = { marginTop: !fullScreen ? "2rem" : "initial" },
 }: {
+  navBar?: boolean;
   fullScreen?: boolean;
   size?: any;
   style?: CSSProperties;
@@ -31,7 +33,11 @@ function Spinner({
         alignContent: "center",
         justifyItems: "center",
         textAlign: "center",
-        height: fullScreen ? "calc(100dvh - 160px)" : "initial",
+        height: fullScreen
+          ? navBar
+            ? "calc(100dvh - 160px)"
+            : "100vh"
+          : "initial",
       }}
     >
       <div className="loading" style={style}>

@@ -1,7 +1,8 @@
 .container {
     background-color: white;
-    padding: 0 ;
+    padding: 0;
     padding-bottom: 0.5rem;
+    min-height: calc(100dvh - 140px);
     > div:first-child {
         > button:first-child {
             margin-left: 0;

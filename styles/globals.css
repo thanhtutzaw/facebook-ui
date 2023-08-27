@@ -191,18 +191,22 @@ body {
 }
 
 .copied {
-  border-radius : 1rem;
-  position      : fixed;
+  border-radius    : 20px;
+  position         : absolute;
+  bottom           : 0;
+  /* position      : fixed; */
   inset         : 0;
-  max-width     : var(--main-width);
-  width         : 100px;
-  top           : 727px;
-  margin        : 0 auto;
-  background    : gainsboro;
-  pointer-events: none;
-  height        : 50px;
-  color         : #0070f3 !important;
-
+  bottom:1rem;
+  top:auto;
+  max-width        : var(--main-width);
+  width            : 100px;
+  /* top           : 727px; */
+  margin           : 0 auto;
+  background       : gainsboro;
+  pointer-events   : none;
+  height           : 40px;
+  border:0;
+  font-size: 16px;
 }
 
 a {

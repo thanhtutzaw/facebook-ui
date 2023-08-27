@@ -64,7 +64,7 @@ export default function Tabs(props: {
     if (
       tagName === "a" ||
       tagName === "dialog" ||
-      target.parentElement?.tagName === "DIALOG"
+      target.parentElement?.tagName === "DIALOG" || tagName === "button"
     )
       return;
     // if (e.target.className == "Home_storyCard__3_T_R") return;

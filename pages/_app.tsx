@@ -33,7 +33,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   try {
     const cookies = nookies.get(context);
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
-    console.log(token.uid);
+    console.log("hi");
+    console.log(token.uid + "In app.tsx");
+
     let expired = false;
     return {
       props: {
@@ -138,8 +140,8 @@ export default function App({
         },
       })
   );
+  const [isPage, setisPage] = useState(currentUser?.uid);
   if (expired) return <Welcome expired={expired} />;
-
   return (
     <>
       <Head>
@@ -155,6 +157,8 @@ export default function App({
       <QueryClientProvider client={queryClient}>
         <PageProvider
           currentUser={currentUser}
+          isPage={currentUser?.uid}
+          setisPage={setisPage}
           active={active}
           setActive={setActive}
         >

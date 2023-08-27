@@ -16,7 +16,7 @@ if (!admin.apps.length) {
 export async function verifyIdToken(token: string) {
   try {
     let decodedToken = await admin.auth().verifyIdToken(token);
-    console.log("🎉running try in firebase admin");
+    // console.log("🎉running try in firebase admin");
     const convertSecondsToTime = (seconds: number) => {
       const days = Math.floor(seconds / (3600 * 24));
       const hours = Math.floor((seconds % (3600 * 24)) / 3600);
@@ -25,12 +25,12 @@ export async function verifyIdToken(token: string) {
 
       return { days, hours, minutes, seconds: remainingSeconds };
     };
-    console.log(convertSecondsToTime(decodedToken.exp));
+    // console.log(convertSecondsToTime(decodedToken.exp));
     const nowInSeconds = Math.floor(Date.now() / 1000);
     if (decodedToken.exp <= nowInSeconds) {
       throw new Error("Token has expired");
     }
-    console.log("🎉 Token is valid");
+    // console.log("🎉 Token is valid");
     return decodedToken;
   } catch (err) {
     console.log("🎉 Firebase admin error", err);

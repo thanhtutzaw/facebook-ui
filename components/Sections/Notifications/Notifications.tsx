@@ -144,7 +144,7 @@ export default function Notifications() {
       </div>
       <div className={s.container}>
         {isLoading ? (
-          <Spinner />
+          <Spinner style={{ marginTop: "0" }} />
         ) : error ? (
           <p style={{ textAlign: "center", color: "red" }}>
             Unexpected Error !

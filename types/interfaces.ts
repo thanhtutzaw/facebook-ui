@@ -12,6 +12,17 @@ export type likes = {
     | Timestamp;
   author?: UserRecord | User | account["profile"];
 }[];
+export type friends = {
+  id: string | number;
+  status?: "friend" | "block" | "pending";
+  createdAt:
+    | {
+        seconds: number;
+        nanoseconds: number;
+      }
+    | Timestamp;
+  author?: UserRecord | User | account["profile"];
+}[];
 export type account = {
   email: string;
   password: string;

@@ -19,7 +19,7 @@ export type selectedId = {
   } | null;
 };
 export interface PageProps {
-  currentUser:User | null;
+  currentUser: User | null;
   queryClient?: QueryClient;
   postError?: string;
   dropdownRef?: RefObject<HTMLDivElement>;
@@ -40,12 +40,14 @@ export interface PageProps {
   setview?: Function;
   // preventClick?: MutableRefObject<boolean>;
   preventClick?: boolean;
+  isPage?: any;
+  setisPage?: Function;
   setpreventClick?: Function;
 }
 export const PageContext = createContext<PageProps | null>(null);
 
 export function PageProvider(props: PageProps) {
-  const { active, setActive , currentUser } = props;
+  const { active, setActive, currentUser, isPage, setisPage } = props;
   const queryClient = useQueryClient();
   const [showAction, setshowAction] = useState("");
   const [shareAction, setshareAction] = useState("");
@@ -71,7 +73,9 @@ export function PageProvider(props: PageProps) {
   return (
     <PageContext.Provider
       value={{
+        isPage,
         currentUser,
+        setisPage,
         queryClient,
         dropdownRef,
         preventClick,

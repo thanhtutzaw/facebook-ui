@@ -1,10 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { useQuery, useQueries } from "@tanstack/react-query";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import router from "next/router";
 import { useContext } from "react";
 import { AppContext } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
-import { db } from "../../../lib/firebase";
+import { db, getProfileByUID } from "../../../lib/firebase";
 import { Props } from "../../../types/interfaces";
 import Spinner from "../../Spinner";
 import { AddSuggestFriend } from "./AddSuggestFriend";
@@ -24,7 +24,13 @@ export default function Friend(props: FriendProps) {
       collection(db, `users`),
       where("__name__", "!=", uid)
     );
+    // const pendingfriendsQuery = query(
+    //   collection(db, `users/friends`),
+    //   where("status", "==", "pending"),
+    //   orderBy("createdAt", "desc")
+    // );
     try {
+      // const pendingFriends = await getDocs(pendingfriendsQuery);
       const allFriendsSnap = await getDocs(allUsersQuery);
       return allFriendsSnap.docs.map((doc) => {
         if (doc.data()) {
@@ -41,13 +47,54 @@ export default function Friend(props: FriendProps) {
       throw new Error("Failed to fetch users");
     }
   };
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["allUsers"],
-    queryFn: async () => await fetchAllUsers(),
-    enabled: tab === "friends",
-    // placeholderData: [],
+  const fetchPendingFriends = async () => {
+    if (!uid) return;
+    const pendingfriendsQuery = query(
+      collection(db, `users/friends`),
+      where("status", "==", "pending"),
+      orderBy("createdAt", "desc")
+    );
+    try {
+      const pendingFriends = await getDocs(pendingfriendsQuery);
+      return pendingFriends.docs.map((doc) => {
+        if (doc.data()) {
+          const profile = getProfileByUID(doc.id.toString());
+          return {
+            id: doc.id,
+            ...doc.data(),
+            author: { ...profile },
+          };
+        } else {
+          return [];
+        }
+      });
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to fetch users");
+    }
+  };
+  // const { isLoading, error, data } = useQuery({
+  //   queryKey: ["allUsers"],
+  //   queryFn: async () => await fetchAllUsers(),
+  //   enabled: tab === "friends",
+  //   // placeholderData: [],
+  // });
+  const [allFriends, pendingFriends] = useQueries({
+    queries: [
+      {
+        queryKey: ["allUsers"],
+        queryFn: async () => await fetchAllUsers(),
+        enabled: tab === "friends",
+      },
+      {
+        queryKey: ["pendingFriends"],
+        queryFn: async () => await fetchPendingFriends(),
+        enabled: tab === "friends",
+      },
+    ],
   });
-  const friends = data ?? [];
+  const friends = allFriends.data ?? [];
+  const pending = pendingFriends.data ?? [];
 
   const Requests = [
     { id: 1, author: { firstName: "Aunt May" } },
@@ -74,21 +121,23 @@ export default function Friend(props: FriendProps) {
           My Friends
         </button>
       </div>
-      <div className={s.request}>
-        <h2 className={s.header}>
-          <p>Friends Requests</p>
-        </h2>
-        {Requests.map((f, index) => (
-          <Request key={index} f={f} tabIndex={tabIndex} />
-        ))}
-      </div>
+      {pending.length > 0 && (
+        <div className={s.request}>
+          <h2 className={s.header}>
+            <p>Friends Requests</p>
+          </h2>
+          {pending.map((f, index) => (
+            <Request key={index} f={f} tabIndex={tabIndex} />
+          ))}
+        </div>
+      )}
       <div className={s.suggest}>
         <h2 className={s.header}>
           <p>People you may know</p>
         </h2>
-        {isLoading ? (
+        {allFriends.isLoading ? (
           <Spinner />
-        ) : error ? (
+        ) : allFriends.error ? (
           <p className="error">Unexpected Error Occured !</p>
         ) : (
           <>

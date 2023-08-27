@@ -1,4 +1,10 @@
-import { faBookmark, faCopy } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBookmark,
+  faCopy,
+  faLink,
+  faLinkSlash,
+  faSmileWink,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
 import { AnimatePresence, motion } from "framer-motion";
@@ -118,10 +124,14 @@ export function CopyLink(props: {
           setcopied(true);
         }}
       >
-        <FontAwesomeIcon icon={faCopy} />
+        <FontAwesomeIcon icon={faLink} />
         Copy Link
       </button>
-      {copied && <button className="copied">Copied</button>}
+      {copied && (
+        <div style={{ position: "fixed", inset: "0", pointerEvents: "none" }}>
+          <button className="copied">Copied</button>
+        </div>
+      )}
     </>
   );
 }

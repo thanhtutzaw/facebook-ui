@@ -9,6 +9,8 @@ import BackHeader from "../../components/Header/BackHeader";
 import { db, userToJSON } from "../../lib/firebase";
 import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
 import s from "./index.module.scss";
+import { useContext } from "react";
+import { PageContext, PageProps } from "../../context/PageContext";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -26,7 +28,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         const accountJSON = userToJSON(account) as UserRecord;
         return {
           id: doc.id,
-          ...data,
+          // ...data,
           author: {
             ...accountJSON,
           },
@@ -50,6 +52,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function Page(props: { acceptedFriends: any[] }) {
   const { acceptedFriends } = props;
+  const { isPage, setisPage } = useContext(PageContext) as PageProps;
   return (
     <div className="user">
       <BackHeader>
@@ -63,6 +66,10 @@ export default function Page(props: { acceptedFriends: any[] }) {
         }}
         className={s.container}
       >
+        {JSON.stringify(isPage)}
+        {/* <button onClick={() => setisPage?.(isPage?.concat([9, 10]))}>
+          change
+        </button> */}
         {/* {JSON.stringify(acceptedFriends)} */}
         <ul>
           {acceptedFriends.map((friend) => (

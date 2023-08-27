@@ -22,7 +22,7 @@ import {
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
@@ -40,12 +40,14 @@ import { Props, account } from "../types/interfaces";
 
 import { useActive } from "../hooks/useActiveTab";
 import Spinner from "../components/Spinner";
+import { PageContext, PageProps } from "../context/PageContext";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
   try {
     const cookies = nookies.get(context);
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
+    console.log(token.uid + " in index");
 
     const convertSecondsToTime = (seconds: number) => {
       const days = Math.floor(seconds / (3600 * 24));
@@ -55,7 +57,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
       return { days, hours, minutes, seconds: remainingSeconds };
     };
-    console.log(convertSecondsToTime(token.exp));
+    // console.log(convertSecondsToTime(token.exp));
     const { name: username, email, uid } = token;
     // console.log("isVerify " + token.email_verified);
     let expired = false;
@@ -86,6 +88,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
     };
     const currentUserData = userToJSON(currentAccount);
+    // context.res.setHeader(
+    //   "Cache-Control",
+    //   "public, s-maxage=10, stale-while-revalidate=59"
+    // );
     return {
       props: {
         expired: false,
@@ -200,7 +206,6 @@ export default function Home({
           limit(10)
         );
         // const count = (await getCountFromServer(notiQuery)).data().count;
-        // testing get only count without fetching big-datas
         // if (UnReadNotiCount >= 10) return;
         console.log("noti listening realtime - unRead" + UnReadNotiCount);
         unsubscribeNotifications = onSnapshot(notiQuery, (querySnapshot) => {
@@ -217,8 +222,9 @@ export default function Home({
       unsubscribeNotifications();
     };
   }, [UnReadNotiCount, uid]);
-
   const { active, setActive } = useActive();
+  // const { isPage, setisPage } = useContext(PageContext) as PageProps;
+  // setisPage?.(uid);
 
   if (expired) return <Welcome postError={postError} expired={expired} />;
   return uid ? (
@@ -238,10 +244,15 @@ export default function Home({
       email={email}
       account={account}
     >
+      {/* {uid + "- SSR uid (not page accessable) "} */}
       <Header tabIndex={active === "/" ? 0 : -1} indicatorRef={indicatorRef} />
+      {/* {JSON.stringify(isPage)} {isPage && "- all page accessable"} */}
+      {/* <button onClick={() => setisPage?.(isPage?.concat([9, 10]))}>
+        change
+      </button> */}
       <Tabs indicatorRef={indicatorRef} />
     </AppProvider>
   ) : (
-    <Spinner fullScreen style={{ margin: "0" }} />
+    <Spinner fullScreen navBar={false} />
   );
 }

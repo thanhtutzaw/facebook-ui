@@ -275,7 +275,7 @@
     border: 0;
     border-radius: 1rem;
     // box-shadow: 0 2px 10px rgb(223, 223, 223);
-    box-shadow: 0 2px 5px rgb(0 0 0 / .1);
+    box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
     padding-top: 0;
     overflow: hidden;
     z-index: 1000;
@@ -557,15 +557,13 @@
 .actions {
     display: flex;
     flex-direction: column;
-    min-width: 150px;
+    // min-width: 150px;
     position: absolute;
     right: 1rem;
     top: 60px;
-    // top: 55px;
-    // right: 1rem;
+    //  max-width: 154.312px;
+    width: clamp(150px, 50%, 180px);
 
-    // top: 80px;
-    // left: -296px;
     border-radius: 1rem;
     overflow: hidden;
     padding-block: 0.7rem;
@@ -582,10 +580,9 @@
         border: 0;
         display: flex;
         gap: 10px;
-        // margin: 0 auto;
         padding: 0.5rem 1rem;
-        // color: rgb(39, 39, 39);
         transition: all 0.02s ease-in-out;
+        text-align: left;
         // svg {
         //     -webkit-text-fill-color: transparent !important;
         //     -webkit-text-stroke: black !important; // can be any color
