@@ -1,21 +1,28 @@
 import { faArrowAltCircleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { collection, doc } from "firebase/firestore";
+import {
+  Timestamp,
+  collection,
+  doc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { db } from "../../lib/firebase";
+import { commentDateToJSON, db } from "../../lib/firebase";
 import { addComment } from "../../lib/firestore/comment";
 import { sendAppNoti } from "../../lib/firestore/notifications";
 import { Post, account } from "../../types/interfaces";
 import s from "./index.module.scss";
+import Image from "next/image";
 export default function CommentInput(props: {
+  setlimitedComments: any;
   uid?: string;
   postId: string;
   authorId: string;
   post?: Post;
   profile?: account["profile"];
 }) {
-  const { profile, post, uid, authorId, postId } = props;
+  const { setlimitedComments, profile, post, uid, authorId, postId } = props;
   const [text, settext] = useState("");
   const commentRef = doc(
     collection(db, `users/${authorId}/posts/${postId}/comments`)
@@ -35,7 +42,7 @@ export default function CommentInput(props: {
         if (text === "") return;
         try {
           setaddLoading(true);
-          await addComment(
+          const addedComment = await addComment(
             commentRef,
             uid,
             text,
@@ -51,6 +58,23 @@ export default function CommentInput(props: {
             `${authorId}/${post?.id}/#comment-${commentRef.id}`,
             text
           );
+          // const date = addedComment.createdAt;
+          // const comment = {
+          //   ...addedComment,
+          //   // createdAt: {new Timestamp()}
+          // };
+          // const date = new Timestamp(
+          //   addedComment.createdAt.nanoseconds,
+          //   addedComment.createdAt.seconds
+          // );
+          // console.log(addedComment.createdAt.toDate() as Timestamp);
+          // setlimitedComments([
+          //   ...post?.comments!,
+          //   commentDateToJSON(addedComment),
+          // ]);
+          // setlimitedComments(post?.comments);
+          // console.log(addedComment.createdAt);
+          // console.log(new Date(Date.now()).getUTCDate());
           router.replace(router.asPath, undefined, { scroll: false });
           settext("");
           setaddLoading(false);
@@ -62,6 +86,16 @@ export default function CommentInput(props: {
       }}
       className={s.input}
     >
+      <Image
+        className={s.profile}
+        width={200}
+        height={200}
+        priority
+        alt={profile?.firstName ?? "Unknow"}
+        src={(profile?.photoURL as string) ?? ""}
+        // alt={currentUser?.displayName ?? "Unknow User"}
+        // src={currentUser?.photoURL ?? ""}
+      />
       <input
         onChange={(e) => {
           settext(e.target.value);

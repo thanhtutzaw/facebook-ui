@@ -25,23 +25,18 @@ export default function Comment(props: {
   }, []);
   if (comments.length === 0) return <></>;
   return (
+    <>
     <ul className={s.container}>
       {comments?.map((c) => (
         <Card client={client} uid={uid} key={c.id} c={c} />
       ))}
-      {/* {commentLoading && !commentEnd && <Spinner style={{ margin: "0" }} />} */}
-
-      {/* {!commentLoading && !commentEnd ? null : commentEnd ? (
-        
-      ) : (
-        <></>
-      )} */}
-      {!commentLoading && !commentEnd ? null : commentLoading ? (
+    </ul>
+      {!commentLoading && !commentEnd ? null : commentLoading? (
         <Spinner style={{ margin: "0" }} />
       ) : (
         <></>
       )}
-    </ul>
+    </>
   );
   function Card(props: { client: boolean; uid: string; c: Comment }) {
     const { client, uid, c } = props;

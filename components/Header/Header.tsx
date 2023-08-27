@@ -44,9 +44,13 @@ export default function Header(props: {
   const { indicatorRef, tabIndex } = props;
   const { active, setActive } = useActive();
   const [width, setwidth] = useState<number>();
-  const { selectMode, setselectMode, headerContainerRef } = useContext(
-    AppContext
-  ) as Props;
+  const {
+    postLoading,
+    postEnd,
+    selectMode,
+    setselectMode,
+    headerContainerRef,
+  } = useContext(AppContext) as Props;
   const { setSelectedId } = useContext(PageContext) as PageProps;
 
   useEffect(() => {
@@ -79,7 +83,8 @@ export default function Header(props: {
         }}
         className={styles.header}
       >
-        <Logo />
+        {/* <Logo /> */}
+
         <div className={styles.action}>
           <button
             tabIndex={tabIndex}
@@ -175,6 +180,8 @@ export default function Header(props: {
           ></div>
         </div>
       </nav>
+      {postLoading ? "loading " : "false"}
+      {postEnd ? "end " : "false"}
     </div>
   );
 }

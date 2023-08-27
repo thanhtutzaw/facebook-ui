@@ -162,7 +162,8 @@ export default function App({
           active={active}
           setActive={setActive}
         >
-          <main style={{ scrollPadding: "5rem", scrollMargin: "5rem" }}>
+          <main>
+            {/* <main style={{ scrollPadding: "5rem", scrollMargin: "5rem" }}> */}
             <Component {...pageProps} />
             {authUser?.uid && <ImageLargeView />}
           </main>

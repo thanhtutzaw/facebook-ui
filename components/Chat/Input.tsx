@@ -13,9 +13,9 @@ export default function ChatInput({
     <form className={s.input}>
       {currentUser ? (
         <Image
-        className={s.profile}
+          className={s.profile}
           width={200}
-      height={200}
+          height={200}
           priority
           alt={currentUser?.displayName ?? "Unknow User"}
           src={currentUser?.photoURL ?? ""}
@@ -26,7 +26,7 @@ export default function ChatInput({
             width: "50px",
             height: "50px",
             backgroundColor: "rgb(230, 230, 230)",
-            borderRadius:'100%'
+            borderRadius: "100%",
           }}
         ></div>
       )}

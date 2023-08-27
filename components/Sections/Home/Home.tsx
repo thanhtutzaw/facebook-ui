@@ -29,6 +29,8 @@ export default function Home(props: { tabIndex: number }) {
             e.currentTarget.scrollHeight &&
           !postEnd
         ) {
+          console.log("getting more posts");
+          console.log({ postEnd });
           getMorePosts?.();
         }
         const header = headerContainerRef?.current;

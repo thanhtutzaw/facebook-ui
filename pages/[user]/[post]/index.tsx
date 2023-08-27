@@ -43,11 +43,13 @@ import { deleteStorage, uploadMedia } from "../../../lib/storage";
 import s from "../../../styles/Home.module.scss";
 import {
   Media,
+  Post,
   Post as PostType,
   Props,
   account,
   likes,
 } from "../../../types/interfaces";
+import { fetchComments } from "../../../lib/firestore/comment";
 export const Comment_LIMIT = 10;
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
@@ -67,7 +69,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const postRef = doc(db, `users/${authorId}/posts/${postId}`);
     const postDoc = await getDoc(postRef);
     const p = await postToJSON(postDoc as DocumentSnapshot<DocumentData>);
-    const newPost = await postInfo(p, uid);
+    const newPost = (await postInfo(p, uid)) as Post;
     const profileData = (await getProfileByUID(uid)) as account["profile"];
     const profile = {
       ...profileData,
@@ -75,7 +77,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         ? profileData.photoURL
         : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
     };
-    const commentRef = query(
+    const commentQuery = query(
       collection(
         db,
         `users/${newPost?.authorId}/posts/${newPost?.id}/comments`
@@ -83,20 +85,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       orderBy("createdAt", "desc"),
       limit(Comment_LIMIT)
     );
-    const commentDoc = await getDocs(commentRef);
-    const commentJSON = await Promise.all(
-      commentDoc.docs.map(async (doc) => await commentToJSON(doc))
-    );
-    const comments = await Promise.all(
-      commentJSON.map(async (c) => {
-        if (c.authorId) {
-          const author = await getProfileByUID(c.authorId?.toString());
-          return { ...c, author };
-        } else {
-          return { ...c, author: null };
-        }
-      })
-    );
+    const comments = await fetchComments(commentQuery);
     const withComment = { ...newPost, comments };
     if (
       !postDoc.exists() ||
@@ -297,48 +286,67 @@ export default function Page(props: {
   const fetchMoreComment = useCallback(
     async function () {
       console.log("fetching more comment");
-      if (limitedComments.length > Comment_LIMIT) {
-        setcommentLoading(true);
-      } else {
-        setcommentLoading(false);
-      }
+      // if (limitedComments.length > Comment_LIMIT) {
+      //   if (commentEnd) return;
+      //   // setcommentLoading(true);
+      //   setcommentLoading(false);
+      // } else {
+      //   setcommentLoading(true);
+      // }
+      setcommentLoading(true);
       const comment = limitedComments?.[limitedComments?.length - 1]!;
       if (!comment) return;
+      if (limitedComments.length > Comment_LIMIT) {
+        setcommentLoading(true);
+      }
       const date = new Timestamp(
         comment.createdAt.seconds,
         comment.createdAt.nanoseconds
       );
-      const commentRef = query(
+      const commentQuery = query(
         collection(db, `users/${post?.authorId}/posts/${post?.id}/comments`),
         orderBy("createdAt", "desc"),
         startAfter(date),
         limit(Comment_LIMIT)
       );
-      const commentDoc = await getDocs(commentRef);
-      const commentJSON = await Promise.all(
-        commentDoc.docs.map(async (doc) => await commentToJSON(doc))
-      );
-      const newComment = await Promise.all(
-        commentJSON.map(async (c) => {
-          if (c.authorId) {
-            const author = await getProfileByUID(c.authorId?.toString());
-            return { ...c, author };
-          } else {
-            return { ...c, author: null };
-          }
-        })
-      );
-      setlimitedComments(limitedComments.concat(newComment));
+      const comments = await fetchComments(commentQuery);
+      setlimitedComments(limitedComments.concat(comments));
       setcommentLoading(false);
-      console.log(limitedComments.length, Comment_LIMIT);
-      if (limitedComments?.length! < Comment_LIMIT) {
+      if (comments?.length! < Comment_LIMIT) {
         setcommentEnd(true);
       }
     },
     [limitedComments, post?.authorId, post?.id]
   );
   const [Likes, setLikes] = useState<likes | []>([]);
+  // const scrollRef = useRef<HTMLDivElement>(null);
   const { scrollRef } = useInfiniteScroll(fetchMoreComment, commentEnd, true);
+  // useEffect(() => {
+  //   function handleScroll(e: Event) {
+  //     const target = e.currentTarget as HTMLElement;
+  //     const currentScroll = target.scrollTop;
+  //     console.log(window.innerHeight + currentScroll >= target.scrollHeight);
+  //     if (
+  //       window.innerHeight + currentScroll + 1 >= target.scrollHeight &&
+  //       !commentEnd
+  //     ) {
+  //       console.log("fetching more comments");
+  //       fetchMoreComment();
+  //     }
+  //   }
+  //   const element = scrollRef.current?.parentElement!;
+  //   element.addEventListener("scroll", handleScroll);
+  //   if (commentEnd) {
+  //     element.removeEventListener("scroll", handleScroll);
+  //   }
+  //   return () => {
+  //     element.removeEventListener("scroll", handleScroll);
+  //   };
+  // }, [commentEnd, commentLoading, fetchMoreComment]);
+  // useEffect(() => {
+  //   console.log(limitedComments);
+  // }, [limitedComments]);
+
   if (expired) return <Welcome expired={expired} />;
   return (
     <div className="user" ref={scrollRef}>
@@ -349,6 +357,8 @@ export default function Page(props: {
         }}
       >
         <h2 className={s.title}>{canEdit ? "Edit" : "Post"}</h2>
+        {/* {commentLoading ? "loading " : "false"}
+        {commentEnd ? "end " : "false"} */}
         {canEdit && (
           <button
             tabIndex={1}
@@ -422,6 +432,7 @@ export default function Page(props: {
               comments={limitedComments}
             />
             <CommentInput
+              setlimitedComments={setlimitedComments}
               profile={profile}
               post={post}
               uid={uid!}

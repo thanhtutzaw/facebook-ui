@@ -7,20 +7,33 @@ function useInfiniteScroll(
 ) {
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    async function handleScroll(e: Event) {
+    function handleScroll(e: Event) {
       const target = e.currentTarget as HTMLElement;
-      if (
-        window.innerHeight + target.scrollTop + 1 >= target.scrollHeight &&
-        !hasMore
-      ) {
-        await fetchMoreData();
-        console.log(hasMore, scrollParent);
+      const currentScroll = target.scrollTop;
+      console.log(target.scrollTop, window.innerHeight);
+      if (window.innerHeight + currentScroll + 1 >= target.scrollHeight) {
+        console.log({ currentScroll });
+        // console.log({ hasMore });
+        console.log("fetching more comments");
+        fetchMoreData();
       }
+      if (hasMore) {
+        element.removeEventListener("scroll", handleScroll);
+      }
+      // if (
+      //   window.innerHeight + target.scrollTop + 1 >= target.scrollHeight &&
+      //   !hasMore
+      // ) {
+      //   console.log("fetching more comments");
+      //   await fetchMoreData();
+      //   // console.log({hasMore, scrollParent});
+      // }
     }
     const element = scrollParent
       ? scrollRef.current?.parentElement!
       : scrollRef.current!;
     element.addEventListener("scroll", handleScroll);
+    // element.removeEventListener("scroll", handleScroll);
     return () => {
       element.removeEventListener("scroll", handleScroll);
     };

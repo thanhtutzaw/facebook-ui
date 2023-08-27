@@ -65,25 +65,48 @@ export async function postToJSON(
 }
 export async function commentToJSON(doc: QueryDocumentSnapshot<DocumentData>) {
   const data = doc.data() as Comment;
+const createdAt = data?.createdAt as Timestamp;
+const updatedAt = data?.updatedAt as Timestamp;
+const author = doc.ref.parent.parent?.parent.parent!;
+if (typeof data?.updatedAt === "string") {
+  return {
+    ...data,
+    id: doc.id,
+    text: data?.text,
+    createdAt: createdAt?.toJSON() || 0,
+  };
+} else {
+  return {
+    ...data,
+    id: doc.id,
+    text: data?.text,
+    createdAt: createdAt?.toJSON() || 0,
+    updatedAt: updatedAt?.toJSON() || 0,
+  };
+}
+
+  // if (typeof data?.updatedAt === "string") {
+  //   // return {
+  //   //   ...data,
+  //   //   id: doc.id,
+  //   //   text: data?.text,
+  //   //   createdAt: createdAt?.toJSON() || 0,
+  //   // };
+  //   commentDateToJSON(data as Comment);
+  // } else {
+  //   return {
+  //     ...commentDateToJSON(data as Comment),
+  //     updatedAt: updatedAt?.toJSON() || 0,
+  //   };
+  // }
+}
+export function commentDateToJSON(data: Comment) {
   const createdAt = data?.createdAt as Timestamp;
-  const updatedAt = data?.updatedAt as Timestamp;
-  const author = doc.ref.parent.parent?.parent.parent!;
-  if (typeof data?.updatedAt === "string") {
-    return {
-      ...data,
-      id: doc.id,
-      text: data?.text,
-      createdAt: createdAt?.toJSON() || 0,
-    };
-  } else {
-    return {
-      ...data,
-      id: doc.id,
-      text: data?.text,
-      createdAt: createdAt?.toJSON() || 0,
-      updatedAt: updatedAt?.toJSON() || 0,
-    };
-  }
+  return {
+    ...data,
+    text: data?.text,
+    createdAt: createdAt?.toJSON() || 0,
+  };
 }
 export function userToJSON(obj: any): any {
   if (Array.isArray(obj)) {
@@ -171,7 +194,7 @@ export async function postInfo(p: Post, uid: string) {
           author: { ...postProfile },
           isLiked: isLiked.exists() ? true : false,
           sharePost: { ...p.sharePost, post: { ...sharePost } },
-        };
+        } ;
       } else {
         return {
           ...p,

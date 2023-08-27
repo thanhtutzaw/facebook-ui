@@ -1,5 +1,12 @@
 import { useQuery, useQueries } from "@tanstack/react-query";
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import {
+  collection,
+  collectionGroup,
+  getDocs,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import router from "next/router";
 import { useContext } from "react";
 import { AppContext } from "../../../context/AppContext";
@@ -50,12 +57,13 @@ export default function Friend(props: FriendProps) {
   const fetchPendingFriends = async () => {
     if (!uid) return;
     const pendingfriendsQuery = query(
-      collection(db, `users/friends`),
+      collection(db, `users/${uid}/friends`),
       where("status", "==", "pending"),
       orderBy("createdAt", "desc")
     );
     try {
       const pendingFriends = await getDocs(pendingfriendsQuery);
+      console.log(pendingFriends.empty);
       return pendingFriends.docs.map((doc) => {
         if (doc.data()) {
           const profile = getProfileByUID(doc.id.toString());

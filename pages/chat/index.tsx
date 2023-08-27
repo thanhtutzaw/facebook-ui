@@ -66,7 +66,7 @@ export default function Page(props: { acceptedFriends: any[] }) {
         }}
         className={s.container}
       >
-        {JSON.stringify(isPage)}
+        {/* {JSON.stringify(isPage)} */}
         {/* <button onClick={() => setisPage?.(isPage?.concat([9, 10]))}>
           change
         </button> */}
