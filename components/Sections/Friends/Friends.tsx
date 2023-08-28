@@ -1,22 +1,15 @@
-import { useQuery, useQueries } from "@tanstack/react-query";
-import {
-  collection,
-  collectionGroup,
-  getDocs,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
+import { useQueries } from "@tanstack/react-query";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import router from "next/router";
 import { useContext } from "react";
 import { AppContext } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
 import { db, getProfileByUID } from "../../../lib/firebase";
-import { Props, friends } from "../../../types/interfaces";
+import { Props } from "../../../types/interfaces";
 import Spinner from "../../Spinner";
-import { AddSuggestFriend } from "./AddSuggestFriend";
 import s from "./Friends.module.scss";
 import { Request } from "./Request";
+import { SuggestFriend } from "./SuggestFriend";
 interface FriendProps {
   tabIndex: number;
 }
@@ -25,21 +18,19 @@ export default function Friend(props: FriendProps) {
   const { active: tab } = useActive();
   const { uid } = useContext(AppContext) as Props;
 
-  const fetchAllUsers = async () => {
+  const fetchSuggestedFriends = async () => {
     if (!uid) return;
-    const allUsersQuery = query(
+    const myFriendsQuery = query(collection(db, `users/${uid}/friends`));
+    const myFriends = (await getDocs(myFriendsQuery)).docs.map((doc) => doc.id);
+    // including friends , pending , blocked (users) string[]
+    const suggestedFriendsQuery = query(
       collection(db, `users`),
-      where("__name__", "!=", uid)
+      where("__name__", "not-in", [uid, ...myFriends])
+      // if not friends , pending , blocked or thisAccount , display all users as suggestedAccount
     );
-    // const pendingfriendsQuery = query(
-    //   collection(db, `users/friends`),
-    //   where("status", "==", "pending"),
-    //   orderBy("createdAt", "desc")
-    // );
     try {
-      // const pendingFriends = await getDocs(pendingfriendsQuery);
-      const allFriendsSnap = await getDocs(allUsersQuery);
-      return allFriendsSnap.docs.map((doc) => {
+      const suggestedFriendsSnap = await getDocs(suggestedFriendsQuery);
+      return suggestedFriendsSnap.docs.map((doc) => {
         if (doc.data()) {
           return {
             id: doc.id,
@@ -51,7 +42,7 @@ export default function Friend(props: FriendProps) {
       });
     } catch (error) {
       console.log(error);
-      throw new Error("Failed to fetch users");
+      throw new Error("Failed to fetch Suggested Friends");
     }
   };
   const fetchPendingFriends = async () => {
@@ -71,7 +62,7 @@ export default function Friend(props: FriendProps) {
             id: doc.id,
             ...doc.data(),
             author: { ...profile },
-          } ;
+          };
         } else {
           return [];
         }
@@ -81,17 +72,11 @@ export default function Friend(props: FriendProps) {
       throw new Error("Failed to fetch users");
     }
   };
-  // const { isLoading, error, data } = useQuery({
-  //   queryKey: ["allUsers"],
-  //   queryFn: async () => await fetchAllUsers(),
-  //   enabled: tab === "friends",
-  //   // placeholderData: [],
-  // });
-  const [allFriends, pendingFriends] = useQueries({
+  const [suggestedFriends, pendingFriends] = useQueries({
     queries: [
       {
         queryKey: ["allUsers"],
-        queryFn: async () => await fetchAllUsers(),
+        queryFn: async () => await fetchSuggestedFriends(),
         enabled: tab === "friends",
       },
       {
@@ -101,7 +86,7 @@ export default function Friend(props: FriendProps) {
       },
     ],
   });
-  const friends = allFriends.data ?? [];
+  const suggested = suggestedFriends.data ?? [];
   const pending = pendingFriends.data ?? [];
 
   const Requests = [
@@ -143,14 +128,14 @@ export default function Friend(props: FriendProps) {
         <h2 className={s.header}>
           <p>People you may know</p>
         </h2>
-        {allFriends.isLoading ? (
+        {suggestedFriends.isLoading ? (
           <Spinner />
-        ) : allFriends.error ? (
+        ) : suggestedFriends.error ? (
           <p className="error">Unexpected Error Occured !</p>
         ) : (
           <>
-            {friends?.map((f: any) => (
-              <AddSuggestFriend key={f.id} f={f} tabIndex={tabIndex} />
+            {suggested?.map((f: any) => (
+              <SuggestFriend key={f.id} f={f} tabIndex={tabIndex} />
             ))}
           </>
         )}

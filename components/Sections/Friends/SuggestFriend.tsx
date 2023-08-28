@@ -6,7 +6,7 @@ interface RequestProps {
   f: any;
   tabIndex: number;
 }
-export function AddSuggestFriend(props: RequestProps) {
+export function SuggestFriend(props: RequestProps) {
   const { f, tabIndex } = props;
   const [accept, setaccept] = useState(false);
   const [reject, setreject] = useState(false);
