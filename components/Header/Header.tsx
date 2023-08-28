@@ -16,14 +16,14 @@ import { RefObject, useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { useActive } from "../../hooks/useActiveTab";
-import styles from "../../styles/Home.module.scss";
+import s from "../../styles/Home.module.scss";
 import { Props } from "../../types/interfaces";
 import Navitems from "./Navitems";
 import SelectModal from "./SelectModal";
 const Logo = () => {
   return (
-    <div className={styles.logoContainer}>
-      <Link tabIndex={-1} scroll={false} href="/" className={styles.logo}>
+    <div className={s.logoContainer}>
+      <Link tabIndex={-1} scroll={false} href="/" className={s.logo}>
         facebook
       </Link>
     </div>
@@ -45,8 +45,6 @@ export default function Header(props: {
   const { active, setActive } = useActive();
   const [width, setwidth] = useState<number>();
   const {
-    postLoading,
-    postEnd,
     selectMode,
     setselectMode,
     headerContainerRef,
@@ -74,18 +72,18 @@ export default function Header(props: {
     };
   }, [selectMode, setSelectedId, setselectMode]);
   return (
-    <div ref={headerContainerRef} className={styles.headerContainer}>
+    <div ref={headerContainerRef} className={s.headerContainer}>
       <header
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
         }}
-        className={styles.header}
+        className={s.header}
       >
-        {/* <Logo /> */}
+        <Logo />
 
-        <div className={styles.action}>
+        <div className={s.action}>
           <button
             tabIndex={tabIndex}
             onClick={() => router.push("/chat")}
@@ -117,7 +115,7 @@ export default function Header(props: {
         </div>
       </header>
 
-      <nav className={styles.nav}>
+      <nav className={s.nav}>
         {!selectMode && (
           <motion.div
             initial={{ width: "100%", opacity: 1 }}
@@ -127,14 +125,7 @@ export default function Header(props: {
             }}
             transition={{ duration: 0.2 }}
             exit={{ opacity: 0, width: "60%" }}
-            style={{
-              willChange: "width , opacity ",
-              opacity: 1,
-              display: "flex",
-              width: "100%",
-              height: "100%",
-              borderBottom: "1px solid #f0f0f0",
-            }}
+            className={s.navItemsContainer}
           >
             {pages.map((page, index) => (
               <Navitems
@@ -158,30 +149,26 @@ export default function Header(props: {
             }}
             exit={{ opacity: 0, width: "70%" }}
             className="selectModal"
-            style={{
-              willChange: "width , opacity",
-              opacity: "1",
-              width: "70%",
-            }}
+            // style={{
+              
+            // }}
           >
             <SelectModal />
           </motion.div>
         )}
         <div
           style={{ opacity: selectMode ? 0 : 1 }}
-          className={styles.indicatorContainer}
+          className={s.indicatorContainer}
         >
           <div
             ref={indicatorRef}
             style={{
               width: `${width}px`,
             }}
-            className={styles.indicator}
+            className={s.indicator}
           ></div>
         </div>
       </nav>
-      {postLoading ? "loading " : "false"}
-      {postEnd ? "end " : "false"}
     </div>
   );
 }

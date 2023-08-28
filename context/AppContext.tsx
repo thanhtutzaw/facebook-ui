@@ -42,41 +42,6 @@ export function AppProvider(props: Props) {
     console.log(posts);
     console.log(limitedPosts);
   }, []);
-  // const [client, setClient] = useState(false);
-  // useEffect(() => {
-  //   setClient(true);
-  // }, []);
-
-  // useEffect(() => {
-  //   // Set up the real-time data listener
-  //   const postQuery = collection(db, `posts`);
-  //   const unsubscribe = postQuery.onSnapshot((snapshot) => {
-  //     const updatedData = snapshot.docs.map((doc) => doc.data());
-  //     setData(updatedData);
-  //   });
-
-  //   return () => {
-  //     // Unsubscribe from the listener when the component unmounts
-  //     unsubscribe();
-  //   };
-  // }, []);
-  // async function fetchInfiniteData(e:UIEventHandler<HTMLDivElement, UIEvent>) {
-  //   const target = e.currentTarget;
-  //   if (
-  //     window.innerHeight + e.currentTarget.scrollTop + 1 >=
-  //     e.currentTarget.scrollHeight
-  //   )
-  //     return;
-  // }
-  // async function fetchInfiniteData(e: UIEvent, postEnd: boolean | undefined) {
-  //   const target = e.currentTarget as HTMLDivElement;
-  //   if (
-  //     window.innerHeight + target.scrollTop + 1 >= target.scrollHeight &&
-  //     !postEnd
-  //   ) {
-  //     await getMorePosts?.();
-  //   }
-  // }
   async function getMorePosts() {
     setpostLoading(true);
     const post = posts?.[posts?.length - 1]!;
@@ -124,18 +89,12 @@ export function AppProvider(props: Props) {
           behavior: "smooth",
         });
       } else {
-        // main.scrollTo({
-        //   top: 0,
-        //   behavior: "smooth",
-        // });
         main.style.scrollSnapType = "none";
         if (!headerContainer) return;
         headerContainer.style.transform = "translateY(-60px)";
         headerContainer.style.height = "60px";
       }
     };
-
-    // if (active === "/") window.location.hash = "#home";
   }, [active]);
   return (
     <AppContext.Provider

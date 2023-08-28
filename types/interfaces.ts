@@ -2,27 +2,25 @@ import { Timestamp } from "firebase/firestore";
 import { ReactNode, RefObject } from "react";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { User } from "firebase/auth";
+type timeStamp =
+  | {
+      seconds: number;
+      nanoseconds: number;
+    }
+  | Timestamp;
 export type likes = {
   uid: string | number;
-  createdAt:
-    | {
-        seconds: number;
-        nanoseconds: number;
-      }
-    | Timestamp;
+  createdAt: timeStamp;
   author?: UserRecord | User | account["profile"];
 }[];
+
 export type friends = {
   id: string | number;
   status?: "friend" | "block" | "pending";
-  createdAt:
-    | {
-        seconds: number;
-        nanoseconds: number;
-      }
-    | Timestamp;
+  createdAt: timeStamp;
   author?: UserRecord | User | account["profile"];
 }[];
+
 export type account = {
   email: string;
   password: string;
@@ -45,12 +43,7 @@ export type NotiTypes = {
   content?: string;
   id?: string | number;
   type: notiContentTypes;
-  createdAt:
-    | {
-        seconds: number;
-        nanoseconds: number;
-      }
-    | Timestamp;
+  createdAt: timeStamp;
   photoURL: string;
 };
 export type Media = {
@@ -74,22 +67,11 @@ export interface sharedPost {
   id?: string | number;
   text: string;
   visibility: string;
-  createdAt:
-    | {
-        seconds: number;
-        nanoseconds: number;
-      }
-    | Timestamp;
-  updatedAt:
-    | {
-        seconds: number;
-        nanoseconds: number;
-      }
-    | Timestamp;
+  createdAt: timeStamp;
+  updatedAt: timeStamp;
   media: Media[] | null;
   isLiked: boolean;
   isSaved: boolean;
-  // shares?: any;
   comments: Comment[];
   commentCount?: string | number;
   likeCount: string | number;
@@ -107,20 +89,10 @@ export interface Post {
   text: string;
   visibility: string;
   sharePost?: { author: string; id: string; post?: sharedPost | null };
-  createdAt:
-    | {
-        seconds: number;
-        nanoseconds: number;
-      }
-    | Timestamp;
-  updatedAt:
-    | {
-        seconds: number;
-        nanoseconds: number;
-      }
-    | Timestamp;
   media: Media[] | null;
   comments: Comment[];
+  createdAt: timeStamp;
+  updatedAt: timeStamp;
 }
 export interface Comment {
   isLiked?: boolean;
@@ -129,18 +101,8 @@ export interface Comment {
   authorId: string | number;
   id?: string | number;
   text: string;
-  createdAt:
-    | {
-        seconds: number;
-        nanoseconds: number;
-      }
-    | Timestamp;
-  updatedAt?:
-    | {
-        seconds: number;
-        nanoseconds: number;
-      }
-    | Timestamp;
+  createdAt: timeStamp;
+  updatedAt?: timeStamp;
 }
 
 export interface Props {
@@ -172,19 +134,9 @@ export interface Props {
   headerContainerRef?: RefObject<HTMLDivElement>;
   profile?: account["profile"] | null;
   account?: UserRecord | null;
-  getMorePosts?: Function;
+  getMorePosts?: () => Promise<void>;
   postLoading?: boolean;
   postEnd?: boolean;
-  lastPullTimestamp?:
-    | {
-        seconds: number;
-        nanoseconds: number;
-      }
-    | Timestamp;
-  updatedAt?:
-    | {
-        seconds: number;
-        nanoseconds: number;
-      }
-    | Timestamp;
+  lastPullTimestamp?: timeStamp;
+  updatedAt?: timeStamp;
 }

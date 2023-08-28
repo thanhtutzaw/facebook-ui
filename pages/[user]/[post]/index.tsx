@@ -7,7 +7,6 @@ import {
   collection,
   doc,
   getDoc,
-  getDocs,
   limit,
   orderBy,
   query,
@@ -31,13 +30,13 @@ import { Welcome } from "../../../components/Welcome";
 import useInfiniteScroll from "../../../hooks/useInfiniteScroll";
 import {
   app,
-  commentToJSON,
   db,
   getProfileByUID,
   postInfo,
   postToJSON,
 } from "../../../lib/firebase";
 import { verifyIdToken } from "../../../lib/firebaseAdmin";
+import { fetchComments } from "../../../lib/firestore/comment";
 import { updatePost } from "../../../lib/firestore/post";
 import { deleteStorage, uploadMedia } from "../../../lib/storage";
 import s from "../../../styles/Home.module.scss";
@@ -49,7 +48,6 @@ import {
   account,
   likes,
 } from "../../../types/interfaces";
-import { fetchComments } from "../../../lib/firestore/comment";
 export const Comment_LIMIT = 10;
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
@@ -286,13 +284,6 @@ export default function Page(props: {
   const fetchMoreComment = useCallback(
     async function () {
       console.log("fetching more comment");
-      // if (limitedComments.length > Comment_LIMIT) {
-      //   if (commentEnd) return;
-      //   // setcommentLoading(true);
-      //   setcommentLoading(false);
-      // } else {
-      //   setcommentLoading(true);
-      // }
       setcommentLoading(true);
       const comment = limitedComments?.[limitedComments?.length - 1]!;
       if (!comment) return;
@@ -319,33 +310,7 @@ export default function Page(props: {
     [limitedComments, post?.authorId, post?.id]
   );
   const [Likes, setLikes] = useState<likes | []>([]);
-  // const scrollRef = useRef<HTMLDivElement>(null);
   const { scrollRef } = useInfiniteScroll(fetchMoreComment, commentEnd, true);
-  // useEffect(() => {
-  //   function handleScroll(e: Event) {
-  //     const target = e.currentTarget as HTMLElement;
-  //     const currentScroll = target.scrollTop;
-  //     console.log(window.innerHeight + currentScroll >= target.scrollHeight);
-  //     if (
-  //       window.innerHeight + currentScroll + 1 >= target.scrollHeight &&
-  //       !commentEnd
-  //     ) {
-  //       console.log("fetching more comments");
-  //       fetchMoreComment();
-  //     }
-  //   }
-  //   const element = scrollRef.current?.parentElement!;
-  //   element.addEventListener("scroll", handleScroll);
-  //   if (commentEnd) {
-  //     element.removeEventListener("scroll", handleScroll);
-  //   }
-  //   return () => {
-  //     element.removeEventListener("scroll", handleScroll);
-  //   };
-  // }, [commentEnd, commentLoading, fetchMoreComment]);
-  // useEffect(() => {
-  //   console.log(limitedComments);
-  // }, [limitedComments]);
 
   if (expired) return <Welcome expired={expired} />;
   return (
@@ -357,8 +322,6 @@ export default function Page(props: {
         }}
       >
         <h2 className={s.title}>{canEdit ? "Edit" : "Post"}</h2>
-        {/* {commentLoading ? "loading " : "false"}
-        {commentEnd ? "end " : "false"} */}
         {canEdit && (
           <button
             tabIndex={1}
@@ -381,7 +344,6 @@ export default function Page(props: {
         <AuthorInfo navigateToProfile={navigateToProfile} post={post} />
         <Input
           style={{
-            // marginBottom: text === "" ? "0" : "1rem",
             cursor: canEdit ? "initial" : "default",
           }}
           role="textbox"

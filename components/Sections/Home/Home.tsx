@@ -9,6 +9,7 @@ import styles from "../../../styles/Home.module.scss";
 import { Props } from "../../../types/interfaces";
 import Newfeed from "./Newfeed";
 import Story from "./Story/Story";
+import useInfiniteScroll from "../../../hooks/useInfiniteScroll";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
 // };
 export default function Home(props: { tabIndex: number }) {
@@ -18,21 +19,14 @@ export default function Home(props: { tabIndex: number }) {
     useContext(AppContext) as Props;
   const { setuploadButtonClicked } = useContext(PageContext) as PageProps;
   const previousScrollRef = useRef(0);
+  const { scrollRef } = useInfiniteScroll(getMorePosts!, postEnd!);
   return (
     <div
+      ref={scrollRef}
       id="/"
       className={styles.home}
       onScroll={async (e) => {
         const currentScroll = e.currentTarget.scrollTop;
-        if (
-          window.innerHeight + currentScroll + 1 >=
-            e.currentTarget.scrollHeight &&
-          !postEnd
-        ) {
-          console.log("getting more posts");
-          console.log({ postEnd });
-          getMorePosts?.();
-        }
         const header = headerContainerRef?.current;
         if (!header) return;
         if (active !== "/") return;
@@ -62,7 +56,6 @@ export default function Home(props: { tabIndex: number }) {
           height={170}
           style={{ width: "40px", height: "40px" }}
           src={
-            // "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg""
             (profile?.photoURL as string) ??
             "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
           }
