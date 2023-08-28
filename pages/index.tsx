@@ -14,7 +14,7 @@ import {
   onSnapshot,
   orderBy,
   query,
-  where
+  where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -29,7 +29,7 @@ import {
   db,
   getPostWithMoreInfo,
   getProfileByUID,
-  userToJSON
+  userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import { Props } from "../types/interfaces";
@@ -151,12 +151,13 @@ export default function Home({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
   const [limitedPosts, setlimitedPosts] = useState(posts);
-  // useEffect(() => {
-  //   // const lastestPost = limitedPosts.concat(posts!);
-  //   if (posts?.length ?? 0 > 0) return;
-  //   setlimitedPosts(posts!);
-  //   // setlimitedPosts([{ ...limitedPosts },  posts!]);
-  // }, [posts]);
+
+  useEffect(() => {
+    // const lastestPost = limitedPosts.concat(posts!);
+    // if (posts?.length ?? 0 > 0) return;
+    if (!expired) setlimitedPosts(posts!);
+    // setlimitedPosts([{ ...limitedPosts },  posts!]);
+  }, [expired, posts]);
 
   // useEffect(() => {
   //   let unsubscribe: Unsubscribe;
