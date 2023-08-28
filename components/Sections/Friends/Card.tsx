@@ -4,14 +4,14 @@ import { ReactNode, useContext, useEffect } from "react";
 import { PageContext, PageProps } from "../../../context/PageContext";
 import s from "./Friends.module.scss";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
-import { account } from "../../../types/interfaces";
-export default function Card(props: {
-  children: ReactNode;
-  f: { id: string; author: account["profile"] };
-}) {
+import { account, friends } from "../../../types/interfaces";
+import { Timestamp } from "firebase/firestore";
+export default function Card(props: { children: ReactNode; f: friends }) {
   const { f } = props;
   const { preventClick } = useContext(PageContext) as PageProps;
-
+  const date = f.createdAt as Timestamp;
+  const author = f.author as account["profile"];
+  const userName = `${author?.firstName ?? f.id} ${author?.lastName ?? ""}`;
   return (
     <Link
       scroll={false}
@@ -33,10 +33,31 @@ export default function Card(props: {
         />
         <div className={s.right}>
           <div className={s.info}>
-            <p>{`${f.author?.firstName ?? f.id} ${
-              f.author?.lastName ?? ""
-            }`}</p>
-            <p>1min</p>
+            {/* <p>{f.id}</p> */}
+            <p>{userName}</p>
+            {date && (
+              <p>
+                {new Timestamp(date?.seconds, date?.nanoseconds)
+                  .toDate()
+                  .toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                {/* {JSON.stringify(f.createdAt)} */}
+
+                {/* {new Timestamp(f.createdAt.nanoseconds, f.createdAt.seconds)
+                .toDate()
+                .toLocaleDateString()} */}
+                {/* {new Timestamp(f.createdAt?.seconds, f.createdAt?.nanoseconds)
+                .toDate()
+                .toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })} */}
+              </p>
+            )}
           </div>
           {props.children}
         </div>

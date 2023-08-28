@@ -12,7 +12,7 @@ import { useContext } from "react";
 import { AppContext } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
 import { db, getProfileByUID } from "../../../lib/firebase";
-import { Props } from "../../../types/interfaces";
+import { Props, friends } from "../../../types/interfaces";
 import Spinner from "../../Spinner";
 import { AddSuggestFriend } from "./AddSuggestFriend";
 import s from "./Friends.module.scss";
@@ -71,7 +71,7 @@ export default function Friend(props: FriendProps) {
             id: doc.id,
             ...doc.data(),
             author: { ...profile },
-          };
+          } ;
         } else {
           return [];
         }

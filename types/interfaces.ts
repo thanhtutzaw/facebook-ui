@@ -19,7 +19,7 @@ export type friends = {
   status?: "friend" | "block" | "pending";
   createdAt: timeStamp;
   author?: UserRecord | User | account["profile"];
-}[];
+};
 
 export type account = {
   email: string;
