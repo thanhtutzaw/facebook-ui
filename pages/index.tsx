@@ -1,5 +1,4 @@
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import {
   AuthErrorCodes,
   Unsubscribe,
@@ -10,19 +9,17 @@ import {
   collection,
   collectionGroup,
   doc,
-  getCountFromServer,
   getDoc,
-  getDocs,
   limit,
   onSnapshot,
   orderBy,
   query,
-  where,
+  where
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
@@ -32,15 +29,13 @@ import {
   db,
   getPostWithMoreInfo,
   getProfileByUID,
-  postToJSON,
-  userToJSON,
+  userToJSON
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import { Props, account } from "../types/interfaces";
+import { Props } from "../types/interfaces";
 
-import { useActive } from "../hooks/useActiveTab";
 import Spinner from "../components/Spinner";
-import { PageContext, PageProps } from "../context/PageContext";
+import { useActive } from "../hooks/useActiveTab";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -155,32 +150,32 @@ export default function Home({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
-  const [limitedPosts, setlimitedPosts] = useState(posts ?? []);
-  useEffect(() => {
-    // const lastestPost = limitedPosts.concat(posts!);
-    if (posts?.length ?? 0 > 0) return;
-    setlimitedPosts(posts!);
-    // setlimitedPosts([{ ...limitedPosts },  posts!]);
-  }, [posts]);
+  const [limitedPosts, setlimitedPosts] = useState(posts);
+  // useEffect(() => {
+  //   // const lastestPost = limitedPosts.concat(posts!);
+  //   if (posts?.length ?? 0 > 0) return;
+  //   setlimitedPosts(posts!);
+  //   // setlimitedPosts([{ ...limitedPosts },  posts!]);
+  // }, [posts]);
 
-  useEffect(() => {
-    let unsubscribe: Unsubscribe;
-    const postQuery = query(
-      collectionGroup(db, `posts`),
-      where("visibility", "in", ["Friend", "Public"]),
-      orderBy("createdAt", "desc"),
-      limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
-    );
-    unsubscribe = onSnapshot(postQuery, async (snapshot) => {
-      const posts =
-        (await getPostWithMoreInfo(uid!, undefined, snapshot)) ?? [];
-      setlimitedPosts(posts);
-      console.log("updated posts");
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, [limitedPosts.length, uid]);
+  // useEffect(() => {
+  //   let unsubscribe: Unsubscribe;
+  //   const postQuery = query(
+  //     collectionGroup(db, `posts`),
+  //     where("visibility", "in", ["Friend", "Public"]),
+  //     orderBy("createdAt", "desc"),
+  //     limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
+  //   );
+  //   unsubscribe = onSnapshot(postQuery, async (snapshot) => {
+  //     const posts =
+  //       (await getPostWithMoreInfo(uid!, undefined, snapshot)) ?? [];
+  //     setlimitedPosts(posts);
+  //     console.log("updated posts");
+  //   });
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, [limitedPosts.length, uid]);
   useEffect(() => {
     if (expired) return;
     if (!uid) {
