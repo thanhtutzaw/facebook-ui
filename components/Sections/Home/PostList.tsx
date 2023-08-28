@@ -39,7 +39,9 @@ export const PostList = memo(
           className={s.container}
           style={{
             willChange: "margin",
-            marginInline: selectMode ? "2rem" : "initial",
+            marginInline: selectMode
+              ? "calc(var(--padding-inline) * 2)"
+              : "initial",
             transition: "margin .35s ease-in-out",
             backgroundColor: "#dadada",
           }}

@@ -337,7 +337,7 @@ export default function Page(props: {
       </BackHeader>
       <div
         style={{
-          marginBottom: canEdit ? "65px" : "130px",
+          marginBottom: canEdit ? "65px" : commentEnd ? "80px" : "130px",
         }}
         className={s.container}
       >
@@ -361,12 +361,12 @@ export default function Page(props: {
           setFiles={setFiles}
         />
         <SharePreview post={post} />
-        <SocialCount
+        {!canEdit && <SocialCount
           Likes={Likes}
           setLikes={setLikes}
           likeCount={likeCount}
           post={post}
-        />
+        />}
         {canEdit ? (
           <FooterInput
             fileRef={fileRef}
