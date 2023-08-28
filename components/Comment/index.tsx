@@ -26,16 +26,16 @@ export default function Comment(props: {
   if (comments.length === 0) return <></>;
   return (
     <>
-    <ul className={s.container}>
-      {comments?.map((c) => (
-        <Card client={client} uid={uid} key={c.id} c={c} />
-      ))}
-    </ul>
-      {!commentLoading && !commentEnd ? null : commentLoading? (
-        <Spinner style={{ margin: "0" }} />
-      ) : (
-        <></>
-      )}
+      <ul className={s.container}>
+        {comments?.map((c) => (
+          <Card client={client} uid={uid} key={c.id} c={c} />
+        ))}
+        {!commentLoading && !commentEnd ? null : commentLoading ? (
+          <Spinner style={{ marginTop: "0" }} />
+        ) : (
+          <></>
+        )}
+      </ul>
     </>
   );
   function Card(props: { client: boolean; uid: string; c: Comment }) {
@@ -62,8 +62,6 @@ export default function Comment(props: {
           }}
         >
           <p className={s.text}>{text}</p>
-          {/* <Link href={"/" + authorId.toString()}>
-        </Link> */}
           <div className={s.actions}>
             <p suppressHydrationWarning>
               {new Timestamp(createdAt?.seconds, createdAt?.nanoseconds)

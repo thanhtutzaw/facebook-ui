@@ -39,9 +39,12 @@ export function AppProvider(props: Props) {
     console.log(limitedPosts);
   };
   useEffect(() => {
+    if (posts && !limitedPosts) {
+      setlimitedPosts?.(posts);
+    }
     console.log(posts);
     console.log(limitedPosts);
-  }, []);
+  }, [limitedPosts, posts, setlimitedPosts]);
   async function getMorePosts() {
     setpostLoading(true);
     const post = posts?.[posts?.length - 1]!;

@@ -176,6 +176,7 @@ export const Footer = (
               );
               setLikeLoading(false);
             }
+            router.replace(router.asPath, undefined, { scroll: false });
           }}
           aria-expanded={reactionAction !== ""}
           aria-label="Like this Post"

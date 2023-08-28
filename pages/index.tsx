@@ -150,7 +150,7 @@ export default function Home({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
-  const [limitedPosts, setlimitedPosts] = useState(posts);
+  const [limitedPosts, setlimitedPosts] = useState(posts ?? []);
 
   useEffect(() => {
     // const lastestPost = limitedPosts.concat(posts!);
@@ -159,24 +159,24 @@ export default function Home({
     // setlimitedPosts([{ ...limitedPosts },  posts!]);
   }, [expired, posts]);
 
-  // useEffect(() => {
-  //   let unsubscribe: Unsubscribe;
-  //   const postQuery = query(
-  //     collectionGroup(db, `posts`),
-  //     where("visibility", "in", ["Friend", "Public"]),
-  //     orderBy("createdAt", "desc"),
-  //     limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
-  //   );
-  //   unsubscribe = onSnapshot(postQuery, async (snapshot) => {
-  //     const posts =
-  //       (await getPostWithMoreInfo(uid!, undefined, snapshot)) ?? [];
-  //     setlimitedPosts(posts);
-  //     console.log("updated posts");
-  //   });
-  //   return () => {
-  //     unsubscribe();
-  //   };
-  // }, [limitedPosts.length, uid]);
+  useEffect(() => {
+    let unsubscribe: Unsubscribe;
+    const postQuery = query(
+      collectionGroup(db, `posts`),
+      where("visibility", "in", ["Friend", "Public"]),
+      orderBy("createdAt", "desc"),
+      limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
+    );
+    unsubscribe = onSnapshot(postQuery, async (snapshot) => {
+      const posts =
+        (await getPostWithMoreInfo(uid!, undefined, snapshot)) ?? [];
+      setlimitedPosts(posts);
+      console.log("updated posts");
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [limitedPosts.length, uid]);
   useEffect(() => {
     if (expired) return;
     if (!uid) {
