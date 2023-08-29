@@ -54,19 +54,20 @@ export default function Friend(props: FriendProps) {
     );
     try {
       const pendingFriends = await getDocs(pendingfriendsQuery);
-      console.log(pendingFriends.empty);
-      return pendingFriends.docs.map((doc) => {
-        if (doc.data()) {
-          const profile = getProfileByUID(doc.id.toString());
-          return {
-            id: doc.id,
-            ...doc.data(),
-            author: { ...profile },
-          };
-        } else {
-          return [];
-        }
-      });
+      return await Promise.all(
+        pendingFriends.docs.map(async (doc) => {
+          if (doc.data()) {
+            const profile = await getProfileByUID(doc.id.toString());
+            return {
+              id: doc.id,
+              ...doc.data(),
+              author: { ...profile },
+            };
+          } else {
+            return [];
+          }
+        })
+      );
     } catch (error) {
       console.log(error);
       throw new Error("Failed to fetch users");

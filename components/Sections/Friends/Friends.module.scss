@@ -64,9 +64,15 @@
             padding-inline: 2px;
             margin-inline: 1rem;
             .profile {
+                width: 80px;
+                height: 80px;
                 border-radius: 100%;
                 object-fit: cover;
                 outline: 1px solid #8080802b;
+            }
+            .date {
+                color: gray;
+                font-size: 16px;
             }
             p {
                 margin: 0;
@@ -81,6 +87,7 @@
                     display: flex;
                     justify-content: space-between;
                     flex-wrap: wrap;
+                    align-items: center;
                     > p:first-child {
                         max-width: 55vw;
                         width: 100%;

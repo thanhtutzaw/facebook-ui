@@ -1,5 +1,5 @@
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import BackHeader from "../../components/Header/BackHeader";
 import { db, userToJSON } from "../../lib/firebase";
@@ -16,19 +16,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
 
     const { uid } = token;
-    const allUsersQuery = query(
-      collection(db, `users`),
-      where("__name__", "!=", uid)
+    const myFriendsQuery = query(
+      collection(db, `users/${uid}/friends`),
+      where("status", "==", "friend"),
+      orderBy("updatedAt", "desc")
     );
-    const allUsersSnap = await getDocs(allUsersQuery);
+    const myFriendsSnap = await getDocs(myFriendsQuery);
     const acceptedFriends = await Promise.all(
-      allUsersSnap.docs.map(async (doc) => {
-        const data = doc.data();
+      myFriendsSnap.docs.map(async (doc) => {
         const account = (await getUserData(doc.id as string))! as UserRecord;
         const accountJSON = userToJSON(account) as UserRecord;
         return {
           id: doc.id,
-          // ...data,
           author: {
             ...accountJSON,
           },
@@ -55,13 +54,13 @@ export default function Page(props: { acceptedFriends: any[] }) {
   return (
     <div className="user">
       <BackHeader>
-        <h2>My Friends</h2>
+        <h2>My Friends {acceptedFriends.length}</h2>
       </BackHeader>
       <div
         style={{
           marginTop: "65px",
           height: "calc(100vh - 65px)",
-          backgroundColor: "#dadada",
+          // backgroundColor: "#dadada",
         }}
         className={s.container}
       >
@@ -72,8 +71,8 @@ export default function Page(props: { acceptedFriends: any[] }) {
                 <Image
                   className={s.profile}
                   alt={"name"}
-                  width={80}
-                  height={80}
+                  width={100}
+                  height={100}
                   src={
                     friend.author.photoURL ??
                     "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
@@ -84,6 +83,8 @@ export default function Page(props: { acceptedFriends: any[] }) {
             </li>
           ))}
         </ul>
+        {/* {JSON.stringify(acceptFriends.length)} */}
+
         {/* {JSON.stringify(savedPosts)} */}
       </div>
     </div>

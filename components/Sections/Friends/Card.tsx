@@ -1,11 +1,10 @@
+import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
-import { ReactNode, useContext, useEffect } from "react";
+import { ReactNode, useContext } from "react";
 import { PageContext, PageProps } from "../../../context/PageContext";
-import s from "./Friends.module.scss";
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { account, friends } from "../../../types/interfaces";
-import { Timestamp } from "firebase/firestore";
+import s from "./Friends.module.scss";
 export default function Card(props: { children: ReactNode; f: friends }) {
   const { f } = props;
   const { preventClick } = useContext(PageContext) as PageProps;
@@ -15,7 +14,6 @@ export default function Card(props: { children: ReactNode; f: friends }) {
   return (
     <Link
       scroll={false}
-      // href={f.id}
       href={f.id?.toString() ?? ""}
       style={{ pointerEvents: preventClick ? "none" : "initial" }}
     >
@@ -24,8 +22,8 @@ export default function Card(props: { children: ReactNode; f: friends }) {
         <Image
           className={s.profile}
           alt={"name"}
-          width={80}
-          height={80}
+          width={100}
+          height={100}
           src={
             (f.author?.photoURL as string) ??
             "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
@@ -36,11 +34,11 @@ export default function Card(props: { children: ReactNode; f: friends }) {
             {/* <p>{f.id}</p> */}
             <p>{userName}</p>
             {date && (
-              <p>
+              <p className={s.date}>
                 {new Timestamp(date?.seconds, date?.nanoseconds)
                   .toDate()
                   .toLocaleDateString("en-US", {
-                    year: "numeric",
+                    year: "2-digit",
                     month: "short",
                     day: "numeric",
                   })}

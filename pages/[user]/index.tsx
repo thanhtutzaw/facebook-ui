@@ -37,10 +37,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     );
     const myPost = await getPostWithMoreInfo(uid as string, mypostQuery);
     if (userExist) {
+      const profile = user?.data().profile as account["profile"];
       return {
         props: {
           token,
-          user: user.data(),
+          profile,
           myPost,
         },
       };
@@ -56,7 +57,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       props: {
         token: null,
-        user: [],
+        profile: [],
         myPost: [],
       },
     };
@@ -64,14 +65,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 export default function UserProfile({
   token,
-  user,
+  profile,
   myPost,
 }: {
   token: DecodedIdToken;
-  user: { profile: account["profile"] } & account;
+  profile: account["profile"];
   myPost: PostType[];
 }) {
-  const { profile } = user;
+  // const { profile } = user;
   const router = useRouter();
   const { setview } = useContext(PageContext) as PageProps;
   const userName = `${profile?.firstName ?? "Unknown"} ${
