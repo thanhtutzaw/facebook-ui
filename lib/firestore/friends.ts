@@ -8,13 +8,33 @@ import {
 import { friends } from "../../types/interfaces";
 import { db } from "../firebase";
 
-export async function addFriends(uid: string) {
+export async function addFriends(uid: string, f: friends) {
   // status pending to friends
+  const { author, ...data } = { ...f };
 
-  const data = {
+  const senderData = {
+    ...data,
     status: "pending",
     createdAt: serverTimestamp(),
-  } as friends;
+    senderId: uid,
+  } as friends & { senderId: string };
+  const receiptData = {
+    ...senderData,
+    id: uid,
+  } as friends & { senderId: string };
+  console.log({ senderData, receiptData });
+  const senderRef = doc(db, `users/${receiptData.id}/friends/${senderData.id}`);
+  const receiptRef = doc(
+    db,
+    `users/${senderData.id}/friends/${receiptData.id}`
+  );
+  try {
+    await setDoc(senderRef, senderData);
+    await setDoc(receiptRef, receiptData);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 }
 export async function acceptFriends(uid: string, f: friends) {
   const { author, ...data } = { ...f };
@@ -35,7 +55,7 @@ export async function acceptFriends(uid: string, f: friends) {
   );
   try {
     await updateDoc(acceptedRef, acceptedData);
-    await setDoc(receiptRef, receiptData);
+    await updateDoc(receiptRef, receiptData);
   } catch (error) {
     console.log(error);
     throw error;

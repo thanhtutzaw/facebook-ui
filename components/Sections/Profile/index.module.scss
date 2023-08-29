@@ -77,6 +77,19 @@
             padding: 0 1rem;
             text-align: center;
         }
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .pending {
+            color: dimgray;
+        }
+        .secondary {
+            background: var(--blue-origin) !important;
+            color: white;
+        }
         .editToggle {
             justify-content: center;
             align-items: center;
@@ -86,6 +99,8 @@
             padding: 10px;
             font-size: 18px;
             background-color: rgb(238, 238, 238);
+
+            gap: 5px;
             &:not(:active) {
                 transition: initial;
             }

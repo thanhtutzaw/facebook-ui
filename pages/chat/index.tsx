@@ -23,12 +23,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const allUsersSnap = await getDocs(allUsersQuery);
     const acceptedFriends = await Promise.all(
       allUsersSnap.docs.map(async (doc) => {
-        const data = doc.data();
         const account = (await getUserData(doc.id as string))! as UserRecord;
         const accountJSON = userToJSON(account) as UserRecord;
         return {
           id: doc.id,
-          // ...data,
           author: {
             ...accountJSON,
           },

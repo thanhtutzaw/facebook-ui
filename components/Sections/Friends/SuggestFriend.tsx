@@ -1,17 +1,22 @@
-import React, { useState } from "react";
-import s from "./Friends.module.scss";
+import { useContext, useState } from "react";
+import { AppContext } from "../../../context/AppContext";
+import { addFriends } from "../../../lib/firestore/friends";
+import { Props, friends } from "../../../types/interfaces";
 import Card from "./Card";
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import s from "./Friends.module.scss";
 interface RequestProps {
-  f: any;
+  f: friends;
   tabIndex: number;
 }
 export function SuggestFriend(props: RequestProps) {
   const { f, tabIndex } = props;
+  const { uid } = useContext(AppContext) as Props;
   const [accept, setaccept] = useState(false);
   const [reject, setreject] = useState(false);
-  function handleConfirmRequest() {
+  async function handleAddFriend() {
     setaccept(true);
+    if (!uid) return;
+    await addFriends(uid , f);
   }
   function handleReject() {
     setreject(true);
@@ -29,7 +34,7 @@ export function SuggestFriend(props: RequestProps) {
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                handleConfirmRequest();
+                handleAddFriend();
               }}
               tabIndex={tabIndex}
               className={s.primary}

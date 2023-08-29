@@ -23,6 +23,7 @@ import { NotiTypes, Props } from "../../../types/interfaces";
 import Spinner from "../../Spinner";
 import t from "../../Tabs/Tabs.module.scss";
 import s from "./Notifications.module.scss";
+import useInfiniteScroll from "../../../hooks/useInfiniteScroll";
 const LIMIT = 10;
 export default function Notifications() {
   const { active: tab } = useActive();
@@ -49,20 +50,13 @@ export default function Notifications() {
 
     try {
       const snapShot = await getDocs(notiQuery);
-      // if (snapShot.empty) {
-      //   throw Error;
-      // }
       const noti = snapShot.docs.map((doc) => {
         const data = doc.data() as NotiTypes;
-        // console.log(data.createdAt.);
         const date = data.createdAt as Timestamp;
-        // console.log();
         const createdDate = date.toDate().getTime();
-        const lastTime = lastPullTimestamp as Timestamp;
-        const lastPull = lastTime.toDate().getTime();
-        // console.log(createdDate);
-        // console.log(lastPullTimestamp);
-
+        const lastPullData = lastPullTimestamp as Timestamp;
+        const lastPull = lastPullData.toDate().getTime();
+        // const hasRead =;
         // const lastPull = new Timestamp(
         //   lastPullTimestamp?.nanoseconds!,
         //   lastPullTimestamp?.seconds!

@@ -2,15 +2,18 @@ import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import {
   Timestamp,
   collection,
+  doc,
+  getDoc,
   limit,
   orderBy,
   query,
+  serverTimestamp,
   startAfter,
   where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import nookies from "nookies";
 import { useCallback, useContext, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
@@ -21,7 +24,16 @@ import { PageContext, PageProps } from "../../context/PageContext";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 import { db, fethUserDoc, getPostWithMoreInfo } from "../../lib/firebase";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
-import { Post as PostType, account } from "../../types/interfaces";
+import { Post as PostType, account, friends } from "../../types/interfaces";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  faCheck,
+  faClock,
+  faPlus,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
+import { acceptFriends } from "../../lib/firestore/friends";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;
@@ -29,20 +41,51 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
     const user = await fethUserDoc(uid);
     const userExist = user.exists();
-    const mypostQuery = query(
+    const isFriendsQuery = doc(db, `users/${token.uid}/friends/${uid}`);
+    const friendDoc = await getDoc(isFriendsQuery);
+    let isFriend = false,
+      isBlock = false,
+      isPending = false,
+      canAccept = false;
+    if (friendDoc.exists()) {
+      // console.log(object);
+      const relation = friendDoc.data() as friends;
+      isFriend = relation.status === "friend" || friendDoc.exists();
+      isPending = relation.status === "pending";
+      isBlock = relation.status === "block";
+      canAccept = relation.senderId !== token.uid;
+    }
+    // const relation = friendDoc.data() as friends;
+    // isBlock = relation.status === "block";
+
+    let mypostQuery = query(
       collection(db, `/users/${uid}/posts`),
-      where("visibility", "in", ["Friend", "Public"]),
+      where("visibility", "in", ["Public"]),
       orderBy("createdAt", "desc"),
       limit(LIMIT)
     );
-    const myPost = await getPostWithMoreInfo(uid as string, mypostQuery);
+    if (isFriend) {
+      mypostQuery = query(
+        collection(db, `/users/${uid}/posts`),
+        where("visibility", "in", ["Friend", "Public"]),
+        orderBy("createdAt", "desc"),
+        limit(LIMIT)
+      );
+    }
+    const myPost = isBlock
+      ? null
+      : await getPostWithMoreInfo(uid as string, mypostQuery);
     if (userExist) {
       const profile = user?.data().profile as account["profile"];
       return {
         props: {
           token,
-          profile,
+          profile: profile ?? null,
           myPost,
+          isFriend,
+          isBlock,
+          isPending,
+          canAccept,
         },
       };
     } else {
@@ -63,15 +106,77 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 };
+
 export default function UserProfile({
   token,
   profile,
   myPost,
+  isFriend,
+  isBlock,
+  isPending,
+  canAccept,
 }: {
   token: DecodedIdToken;
   profile: account["profile"];
   myPost: PostType[];
+  isFriend: Boolean;
+  isBlock: Boolean;
+  isPending: Boolean;
+  canAccept: Boolean;
 }) {
+  const queryClient = useQueryClient();
+  const statusComponents = {
+    canAccept: (
+      <button
+        onClick={async () => {
+          const data = {
+            id: router.query.user,
+          } as friends;
+          await acceptFriends(token.uid, data);
+          router.replace("/", undefined, { scroll: false });
+          queryClient.refetchQueries(["pendingFriends"]);
+          queryClient.invalidateQueries(["pendingFriends"]);
+        }}
+        className={`${s.editToggle} ${s.secondary}`}
+      >
+        <FontAwesomeIcon icon={faCheck} />
+        Accept
+      </button>
+    ),
+    friend: (
+      <button
+        // onClick={() => {
+        //   router.push(`/chat/${router.query.user}`);
+        // }}
+        className={s.editToggle}
+      >
+        <FontAwesomeIcon icon={faCheck} />
+        Friends
+      </button>
+    ),
+    notFriend: (
+      <button
+        // onClick={() => {
+        //   router.push(`/chat/${router.query.user}`);
+        // }}
+        className={`${s.editToggle} ${s.secondary}`}
+      >
+        <FontAwesomeIcon icon={faPlus} />
+        Add Friend
+      </button>
+    ),
+    pending: (
+      <button
+        onClick={() => {
+          router.push(`/chat/${router.query.user}`);
+        }}
+        className={`${s.editToggle} ${s.pending}`}
+      >
+        <FontAwesomeIcon icon={faClock} />
+        Pending
+      </button>
+    ),
+  };
   // const { profile } = user;
   const router = useRouter();
   const { setview } = useContext(PageContext) as PageProps;
@@ -109,6 +214,14 @@ export default function UserProfile({
   const { scrollRef } = useInfiniteScroll(fetchMorePosts, postEnd, true);
   const bio = profile?.bio === "" || !profile ? "No Bio Yet" : profile?.bio;
   const otherUser = token?.uid !== router.query.user;
+  // if (isBlock) return <p>This Account is Blocked </p>;
+  const status = isFriend
+    ? "friend"
+    : isPending
+    ? "pending"
+    : !canAccept
+    ? "notFriend"
+    : "canAccept";
   return (
     <div ref={scrollRef} className="user">
       <BackHeader
@@ -155,15 +268,22 @@ export default function UserProfile({
           >
             {bio}
           </p>
-          {otherUser && (
-            <button
-              onClick={() => {
-                router.push(`/chat/${router.query.user}`);
-              }}
-              className={s.editToggle}
-            >
-              Send Message
-            </button>
+          {isBlock ? (
+            <p style={{ color: "red" }}>This Account is Blocked </p>
+          ) : (
+            otherUser && (
+              <div className={s.actions}>
+                {statusComponents[status]}
+                <button
+                  onClick={() => {
+                    router.push(`/chat/${router.query.user}`);
+                  }}
+                  className={s.editToggle}
+                >
+                  Send Message
+                </button>
+              </div>
+            )
           )}
         </div>
         <PostList

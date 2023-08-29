@@ -51,10 +51,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function Page(props: { acceptedFriends: any[] }) {
   const { acceptedFriends } = props;
+  const allFriendsCount = acceptedFriends.length;
   return (
     <div className="user">
       <BackHeader>
-        <h2>My Friends {acceptedFriends.length}</h2>
+        <h2>Friends {allFriendsCount > 0 && allFriendsCount}</h2>
       </BackHeader>
       <div
         style={{
@@ -64,25 +65,30 @@ export default function Page(props: { acceptedFriends: any[] }) {
         }}
         className={s.container}
       >
-        <ul>
-          {acceptedFriends.map((friend) => (
-            <li key={friend.id} aria-label="Go to Friends Profile">
-              <Link href={friend.id} key={friend.id}>
-                <Image
-                  className={s.profile}
-                  alt={"name"}
-                  width={100}
-                  height={100}
-                  src={
-                    friend.author.photoURL ??
-                    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-                  }
-                />
-                <p>{friend.author.displayName ?? friend.id}</p>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        {allFriendsCount > 0 ? (
+          <ul>
+            {acceptedFriends.map((friend) => (
+              <li key={friend.id} aria-label="Go to Friends Profile">
+                <Link href={friend.id} key={friend.id}>
+                  <Image
+                    className={s.profile}
+                    alt={"name"}
+                    width={100}
+                    height={100}
+                    src={
+                      friend.author.photoURL ??
+                      "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+                    }
+                  />
+                  <p>{friend.author.displayName ?? friend.id}</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p style={{ textAlign: "center", padding: "1rem" }}>Empty Friends</p>
+        )}
+
         {/* {JSON.stringify(acceptFriends.length)} */}
 
         {/* {JSON.stringify(savedPosts)} */}

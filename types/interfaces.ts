@@ -19,6 +19,7 @@ export type friends = {
   status?: "friend" | "block" | "pending";
   createdAt: timeStamp;
   updatedAt?: timeStamp;
+  senderId?:string;
   author?: UserRecord | User | account["profile"];
 };
 

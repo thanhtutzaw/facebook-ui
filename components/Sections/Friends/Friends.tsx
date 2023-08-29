@@ -50,6 +50,8 @@ export default function Friend(props: FriendProps) {
     const pendingfriendsQuery = query(
       collection(db, `users/${uid}/friends`),
       where("status", "==", "pending"),
+      where("senderId", "!=", uid), // do not display requset when you send the friend request
+      orderBy("senderId", "asc"),
       orderBy("createdAt", "desc")
     );
     try {
@@ -76,12 +78,12 @@ export default function Friend(props: FriendProps) {
   const [suggestedFriends, pendingFriends] = useQueries({
     queries: [
       {
-        queryKey: ["allUsers"],
+        queryKey: ["allUsers", uid],
         queryFn: async () => await fetchSuggestedFriends(),
         enabled: tab === "friends",
       },
       {
-        queryKey: ["pendingFriends"],
+        queryKey: ["pendingFriends", uid],
         queryFn: async () => await fetchPendingFriends(),
         enabled: tab === "friends",
       },
@@ -112,13 +114,15 @@ export default function Friend(props: FriendProps) {
             router.push("/friends");
           }}
         >
-          My Friends
+          All Friends
         </button>
       </div>
       {pending.length > 0 && (
         <div className={s.request}>
           <h2 className={s.header}>
-            <p>Friends Requests</p>
+            <p>
+              Friends Requests <span style={{color:'red'}}>{pending.length}</span>
+            </p>
           </h2>
           {pending.map((f, index) => (
             <Request key={index} f={f} tabIndex={tabIndex} />

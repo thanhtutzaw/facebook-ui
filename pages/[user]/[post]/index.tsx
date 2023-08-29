@@ -290,6 +290,9 @@ export default function Page(props: {
       if (limitedComments.length > Comment_LIMIT) {
         setcommentLoading(true);
       }
+      //  else {
+      //   setcommentLoading(false);
+      // }
       const date = new Timestamp(
         comment.createdAt.seconds,
         comment.createdAt.nanoseconds
@@ -337,7 +340,11 @@ export default function Page(props: {
       </BackHeader>
       <div
         style={{
-          marginBottom: canEdit ? "65px" : commentEnd ? "80px" : "130px",
+          marginBottom: canEdit
+            ? "65px"
+            : limitedComments.length <= Comment_LIMIT || commentEnd
+            ? "80px"
+            : "130px",
         }}
         className={s.container}
       >
@@ -361,12 +368,14 @@ export default function Page(props: {
           setFiles={setFiles}
         />
         <SharePreview post={post} />
-        {!canEdit && <SocialCount
-          Likes={Likes}
-          setLikes={setLikes}
-          likeCount={likeCount}
-          post={post}
-        />}
+        {!canEdit && (
+          <SocialCount
+            Likes={Likes}
+            setLikes={setLikes}
+            likeCount={likeCount}
+            post={post}
+          />
+        )}
         {canEdit ? (
           <FooterInput
             fileRef={fileRef}

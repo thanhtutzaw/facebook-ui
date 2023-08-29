@@ -13,16 +13,16 @@ function useInfiniteScroll(
       if (window.innerHeight + currentScroll + 1 >= target.scrollHeight) {
         fetchMoreData();
       }
-      if (hasMore) {
+      if (hasMore ) {
         element.removeEventListener("scroll", handleScroll);
       }
     }
     const element = scrollParent
       ? scrollRef.current?.parentElement!
       : scrollRef.current!;
-    element.addEventListener("scroll", handleScroll);
+    element?.addEventListener("scroll", handleScroll);
     return () => {
-      element.removeEventListener("scroll", handleScroll);
+      element?.removeEventListener("scroll", handleScroll);
     };
   }, [fetchMoreData, hasMore, scrollParent]);
   return { scrollRef };

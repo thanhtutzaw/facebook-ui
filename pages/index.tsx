@@ -62,14 +62,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       orderBy("createdAt", "desc"),
       limit(LIMIT)
     );
-    // const posts = await getDocs(postQuery);
-
-    // const newPosts = await Promise.all(
-    //   posts.docs.map(async (doc) => await postToJSON(doc))
-    // );
-    // const newPosts = await getPostWithMoreInfo(uid, postQuery);
-    // const profileData = (await getProfileByUID(uid)) as account["profile"];
-    // const currentAccount = (await getUserData(uid)) as UserRecord;
 
     const [newPosts, profileData, currentAccount] = await Promise.all([
       getPostWithMoreInfo(uid, postQuery),
@@ -193,7 +185,7 @@ export default function Home({
       const userDoc = doc(db, `users/${uid}`);
       try {
         const doc = await getDoc(userDoc);
-        const lastPull = doc.data()?.lastPullTimestamp;
+        const lastPull = doc.data()?.lastPullTimestamp ?? Date.now();
         setlastPullTimestamp(lastPull);
         // listening notifications
         const notiQuery = query(
