@@ -3,6 +3,7 @@ import { AppContext } from "../../../context/AppContext";
 import { addFriends } from "../../../lib/firestore/friends";
 import { Props, friends } from "../../../types/interfaces";
 import Card from "./Card";
+import { useQueryClient } from "@tanstack/react-query";
 import s from "./Friends.module.scss";
 interface RequestProps {
   f: friends;
@@ -10,6 +11,7 @@ interface RequestProps {
 }
 export function SuggestFriend(props: RequestProps) {
   const { f, tabIndex } = props;
+  const queryClient = useQueryClient();
   const { uid } = useContext(AppContext) as Props;
   const [accept, setaccept] = useState(false);
   const [reject, setreject] = useState(false);
@@ -17,6 +19,7 @@ export function SuggestFriend(props: RequestProps) {
     setaccept(true);
     if (!uid) return;
     await addFriends(uid , f);
+    queryClient.invalidateQueries(["suggestedFriends"]);
   }
   function handleReject() {
     setreject(true);

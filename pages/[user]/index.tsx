@@ -177,7 +177,6 @@ export default function UserProfile({
       </button>
     ),
   };
-  // const { profile } = user;
   const router = useRouter();
   const { setview } = useContext(PageContext) as PageProps;
   const userName = `${profile?.firstName ?? "Unknown"} ${
@@ -214,11 +213,10 @@ export default function UserProfile({
   const { scrollRef } = useInfiniteScroll(fetchMorePosts, postEnd, true);
   const bio = profile?.bio === "" || !profile ? "No Bio Yet" : profile?.bio;
   const otherUser = token?.uid !== router.query.user;
-  // if (isBlock) return <p>This Account is Blocked </p>;
-  const status = isFriend
-    ? "friend"
-    : isPending
+  const status = isPending
     ? "pending"
+    : isFriend
+    ? "friend"
     : !canAccept
     ? "notFriend"
     : "canAccept";

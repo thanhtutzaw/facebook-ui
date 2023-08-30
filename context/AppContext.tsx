@@ -7,7 +7,7 @@ import {
   startAfter,
   where,
 } from "firebase/firestore";
-import { createContext, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { db, getPostWithMoreInfo } from "../lib/firebase";
 import { Post, Props } from "../types/interfaces";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
@@ -16,6 +16,8 @@ export const LIMIT = 10;
 
 export function AppProvider(props: Props) {
   const {
+    acceptedFriends,
+    isFriendEmpty,
     lastPullTimestamp,
     UnReadNotiCount,
     active,
@@ -45,16 +47,24 @@ export function AppProvider(props: Props) {
     console.log(posts);
     console.log(limitedPosts);
   }, [limitedPosts, posts, setlimitedPosts]);
-  async function getMorePosts() {
+  const getMorePosts = async () => {
     setpostLoading(true);
     const post = posts?.[posts?.length - 1]!;
     const date = new Timestamp(
       post.createdAt.seconds,
       post.createdAt.nanoseconds
     );
+    // const postQuery = query(
+    //   collectionGroup(db, `posts`),
+    //   where("visibility", "in", ["Friend", "Public"]),
+    //   orderBy("createdAt", "desc"),
+    //   startAfter(date),
+    //   limit(LIMIT)
+    // );
     const postQuery = query(
       collectionGroup(db, `posts`),
-      where("visibility", "in", ["Friend", "Public"]),
+      // where("visibility", "in", ["Friend", "Public"]),
+      where("authorId", "in", acceptedFriends ? acceptedFriends : ["0"]),
       orderBy("createdAt", "desc"),
       startAfter(date),
       limit(LIMIT)
@@ -66,7 +76,7 @@ export function AppProvider(props: Props) {
     if (finalPost.length < LIMIT) {
       setPostEnd(true);
     }
-  }
+  };
   useEffect(() => {
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];

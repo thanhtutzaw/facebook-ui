@@ -1,5 +1,6 @@
 import {
   addDoc,
+  deleteDoc,
   doc,
   serverTimestamp,
   setDoc,
@@ -61,7 +62,17 @@ export async function acceptFriends(uid: string, f: friends) {
     throw error;
   }
 }
-export async function rejectFriends() {}
+export async function rejectFriendRequest(uid: string, f: friends) {
+  try {
+    await unFriend(uid, f);
+  } catch (error) {
+    console.log(error);
+  }
+}
+export async function unFriend(uid: string, f: friends) {
+  await deleteDoc(doc(db, `users/${uid}/friends/${f.id}`));
+  await deleteDoc(doc(db, `users/${f.id}/friends/${uid}`));
+}
 export async function blockFriends(uid: string, id: string) {
   const data = {
     status: "block",

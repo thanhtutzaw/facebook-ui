@@ -1,7 +1,7 @@
 import { useQueries } from "@tanstack/react-query";
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import router from "next/router";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
 import { db, getProfileByUID } from "../../../lib/firebase";
@@ -22,6 +22,7 @@ export default function Friend(props: FriendProps) {
     if (!uid) return;
     const myFriendsQuery = query(collection(db, `users/${uid}/friends`));
     const myFriends = (await getDocs(myFriendsQuery)).docs.map((doc) => doc.id);
+    console.log("should not be in suggest", myFriends);
     // including friends , pending , blocked (users) string[]
     const suggestedFriendsQuery = query(
       collection(db, `users`),
@@ -75,10 +76,11 @@ export default function Friend(props: FriendProps) {
       throw new Error("Failed to fetch users");
     }
   };
+
   const [suggestedFriends, pendingFriends] = useQueries({
     queries: [
       {
-        queryKey: ["allUsers", uid],
+        queryKey: ["suggestedFriends", uid],
         queryFn: async () => await fetchSuggestedFriends(),
         enabled: tab === "friends",
       },
@@ -97,6 +99,7 @@ export default function Friend(props: FriendProps) {
     { id: 2, author: { firstName: "Peter 2" } },
     { id: 3, author: { firstName: "Peter 3" } },
   ];
+  // const [requestCount, setrequestCount] = useState(pending.length);
   // const Suggestions = ["Captain America", "Iron Man", "Thor"];
   return (
     <div className={s.container}>
@@ -121,11 +124,17 @@ export default function Friend(props: FriendProps) {
         <div className={s.request}>
           <h2 className={s.header}>
             <p>
-              Friends Requests <span style={{color:'red'}}>{pending.length}</span>
+              Friends Requests{" "}
+              <span style={{ color: "red" }}>{pending.length}</span>
             </p>
           </h2>
           {pending.map((f, index) => (
-            <Request key={index} f={f} tabIndex={tabIndex} />
+            <Request
+              // setrequestCount={setrequestCount}
+              key={index}
+              f={f}
+              tabIndex={tabIndex}
+            />
           ))}
         </div>
       )}

@@ -109,6 +109,8 @@ export interface Comment {
 
 export interface Props {
   UnReadNotiCount?: number | string;
+  acceptedFriends?: string[];
+  isFriendEmpty?: boolean;
   postError?: string;
   setlimitedPosts?: Function;
   limitedPosts?: Post[];

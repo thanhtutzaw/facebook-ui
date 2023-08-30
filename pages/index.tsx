@@ -10,6 +10,7 @@ import {
   collectionGroup,
   doc,
   getDoc,
+  getDocs,
   limit,
   onSnapshot,
   orderBy,
@@ -36,6 +37,7 @@ import { Props } from "../types/interfaces";
 
 import Spinner from "../components/Spinner";
 import { useActive } from "../hooks/useActiveTab";
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -55,10 +57,25 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // console.log(convertSecondsToTime(token.exp));
     const { name: username, email, uid } = token;
     // console.log("isVerify " + token.email_verified);
+    // const friends = ;
+    const myFriendsQuery = query(
+      collection(db, `users/${uid}/friends`),
+      where("status", "==", "friend"),
+      orderBy("updatedAt", "desc")
+    );
+    const myFriendsSnap = await getDocs(myFriendsQuery);
+    const acceptedFriends = await Promise.all(
+      myFriendsSnap.docs.map(async (doc) => {
+        return doc.id;
+      })
+    );
+    const isFriendEmpty = myFriendsSnap.empty;
+    // console.log(acceptedFriends);
     let expired = false;
     const postQuery = query(
       collectionGroup(db, `posts`),
-      where("visibility", "in", ["Friend", "Public"]),
+      // where("visibility", "in", ["Friend", "Public"]),
+      where("authorId", "in", !isFriendEmpty ? acceptedFriends : [uid]),
       orderBy("createdAt", "desc"),
       limit(LIMIT)
     );
@@ -68,6 +85,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       getProfileByUID(uid),
       getUserData(uid),
     ]);
+    console.log(newPosts);
     const profile = {
       ...profileData,
       photoURL: profileData.photoURL
@@ -88,6 +106,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         username: username ?? "Unknown",
         profile,
         account: currentUserData ?? null,
+        acceptedFriends,
+        isFriendEmpty,
         // posts: [],
         // profile: null,
         // account: null,
@@ -107,7 +127,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         postError: postError,
         expired: true,
         uid: "",
+        acceptedFriends: [],
         posts: [],
+        isFriendEmpty: false,
         email: "",
         username: "",
         profile: null,
@@ -117,6 +139,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   }
 };
 export default function Home({
+  acceptedFriends,
+  isFriendEmpty,
   postError,
   expired,
   uid,
@@ -153,9 +177,17 @@ export default function Home({
 
   useEffect(() => {
     let unsubscribe: Unsubscribe;
+    // const postQuery = query(
+    //   collectionGroup(db, `posts`),
+    //   where("visibility", "in", ["Friend", "Public"]),
+
+    //   orderBy("createdAt", "desc"),
+    //   limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
+    // );
     const postQuery = query(
       collectionGroup(db, `posts`),
-      where("visibility", "in", ["Friend", "Public"]),
+      // where("visibility", "in", ["Friend", "Public"]),
+      where("authorId", "in", !isFriendEmpty ? acceptedFriends : [uid]),
       orderBy("createdAt", "desc"),
       limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
     );
@@ -168,7 +200,7 @@ export default function Home({
     return () => {
       unsubscribe();
     };
-  }, [limitedPosts.length, uid]);
+  }, [acceptedFriends, isFriendEmpty, limitedPosts.length, uid]);
   useEffect(() => {
     if (expired) return;
     if (!uid) {
@@ -217,6 +249,8 @@ export default function Home({
   if (expired) return <Welcome postError={postError} expired={expired} />;
   return uid ? (
     <AppProvider
+      acceptedFriends={acceptedFriends}
+      isFriendEmpty={isFriendEmpty}
       lastPullTimestamp={lastPullTimestamp}
       UnReadNotiCount={UnReadNotiCount}
       active={active!}

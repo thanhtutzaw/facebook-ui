@@ -10,6 +10,9 @@ import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import Image from "next/image";
 import Link from "next/link";
 import nookies from "nookies";
+import { unFriend } from "../../lib/firestore/friends";
+import { useRouter } from "next/router";
+import {useQueryClient} from '@tanstack/react-query'
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -36,6 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     );
     return {
       props: {
+        uid,
         acceptedFriends,
       },
     };
@@ -43,15 +47,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     console.log("SSR Error " + error);
     return {
       props: {
+        uid: null,
         acceptedFriends: [],
       },
     };
   }
 };
 
-export default function Page(props: { acceptedFriends: any[] }) {
-  const { acceptedFriends } = props;
+export default function Page(props: { acceptedFriends: any[]; uid: string }) {
+  const { acceptedFriends, uid } = props;
   const allFriendsCount = acceptedFriends.length;
+  const router = useRouter();
+  const queryClient = useQueryClient();
   return (
     <div className="user">
       <BackHeader>
@@ -82,6 +89,22 @@ export default function Page(props: { acceptedFriends: any[] }) {
                   />
                   <p>{friend.author.displayName ?? friend.id}</p>
                 </Link>
+                <button
+                  onClick={async () => {
+                    try {
+                      await unFriend(uid, friend);
+                      router.replace(router.asPath, undefined, {
+                        scroll: false,
+                      });
+                      queryClient.refetchQueries(["allUsers"]);
+                      queryClient.invalidateQueries(["allUsers"]);
+                    } catch (error) {
+                      console.log(error);
+                    }
+                  }}
+                >
+                  Un-Friend
+                </button>
               </li>
             ))}
           </ul>
