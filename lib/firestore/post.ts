@@ -30,6 +30,7 @@ export async function addPost(
     ? doc(collection(db, `users/${uid}/posts`))
     : doc(db, `users/${uid}/posts/${sharePost.refId}`);
   const post = {
+    authorId: uid,
     id: !sharePost ? Ref.id : sharePost.refId,
     text: text,
     // media: files.map((file) => ({ ...file, id: doc().id })),

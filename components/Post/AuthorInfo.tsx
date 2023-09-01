@@ -50,15 +50,17 @@ export default function AuthorInfo(props: {
           comment={comment!}
         >
           <div className={styles.moreInfo}>
-            <p className={styles.date} suppressHydrationWarning>
-              {new Timestamp(createdAt?.seconds, createdAt?.nanoseconds)
-                .toDate()
-                .toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
-            </p>
+            {typeof createdAt !== "number" && (
+              <p className={styles.date} suppressHydrationWarning>
+                {new Timestamp(createdAt?.seconds, createdAt?.nanoseconds)
+                  .toDate()
+                  .toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+              </p>
+            )}
             {visibility?.toLowerCase() === "public" && (
               <span title="Everyone can see this Post">
                 <FontAwesomeIcon icon={faEarth} />

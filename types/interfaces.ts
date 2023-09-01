@@ -88,7 +88,7 @@ export interface Post {
   author: author;
   authorId: string | number;
   id?: string | number;
-  text: string;
+  text: string ;
   visibility: string;
   sharePost?: { author: string; id: string; post?: sharedPost | null };
   media: Media[] | null;

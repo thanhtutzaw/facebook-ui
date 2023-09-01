@@ -19,10 +19,10 @@ export default function Home(props: { tabIndex: number }) {
     useContext(AppContext) as Props;
   const { setuploadButtonClicked } = useContext(PageContext) as PageProps;
   const previousScrollRef = useRef(0);
-  const { scrollRef } = useInfiniteScroll(getMorePosts!, postEnd!);
+  // const { scrollRef } = useInfiniteScroll(getMorePosts!, postEnd!);
   return (
     <div
-      ref={scrollRef}
+      // ref={scrollRef}
       id="/"
       className={styles.home}
       onScroll={async (e) => {

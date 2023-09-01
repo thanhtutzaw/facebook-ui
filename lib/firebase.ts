@@ -48,7 +48,7 @@ export async function postToJSON(
       media: data?.media ?? [],
       authorId: author.id,
       id: doc.id,
-      text: data?.text,
+      text: data?.text ?? "",
       createdAt: createdAt?.toJSON() || 0,
     };
   } else {
@@ -57,7 +57,7 @@ export async function postToJSON(
       media: data?.media ?? [],
       authorId: author.id,
       id: doc.id,
-      text: data?.text,
+      text: data?.text ?? "",
       createdAt: createdAt?.toJSON() || 0,
       updatedAt: updatedAt?.toJSON() || 0,
     };
@@ -65,25 +65,25 @@ export async function postToJSON(
 }
 export async function commentToJSON(doc: QueryDocumentSnapshot<DocumentData>) {
   const data = doc.data() as Comment;
-const createdAt = data?.createdAt as Timestamp;
-const updatedAt = data?.updatedAt as Timestamp;
-const author = doc.ref.parent.parent?.parent.parent!;
-if (typeof data?.updatedAt === "string") {
-  return {
-    ...data,
-    id: doc.id,
-    text: data?.text,
-    createdAt: createdAt?.toJSON() || 0,
-  };
-} else {
-  return {
-    ...data,
-    id: doc.id,
-    text: data?.text,
-    createdAt: createdAt?.toJSON() || 0,
-    updatedAt: updatedAt?.toJSON() || 0,
-  };
-}
+  const createdAt = data?.createdAt as Timestamp;
+  const updatedAt = data?.updatedAt as Timestamp;
+  const author = doc.ref.parent.parent?.parent.parent!;
+  if (typeof data?.updatedAt === "string") {
+    return {
+      ...data,
+      id: doc.id,
+      text: data?.text,
+      createdAt: createdAt?.toJSON() || 0,
+    };
+  } else {
+    return {
+      ...data,
+      id: doc.id,
+      text: data?.text,
+      createdAt: createdAt?.toJSON() || 0,
+      updatedAt: updatedAt?.toJSON() || 0,
+    };
+  }
 
   // if (typeof data?.updatedAt === "string") {
   //   // return {
@@ -194,7 +194,7 @@ export async function postInfo(p: Post, uid: string) {
           author: { ...postProfile },
           isLiked: isLiked.exists() ? true : false,
           sharePost: { ...p.sharePost, post: { ...sharePost } },
-        } ;
+        };
       } else {
         return {
           ...p,
@@ -209,6 +209,49 @@ export async function postInfo(p: Post, uid: string) {
     }
   }
   return null;
+}
+export async function getPostsbyId(uid: string, posts?: any[]) {
+  // const postSnap = postQuery ? await getDocs(postQuery as Query) : snapShot;
+  console.log("posts are fetched");
+  if (posts) {
+    const data = await Promise.all(
+      posts.map(async (post) => {
+        if (!post.authorId) return null;
+        const postRef = doc(db, `users/${post.authorId}/posts/${post.id}`);
+        const postDoc = await getDoc(postRef);
+        const postData = await postToJSON(postDoc);
+        const postwithInfo = await postInfo(postData,uid)
+        return postwithInfo;
+      })
+    );
+    return data as Post[];
+    // console.log(data);
+    // const postJSON = await Promise.all(
+    //   // postSnap.docs.map(async (doc) => await postToJSON(doc))
+    //   // post.
+
+    // );
+
+    // try {
+    //   return (await Promise.all(
+    //     // postJSON.map(async (p) => {
+    //     //   return await postInfo(p, uid);
+    //     // })
+    //   )) as Post[];
+    // } catch (error: any) {
+    //   if (error === AuthErrorCodes.QUOTA_EXCEEDED) {
+    //     console.log(AuthErrorCodes.QUOTA_EXCEEDED);
+    //     alert("Firebase Quota Exceeded. Please try again later.");
+    //     throw error;
+    //   }
+    //   if (error.code === "quota-exceeded") {
+    //     alert("Firebase Quota Exceeded. Please try again later.");
+    //     throw error;
+    //   }
+    //   // return null;
+    // }
+  }
+  // return null;
 }
 export async function getPostWithMoreInfo(
   uid: string,

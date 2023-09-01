@@ -22,7 +22,7 @@ export default function Friend(props: FriendProps) {
     if (!uid) return;
     const myFriendsQuery = query(collection(db, `users/${uid}/friends`));
     const myFriends = (await getDocs(myFriendsQuery)).docs.map((doc) => doc.id);
-    console.log("should not be in suggest", myFriends);
+    // console.log("should not be in suggest", myFriends);
     // including friends , pending , blocked (users) string[]
     const suggestedFriendsQuery = query(
       collection(db, `users`),

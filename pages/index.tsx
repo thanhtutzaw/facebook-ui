@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import {
+  Timestamp,
   collection,
   collectionGroup,
   doc,
@@ -15,6 +16,8 @@ import {
   onSnapshot,
   orderBy,
   query,
+  startAfter,
+  startAt,
   where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
@@ -29,7 +32,9 @@ import {
   app,
   db,
   getPostWithMoreInfo,
+  getPostsbyId,
   getProfileByUID,
+  postToJSON,
   userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
@@ -37,7 +42,6 @@ import { Props } from "../types/interfaces";
 
 import Spinner from "../components/Spinner";
 import { useActive } from "../hooks/useActiveTab";
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -57,31 +61,100 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // console.log(convertSecondsToTime(token.exp));
     const { name: username, email, uid } = token;
     // console.log("isVerify " + token.email_verified);
-    // const friends = ;
+
     const myFriendsQuery = query(
       collection(db, `users/${uid}/friends`),
       where("status", "==", "friend"),
       orderBy("updatedAt", "desc")
     );
     const myFriendsSnap = await getDocs(myFriendsQuery);
-    const acceptedFriends = await Promise.all(
+    const acceptedFriends = myFriendsSnap.docs.map((doc) => doc.id);
+    const recentPosts = await Promise.all(
       myFriendsSnap.docs.map(async (doc) => {
-        return doc.id;
+        const { id: friendId, updatedAt: acceptedDate } = doc.data();
+        console.log(friendId);
+        const recentPostQuery = query(
+          collection(db, `users/${uid}/friends/${friendId}/recentPosts`),
+          orderBy("createdAt", "desc")
+        );
+        return (await getDocs(recentPostQuery)).docs.map((doc) => {
+          const authorId = doc.ref.parent.parent?.id;
+          return {
+            ...doc.data(),
+            authorId,
+          };
+        });
       })
     );
+    // console.log(friendsDoc.reduce);
+    const posts = recentPosts.reduce((acc, cur) => acc.concat(cur), []);
+    // console.log(posts);
+    const newsFeedWithMe = [...acceptedFriends, uid];
     const isFriendEmpty = myFriendsSnap.empty;
-    // console.log(acceptedFriends);
+    // console.log(acceptedFriends2);
+    const friendsList = !isFriendEmpty ? newsFeedWithMe : [uid];
+    // const data = await Promise.all(
+    //   acceptedFriends2.map(async ({ id, updatedAt }) => {
+    //     // console.log(id);
+    //     const postQuery = query(
+    //       collection(db, `users/${id}/posts`),
+    //       where("visibility", "in", ["Friend", "Public"]),
+    //       orderBy("createdAt", "desc"),
+    //       limit(10)
+    //     );
+    //     const ddocs = await getDocs(postQuery)
+    //     return await Promise.all(
+    //       ddocs.docs.map(async (doc) => doc.id)
+    //     );
+    //   })
+    // );
+    // console.log(data);
+    // const startNewsFeedDate = myFriendsSnap.docs[1]
+    //   .data()
+    //   .updatedAt.toJSON() as Timestamp;
+    // const startNewsFeedDate = myFriendsSnap.docs[0].data()
+    //   .updatedAt as Timestamp;
+    // const date = new Timestamp(
+    //   startNewsFeedDate.seconds,
+    //   startNewsFeedDate.nanoseconds
+    // );
+    // const date = new Timestamp(
+    //   startNewsFeedDate.seconds,
+    //   startNewsFeedDate.nanoseconds
+    // );
+    // console.log(startNewsFeedDate);
+    // const startNewsFeed = new Timestamp(1693404110, 291000000);
+    // const startNewsFeed = new Timestamp(
+    //   startNewsFeedDate.seconds,
+    //   startNewsFeedDate.nanoseconds
+    // );
+    // console.log(myFriendsSnap.docs[0].data());
     let expired = false;
-    const postQuery = query(
-      collectionGroup(db, `posts`),
-      // where("visibility", "in", ["Friend", "Public"]),
-      where("authorId", "in", !isFriendEmpty ? acceptedFriends : [uid]),
-      orderBy("createdAt", "desc"),
-      limit(LIMIT)
-    );
+    // const postQuery = query(
+    //   collectionGroup(db, `posts`),
+    //   where("authorId", "in", friendsList),
+    //   // where("visibility", "in", ["Friend", "Public"]),
+    //   where("updatedAt", ">=", new Timestamp(1693409835, 2000000)),
+    //   orderBy("createdAt", "desc"),
+    //   limit(10)
+    // );
+    // const myFriendsQuery = query(
+    //   collection(db, `users/${uid}/friends`),
+    //   where("status", "==", "friend"),
+    //   orderBy("updatedAt", "desc")
+    // );
+    // const postQuery = query(
+    //   collectionGroup(db, `posts`),
+    //   // where("authorId", "in", friendsList),
+    //   // where("visibility", "in", ["Friend", "Public"]),
+    //   // where("updatedAt", ">=", new Timestamp(1693409835, 2000000)),
+    //   orderBy("createdAt", "desc"),
+    //   limit(1)
+    // );
 
     const [newPosts, profileData, currentAccount] = await Promise.all([
-      getPostWithMoreInfo(uid, postQuery),
+      getPostsbyId(uid, posts),
+      // getPostWithMoreInfo(uid, postQuery),
       getProfileByUID(uid),
       getUserData(uid),
     ]);
@@ -175,32 +248,32 @@ export default function Home({
     // setlimitedPosts([{ ...limitedPosts },  posts!]);
   }, [expired, posts]);
 
-  useEffect(() => {
-    let unsubscribe: Unsubscribe;
-    // const postQuery = query(
-    //   collectionGroup(db, `posts`),
-    //   where("visibility", "in", ["Friend", "Public"]),
+  // useEffect(() => {
+  //   let unsubscribe: Unsubscribe;
+  //   // const postQuery = query(
+  //   //   collectionGroup(db, `posts`),
+  //   //   where("visibility", "in", ["Friend", "Public"]),
 
-    //   orderBy("createdAt", "desc"),
-    //   limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
-    // );
-    const postQuery = query(
-      collectionGroup(db, `posts`),
-      // where("visibility", "in", ["Friend", "Public"]),
-      where("authorId", "in", !isFriendEmpty ? acceptedFriends : [uid]),
-      orderBy("createdAt", "desc"),
-      limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
-    );
-    unsubscribe = onSnapshot(postQuery, async (snapshot) => {
-      const posts =
-        (await getPostWithMoreInfo(uid!, undefined, snapshot)) ?? [];
-      setlimitedPosts(posts);
-      console.log("updated posts");
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, [acceptedFriends, isFriendEmpty, limitedPosts.length, uid]);
+  //   //   orderBy("createdAt", "desc"),
+  //   //   limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
+  //   // );
+  //   const postQuery = query(
+  //     collectionGroup(db, `posts`),
+  //     // where("visibility", "in", ["Friend", "Public"]),
+  //     where("authorId", "in", !isFriendEmpty ? acceptedFriends : [uid]),
+  //     orderBy("createdAt", "desc"),
+  //     limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
+  //   );
+  //   unsubscribe = onSnapshot(postQuery, async (snapshot) => {
+  //     const posts =
+  //       (await getPostWithMoreInfo(uid!, undefined, snapshot)) ?? [];
+  //     setlimitedPosts(posts);
+  //     console.log("updated posts");
+  //   });
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, [acceptedFriends, isFriendEmpty, limitedPosts.length, uid]);
   useEffect(() => {
     if (expired) return;
     if (!uid) {
