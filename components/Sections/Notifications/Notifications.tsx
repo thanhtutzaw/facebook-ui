@@ -61,8 +61,6 @@ export default function Notifications() {
         //   lastPullTimestamp?.nanoseconds!,
         //   lastPullTimestamp?.seconds!
         // )
-        //   .toDate()
-        //   .getTime();
         // console.log(lastPull);
         // console.log("hasRead", );
         return {

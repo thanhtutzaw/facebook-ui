@@ -13,7 +13,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { db, getProfileByUID } from "../../lib/firebase";
+import { JSONTimestampToDate, db, getProfileByUID } from "../../lib/firebase";
 import { Post, account, likes } from "../../types/interfaces";
 import Spinner from "../Spinner";
 import AuthorInfo from "./AuthorInfo";
@@ -116,16 +116,14 @@ export function LikedUsers({
                   profile={l.author as account["profile"]}
                 >
                   <p>
-                    {new Timestamp(
-                      l.createdAt?.seconds,
-                      l.createdAt?.nanoseconds
-                    )
-                      .toDate()
-                      .toLocaleDateString("en-US", {
+                    {JSONTimestampToDate(l.createdAt).toLocaleDateString(
+                      "en-US",
+                      {
                         year: "2-digit",
                         month: "short",
                         day: "2-digit",
-                      })}
+                      }
+                    )}
                   </p>
                 </AuthorInfo>
               </Link>

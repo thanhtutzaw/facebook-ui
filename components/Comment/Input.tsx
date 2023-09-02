@@ -67,7 +67,6 @@ export default function CommentInput(props: {
           //   addedComment.createdAt.nanoseconds,
           //   addedComment.createdAt.seconds
           // );
-          // console.log(addedComment.createdAt.toDate() as Timestamp);
           // setlimitedComments([
           //   ...post?.comments!,
           //   commentDateToJSON(addedComment),

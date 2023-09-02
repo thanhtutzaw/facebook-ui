@@ -17,10 +17,10 @@ export type likes = {
 export type friends = {
   id: string | number;
   status?: "friend" | "block" | "pending";
-  createdAt: timeStamp;
+  createdAt?: timeStamp;
   updatedAt?: timeStamp;
   senderId?:string;
-  author?: UserRecord | User | account["profile"];
+  author?:account["profile"];
 };
 
 export type account = {

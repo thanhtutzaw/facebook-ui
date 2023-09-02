@@ -1,7 +1,7 @@
 import { Timestamp, doc } from "firebase/firestore";
 import router, { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { db } from "../../lib/firebase";
+import { JSONTimestampToDate, db } from "../../lib/firebase";
 import { Comment, Post } from "../../types/interfaces";
 import AuthorInfo from "../Post/AuthorInfo";
 import s from "./index.module.scss";
@@ -58,19 +58,16 @@ export default function Comment(props: {
               client && router.asPath.match(c.id?.toString()!)
                 ? "#e9f3ff"
                 : "initial",
-            // paddingBottom: "20px !important",
           }}
         >
           <p className={s.text}>{text}</p>
           <div className={s.actions}>
             <p suppressHydrationWarning>
-              {new Timestamp(createdAt?.seconds, createdAt?.nanoseconds)
-                .toDate()
-                .toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
+              {JSONTimestampToDate(createdAt).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
             </p>
             <button className={s.replayBtn}>Reply</button>
           </div>

@@ -1,12 +1,14 @@
 .container {
     // display: none;
     ul {
+        
         padding: 0;
         margin: 0;
         list-style: none;
         li {
             list-style: none;
             margin: 0;
+            
             a {
                 background: white;
                 padding: 1rem;
@@ -33,3 +35,10 @@
         }
     }
 }
+.active{
+                // background-colo
+                background-color: hsl(204, 100%, 50%);
+                color:white;
+                border:0;
+                padding: .5rem;
+            }

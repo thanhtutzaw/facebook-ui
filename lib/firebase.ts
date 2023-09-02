@@ -35,6 +35,11 @@ export async function fethUserDoc(uid: string | string[]) {
   const user = await getDoc(userQuery);
   return user!;
 }
+export function JSONTimestampToDate(date: Timestamp | Post["createdAt"]) {
+  // if(!data instanceof Timestamp) return;
+  // if (!date) return;
+  return new Timestamp(date?.seconds, date?.nanoseconds).toDate();
+}
 export async function postToJSON(
   doc: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>
 ) {
@@ -220,7 +225,7 @@ export async function getPostsbyId(uid: string, posts?: any[]) {
         const postRef = doc(db, `users/${post.authorId}/posts/${post.id}`);
         const postDoc = await getDoc(postRef);
         const postData = await postToJSON(postDoc);
-        const postwithInfo = await postInfo(postData,uid)
+        const postwithInfo = await postInfo(postData, uid);
         return postwithInfo;
       })
     );

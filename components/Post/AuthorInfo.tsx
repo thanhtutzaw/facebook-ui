@@ -11,6 +11,7 @@ import { CSSProperties, MouseEventHandler, ReactNode } from "react";
 import { Comment, Post, account } from "../../types/interfaces";
 import Action from "../Comment/Action";
 import styles from "./index.module.scss";
+import { JSONTimestampToDate } from "../../lib/firebase";
 type layoutTypes = "row" | "column";
 
 export default function AuthorInfo(props: {
@@ -52,13 +53,11 @@ export default function AuthorInfo(props: {
           <div className={styles.moreInfo}>
             {typeof createdAt !== "number" && (
               <p className={styles.date} suppressHydrationWarning>
-                {new Timestamp(createdAt?.seconds, createdAt?.nanoseconds)
-                  .toDate()
-                  .toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
+                {JSONTimestampToDate(createdAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
               </p>
             )}
             {visibility?.toLowerCase() === "public" && (

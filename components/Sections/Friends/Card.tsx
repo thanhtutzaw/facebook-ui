@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ReactNode, useContext } from "react";
 import { PageContext, PageProps } from "../../../context/PageContext";
+import { JSONTimestampToDate } from "../../../lib/firebase";
 import { account, friends } from "../../../types/interfaces";
 import s from "./Friends.module.scss";
 export default function Card(props: { children: ReactNode; f: friends }) {
@@ -18,7 +19,6 @@ export default function Card(props: { children: ReactNode; f: friends }) {
       style={{ pointerEvents: preventClick ? "none" : "initial" }}
     >
       <div className={s.card}>
-        {/* {preventClick?.current ? "true" : "false"} */}
         <Image
           className={s.profile}
           alt={"name"}
@@ -31,29 +31,14 @@ export default function Card(props: { children: ReactNode; f: friends }) {
         />
         <div className={s.right}>
           <div className={s.info}>
-            {/* <p>{f.id}</p> */}
             <p>{userName}</p>
             {date && (
               <p className={s.date}>
-                {new Timestamp(date?.seconds, date?.nanoseconds)
-                  .toDate()
-                  .toLocaleDateString("en-US", {
-                    year: "2-digit",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                {/* {JSON.stringify(f.createdAt)} */}
-
-                {/* {new Timestamp(f.createdAt.nanoseconds, f.createdAt.seconds)
-                .toDate()
-                .toLocaleDateString()} */}
-                {/* {new Timestamp(f.createdAt?.seconds, f.createdAt?.nanoseconds)
-                .toDate()
-                .toLocaleDateString("en-US", {
-                  year: "numeric",
+                {JSONTimestampToDate(date).toLocaleDateString("en-US", {
+                  year: "2-digit",
                   month: "short",
                   day: "numeric",
-                })} */}
+                })}
               </p>
             )}
           </div>
