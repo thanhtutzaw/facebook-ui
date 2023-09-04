@@ -5,7 +5,7 @@ import { useContext, useState } from "react";
 import { AppContext } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
 import { db, getProfileByUID } from "../../../lib/firebase";
-import { Props } from "../../../types/interfaces";
+import { Props, friends } from "../../../types/interfaces";
 import Spinner from "../../Spinner";
 import s from "./Friends.module.scss";
 import { Request } from "./Request";
@@ -16,7 +16,7 @@ interface FriendProps {
 export default function Friend(props: FriendProps) {
   const { tabIndex } = props;
   const { active: tab } = useActive();
-  const { uid } = useContext(AppContext) as Props;
+  const { uid, friendReqCount } = useContext(AppContext) as Props;
 
   const fetchSuggestedFriends = async () => {
     if (!uid) return;
@@ -35,7 +35,9 @@ export default function Friend(props: FriendProps) {
         if (doc.data()) {
           return {
             id: doc.id,
-            author: { ...doc.data().profile },
+            author: {
+              ...doc.data().profile,
+            },
           };
         } else {
           return [];
@@ -64,13 +66,18 @@ export default function Friend(props: FriendProps) {
             return {
               id: doc.id,
               ...doc.data(),
-              author: { ...profile },
-            };
+              author: {
+                ...profile,
+                photoURL: profile.photoURL
+                  ? profile.photoURL
+                  : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+              },
+            } as friends;
           } else {
             return [];
           }
         })
-      );
+      ) as friends[];
     } catch (error) {
       console.log(error);
       throw new Error("Failed to fetch users");
@@ -80,12 +87,12 @@ export default function Friend(props: FriendProps) {
   const [suggestedFriends, pendingFriends] = useQueries({
     queries: [
       {
-        queryKey: ["suggestedFriends", uid],
+        queryKey: ["suggestedFriends", uid, friendReqCount],
         queryFn: async () => await fetchSuggestedFriends(),
         enabled: tab === "friends",
       },
       {
-        queryKey: ["pendingFriends", uid],
+        queryKey: ["pendingFriends", uid, friendReqCount],
         queryFn: async () => await fetchPendingFriends(),
         enabled: tab === "friends",
       },
@@ -128,10 +135,10 @@ export default function Friend(props: FriendProps) {
               <span style={{ color: "red" }}>{pending.length}</span>
             </p>
           </h2>
-          {pending.map((f, index) => (
+          {pending.map((f) => (
             <Request
               // setrequestCount={setrequestCount}
-              key={index}
+              key={f.id.toString()}
               f={f}
               tabIndex={tabIndex}
             />

@@ -38,20 +38,7 @@
             }
         }
     }
-    .error {
-        margin: 0px;
-        color: red;
-        background: #fbfbfb;
-        background: rgb(255 255 255);
-        position: absolute;
-        padding: 1rem;
-        top: -35%;
-        width: 100%;
-        left: 0;
-        border-radius: 1rem;
-        max-height: 102px;
-        overflow: scroll;
-    }
+    
     &:has(> div:only-child) {
         justify-content: center;
         align-items: center;
@@ -198,3 +185,17 @@
         // }
     }
 }
+.error {
+        margin: 0px;
+        color: red;
+        background: #fbfbfb;
+        background: rgb(255 255 255);
+        position: absolute;
+        padding: 1rem;
+        top: -35%;
+        width: 100%;
+        left: 0;
+        border-radius: 1rem;
+        max-height: 102px;
+        overflow: scroll;
+    }

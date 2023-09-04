@@ -33,7 +33,7 @@ import {
   faPlus,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
-import { acceptFriends } from "../../lib/firestore/friends";
+import { acceptFriends, addFriends } from "../../lib/firestore/friends";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;
@@ -156,9 +156,16 @@ export default function UserProfile({
     ),
     notFriend: (
       <button
-        // onClick={() => {
-        //   router.push(`/chat/${router.query.user}`);
-        // }}
+        onClick={async () => {
+          // router.push(`/chat/${router.query.user}`);
+          const data = {
+            id: router.query.user,
+          } as friends;
+          await addFriends(token.uid, data);
+          router.replace("/", undefined, { scroll: false });
+          queryClient.refetchQueries(["pendingFriends"]);
+          queryClient.invalidateQueries(["pendingFriends"]);
+        }}
         className={`${s.editToggle} ${s.secondary}`}
       >
         <FontAwesomeIcon icon={faPlus} />

@@ -108,6 +108,7 @@ export interface Comment {
 }
 
 export interface Props {
+  friendReqCount?: number | string;
   UnReadNotiCount?: number | string;
   acceptedFriends?: string[];
   isFriendEmpty?: boolean;

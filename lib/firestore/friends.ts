@@ -1,7 +1,8 @@
 import {
-  addDoc,
   deleteDoc,
   doc,
+  getDoc,
+  increment,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -10,9 +11,8 @@ import { friends } from "../../types/interfaces";
 import { db } from "../firebase";
 
 export async function addFriends(uid: string, f: friends) {
-  // status pending to friends
   const { author, ...data } = { ...f };
-
+  const reqCountRef = doc(db, `users/${f.id}/friendReqCount/reqCount`);
   const senderData = {
     ...data,
     status: "pending",
@@ -32,6 +32,15 @@ export async function addFriends(uid: string, f: friends) {
   try {
     await setDoc(senderRef, senderData);
     await setDoc(receiptRef, receiptData);
+    const doc = await getDoc(reqCountRef);
+    if (doc.exists() && doc.data().count >= 0) {
+      await updateDoc(reqCountRef, {
+        count: increment(+1),
+        updatedAt: serverTimestamp(),
+      });
+    } else {
+      await setDoc(reqCountRef, { count: 1, updatedAt: serverTimestamp() });
+    }
   } catch (error) {
     console.log(error);
     throw error;
@@ -45,7 +54,9 @@ export async function acceptFriends(uid: string, f: friends) {
     updatedAt: serverTimestamp(),
   } as friends;
   // const receiptData = { ...acceptedData, id: uid };
-
+  // await setDoc(reqCountRef, { count: increment(+1) });
+  const reqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
+  await setDoc(reqCountRef, { count: increment(-1) });
   await updateFriendStatus(uid, acceptedData);
   // console.log({ acceptedData, receiptData });
   // const acceptedRef = doc(
@@ -67,6 +78,8 @@ export async function acceptFriends(uid: string, f: friends) {
 export async function rejectFriendRequest(uid: string, f: friends) {
   try {
     await unFriend(uid, f);
+    const reqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
+    await updateDoc(reqCountRef, { count: increment(-1) });
   } catch (error) {
     console.log(error);
   }

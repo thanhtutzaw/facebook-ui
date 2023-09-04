@@ -21,10 +21,10 @@ export function Request(props: RequestProps) {
   const [reject, setreject] = useState(false);
   const { uid } = useContext(AppContext) as Props;
   async function handleConfirmRequest() {
-    setaccept(true);
     if (!uid) return;
     try {
       await acceptFriends(uid, f);
+      setaccept(true);
       // setrequestCount((prev: number) => prev - 1);
       queryClient.invalidateQueries(["pendingFriends"]);
       // queryClient.refetchQueries(["pendingFriends"]);
@@ -33,10 +33,10 @@ export function Request(props: RequestProps) {
     }
   }
   async function handleRejectFriendRequest() {
-    setreject(true);
     if (!uid) return;
     try {
       await rejectFriendRequest(uid, f);
+      setreject(true);
       // setrequestCount((prev: number) => prev - 1);
       queryClient.invalidateQueries(["pendingFriends"]);
       // queryClient.refetchQueries(["pendingFriends"]);

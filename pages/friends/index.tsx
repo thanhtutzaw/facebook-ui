@@ -122,7 +122,14 @@ export default function Page(props: {
   return (
     <div className="user">
       <BackHeader>
-        <h2>Friends {allFriendsCount > 0 && allFriendsCount}</h2>
+        <h2>
+          {status === "friend"
+            ? "Friends"
+            : status === "pending"
+            ? "Pending"
+            : "Block"}{" "}
+          {friends.length > 0 && status === "friend" && friends.length}
+        </h2>
       </BackHeader>
       <div
         style={{
@@ -167,8 +174,9 @@ export default function Page(props: {
                     width={100}
                     height={100}
                     src={
-                      (friend.author?.photoURL as string) ??
-                      "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+                      friend.author?.photoURL
+                        ? (friend.author?.photoURL as string)
+                        : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
                     }
                   />
                   <p>
@@ -186,8 +194,7 @@ export default function Page(props: {
                         router.replace(router.asPath, undefined, {
                           scroll: false,
                         });
-                        queryClient.refetchQueries(["allUsers"]);
-                        queryClient.invalidateQueries(["allUsers"]);
+                        queryClient.invalidateQueries(["suggestedFriends"]);
                       } catch (error) {
                         console.log(error);
                       }
@@ -209,8 +216,7 @@ export default function Page(props: {
                             setFriends(
                               friends.filter((f) => f.id !== friend.id)
                             );
-                            queryClient.refetchQueries(["allUsers"]);
-                            queryClient.invalidateQueries(["allUsers"]);
+                            queryClient.invalidateQueries(["suggestedFriends"]);
                           } catch (error) {
                             console.log(error);
                           }
@@ -246,8 +252,7 @@ export default function Page(props: {
                       //   router.replace(router.asPath, undefined, {
                       //     scroll: false,
                       //   });
-                      //   queryClient.refetchQueries(["allUsers"]);
-                      //   queryClient.invalidateQueries(["allUsers"]);
+                      //   queryClient.invalidateQueries(["suggestedFriends"]);
                       // } catch (error) {
                       //   console.log(error);
                       // }
@@ -263,8 +268,7 @@ export default function Page(props: {
                         router.replace(router.asPath, undefined, {
                           scroll: false,
                         });
-                        queryClient.refetchQueries(["allUsers"]);
-                        queryClient.invalidateQueries(["allUsers"]);
+                        queryClient.invalidateQueries(["suggestedFriends"]);
                       } catch (error) {
                         console.log(error);
                       }
@@ -279,7 +283,7 @@ export default function Page(props: {
         ) : (
           <p style={{ textAlign: "center", padding: "1rem" }}>Empty Friends</p>
         )}
-        {JSON.stringify(friends)}
+        {/* {JSON.stringify(friends)} */}
         {/* {JSON.stringify(savedPosts)} */}
       </div>
     </div>

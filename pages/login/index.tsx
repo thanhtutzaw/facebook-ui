@@ -17,6 +17,7 @@ import { app } from "../../lib/firebase";
 import { signin } from "../../lib/signin";
 import EmailIcon from "../../public/email.svg";
 import styles from "../../styles/Home.module.scss";
+import signupStyles from "../../components/Signup/index.module.scss";
 import { addProfile } from "../../lib/profile";
 import { Props, account } from "../../types/interfaces";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
@@ -205,6 +206,7 @@ export default function Login({ uid }: { uid: string }) {
     // });
   };
   // if (uid) return <p style={{ textAlign: "center" }}>Loading ...</p>;
+  const [error, seterror] = useState("sd");
   return (
     <section className={styles.login}>
       {uid ? (
@@ -352,15 +354,44 @@ export default function Login({ uid }: { uid: string }) {
                   </p>
                 </motion.button>
               ) : (
-                <Signup
-                  emailLoading={emailLoading}
-                  handleSubmit={handleSubmit}
-                  handleChange={handleChange}
-                  signup={signup}
-                  Account={Account}
-                  setAccount={setAccount}
-                  emailRef={emailRef}
-                />
+                <div style={{position:'relative'}}>
+                  {!error && (
+                    <>
+                      <motion.div
+                        initial={{ scale: 0.5, opacity: 0 }}
+                        animate={{
+                          scale: !error ? 0.5 : 1,
+                          opacity: !error ? 0 : 1,
+                        }}
+                        exit={{ scale: 0.5, opacity: 0 }}
+                        className={signupStyles.error}
+                      >
+                        <h4
+                          style={{ margin: "0", color: "red" }}
+                        >{`Error (${error})`}</h4>
+                        {/* {error === AuthErrorCodes.USER_DELETED && (
+                          <Link
+                            style={{
+                              color: "var(--blue-origin)",
+                            }}
+                            href="/login"
+                          >
+                            Create New Account
+                          </Link>
+                        )} */}
+                      </motion.div>
+                    </>
+                  )}
+                  <Signup
+                    emailLoading={emailLoading}
+                    handleSubmit={handleSubmit}
+                    handleChange={handleChange}
+                    signup={signup}
+                    Account={Account}
+                    setAccount={setAccount}
+                    emailRef={emailRef}
+                  />
+                </div>
               )}
             </AnimatePresence>
           </div>

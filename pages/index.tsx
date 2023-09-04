@@ -8,7 +8,6 @@ import {
 import {
   Timestamp,
   collection,
-  collectionGroup,
   doc,
   getDoc,
   getDocs,
@@ -16,8 +15,8 @@ import {
   onSnapshot,
   orderBy,
   query,
-  startAfter,
-  startAt,
+  serverTimestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
@@ -27,19 +26,19 @@ import { useEffect, useRef, useState } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
-import { AppProvider, LIMIT } from "../context/AppContext";
+import { AppProvider } from "../context/AppContext";
 import {
   app,
   db,
-  getPostWithMoreInfo,
   getPostsbyId,
   getProfileByUID,
-  postToJSON,
   userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
+import pop from "../public/pop.mp3";
 import { Props } from "../types/interfaces";
 
+import useSound from "use-sound";
 import Spinner from "../components/Spinner";
 import { useActive } from "../hooks/useActiveTab";
 export const getServerSideProps: GetServerSideProps<Props> = async (
@@ -226,6 +225,8 @@ export default function Home({
   const indicatorRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const auth = getAuth(app);
+  const [friendReqCount, setfriendReqCount] = useState(0);
+  const [prevfriendReqCount, setprevfriendReqCount] = useState(0);
   useEffect(() => {
     const auth = getAuth(app);
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -281,6 +282,7 @@ export default function Home({
     }
   }, [expired, router, uid]);
   const [UnReadNotiCount, setUnReadNotiCount] = useState(0);
+  // const [friendReqLastPull, setfriendReqLastPull] = useState(Date.now);
   const [lastPullTimestamp, setlastPullTimestamp] =
     useState<Props["lastPullTimestamp"]>(undefined);
   useEffect(() => {
@@ -312,9 +314,95 @@ export default function Home({
     };
     fetchNotiCount();
     return () => {
-      unsubscribeNotifications();
+      if (unsubscribeNotifications) unsubscribeNotifications();
     };
   }, [UnReadNotiCount, uid]);
+  const [playFriendRequest] = useSound(pop, { volume: 0.11 });
+  //  const [playOff] = useSound(uncheckSound, { volume: 0.11 });
+  const soundRef = useRef<HTMLAudioElement>(null);
+  // useEffect(() => {
+  //   const friendReqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
+  //   async function fetchFriendReqLastPull() {
+  //     await updateDoc(friendReqCountRef, {
+  //       lastPullTimestamp: serverTimestamp(),
+  //     });
+  //     // setfriendReqLastPull(
+  //     // );
+  //   }
+  //   fetchFriendReqLastPull();
+  // }, [uid]);
+
+  useEffect(() => {
+    if (!uid) return;
+    const friendReqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
+    let lastPull: Timestamp | null = null;
+    async function getLastpull() {
+      lastPull = (await getDoc(friendReqCountRef)).data()
+        ?.lastPullTimestamp as Timestamp;
+      // console.log();
+    }
+    getLastpull();
+    let unsubscribeFriendReqCount: Unsubscribe;
+    const fetchFriendReqCount = async () => {
+      const pendingRef = collection(db, `users/${uid}/friendReqCount`);
+      try {
+        if (friendReqCount >= 10) return;
+        unsubscribeFriendReqCount = onSnapshot(pendingRef, (snap) => {
+          snap.docs.map((doc) => {
+            const updatedAt =
+              doc.data().updatedAt?.toDate()?.getTime() ?? Date.now();
+            const count = doc.data().count;
+            // console.log({updatedAt});
+            // if (count) {
+              const newCount = count;
+
+              // Check if the count increased
+              // if (newCount > prevfriendReqCount) {
+              // Play the pop sound
+              // playPopSound();
+              if (count > 0) {
+                console.log(lastPull?.toDate().getTime! < updatedAt);
+                // if (updatedAt < Date.now()) return;
+
+                if (updatedAt > Date.now()) {
+                  soundRef.current
+                    ?.play()
+                    .then(() => {
+                      console.log("allow");
+                      playFriendRequest();
+                    })
+                    .catch(() => {
+                      console.log(
+                        "Audio autoplay not allowed (Try app at HomeScreen)"
+                      );
+                    });
+                }
+              }
+
+              // Update the previous count
+              setprevfriendReqCount(newCount);
+              // }
+
+              // Update the current count
+              // setCurrentCount(newCount);
+              setfriendReqCount(count);
+            // }
+            // console.log(count , friendReqCount);
+          });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchFriendReqCount();
+    return () => {
+      if (unsubscribeFriendReqCount) unsubscribeFriendReqCount();
+    };
+  }, [friendReqCount, playFriendRequest, uid]);
+  useEffect(() => {
+    console.log({ friendReqCount, prevfriendReqCount });
+  }, [friendReqCount, prevfriendReqCount]);
+
   const { active, setActive } = useActive();
   // const { isPage, setisPage } = useContext(PageContext) as PageProps;
   // setisPage?.(uid);
@@ -322,6 +410,7 @@ export default function Home({
   if (expired) return <Welcome postError={postError} expired={expired} />;
   return uid ? (
     <AppProvider
+      friendReqCount={friendReqCount}
       acceptedFriends={acceptedFriends}
       isFriendEmpty={isFriendEmpty}
       lastPullTimestamp={lastPullTimestamp}
@@ -339,12 +428,29 @@ export default function Home({
       email={email}
       account={account}
     >
+      {/* <button
+        ref={soundRef}
+        onClick={() => {
+          console.log("clicked sound button");
+          playFriendRequest();
+        }}
+        style={{ visibility: "hidden", display: "none" }}
+      >
+        Hidden Sound
+      </button> */}
+
       {/* {uid + "- SSR uid (not page accessable) "} */}
       <Header tabIndex={active === "/" ? 0 : -1} indicatorRef={indicatorRef} />
       {/* {JSON.stringify(isPage)} {isPage && "- all page accessable"} */}
       {/* <button onClick={() => setisPage?.(isPage?.concat([9, 10]))}>
         change
       </button> */}
+      <audio
+        style={{ visibility: "hidden", display: "none" }}
+        ref={soundRef}
+        src={pop}
+      ></audio>
+
       <Tabs indicatorRef={indicatorRef} />
     </AppProvider>
   ) : (

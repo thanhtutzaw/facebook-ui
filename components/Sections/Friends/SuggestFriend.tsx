@@ -15,13 +15,13 @@ export function SuggestFriend(props: RequestProps) {
   const { uid } = useContext(AppContext) as Props;
   const [accept, setaccept] = useState(false);
   const [reject, setreject] = useState(false);
-  async function handleAddFriend() {
+  async function handleAddSuggestedFriend() {
     setaccept(true);
     if (!uid) return;
     await addFriends(uid , f);
     queryClient.invalidateQueries(["suggestedFriends"]);
   }
-  function handleReject() {
+  function handleSuggestDelete() {
     setreject(true);
   }
   return (
@@ -37,7 +37,7 @@ export function SuggestFriend(props: RequestProps) {
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                handleAddFriend();
+                handleAddSuggestedFriend();
               }}
               tabIndex={tabIndex}
               className={s.primary}
@@ -48,7 +48,7 @@ export function SuggestFriend(props: RequestProps) {
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                handleReject();
+                handleSuggestDelete();
               }}
               tabIndex={tabIndex}
               className={s.secondary}

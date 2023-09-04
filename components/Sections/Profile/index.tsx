@@ -87,7 +87,7 @@ export default function Profile() {
   );
   const { fetchNextPage, isLoading, error, data, hasNextPage } =
     useInfiniteQuery({
-      queryKey: ["myPost", sortby],
+      queryKey: ["myPost", sortby, uid],
       queryFn: async ({ pageParam }) => await fetchMyPost(pageParam),
       enabled: tab === "profile",
       keepPreviousData: true,

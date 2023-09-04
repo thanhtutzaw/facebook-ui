@@ -21,11 +21,11 @@ export default function Card(props: { children: ReactNode; f: friends }) {
       <div className={s.card}>
         <Image
           className={s.profile}
-          alt={"name"}
+          alt={f.id.toString()}
           width={100}
           height={100}
           src={
-            (f.author?.photoURL as string) ??
+            f.author?.photoURL ? (f.author?.photoURL as string) :
             "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
           }
         />

@@ -28,6 +28,8 @@ Project is created with:
 :ballot_box_with_check: Implement media (photos and videos) upload functionality by leveraging the power of Firebase Cloud Storage \
 :ballot_box_with_check: Enable image preview layout and zoom capability for a better user experience \
 :ballot_box_with_check: Store the id_token in cookies with [nookies](https://www.npmjs.com/package/nookies) to fetch SSR data with the stored uid \
+:ballot_box_with_check: Friends Request , acceptable and blockable
+:ballot_box_with_check: Friends Request Sound Play in App Mode (Add to HomeScreen due to Browser Autoplay ploicy)
 :ballot_box_with_check: Users will receive notifications when their posts are liked by other users
 
 ## User-Interface

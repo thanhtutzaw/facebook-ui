@@ -12,13 +12,23 @@ export default function Signup(props: {
   emailLoading: boolean;
   emailRef: any;
 }) {
-  const {emailLoading, handleSubmit, handleChange, signup, Account, setAccount, emailRef } =
-    props;
+  const {
+    emailLoading,
+    handleSubmit,
+    handleChange,
+    signup,
+    Account,
+    setAccount,
+    emailRef,
+  } = props;
   return (
     <motion.form
       onClick={(e) => {
         e.stopPropagation();
       }}
+      // onError={(error) => {
+      //   console.log(error);
+      // }}
       onSubmit={handleSubmit}
       key="label2"
       initial={{ opacity: 0, scale: 0.5 }}
@@ -36,9 +46,9 @@ export default function Signup(props: {
         />
         <button
           onClick={(e) => {
-            const nextElement =
-              e.currentTarget.parentElement?.nextElementSibling;
-            nextElement?.scrollIntoView({ block: "center" });
+            // const nextElement =
+            //   e.currentTarget.parentElement?.nextElementSibling;
+            // nextElement?.scrollIntoView({ block: "center" });
           }}
           type="submit"
           className={styles.nextForm}

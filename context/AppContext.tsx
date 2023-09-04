@@ -16,6 +16,7 @@ export const LIMIT = 10;
 
 export function AppProvider(props: Props) {
   const {
+    friendReqCount,
     acceptedFriends,
     isFriendEmpty,
     lastPullTimestamp,
@@ -112,6 +113,7 @@ export function AppProvider(props: Props) {
   return (
     <AppContext.Provider
       value={{
+        friendReqCount,
         lastPullTimestamp,
         updatePost,
         UnReadNotiCount,

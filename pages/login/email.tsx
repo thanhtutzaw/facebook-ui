@@ -41,7 +41,6 @@ export default function Email() {
     if (!email || !password) return;
     seterror("");
     setloading(true);
-    // setloading(true)
     try {
       const error = (await signin(email, password)) as FirebaseError;
       if (error) {
@@ -119,7 +118,6 @@ export default function Email() {
           </button>
         </div>
       </motion.form>
-      {/* </section> */}
     </div>
   );
 }
