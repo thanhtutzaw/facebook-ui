@@ -14,6 +14,7 @@ import {
   getFirestore,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getMessaging } from "firebase/messaging";
 import { Comment, Post, account } from "../types/interfaces";
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -28,8 +29,25 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore();
 const storage = getStorage(app);
-export { app, db, storage };
+const production = process.env.NODE_ENV == "production";
+// const messaging = getMessaging(app);
+if(production){
+  const messaging = getMessaging(app);
+}
 
+export { app, db, storage };
+// const messageKey = process.env.NEXT_PUBLIC_MessageKey;
+// function requestPermission() {
+//   console.log("Requesting permission...");
+//   Notification.requestPermission().then((permission) => {
+//     if (permission === "granted") {
+//       console.log("Notification permission granted.");
+//     } else {
+//       console.log("Notification Prevented !");
+//     }
+//   });
+// }
+// requestPermission();
 export async function fethUserDoc(uid: string | string[]) {
   const userQuery = doc(db, `users/${uid}`);
   const user = await getDoc(userQuery);
