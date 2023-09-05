@@ -22,7 +22,7 @@ import {
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
@@ -41,6 +41,8 @@ import { Props } from "../types/interfaces";
 import useSound from "use-sound";
 import Spinner from "../components/Spinner";
 import { useActive } from "../hooks/useActiveTab";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { messaging } from "firebase-admin";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -331,7 +333,69 @@ export default function Home({
   //   }
   //   fetchFriendReqLastPull();
   // }, [uid]);
+  // const messaging = getMessaging(app);
+  // const messagingRef = useRef(null);
 
+  const requestNotificationPermission = async () => {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        console.log("Notification permission granted.");
+      } else {
+        console.log("Notification permission denied.");
+      }
+    } catch (error) {
+      console.error("Error requesting notification permission:", error);
+    }
+  };
+
+  // if (messagingRef.current) {
+  //   onMessage(messagingRef?.current!, (message) => {
+  //     console.log("Received message:", message);
+  //   });
+  // }
+  useEffect(() => {
+    if (
+      "Notification" in window &&
+      "serviceWorker" in navigator &&
+      "PushManager" in window
+    ) {
+      const messaging = getMessaging(app);
+
+      requestNotificationPermission();
+      const getFCMToken = async () => {
+        try {
+          const token = await getToken(messaging, {
+            vapidKey:
+              "BJPHa_aNR1GtwaZB8Wg1KDStszJikoSxmLm_xs2c3e001R6yCy4SkoLQZ-rRLicS2kB__aACT55g1Ep4njxacOE",
+          });
+          if (token) {
+            console.log("FCM token:", token);
+          } else {
+            console.log("No FCM token received.");
+          }
+        } catch (error) {
+          console.error("Error getting FCM token:", error);
+        }
+      };
+      getFCMToken();
+    } else {
+      console.log("FCM not supported");
+    }
+  }, []);
+  //  useEffect(() => {
+  //    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+  //      const messaging = getMessaging(app);
+  //      const unsubscribe = onMessage(messaging, (payload) => {
+  //        console.log("Foreground push notification received:", payload);
+  //        // Handle the received push notification while the app is in the foreground
+  //        // You can display a notification or update the UI based on the payload
+  //      });
+  //      return () => {
+  //        unsubscribe(); // Unsubscribe from the onMessage event
+  //      };
+  //    }
+  //  }, []);
   useEffect(() => {
     if (!uid) return;
     const friendReqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
@@ -354,38 +418,38 @@ export default function Home({
             const count = doc.data().count;
             // console.log({updatedAt});
             // if (count) {
-              const newCount = count;
+            const newCount = count;
 
-              // Check if the count increased
-              // if (newCount > prevfriendReqCount) {
-              // Play the pop sound
-              // playPopSound();
-              if (count > 0) {
-                console.log(lastPull?.toDate().getTime! < updatedAt);
-                // if (updatedAt < Date.now()) return;
+            // Check if the count increased
+            // if (newCount > prevfriendReqCount) {
+            // Play the pop sound
+            // playPopSound();
+            if (count > 0) {
+              console.log(lastPull?.toDate().getTime! < updatedAt);
+              // if (updatedAt < Date.now()) return;
 
-                if (updatedAt > Date.now()) {
-                  soundRef.current
-                    ?.play()
-                    .then(() => {
-                      console.log("allow");
-                      playFriendRequest();
-                    })
-                    .catch(() => {
-                      console.log(
-                        "Audio autoplay not allowed (Try app at HomeScreen)"
-                      );
-                    });
-                }
+              if (updatedAt > Date.now()) {
+                soundRef.current
+                  ?.play()
+                  .then(() => {
+                    console.log("allow");
+                    playFriendRequest();
+                  })
+                  .catch(() => {
+                    console.log(
+                      "Audio autoplay not allowed (Try app at HomeScreen)"
+                    );
+                  });
               }
+            }
 
-              // Update the previous count
-              setprevfriendReqCount(newCount);
-              // }
+            // Update the previous count
+            setprevfriendReqCount(newCount);
+            // }
 
-              // Update the current count
-              // setCurrentCount(newCount);
-              setfriendReqCount(count);
+            // Update the current count
+            // setCurrentCount(newCount);
+            setfriendReqCount(count);
             // }
             // console.log(count , friendReqCount);
           });

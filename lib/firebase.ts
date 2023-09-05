@@ -16,7 +16,7 @@ import {
 import { getStorage } from "firebase/storage";
 import { getMessaging } from "firebase/messaging";
 import { Comment, Post, account } from "../types/interfaces";
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
@@ -29,11 +29,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore();
 const storage = getStorage(app);
-const production = process.env.NODE_ENV == "production";
-// const messaging = getMessaging(app);
-if(production){
-  const messaging = getMessaging(app);
-}
+// const production = process.env.NODE_ENV == "production";
+// if(production){
+//   const messaging = getMessaging(app);
+// }
 
 export { app, db, storage };
 // const messageKey = process.env.NEXT_PUBLIC_MessageKey;
