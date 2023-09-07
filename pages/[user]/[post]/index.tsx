@@ -19,7 +19,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Comment from "../../../components/Comment";
 import CommentInput from "../../../components/Comment/Input";
 import BackHeader from "../../../components/Header/BackHeader";
-import FooterInput from "../../../components/Input/FooterInput";
+import PostSettingFooterForm from "../../../components/Input/PostSettingFooterForm";
 import Input from "../../../components/Input/Input";
 import AuthorInfo from "../../../components/Post/AuthorInfo";
 import { Footer } from "../../../components/Post/Footer";
@@ -38,7 +38,7 @@ import {
 import { verifyIdToken } from "../../../lib/firebaseAdmin";
 import { fetchComments } from "../../../lib/firestore/comment";
 import { updatePost } from "../../../lib/firestore/post";
-import { deleteStorage, uploadMedia } from "../../../lib/storage";
+import { deleteMedia, uploadMedia } from "../../../lib/storage";
 import s from "../../../styles/Home.module.scss";
 import {
   Media,
@@ -103,7 +103,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       };
     }
   } catch (error) {
-    console.log("SSR Error " + error);
+    console.log("SSR Error in user/post " + error);
     return {
       props: {
         profile: null,
@@ -145,7 +145,7 @@ export default function Page(props: {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (
         InputRef.current?.innerHTML !== post.text ||
-        visibility.toLowerCase() !== post.visibility?.toLowerCase() ||
+        visibility?.toLowerCase() !== post.visibility?.toLowerCase() ||
         files?.length !== post.media?.length ||
         deleteFile?.length !== 0
       ) {
@@ -171,7 +171,7 @@ export default function Page(props: {
       const currentPath = router.asPath;
       if (
         (as !== currentPath && InputRef.current?.innerHTML !== post.text) ||
-        visibility.toLowerCase() !== post.visibility?.toLowerCase() ||
+        visibility?.toLowerCase() !== post.visibility?.toLowerCase() ||
         files?.length !== post.media?.length ||
         deleteFile?.length !== 0
       ) {
@@ -246,7 +246,7 @@ export default function Page(props: {
           ...(files as Media[]),
           ...(uploadedFiles.filter((file) => file !== null) as Media[]),
         ].filter((file) => file?.url);
-        await deleteStorage(deleteFile!);
+        await deleteMedia(deleteFile!);
       } catch (error) {
         console.log("Error uploading and Deleting files:", error);
         return null;
@@ -377,7 +377,7 @@ export default function Page(props: {
           />
         )}
         {canEdit ? (
-          <FooterInput
+          <PostSettingFooterForm
             fileRef={fileRef}
             files={files}
             setFiles={setFiles}

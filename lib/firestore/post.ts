@@ -16,24 +16,49 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { selectedId } from "../../context/PageContext";
-import { Post, likes } from "../../types/interfaces";
+import { Post, friends, likes } from "../../types/interfaces";
 import { db, getProfileByUID } from "../firebase";
 export async function addPost(
   uid: string,
   visibility: string,
   text: string,
   files?: any[],
-  sharePost?: { refId: string; author: string; id: string }
+  sharePost?: { refId: string; author: string; id: string } | null,
+  friends?: friends[]
 ) {
   // const Ref = doc(collection(db, `users/${uid}/posts`));
   const Ref = !sharePost
     ? doc(collection(db, `users/${uid}/posts`))
     : doc(db, `users/${uid}/posts/${sharePost.refId}`);
+  if (friends) {
+    await Promise.all(
+      friends.map(async (friend) => {
+        const newsFeedRef = !sharePost
+          ? doc(collection(db, `users/${friend}/friends/${uid}/recentPosts`))
+          : doc(
+              db,
+              `users/${friend}/friends/${uid}/recentPosts/${sharePost.refId}`
+            );
+        const newsFeedPost = {
+          id: !sharePost ? Ref.id : sharePost.refId,
+          createdAt: serverTimestamp(),
+        };
+        await setDoc(newsFeedRef, newsFeedPost);
+      })
+    );
+  }
+  const adminNewsFeedRef = doc(
+    collection(db, `users/${uid}/friends/${uid}/recentPosts`)
+  );
+  const adminNewsFeedPost = {
+    id: !sharePost ? Ref.id : sharePost.refId,
+    createdAt: serverTimestamp(),
+  };
+  await setDoc(adminNewsFeedRef, adminNewsFeedPost);
   const post = {
     authorId: uid,
     id: !sharePost ? Ref.id : sharePost.refId,
     text: text,
-    // media: files.map((file) => ({ ...file, id: doc().id })),
     media: files,
     visibility: visibility,
     createdAt: serverTimestamp(),
@@ -81,7 +106,7 @@ export async function updatePost(
     ),
     updatedAt: serverTimestamp(),
   };
-  if (myPost.sharePost) {
+  if (myPost.sharePost && myPost.sharePost?.id) {
     data = {
       ...post,
       sharePost: { author: myPost.sharePost?.author, id: myPost.sharePost?.id },

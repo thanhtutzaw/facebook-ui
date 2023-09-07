@@ -259,8 +259,9 @@ export default function UserProfile({
             style={{ objectFit: "cover", width: "120px", height: "120px" }}
             alt={`${userName}'s profile`}
             src={
-              (profile?.photoURL as string) ??
-              "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+              (profile?.photoURL as string)
+                ? (profile?.photoURL as string)
+                : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
             }
           />
           <h3 style={{ marginBottom: "18px" }}>{userName}</h3>

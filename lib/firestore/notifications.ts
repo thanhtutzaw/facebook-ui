@@ -11,8 +11,8 @@ export async function sendAppNoti(
   content?: string
 ) {
   const { firstName, lastName, photoURL } = profile!;
-  const samePerson = receiptId.toString() === uid;
-  // if (samePerson) return;
+  const isAdmin = receiptId.toString() === uid;
+  // if (isAdmin) return;
   const notifRef = doc(collection(db, `users/${receiptId}/notifications`));
   const userName = `${firstName} ${lastName}`;
   const data = {
@@ -35,3 +35,11 @@ export const getMessage = (type: notiContentTypes) => {
   };
   return { message: messages[type] || "" };
 };
+
+export async function getCurrentPushSubscription() {
+  const sw = await getReadyServiceWorker();
+  return sw.pushManager.getSubscription();
+}
+async function getReadyServiceWorker() {
+  return await navigator.serviceWorker.ready;
+}

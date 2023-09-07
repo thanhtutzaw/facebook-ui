@@ -11,9 +11,7 @@ import { collection, doc, getDoc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import {
-  MouseEventHandler,
   StyleHTMLAttributes,
-  memo,
   useContext,
   useEffect,
   useRef,
@@ -22,10 +20,9 @@ import {
 import { PageContext, PageProps } from "../../context/PageContext";
 import { app, db } from "../../lib/firebase";
 import { sendAppNoti } from "../../lib/firestore/notifications";
-import { addPost, unlikePost, likePost } from "../../lib/firestore/post";
+import { addPost, likePost, unlikePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
-import { debounce } from "../../lib/debounce";
 export const Footer = (
   props: {
     likeCount?: number;
@@ -47,10 +44,10 @@ export const Footer = (
   } = props;
   const router = useRouter();
   const commentRef = useRef<HTMLDivElement>(null);
-  const [savedVisibility, setsavedVisibility] = useState("");
+  const [visibility, setvisibility] = useState("");
   const [reactionAction, setreactionAction] = useState("");
   useEffect(() => {
-    setsavedVisibility(localStorage.getItem("visibility")!);
+    setvisibility(localStorage.getItem("visibility")!);
   }, []);
   const [isLiked, setisLiked] = useState(post.isLiked);
 
@@ -112,10 +109,6 @@ export const Footer = (
   // const [reaction, setReaction] = useState({
   //   like: ["1a", "2d"],
   // });
-  // console.log("footer rendering");
-  useEffect(() => {
-    // console.log("footer rendering");
-  }, []);
 
   const [likeLoading, setLikeLoading] = useState(false);
   // const debounceLikeUnlike = useRef(debounce(handleLikeUnlike(), 1000)).current;
@@ -143,7 +136,10 @@ export const Footer = (
       >
         <button
           disabled={likeLoading}
-          style={{ pointerEvents: likeLoading ? "none" : "initial" }}
+          style={{
+            border: likeLoading ? "2px solid red" : "initial",
+            pointerEvents: likeLoading ? "none" : "initial",
+          }}
           // onClick={async () => await handleLikeUnlike()}
           onClick={async () => {
             const uid = auth.currentUser?.uid;
@@ -166,6 +162,20 @@ export const Footer = (
               // setlikeCount?.(parseInt(post.likeCount.toString()));
               // setisLiked(true);
               setLikes?.([]);
+              await fetch("/api/sendFCM", {
+                method: "POST",
+                headers: {
+                  "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                  senderId: uid,
+                  message: `${profile?.firstName ?? "Unknown User"} ${
+                    profile.lastName ?? ""
+                  } liked this post`,
+                }),
+              });
+              // , { uid, message }
+
               await likePost(likeCount ?? 0, postRef, likeRef, uid);
               await sendAppNoti(
                 uid,
@@ -247,16 +257,8 @@ export const Footer = (
           <p>Comment</p>
         </button>
       </div>
-      <div
-      // className={styles.socialButton}
-      >
+      <div>
         <button
-          style={
-            {
-              // overflow: "hidden",
-              // zIndex: shareAction === id ? "100" : "initial",
-            }
-          }
           tabIndex={-1}
           aria-expanded={shareAction !== ""}
           aria-label="open share options"
@@ -341,14 +343,13 @@ export const Footer = (
                   };
                   try {
                     window.document.body.style.cursor = "wait";
-                    await addPost(uid, savedVisibility, "", [], sharePost);
-                    await sendAppNoti(
+                    await handleShareNow(
                       uid,
-                      post?.authorId.toString()!,
-                      profile!,
-                      "share",
-                      `${uid}/${sharePost.refId}`,
-                      `${authorName} : ${post.text}`
+                      visibility,
+                      sharePost,
+                      post,
+                      profile,
+                      authorName
                     );
                     router.replace("/", undefined, { scroll: false });
                     setshareAction?.("");
@@ -380,77 +381,27 @@ export const Footer = (
           )}
         </AnimatePresence>
       </div>
-
-      {/* <AnimatePresence>
-        {reactionAction === id && (
-          <motion.div
-            ref={dropdownRef}
-            key={id}
-            initial={{
-              opacity: "0",
-              scale: 0.8,
-            }}
-            animate={{
-              opacity: shareAction === id ? 1 : 0,
-              scale: 1,
-            }}
-            exit={{
-              opacity: "0",
-              scale: 0.8,
-            }}
-            transition={{
-              duration: 0.15,
-            }}
-            className={styles.actions}
-            style={{ top: "-6rem", right: "1rem" }}
-          >
-            <button
-              onClick={async (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const sharePost = { author: authorId.toString(), id: id! };
-                try {
-                  window.document.body.style.cursor = "wait";
-                  await addPost(
-                    auth?.currentUser?.uid!,
-                    savedVisibility,
-                    "",
-                    [],
-                    sharePost
-                    // post
-                  );
-                  router.replace("/", undefined, { scroll: false });
-                  setshareAction?.("");
-                  window.document.body.style.cursor = "initial";
-                } catch (error: any) {
-                  alert(error.message);
-                }
-              }}
-            >
-              <FontAwesomeIcon icon={faShareFromSquare} />
-              Share Now
-            </button>
-            <button
-              onClick={async (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                router.push({
-                  pathname: "/share",
-                  query: { author: authorId, id: id },
-                });
-                setshareAction?.("");
-              }}
-            >
-              <FontAwesomeIcon icon={faPen} />
-              Write Post
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence> */}
     </div>
   );
-
-  async function handleLikeUnlike() {}
 };
+
+async function handleShareNow(
+  uid: string,
+  visibility: string,
+  sharePost: { refId: string; author: string; id: string },
+  post: Post,
+  profile: account["profile"],
+  authorName: string
+) {
+  await addPost(uid, visibility, "", [], sharePost);
+  await sendAppNoti(
+    uid,
+    post?.authorId.toString()!,
+    profile!,
+    "share",
+    `${uid}/${sharePost.refId}`,
+    `${authorName} : ${post.text}`
+  );
+}
 // );
 // Footer.displayName = "Footer";

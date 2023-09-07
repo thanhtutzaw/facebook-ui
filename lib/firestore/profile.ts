@@ -1,28 +1,20 @@
 import { User, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { account } from "../types/interfaces";
-import { db, storage } from "./firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { type } from "os";
-
-// export async function updateUserName(
-//   UserCredential: UserCredential,
-//   Account: account
-// ) {
-//   //   await updateProfile(UserCredential.user, {
-//   //     displayName: Account.firstName + Account.lastName,
-//   //   });
-// }
+import { account } from "../../types/interfaces";
+import { db, storage } from "../firebase";
 export async function addProfile(user: User, profile: account["profile"]) {
   const Ref = doc(db, `users/${user.uid}`);
   const { firstName, lastName } = profile;
+  const data = {
+    profile: {
+      ...profile,
+      bio: "",
+    },
+  };
+  console.log({ data });
   try {
-    await setDoc(Ref, {
-      profile: {
-        ...profile,
-        bio: "",
-      },
-    });
+    await setDoc(Ref, data);
     await updateName(user, firstName, lastName);
   } catch (error) {
     console.error(error);

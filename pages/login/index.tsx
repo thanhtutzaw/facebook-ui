@@ -18,7 +18,7 @@ import { signin } from "../../lib/signin";
 import EmailIcon from "../../public/email.svg";
 import styles from "../../styles/Home.module.scss";
 import signupStyles from "../../components/Signup/index.module.scss";
-import { addProfile } from "../../lib/profile";
+import { addProfile } from "../../lib/firestore/profile";
 import { Props, account } from "../../types/interfaces";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
@@ -156,7 +156,7 @@ export default function Login({ uid }: { uid: string }) {
       } else {
         name.setAttribute("required", "true");
         if (firstName) {
-          alert(JSON.stringify(Account, null, 4));
+          // alert(JSON.stringify(Account, null, 4));
 
           const UserCredential = await createUserWithEmailAndPassword(
             auth,
@@ -165,7 +165,10 @@ export default function Login({ uid }: { uid: string }) {
           );
           setadding(true);
           try {
+            // const {email,password , ...profile} = Account.profile
+            // const accountProfile = {}
             await addProfile(UserCredential.user, Account.profile);
+            console.log(Account.profile);
             setadding(false);
           } catch (error) {
             console.error(error);
@@ -354,7 +357,7 @@ export default function Login({ uid }: { uid: string }) {
                   </p>
                 </motion.button>
               ) : (
-                <div style={{position:'relative'}}>
+                <div style={{ position: "relative" }}>
                   {!error && (
                     <>
                       <motion.div

@@ -1,4 +1,5 @@
 import { getAuth } from "firebase/auth";
+import { collection, doc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
@@ -11,11 +12,8 @@ import { Post as PostTypes } from "../../types/interfaces";
 import BackHeader from "../Header/BackHeader";
 import PhotoLayout from "../Post/PhotoLayout";
 import { SharePreview } from "../Post/SharePreview";
-import FooterInput from "./FooterInput";
+import PostSettingFooterForm from "./PostSettingFooterForm";
 import Input from "./Input";
-import { doc, collection } from "firebase/firestore";
-import { sendAppNoti } from "../../lib/firestore/notifications";
-import { profile } from "console";
 
 export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const { sharePost } = props;
@@ -29,14 +27,13 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const [value, setvalue] = useState("");
   const [visibility, setVisibility] = useState(value);
   const { setLocal } = useLocalStorage("visibility", value);
-  const { fileRef, uploadButtonClicked, setuploadButtonClicked } = useContext(
-    PageContext
-  ) as PageProps;
+  const { friends, fileRef, uploadButtonClicked, setuploadButtonClicked } =
+    useContext(PageContext) as PageProps;
 
   useEffect(() => {
     setvalue(localStorage.getItem("visibility")!);
     const value = localStorage.getItem("visibility");
-    setVisibility(value!);
+    setVisibility(value ?? "Public");
   }, [visibility]);
 
   useEffect(() => {
@@ -62,10 +59,6 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
         (as !== currentPath && textRef.current?.textContent) ||
         (files?.length !== 0 && !confirm("Changes you made may not be saved."))
       ) {
-        // router.back();
-        //This code work but I want to display Leave Propmt , instead confirm box
-        // history.pushState(null, document.title, currentPath);
-        // return false;
         if (confirm("Changes you made may not be saved.")) {
           return true;
         } else {
@@ -89,7 +82,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   useEffect(() => {
     setshareAction?.("");
   }, [setshareAction]);
-  const { author, id } = router.query;
+  // console.log(friends);
   return (
     <div
       style={{
@@ -170,39 +163,26 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
             try {
               setLoading(true);
               window.document.body.style.cursor = "wait";
-              // await addPost(uid, media, replace.current, visibility);
               const media = await uploadMedia(files as File[]);
               const shareRef = doc(collection(db, `users/${uid}/posts`));
-
-              const sharePost2 = {
-                author: sharePost?.authorId?.toString()!,
+              const sharePostData = {
                 id: sharePost?.id?.toString()!,
+                author: sharePost?.authorId?.toString()!,
                 sharer: [{ id: uid }],
                 refId: shareRef.id,
               };
-              // console.log(sharePost2);
-              if (sharePost) {
-                await addPost(
-                  uid,
-                  visibility,
-                  replace.current,
-                  media,
-                  sharePost2
-                );
-                // await sendAppNoti(
-                //   uid,
-                //   sharePost.sharePost?.post?.authorId.toString()!,
-                //   profile!,
-                //   "share",
-                //   `${uid}/${sharePost.refId}`,
-                //   `${authorName} : ${replace.current}`
-                // );
-              } else {
-                await addPost(uid, visibility, replace.current, media);
-              }
+              await addPost(
+                uid,
+                visibility,
+                replace.current,
+                media,
+                sharePost ? sharePostData : null,
+                friends
+              );
               router.replace("/", undefined, { scroll: false });
               window.document.body.style.cursor = "initial";
             } catch (error: any) {
+              setLoading(false);
               alert(error.message);
             } finally {
               window.document.body.style.cursor = "initial";
@@ -216,7 +196,6 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
         style={{ direction: "ltr" }}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
-            // e.preventDefault();
             // const element = textRef.current;
             // const selection = window.getSelection();
             // const range = selection?.getRangeAt(0)!;
@@ -307,7 +286,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
       {router.query.author && (
         <SharePreview query={router.query} post={sharePost!} />
       )}
-      <FooterInput
+      <PostSettingFooterForm
         fileRef={fileRef!}
         files={files}
         setFiles={setFiles}

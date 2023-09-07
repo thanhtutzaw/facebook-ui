@@ -5,7 +5,7 @@ import { SelectVisiblity } from "../Post/SelectVisiblity";
 import s from "../../styles/Home.module.scss";
 import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { Post } from "../../types/interfaces";
-function FooterInput(props: {
+function PostSettingFooterForm(props: {
   setLocal?: Function;
   fileRef: RefObject<HTMLInputElement>;
   setFiles: Function;
@@ -52,4 +52,4 @@ function FooterInput(props: {
   );
 }
 
-export default FooterInput;
+export default PostSettingFooterForm;

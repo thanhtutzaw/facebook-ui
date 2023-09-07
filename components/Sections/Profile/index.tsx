@@ -22,7 +22,7 @@ import {
 import { AppContext, LIMIT } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
 import { app, db, getPostWithMoreInfo } from "../../../lib/firebase";
-import { changeProfile } from "../../../lib/profile";
+import { changeProfile } from "../../../lib/firestore/profile";
 import { Post, Props, account } from "../../../types/interfaces";
 import Content from "./Content";
 import EditProfile from "./EditProfile";

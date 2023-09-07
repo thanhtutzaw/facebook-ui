@@ -15,41 +15,39 @@ import {
   onSnapshot,
   orderBy,
   query,
-  serverTimestamp,
-  updateDoc,
   where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
-import { AppProvider } from "../context/AppContext";
+import { AppProvider, LIMIT } from "../context/AppContext";
 import {
   app,
   db,
-  getPostsbyId,
+  getNewsFeed,
   getProfileByUID,
   userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import pop from "../public/pop.mp3";
+import friendReqSound from "../public/NotiSounds/chord.mp3";
 import { Props } from "../types/interfaces";
 
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import useSound from "use-sound";
 import Spinner from "../components/Spinner";
+import { PageContext, PageProps } from "../context/PageContext";
 import { useActive } from "../hooks/useActiveTab";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import { messaging } from "firebase-admin";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
   try {
     const cookies = nookies.get(context);
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
-    console.log(token.uid + " in index");
+    // console.log(token.uid + " in index");
 
     const convertSecondsToTime = (seconds: number) => {
       const days = Math.floor(seconds / (3600 * 24));
@@ -62,7 +60,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // console.log(convertSecondsToTime(token.exp));
     const { name: username, email, uid } = token;
     // console.log("isVerify " + token.email_verified);
-
+    // await getFCMToken(uid);
     const myFriendsQuery = query(
       collection(db, `users/${uid}/friends`),
       where("status", "==", "friend"),
@@ -70,13 +68,20 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     );
     const myFriendsSnap = await getDocs(myFriendsQuery);
     const acceptedFriends = myFriendsSnap.docs.map((doc) => doc.id);
+    const feedUser = myFriendsSnap.docs.map((doc) => {
+      const feedUser = { id: doc.data().id };
+      return feedUser as { id: string };
+    });
+    const feedUserWithAdmin = [{ id: uid }, ...feedUser];
+    console.log(feedUserWithAdmin);
     const recentPosts = await Promise.all(
-      myFriendsSnap.docs.map(async (doc) => {
-        const { id: friendId, updatedAt: acceptedDate } = doc.data();
-        console.log(friendId);
+      feedUserWithAdmin.map(async (friend) => {
+        // const { id: friendId, updatedAt: acceptedDate } = doc.data();
+        // console.log(friendId);
         const recentPostQuery = query(
-          collection(db, `users/${uid}/friends/${friendId}/recentPosts`),
-          orderBy("createdAt", "desc")
+          collection(db, `users/${uid}/friends/${friend.id}/recentPosts`),
+          orderBy("createdAt", "desc"),
+          limit(LIMIT)
         );
         return (await getDocs(recentPostQuery)).docs.map((doc) => {
           const authorId = doc.ref.parent.parent?.id;
@@ -153,13 +158,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     //   limit(1)
     // );
 
-    const [newPosts, profileData, currentAccount] = await Promise.all([
-      getPostsbyId(uid, posts),
+    const [newsFeedPosts, profileData, currentAccount] = await Promise.all([
+      getNewsFeed(uid, posts),
       // getPostWithMoreInfo(uid, postQuery),
       getProfileByUID(uid),
       getUserData(uid),
     ]);
-    console.log(newPosts);
     const profile = {
       ...profileData,
       photoURL: profileData.photoURL
@@ -173,9 +177,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // );
     return {
       props: {
-        expired: false,
+        expired,
         uid,
-        posts: newPosts,
+        posts: newsFeedPosts,
         email,
         username: username ?? "Unknown",
         profile,
@@ -188,7 +192,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       },
     };
   } catch (error: any) {
-    console.log("SSR Error " + error);
+    console.log("SSR Error in index " + error);
     let postError = error.code === "resource-exhausted" ? error.message : "";
     if (error.code === "resource-exhausted") {
       console.log(AuthErrorCodes.QUOTA_EXCEEDED);
@@ -319,8 +323,7 @@ export default function Home({
       if (unsubscribeNotifications) unsubscribeNotifications();
     };
   }, [UnReadNotiCount, uid]);
-  const [playFriendRequest] = useSound(pop, { volume: 0.11 });
-  //  const [playOff] = useSound(uncheckSound, { volume: 0.11 });
+  // const [playFriendRequest] = useSound(friendReqSound, { volume: 0.11 });
   const soundRef = useRef<HTMLAudioElement>(null);
   // useEffect(() => {
   //   const friendReqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
@@ -340,12 +343,16 @@ export default function Home({
     try {
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
+        // console.log(await navigator.serviceWorker.controller);
         console.log("Notification permission granted.");
+        return true;
       } else {
         console.log("Notification permission denied.");
+        return false;
       }
     } catch (error) {
       console.error("Error requesting notification permission:", error);
+      return false;
     }
   };
 
@@ -362,7 +369,7 @@ export default function Home({
     ) {
       const messaging = getMessaging(app);
 
-      requestNotificationPermission();
+      const isAllowedNoti = requestNotificationPermission();
       const getFCMToken = async () => {
         try {
           const token = await getToken(messaging, {
@@ -383,19 +390,31 @@ export default function Home({
       console.log("FCM not supported");
     }
   }, []);
-  //  useEffect(() => {
-  //    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
-  //      const messaging = getMessaging(app);
-  //      const unsubscribe = onMessage(messaging, (payload) => {
-  //        console.log("Foreground push notification received:", payload);
-  //        // Handle the received push notification while the app is in the foreground
-  //        // You can display a notification or update the UI based on the payload
-  //      });
-  //      return () => {
-  //        unsubscribe(); // Unsubscribe from the onMessage event
-  //      };
-  //    }
-  //  }, []);
+  useEffect(() => {
+    // async function isAllowedNoti() {
+    //   return await requestNotificationPermission();
+    // }
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      const messaging = getMessaging(app);
+      const unsubscribe = onMessage(messaging, (payload) => {
+        console.log("Foreground push notification received:", payload);
+        // Handle the received push notification while the app is in the foreground
+        // You can display a notification or update the UI based on the payload
+        const notificationTitle = payload?.notification?.title ?? "Facebook";
+        const notificationOptions = {
+          body: payload?.notification?.body ?? "Notifications from facebook .",
+          icon: "/logo.svg",
+        };
+        navigator.serviceWorker.ready.then((reg) =>
+          reg.showNotification(notificationTitle, notificationOptions)
+        );
+        new Notification(notificationTitle, notificationOptions);
+      });
+      return () => {
+        unsubscribe(); // Unsubscribe from the onMessage event
+      };
+    }
+  }, []);
   useEffect(() => {
     if (!uid) return;
     const friendReqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
@@ -416,42 +435,37 @@ export default function Home({
             const updatedAt =
               doc.data().updatedAt?.toDate()?.getTime() ?? Date.now();
             const count = doc.data().count;
-            // console.log({updatedAt});
-            // if (count) {
             const newCount = count;
-
-            // Check if the count increased
-            // if (newCount > prevfriendReqCount) {
-            // Play the pop sound
-            // playPopSound();
             if (count > 0) {
               console.log(lastPull?.toDate().getTime! < updatedAt);
-              // if (updatedAt < Date.now()) return;
-
               if (updatedAt > Date.now()) {
                 soundRef.current
                   ?.play()
                   .then(() => {
+                    soundRef.current?.play();
                     console.log("allow");
-                    playFriendRequest();
+                    // playFriendRequest();
                   })
                   .catch(() => {
+                    soundRef.current?.pause();
                     console.log(
                       "Audio autoplay not allowed (Try app at HomeScreen)"
                     );
                   });
+                // try {
+                //   soundRef.current?.play();
+                //   console.log("Audio autoplay Allowed in HomeScreen App");
+                //   playFriendRequest();
+                // } catch (error) {
+                //   soundRef.current?.pause();
+                //   console.log(
+                //     "Audio autoplay not allowed (Try agin by adding App to HomeScreen)"
+                //   );
+                // }
               }
             }
-
-            // Update the previous count
             setprevfriendReqCount(newCount);
-            // }
-
-            // Update the current count
-            // setCurrentCount(newCount);
             setfriendReqCount(count);
-            // }
-            // console.log(count , friendReqCount);
           });
         });
       } catch (error) {
@@ -462,14 +476,16 @@ export default function Home({
     return () => {
       if (unsubscribeFriendReqCount) unsubscribeFriendReqCount();
     };
-  }, [friendReqCount, playFriendRequest, uid]);
+  }, [friendReqCount, uid]);
+  // useEffect(() => {
+  //   console.log({ friendReqCount, prevfriendReqCount });
+  // }, [friendReqCount, prevfriendReqCount]);
+  const { setfriends } = useContext(PageContext) as PageProps;
   useEffect(() => {
-    console.log({ friendReqCount, prevfriendReqCount });
-  }, [friendReqCount, prevfriendReqCount]);
+    setfriends?.(acceptedFriends);
+  }, [acceptedFriends, setfriends]);
 
   const { active, setActive } = useActive();
-  // const { isPage, setisPage } = useContext(PageContext) as PageProps;
-  // setisPage?.(uid);
 
   if (expired) return <Welcome postError={postError} expired={expired} />;
   return uid ? (
@@ -492,28 +508,12 @@ export default function Home({
       email={email}
       account={account}
     >
-      {/* <button
-        ref={soundRef}
-        onClick={() => {
-          console.log("clicked sound button");
-          playFriendRequest();
-        }}
-        style={{ visibility: "hidden", display: "none" }}
-      >
-        Hidden Sound
-      </button> */}
-
-      {/* {uid + "- SSR uid (not page accessable) "} */}
       <Header tabIndex={active === "/" ? 0 : -1} indicatorRef={indicatorRef} />
-      {/* {JSON.stringify(isPage)} {isPage && "- all page accessable"} */}
-      {/* <button onClick={() => setisPage?.(isPage?.concat([9, 10]))}>
-        change
-      </button> */}
       <audio
         style={{ visibility: "hidden", display: "none" }}
         ref={soundRef}
-        src={pop}
-      ></audio>
+        src={friendReqSound}
+      />
 
       <Tabs indicatorRef={indicatorRef} />
     </AppProvider>

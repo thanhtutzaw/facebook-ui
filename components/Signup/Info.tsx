@@ -30,7 +30,6 @@ export default function Info(props: {
         aria-label="First name"
         autoCapitalize="sentences"
       />
-
       <input
         onChange={handleChange}
         id="lastName"

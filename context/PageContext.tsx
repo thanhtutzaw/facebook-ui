@@ -9,6 +9,7 @@ import {
 import { createContext } from "react";
 import { useQueryClient, QueryClient } from "@tanstack/react-query";
 import { User } from "firebase/auth";
+import { friends } from "../types/interfaces";
 
 export type selectedId = {
   post: string;
@@ -42,12 +43,15 @@ export interface PageProps {
   preventClick?: boolean;
   isPage?: any;
   setisPage?: Function;
+  friends?: friends[] | [];
   setpreventClick?: Function;
+  setfriends?: Function;
 }
 export const PageContext = createContext<PageProps | null>(null);
 
 export function PageProvider(props: PageProps) {
   const { active, setActive, currentUser, isPage, setisPage } = props;
+  const [friends, setfriends] = useState<friends[]>([]);
   const queryClient = useQueryClient();
   const [showAction, setshowAction] = useState("");
   const [shareAction, setshareAction] = useState("");
@@ -73,6 +77,8 @@ export function PageProvider(props: PageProps) {
   return (
     <PageContext.Provider
       value={{
+        friends,
+        setfriends,
         isPage,
         currentUser,
         setisPage,

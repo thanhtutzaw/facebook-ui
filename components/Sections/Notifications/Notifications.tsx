@@ -55,7 +55,7 @@ export default function Notifications() {
         const date = data.createdAt as Timestamp;
         const createdDate = date.toDate().getTime();
         const lastPullData = lastPullTimestamp as Timestamp;
-        const lastPull = lastPullData.toDate().getTime();
+        const lastPull = lastPullData?.toDate().getTime();
         // const hasRead =;
         // const lastPull = new Timestamp(
         //   lastPullTimestamp?.nanoseconds!,

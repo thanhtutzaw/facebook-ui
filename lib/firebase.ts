@@ -11,10 +11,9 @@ import {
   doc,
   getDoc,
   getDocs,
-  getFirestore,
+  getFirestore
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { getMessaging } from "firebase/messaging";
 import { Comment, Post, account } from "../types/interfaces";
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -29,11 +28,6 @@ export const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore();
 const storage = getStorage(app);
-// const production = process.env.NODE_ENV == "production";
-// if(production){
-//   const messaging = getMessaging(app);
-// }
-
 export { app, db, storage };
 // const messageKey = process.env.NEXT_PUBLIC_MessageKey;
 // function requestPermission() {
@@ -53,8 +47,6 @@ export async function fethUserDoc(uid: string | string[]) {
   return user!;
 }
 export function JSONTimestampToDate(date: Timestamp | Post["createdAt"]) {
-  // if(!data instanceof Timestamp) return;
-  // if (!date) return;
   return new Timestamp(date?.seconds, date?.nanoseconds).toDate();
 }
 export async function postToJSON(
@@ -232,12 +224,28 @@ export async function postInfo(p: Post, uid: string) {
   }
   return null;
 }
-export async function getPostsbyId(uid: string, posts?: any[]) {
-  // const postSnap = postQuery ? await getDocs(postQuery as Query) : snapShot;
+// export async function getNewsFeed(uid: string, newsFeedPosts?: any[]) {
+//   console.log("posts are fetched");
+//   const newsFeedPostswithoutAdmin = await getPostsbyId(uid, newsFeedPosts);
+
+//   const adminPostsRef = query(
+//     collection(db, `users/${uid}/posts`),
+//     orderBy("createdAt", "desc"),
+//     limit(10)
+//   );
+//   const postDoc = await getDocs(adminPostsRef);
+//   // const postData = await postToJSON(postDoc);
+//   const adminPosts = await Promise.all(
+//     postDoc.docs.map(async (doc) => await postToJSON(doc))
+//   );
+//   console.log({ ...newsFeedPostswithoutAdmin, ...adminPosts });
+//   return null;
+// }
+export async function getNewsFeed(uid: string, newsFeedPosts?: any[]) {
   console.log("posts are fetched");
-  if (posts) {
+  if (newsFeedPosts) {
     const data = await Promise.all(
-      posts.map(async (post) => {
+      newsFeedPosts.map(async (post) => {
         if (!post.authorId) return null;
         const postRef = doc(db, `users/${post.authorId}/posts/${post.id}`);
         const postDoc = await getDoc(postRef);
@@ -247,34 +255,11 @@ export async function getPostsbyId(uid: string, posts?: any[]) {
       })
     );
     return data as Post[];
-    // console.log(data);
-    // const postJSON = await Promise.all(
-    //   // postSnap.docs.map(async (doc) => await postToJSON(doc))
-    //   // post.
-
-    // );
-
-    // try {
-    //   return (await Promise.all(
-    //     // postJSON.map(async (p) => {
-    //     //   return await postInfo(p, uid);
-    //     // })
-    //   )) as Post[];
-    // } catch (error: any) {
-    //   if (error === AuthErrorCodes.QUOTA_EXCEEDED) {
-    //     console.log(AuthErrorCodes.QUOTA_EXCEEDED);
-    //     alert("Firebase Quota Exceeded. Please try again later.");
-    //     throw error;
-    //   }
-    //   if (error.code === "quota-exceeded") {
-    //     alert("Firebase Quota Exceeded. Please try again later.");
-    //     throw error;
-    //   }
-    //   // return null;
-    // }
   }
-  // return null;
 }
+// export async function getPostsbyId(uid: string, newsFeedPosts?: any[]) {
+
+// }
 export async function getPostWithMoreInfo(
   uid: string,
   postQuery?: Query<DocumentData>,

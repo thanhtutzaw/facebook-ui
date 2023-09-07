@@ -1,7 +1,4 @@
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
-import { app } from "../lib/firebase";
-import { auth } from "firebase-admin";
-import { getAuth } from "firebase/auth";
+import { firestore } from "firebase-admin";
 var admin = require("firebase-admin");
 // var serviceAccount = require("../secret.json");
 if (!admin.apps.length) {
@@ -46,3 +43,21 @@ export async function getUserData(uid: string) {
     console.error("Error retrieving user data:", error);
   }
 }
+export async function getFCMToken(uid: string) {
+  // Get the user's FCM token (replace with your user lookup logic)
+  // const user = await admin.auth().getUser(uid);
+  const user = await firestore().doc(`users/${uid}`).get();
+  // const fcmToken = user.tokens?.fcmToken;
+  const fcmToken = user.data()?.fcmToken ?? null;
+  return fcmToken;
+  // getMess
+  // console.log({ withFCM: fcmToken });
+}
+// export async function sendPushNoti(params: type) {
+//   const notification = {
+//     token: fcmToken,
+//     notification: {
+//       body: message,
+//     },
+//   };
+// }

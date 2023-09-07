@@ -9,7 +9,7 @@ import { deletePost } from "../../lib/firestore/post";
 import { Post } from "../../types/interfaces";
 import { CopyLink } from "./DropDown";
 import styles from "./index.module.scss";
-
+import { useQueryClient } from "@tanstack/react-query";
 export default function AdminDropDown(props: {
   updatePost: Function;
   setshowAction: Function;
@@ -21,7 +21,7 @@ export default function AdminDropDown(props: {
   const { updatePost, post, setshowAction, authorId, id, showAction } = props;
   const auth = getAuth(app);
   const [loading, setLoading] = useState(false);
-
+  const queryClient = useQueryClient();
   // const deletePostMutation = useMutation({
   //   mutationFn: async (data: any) => await deletePost(data),
   //   onSuccess: (data) => {
@@ -93,6 +93,8 @@ export default function AdminDropDown(props: {
                 // queryClient.invalidateQueries(["myPost"]);
                 setLoading(false);
                 setshowAction?.("");
+                queryClient.refetchQueries(["myPost"]);
+                queryClient.invalidateQueries(["myPost"]);
                 // deletePostMutation.mutate({
                 //   uid: auth.currentUser.uid,
                 //   postid: id!,
