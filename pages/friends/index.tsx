@@ -265,7 +265,7 @@ export default function Page(props: {
                   </>
                 )}
 
-                {friend.senderId === uid && friend.status !== "pending" ? (
+                {friend.senderId === uid && friend.status !== "pending" && friend.status === "block" ? (
                   <button
                     onClick={async () => {
                       await unFriend(uid, friend);

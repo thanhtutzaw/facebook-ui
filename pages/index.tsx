@@ -372,7 +372,7 @@ export default function Home({
             vapidKey: process.env.NEXT_PUBLIC_MessageKey,
           });
           // console.log(process.env.NEXT_PUBLIC_MessageKey);
-          if (token) {
+          if (token && uid) {
             console.log("FCM token:", token);
             const shouldStoreNewDeviceToken = fcmToken?.includes(token);
             if (shouldStoreNewDeviceToken) return;
@@ -441,20 +441,27 @@ export default function Home({
             const newCount = count;
             if (count > 0) {
               console.log(lastPull?.toDate().getTime! < updatedAt);
+              const audioElement = soundRef.current;
+
               if (updatedAt > Date.now()) {
-                soundRef.current
-                  ?.play()
-                  .then(() => {
-                    soundRef.current?.play();
-                    console.log("allow");
-                    // playFriendRequest();
-                  })
-                  .catch(() => {
-                    soundRef.current?.pause();
-                    console.log(
-                      "Audio autoplay not allowed (Try app at HomeScreen)"
-                    );
-                  });
+                if (audioElement) {
+                  // Decrease the volume by setting it to a value less than 1.0
+                  audioElement.volume = 0.4; // Adjust the volume as needed (0.5 means 50% volume)
+                  audioElement
+                    .play()
+                    .then(() => {
+                      soundRef.current?.play();
+                      console.log("allow");
+                    })
+                    .catch(() => {
+                      soundRef.current?.pause();
+                      console.log(
+                        "Audio autoplay not allowed (Try app at HomeScreen)"
+                      );
+                    });
+                }
+                // soundRef.current
+                //   ?.
                 // try {
                 //   soundRef.current?.play();
                 //   console.log("Audio autoplay Allowed in HomeScreen App");

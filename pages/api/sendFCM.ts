@@ -1,22 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import admin from "firebase-admin";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getFCMToken } from "../../lib/firebaseAdmin";
-import admin from "firebase-admin";
-// import { app } from "../../lib/firebase";
-// import { getMessaging } from "firebase-admin/messaging";
-// Initialize Firebase Admin SDK (replace with your service account credentials)
-// const serviceAccount = require("./path-to-your-service-account-key.json");
-// if (!admin.apps.length) {
-//   admin.initializeApp({
-//     credential: admin.credential.cert(serviceAccount),
-//     // Add other Firebase configuration options here
-//   });
-// }
-type Data = {
-  uid: string;
-  message: string;
-  name?: string;
-};
+// type Data = {
+//   uid: string;
+//   message: string;
+//   name?: string;
+// };
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -28,7 +18,7 @@ if (!admin.apps.length) {
 }
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse
 ) {
   const { recieptId, message } = req.body;
   // const registrationToken =
@@ -38,13 +28,7 @@ export default async function handler(
   console.log(recieptId);
   const registrationToken = await getFCMToken(recieptId);
   if (!registrationToken) return;
-  const message2 = {
-    data: {
-      score: "850",
-      time: "2:45",
-    },
-    token: registrationToken,
-  };
+
   // const messaging = getMessaging();
   // messaging
   //   .send(message2)
@@ -55,16 +39,18 @@ export default async function handler(
   //   .catch((error: any) => {
   //     console.log("Error sending message:", error);
   //   });
-  const messageNoti = {
-    token: registrationToken, // Replace with the user's FCM token
-    notification: {
-      title: "Facebook",
-      body: message,
-    },
-  };
   try {
-    const response = await admin.messaging().send(messageNoti);
-    console.log("Successfully sent message:", response);
+    registrationToken.map(async (token) => {
+      const messageNoti = {
+        token, // Replace with the user's FCM token
+        notification: {
+          title: "Facebook",
+          body: message,
+        },
+      };
+      const response = await admin.messaging().send(messageNoti);
+      console.log("Successfully sent message:", response);
+    });
   } catch (error) {
     console.log(error);
   }

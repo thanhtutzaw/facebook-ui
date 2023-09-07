@@ -11,7 +11,7 @@ export default function Navitems(props: {
   name: string;
   index: number;
 }) {
-  const { UnReadNotiCount , friendReqCount} = useContext(AppContext) as Props;
+  const { UnReadNotiCount, friendReqCount } = useContext(AppContext) as Props;
 
   const { active, setActive, icon: TabIcon, name, index } = props;
   const router = useRouter();
@@ -33,10 +33,13 @@ export default function Navitems(props: {
         behavior: "smooth",
       });
       // if (active !== "home") return;
-      if (active !== "/") return;
       if (tab.scrollTop >= 60) return;
-      console.log("refreshing new data in Newsfeed");
-      router.replace("/", undefined, { scroll: false });
+      if (active === "/") {
+        console.log("refreshing new data in Newsfeed");
+        router.replace("/", undefined, { scroll: false });
+      } else if (active === "friends") {
+        router.replace("/#friends", undefined, { scroll: false });
+      }
     }
   };
   const activeClass = active === TabName ? styles.active : "";

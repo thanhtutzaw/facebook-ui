@@ -167,7 +167,7 @@ export const Footer = (
 
               await likePost(likeCount ?? 0, postRef, likeRef, uid);
               setLikeLoading(false);
-
+              if (uid === post.authorId) return;
               await sendAppNoti(
                 uid,
                 post.authorId,

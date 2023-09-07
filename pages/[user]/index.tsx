@@ -162,7 +162,7 @@ export default function UserProfile({
             id: router.query.user,
           } as friends;
           await addFriends(token.uid, data);
-          router.replace("/", undefined, { scroll: false });
+          router.replace(router.asPath, undefined, { scroll: false });
           queryClient.refetchQueries(["pendingFriends"]);
           queryClient.invalidateQueries(["pendingFriends"]);
         }}
@@ -174,9 +174,9 @@ export default function UserProfile({
     ),
     pending: (
       <button
-        onClick={() => {
-          router.push(`/chat/${router.query.user}`);
-        }}
+        // onClick={() => {
+        //   router.push(`/chat/${router.query.user}`);
+        // }}
         className={`${s.editToggle} ${s.pending}`}
       >
         <FontAwesomeIcon icon={faClock} />
