@@ -49,6 +49,7 @@ export async function getFCMToken(uid: string) {
   const user = await firestore().doc(`users/${uid}`).get();
   // const fcmToken = user.tokens?.fcmToken;
   const fcmToken = user.data()?.fcmToken ?? null;
+  console.log(fcmToken);
   return fcmToken;
   // getMess
   // console.log({ withFCM: fcmToken });

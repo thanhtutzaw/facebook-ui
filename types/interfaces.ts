@@ -19,8 +19,8 @@ export type friends = {
   status?: "friend" | "block" | "pending";
   createdAt?: timeStamp;
   updatedAt?: timeStamp;
-  senderId?:string;
-  author?:account["profile"];
+  senderId?: string;
+  author?: account["profile"];
 };
 
 export type account = {
@@ -88,7 +88,7 @@ export interface Post {
   author: author;
   authorId: string | number;
   id?: string | number;
-  text: string ;
+  text: string;
   visibility: string;
   sharePost?: { author: string; id: string; post?: sharedPost | null };
   media: Media[] | null;
@@ -108,6 +108,7 @@ export interface Comment {
 }
 
 export interface Props {
+  fcmToken?: string | string[];
   friendReqCount?: number | string;
   UnReadNotiCount?: number | string;
   acceptedFriends?: string[];

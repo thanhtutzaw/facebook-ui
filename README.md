@@ -30,8 +30,9 @@ Project is created with:
 :ballot_box_with_check: Enable image preview layout and zoom capability for a better user experience \
 :ballot_box_with_check: Store the id_token in cookies with [nookies](https://www.npmjs.com/package/nookies) to fetch SSR data with the stored uid \
 :ballot_box_with_check: Friends Request , acceptable and blockable \
-:ballot_box_with_check: Friends Request Sound Play in App Mode (Add to HomeScreen due to Browser Autoplay ploicy) \
-:ballot_box_with_check: Users will receive notifications when their posts are liked,commented and shared by other users
+:ballot_box_with_check: Friends Request Sound play in App Mode (Add to HomeScreen due to Browser Autoplay ploicy) \
+:ballot_box_with_check: Users will receive Inbox notifications when their posts are liked,commented and shared by other users \
+:ballot_box_with_check: Push notificatons to multiple devices with Service Worker and Firebase Cloud messaging for foreground and background modes \
 
 ## User-Interface
 

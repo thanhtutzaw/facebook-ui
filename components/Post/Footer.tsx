@@ -162,21 +162,12 @@ export const Footer = (
               // setlikeCount?.(parseInt(post.likeCount.toString()));
               // setisLiked(true);
               setLikes?.([]);
-              await fetch("/api/sendFCM", {
-                method: "POST",
-                headers: {
-                  "Content-type": "application/json",
-                },
-                body: JSON.stringify({
-                  senderId: uid,
-                  message: `${profile?.firstName ?? "Unknown User"} ${
-                    profile.lastName ?? ""
-                  } liked this post`,
-                }),
-              });
+
               // , { uid, message }
 
               await likePost(likeCount ?? 0, postRef, likeRef, uid);
+              setLikeLoading(false);
+
               await sendAppNoti(
                 uid,
                 post.authorId,
@@ -184,7 +175,18 @@ export const Footer = (
                 "post_reaction",
                 `${authorId}/${id}`
               );
-              setLikeLoading(false);
+              await fetch("/api/sendFCM", {
+                method: "POST",
+                headers: {
+                  "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                  recieptId: post.authorId.toString(),
+                  message: `${profile?.firstName ?? "Unknown User"} ${
+                    profile.lastName ?? ""
+                  } liked this post`,
+                }),
+              });
             }
             router.replace(router.asPath, undefined, { scroll: false });
           }}

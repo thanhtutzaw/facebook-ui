@@ -7,6 +7,7 @@ import {
 } from "firebase/auth";
 import {
   Timestamp,
+  arrayUnion,
   collection,
   doc,
   getDoc,
@@ -15,6 +16,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
@@ -28,6 +30,7 @@ import { AppProvider, LIMIT } from "../context/AppContext";
 import {
   app,
   db,
+  fethUserDoc,
   getNewsFeed,
   getProfileByUID,
   userToJSON,
@@ -60,7 +63,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // console.log(convertSecondsToTime(token.exp));
     const { name: username, email, uid } = token;
     // console.log("isVerify " + token.email_verified);
-    // await getFCMToken(uid);
     const myFriendsQuery = query(
       collection(db, `users/${uid}/friends`),
       where("status", "==", "friend"),
@@ -69,15 +71,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     const myFriendsSnap = await getDocs(myFriendsQuery);
     const acceptedFriends = myFriendsSnap.docs.map((doc) => doc.id);
     const feedUser = myFriendsSnap.docs.map((doc) => {
-      const feedUser = { id: doc.data().id };
-      return feedUser as { id: string };
+      return { id: doc.data().id } as { id: string };
     });
     const feedUserWithAdmin = [{ id: uid }, ...feedUser];
     console.log(feedUserWithAdmin);
     const recentPosts = await Promise.all(
       feedUserWithAdmin.map(async (friend) => {
-        // const { id: friendId, updatedAt: acceptedDate } = doc.data();
-        // console.log(friendId);
         const recentPostQuery = query(
           collection(db, `users/${uid}/friends/${friend.id}/recentPosts`),
           orderBy("createdAt", "desc"),
@@ -164,6 +163,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       getProfileByUID(uid),
       getUserData(uid),
     ]);
+    const fcmToken = (await fethUserDoc(uid)).data()?.fcmToken ?? null;
     const profile = {
       ...profileData,
       photoURL: profileData.photoURL
@@ -186,6 +186,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         account: currentUserData ?? null,
         acceptedFriends,
         isFriendEmpty,
+        fcmToken,
         // posts: [],
         // profile: null,
         // account: null,
@@ -227,6 +228,7 @@ export default function Home({
   username,
   profile,
   account,
+  fcmToken,
 }: Props) {
   const indicatorRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -355,12 +357,6 @@ export default function Home({
       return false;
     }
   };
-
-  // if (messagingRef.current) {
-  //   onMessage(messagingRef?.current!, (message) => {
-  //     console.log("Received message:", message);
-  //   });
-  // }
   useEffect(() => {
     if (
       "Notification" in window &&
@@ -373,11 +369,18 @@ export default function Home({
       const getFCMToken = async () => {
         try {
           const token = await getToken(messaging, {
-            vapidKey:
-              "BJPHa_aNR1GtwaZB8Wg1KDStszJikoSxmLm_xs2c3e001R6yCy4SkoLQZ-rRLicS2kB__aACT55g1Ep4njxacOE",
+            vapidKey: process.env.NEXT_PUBLIC_MessageKey,
           });
+          // console.log(process.env.NEXT_PUBLIC_MessageKey);
           if (token) {
             console.log("FCM token:", token);
+            const shouldStoreNewDeviceToken = fcmToken?.includes(token);
+            if (shouldStoreNewDeviceToken) return;
+            const userDoc = doc(db, `users/${uid}`);
+
+            await updateDoc(userDoc, { fcmToken: arrayUnion(token) });
+
+            console.log("stored token to db");
           } else {
             console.log("No FCM token received.");
           }
@@ -389,7 +392,7 @@ export default function Home({
     } else {
       console.log("FCM not supported");
     }
-  }, []);
+  }, [fcmToken, uid]);
   useEffect(() => {
     // async function isAllowedNoti() {
     //   return await requestNotificationPermission();
