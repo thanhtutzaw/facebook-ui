@@ -29,7 +29,7 @@ export default function Post({
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
-  const { showAction, setshowAction } = useContext(PageContext) as PageProps;
+  const { showAction, setshowAction , currentUser } = useContext(PageContext) as PageProps;
 
   useEffect(() => {
     if (selectMode) {
@@ -76,7 +76,7 @@ export default function Post({
       {!shareMode && (
         <Footer
           setLikes={setLikes}
-          profile={profile!}
+          profile={currentUser}
           likeCount={likeCount!}
           setlikeCount={setlikeCount}
           post={post}

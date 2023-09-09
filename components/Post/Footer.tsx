@@ -6,7 +6,7 @@ import {
   faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getAuth } from "firebase/auth";
+import { User, getAuth } from "firebase/auth";
 import { collection, doc, getDoc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
@@ -23,13 +23,14 @@ import { sendAppNoti } from "../../lib/firestore/notifications";
 import { addPost, likePost, unlikePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 export const Footer = (
   props: {
     likeCount?: number;
     setLikes?: Function;
     setlikeCount?: Function;
     post: Post;
-    profile: account["profile"];
+    profile: User | null;
     tabIndex?: number;
   } & StyleHTMLAttributes<HTMLDivElement>
 ) => {
@@ -182,9 +183,12 @@ export const Footer = (
                 },
                 body: JSON.stringify({
                   recieptId: post.authorId.toString(),
-                  message: `${profile?.firstName ?? "Unknown User"} ${
-                    profile.lastName ?? ""
+                  message: `${
+                    profile?.displayName ?? "Unknown User"
                   } liked this post`,
+                  // message: `${profile?.firstName ?? "Unknown User"} ${
+                  //   profile.lastName ?? ""
+                  // } liked this post`,
                 }),
               });
             }
@@ -392,7 +396,7 @@ async function handleShareNow(
   visibility: string,
   sharePost: { refId: string; author: string; id: string },
   post: Post,
-  profile: account["profile"],
+  profile: User | null,
   authorName: string
 ) {
   await addPost(uid, visibility, "", [], sharePost);

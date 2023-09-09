@@ -7,22 +7,24 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { commentDateToJSON, db } from "../../lib/firebase";
 import { addComment } from "../../lib/firestore/comment";
 import { sendAppNoti } from "../../lib/firestore/notifications";
 import { Post, account } from "../../types/interfaces";
 import s from "./index.module.scss";
 import Image from "next/image";
+import { PageContext, PageProps } from "../../context/PageContext";
 export default function CommentInput(props: {
   setlimitedComments: any;
   uid?: string;
   postId: string;
   authorId: string;
   post?: Post;
-  profile?: account["profile"];
+  // profile?: account["profile"];
 }) {
-  const { setlimitedComments, profile, post, uid, authorId, postId } = props;
+  const { currentUser } = useContext(PageContext) as PageProps;
+  const { setlimitedComments, post, uid, authorId, postId } = props;
   const [text, settext] = useState("");
   const commentRef = doc(
     collection(db, `users/${authorId}/posts/${postId}/comments`)
@@ -53,7 +55,7 @@ export default function CommentInput(props: {
           await sendAppNoti(
             uid,
             post?.authorId.toString()!,
-            profile!,
+            currentUser!,
             "comment",
             `${authorId}/${post?.id}/#comment-${commentRef.id}`,
             text
@@ -90,8 +92,9 @@ export default function CommentInput(props: {
         width={200}
         height={200}
         priority
-        alt={profile?.firstName ?? "Unknow"}
-        src={(profile?.photoURL as string) ?? ""}
+        // alt={profile?.firstName ?? "Unknow"}
+        alt={currentUser?.displayName ?? "Unknow User"}
+        src={(currentUser?.photoURL as string) ?? ""}
         // alt={currentUser?.displayName ?? "Unknow User"}
         // src={currentUser?.photoURL ?? ""}
       />
