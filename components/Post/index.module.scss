@@ -658,12 +658,14 @@
         // &:active {
         //     opacity: 0.7;
         // }
-        &:has(:hover) > button {
-            // background-color: rgb(207, 207, 207) !important;
-            background-color: rgb(221, 221, 221) !important;
-            // outline: 1px solid var(--blue-origin) !important;
-            // outline-offset: -1px;
+        @media only screen and (hover: hover) and (pointer: fine) {
+            &:has(:hover) > button {
+                // background-color: rgb(207, 207, 207) !important;
+                background-color: rgb(221, 221, 221) !important;
+                // border: 2px solid green !important;
+            }
         }
+
         &:has(:active) > button {
             opacity: 0.6;
         }

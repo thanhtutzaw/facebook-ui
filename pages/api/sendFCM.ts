@@ -40,19 +40,18 @@ export default async function handler(
   //     console.log("Error sending message:", error);
   //   });
   try {
-    registrationToken.map(async (token) => {
-      const messageNoti = {
-        token, // Replace with the user's FCM token
-        data: {
-          title: "Facebook",
-          body: message,
-          // icon: "/logo.svg",
-          // icon: "https://facebook-ui-zee.com/logo.svg",
-        },
-      };
-      const response = await admin.messaging().send(messageNoti);
-      console.log("Successfully sent message:", response);
-    });
+    // registrationToken.map(async (token) => {
+    //   console.log("Successfully sent message:", response);
+    // });
+    const messageNoti = {
+      tokens: registrationToken, // Replace with the user's FCM token
+      data: {
+        title: "Facebook",
+        body: message,
+      },
+    };
+    const response = await admin.messaging().sendEachForMulticast(messageNoti);
+    console.log("Successfully sent message:", response);
   } catch (error) {
     console.log(error);
   }

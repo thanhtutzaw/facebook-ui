@@ -246,9 +246,8 @@ export const Footer = (
           )}
         </AnimatePresence>
       </div>
-      <div>
+      <div className={styles.socialButton}>
         <button
-          className={styles.socialButton}
           title="Comment"
           tabIndex={-1}
           onClick={(e) => {
@@ -263,7 +262,7 @@ export const Footer = (
           <p>Comment</p>
         </button>
       </div>
-      <div>
+      <div className={styles.socialButton}>
         <button
           tabIndex={-1}
           aria-expanded={shareAction !== ""}
