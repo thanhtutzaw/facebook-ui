@@ -26,6 +26,7 @@ import "../styles/globals.css";
 import { GetServerSideProps } from "next";
 import { Props } from "../types/interfaces";
 import { verifyIdToken } from "../lib/firebaseAdmin";
+import { getMessaging, onMessage } from "firebase/messaging";
 config.autoAddCss = false;
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
@@ -77,6 +78,31 @@ export default function App({
       router.events.off("routeChangeError", handleRouteDone);
     };
   }, [router.events]);
+  useEffect(() => {
+    // async function isAllowedNoti() {
+    //   return await requestNotificationPermission();
+    // }
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      const messaging = getMessaging(app);
+      const unsubscribe = onMessage(messaging, (payload) => {
+        console.log("Foreground push notification received:", payload);
+        // Handle the received push notification while the app is in the foreground
+        // You can display a notification or update the UI based on the payload
+        const notificationTitle = payload?.notification?.title ?? "Facebook";
+        const notificationOptions = {
+          body: payload?.notification?.body ?? "Notifications from facebook .",
+          icon: "/logo.svg",
+        };
+        navigator.serviceWorker.ready.then((reg) =>
+          reg.showNotification(notificationTitle, notificationOptions)
+        );
+        new Notification(notificationTitle, notificationOptions);
+      });
+      return () => {
+        unsubscribe(); // Unsubscribe from the onMessage event
+      };
+    }
+  }, []);
   const auth = getAuth(app);
   const [authUser, setauthUser] = useState<User | null>(null);
   useEffect(() => {

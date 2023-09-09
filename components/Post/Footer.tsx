@@ -55,8 +55,8 @@ export const Footer = (
   const { queryClient, dropdownRef, shareAction, setshareAction } = useContext(
     PageContext
   ) as PageProps;
-  const { id, author, authorId } = post;
-  const authorProfile = author as account["profile"];
+  const { id, author: authorAccount, authorId } = post;
+  const authorProfile = authorAccount as account["profile"];
   const authorName = `${authorProfile?.firstName ?? "Unknow"} ${
     authorProfile?.lastName ?? "User"
   }`;

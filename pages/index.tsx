@@ -393,31 +393,7 @@ export default function Home({
       console.log("FCM not supported");
     }
   }, [fcmToken, uid]);
-  useEffect(() => {
-    // async function isAllowedNoti() {
-    //   return await requestNotificationPermission();
-    // }
-    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
-      const messaging = getMessaging(app);
-      const unsubscribe = onMessage(messaging, (payload) => {
-        console.log("Foreground push notification received:", payload);
-        // Handle the received push notification while the app is in the foreground
-        // You can display a notification or update the UI based on the payload
-        const notificationTitle = payload?.notification?.title ?? "Facebook";
-        const notificationOptions = {
-          body: payload?.notification?.body ?? "Notifications from facebook .",
-          icon: "/logo.svg",
-        };
-        navigator.serviceWorker.ready.then((reg) =>
-          reg.showNotification(notificationTitle, notificationOptions)
-        );
-        new Notification(notificationTitle, notificationOptions);
-      });
-      return () => {
-        unsubscribe(); // Unsubscribe from the onMessage event
-      };
-    }
-  }, []);
+  
   useEffect(() => {
     if (!uid) return;
     const friendReqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);

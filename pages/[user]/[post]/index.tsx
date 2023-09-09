@@ -15,7 +15,7 @@ import {
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import Comment from "../../../components/Comment";
 import CommentInput from "../../../components/Comment/Input";
 import BackHeader from "../../../components/Header/BackHeader";
@@ -48,6 +48,8 @@ import {
   account,
   likes,
 } from "../../../types/interfaces";
+import { profile } from "console";
+import { PageContext, PageProps } from "../../../context/PageContext";
 export const Comment_LIMIT = 10;
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
@@ -116,11 +118,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 };
 export default function Page(props: {
   expired: boolean;
-  profile: account["profile"];
+  // profile: account["profile"];
   uid: string;
   post: PostType;
 }) {
-  const { profile, expired, uid, post } = props;
+  const { expired, uid, post } = props;
+  const { currentUser:profile } = useContext(PageContext) as PageProps;
   const router = useRouter();
   const [visibility, setVisibility] = useState(post?.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
@@ -404,7 +407,7 @@ export default function Page(props: {
             />
             <CommentInput
               setlimitedComments={setlimitedComments}
-              profile={profile}
+              // profile={profile}
               post={post}
               uid={uid!}
               authorId={post.authorId?.toString() ?? null}

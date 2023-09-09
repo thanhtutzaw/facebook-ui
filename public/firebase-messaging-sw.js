@@ -1,7 +1,76 @@
-// eslint-disable-next-line no-undef
-importScripts('https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js');
-// eslint-disable-next-line no-undef
-importScripts('https://www.gstatic.com/firebasejs/8.8.0/firebase-messaging.js');
+// // eslint-disable-next-line no-undef
+// importScripts('https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js');
+// // eslint-disable-next-line no-undef
+// importScripts('https://www.gstatic.com/firebasejs/8.8.0/firebase-messaging.js');
+// // import { getMessaging } from "firebase/messaging/sw";
+// // import { onBackgroundMessage } from "firebase/messaging/sw";
+
+// // const messaging = getMessaging();
+// const firebaseConfig = {
+//     apiKey: "AIzaSyAEXJn6eWHzxlh4BuXNtwyA82B-P7bwU4E",
+//     authDomain: "facebook-37f93.firebaseapp.com",
+//     projectId: "facebook-37f93",
+//     storageBucket: "facebook-37f93.appspot.com",
+//     messagingSenderId: "1050578101323",
+//     appId: "1:1050578101323:web:f0cea355bd01e045cc99ce",
+//     measurementId: "G-ME0NSYLYR3"
+// };
+// // eslint-disable-next-line no-undef
+// firebase.initializeApp(firebaseConfig);
+// // eslint-disable-next-line no-undef
+// const messaging = firebase.messaging();
+
+
+// // if (typeof window !== "undefined") {
+// //     console.log("window exist")
+// //     messaging.onMessage((payload) => {
+// //         console.log(
+// //             '[firebase-messaging-sw.js] Received foreground message ',
+// //             payload
+// //         );
+// //         const notificationTitle = payload.notification.title;
+// //         const notificationOptions = {
+// //             body: payload.notification.body,
+// //             icon: '/logo.svg',
+
+// //         };
+// //         self.registration.showNotification(notificationTitle, notificationOptions);
+// //     });
+// // }
+// // const messaging = getMessaging();
+
+// messaging.onBackgroundMessage((payload) => {
+//     console.log(
+//         '[firebase-messaging-sw.js] Received background message ',
+//         payload
+//     );
+//     const notificationTitle = payload.notification.title;
+//     const notificationOptions = {
+//         body: payload.notification.body,
+//         icon: 'https://facebook-ui-zee.com/logo.svg',
+//     };
+//     // self.registration.showNotification(notificationTitle, notificationOptions);
+// });
+// // onBackgroundMessage(messaging, (payload) => {
+// //     console.log('[firebase-messaging-sw.js] Received background message ', payload);
+// //     // Customize notification here
+// //     const notificationTitle = 'Background Message Title';
+// //     const notificationOptions = {
+// //         body: 'Background Message body.',
+// //         icon: '/firebase-logo.png'
+// //     };
+
+// //     self.registration.showNotification(notificationTitle,
+// //         notificationOptions);
+// // });
+
+
+
+// sw.js
+
+importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js'); // Import the Firebase v9 compat library
+importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-messaging-compat.js'); // Import the Firebase v9 compat library for messaging
+
 const firebaseConfig = {
     apiKey: "AIzaSyAEXJn6eWHzxlh4BuXNtwyA82B-P7bwU4E",
     authDomain: "facebook-37f93.firebaseapp.com",
@@ -11,37 +80,19 @@ const firebaseConfig = {
     appId: "1:1050578101323:web:f0cea355bd01e045cc99ce",
     measurementId: "G-ME0NSYLYR3"
 };
-// eslint-disable-next-line no-undef
+
 firebase.initializeApp(firebaseConfig);
-// eslint-disable-next-line no-undef
+
 const messaging = firebase.messaging();
 
-// if (typeof window !== "undefined") {
-//     console.log("window exist") 
-//     messaging.onMessage((payload) => {
-//         console.log(
-//             '[firebase-messaging-sw.js] Received foreground message ',
-//             payload
-//         );
-//         const notificationTitle = payload.notification.title;
-//         const notificationOptions = {
-//             body: payload.notification.body,
-//             icon: '/logo.svg',
+// Add an event listener to handle incoming messages and display notifications
+// self.addEventListener('push', (event) => {
+//     const options = {
+//         body: event.data.text(),
+//         icon: '/path-to-your-icon.png', // Replace with the path to your notification icon
+//     };
 
-//         };
-//         self.registration.showNotification(notificationTitle, notificationOptions);
-//     });
-// } 
-messaging.onBackgroundMessage((payload) => {
-    console.log(
-        '[firebase-messaging-sw.js] Received background message ',
-        payload
-    );
-    const notificationTitle = payload.notification.title;
-    const notificationOptions = {
-        body: payload.notification.body,
-        icon: '/logo.svg',
-
-    };
-    self.registration.showNotification(notificationTitle, notificationOptions);
-});
+//     event.waitUntil(
+//         self.registration.showNotification('Your Notification Title', options)
+//     );
+// });
