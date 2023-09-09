@@ -5,7 +5,7 @@ import { db } from "../firebase";
 export async function sendAppNoti(
   uid: string,
   receiptId: string | number,
-  profile: account["profile"] | null,
+  profile: account["profile"] | null = null,
   type: notiContentTypes,
   url: string,
   content?: string
@@ -19,7 +19,7 @@ export async function sendAppNoti(
     type,
     userName,
     createdAt: serverTimestamp(),
-    photoURL: photoURL as string,
+    photoURL: (photoURL as string) ?? null,
     url,
     uid,
     content: content ? content : "",
