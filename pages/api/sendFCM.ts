@@ -46,7 +46,8 @@ export default async function handler(
         notification: {
           title: "Facebook",
           body: message,
-          icon: "https://facebook-ui-zee.com/logo.svg",
+          icon: "/logo.svg",
+          // icon: "https://facebook-ui-zee.com/logo.svg",
         },
       };
       const response = await admin.messaging().send(messageNoti);
