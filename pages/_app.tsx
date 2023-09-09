@@ -99,7 +99,7 @@ export default function App({
         new Notification(notificationTitle, notificationOptions);
       });
       return () => {
-        unsubscribe(); // Unsubscribe from the onMessage event
+        if (unsubscribe) unsubscribe(); // Unsubscribe from the onMessage event
       };
     }
   }, []);

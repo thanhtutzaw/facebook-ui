@@ -43,10 +43,10 @@ export default async function handler(
     registrationToken.map(async (token) => {
       const messageNoti = {
         token, // Replace with the user's FCM token
-        notification: {
+        data: {
           title: "Facebook",
           body: message,
-          icon: "/logo.svg",
+          // icon: "/logo.svg",
           // icon: "https://facebook-ui-zee.com/logo.svg",
         },
       };
