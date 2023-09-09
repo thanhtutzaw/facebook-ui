@@ -88,9 +88,9 @@ export default function App({
         console.log("Foreground push notification received:", payload);
         // Handle the received push notification while the app is in the foreground
         // You can display a notification or update the UI based on the payload
-        const notificationTitle = payload?.notification?.title ?? "Facebook";
+        const notificationTitle = payload?.data?.title ?? "Facebook";
         const notificationOptions = {
-          body: payload?.notification?.body ?? "Notifications from facebook .",
+          body: payload?.data?.body ?? "Notifications from facebook .",
           icon: "/logo.svg",
         };
         navigator.serviceWorker.ready.then((reg) =>

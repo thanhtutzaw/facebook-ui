@@ -34,6 +34,11 @@
 // //             icon: '/logo.svg',
 
 // //         };
+// //         const notificationOptions = {
+// //             body: payload.notification.body,
+// //             icon: '/logo.svg',
+
+// //         };
 // //         self.registration.showNotification(notificationTitle, notificationOptions);
 // //     });
 // // }
@@ -84,7 +89,14 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
-
+messaging.onBackgroundMessage((payload) => {
+    const { title, body } = payload.data
+    const notificationOptions = {
+        body: body ?? "Notifications from facebook .",
+        icon: "/logo.svg",
+    };
+    self.registration.showNotification(title, notificationOptions)
+})
 // Add an event listener to handle incoming messages and display notifications
 // self.addEventListener('push', (event) => {
 //     const options = {
