@@ -10,7 +10,7 @@ import {
 } from "firebase/auth";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import nookies from "nookies";
 import nProgress from "nprogress";
 import "nprogress/nprogress.css";
@@ -78,14 +78,36 @@ export default function App({
       router.events.off("routeChangeError", handleRouteDone);
     };
   }, [router.events]);
+
+  const requestNotificationPermission = async () => {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        // console.log(await navigator.serviceWorker.controller);
+        console.log("Notification permission granted.");
+        return true;
+      } else {
+        console.log("Notification permission denied.");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error requesting notification permission:", error);
+      return false;
+    }
+  };
   useEffect(() => {
     // async function isAllowedNoti() {
     //   return await requestNotificationPermission();
     // }
+    async function getPermisson() {
+      return await Notification.requestPermission();
+    }
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       const messaging = getMessaging(app);
+
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
+        alert("foregroud noti");
         // Handle the received push notification while the app is in the foreground
         // You can display a notification or update the UI based on the payload
         const notificationTitle = payload?.data?.title ?? "Facebook";
@@ -93,9 +115,11 @@ export default function App({
           body: payload?.data?.body ?? "Notifications from facebook .",
           icon: "/logo.svg",
         };
-        navigator.serviceWorker.ready.then((reg) =>
-          reg.showNotification(notificationTitle, notificationOptions)
-        );
+        alert(JSON.stringify({ notificationTitle, notificationOptions }));
+        navigator.serviceWorker.ready.then((reg) => {
+          alert("Sw ready");
+          reg.showNotification(notificationTitle, notificationOptions);
+        });
         new Notification(notificationTitle, notificationOptions);
       });
       return () => {

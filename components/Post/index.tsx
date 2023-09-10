@@ -4,7 +4,7 @@ import { PageContext, PageProps } from "../../context/PageContext";
 import { Post as PostType, account, likes } from "../../types/interfaces";
 import Content from "./Content";
 import { Footer } from "./Footer";
-import styles from "./index.module.scss";
+import s from "./index.module.scss";
 
 interface PostProps {
   updatePost?: Function;
@@ -29,7 +29,9 @@ export default function Post({
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
-  const { showAction, setshowAction , currentUser } = useContext(PageContext) as PageProps;
+  const { showAction, setshowAction, currentUser } = useContext(
+    PageContext
+  ) as PageProps;
 
   useEffect(() => {
     if (selectMode) {
@@ -49,9 +51,9 @@ export default function Post({
   );
   const [Likes, setLikes] = useState<likes | []>([]);
   if (!post) return <></>;
-  const postClass = `${styles.item} ${checked ? styles.checked : ""} ${
-    selectMode ? styles.selected : ""
-  } ${shareMode ? styles.share : ""}`;
+  const postClass = `${s.item} ${checked ? s.checked : ""} ${
+    selectMode ? s.selected : ""
+  } ${shareMode ? s.share : ""}`;
   return (
     <div className={postClass}>
       <Content
