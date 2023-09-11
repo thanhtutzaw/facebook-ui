@@ -117,6 +117,7 @@ export default function App({
           body: body ?? "Notifications from facebook .",
           icon: icon ?? "/logo.svg",
           badge,
+          click_action: link,
           // webpush,
           webpush: {
             fcm_options: {
@@ -126,16 +127,16 @@ export default function App({
         };
         alert(JSON.stringify({ notificationTitle, notificationOptions }));
         // below didn't run in mobile chrome . but new Noti line run in Desktop
-        navigator.serviceWorker.ready
-          .then((reg) => {
-            console.log("sw noti");
-            alert("Sw ready");
-            reg.showNotification(notificationTitle, notificationOptions);
-          })
-          .catch((error) => {
-            console.log(error);
-            alert("sw not ready !");
-          });
+        // navigator.serviceWorker.ready
+        //   .then((reg) => {
+        //     console.log("sw noti");
+        //     alert("Sw ready");
+        //     reg.showNotification(notificationTitle, notificationOptions);
+        //   })
+        //   .catch((error) => {
+        //     console.log(error);
+        //     alert("sw not ready !");
+        //   });
         new Notification(notificationTitle, notificationOptions);
       });
       return () => {

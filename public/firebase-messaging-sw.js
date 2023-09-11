@@ -95,6 +95,7 @@ messaging.onBackgroundMessage((payload) => {
         body: body ?? "Notifications from facebook .",
         icon: icon ?? "/logo.svg",
         badge,
+        click_action:link,
         webpush: {
             fcm_options: {
                 link,
