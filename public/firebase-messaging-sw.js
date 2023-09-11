@@ -99,14 +99,14 @@ firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
-    const { title, body, icon, webpush, badge, link, tag } = payload.data;
+    const { title, body, icon, webpush, badge, click_action, link, tag } = payload.data;
     const notificationOptions = {
         body: body ?? "Notifications from facebook .",
         icon: icon ?? "/logo.svg",
         badge,
         tag: tag ?? "General",
         renotify: true,
-        click_action: link,
+        click_action: link ?? click_action,
         webpush: {
             fcm_options: {
                 link,

@@ -191,6 +191,7 @@ export const Footer = (
                     : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
                   badge: "/badge.svg",
                   "tag":"Likes",
+                  link: `https://facebook-ui-zee.vercel.app/${post.authorId}/${post.id}`,
                   webpush: {
                     fcm_options: {
                       link: `https://facebook-ui-zee.vercel.app/${post.authorId}/${post.id}`,

@@ -119,14 +119,14 @@ export default function App({
           icon: icon ?? "/logo.svg",
           badge,
           tag: tag ?? "General",
-          click_action: link,
-          renotify: true,
-          // webpush,
-          webpush: {
-            fcm_options: {
-              link,
-            },
-          },
+          // click_action: link,
+          // renotify: true,
+          // // webpush,
+          // webpush: {
+          //   fcm_options: {
+          //     link,
+          //   },
+          // },
         };
         // alert(JSON.stringify({ notificationTitle, notificationOptions }));
         // below didn't run in mobile chrome . but new Noti line run in Desktop
