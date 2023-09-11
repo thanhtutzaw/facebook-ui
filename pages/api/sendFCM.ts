@@ -20,7 +20,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { recieptId, message, icon } = req.body;
+  const { recieptId, message, icon, webpush, badge } = req.body;
   // const registrationToken =
   //   "e-V9ewoFQaq47-nX6o5cnI:APA91bEAMSYbu-D8yYqQyZcZELFFXaCLSmHU-mweav8eTy0ZdMxSAkzcUL1pXo3cpleWZHtTEpMykvZVLKJeCXRXZ77QwxrXuUOgaDhjjVl14q4R-0Ko8aZSN9xuWTaYDacZRbJ_Onyk";
   // const registrationToken =
@@ -49,6 +49,8 @@ export default async function handler(
         title: "Facebook",
         body: message,
         icon,
+        badge,
+        webpush,
       },
     };
     const response = await admin.messaging().sendEachForMulticast(messageNoti);

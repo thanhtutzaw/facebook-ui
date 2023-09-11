@@ -186,7 +186,15 @@ export const Footer = (
                   message: `${
                     profile?.displayName ?? "Unknown User"
                   } liked this post`,
-                  icon:profile?.photoURL
+                  icon: profile?.photoURL
+                    ? profile.photoURL
+                    : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+                  badge: "/logo.svg",
+                  webpush: {
+                    fcm_options: {
+                      link: `https://facebook-ui-zee.vercel.app/${post.authorId}/${post.id}`,
+                    },
+                  },
                   // message: `${profile?.firstName ?? "Unknown User"} ${
                   //   profile.lastName ?? ""
                   // } liked this post`,

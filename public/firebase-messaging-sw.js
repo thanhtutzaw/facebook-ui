@@ -90,10 +90,12 @@ firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
-    const { title, body, icon } = payload.data;
+    const { title, body, icon, webpush, badge } = payload.data;
     const notificationOptions = {
         body: body ?? "Notifications from facebook .",
         icon: icon ?? "/logo.svg",
+        badge,
+        webpush,
     };
     self.registration.showNotification(title, notificationOptions)
 })

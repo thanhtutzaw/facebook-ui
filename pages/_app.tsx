@@ -109,13 +109,15 @@ export default function App({
         alert("foregroud noti");
         // Handle the received push notification while the app is in the foreground
         // You can display a notification or update the UI based on the payload
-        const { title, body, icon } = payload.data as any;
+        const { title, body, icon, webpush, badge } = payload.data as any;
 
         const notificationTitle = title ?? "Facebook";
 
         const notificationOptions = {
           body: body ?? "Notifications from facebook .",
           icon: icon ?? "/logo.svg",
+          badge,
+          webpush,
         };
         alert(JSON.stringify({ notificationTitle, notificationOptions }));
         // below didn't run in mobile chrome . but new Noti line run in Desktop
