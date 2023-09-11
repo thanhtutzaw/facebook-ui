@@ -99,13 +99,9 @@ export default function App({
   useEffect(() => {
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       const messaging = getMessaging(app);
-      // const getPermission = async () => {
-      //   await requestNotificationPermission();
-      // };
-      // getPermission();
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
-        // alert("foregroud noti");
+        alert(JSON.stringify(payload));
         // Handle the received push notification while the app is in the foreground
         // You can display a notification or update the UI based on the payload
         const { title, body, icon, webpush, badge, click_action, link, tag } =
@@ -120,15 +116,11 @@ export default function App({
           data: {
             click_action,
           },
+          actions: [{ action: "see_post", title: "See Post" }],
           renotify: true,
-          // webpush: {
-          //   fcm_options: {
-          //     link,
-          //   },
-          // },
         };
-        
-        // alert(JSON.stringify({ notificationTitle, notificationOptions }));
+
+        alert(JSON.stringify({ notificationTitle, notificationOptions }));
         // below didn't run in mobile chrome . but new Noti line run in Desktop
         navigator.serviceWorker.ready
           .then((reg) => {

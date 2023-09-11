@@ -72,11 +72,13 @@ self.addEventListener("notificationclick", function (event) {
     console.log('notification click event', event);
     const { click_action } = event.notification.data;
     event.notification.close();
+    // event.waitUntil(
 
-
-    event.waitUntil(
-        clients.openWindow(click_action)
-    );
+    switch (event.action) {
+        case `see_post`:
+            event.waitUntil(clients.openWindow(click_action));
+            break;
+    }
 });
 // self.addEventListener('notificationclick', function (event) {
 //     event.notification.close();
@@ -112,7 +114,9 @@ messaging.onBackgroundMessage((payload) => {
         renotify: true,
         data: {
             click_action
-        }
+        },
+        actions: [{ action: "see_post", title: "See Post" }],
+
         // webpush: {
         //     fcm_options: {
         //         link,
