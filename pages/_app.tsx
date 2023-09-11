@@ -100,10 +100,10 @@ export default function App({
   useEffect(() => {
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       const messaging = getMessaging(app);
-      const getPermission = async () => {
-        await requestNotificationPermission();
-      };
-      getPermission();
+      // const getPermission = async () => {
+      //   await requestNotificationPermission();
+      // };
+      // getPermission();
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
         // alert("foregroud noti");

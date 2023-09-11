@@ -20,7 +20,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { recieptId, message, icon, webpush,tag, badge } = req.body;
+  const { recieptId, message, icon, webpush, tag, badge, click_action } =
+    req.body;
   // const registrationToken =
   //   "e-V9ewoFQaq47-nX6o5cnI:APA91bEAMSYbu-D8yYqQyZcZELFFXaCLSmHU-mweav8eTy0ZdMxSAkzcUL1pXo3cpleWZHtTEpMykvZVLKJeCXRXZ77QwxrXuUOgaDhjjVl14q4R-0Ko8aZSN9xuWTaYDacZRbJ_Onyk";
   // const registrationToken =
@@ -51,6 +52,7 @@ export default async function handler(
         icon,
         badge,
         tag,
+        click_action,
         // webpush,
         link: `https://facebook-ui-zee.vercel.app`
         
