@@ -69,10 +69,13 @@
 // //         notificationOptions);
 // // });
 self.addEventListener("notificationclick", function (event) {
-    console.log('notification open');
-    console.log(event)
+    console.log('notification click event', event);
+    const { click_action } = event.notification.data;
+    event.notification.close();
+
+
     event.waitUntil(
-        clients.openWindow(event.data.click_action)
+        clients.openWindow(click_action)
     );
 });
 // self.addEventListener('notificationclick', function (event) {
@@ -99,6 +102,7 @@ firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
+    console.log("FCM Background Noti ", payload)
     const { title, body, icon, webpush, badge, click_action, link, tag } = payload.data;
     const notificationOptions = {
         body: body ?? "Notifications from facebook .",
@@ -106,13 +110,14 @@ messaging.onBackgroundMessage((payload) => {
         badge,
         tag: tag ?? "General",
         renotify: true,
-        click_action: link ?? click_action,
-        webpush: {
-            fcm_options: {
-                link,
-            },
-        },
-        // webpush,
+        data: {
+            click_action
+        }
+        // webpush: {
+        //     fcm_options: {
+        //         link,
+        //     },
+        // },
     };
     self.registration.showNotification(title, notificationOptions)
 })

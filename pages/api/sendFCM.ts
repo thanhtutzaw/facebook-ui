@@ -51,9 +51,9 @@ export default async function handler(
         icon,
         badge,
         tag,
-        click_action: link,
-        // webpush,
-        link: `https://facebook-ui-zee.vercel.app`,
+        click_action: link ?? '/',
+        // onclose: `()=>{alert("hey")}`,
+        // actions: ["heloo actions"],
       },
     };
     const response = await admin.messaging().sendEachForMulticast(messageNoti);

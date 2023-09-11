@@ -34,7 +34,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   try {
     const cookies = nookies.get(context);
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
-    console.log("hi");
     console.log(token.uid + "In app.tsx");
 
     let expired = false;
@@ -79,24 +78,24 @@ export default function App({
     };
   }, [router.events]);
 
-  const requestNotificationPermission = async () => {
-    try {
-      const permission = await Notification.requestPermission();
-      if (permission === "granted") {
-        // console.log(await navigator.serviceWorker.controller);
-        // alert("Notification permission granted.");
-        console.log("Notification permission granted.");
-        return true;
-      } else {
-        // alert("Notification permission denied.");
-        console.log("Notification permission denied.");
-        return false;
-      }
-    } catch (error) {
-      console.error("Error requesting notification permission:", error);
-      return false;
-    }
-  };
+  // const requestNotificationPermission = async () => {
+  //   try {
+  //     const permission = await Notification.requestPermission();
+  //     if (permission === "granted") {
+  //       // console.log(await navigator.serviceWorker.controller);
+  //       // alert("Notification permission granted.");
+  //       console.log("Notification permission granted.");
+  //       return true;
+  //     } else {
+  //       // alert("Notification permission denied.");
+  //       console.log("Notification permission denied.");
+  //       return false;
+  //     }
+  //   } catch (error) {
+  //     console.error("Error requesting notification permission:", error);
+  //     return false;
+  //   }
+  // };
   useEffect(() => {
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       const messaging = getMessaging(app);
@@ -109,37 +108,38 @@ export default function App({
         // alert("foregroud noti");
         // Handle the received push notification while the app is in the foreground
         // You can display a notification or update the UI based on the payload
-        const { title, body, icon, webpush, badge, link, tag } =
+        const { title, body, icon, webpush, badge, click_action, link, tag } =
           payload.data as any;
 
         const notificationTitle = title ?? "Facebook";
-
         const notificationOptions = {
           body: body ?? "Notifications from facebook .",
           icon: icon ?? "/logo.svg",
           badge,
           tag: tag ?? "General",
-          // click_action: link,
-          // renotify: true,
-          // // webpush,
+          data: {
+            click_action,
+          },
+          renotify: true,
           // webpush: {
           //   fcm_options: {
           //     link,
           //   },
           // },
         };
+        
         // alert(JSON.stringify({ notificationTitle, notificationOptions }));
         // below didn't run in mobile chrome . but new Noti line run in Desktop
-        // navigator.serviceWorker.ready
-        //   .then((reg) => {
-        //     console.log("sw noti");
-        //     alert("Sw ready");
-        //     reg.showNotification(notificationTitle, notificationOptions);
-        //   })
-        //   .catch((error) => {
-        //     console.log(error);
-        //     alert("sw not ready !");
-        //   });
+        navigator.serviceWorker.ready
+          .then((reg) => {
+            console.log("sw ready");
+            alert("Sw ready");
+            reg.showNotification(notificationTitle, notificationOptions);
+          })
+          .catch((error) => {
+            console.log(error);
+            alert("sw not ready !");
+          });
         new Notification(notificationTitle, notificationOptions);
       });
       return () => {

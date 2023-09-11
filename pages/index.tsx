@@ -347,16 +347,20 @@ export default function Home({
       if (permission === "granted") {
         // console.log(await navigator.serviceWorker.controller);
         console.log("Notification permission granted.");
-        return true;
+        // return true;
       } else {
         console.log("Notification permission denied.");
-        return false;
+        // return false;
       }
     } catch (error) {
       console.error("Error requesting notification permission:", error);
-      return false;
+      // return false;
     }
   };
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
+
   useEffect(() => {
     if (
       "Notification" in window &&
@@ -365,7 +369,6 @@ export default function Home({
     ) {
       const messaging = getMessaging(app);
 
-      const isAllowedNoti = requestNotificationPermission();
       const getFCMToken = async () => {
         try {
           const token = await getToken(messaging, {
@@ -393,7 +396,7 @@ export default function Home({
       console.log("FCM not supported");
     }
   }, [fcmToken, uid]);
-  
+
   useEffect(() => {
     if (!uid) return;
     const friendReqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);

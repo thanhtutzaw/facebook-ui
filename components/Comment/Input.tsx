@@ -1,20 +1,15 @@
 import { faArrowAltCircleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Timestamp,
-  collection,
-  doc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { collection, doc } from "firebase/firestore";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
-import { commentDateToJSON, db } from "../../lib/firebase";
+import { PageContext, PageProps } from "../../context/PageContext";
+import { db } from "../../lib/firebase";
 import { addComment } from "../../lib/firestore/comment";
 import { sendAppNoti } from "../../lib/firestore/notifications";
-import { Post, account } from "../../types/interfaces";
+import { Post } from "../../types/interfaces";
 import s from "./index.module.scss";
-import Image from "next/image";
-import { PageContext, PageProps } from "../../context/PageContext";
 export default function CommentInput(props: {
   setlimitedComments: any;
   uid?: string;
@@ -92,11 +87,12 @@ export default function CommentInput(props: {
         width={200}
         height={200}
         priority
-        // alt={profile?.firstName ?? "Unknow"}
         alt={currentUser?.displayName ?? "Unknow User"}
-        src={(currentUser?.photoURL as string) ?? ""}
-        // alt={currentUser?.displayName ?? "Unknow User"}
-        // src={currentUser?.photoURL ?? ""}
+        src={
+          currentUser?.photoURL
+            ? currentUser.photoURL
+            : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+        }
       />
       <input
         onChange={(e) => {
