@@ -84,9 +84,11 @@ export default function App({
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
         // console.log(await navigator.serviceWorker.controller);
+        alert("Notification permission granted.");
         console.log("Notification permission granted.");
         return true;
       } else {
+        alert("Notification permission denied.");
         console.log("Notification permission denied.");
         return false;
       }
@@ -96,15 +98,12 @@ export default function App({
     }
   };
   useEffect(() => {
-    // async function isAllowedNoti() {
-    //   return await requestNotificationPermission();
-    // }
-    async function getPermisson() {
-      return await Notification.requestPermission();
-    }
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       const messaging = getMessaging(app);
-
+      const getPermission = async () => {
+        await requestNotificationPermission();
+      };
+      getPermission();
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
         alert("foregroud noti");
@@ -116,8 +115,10 @@ export default function App({
           icon: "/logo.svg",
         };
         alert(JSON.stringify({ notificationTitle, notificationOptions }));
+        // below didn't run in mobile chrome . but new Noti line run in Desktop
         navigator.serviceWorker.ready
           .then((reg) => {
+            console.log("sw noti");
             alert("Sw ready");
             reg.showNotification(notificationTitle, notificationOptions);
           })
