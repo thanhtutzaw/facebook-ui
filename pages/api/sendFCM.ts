@@ -20,14 +20,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { recieptId, message } = req.body;
+  const { recieptId, message, icon } = req.body;
   // const registrationToken =
   //   "e-V9ewoFQaq47-nX6o5cnI:APA91bEAMSYbu-D8yYqQyZcZELFFXaCLSmHU-mweav8eTy0ZdMxSAkzcUL1pXo3cpleWZHtTEpMykvZVLKJeCXRXZ77QwxrXuUOgaDhjjVl14q4R-0Ko8aZSN9xuWTaYDacZRbJ_Onyk";
   // const registrationToken =
   //   "cO_IgJ_8jok31igywGDgoQ:APA91bEnEbzoo76ILgvUwNRon1joTBmpMLZdSIwW1KTxZoEQHgHHl_B5U9zhNbr5UrcUKWkpRBQtgijtSny3Incu_ZJRMqmpn8o9CCNZBPttvv4Q4w80hB3arVovgR57TvVn8FPrmAtA";
-  console.log(recieptId);
-  const registrationToken = await getFCMToken(recieptId);
-  if (!registrationToken) return;
+  // console.log(recieptId);
+  const registrationTokens = await getFCMToken(recieptId);
+  if (!registrationTokens) return;
 
   // const messaging = getMessaging();
   // messaging
@@ -44,10 +44,11 @@ export default async function handler(
     //   console.log("Successfully sent message:", response);
     // });
     const messageNoti = {
-      tokens: registrationToken, // Replace with the user's FCM token
+      tokens: registrationTokens,
       data: {
         title: "Facebook",
         body: message,
+        icon,
       },
     };
     const response = await admin.messaging().sendEachForMulticast(messageNoti);
@@ -55,6 +56,6 @@ export default async function handler(
   } catch (error) {
     console.log(error);
   }
-  console.log({ registrationToken });
+  console.log({ registrationTokens });
   res.status(200).json(req.body);
 }

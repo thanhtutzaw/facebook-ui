@@ -186,6 +186,7 @@ export const Footer = (
                   message: `${
                     profile?.displayName ?? "Unknown User"
                   } liked this post`,
+                  icon:profile?.photoURL
                   // message: `${profile?.firstName ?? "Unknown User"} ${
                   //   profile.lastName ?? ""
                   // } liked this post`,
