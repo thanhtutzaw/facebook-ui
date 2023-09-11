@@ -116,10 +116,15 @@ export default function App({
           icon: "/logo.svg",
         };
         alert(JSON.stringify({ notificationTitle, notificationOptions }));
-        navigator.serviceWorker.ready.then((reg) => {
-          alert("Sw ready");
-          reg.showNotification(notificationTitle, notificationOptions);
-        });
+        navigator.serviceWorker.ready
+          .then((reg) => {
+            alert("Sw ready");
+            reg.showNotification(notificationTitle, notificationOptions);
+          })
+          .catch((error) => {
+            console.log(error);
+            alert("sw not ready !");
+          });
         new Notification(notificationTitle, notificationOptions);
       });
       return () => {
