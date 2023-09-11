@@ -50,7 +50,7 @@ export default async function handler(
         body: message,
         icon,
         badge,
-        webpush,
+        // webpush,
       },
     };
     const response = await admin.messaging().sendEachForMulticast(messageNoti);

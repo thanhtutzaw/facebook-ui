@@ -95,7 +95,7 @@ messaging.onBackgroundMessage((payload) => {
         body: body ?? "Notifications from facebook .",
         icon: icon ?? "/logo.svg",
         badge,
-        webpush,
+        // webpush,
     };
     self.registration.showNotification(title, notificationOptions)
 })

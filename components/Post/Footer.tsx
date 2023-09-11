@@ -189,7 +189,7 @@ export const Footer = (
                   icon: profile?.photoURL
                     ? profile.photoURL
                     : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-                  badge: "/logo.svg",
+                  badge: "/badge.svg",
                   webpush: {
                     fcm_options: {
                       link: `https://facebook-ui-zee.vercel.app/${post.authorId}/${post.id}`,
