@@ -68,11 +68,20 @@
 // //     self.registration.showNotification(notificationTitle,
 // //         notificationOptions);
 // // });
-
-
-
-// sw.js
-
+self.addEventListener("notificationclick", function (event) {
+    console.log('notification open');
+    console.log(event)
+    event.waitUntil(
+        clients.openWindow(event.data.click_action)
+    );
+});
+// self.addEventListener('notificationclick', function (event) {
+//     event.notification.close();
+//     console.log('Notification notificationclick triggered');
+//     event.waitUntil(
+//         clients.openWindow(event.notification.data)
+//     );
+// })
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js'); // Import the Firebase v9 compat library
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-messaging-compat.js'); // Import the Firebase v9 compat library for messaging
 
@@ -90,12 +99,14 @@ firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
-    const { title, body, icon, webpush, badge, link } = payload.data;
+    const { title, body, icon, webpush, badge, link, tag } = payload.data;
     const notificationOptions = {
         body: body ?? "Notifications from facebook .",
         icon: icon ?? "/logo.svg",
         badge,
-        click_action:link,
+        tag: tag ?? "General",
+        renotify: true,
+        click_action: link,
         webpush: {
             fcm_options: {
                 link,

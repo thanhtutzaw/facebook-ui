@@ -61,7 +61,6 @@ export default function ChatInput({
           //   setaddLoading(false);
           // } catch (error: any) {
           //   console.log(error);
-          //   alert(error.message);
           //   setaddLoading(false);
           // }
         }}

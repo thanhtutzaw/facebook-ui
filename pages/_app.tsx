@@ -84,11 +84,11 @@ export default function App({
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
         // console.log(await navigator.serviceWorker.controller);
-        alert("Notification permission granted.");
+        // alert("Notification permission granted.");
         console.log("Notification permission granted.");
         return true;
       } else {
-        alert("Notification permission denied.");
+        // alert("Notification permission denied.");
         console.log("Notification permission denied.");
         return false;
       }
@@ -106,10 +106,11 @@ export default function App({
       getPermission();
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
-        alert("foregroud noti");
+        // alert("foregroud noti");
         // Handle the received push notification while the app is in the foreground
         // You can display a notification or update the UI based on the payload
-        const { title, body, icon, webpush, badge, link } = payload.data as any;
+        const { title, body, icon, webpush, badge, link, tag } =
+          payload.data as any;
 
         const notificationTitle = title ?? "Facebook";
 
@@ -117,7 +118,9 @@ export default function App({
           body: body ?? "Notifications from facebook .",
           icon: icon ?? "/logo.svg",
           badge,
+          tag: tag ?? "General",
           click_action: link,
+          renotify: true,
           // webpush,
           webpush: {
             fcm_options: {
@@ -125,7 +128,7 @@ export default function App({
             },
           },
         };
-        alert(JSON.stringify({ notificationTitle, notificationOptions }));
+        // alert(JSON.stringify({ notificationTitle, notificationOptions }));
         // below didn't run in mobile chrome . but new Noti line run in Desktop
         // navigator.serviceWorker.ready
         //   .then((reg) => {

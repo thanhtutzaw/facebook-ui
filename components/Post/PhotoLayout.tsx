@@ -37,7 +37,6 @@ export default function PhotoLayout(props: {
   //   window.onpopstate = () => {
   //     // if (viewRef?.current?.open) {
   //     // history.pushState(null, document.title, location.href);
-  //     // alert("hety");
 
   //     // }
   //   };
