@@ -138,7 +138,7 @@ export default function App({
           },
           // actions: [{ action: "see_post", title: "See Post" }],
           // actons: [...actions],
-          actons: JSON.parse(actions),
+          actions: JSON.parse(actions),
           renotify: tag !== "",
         };
         console.log("serviceWorker" in navigator); // true

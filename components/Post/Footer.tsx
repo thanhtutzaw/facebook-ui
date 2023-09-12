@@ -195,12 +195,12 @@ export const Footer = (
                   // type:'post',
                   actions: JSON.stringify([
                     { action: "see_post", title: "See Post" },
-                    {
-                      action: "Input",
-                      title: "Input",
-                      type: "input",
-                      placeHolder: "Type Something",
-                    },
+                    // {
+                    //   action: "Input",
+                    //   title: "Input",
+                    //   type: "input",
+                    //   placeHolder: "Type Something",
+                    // },
                   ]),
                   webpush: {
                     fcm_options: {

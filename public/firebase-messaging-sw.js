@@ -5,7 +5,17 @@ self.addEventListener("notificationclick", function (event) {
     switch (event.action) {
         case `see_post`:
             event.notification.close();
-            event.waitUntil(clients.openWindow(click_action));
+            // event.waitUntil(clients.openWindow(click_action));
+            clients
+                .matchAll({
+                    type: "window",
+                })
+                .then((clientList) => {
+                    for (const client of clientList) {
+                        if (client.url === "/" && "focus" in client) return client.focus();
+                    }
+                    if (clients.openWindow) return clients.openWindow(click_action);
+                })
             break;
         default:
             event.notification.close();
@@ -38,12 +48,13 @@ messaging.onBackgroundMessage((payload) => {
         icon: icon ?? "/logo.svg",
         badge,
         tag: tag ?? "",
-        renotify: !tag,
+        renotify: tag !== '',
         data: {
             click_action
         },
-        actons: JSON.parse(actions)
+        actions: JSON.parse(actions)
         // actions: [{ action: "see_post", title: "See Post" }, { action: "Input", title: "Input", type: 'input',placeHolder:'Type Something' }],
     };
+    console.log(notificationOptions)
     self.registration.showNotification(title, notificationOptions)
 })
