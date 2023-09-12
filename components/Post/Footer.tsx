@@ -184,7 +184,7 @@ export const Footer = (
                 },
                 body: JSON.stringify({
                   recieptId: post.authorId.toString(),
-                  message: `${
+                  body: `${
                     profile?.displayName ?? "Unknown User"
                   } liked this post`,
                   icon: profile?.photoURL
@@ -193,16 +193,12 @@ export const Footer = (
                   badge: "/badge.svg",
                   tag: `Likes-${post.id}`,
                   link: `/${post.authorId}/${post.id}`,
-                  // type:'post',
                   actions: JSON.stringify([...NotiAction.friend_request]),
                   webpush: {
                     fcm_options: {
                       link: `https://facebook-ui-zee.vercel.app/${post.authorId}/${post.id}`,
                     },
                   },
-                  // message: `${profile?.firstName ?? "Unknown User"} ${
-                  //   profile.lastName ?? ""
-                  // } liked this post`,
                 }),
               });
             }

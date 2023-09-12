@@ -1,12 +1,6 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import admin from "firebase-admin";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getFCMToken } from "../../lib/firebaseAdmin";
-// type Data = {
-//   uid: string;
-//   message: string;
-//   name?: string;
-// };
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -20,22 +14,17 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { recieptId, message, icon, webpush, tag, badge, link, actions } =
-    req.body;
+  const { title, recieptId, link, icon, ...rest } = req.body;
   const registrationTokens = await getFCMToken(recieptId);
   if (!registrationTokens) return;
   try {
     const messageNoti = {
       tokens: registrationTokens,
       data: {
-        title: "Facebook",
-        body: message,
-        icon,
-        badge,
-        tag,
-        // bodyLocArgs: ['FooCorp', '11.80', '835.67', '1.43'],
+        title: title ?? "Facebook",
         click_action: link ?? "/",
-        actions,
+        icon,
+        ...rest,
       },
       webpush: {
         headers: {
