@@ -194,7 +194,7 @@ export const Footer = (
                   tag: `Likes-${post.id}`,
                   link: `/${post.authorId}/${post.id}`,
                   // type:'post',
-                  actions: JSON.stringify([NotiAction.friend_request]),
+                  actions: JSON.stringify([...NotiAction.friend_request]),
                   webpush: {
                     fcm_options: {
                       link: `https://facebook-ui-zee.vercel.app/${post.authorId}/${post.id}`,
