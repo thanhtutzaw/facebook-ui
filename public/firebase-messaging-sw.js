@@ -1,6 +1,6 @@
 self.addEventListener("notificationclick", function (event) {
     console.log('notification click event', event);
-    const { reply } = event;
+    const { reply: inputText } = event;
     const { click_action } = event.notification.data;
     // console.log(event.action)
     switch (event.action) {
@@ -27,8 +27,8 @@ self.addEventListener("notificationclick", function (event) {
             break;
         case `reply`:
             event.notification.close();
-            event.waitUntil(clients.openWindow(`https://facebook-ui-zee.vercel.app/${reply}`))
-            console.log("Submited content :", reply)
+            event.waitUntil(clients.openWindow(`https://facebook-ui-zee.vercel.app/${inputText}`))
+            console.log("Submited content :", inputText);
             break;
         default:
             event.notification.close();
@@ -41,6 +41,7 @@ self.addEventListener("notificationclick", function (event) {
 self.addEventListener('notificationclose', (e) => {
     console.log("close", e)
 })
+importScripts('../lib/NotiAction.ts'); // Import the Firebase v9 compat library
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js'); // Import the Firebase v9 compat library
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-messaging-compat.js'); // Import the Firebase v9 compat library for messaging
 
@@ -53,22 +54,22 @@ const firebaseConfig = {
     appId: "1:1050578101323:web:f0cea355bd01e045cc99ce",
     measurementId: "G-ME0NSYLYR3"
 };
-
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
 
-messaging.onMessage((payload) => {
-    const { title, body, icon } = payload.notification;
-    alert("foreground sw")
-    const notificationOptions = {
-        body: body || "Default body",
-        icon: icon || "/logo.svg",
-    };
+// messaging.onMessage((payload) => {
+//     const { title, body, icon } = payload.notification;
+//     alert("foreground sw")
+//     const notificationOptions = {
+//         body: body || "Default body",
+//         icon: icon || "/logo.svg",
+//     };
 
-    self.registration.showNotification(title, notificationOptions);
-});
+//     self.registration.showNotification(title, notificationOptions);
+// });
 messaging.onBackgroundMessage((payload) => {
+    console.log({ NotiAction })
     console.log("FCM Background Noti ", payload)
     const { title, body, icon, webpush, badge, click_action, link, tag, actions } = payload.data;
     const notificationOptions = {

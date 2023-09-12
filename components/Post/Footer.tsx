@@ -24,6 +24,7 @@ import { addPost, likePost, unlikePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import { NotiAction } from "../../lib/NotiAction";
 export const Footer = (
   props: {
     likeCount?: number;
@@ -194,13 +195,9 @@ export const Footer = (
                   link: `/${post.authorId}/${post.id}`,
                   // type:'post',
                   actions: JSON.stringify([
-                    { action: "see_post", title: "See Post" },
-                    {
-                      action: "reply",
-                      title: "Reply",
-                      type: "text",
-                      placeholder: "Reply Comment",
-                    },
+                    // { action: "see_post", title: "See Post" },
+                    NotiAction.accept_friend,
+                    NotiAction.reply,
                   ]),
                   webpush: {
                     fcm_options: {

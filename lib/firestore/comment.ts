@@ -9,17 +9,12 @@ import {
   orderBy,
   query,
   serverTimestamp,
-  writeBatch
+  writeBatch,
 } from "firebase/firestore";
 import { Comment_LIMIT } from "../../pages/[user]/[post]";
 import { Comment, Post } from "../../types/interfaces";
-import {
-  commentToJSON,
-  db,
-  getProfileByUID
-} from "../firebase";
-export async function fetchComments(query:Query) {
-  
+import { commentToJSON, db, getProfileByUID } from "../firebase";
+export async function fetchComments(query: Query) {
   const commentDoc = await getDocs(query);
   const commentJSON = await Promise.all(
     commentDoc.docs.map(async (doc) => await commentToJSON(doc))
