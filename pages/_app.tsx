@@ -103,7 +103,6 @@ export default function App({
         console.log("Foreground push notification received:", payload);
         alert(JSON.stringify(payload));
         // Handle the received push notification while the app is in the foreground
-        // You can display a notification or update the UI based on the payload
         const { title, body, icon, webpush, badge, click_action, link, tag } =
           payload.data as any;
 
@@ -119,9 +118,9 @@ export default function App({
           actions: [{ action: "see_post", title: "See Post" }],
           renotify: true,
         };
-
-        alert(JSON.stringify({ notificationTitle, notificationOptions }));
-        // below didn't run in mobile chrome . but new Noti line run in Desktop
+        console.log("serviceWorker" in navigator); // true
+        console.log(navigator.serviceWorker);
+        // below didn't run in mobile chrome
         navigator.serviceWorker.ready
           .then((reg) => {
             console.log("sw ready");
@@ -132,11 +131,15 @@ export default function App({
             console.log(error);
             alert("sw not ready !");
           });
-        new Notification(notificationTitle, notificationOptions);
+        // new ServiceWorkerRegistration().showNotification(
+        //   notificationTitle,
+        //   notificationOptions
+        // );
+        // new Notification(notificationTitle, notificationOptions); // this line only work in Desktop
+        return () => {
+          if (unsubscribe) unsubscribe();
+        };
       });
-      return () => {
-        if (unsubscribe) unsubscribe(); // Unsubscribe from the onMessage event
-      };
     }
   }, []);
   const auth = getAuth(app);
