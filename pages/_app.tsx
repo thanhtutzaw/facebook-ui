@@ -96,6 +96,18 @@ export default function App({
   //     return false;
   //   }
   // };
+  if(typeof window !== "undefined"){
+    navigator.serviceWorker.ready
+      .then((reg) => {
+        console.log("sw ready");
+        alert("Sw ready");
+        reg.showNotification("foreground title");
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("sw not ready !");
+      });
+  }
   useEffect(() => {
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       const messaging = getMessaging(app);
@@ -103,20 +115,30 @@ export default function App({
         console.log("Foreground push notification received:", payload);
         alert(JSON.stringify(payload));
         // Handle the received push notification while the app is in the foreground
-        const { title, body, icon, webpush, badge, click_action, link, tag } =
-          payload.data as any;
+        const {
+          title,
+          body,
+          icon,
+          webpush,
+          badge,
+          click_action,
+          link,
+          tag,
+          actions,
+        } = payload.data as any;
 
         const notificationTitle = title ?? "Facebook";
         const notificationOptions = {
           body: body ?? "Notifications from facebook .",
           icon: icon ?? "/logo.svg",
           badge,
-          tag: tag ?? "General",
+          tag: tag ?? "",
           data: {
             click_action,
           },
-          actions: [{ action: "see_post", title: "See Post" }],
-          renotify: true,
+          // actions: [{ action: "see_post", title: "See Post" }],
+          actons: [...actions],
+          renotify: tag !== "",
         };
         console.log("serviceWorker" in navigator); // true
         console.log(navigator.serviceWorker);

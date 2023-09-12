@@ -1,6 +1,7 @@
 self.addEventListener("notificationclick", function (event) {
     console.log('notification click event', event);
     const { click_action } = event.notification.data;
+    console.log(event.action)
     switch (event.action) {
         case `see_post`:
             event.notification.close();
@@ -31,17 +32,20 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
     console.log("FCM Background Noti ", payload)
-    const { title, body, icon, webpush, badge, click_action, link, tag } = payload.data;
+    const { title, body, icon, webpush, badge, click_action, link, tag, actions } = payload.data;
     const notificationOptions = {
         body: body ?? "Notifications from facebook .",
         icon: icon ?? "/logo.svg",
         badge,
-        tag: tag ?? "General",
-        renotify: true,
+        tag: tag ?? "",
+        renotify: !tag,
         data: {
             click_action
         },
-        actions: [{ action: "see_post", title: "See Post" }],
+        actons: [
+            ...actions
+        ]
+        // actions: [{ action: "see_post", title: "See Post" }, { action: "Input", title: "Input", type: 'input',placeHolder:'Type Something' }],
     };
     self.registration.showNotification(title, notificationOptions)
 })

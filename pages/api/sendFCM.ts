@@ -20,7 +20,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { recieptId, message, icon, webpush, tag, badge, link } = req.body;
+  const { recieptId, message, icon, webpush, tag, badge, link , actions} = req.body;
   // const registrationToken =
   //   "e-V9ewoFQaq47-nX6o5cnI:APA91bEAMSYbu-D8yYqQyZcZELFFXaCLSmHU-mweav8eTy0ZdMxSAkzcUL1pXo3cpleWZHtTEpMykvZVLKJeCXRXZ77QwxrXuUOgaDhjjVl14q4R-0Ko8aZSN9xuWTaYDacZRbJ_Onyk";
   // const registrationToken =
@@ -40,9 +40,6 @@ export default async function handler(
   //     console.log("Error sending message:", error);
   //   });
   try {
-    // registrationToken.map(async (token) => {
-    //   console.log("Successfully sent message:", response);
-    // });
     const messageNoti = {
       tokens: registrationTokens,
       data: {
@@ -51,9 +48,22 @@ export default async function handler(
         icon,
         badge,
         tag,
-        click_action: link ?? '/',
-        // onclose: `()=>{alert("hey")}`,
-        // actions: ["heloo actions"],
+        // bodyLocArgs: ['FooCorp', '11.80', '835.67', '1.43'],
+        // bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+        click_action: link ?? "/",
+        actions,
+      },
+      webpush: {
+        headers: {
+          image: icon,
+        },
+      },
+      android: {
+        ttl: 3600000,
+        notification: {
+          bodyLocKey: "STOCK_NOTIFICATION_BODY",
+          bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+        },
       },
     };
     const response = await admin.messaging().sendEachForMulticast(messageNoti);
