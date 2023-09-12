@@ -38,10 +38,6 @@ self.addEventListener("notificationclick", function (event) {
     }
 
 });
-self.addEventListener('notificationclose', (e) => {
-    console.log("close", e)
-})
-importScripts('../lib/NotiAction.ts'); // Import the Firebase v9 compat library
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js'); // Import the Firebase v9 compat library
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-messaging-compat.js'); // Import the Firebase v9 compat library for messaging
 

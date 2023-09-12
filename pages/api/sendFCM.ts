@@ -14,7 +14,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { title, recieptId, link, icon, ...rest } = req.body;
+  const { title, recieptId, link, message, icon, ...rest } = req.body;
   const registrationTokens = await getFCMToken(recieptId);
   if (!registrationTokens) return;
   try {
@@ -24,6 +24,7 @@ export default async function handler(
         title: title ?? "Facebook",
         click_action: link ?? "/",
         icon,
+        body: message ?? "Notification from Facebook",
         ...rest,
       },
       webpush: {
@@ -39,6 +40,8 @@ export default async function handler(
         },
       },
     };
+    console.log({ messageNoti });
+
     const response = await admin.messaging().sendEachForMulticast(messageNoti);
     console.log("Successfully sent message:", response);
   } catch (error) {
