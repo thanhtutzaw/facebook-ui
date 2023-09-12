@@ -27,15 +27,24 @@ export default async function handler(
   //       body: message ?? "Notification from Facebook",
   //       ...rest,
   //     },
-  const { recieptId, message, icon, webpush, tag, badge, link, actions } =
-    req.body;
+  const {
+    title,
+    recieptId,
+    message,
+    icon,
+    webpush,
+    tag,
+    badge,
+    link,
+    actions,
+  } = req.body;
   const registrationTokens = await getFCMToken(recieptId);
   if (!registrationTokens) return;
   try {
     const messageNoti = {
       tokens: registrationTokens,
       data: {
-        title: "Facebook",
+        title: title ?? "Facebook",
         body: message,
         icon,
         badge,
