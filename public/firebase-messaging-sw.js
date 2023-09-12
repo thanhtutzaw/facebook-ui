@@ -65,7 +65,7 @@ const messaging = firebase.messaging();
 //     self.registration.showNotification(title, notificationOptions);
 // });
 messaging.onBackgroundMessage((payload) => {
-    console.log({ NotiAction })
+    // console.log({ NotiAction })
     console.log("FCM Background Noti ", payload)
     const { title, body, icon, webpush, badge, click_action, link, tag, actions } = payload.data;
     const notificationOptions = {
