@@ -193,7 +193,7 @@ export const Footer = (
                   tag: `Likes-${post.id}`,
                   link: `/${post.authorId}/${post.id}`,
                   // type:'post',
-                  actions: [
+                  actions: JSON.stringify([
                     { action: "see_post", title: "See Post" },
                     {
                       action: "Input",
@@ -201,7 +201,7 @@ export const Footer = (
                       type: "input",
                       placeHolder: "Type Something",
                     },
-                  ],
+                  ]),
                   webpush: {
                     fcm_options: {
                       link: `https://facebook-ui-zee.vercel.app/${post.authorId}/${post.id}`,

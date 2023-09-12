@@ -42,9 +42,7 @@ messaging.onBackgroundMessage((payload) => {
         data: {
             click_action
         },
-        actons: [
-            ...actions
-        ]
+        actons: JSON.parse(actions)
         // actions: [{ action: "see_post", title: "See Post" }, { action: "Input", title: "Input", type: 'input',placeHolder:'Type Something' }],
     };
     self.registration.showNotification(title, notificationOptions)

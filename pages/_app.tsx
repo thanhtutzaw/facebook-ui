@@ -96,7 +96,7 @@ export default function App({
   //     return false;
   //   }
   // };
-  if(typeof window !== "undefined"){
+  if (typeof window !== "undefined") {
     navigator.serviceWorker.ready
       .then((reg) => {
         console.log("sw ready");
@@ -137,7 +137,8 @@ export default function App({
             click_action,
           },
           // actions: [{ action: "see_post", title: "See Post" }],
-          actons: [...actions],
+          // actons: [...actions],
+          actons: JSON.parse(actions),
           renotify: tag !== "",
         };
         console.log("serviceWorker" in navigator); // true

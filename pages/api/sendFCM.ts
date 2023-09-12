@@ -20,25 +20,10 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { recieptId, message, icon, webpush, tag, badge, link , actions} = req.body;
-  // const registrationToken =
-  //   "e-V9ewoFQaq47-nX6o5cnI:APA91bEAMSYbu-D8yYqQyZcZELFFXaCLSmHU-mweav8eTy0ZdMxSAkzcUL1pXo3cpleWZHtTEpMykvZVLKJeCXRXZ77QwxrXuUOgaDhjjVl14q4R-0Ko8aZSN9xuWTaYDacZRbJ_Onyk";
-  // const registrationToken =
-  //   "cO_IgJ_8jok31igywGDgoQ:APA91bEnEbzoo76ILgvUwNRon1joTBmpMLZdSIwW1KTxZoEQHgHHl_B5U9zhNbr5UrcUKWkpRBQtgijtSny3Incu_ZJRMqmpn8o9CCNZBPttvv4Q4w80hB3arVovgR57TvVn8FPrmAtA";
-  // console.log(recieptId);
+  const { recieptId, message, icon, webpush, tag, badge, link, actions } =
+    req.body;
   const registrationTokens = await getFCMToken(recieptId);
   if (!registrationTokens) return;
-
-  // const messaging = getMessaging();
-  // messaging
-  //   .send(message2)
-  //   .then((response) => {
-  //     // Response is a message ID string.
-  //     console.log("Successfully sent message:", response);
-  //   })
-  //   .catch((error: any) => {
-  //     console.log("Error sending message:", error);
-  //   });
   try {
     const messageNoti = {
       tokens: registrationTokens,
@@ -49,7 +34,6 @@ export default async function handler(
         badge,
         tag,
         // bodyLocArgs: ['FooCorp', '11.80', '835.67', '1.43'],
-        // bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
         click_action: link ?? "/",
         actions,
       },
