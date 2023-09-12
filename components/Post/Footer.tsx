@@ -195,6 +195,12 @@ export const Footer = (
                   // type:'post',
                   actions: JSON.stringify([
                     { action: "see_post", title: "See Post" },
+                    {
+                      action: "reply",
+                      title: "Reply",
+                      type: "text",
+                      placeHolder: "Reply Comment",
+                    },
                     // {
                     //   action: "Input",
                     //   title: "Input",
