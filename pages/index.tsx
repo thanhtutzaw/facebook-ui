@@ -234,6 +234,9 @@ export default function Home({
   const router = useRouter();
   const auth = getAuth(app);
   const [friendReqCount, setfriendReqCount] = useState(0);
+  const { setfriends, setnotiPermission } = useContext(
+    PageContext
+  ) as PageProps;
   const [prevfriendReqCount, setprevfriendReqCount] = useState(0);
   useEffect(() => {
     const auth = getAuth(app);
@@ -341,25 +344,27 @@ export default function Home({
   // const messaging = getMessaging(app);
   // const messagingRef = useRef(null);
 
-  const requestNotificationPermission = async () => {
-    try {
-      const permission = await Notification.requestPermission();
-      if (permission === "granted") {
-        // console.log(await navigator.serviceWorker.controller);
-        console.log("Notification permission granted.");
-        // return true;
-      } else {
-        console.log("Notification permission denied.");
+  useEffect(() => {
+    const requestNotificationPermission = async () => {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+          setnotiPermission?.(true);
+          // console.log(await navigator.serviceWorker.controller);
+          console.log("Notification permission granted.");
+          // return true;
+        } else {
+          setnotiPermission?.(false);
+          console.log("Notification permission denied.");
+          // return false;
+        }
+      } catch (error) {
+        console.error("Error requesting notification permission:", error);
         // return false;
       }
-    } catch (error) {
-      console.error("Error requesting notification permission:", error);
-      // return false;
-    }
-  };
-  useEffect(() => {
+    };
     requestNotificationPermission();
-  }, []);
+  }, [setnotiPermission]);
 
   useEffect(() => {
     if (
@@ -469,7 +474,7 @@ export default function Home({
   // useEffect(() => {
   //   console.log({ friendReqCount, prevfriendReqCount });
   // }, [friendReqCount, prevfriendReqCount]);
-  const { setfriends } = useContext(PageContext) as PageProps;
+
   useEffect(() => {
     setfriends?.(acceptedFriends);
   }, [acceptedFriends, setfriends]);

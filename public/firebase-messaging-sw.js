@@ -5,21 +5,29 @@ self.addEventListener("notificationclick", function (event) {
     switch (event.action) {
         case `see_post`:
             event.notification.close();
+            event.waitUntil(clients.openWindow(`https://facebook-ui-zee.vercel.app/${click_action}`))
+            // if (clients.openWindow) return event.waitUntil(window.open(click_action, "_self"))
+            // client.navigate(click_action);
+            // clients.openWindow(click_action).then(function (client) {
+            //     client.navigate(click_action);
+            // });
+
             // event.waitUntil(clients.openWindow(click_action));
-            clients
-                .matchAll({
-                    type: "window",
-                })
-                .then((clientList) => {
-                    for (const client of clientList) {
-                        if (client.url === "/" && "focus" in client) return client.focus();
-                    }
-                    if (clients.openWindow) return clients.openWindow(click_action);
-                })
+            // clients
+            //     .matchAll({
+            //         type: "window",
+            //     })
+            //     .then((clientList) => {
+            //         for (const client of clientList) {
+            //             if (client.url === "/" && "focus" in client) return client.focus();
+            //         }
+            //         if (clients.openWindow) return event.waitUntil(clients.openWindow(click_action));
+            //     })
             break;
         default:
             event.notification.close();
-            event.waitUntil(clients.openWindow(click_action));
+            // event.waitUntil(clients.openWindow(click_action));
+            window.open(click_action, "_self");
             break;
     }
 
@@ -40,6 +48,17 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
+
+messaging.onMessage((payload) => {
+    const { title, body, icon } = payload.notification;
+    alert("foreground sw")
+    const notificationOptions = {
+        body: body || "Default body",
+        icon: icon || "/logo.svg",
+    };
+
+    self.registration.showNotification(title, notificationOptions);
+});
 messaging.onBackgroundMessage((payload) => {
     console.log("FCM Background Noti ", payload)
     const { title, body, icon, webpush, badge, click_action, link, tag, actions } = payload.data;

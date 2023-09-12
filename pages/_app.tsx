@@ -108,9 +108,12 @@ export default function App({
         alert("sw not ready !");
       });
   }
+  const [notiPermission, setnotiPermission] = useState(false);
   useEffect(() => {
+    if (!notiPermission) return;
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       const messaging = getMessaging(app);
+      console.log("getting foreground");
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
         alert(JSON.stringify(payload));
@@ -143,10 +146,15 @@ export default function App({
         };
         console.log("serviceWorker" in navigator); // true
         console.log(navigator.serviceWorker);
-        // below didn't run in mobile chrome
-        navigator.serviceWorker.ready
+        //         controller:null
+        // oncontrollerchange:null
+        // onmessage:null
+        // onmessageerror:null
+        // ready:Promise {<pending>}
+
+        navigator.serviceWorker.ready // this code didn't run
           .then((reg) => {
-            console.log("sw ready");
+            console.log("sw ready", reg);
             alert("Sw ready");
             reg.showNotification(notificationTitle, notificationOptions);
           })
@@ -154,6 +162,18 @@ export default function App({
             console.log(error);
             alert("sw not ready !");
           });
+        // if (
+        //   "serviceWorker" in navigator &&
+        //   navigator.serviceWorker.controller
+        // ) {
+        //   navigator.serviceWorker.controller.postMessage({
+        //     type: "showNotification",
+        //     title: notificationTitle,
+        //     options: notificationOptions,
+        //   });
+        // } else {
+        //   alert("noti can't show");
+        // }
         // new ServiceWorkerRegistration().showNotification(
         //   notificationTitle,
         //   notificationOptions
@@ -164,7 +184,7 @@ export default function App({
         };
       });
     }
-  }, []);
+  }, [notiPermission]);
   const auth = getAuth(app);
   const [authUser, setauthUser] = useState<User | null>(null);
   useEffect(() => {
@@ -244,6 +264,7 @@ export default function App({
       </Head>
       <QueryClientProvider client={queryClient}>
         <PageProvider
+          setnotiPermission={setnotiPermission}
           currentUser={currentUser}
           isPage={currentUser?.uid}
           setisPage={setisPage}
