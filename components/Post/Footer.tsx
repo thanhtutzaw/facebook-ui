@@ -7,7 +7,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { User, getAuth } from "firebase/auth";
-import { collection, doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getCountFromServer,
+  getDoc,
+  getDocs,
+} from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import {
@@ -69,10 +75,10 @@ export const Footer = (
     `users/${post.authorId}/posts/${post.id}/likes/${auth?.currentUser?.uid}`
   );
   useEffect(() => {
-    // const likeCollectionRef = collection(
-    //   db,
-    //   `users/${post.authorId}/posts/${post.id}/likes`
-    // );
+    const likeCollectionRef = collection(
+      db,
+      `users/${post.authorId}/posts/${post.id}/likes`
+    );
 
     async function getLikeCount() {
       const likeRef = doc(
@@ -80,14 +86,14 @@ export const Footer = (
         `users/${post.authorId}/posts/${post.id}/likes/${auth?.currentUser?.uid}`
       );
       const isUserLikeThisPost = await getDoc(likeRef);
-      // const likes = await getDocs(likeCollectionRef);
+      const likes = (await getCountFromServer(likeCollectionRef)).data().count;
       // const likeCount = likes.docs.length;
       const likeCount = post.likeCount;
       if (isUserLikeThisPost.exists()) {
-        setlikeCount?.(likeCount);
+        setlikeCount?.(likes);
         setisLiked(true);
       } else {
-        setlikeCount?.(likeCount);
+        setlikeCount?.(likes);
         setisLiked(false);
       }
     }
@@ -149,26 +155,39 @@ export const Footer = (
               alert("Error : User Not Found . Sign up and Try Again ! ");
               return;
             }
-            setlikeCount?.(post.likeCount);
+            // setlikeCount?.(post.likeCount);
             setisLiked((prev) => !prev);
-            queryClient?.refetchQueries(["myPost"]);
+            // queryClient?.refetchQueries(["myPost"]);
             queryClient?.invalidateQueries(["myPost"]);
             setLikeLoading(true);
+            const likeCollectionRef = collection(
+              db,
+              `users/${post.authorId}/posts/${post.id}/likes`
+            );
+
             if (isLiked) {
               // setisLiked(false);
               setLikes?.([]);
-              await unlikePost(likeCount ?? 0, postRef, likeRef);
+
               setLikeLoading(false);
+              await unlikePost(likeCount ?? 0, postRef, likeRef);
+              const likes = (await getCountFromServer(likeCollectionRef)).data()
+                .count;
+              console.log({ likes });
+              setlikeCount?.(likes);
+              console.log({ likeCount });
               // setlikeCount?.(parseInt(post.likeCount.toString()) - 1);
             } else {
               // setlikeCount?.(parseInt(post.likeCount.toString()));
-              // setisLiked(true);
               setLikes?.([]);
-
-              // , { uid, message }
 
               await likePost(likeCount ?? 0, postRef, likeRef, uid);
               setLikeLoading(false);
+              const likes = (await getCountFromServer(likeCollectionRef)).data()
+                .count;
+              console.log({ likes });
+              setlikeCount?.(likes);
+              console.log({ likeCount });
               if (uid === post.authorId) return;
               await sendAppNoti(
                 uid,
@@ -202,7 +221,8 @@ export const Footer = (
                 }),
               });
             }
-            router.replace(router.asPath, undefined, { scroll: false });
+            console.log(likeCount);
+            // router.replace(router.asPath, undefined, { scroll: false });
           }}
           aria-expanded={reactionAction !== ""}
           aria-label="Like this Post"

@@ -7,6 +7,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  increment,
   limit,
   orderBy,
   query,
@@ -200,8 +201,8 @@ export async function likePost(
   const batch = writeBatch(db);
   batch.set(likeRef, { uid, createdAt: serverTimestamp() });
   batch.update(postRef, {
-    // likeCount: increment(1),
-    likeCount: likeCount + 1,
+    likeCount: increment(1),
+    // likeCount: likeCount,
   });
   await batch.commit();
   console.log("liked post");
@@ -241,8 +242,8 @@ export async function unlikePost(
 
   batch.delete(likeRef);
   batch.update(postRef, {
-    // likeCount: increment(-1),
-    likeCount: likeCount > 0 ? likeCount - 1 : likeCount,
+    likeCount: likeCount > 0 ? increment(-1) : likeCount,
+    // likeCount: likeCount > 0 ? likeCount : likeCount,
   });
   await batch.commit();
   console.log("unliked post");
