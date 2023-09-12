@@ -1,7 +1,8 @@
 self.addEventListener("notificationclick", function (event) {
     console.log('notification click event', event);
+    const { reply } = event;
     const { click_action } = event.notification.data;
-    console.log(event.action)
+    // console.log(event.action)
     switch (event.action) {
         case `see_post`:
             event.notification.close();
@@ -24,14 +25,22 @@ self.addEventListener("notificationclick", function (event) {
             //         if (clients.openWindow) return event.waitUntil(clients.openWindow(click_action));
             //     })
             break;
+        case `reply`:
+            event.notification.close();
+            event.waitUntil(clients.openWindow(`https://facebook-ui-zee.vercel.app/${reply}`))
+            console.log("Submited content :", reply)
+            break;
         default:
             event.notification.close();
-            // event.waitUntil(clients.openWindow(click_action));
-            window.open(click_action, "_self");
+            event.waitUntil(clients.openWindow(click_action));
+            // window.open(click_action, "_self");
             break;
     }
 
 });
+self.addEventListener('notificationclose', (e) => {
+    console.log("close", e)
+})
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js'); // Import the Firebase v9 compat library
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-messaging-compat.js'); // Import the Firebase v9 compat library for messaging
 

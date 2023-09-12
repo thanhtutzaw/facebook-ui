@@ -199,14 +199,8 @@ export const Footer = (
                       action: "reply",
                       title: "Reply",
                       type: "text",
-                      placeHolder: "Reply Comment",
+                      placeholder: "Reply Comment",
                     },
-                    // {
-                    //   action: "Input",
-                    //   title: "Input",
-                    //   type: "input",
-                    //   placeHolder: "Type Something",
-                    // },
                   ]),
                   webpush: {
                     fcm_options: {
