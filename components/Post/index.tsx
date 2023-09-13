@@ -24,7 +24,6 @@ export default function Post({
   selectMode,
   post,
   tabIndex,
-  profile,
 }: PostProps) {
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);

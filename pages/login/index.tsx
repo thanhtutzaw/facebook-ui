@@ -73,13 +73,10 @@ export default function Login({ uid }: { uid: string }) {
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, adding]);
-  // }, [auth, adding]);
   useEscape(() => {
     if (!signup) return;
     setsignup(false);
   });
-  // const email = "testuser@gmail.com";
-  // const password = "111111";
   const [signup, setsignup] = useState(false);
   const handleTestUserSignin = () => {
     setLoading(true);

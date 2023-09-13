@@ -5,6 +5,7 @@ import { Props, friends } from "../../../types/interfaces";
 import Card from "./Card";
 import { useQueryClient } from "@tanstack/react-query";
 import s from "./Friends.module.scss";
+import { PageContext, PageProps } from "../../../context/PageContext";
 interface RequestProps {
   f: friends;
   tabIndex: number;
@@ -12,13 +13,14 @@ interface RequestProps {
 export function SuggestFriend(props: RequestProps) {
   const { f, tabIndex } = props;
   const queryClient = useQueryClient();
+  const { currentUser } = useContext(PageContext) as PageProps;
   const { uid } = useContext(AppContext) as Props;
   const [accept, setaccept] = useState(false);
   const [reject, setreject] = useState(false);
   async function handleAddSuggestedFriend() {
     setaccept(true);
     if (!uid) return;
-    await addFriends(uid , f);
+    await addFriends(uid, f, currentUser);
     queryClient.invalidateQueries(["suggestedFriends"]);
   }
   function handleSuggestDelete() {

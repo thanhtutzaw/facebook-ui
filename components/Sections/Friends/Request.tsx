@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Props } from "../../../types/interfaces";
 import Card from "./Card";
 import s from "./Friends.module.scss";
+import { PageContext, PageProps } from "../../../context/PageContext";
 interface RequestProps {
   f: any;
   setrequestCount?: Function;
@@ -16,6 +17,7 @@ interface RequestProps {
 export function Request(props: RequestProps) {
   const { f, tabIndex, setrequestCount } = props;
   const queryClient = useQueryClient();
+  const { currentUser } = useContext(PageContext) as PageProps;
 
   const [accept, setaccept] = useState(false);
   const [reject, setreject] = useState(false);
@@ -23,7 +25,7 @@ export function Request(props: RequestProps) {
   async function handleConfirmRequest() {
     if (!uid) return;
     try {
-      await acceptFriends(uid, f);
+      await acceptFriends(uid, f, currentUser);
       setaccept(true);
       // setrequestCount((prev: number) => prev - 1);
       queryClient.invalidateQueries(["pendingFriends"]);

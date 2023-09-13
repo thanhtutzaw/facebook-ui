@@ -12,7 +12,6 @@ import {
   doc,
   getCountFromServer,
   getDoc,
-  getDocs,
 } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
@@ -24,13 +23,12 @@ import {
   useState,
 } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
+import { NotiAction } from "../../lib/NotiAction";
 import { app, db } from "../../lib/firebase";
 import { sendAppNoti } from "../../lib/firestore/notifications";
 import { addPost, likePost, unlikePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
-import { NotiAction } from "../../lib/NotiAction";
 export const Footer = (
   props: {
     likeCount?: number;
@@ -87,8 +85,6 @@ export const Footer = (
       );
       const isUserLikeThisPost = await getDoc(likeRef);
       const likes = (await getCountFromServer(likeCollectionRef)).data().count;
-      // const likeCount = likes.docs.length;
-      const likeCount = post.likeCount;
       if (isUserLikeThisPost.exists()) {
         setlikeCount?.(likes);
         setisLiked(true);
@@ -438,5 +434,3 @@ async function handleShareNow(
     `${authorName} : ${post.text}`
   );
 }
-// );
-// Footer.displayName = "Footer";

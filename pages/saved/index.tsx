@@ -1,7 +1,6 @@
 import {
   Unsubscribe,
   collection,
-  collectionGroup,
   doc,
   getDoc,
   getDocs,
@@ -9,32 +8,25 @@ import {
   onSnapshot,
   orderBy,
   query,
-  where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import BackHeader from "../../components/Header/BackHeader";
 import { PostList } from "../../components/Sections/Home/PostList";
 import s from "../../components/Sections/Profile/index.module.scss";
-import {
-  db,
-  getPostWithMoreInfo,
-  getProfileByUID,
-  postInfo,
-  postToJSON,
-} from "../../lib/firebase";
+import { db, getProfileByUID, postInfo, postToJSON } from "../../lib/firebase";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
-// import console, { profile } from "console";
+import { Timestamp } from "@google-cloud/firestore";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import nookies from "nookies";
-import { Post, account } from "../../types/interfaces";
 import { useEffect, useState } from "react";
-import { Timestamp } from "@google-cloud/firestore";
+import { SavedPost_LIMIT } from "../../lib/QUERY_LIMIT";
+import { Post, account } from "../../types/interfaces";
 type savedPostTypes = {
   authorId: string;
   postId: string;
   createdAt: Timestamp;
 };
-const LIMIT = 10;
+// const SavedPost_LIMIT = 10;
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -44,11 +36,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const savedPostsQuery = query(
       collection(db, `users/${uid}/savedPost`),
       orderBy("createdAt", "desc"),
-      limit(LIMIT)
+      limit(SavedPost_LIMIT)
     );
     const saved = await getDocs(savedPostsQuery);
     const data = saved.docs.map((doc) => doc.data()) as savedPostTypes[];
-    // console.log(data[0].);
     const posts = await Promise.all(
       data.map(async (s: any) => {
         const { authorId, postId } = s;
@@ -90,15 +81,13 @@ export default function Page(props: {
   }, [savedPosts]);
 
   useEffect(() => {
-    // if (limitedPosts.length <= 0) return;
     let unsubscribe: Unsubscribe;
     const savedPostsQuery = query(
       collection(db, `users/${uid}/savedPost`),
       orderBy("createdAt", "desc"),
-      limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
+      limit(limitedPosts.length > 0 ? limitedPosts.length : SavedPost_LIMIT)
     );
     unsubscribe = onSnapshot(savedPostsQuery, async (snapshot) => {
-      // const saved = await getDocs(savedPostsQuery);
       const data = snapshot.docs.map((doc) => doc.data()) as savedPostTypes[];
       const posts = (await Promise.all(
         data.map(async (s) => {

@@ -17,6 +17,7 @@ import { JSONTimestampToDate, db, getProfileByUID } from "../../lib/firebase";
 import { Post, account, likes } from "../../types/interfaces";
 import Spinner from "../Spinner";
 import AuthorInfo from "./AuthorInfo";
+import { LikedUsers_LIMIT } from "../../lib/QUERY_LIMIT";
 
 export function LikedUsers({
   count,
@@ -61,7 +62,7 @@ export function LikedUsers({
     const likeRef = query(
       collection(db, `users/${post.authorId}/posts/${post.id}/likes`),
       orderBy("createdAt", "desc"),
-      limit(10)
+      limit(LikedUsers_LIMIT)
     );
     let unsubscribe: Unsubscribe;
     unsubscribe = onSnapshot(likeRef, async (snapshot) => {

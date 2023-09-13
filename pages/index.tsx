@@ -26,7 +26,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
-import { AppProvider, LIMIT } from "../context/AppContext";
+import { AppProvider } from "../context/AppContext";
 import {
   app,
   db,
@@ -44,6 +44,7 @@ import useSound from "use-sound";
 import Spinner from "../components/Spinner";
 import { PageContext, PageProps } from "../context/PageContext";
 import { useActive } from "../hooks/useActiveTab";
+import { NewsFeed_LIMIT, UnReadNoti_LIMIT } from "../lib/QUERY_LIMIT";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
@@ -77,12 +78,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     console.log(feedUserWithAdmin);
     const recentPosts = await Promise.all(
       feedUserWithAdmin.map(async (friend) => {
-        const recentPostQuery = query(
+        const newsFeedQuery = query(
           collection(db, `users/${uid}/friends/${friend.id}/recentPosts`),
           orderBy("createdAt", "desc"),
-          limit(LIMIT)
+          limit(NewsFeed_LIMIT)
         );
-        return (await getDocs(recentPostQuery)).docs.map((doc) => {
+        return (await getDocs(newsFeedQuery)).docs.map((doc) => {
           const authorId = doc.ref.parent.parent?.id;
           return {
             ...doc.data(),
@@ -93,10 +94,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     );
     // console.log(friendsDoc.reduce);
     const posts = recentPosts.reduce((acc, cur) => acc.concat(cur), []);
-    // console.log(posts);
     const newsFeedWithMe = [...acceptedFriends, uid];
     const isFriendEmpty = myFriendsSnap.empty;
-    // console.log(acceptedFriends2);
     const friendsList = !isFriendEmpty ? newsFeedWithMe : [uid];
     // const data = await Promise.all(
     //   acceptedFriends2.map(async ({ id, updatedAt }) => {
@@ -105,7 +104,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     //       collection(db, `users/${id}/posts`),
     //       where("visibility", "in", ["Friend", "Public"]),
     //       orderBy("createdAt", "desc"),
-    //       limit(10)
     //     );
     //     const ddocs = await getDocs(postQuery)
     //     return await Promise.all(
@@ -113,7 +111,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     //     );
     //   })
     // );
-    // console.log(data);
     // const startNewsFeedDate = myFriendsSnap.docs[1]
     //   .data()
     //   .updatedAt.toJSON() as Timestamp;
@@ -141,7 +138,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     //   // where("visibility", "in", ["Friend", "Public"]),
     //   where("updatedAt", ">=", new Timestamp(1693409835, 2000000)),
     //   orderBy("createdAt", "desc"),
-    //   limit(10)
     // );
     // const myFriendsQuery = query(
     //   collection(db, `users/${uid}/friends`),
@@ -154,7 +150,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     //   // where("visibility", "in", ["Friend", "Public"]),
     //   // where("updatedAt", ">=", new Timestamp(1693409835, 2000000)),
     //   orderBy("createdAt", "desc"),
-    //   limit(1)
     // );
 
     const [newsFeedPosts, profileData, currentAccount] = await Promise.all([
@@ -237,7 +232,7 @@ export default function Home({
   const { setfriends, setnotiPermission } = useContext(
     PageContext
   ) as PageProps;
-  const [prevfriendReqCount, setprevfriendReqCount] = useState(0);
+  // const [prevfriendReqCount, setprevfriendReqCount] = useState(0);
   useEffect(() => {
     const auth = getAuth(app);
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -265,16 +260,15 @@ export default function Home({
   //   // const postQuery = query(
   //   //   collectionGroup(db, `posts`),
   //   //   where("visibility", "in", ["Friend", "Public"]),
-
   //   //   orderBy("createdAt", "desc"),
-  //   //   limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
+  //   //   limit(limitedPosts.length > 0 ? limitedPosts.length : NewsFeed_LIMIT)
   //   // );
   //   const postQuery = query(
   //     collectionGroup(db, `posts`),
   //     // where("visibility", "in", ["Friend", "Public"]),
   //     where("authorId", "in", !isFriendEmpty ? acceptedFriends : [uid]),
   //     orderBy("createdAt", "desc"),
-  //     limit(limitedPosts.length > 0 ? limitedPosts.length : LIMIT)
+  //     limit(limitedPosts.length > 0 ? limitedPosts.length : NewsFeed_LIMIT)
   //   );
   //   unsubscribe = onSnapshot(postQuery, async (snapshot) => {
   //     const posts =
@@ -305,20 +299,22 @@ export default function Home({
         const doc = await getDoc(userDoc);
         const lastPull = doc.data()?.lastPullTimestamp ?? Date.now();
         setlastPullTimestamp(lastPull);
-        // listening notifications
-        const notiQuery = query(
+        const notiCountQuery = query(
           collection(db, `/users/${uid}/notifications`),
           where("createdAt", ">", lastPull),
-          limit(10)
+          limit(UnReadNoti_LIMIT)
         );
-        // const count = (await getCountFromServer(notiQuery)).data().count;
+        // const count = (await getCountFromServer(notiCountQuery)).data().count;
         // if (UnReadNotiCount >= 10) return;
         console.log("noti listening realtime - unRead" + UnReadNotiCount);
-        unsubscribeNotifications = onSnapshot(notiQuery, (querySnapshot) => {
-          console.log(querySnapshot.docs.map((doc) => doc.data()));
-          setUnReadNotiCount(querySnapshot.size); // getting unRead noti count
-          // setUnReadNotiCount(count); // getting unRead noti count
-        });
+        unsubscribeNotifications = onSnapshot(
+          notiCountQuery,
+          (querySnapshot) => {
+            console.log(querySnapshot.docs.map((doc) => doc.data()));
+            setUnReadNotiCount(querySnapshot.size); // getting unRead noti count
+            // setUnReadNotiCount(count); // getting unRead noti count
+          }
+        );
       } catch (error) {
         console.log(error);
       }
@@ -341,8 +337,6 @@ export default function Home({
   //   }
   //   fetchFriendReqLastPull();
   // }, [uid]);
-  // const messaging = getMessaging(app);
-  // const messagingRef = useRef(null);
 
   useEffect(() => {
     const requestNotificationPermission = async () => {
@@ -352,15 +346,12 @@ export default function Home({
           setnotiPermission?.(true);
           // console.log(await navigator.serviceWorker.controller);
           console.log("Notification permission granted.");
-          // return true;
         } else {
           setnotiPermission?.(false);
           console.log("Notification permission denied.");
-          // return false;
         }
       } catch (error) {
         console.error("Error requesting notification permission:", error);
-        // return false;
       }
     };
     requestNotificationPermission();
@@ -409,7 +400,6 @@ export default function Home({
     async function getLastpull() {
       lastPull = (await getDoc(friendReqCountRef)).data()
         ?.lastPullTimestamp as Timestamp;
-      // console.log();
     }
     getLastpull();
     let unsubscribeFriendReqCount: Unsubscribe;
@@ -458,7 +448,7 @@ export default function Home({
                 // }
               }
             }
-            setprevfriendReqCount(newCount);
+            // setprevfriendReqCount(newCount);
             setfriendReqCount(count);
           });
         });

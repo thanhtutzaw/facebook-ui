@@ -11,8 +11,6 @@ function ErrorPage() {
       <div
         style={{
           textAlign: "center",
-          // alignContent: "center",
-          // height: "calc(100dvh - 65px)",
         }}
         className={s.userContent}
       >

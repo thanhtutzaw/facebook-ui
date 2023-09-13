@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { ChangeEventHandler, FormEventHandler, MouseEventHandler } from "react";
 import s from "./index.module.scss";
 import { account } from "../../../types/interfaces";
+import { faEdit, faPen } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 function EditProfile(props: {
   updating: boolean;
   edit: boolean;
@@ -21,6 +23,7 @@ function EditProfile(props: {
         exit={{ opacity: 0 }}
         className={s.editToggle}
       >
+        <FontAwesomeIcon icon={faPen} />
         Edit Profile
       </motion.button>
     );

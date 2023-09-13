@@ -11,9 +11,9 @@ import { PageContext, PageProps } from "../../context/PageContext";
 import { app } from "../../lib/firebase";
 import { Post as PostType, likes } from "../../types/interfaces";
 import Input from "../Input/Input";
-import AdminDropDown from "./AdminDropDown";
+import AdminMenu from "./Menu/AdminMenu";
 import AuthorInfo from "./AuthorInfo";
-import DropDown from "./DropDown";
+import Menu from "./Menu/Menu";
 import PhotoLayout from "./PhotoLayout";
 import { SharePreview } from "./SharePreview";
 import { SocialCount } from "./SocialCount";
@@ -185,7 +185,7 @@ export default function Content(props: {
       {!shareMode && (
         <>
           {isAdmin ? (
-            <AdminDropDown
+            <AdminMenu
               updatePost={updatePost!}
               setshowAction={setshowAction!}
               showAction={showAction ?? ""}
@@ -194,7 +194,7 @@ export default function Content(props: {
               post={post}
             />
           ) : (
-            <DropDown
+            <Menu
               setshowAction={setshowAction!}
               showAction={showAction ?? ""}
               authorId={authorId?.toString()!}

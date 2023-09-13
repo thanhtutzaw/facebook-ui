@@ -1,20 +1,13 @@
-import {
-  faBookmark,
-  faCopy,
-  faLink,
-  faLinkSlash,
-  faSmileWink,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBookmark, faLink } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getAuth } from "firebase/auth";
+import { doc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import { app, db } from "../../lib/firebase";
-import { addSavedPost, unSavePost } from "../../lib/firestore/savedPost";
-import styles from "./index.module.scss";
-import { deleteDoc, doc } from "firebase/firestore";
 import { useRouter } from "next/router";
-export default function DropDown(props: {
+import { useEffect, useState } from "react";
+import { db } from "../../../lib/firebase";
+import { addSavedPost, unSavePost } from "../../../lib/firestore/savedPost";
+import styles from "../index.module.scss";
+export default function Menu(props: {
   setshowAction: Function;
   showAction: string;
   authorId: string;

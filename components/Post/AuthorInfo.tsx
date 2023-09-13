@@ -4,14 +4,14 @@ import {
   faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DocumentData, DocumentReference, Timestamp } from "firebase/firestore";
+import { DocumentData, DocumentReference } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { CSSProperties, MouseEventHandler, ReactNode } from "react";
+import { JSONTimestampToDate } from "../../lib/firebase";
 import { Comment, Post, account } from "../../types/interfaces";
 import Action from "../Comment/Action";
 import styles from "./index.module.scss";
-import { JSONTimestampToDate } from "../../lib/firebase";
 type layoutTypes = "row" | "column";
 
 export default function AuthorInfo(props: {

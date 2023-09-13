@@ -65,7 +65,6 @@ export function PageProvider(props: PageProps) {
   const [shareAction, setshareAction] = useState("");
   const [selectedId, setSelectedId] = useState([]);
   const [preventClick, setpreventClick] = useState(false);
-  // const preventClick = useRef(false);
   const [view, setview] = useState({ src: "", name: "" });
   const fileRef = useRef<HTMLInputElement>(null);
   const viewRef = useRef<HTMLDialogElement>(null);

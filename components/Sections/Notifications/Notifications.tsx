@@ -7,9 +7,7 @@ import {
   limit,
   orderBy,
   query,
-  serverTimestamp,
   startAfter,
-  updateDoc,
 } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,8 +21,8 @@ import { NotiTypes, Props } from "../../../types/interfaces";
 import Spinner from "../../Spinner";
 import t from "../../Tabs/Tabs.module.scss";
 import s from "./Notifications.module.scss";
-import useInfiniteScroll from "../../../hooks/useInfiniteScroll";
-const LIMIT = 10;
+import { NOTI_LIMIT } from "../../../lib/QUERY_LIMIT";
+
 export default function Notifications() {
   const { active: tab } = useActive();
   const { uid, lastPullTimestamp, UnReadNotiCount } = useContext(
@@ -36,7 +34,7 @@ export default function Notifications() {
     let notiQuery = query(
       collection(db, `/users/${uid}/notifications`),
       orderBy("createdAt", "desc"),
-      limit(LIMIT + 1)
+      limit(NOTI_LIMIT + 1)
     );
     const userDoc = doc(db, `users/${uid}`);
     // await updateDoc(userDoc, { lastPullTimestamp: serverTimestamp() });
@@ -70,7 +68,7 @@ export default function Notifications() {
           hasRead: createdDate < lastPull,
         };
       }) as NotiTypes[];
-      const hasMore = noti.length > LIMIT;
+      const hasMore = noti.length > NOTI_LIMIT;
       if (hasMore) {
         noti.pop();
       }
@@ -100,7 +98,7 @@ export default function Notifications() {
     let notiQuery = query(
       collection(db, `/users/${uid}/notifications`),
       orderBy("createdAt", "desc"),
-      limit(LIMIT + 1)
+      limit(NOTI_LIMIT + 1)
     );
     // let unsubscribe: Unsubscribe;
     // unsubscribe = onSnapshot(notiQuery, async (snapshot) => {

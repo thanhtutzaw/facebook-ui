@@ -1,3 +1,12 @@
+import {
+  faCheck,
+  faClock,
+  faPlus,
+  faUser,
+  faUserFriends,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useQueryClient } from "@tanstack/react-query";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import {
   Timestamp,
@@ -7,33 +16,24 @@ import {
   limit,
   orderBy,
   query,
-  serverTimestamp,
   startAfter,
   where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useCallback, useContext, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
 import { PostList } from "../../components/Sections/Home/PostList";
 import s from "../../components/Sections/Profile/index.module.scss";
-import { LIMIT } from "../../context/AppContext";
 import { PageContext, PageProps } from "../../context/PageContext";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
+import { MYPOST_LIMIT } from "../../lib/QUERY_LIMIT";
 import { db, fethUserDoc, getPostWithMoreInfo } from "../../lib/firebase";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
-import { Post as PostType, account, friends } from "../../types/interfaces";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useQueryClient } from "@tanstack/react-query";
-import {
-  faCheck,
-  faClock,
-  faPlus,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
 import { acceptFriends, addFriends } from "../../lib/firestore/friends";
+import { Post as PostType, account, friends } from "../../types/interfaces";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;
@@ -44,35 +44,31 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const isFriendsQuery = doc(db, `users/${token.uid}/friends/${uid}`);
     const friendDoc = await getDoc(isFriendsQuery);
     let isFriend = false,
-      isBlock = false,
+      isBlocked = false,
       isPending = false,
       canAccept = false;
     if (friendDoc.exists()) {
-      // console.log(object);
       const relation = friendDoc.data() as friends;
-      isFriend = relation.status === "friend" || friendDoc.exists();
+      isFriend = relation.status === "friend";
       isPending = relation.status === "pending";
-      isBlock = relation.status === "block";
+      isBlocked = relation.status === "block";
       canAccept = relation.senderId !== token.uid;
     }
-    // const relation = friendDoc.data() as friends;
-    // isBlock = relation.status === "block";
-
     let mypostQuery = query(
       collection(db, `/users/${uid}/posts`),
       where("visibility", "in", ["Public"]),
       orderBy("createdAt", "desc"),
-      limit(LIMIT)
+      limit(MYPOST_LIMIT)
     );
     if (isFriend) {
       mypostQuery = query(
         collection(db, `/users/${uid}/posts`),
         where("visibility", "in", ["Friend", "Public"]),
         orderBy("createdAt", "desc"),
-        limit(LIMIT)
+        limit(MYPOST_LIMIT)
       );
     }
-    const myPost = isBlock
+    const myPost = isBlocked
       ? null
       : await getPostWithMoreInfo(uid as string, mypostQuery);
     if (userExist) {
@@ -83,7 +79,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           profile: profile ?? null,
           myPost,
           isFriend,
-          isBlock,
+          isBlocked,
           isPending,
           canAccept,
         },
@@ -112,7 +108,7 @@ export default function UserProfile({
   profile,
   myPost,
   isFriend,
-  isBlock,
+  isBlocked,
   isPending,
   canAccept,
 }: {
@@ -120,7 +116,7 @@ export default function UserProfile({
   profile: account["profile"];
   myPost: PostType[];
   isFriend: Boolean;
-  isBlock: Boolean;
+  isBlocked: Boolean;
   isPending: Boolean;
   canAccept: Boolean;
 }) {
@@ -132,7 +128,7 @@ export default function UserProfile({
           const data = {
             id: router.query.user,
           } as friends;
-          await acceptFriends(token.uid, data);
+          await acceptFriends(token.uid, data, currentUser);
           router.replace("/", undefined, { scroll: false });
           queryClient.refetchQueries(["pendingFriends"]);
           queryClient.invalidateQueries(["pendingFriends"]);
@@ -145,23 +141,35 @@ export default function UserProfile({
     ),
     friend: (
       <button
-        // onClick={() => {
-        //   router.push(`/chat/${router.query.user}`);
-        // }}
+        style={
+          {
+            // position: "relative",
+          }
+        }
         className={s.editToggle}
       >
-        <FontAwesomeIcon icon={faCheck} />
+        <div>
+          <FontAwesomeIcon icon={faUser} />
+          <FontAwesomeIcon
+            style={{
+              width: "10px",
+              position: "relative",
+              top: "-5px",
+              // left: "-5px",
+            }}
+            icon={faCheck}
+          />
+        </div>
         Friends
       </button>
     ),
     notFriend: (
       <button
         onClick={async () => {
-          // router.push(`/chat/${router.query.user}`);
           const data = {
             id: router.query.user,
           } as friends;
-          await addFriends(token.uid, data);
+          await addFriends(token.uid, data, currentUser);
           router.replace(router.asPath, undefined, { scroll: false });
           queryClient.refetchQueries(["pendingFriends"]);
           queryClient.invalidateQueries(["pendingFriends"]);
@@ -173,19 +181,14 @@ export default function UserProfile({
       </button>
     ),
     pending: (
-      <button
-        // onClick={() => {
-        //   router.push(`/chat/${router.query.user}`);
-        // }}
-        className={`${s.editToggle} ${s.pending}`}
-      >
+      <button className={`${s.editToggle} ${s.pending}`}>
         <FontAwesomeIcon icon={faClock} />
         Pending
       </button>
     ),
   };
   const router = useRouter();
-  const { setview } = useContext(PageContext) as PageProps;
+  const { setview, currentUser } = useContext(PageContext) as PageProps;
   const userName = `${profile?.firstName ?? "Unknown"} ${
     profile?.lastName ?? "User"
   }`;
@@ -205,13 +208,13 @@ export default function UserProfile({
         where("visibility", "in", ["Friend", "Public"]),
         orderBy("createdAt", "desc"),
         startAfter(date),
-        limit(LIMIT)
+        limit(MYPOST_LIMIT)
       );
       const finalPost = await getPostWithMoreInfo(token.uid!, mypostQuery)!;
       setlimitedPosts(limitedPosts?.concat(finalPost!));
       setpostLoading(false);
 
-      if (finalPost?.length! < LIMIT) {
+      if (finalPost?.length! < MYPOST_LIMIT) {
         setPostEnd(true);
       }
     },
@@ -220,13 +223,13 @@ export default function UserProfile({
   const { scrollRef } = useInfiniteScroll(fetchMorePosts, postEnd, true);
   const bio = profile?.bio === "" || !profile ? "No Bio Yet" : profile?.bio;
   const otherUser = token?.uid !== router.query.user;
-  const status = isPending
+  const status = canAccept
+    ? "canAccept"
+    : isPending
     ? "pending"
     : isFriend
     ? "friend"
-    : !canAccept
-    ? "notFriend"
-    : "canAccept";
+    : "notFriend";
   return (
     <div ref={scrollRef} className="user">
       <BackHeader
@@ -268,13 +271,12 @@ export default function UserProfile({
           <p
             style={{
               color: profile?.bio === "" ? "gray" : "initial",
-              marginTop: "0",
             }}
             className={s.bio}
           >
             {bio}
           </p>
-          {isBlock ? (
+          {isBlocked ? (
             <p style={{ color: "red" }}>This Account is Blocked </p>
           ) : (
             otherUser && (

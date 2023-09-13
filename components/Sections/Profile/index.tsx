@@ -19,7 +19,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { AppContext, LIMIT } from "../../../context/AppContext";
+import { AppContext } from "../../../context/AppContext";
 import { useActive } from "../../../hooks/useActiveTab";
 import { app, db, getPostWithMoreInfo } from "../../../lib/firebase";
 import { changeProfile } from "../../../lib/firestore/profile";
@@ -28,6 +28,7 @@ import Content from "./Content";
 import EditProfile from "./EditProfile";
 import ProfileInfo from "./ProfileInfo";
 import s from "./index.module.scss";
+import { MYPOST_LIMIT } from "../../../lib/QUERY_LIMIT";
 export default function Profile() {
   const {
     profile,
@@ -66,7 +67,7 @@ export default function Profile() {
       let postQuery = query(
         collection(db, `/users/${uid}/posts`),
         orderBy("createdAt", sortby === "old" ? "asc" : "desc"),
-        limit(LIMIT + 1)
+        limit(MYPOST_LIMIT + 1)
       );
       if (pageParam) {
         const date = new Timestamp(
@@ -77,7 +78,7 @@ export default function Profile() {
       }
       const posts = await getPostWithMoreInfo(uid!, postQuery);
       if (!posts) return;
-      const hasMore = posts.length > LIMIT;
+      const hasMore = posts.length > MYPOST_LIMIT;
       if (hasMore) {
         posts.pop();
       }

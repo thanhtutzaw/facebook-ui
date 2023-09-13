@@ -1,25 +1,24 @@
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import { useQueryClient } from "@tanstack/react-query";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { GetServerSideProps } from "next";
-import BackHeader from "../../components/Header/BackHeader";
-import { db, getProfileByUID, userToJSON } from "../../lib/firebase";
-import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
-import s from "./index.module.scss";
-import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import nookies from "nookies";
+import { useContext, useEffect, useState } from "react";
+import BackHeader from "../../components/Header/BackHeader";
+import { db, getProfileByUID } from "../../lib/firebase";
+import { verifyIdToken } from "../../lib/firebaseAdmin";
 import {
   acceptFriends,
   blockFriends,
   rejectFriendRequest,
   unFriend,
 } from "../../lib/firestore/friends";
-import { useRouter } from "next/router";
-import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { account, friends } from "../../types/interfaces";
-import { User } from "firebase/auth";
+import { friends } from "../../types/interfaces";
+import s from "./index.module.scss";
+import { PageContext, PageProps } from "../../context/PageContext";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -71,6 +70,7 @@ export default function Page(props: {
   const { acceptedFriends, uid } = props;
   const allFriendsCount = acceptedFriends.length;
   const router = useRouter();
+  const { currentUser } = useContext(PageContext) as PageProps;
   // const displayName = friend
   const queryClient = useQueryClient();
   const [friends, setFriends] = useState(acceptedFriends);
@@ -221,9 +221,12 @@ export default function Page(props: {
                               id: friend.id,
                             } as friends;
                             await rejectFriendRequest(uid, data);
-                            router.replace("/", undefined, { scroll: false });
+                            router.replace(router.asPath, undefined, {
+                              scroll: false,
+                            });
                             queryClient.refetchQueries(["pendingFriends"]);
-                            queryClient.invalidateQueries(["pendingFriends"]);
+                            queryClient.refetchQueries(["suggestedFriends"]);
+                            // queryClient.invalidateQueries(["pendingFriends"]);
                           }}
                           className={`${s.editToggle} ${s.secondary}`}
                         >
@@ -237,7 +240,7 @@ export default function Page(props: {
                             const data = {
                               id: friend.id,
                             } as friends;
-                            await acceptFriends(uid, data);
+                            await acceptFriends(uid, data, currentUser);
                             router.replace("/", undefined, { scroll: false });
                             queryClient.refetchQueries(["pendingFriends"]);
                             queryClient.invalidateQueries(["pendingFriends"]);
@@ -258,14 +261,16 @@ export default function Page(props: {
                           }}
                           className={`${s.editToggle} ${s.secondary}`}
                         >
-                         Reject
+                          Reject
                         </button>
                       </>
                     )}
                   </>
                 )}
 
-                {friend.senderId === uid && friend.status !== "pending" && friend.status === "block" ? (
+                {friend.senderId === uid &&
+                friend.status !== "pending" &&
+                friend.status === "block" ? (
                   <button
                     onClick={async () => {
                       await unFriend(uid, friend);

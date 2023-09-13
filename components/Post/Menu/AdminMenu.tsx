@@ -4,13 +4,13 @@ import { getAuth } from "firebase/auth";
 import { AnimatePresence, motion } from "framer-motion";
 import router from "next/router";
 import { useState } from "react";
-import { app } from "../../lib/firebase";
-import { deletePost } from "../../lib/firestore/post";
-import { Post } from "../../types/interfaces";
-import { CopyLink } from "./DropDown";
-import styles from "./index.module.scss";
+import { app } from "../../../lib/firebase";
+import { deletePost } from "../../../lib/firestore/post";
+import { Post } from "../../../types/interfaces";
+import { CopyLink } from "./Menu";
+import styles from "../index.module.scss";
 import { useQueryClient } from "@tanstack/react-query";
-export default function AdminDropDown(props: {
+export default function AdminMenu(props: {
   updatePost: Function;
   setshowAction: Function;
   showAction: string;

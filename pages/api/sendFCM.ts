@@ -48,10 +48,10 @@ export default async function handler(
         body: message,
         icon,
         badge,
-        tag,
+        tag: tag ?? "",
         // bodyLocArgs: ['FooCorp', '11.80', '835.67', '1.43'],
         click_action: link ?? "/",
-        actions,
+        actions: actions ?? JSON.stringify([]),
       },
       webpush: {
         headers: {

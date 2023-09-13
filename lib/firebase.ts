@@ -219,7 +219,6 @@ export async function postInfo(p: Post, uid: string) {
 //   const adminPostsRef = query(
 //     collection(db, `users/${uid}/posts`),
 //     orderBy("createdAt", "desc"),
-//     limit(10)
 //   );
 //   const postDoc = await getDocs(adminPostsRef);
 //   // const postData = await postToJSON(postDoc);

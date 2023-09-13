@@ -7,13 +7,12 @@ import {
   startAfter,
   where,
 } from "firebase/firestore";
-import { createContext, useCallback, useEffect, useRef, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
+import { NewsFeed_LIMIT } from "../lib/QUERY_LIMIT";
 import { db, getPostWithMoreInfo } from "../lib/firebase";
 import { Post, Props } from "../types/interfaces";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
 export const AppContext = createContext<Props | null>(null);
-export const LIMIT = 10;
-
 export function AppProvider(props: Props) {
   const {
     friendReqCount,
@@ -60,7 +59,6 @@ export function AppProvider(props: Props) {
     //   where("visibility", "in", ["Friend", "Public"]),
     //   orderBy("createdAt", "desc"),
     //   startAfter(date),
-    //   limit(LIMIT)
     // );
     const postQuery = query(
       collectionGroup(db, `posts`),
@@ -68,13 +66,13 @@ export function AppProvider(props: Props) {
       where("authorId", "in", acceptedFriends ? acceptedFriends : ["0"]),
       orderBy("createdAt", "desc"),
       startAfter(date),
-      limit(LIMIT)
+      limit(NewsFeed_LIMIT)
     );
     const finalPost = (await getPostWithMoreInfo(uid!, postQuery)) ?? [];
 
     setlimitedPosts?.(limitedPosts?.concat(finalPost));
     setpostLoading(false);
-    if (finalPost.length < LIMIT) {
+    if (finalPost.length < NewsFeed_LIMIT) {
       setPostEnd(true);
     }
   };

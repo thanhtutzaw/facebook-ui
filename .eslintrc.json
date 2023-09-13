@@ -1,3 +1,17 @@
 {
   "extends": "next/core-web-vitals"
 }
+// {
+//   "extends": ["next/core-web-vitals"],
+//   "plugins": ["import"],
+//   "rules": {
+//     // Add any custom ESLint rules here
+//     "import/no-unresolved": [
+//       "error",
+//       {
+//         "commonjs": true,
+//         "caseSensitive": true
+//       }
+//     ]
+//   }
+// }

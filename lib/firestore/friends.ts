@@ -9,8 +9,14 @@ import {
 } from "firebase/firestore";
 import { friends } from "../../types/interfaces";
 import { db } from "../firebase";
+import { NotiAction } from "../NotiAction";
+import { User } from "firebase/auth";
 
-export async function addFriends(uid: string, f: friends) {
+export async function addFriends(
+  uid: string,
+  f: friends,
+  currentUser?: User | null
+) {
   const { author, ...data } = { ...f };
   const reqCountRef = doc(db, `users/${f.id}/friendReqCount/reqCount`);
   const senderData = {
@@ -29,6 +35,15 @@ export async function addFriends(uid: string, f: friends) {
     db,
     `users/${senderData.id}/friends/${receiptData.id}`
   );
+  // console.log(author);
+  // const senderName = `${author?.firstName ?? "Unknown User"} ${
+  //   author?.lastName ?? " "
+  // }`;
+  const senderProfilePicture = `${
+    currentUser?.photoURL
+      ? currentUser?.photoURL
+      : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+  }`;
   try {
     await setDoc(senderRef, senderData);
     await setDoc(receiptRef, receiptData);
@@ -41,12 +56,37 @@ export async function addFriends(uid: string, f: friends) {
     } else {
       await setDoc(reqCountRef, { count: 1, updatedAt: serverTimestamp() });
     }
+    await fetch("/api/sendFCM", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        recieptId: senderData.id,
+        message: `${
+          currentUser?.displayName ?? "Unknow User"
+        } send you a friend request.`,
+        icon: senderProfilePicture,
+        badge: "/badge.svg",
+        link: `/${receiptData.id}`,
+        actions: JSON.stringify([...NotiAction.friend_request]),
+        // webpush: {
+        //   fcm_options: {
+        //     link: `https://facebook-ui-zee.vercel.app/${post.authorId}/${post.id}`,
+        //   },
+        // },
+      }),
+    });
   } catch (error) {
     console.log(error);
     throw error;
   }
 }
-export async function acceptFriends(uid: string, f: friends) {
+export async function acceptFriends(
+  uid: string,
+  f: friends,
+  currentUser?: User | null
+) {
   const { author, ...data } = { ...f };
   const acceptedData = {
     ...data,
@@ -58,6 +98,30 @@ export async function acceptFriends(uid: string, f: friends) {
   const reqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
   await setDoc(reqCountRef, { count: increment(-1) });
   await updateFriendStatus(uid, acceptedData);
+
+  await fetch("/api/sendFCM", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({
+      recieptId: f.senderId,
+      message: `${
+        currentUser?.displayName ?? "Unknown User"
+      } accepted your friend request.`,
+      icon: currentUser?.photoURL
+        ? currentUser?.photoURL
+        : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+      badge: "/badge.svg",
+      link: `/${uid}`,
+      // actions: JSON.stringify([...NotiAction.friend_request]),
+      // webpush: {
+      //   fcm_options: {
+      //     link: `https://facebook-ui-zee.vercel.app/${post.authorId}/${post.id}`,
+      //   },
+      // },
+    }),
+  });
   // console.log({ acceptedData, receiptData });
   // const acceptedRef = doc(
   //   db,
@@ -78,7 +142,9 @@ export async function acceptFriends(uid: string, f: friends) {
 export async function rejectFriendRequest(uid: string, f: friends) {
   try {
     await unFriend(uid, f);
-    const reqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
+    const reqCountRef = doc(db, `users/${f.id}/friendReqCount/reqCount`);
+    // await setDoc(reqCountRef, { count: increment(-1) });
+    // const reqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
     await updateDoc(reqCountRef, { count: increment(-1) });
   } catch (error) {
     console.log(error);

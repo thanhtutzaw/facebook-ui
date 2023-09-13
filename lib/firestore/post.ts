@@ -19,6 +19,7 @@ import {
 import { selectedId } from "../../context/PageContext";
 import { Post, friends, likes } from "../../types/interfaces";
 import { db, getProfileByUID } from "../firebase";
+import { LikedUsers_LIMIT } from "../QUERY_LIMIT";
 export async function addPost(
   uid: string,
   visibility: string,
@@ -211,7 +212,7 @@ export async function fetchLikedUsers(p: Post) {
   const likeRef = query(
     collection(db, `users/${p.authorId}/posts/${p.id}/likes`),
     orderBy("createdAt", "desc"),
-    limit(10)
+    limit(LikedUsers_LIMIT)
   );
   try {
     const likeDoc = await getDocs(likeRef);

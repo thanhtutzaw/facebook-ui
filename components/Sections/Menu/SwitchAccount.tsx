@@ -36,13 +36,18 @@ export default function SwitchAccount(props: {
       email: "hellokitty2@gmail.com",
       password: "1111112",
     },
+    {
+      uid: "wong@gmail.com",
+      email: "wong@gmail.com",
+      password: "111111",
+    },
   ];
   const [toggleSwitchAcc, setToggleSwitchAcc] = useState(false);
   return (
     <div
       style={{
         height: !toggleSwitchAcc ? "65px" : "300px",
-        transition: "height 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0s",
+        // transition: "",
       }}
       onClick={() => {
         setToggleSwitchAcc((prev) => !prev);
@@ -54,23 +59,13 @@ export default function SwitchAccount(props: {
         <h2>Switch Account</h2>
 
         {toggleSwitchAcc ? (
-          <button
-            onClick={() => {
-              // setSort((prev: any) => !prev);
-            }}
-            aria-label="toggle"
-          >
+          <button aria-label="toggle">
             <div>
               <FontAwesomeIcon color="#0070f3" icon={faAngleUp} />
             </div>
           </button>
         ) : (
-          <button
-            onClick={() => {
-              // setSort((prev: any) => !prev);
-            }}
-            aria-label="toggle"
-          >
+          <button aria-label="toggle">
             <div>
               <FontAwesomeIcon color="#0070f3" icon={faAngleDown} />
             </div>
