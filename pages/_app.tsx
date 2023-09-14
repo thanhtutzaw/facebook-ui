@@ -10,7 +10,7 @@ import {
 } from "firebase/auth";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import nookies from "nookies";
 import nProgress from "nprogress";
 import "nprogress/nprogress.css";
@@ -22,11 +22,11 @@ import { useActive } from "../hooks/useActiveTab";
 import { app } from "../lib/firebase";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import "../styles/globals.css";
-import { GetServerSideProps } from "next";
-import { Props } from "../types/interfaces";
-import { verifyIdToken } from "../lib/firebaseAdmin";
 import { getMessaging, onMessage } from "firebase/messaging";
+import { GetServerSideProps } from "next";
+import { verifyIdToken } from "../lib/firebaseAdmin";
+import "../styles/globals.css";
+import { Props } from "../types/interfaces";
 config.autoAddCss = false;
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context

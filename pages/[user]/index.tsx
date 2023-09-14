@@ -2,8 +2,7 @@ import {
   faCheck,
   faClock,
   faPlus,
-  faUser,
-  faUserFriends,
+  faUser
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQueryClient } from "@tanstack/react-query";
@@ -20,6 +19,7 @@ import {
   where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
+import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import nookies from "nookies";
@@ -35,8 +35,7 @@ import { verifyIdToken } from "../../lib/firebaseAdmin";
 import {
   acceptFriends,
   addFriends,
-  unBlockFriends,
-  unFriend,
+  unBlockFriends
 } from "../../lib/firestore/friends";
 import { Post as PostType, account, friends } from "../../types/interfaces";
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -58,7 +57,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       isFriend = relation.status === "friend";
       isPending = relation.status === "pending";
       isBlocked = relation.status === "block";
-      canAccept = relation.senderId !== token.uid;
+      canAccept = relation.senderId !== token.uid && !isFriend;
       canUnBlock = relation.senderId === token.uid;
     }
     let mypostQuery = query(
@@ -158,7 +157,21 @@ export default function UserProfile({
         }
         className={s.editToggle}
       >
-        <div>
+        <svg
+          width="20"
+          data-e2e=""
+          height="20"
+          viewBox="0 0 48 48"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M13.0001 13C13.0001 9.68629 15.6864 7 19.0001 7C22.3139 7 25.0001 9.68629 25.0001 13C25.0001 16.3137 22.3139 19 19.0001 19C15.6864 19 13.0001 16.3137 13.0001 13ZM19.0001 3C13.4773 3 9.00015 7.47715 9.00015 13C9.00015 18.5228 13.4773 23 19.0001 23C24.523 23 29.0001 18.5228 29.0001 13C29.0001 7.47715 24.523 3 19.0001 3ZM5.19435 40.9681C6.70152 35.5144 10.0886 32.2352 13.9162 30.738C17.7125 29.2531 22.0358 29.4832 25.6064 31.2486C26.1015 31.4934 26.7131 31.338 26.9931 30.8619L28.0072 29.1381C28.2872 28.662 28.1294 28.0465 27.6384 27.7937C23.0156 25.4139 17.4034 25.0789 12.4591 27.0129C7.37426 29.0018 3.09339 33.3505 1.2883 40.0887C1.14539 40.6222 1.48573 41.1592 2.02454 41.2805L3.97575 41.7195C4.51457 41.8408 5.04724 41.5004 5.19435 40.9681ZM44.7074 30.1212C45.0979 29.7307 45.0979 29.0975 44.7074 28.707L43.2932 27.2928C42.9026 26.9023 42.2695 26.9023 41.8789 27.2928L30.0003 39.1715L25.1216 34.2928C24.7311 33.9023 24.0979 33.9023 23.7074 34.2928L22.2932 35.707C21.9026 36.0975 21.9026 36.7307 22.2932 37.1212L28.586 43.4141C29.3671 44.1952 30.6334 44.1952 31.4145 43.4141L44.7074 30.1212Z"
+          ></path>
+        </svg>
+        {/* <div>
           <FontAwesomeIcon icon={faUser} />
           <FontAwesomeIcon
             style={{
@@ -168,7 +181,7 @@ export default function UserProfile({
             }}
             icon={faCheck}
           />
-        </div>
+        </div> */}
         Friends
       </button>
     ),
@@ -240,93 +253,108 @@ export default function UserProfile({
     ? "friend"
     : "notFriend";
   return (
-    <div ref={scrollRef} className="user">
-      <BackHeader
-        onClick={() => {
-          router.push("/");
-        }}
-      />
-      <div
-        style={{
-          marginTop: "65px",
-          height: "calc(100vh - 65px)",
-          backgroundColor: "#dadada",
-        }}
-        className={s.container}
-      >
-        <div className={`${s.info}`} style={{ paddingBottom: "1rem" }}>
-          <Image
-            onClick={() => {
-              setview?.({
-                src: profile?.photoURL
-                  ? profile?.photoURL
-                  : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-                name: `${userName}'s profile`,
-              });
-            }}
-            priority={false}
-            className={s.profile}
-            width={500}
-            height={170}
-            style={{ objectFit: "cover", width: "120px", height: "120px" }}
-            alt={`${userName}'s profile`}
-            src={
-              (profile?.photoURL as string)
-                ? (profile?.photoURL as string)
-                : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-            }
-          />
-          <h3 style={{ marginBottom: "18px" }}>{userName}</h3>
-          <p
-            style={{
-              color: profile?.bio === "" ? "gray" : "initial",
-            }}
-            className={s.bio}
-          >
-            {bio}
-          </p>
-          {isBlocked ? (
-            <>
-              <p style={{ color: "red" }}>This Account is Blocked </p>
-              {canUnBlock && (
-                <button
-                  onClick={async () => {
-                    router.replace(router.asPath, undefined, {
-                      scroll: false,
-                    });
-                    await unBlockFriends(token.uid, {
-                      id: router.query.user?.toString()!,
-                    });
-                  }}
-                >
-                  Un Block
-                </button>
-              )}
-            </>
-          ) : (
-            otherUser && (
-              <div className={s.actions}>
-                {statusComponents[status]}
-                <button
-                  onClick={() => {
-                    router.push(`/chat/${router.query.user}`);
-                  }}
-                  className={s.editToggle}
-                >
-                  Send Message
-                </button>
-              </div>
-            )
-          )}
-        </div>
-        <PostList
-          postLoading={postLoading}
-          postEnd={postEnd}
-          tabIndex={1}
-          posts={limitedPosts}
-          profile={profile}
+    <>
+      <Head>
+        <title>{userName} | Facebook Next</title>
+        <meta
+          name="description"
+          content={`${userName} Facebook-Mobile-UI with Next.js`}
         />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no"
+        />
+        <link rel="icon" href="/logo.svg" />
+        <link rel="manifest" href="/manifest.json" />
+      </Head>
+      <div ref={scrollRef} className="user">
+        <BackHeader
+          onClick={() => {
+            router.push("/");
+          }}
+        />
+        <div
+          style={{
+            marginTop: "65px",
+            height: "calc(100vh - 65px)",
+            backgroundColor: "#dadada",
+          }}
+          className={s.container}
+        >
+          <div className={`${s.info}`} style={{ paddingBottom: "1rem" }}>
+            <Image
+              onClick={() => {
+                setview?.({
+                  src: profile?.photoURL
+                    ? profile?.photoURL
+                    : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+                  name: `${userName}'s profile`,
+                });
+              }}
+              priority={false}
+              className={s.profile}
+              width={500}
+              height={170}
+              style={{ objectFit: "cover", width: "120px", height: "120px" }}
+              alt={`${userName}'s profile`}
+              src={
+                (profile?.photoURL as string)
+                  ? (profile?.photoURL as string)
+                  : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+              }
+            />
+            <h3 style={{ marginBottom: "18px" }}>{userName}</h3>
+            <p
+              style={{
+                color: profile?.bio === "" ? "gray" : "initial",
+              }}
+              className={s.bio}
+            >
+              {bio}
+            </p>
+            {isBlocked ? (
+              <>
+                <p style={{ color: "red" }}>This Account is Blocked </p>
+                {canUnBlock && (
+                  <button
+                    onClick={async () => {
+                      router.replace(router.asPath, undefined, {
+                        scroll: false,
+                      });
+                      await unBlockFriends(token.uid, {
+                        id: router.query.user?.toString()!,
+                      });
+                    }}
+                  >
+                    Un Block
+                  </button>
+                )}
+              </>
+            ) : (
+              otherUser && (
+                <div className={s.actions}>
+                  {statusComponents[status]}
+                  <button
+                    onClick={() => {
+                      router.push(`/chat/${router.query.user}`);
+                    }}
+                    className={s.editToggle}
+                  >
+                    Send Message
+                  </button>
+                </div>
+              )
+            )}
+          </div>
+          <PostList
+            postLoading={postLoading}
+            postEnd={postEnd}
+            tabIndex={1}
+            posts={limitedPosts}
+            profile={profile}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
