@@ -1,6 +1,13 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import {
+  Timestamp,
+  collection,
+  getDocs,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,11 +21,13 @@ import {
   acceptFriends,
   blockFriends,
   rejectFriendRequest,
+  unBlockFriends,
   unFriend,
 } from "../../lib/firestore/friends";
 import { friends } from "../../types/interfaces";
 import s from "./index.module.scss";
 import { PageContext, PageProps } from "../../context/PageContext";
+import Spinner from "../../components/Spinner";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -38,7 +47,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         return {
           status: doc.data().status,
           senderId: doc.data().senderId,
-          // ...doc.data(),
           id: doc.id,
           author: {
             ...account,
@@ -68,36 +76,39 @@ export default function Page(props: {
   uid: string;
 }) {
   const { acceptedFriends, uid } = props;
-  const allFriendsCount = acceptedFriends.length;
   const router = useRouter();
   const { currentUser } = useContext(PageContext) as PageProps;
-  // const displayName = friend
   const queryClient = useQueryClient();
   const [friends, setFriends] = useState(acceptedFriends);
   const [status, setstatus] = useState<friends["status"]>("friend");
-  //  === "friend"
-  //         ? "friend"
-  //         : status === "pending"
-  //         ? "pending"
-  //         : "block"
+  const [firendLoading, setFirendLoading] = useState(false);
   useEffect(() => {
     async function fetchSortedFriends() {
-      const myFriendsQuery = query(
+      let myFriendsQuery = query(
         collection(db, `users/${uid}/friends`),
         where("status", "==", status),
         orderBy(status === "pending" ? "createdAt" : "updatedAt", "desc")
       );
-      // if (status === "friend") return;
+      if (status === "block") {
+        myFriendsQuery = query(
+          collection(db, `users/${uid}/friends`),
+          where("status", "==", "block"),
+          where("senderId", "==", uid),
+          orderBy("updatedAt", "desc")
+        );
+      }
+      setFirendLoading(true);
       const myFriendsSnap = await getDocs(myFriendsQuery);
       const acceptedFriends = await Promise.all(
         myFriendsSnap.docs.map(async (doc) => {
-          // const account = (await getUserData(doc.id as string))! as UserRecord;
           const account = await getProfileByUID(doc.id);
-          // const accountJSON = userToJSON(account) as UserRecord;
           return {
+            date:
+              status === "pending"
+                ? doc.data().createdAt
+                : doc.data().updatedAt,
             status: doc.data().status,
             senderId: doc.data().senderId,
-            // ...doc.data(),
             id: doc.id,
             author: {
               ...account,
@@ -105,6 +116,7 @@ export default function Page(props: {
           };
         })
       );
+      setFirendLoading(false);
       setFriends(acceptedFriends);
     }
     fetchSortedFriends();
@@ -119,7 +131,7 @@ export default function Page(props: {
             : status === "pending"
             ? "Pending"
             : "Block"}{" "}
-          {friends.length > 0 && friends.length}
+          {friends.length > 0 && !firendLoading && friends.length}
         </h2>
       </BackHeader>
       <div
@@ -153,51 +165,69 @@ export default function Page(props: {
         >
           Pending
         </button>
-        {friends.length > 0 ? (
+        {firendLoading ? (
+          <Spinner />
+        ) : friends.length <= 0 ? (
+          <p style={{ textAlign: "center", padding: "1rem" }}>
+            {status === "block" ? "Empty Blocked" : "Empty Friends"}
+          </p>
+        ) : (
           <ul>
             {friends.map((friend) => (
               <li key={friend.id} aria-label="Go to Friends Profile">
                 <Link href={friend.id.toString()} key={friend.id}>
-                  <Image
-                    className={s.profile}
-                    alt={"name"}
-                    width={100}
-                    height={100}
-                    src={
-                      friend.author?.photoURL
-                        ? (friend.author?.photoURL as string)
-                        : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-                    }
-                  />
-                  <p>
-                    {/* {friend.author} */}
-                    {`${friend.author?.firstName ?? friend.id} ${
-                      friend.author?.lastName
-                    }`}
-                  </p>
-                </Link>
-                {friend.status === "friend" && (
-                  <button
-                    onClick={async () => {
-                      try {
-                        await unFriend(uid, friend);
-                        router.replace(router.asPath, undefined, {
-                          scroll: false,
-                        });
-                        queryClient.invalidateQueries(["suggestedFriends"]);
-                      } catch (error) {
-                        console.log(error);
+                  <div className={s.info}>
+                    <Image
+                      className={s.profile}
+                      alt={"name"}
+                      width={100}
+                      height={100}
+                      src={
+                        friend.author?.photoURL
+                          ? (friend.author?.photoURL as string)
+                          : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
                       }
-                    }}
-                  >
-                    Un Friend
-                  </button>
-                )}
-                {friend.status === "pending" && (
-                  <>
-                    {friend.senderId === uid ? (
+                    />
+                    <div className={s.secondInfo}>
+                      <p>
+                        {`${friend.author?.firstName ?? friend.id} ${
+                          friend.author?.lastName
+                        }`}
+                      </p>
+                      <p className={s.date}>
+                        {friend.date &&
+                          new Timestamp(
+                            friend.date?.seconds,
+                            friend.date?.nanoseconds
+                          )
+                            .toDate()
+                            .toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className={s.actions}>
+                    {friend.status === "friend" && (
+                      <button
+                        onClick={async () => {
+                          try {
+                            await unFriend(uid, friend);
+                            router.replace(router.asPath, undefined, {
+                              scroll: false,
+                            });
+                            queryClient.invalidateQueries(["suggestedFriends"]);
+                          } catch (error) {
+                            console.log(error);
+                          }
+                        }}
+                      >
+                        Un Friend
+                      </button>
+                    )}
+                    {friend.status === "pending" && (
                       <>
-                        {/* <button
+                        {friend.senderId === uid ? (
+                          <>
+                            {/* <button
                         onClick={async () => {
                           try {
                             await unFriend(uid, friend);
@@ -215,103 +245,113 @@ export default function Page(props: {
                       >
                         Delete
                       </button> */}
-                        <button
-                          onClick={async () => {
-                            const data = {
-                              id: friend.id,
-                            } as friends;
-                            await rejectFriendRequest(uid, data);
+                            <button
+                              onClick={async () => {
+                                const data = {
+                                  id: friend.id,
+                                } as friends;
+                                await rejectFriendRequest(uid, data);
+                                router.replace(router.asPath, undefined, {
+                                  scroll: false,
+                                });
+                                queryClient.refetchQueries(["pendingFriends"]);
+                                queryClient.refetchQueries([
+                                  "suggestedFriends",
+                                ]);
+                                // queryClient.invalidateQueries(["pendingFriends"]);
+                              }}
+                              className={`${s.editToggle} ${s.secondary}`}
+                            >
+                              Cancel Request
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={async () => {
+                                const data = {
+                                  id: friend.id,
+                                } as friends;
+                                await acceptFriends(uid, data, currentUser);
+                                router.replace("/", undefined, {
+                                  scroll: false,
+                                });
+                                queryClient.refetchQueries(["pendingFriends"]);
+                                queryClient.invalidateQueries([
+                                  "pendingFriends",
+                                ]);
+                              }}
+                              className={`${s.editToggle} ${s.secondary}`}
+                            >
+                              Accept
+                            </button>
+                            <button
+                              onClick={async () => {
+                                const data = {
+                                  id: friend.id,
+                                } as friends;
+                                await rejectFriendRequest(uid, data);
+                                router.replace("/", undefined, {
+                                  scroll: false,
+                                });
+                                queryClient.refetchQueries(["pendingFriends"]);
+                                queryClient.invalidateQueries([
+                                  "pendingFriends",
+                                ]);
+                              }}
+                              className={`${s.editToggle} ${s.secondary}`}
+                            >
+                              Reject
+                            </button>
+                          </>
+                        )}
+                      </>
+                    )}
+
+                    {friend.senderId === uid &&
+                    friend.status !== "pending" &&
+                    friend.status === "block" ? (
+                      <button
+                        onClick={async () => {
+                          await unBlockFriends(uid, friend);
+                          router.replace(router.asPath, undefined, {
+                            scroll: false,
+                          });
+                        }}
+                      >
+                        Un Block
+                      </button>
+                    ) : (
+                      <button
+                      className={s.danger}
+                        onClick={async () => {
+                          try {
+                            await blockFriends(uid, friend);
                             router.replace(router.asPath, undefined, {
                               scroll: false,
                             });
-                            queryClient.refetchQueries(["pendingFriends"]);
-                            queryClient.refetchQueries(["suggestedFriends"]);
-                            // queryClient.invalidateQueries(["pendingFriends"]);
-                          }}
-                          className={`${s.editToggle} ${s.secondary}`}
-                        >
-                          Cancel Request
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          onClick={async () => {
-                            const data = {
-                              id: friend.id,
-                            } as friends;
-                            await acceptFriends(uid, data, currentUser);
-                            router.replace("/", undefined, { scroll: false });
-                            queryClient.refetchQueries(["pendingFriends"]);
-                            queryClient.invalidateQueries(["pendingFriends"]);
-                          }}
-                          className={`${s.editToggle} ${s.secondary}`}
-                        >
-                          Accept
-                        </button>
-                        <button
-                          onClick={async () => {
-                            const data = {
-                              id: friend.id,
-                            } as friends;
-                            await rejectFriendRequest(uid, data);
-                            router.replace("/", undefined, { scroll: false });
-                            queryClient.refetchQueries(["pendingFriends"]);
-                            queryClient.invalidateQueries(["pendingFriends"]);
-                          }}
-                          className={`${s.editToggle} ${s.secondary}`}
-                        >
-                          Reject
-                        </button>
-                      </>
+                            queryClient.invalidateQueries(["suggestedFriends"]);
+                          } catch (error) {
+                            console.log(error);
+                          }
+                        }}
+                      >
+                        Block
+                      </button>
                     )}
-                  </>
-                )}
-
-                {friend.senderId === uid &&
-                friend.status !== "pending" &&
-                friend.status === "block" ? (
-                  <button
-                    onClick={async () => {
-                      await unFriend(uid, friend);
-                      // try {
-                      //   await blockFriends(uid, friend);
-                      //   router.replace(router.asPath, undefined, {
-                      //     scroll: false,
-                      //   });
-                      //   queryClient.invalidateQueries(["suggestedFriends"]);
-                      // } catch (error) {
-                      //   console.log(error);
-                      // }
-                    }}
-                  >
-                    Un Block
-                  </button>
-                ) : (
-                  <button
-                    onClick={async () => {
-                      try {
-                        await blockFriends(uid, friend);
-                        router.replace(router.asPath, undefined, {
-                          scroll: false,
-                        });
-                        queryClient.invalidateQueries(["suggestedFriends"]);
-                      } catch (error) {
-                        console.log(error);
-                      }
-                    }}
-                  >
-                    Block
-                  </button>
-                )}
+                  </div>
+                </Link>
               </li>
             ))}
           </ul>
+        )}
+        {/* {friends.length > 0 ? (
+          
         ) : (
           <p style={{ textAlign: "center", padding: "1rem" }}>
             {status === "block" ? "Empty Blocked" : "Empty Friends"}
           </p>
-        )}
+        )} */}
       </div>
     </div>
   );

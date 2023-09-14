@@ -150,6 +150,13 @@ export async function rejectFriendRequest(uid: string, f: friends) {
     console.log(error);
   }
 }
+export async function unBlockFriends(uid: string, f: friends) {
+  try {
+    await unFriend(uid, f);
+  } catch (error) {
+    console.log(error);
+  }
+}
 export async function unFriend(uid: string, f: friends) {
   await deleteDoc(doc(db, `users/${uid}/friends/${f.id}`));
   await deleteDoc(doc(db, `users/${f.id}/friends/${uid}`));

@@ -32,7 +32,12 @@ import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 import { MYPOST_LIMIT } from "../../lib/QUERY_LIMIT";
 import { db, fethUserDoc, getPostWithMoreInfo } from "../../lib/firebase";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
-import { acceptFriends, addFriends } from "../../lib/firestore/friends";
+import {
+  acceptFriends,
+  addFriends,
+  unBlockFriends,
+  unFriend,
+} from "../../lib/firestore/friends";
 import { Post as PostType, account, friends } from "../../types/interfaces";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -46,13 +51,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     let isFriend = false,
       isBlocked = false,
       isPending = false,
-      canAccept = false;
+      canAccept = false,
+      canUnBlock = false;
     if (friendDoc.exists()) {
       const relation = friendDoc.data() as friends;
       isFriend = relation.status === "friend";
       isPending = relation.status === "pending";
       isBlocked = relation.status === "block";
       canAccept = relation.senderId !== token.uid;
+      canUnBlock = relation.senderId === token.uid;
     }
     let mypostQuery = query(
       collection(db, `/users/${uid}/posts`),
@@ -82,6 +89,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           isBlocked,
           isPending,
           canAccept,
+          canUnBlock,
         },
       };
     } else {
@@ -111,6 +119,7 @@ export default function UserProfile({
   isBlocked,
   isPending,
   canAccept,
+  canUnBlock,
 }: {
   token: DecodedIdToken;
   profile: account["profile"];
@@ -119,6 +128,7 @@ export default function UserProfile({
   isBlocked: Boolean;
   isPending: Boolean;
   canAccept: Boolean;
+  canUnBlock: Boolean;
 }) {
   const queryClient = useQueryClient();
   const statusComponents = {
@@ -155,7 +165,6 @@ export default function UserProfile({
               width: "10px",
               position: "relative",
               top: "-5px",
-              // left: "-5px",
             }}
             icon={faCheck}
           />
@@ -277,7 +286,23 @@ export default function UserProfile({
             {bio}
           </p>
           {isBlocked ? (
-            <p style={{ color: "red" }}>This Account is Blocked </p>
+            <>
+              <p style={{ color: "red" }}>This Account is Blocked </p>
+              {canUnBlock && (
+                <button
+                  onClick={async () => {
+                    router.replace(router.asPath, undefined, {
+                      scroll: false,
+                    });
+                    await unBlockFriends(token.uid, {
+                      id: router.query.user?.toString()!,
+                    });
+                  }}
+                >
+                  Un Block
+                </button>
+              )}
+            </>
           ) : (
             otherUser && (
               <div className={s.actions}>
