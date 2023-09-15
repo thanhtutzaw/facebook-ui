@@ -62,7 +62,7 @@ export async function addFriends(
         "Content-type": "application/json",
       },
       body: JSON.stringify({
-        recieptId: receiptData.id,
+        recieptId: senderData.id,
         message: `${
           currentUser?.displayName ?? "Unknow User"
         } send you a friend request.`,
