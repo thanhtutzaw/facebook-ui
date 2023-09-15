@@ -180,24 +180,36 @@ export default function Page(props: {
             {status === "block" ? "Empty Blocked" : "Empty Friends"}
           </p>
         ) : (
-          <FriendList friends={friends} uid={uid} />
+          <FriendList setFriends={setFriends} friends={friends} uid={uid} />
         )}
       </div>
     </div>
   );
 }
 
-function FriendList({ friends, uid }: { friends: friends[]; uid: string }) {
+function FriendList({
+  setFriends,
+  friends,
+  uid,
+}: {
+  setFriends: Function;
+  friends: friends[];
+  uid: string;
+}) {
   const router = useRouter();
   const [toggleFriendMenu, settoggleFriendMenu] = useState("");
   const queryClient = useQueryClient();
   const { currentUser } = useContext(PageContext) as PageProps;
+  function updateFriendList(id: string) {
+    return setFriends(friends.filter((f) => f.id !== id));
+  }
   async function handleBlock(friend: friends) {
     try {
       await blockFriend(uid, friend);
       router.replace(router.asPath, undefined, {
         scroll: false,
       });
+      updateFriendList(friend.id.toString());
       queryClient.invalidateQueries(["pendingFriends"]);
       queryClient.invalidateQueries(["suggestedFriends"]);
     } catch (error) {
@@ -256,6 +268,7 @@ function FriendList({ friends, uid }: { friends: friends[]; uid: string }) {
                             scroll: false,
                           });
                           queryClient.invalidateQueries(["suggestedFriends"]);
+                          updateFriendList(friend.id.toString());
                         } catch (error) {
                           console.log(error);
                         }
@@ -294,12 +307,19 @@ function FriendList({ friends, uid }: { friends: friends[]; uid: string }) {
                               const data = {
                                 id: friend.id,
                               } as friends;
-                              await rejectFriendRequest(uid, data);
-                              router.replace(router.asPath, undefined, {
-                                scroll: false,
-                              });
-                              queryClient.refetchQueries(["pendingFriends"]);
-                              queryClient.refetchQueries(["suggestedFriends"]); // queryClient.invalidateQueries(["pendingFriends"]);
+                              try {
+                                await rejectFriendRequest(uid, data);
+                                router.replace(router.asPath, undefined, {
+                                  scroll: false,
+                                });
+                                updateFriendList(friend.id.toString());
+                                queryClient.refetchQueries(["pendingFriends"]);
+                                queryClient.refetchQueries([
+                                  "suggestedFriends",
+                                ]); // queryClient.invalidateQueries(["pendingFriends"]);
+                              } catch (error) {
+                                console.log(error);
+                              }
                             }}
                           >
                             Cancel
@@ -319,6 +339,7 @@ function FriendList({ friends, uid }: { friends: friends[]; uid: string }) {
                               router.replace("/", undefined, {
                                 scroll: false,
                               });
+                              updateFriendList(friend.id.toString());
                               queryClient.refetchQueries(["pendingFriends"]);
                               queryClient.invalidateQueries(["pendingFriends"]);
                             }}
@@ -341,6 +362,7 @@ function FriendList({ friends, uid }: { friends: friends[]; uid: string }) {
                               router.replace("/", undefined, {
                                 scroll: false,
                               });
+                              updateFriendList(friend.id.toString());
                               queryClient.refetchQueries(["pendingFriends"]);
                               queryClient.invalidateQueries(["pendingFriends"]);
                             }}
@@ -365,6 +387,7 @@ function FriendList({ friends, uid }: { friends: friends[]; uid: string }) {
                         router.replace(router.asPath, undefined, {
                           scroll: false,
                         });
+                        updateFriendList(friend.id.toString());
                       }}
                     >
                       Unblock
@@ -381,22 +404,9 @@ function FriendList({ friends, uid }: { friends: friends[]; uid: string }) {
                           } else {
                             settoggleFriendMenu(friend.id.toString());
                           }
-                          // try {
-                          //   await blockFriend(uid, friend);
-                          //   router.replace(router.asPath, undefined, {
-                          //     scroll: false,
-                          //   });
-                          //   queryClient.invalidateQueries([
-                          //     "suggestedFriends",
-                          //   ]);
-                          // } catch (error) {
-                          //   console.log(error);
-                          // }
                         }}
                       >
                         <FontAwesomeIcon icon={faEllipsisV} />
-                        {/* <FontAwesomeIcon icon={faBan} /> */}
-                        {/* Block */}
                       </button>
                       <Menu
                         toggleFriendMenu={toggleFriendMenu}

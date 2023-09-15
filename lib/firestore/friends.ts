@@ -130,6 +130,12 @@ export async function rejectFriendRequest(uid: string, f: friends) {
 }
 export async function unBlockFriend(uid: string, f: friends) {
   try {
+    if (uid !== f.senderId) {
+      alert(
+        "Unblocking not allowed ! \n Only authorized user can unblock friend ."
+      );
+      return;
+    }
     await unFriend(uid, f);
   } catch (error) {
     console.log(error);
