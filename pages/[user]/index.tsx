@@ -142,7 +142,7 @@ export default function UserProfile({
           queryClient.refetchQueries(["pendingFriends"]);
           queryClient.invalidateQueries(["pendingFriends"]);
         }}
-        className={`${s.editToggle} ${s.secondary}`}
+        className={`${s.editToggle} ${s.confirm}`}
       >
         <FontAwesomeIcon icon={faCheck} />
         Accept
@@ -255,7 +255,7 @@ export default function UserProfile({
   return (
     <>
       <Head>
-        <title>{userName} | Facebook Next</title>
+        <title>{`${userName} | Facebook Next`}</title>
         <meta
           name="description"
           content={`${userName} Facebook-Mobile-UI with Next.js`}

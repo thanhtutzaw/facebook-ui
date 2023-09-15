@@ -1,23 +1,37 @@
 @import "../../styles/mixins";
+.nav {
+    position: sticky;
+    top: 65px;
+    padding: 10px 1rem;
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: scroll;
+    background-color: white;
+    * {
+        min-width: 50px;
+        /* max-width: 50px; */
+        width: 100%;
+        border: 0;
+        padding: 0.5rem;
+        font-size: 16px;
+        border-radius: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
 .container {
-    // display: none;
-    nav {
-        padding: 10px 1rem;
-        display: flex;
-        gap: 0.5rem;
-        overflow-x: scroll;
-        * {
-            min-width: 50px;
-            /* max-width: 50px; */
-            width: 100%;
-            border: 0;
-            padding: 0.5rem;
-            font-size: 16px;
-            border-radius: 10px;
-            overflow: hidden;
-            text-overflow: ellipsis;
+    button {
+        -webkit-tap-highlight-color: transparent;
+        &:active {
+            opacity: 0.5;
+        }
+        @include mouse() {
+            // &:active{
+            //     opacity: .5;
+            // }
         }
     }
+
     ul {
         padding: 0;
         margin: 0;
@@ -25,7 +39,7 @@
         li {
             list-style: none;
             margin: 0;
-
+            // position: relative;
             a {
                 background: white;
                 padding: 1rem;
@@ -66,10 +80,12 @@
                 .actions {
                     display: flex;
                     align-items: center;
+                    flex-wrap: wrap;
                     gap: 0.5rem;
+                    justify-content: center;
                     button {
                         border: 0;
-                        padding: 0.5rem;
+                        padding: 0.5rem 1rem;
                         font-size: 16px;
                         border-radius: 10px;
                         min-width: 45px;
@@ -77,6 +93,10 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
+                        gap:5px;
+                    }
+                    .confirm{
+                        color: seagreen;
                     }
                     .danger {
                         color: red;
@@ -93,11 +113,8 @@
                     opacity: 0.8;
                 }
                 @include mouse() {
-                    // background-color: red !important;
                     &:hover {
-                        // background-color: rgb(228, 228, 228);
                         background-color: rgb(235, 235, 235);
-                        // background-color: rgb(201, 201, 201);
                     }
                 }
             }
@@ -106,6 +123,36 @@
                 border-bottom: 1px solid rgb(235, 235, 235);
             }
         }
+    }
+}
+.menuContainer {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    right: 1rem;
+    // top: 60px;
+    // top: 60px;
+    width: clamp(150px, 50%, 180px);
+    border-radius: 1rem;
+    overflow: hidden;
+    padding-block: 0.7rem;
+    background-color: rgb(241, 241, 241) !important;
+    z-index: 200;
+    box-shadow: 0 5px 12px rgba(136, 135, 135, 0.5);
+    // min-height: 200px;
+    max-height: 200px;
+    overflow-y:scroll;
+    &:has(> button:only-child) {
+        padding-block: 0;
+    }
+    .danger {
+        background-color: transparent !important;
+    }
+    > button {
+        align-items: center;
+        display: flex;
+        justify-content: initial !important;
+        gap: 10px;
     }
 }
 .active {

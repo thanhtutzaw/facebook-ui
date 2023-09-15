@@ -62,7 +62,7 @@ export async function addFriends(
         "Content-type": "application/json",
       },
       body: JSON.stringify({
-        recieptId: senderData.id,
+        recieptId: receiptData.id,
         message: `${
           currentUser?.displayName ?? "Unknow User"
         } send you a friend request.`,
@@ -145,6 +145,7 @@ export async function blockFriend(uid: string, f: friends) {
     ...data,
     status: "block",
     updatedAt: serverTimestamp(),
+    senderId: uid,
   } as friends;
   await updateFriendStatus(uid, blockedData);
 }

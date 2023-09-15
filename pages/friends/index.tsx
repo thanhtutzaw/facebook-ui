@@ -1,4 +1,9 @@
-import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBan,
+  faCheck,
+  faEllipsisV,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQueryClient } from "@tanstack/react-query";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
@@ -23,12 +28,14 @@ import { db, getProfileByUID } from "../../lib/firebase";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
 import {
   acceptFriends,
+  blockFriend,
   rejectFriendRequest,
   unBlockFriend,
   unFriend,
 } from "../../lib/firestore/friends";
 import { friends } from "../../types/interfaces";
 import s from "./index.module.scss";
+import { AnimatePresence, motion } from "framer-motion";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -77,9 +84,6 @@ export default function Page(props: {
   uid: string;
 }) {
   const { acceptedFriends, uid } = props;
-  const router = useRouter();
-  const { currentUser } = useContext(PageContext) as PageProps;
-  const queryClient = useQueryClient();
   const [friends, setFriends] = useState(acceptedFriends);
   const [status, setstatus] = useState<friends["status"]>("friend");
   const [firendLoading, setFirendLoading] = useState(false);
@@ -94,7 +98,7 @@ export default function Page(props: {
         myFriendsQuery = query(
           collection(db, `users/${uid}/friends`),
           where("status", "==", "block"),
-          where("senderId", "==", uid),
+          where("senderId", "==", uid.toString()),
           orderBy("updatedAt", "desc")
         );
       }
@@ -135,14 +139,15 @@ export default function Page(props: {
           {friends.length > 0 && !firendLoading && friends.length}
         </h2>
       </BackHeader>
+
       <div
         style={{
           marginTop: "65px",
-          height: "calc(100vh - 65px)",
+          minHeight: "calc(100vh - 65px)",
         }}
         className={s.container}
       >
-        <nav>
+        <nav className={s.nav}>
           <button
             className={`${status === "friend" ? s.active : ""} `}
             onClick={() => {
@@ -168,224 +173,346 @@ export default function Page(props: {
             Pending
           </button>
         </nav>
-
         {firendLoading ? (
-          <Spinner />
+          <Spinner style={{ marginBlock: "1rem", paddingBlock: "1rem" }} />
         ) : friends.length <= 0 ? (
           <p style={{ textAlign: "center", padding: "1rem" }}>
             {status === "block" ? "Empty Blocked" : "Empty Friends"}
           </p>
         ) : (
-          <ul>
-            {friends.map((friend) => (
-              <li
-                key={friend.id}
-                aria-label={`Go to ${
-                  friend.author?.firstName ?? "Unknow User"
-                } ${friend.author?.lastName ?? ""}'s Profile page`}
-              >
-                <Link href={friend.id.toString()} key={friend.id}>
-                  <div className={s.cardContainer}>
-                    <Image
-                      className={s.profile}
-                      alt={"name"}
-                      width={50}
-                      height={50}
-                      src={
-                        friend.author?.photoURL
-                          ? (friend.author?.photoURL as string)
-                          : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-                      }
-                    />
-                    <div className={s.infoContainer}>
-                      <div className={s.info}>
-                        <p>
-                          {`${friend.author?.firstName ?? friend.id} ${
-                            friend.author?.lastName
-                          }`}
-                        </p>
-                        <p className={s.date}>
-                          {friend.date &&
-                            new Timestamp(
-                              friend.date?.seconds,
-                              friend.date?.nanoseconds
-                            )
-                              .toDate()
-                              .toLocaleDateString()}
-                        </p>
-                      </div>
+          <FriendList friends={friends} uid={uid} />
+        )}
+      </div>
+    </div>
+  );
+}
 
-                      <div className={s.actions}>
-                        {friend.status === "friend" && (
-                          <button
-                            onClick={async () => {
-                              try {
-                                await unFriend(uid, friend);
-                                router.replace(router.asPath, undefined, {
-                                  scroll: false,
-                                });
-                                queryClient.invalidateQueries([
-                                  "suggestedFriends",
-                                ]);
-                              } catch (error) {
-                                console.log(error);
-                              }
-                            }}
-                          >
-                            Un Friend
-                          </button>
-                        )}
-                        {friend.status === "pending" && (
-                          <>
-                            {friend.senderId === uid ? (
-                              <>
-                                {/* <button
-                        onClick={async () => {
-                          try {
-                            await unFriend(uid, friend);
-                            router.replace(router.asPath, undefined, {
-                              scroll: false,
-                            });
-                            setFriends(
-                              friends.filter((f) => f.id !== friend.id)
-                            );
-                            queryClient.invalidateQueries(["suggestedFriends"]);
-                          } catch (error) {
-                            console.log(error);
-                          }
-                        }}
-                      >
-                        Delete
-                      </button> */}
-                                <button
-                                  title="Cancel Request"
-                                  onClick={async () => {
-                                    const data = {
-                                      id: friend.id,
-                                    } as friends;
-                                    await rejectFriendRequest(uid, data);
-                                    router.replace(router.asPath, undefined, {
-                                      scroll: false,
-                                    });
-                                    queryClient.refetchQueries([
-                                      "pendingFriends",
-                                    ]);
-                                    queryClient.refetchQueries([
-                                      "suggestedFriends",
-                                    ]);
-                                    // queryClient.invalidateQueries(["pendingFriends"]);
-                                  }}
-                                  className={`${s.editToggle} ${s.secondary}`}
-                                >
-                                  Cancel
-                                </button>
-                              </>
-                            ) : (
-                              <>
-                                <button
-                                  aria-label="Accept"
-                                  onClick={async () => {
-                                    const data = {
-                                      id: friend.id,
-                                    } as friends;
-                                    await acceptFriends(uid, data, currentUser);
-                                    router.replace("/", undefined, {
-                                      scroll: false,
-                                    });
-                                    queryClient.refetchQueries([
-                                      "pendingFriends",
-                                    ]);
-                                    queryClient.invalidateQueries([
-                                      "pendingFriends",
-                                    ]);
-                                  }}
-                                  className={`${s.editToggle} ${s.secondary}`}
-                                >
-                                  Accept
-                                </button>
-                                <button
-                                  aria-label="Reject"
-                                  onClick={async () => {
-                                    const data = {
-                                      id: friend.id,
-                                    } as friends;
-                                    await rejectFriendRequest(uid, data);
-                                    router.replace("/", undefined, {
-                                      scroll: false,
-                                    });
-                                    queryClient.refetchQueries([
-                                      "pendingFriends",
-                                    ]);
-                                    queryClient.invalidateQueries([
-                                      "pendingFriends",
-                                    ]);
-                                  }}
-                                  className={`${s.editToggle} ${s.secondary}`}
-                                >
-                                  Reject
-                                </button>
-                              </>
-                            )}
-                          </>
-                        )}
+function FriendList({ friends, uid }: { friends: friends[]; uid: string }) {
+  const router = useRouter();
+  const [toggleFriendMenu, settoggleFriendMenu] = useState("");
+  const queryClient = useQueryClient();
+  const { currentUser } = useContext(PageContext) as PageProps;
+  async function handleBlock(friend: friends) {
+    try {
+      await blockFriend(uid, friend);
+      router.replace(router.asPath, undefined, {
+        scroll: false,
+      });
+      queryClient.invalidateQueries(["pendingFriends"]);
+      queryClient.invalidateQueries(["suggestedFriends"]);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  return (
+    <ul>
+      {friends.map((friend) => (
+        <li
+          key={friend.id}
+          aria-label={`Go to ${friend.author?.firstName ?? "Unknow User"} ${
+            friend.author?.lastName ?? ""
+          }'s Profile page`}
+        >
+          <Link draggable={false} href={friend.id.toString()} key={friend.id}>
+            <div className={s.cardContainer}>
+              <Image
+                className={s.profile}
+                alt={"name"}
+                width={50}
+                height={50}
+                src={
+                  friend.author?.photoURL
+                    ? (friend.author?.photoURL as string)
+                    : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+                }
+              />
+              <div className={s.infoContainer}>
+                <div className={s.info}>
+                  <p>
+                    {`${friend.author?.firstName ?? friend.id} ${
+                      friend.author?.lastName
+                    }`}
+                  </p>
+                  <p className={s.date}>
+                    {friend.date &&
+                      new Timestamp(
+                        friend.date?.seconds,
+                        friend.date?.nanoseconds
+                      )
+                        .toDate()
+                        .toLocaleDateString()}
+                  </p>
+                </div>
 
-                        {friend.senderId === uid &&
-                        friend.status !== "pending" &&
-                        friend.status === "block" ? (
+                <div className={s.actions}>
+                  {friend.status === "friend" && (
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        try {
+                          await unFriend(uid, friend);
+                          router.replace(router.asPath, undefined, {
+                            scroll: false,
+                          });
+                          queryClient.invalidateQueries(["suggestedFriends"]);
+                        } catch (error) {
+                          console.log(error);
+                        }
+                      }}
+                    >
+                      Un Friend
+                    </button>
+                  )}
+                  {friend.status === "pending" && (
+                    <>
+                      {friend.senderId === uid ? (
+                        <>
+                          {/* <button
+                  onClick={async () => {
+                  try {
+                  await unFriend(uid, friend);
+                  router.replace(router.asPath, undefined, {
+                  scroll: false,
+                  });
+                  setFriends(
+                  friends.filter((f) => f.id !== friend.id)
+                  );
+                  queryClient.invalidateQueries(["suggestedFriends"]);
+                  } catch (error) {
+                  console.log(error);
+                  }
+                  }}
+                  >
+                  Delete
+                  </button> */}
                           <button
-                            aria-label="Unblock"
-                            onClick={async () => {
-                              await unBlockFriend(uid, friend);
-                              router.replace(router.asPath, undefined, {
-                                scroll: false,
-                              });
-                            }}
-                          >
-                            Unblock
-                          </button>
-                        ) : (
-                          <button
-                            aria-label="friend action menu"
-                            // className={s.danger}
+                            title="Cancel Request"
                             onClick={async (e) => {
                               e.stopPropagation();
                               e.preventDefault();
-
-                              console.log("run");
-                              // try {
-                              //   await blockFriend(uid, friend);
-                              //   router.replace(router.asPath, undefined, {
-                              //     scroll: false,
-                              //   });
-                              //   queryClient.invalidateQueries([
-                              //     "suggestedFriends",
-                              //   ]);
-                              // } catch (error) {
-                              //   console.log(error);
-                              // }
+                              const data = {
+                                id: friend.id,
+                              } as friends;
+                              await rejectFriendRequest(uid, data);
+                              router.replace(router.asPath, undefined, {
+                                scroll: false,
+                              });
+                              queryClient.refetchQueries(["pendingFriends"]);
+                              queryClient.refetchQueries(["suggestedFriends"]); // queryClient.invalidateQueries(["pendingFriends"]);
                             }}
                           >
-                            <FontAwesomeIcon icon={faEllipsisV} />
-                            {/* <FontAwesomeIcon icon={faBan} /> */}
-                            {/* Block */}
+                            Cancel
                           </button>
-                        )}
-                      </div>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            aria-label="Accept"
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              const data = {
+                                id: friend.id,
+                              } as friends;
+                              await acceptFriends(uid, data, currentUser);
+                              router.replace("/", undefined, {
+                                scroll: false,
+                              });
+                              queryClient.refetchQueries(["pendingFriends"]);
+                              queryClient.invalidateQueries(["pendingFriends"]);
+                            }}
+                            title="Accept"
+                            className={s.confirm}
+                          >
+                            <FontAwesomeIcon icon={faCheck} />
+                            Accept
+                          </button>
+                          <button
+                            title="Reject"
+                            aria-label="Reject"
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              const data = {
+                                id: friend.id,
+                              } as friends;
+                              await rejectFriendRequest(uid, data);
+                              router.replace("/", undefined, {
+                                scroll: false,
+                              });
+                              queryClient.refetchQueries(["pendingFriends"]);
+                              queryClient.invalidateQueries(["pendingFriends"]);
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faTrash} />
+                            {/* Reject */}
+                          </button>
+                        </>
+                      )}
+                    </>
+                  )}
+
+                  {friend.senderId === uid &&
+                  friend.status !== "pending" &&
+                  friend.status === "block" ? (
+                    <button
+                      aria-label="Unblock"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        await unBlockFriend(uid, friend);
+                        router.replace(router.asPath, undefined, {
+                          scroll: false,
+                        });
+                      }}
+                    >
+                      Unblock
+                    </button>
+                  ) : (
+                    <div style={{ position: "relative" }}>
+                      <button
+                        aria-label="friend action menu" // className={s.danger}
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          if (toggleFriendMenu === friend.id) {
+                            settoggleFriendMenu("");
+                          } else {
+                            settoggleFriendMenu(friend.id.toString());
+                          }
+                          // try {
+                          //   await blockFriend(uid, friend);
+                          //   router.replace(router.asPath, undefined, {
+                          //     scroll: false,
+                          //   });
+                          //   queryClient.invalidateQueries([
+                          //     "suggestedFriends",
+                          //   ]);
+                          // } catch (error) {
+                          //   console.log(error);
+                          // }
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faEllipsisV} />
+                        {/* <FontAwesomeIcon icon={faBan} /> */}
+                        {/* Block */}
+                      </button>
+                      <Menu
+                        toggleFriendMenu={toggleFriendMenu}
+                        friend={friend}
+                        handleBlock={async () => handleBlock(friend)}
+                      />
                     </div>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-        {/* {friends.length > 0 ? (
-          
-        ) : (
-          <p style={{ textAlign: "center", padding: "1rem" }}>
-            {status === "block" ? "Empty Blocked" : "Empty Friends"}
-          </p>
-        )} */}
-      </div>
-    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Menu({
+  toggleFriendMenu,
+  friend,
+  handleBlock,
+}: {
+  toggleFriendMenu: string;
+  friend: friends;
+  handleBlock: () => Promise<void>;
+}) {
+  return (
+    <AnimatePresence mode="wait">
+      {friend.id === toggleFriendMenu && (
+        <motion.div
+          className={s.menuContainer}
+          initial={{
+            opacity: 0,
+            scale: 0.8,
+          }}
+          animate={{
+            opacity: friend.id === toggleFriendMenu ? 1 : 0,
+            // opacity: showAction === id ? 1 : 0,
+            scale: 1,
+          }}
+          exit={{
+            opacity: 0,
+            scale: 0.8,
+          }}
+          transition={{
+            duration: 0.15,
+          }}
+          // className={styles.actions}
+        >
+          <button
+            aria-label="Block"
+            className={s.danger}
+            onClick={async (e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              await handleBlock();
+            }}
+          >
+            <FontAwesomeIcon icon={faBan} />
+            Block
+          </button>
+          {/* <button
+                onClick={async (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  router.push({
+                    pathname: `${authorId}/${id?.toString()}`,
+                    query: { edit: true },
+                  });
+                  setshowAction("");
+                }}
+              >
+                <FontAwesomeIcon icon={faEdit} />
+                Edit
+              </button>
+              <button
+                disabled={loading}
+                onClick={async (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (auth.currentUser?.uid !== authorId) {
+                    alert("Not Allowed ! Mismatch userId and authorId");
+                    throw new Error("Not Allowed");
+                  }
+                  setLoading(true);
+                  try {
+                    await deletePost({
+                      uid: auth.currentUser.uid,
+                      postid: id,
+                      post,
+                    });
+                    // queryClient.invalidateQueries(["myPost"]);
+                    setLoading(false);
+                    setshowAction?.("");
+                    queryClient.refetchQueries(["myPost"]);
+                    queryClient.invalidateQueries(["myPost"]);
+                    // deletePostMutation.mutate({
+                    //   uid: auth.currentUser.uid,
+                    //   postid: id!,
+                    //   post,
+                    // });
+                    if (loading) return;
+                    updatePost(id);
+                  } catch (error: any) {
+                    setshowAction?.("");
+                    console.error(error);
+                    setLoading(false);
+                  }
+                }}
+              >
+                <FontAwesomeIcon icon={faTrash} />
+                {loading ? "Deleting" : "Delete"}
+              </button> */}
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
