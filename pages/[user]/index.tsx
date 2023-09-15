@@ -2,7 +2,7 @@ import {
   faCheck,
   faClock,
   faPlus,
-  faUser
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQueryClient } from "@tanstack/react-query";
@@ -35,7 +35,7 @@ import { verifyIdToken } from "../../lib/firebaseAdmin";
 import {
   acceptFriends,
   addFriends,
-  unBlockFriends
+  unBlockFriend,
 } from "../../lib/firestore/friends";
 import { Post as PostType, account, friends } from "../../types/interfaces";
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -268,11 +268,7 @@ export default function UserProfile({
         <link rel="manifest" href="/manifest.json" />
       </Head>
       <div ref={scrollRef} className="user">
-        <BackHeader
-          onClick={() => {
-            router.push("/");
-          }}
-        />
+        <BackHeader />
         <div
           style={{
             marginTop: "65px",
@@ -316,18 +312,23 @@ export default function UserProfile({
               <>
                 <p style={{ color: "red" }}>This Account is Blocked </p>
                 {canUnBlock && (
-                  <button
-                    onClick={async () => {
-                      router.replace(router.asPath, undefined, {
-                        scroll: false,
-                      });
-                      await unBlockFriends(token.uid, {
-                        id: router.query.user?.toString()!,
-                      });
-                    }}
-                  >
-                    Un Block
-                  </button>
+                  <>
+                    <div className={s.actions}>
+                      <button
+                        className={s.editToggle}
+                        onClick={async () => {
+                          router.replace(router.asPath, undefined, {
+                            scroll: false,
+                          });
+                          await unBlockFriend(token.uid, {
+                            id: router.query.user?.toString()!,
+                          });
+                        }}
+                      >
+                        Unblock
+                      </button>
+                    </div>
+                  </>
                 )}
               </>
             ) : (

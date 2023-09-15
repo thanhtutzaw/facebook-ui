@@ -114,30 +114,8 @@ export async function acceptFriends(
         : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
       badge: "/badge.svg",
       link: `/${uid}`,
-      // actions: JSON.stringify([...NotiAction.friend_request]),
-      // webpush: {
-      //   fcm_options: {
-      //     link: `https://facebook-ui-zee.vercel.app/${post.authorId}/${post.id}`,
-      //   },
-      // },
     }),
   });
-  // console.log({ acceptedData, receiptData });
-  // const acceptedRef = doc(
-  //   db,
-  //   `users/${receiptData.id}/friends/${acceptedData.id}`
-  // );
-  // const receiptRef = doc(
-  //   db,
-  //   `users/${acceptedData.id}/friends/${receiptData.id}`
-  // );
-  // try {
-  //   await updateDoc(acceptedRef, acceptedData);
-  //   await updateDoc(receiptRef, receiptData);
-  // } catch (error) {
-  //   console.log(error);
-  //   throw error;
-  // }
 }
 export async function rejectFriendRequest(uid: string, f: friends) {
   try {
@@ -150,7 +128,7 @@ export async function rejectFriendRequest(uid: string, f: friends) {
     console.log(error);
   }
 }
-export async function unBlockFriends(uid: string, f: friends) {
+export async function unBlockFriend(uid: string, f: friends) {
   try {
     await unFriend(uid, f);
   } catch (error) {
@@ -161,7 +139,7 @@ export async function unFriend(uid: string, f: friends) {
   await deleteDoc(doc(db, `users/${uid}/friends/${f.id}`));
   await deleteDoc(doc(db, `users/${f.id}/friends/${uid}`));
 }
-export async function blockFriends(uid: string, f: friends) {
+export async function blockFriend(uid: string, f: friends) {
   const { author, ...data } = { ...f };
   const blockedData = {
     ...data,
