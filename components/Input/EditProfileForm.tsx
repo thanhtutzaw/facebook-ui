@@ -1,26 +1,39 @@
+import { faPen } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import { ChangeEventHandler, FormEventHandler, MouseEventHandler } from "react";
-import s from "./index.module.scss";
-import { account } from "../../../types/interfaces";
-import { faEdit, faPen } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-function EditProfile(props: {
+import { account } from "../../types/interfaces";
+
+//module scss file path Error didn't get warning (only detect with next-build)
+import s from "@/components/Tabs/Sections/Profile/index.module.scss"; // correct (absolute) path
+// import NoErrorBecauseOfModuleSCSS from "../notExist/file/index.module.scss"; // this only visible after next-build
+// import NormalPathError from "@/components/Tabs/Sections/Profile/notExist.js"; // get normal error for js file
+
+function EditProfileForm(props: {
   updating: boolean;
-  edit: boolean;
+  editToggle: boolean;
   handleSubmit: FormEventHandler<HTMLFormElement>;
   handleChange: ChangeEventHandler<HTMLInputElement>;
   newProfile: account["profile"];
   toggleEdit: MouseEventHandler<HTMLButtonElement>;
 }) {
-  const { updating, edit, handleSubmit, handleChange, newProfile, toggleEdit } =
-    props;
-  if (!edit)
+  const {
+    updating,
+    editToggle,
+    handleSubmit,
+    handleChange,
+    newProfile,
+    toggleEdit,
+  } = props;
+  if (!editToggle)
     return (
       <motion.button
+        key={"false"}
         onClick={toggleEdit}
         initial={{ opacity: 0 }}
-        animate={{ opacity: !edit ? 1 : 0 }}
+        animate={{ opacity: !editToggle ? 1 : 0 }}
         exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
         className={s.editToggle}
       >
         <FontAwesomeIcon icon={faPen} />
@@ -29,16 +42,17 @@ function EditProfile(props: {
     );
   return (
     <motion.form
-      // key={"edit"}
+      key={"true"}
       initial={{
         opacity: 0,
       }}
       animate={{
-        opacity: edit ? 1 : 0,
+        opacity: editToggle ? 1 : 0,
       }}
       exit={{
         opacity: 0,
       }}
+      transition={{ duration: 0.3 }}
       onSubmit={handleSubmit}
       className={s.editProfile}
     >
@@ -102,4 +116,4 @@ function EditProfile(props: {
   );
 }
 
-export default EditProfile;
+export default EditProfileForm;

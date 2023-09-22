@@ -1,16 +1,16 @@
-import {
-  faCircleExclamation
-} from "@fortawesome/free-solid-svg-icons";
+import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { DevelopedByThanHtutZaw } from "./DevelopedByThanHtutZaw";
 
 export function Welcome({
-  expired,
+  expired=false,
   postError = "",
+  setresourceError,
 }: {
-  expired: boolean;
+  expired?: boolean;
+  setresourceError?: Function;
   postError?: string;
 }) {
   const router = useRouter();
@@ -21,7 +21,16 @@ export function Welcome({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expired]);
-
+  useEffect(() => {
+    let t: NodeJS.Timeout;
+    if (postError) {
+      t = setTimeout(() => {
+        setresourceError?.("");
+      }, 5000);
+    }
+    return () => clearTimeout(t);
+  }, [postError, setresourceError]);
+  // if (postError !== "") return null;
   return (
     <div
       style={{
@@ -39,9 +48,11 @@ export function Welcome({
         <>
           <p className="error">
             <FontAwesomeIcon icon={faCircleExclamation} />
-            {postError}
+            {/* {postError} */}
+            Apologies, our Firebase resources have reached their limit. Please
+            try again in 24 hours. Thank you for your understanding.
           </p>
-          <p
+          {/* <p
             style={{
               marginTop: "auto",
               color: "gray",
@@ -49,9 +60,10 @@ export function Welcome({
               // textAlign: "left",
             }}
           >
-            Apologies, our Firebase resources have reached their limit. Please
-            try again in 24 hours. Thank you for your understanding.
-          </p>
+            </p> */}
+          {/* {postError} */}
+          {/* Apologies, our Firebase resources have reached their limit. Please
+            try again in 24 hours. Thank you for your understanding. */}
         </>
       ) : (
         <>

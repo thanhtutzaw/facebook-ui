@@ -39,8 +39,7 @@ import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import friendReqSound from "../public/NotiSounds/chord.mp3";
 import { Props } from "../types/interfaces";
 
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import useSound from "use-sound";
+import { getMessaging, getToken } from "firebase/messaging";
 import Spinner from "../components/Spinner";
 import { PageContext, PageProps } from "../context/PageContext";
 import { useActive } from "../hooks/useActiveTab";
@@ -48,11 +47,15 @@ import { NewsFeed_LIMIT, UnReadNoti_LIMIT } from "../lib/QUERY_LIMIT";
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
+  let expired = true;
+  let tokenUID;
   try {
     const cookies = nookies.get(context);
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
     // console.log(token.uid + " in index");
-
+    expired = !token;
+    console.log({ cookies });
+    // console.log(!token);
     const convertSecondsToTime = (seconds: number) => {
       const days = Math.floor(seconds / (3600 * 24));
       const hours = Math.floor((seconds % (3600 * 24)) / 3600);
@@ -63,6 +66,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     };
     // console.log(convertSecondsToTime(token.exp));
     const { name: username, email, uid } = token;
+    tokenUID = uid;
     // console.log("isVerify " + token.email_verified);
     const myFriendsQuery = query(
       collection(db, `users/${uid}/friends`),
@@ -131,7 +135,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     //   startNewsFeedDate.nanoseconds
     // );
     // console.log(myFriendsSnap.docs[0].data());
-    let expired = false;
+    // let expired = false;
     // const postQuery = query(
     //   collectionGroup(db, `posts`),
     //   where("authorId", "in", friendsList),
@@ -172,13 +176,14 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // );
     return {
       props: {
-        expired,
+        expired: expired,
         uid,
         posts: newsFeedPosts,
         email,
         username: username ?? "Unknown",
         profile,
         account: currentUserData ?? null,
+        postError: "",
         acceptedFriends,
         isFriendEmpty,
         fcmToken,
@@ -188,19 +193,26 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       },
     };
   } catch (error: any) {
-    console.log("SSR Error in index " + error);
+    console.log(tokenUID);
+    // expired = !error.code
+    expired = error.code === "auth/argument-error";
+    console.log("SSR Error in index.tsx " + error);
+    console.log("SSR ErrorCode in index.tsx " + error.code);
     let postError = error.code === "resource-exhausted" ? error.message : "";
+    let resourceError =
+      error.code === "resource-exhausted" ? error.message : "";
     if (error.code === "resource-exhausted") {
       console.log(AuthErrorCodes.QUOTA_EXCEEDED);
       console.log("Resource Error : " + error);
     }
+    // const isTokenError = error.code === "resource-exhausted";
     // context.res.writeHead(302, { Location: "/login" });
     // context.res.end();
     return {
       props: {
-        postError: postError,
-        expired: true,
-        uid: "",
+        postError: "postError",
+        expired: expired,
+        uid: tokenUID ?? "",
         acceptedFriends: [],
         posts: [],
         isFriendEmpty: false,
@@ -283,7 +295,7 @@ export default function Home({
   useEffect(() => {
     if (expired) return;
     if (!uid) {
-      router.push("/login");
+      // router.push("/login");
     }
   }, [expired, router, uid]);
   const [UnReadNotiCount, setUnReadNotiCount] = useState(0);
@@ -469,39 +481,57 @@ export default function Home({
     setfriends?.(acceptedFriends);
   }, [acceptedFriends, setfriends]);
 
-  const { active, setActive } = useActive();
+  const { active: activeTab, setActive: setActiveTab } = useActive();
+  const [resourceError, setresourceError] = useState(postError);
 
-  if (expired) return <Welcome postError={postError} expired={expired} />;
-  return uid ? (
-    <AppProvider
-      friendReqCount={friendReqCount}
-      acceptedFriends={acceptedFriends}
-      isFriendEmpty={isFriendEmpty}
-      lastPullTimestamp={lastPullTimestamp}
-      UnReadNotiCount={UnReadNotiCount}
-      active={active!}
-      setActive={setActive!}
-      postError={postError!}
-      limitedPosts={limitedPosts!}
-      setlimitedPosts={setlimitedPosts!}
-      profile={profile!}
-      expired={expired}
-      username={username}
-      uid={uid}
-      posts={posts}
-      email={email}
-      account={account}
-    >
-      <Header tabIndex={active === "/" ? 0 : -1} indicatorRef={indicatorRef} />
-      <audio
-        style={{ visibility: "hidden", display: "none" }}
-        ref={soundRef}
-        src={friendReqSound}
+  if (resourceError !== '') {
+    return (
+      <Welcome
+        setresourceError={setresourceError}
+        postError={resourceError}
       />
-
-      <Tabs indicatorRef={indicatorRef} />
-    </AppProvider>
-  ) : (
-    <Spinner fullScreen navBar={false} />
-  );
+    );
+  } else if (expired ) {
+    return (
+      <Welcome
+        setresourceError={setresourceError}
+        expired={expired!}
+      />
+    );
+  } else {
+    return uid ? (
+      <AppProvider
+        friendReqCount={friendReqCount}
+        acceptedFriends={acceptedFriends}
+        isFriendEmpty={isFriendEmpty}
+        lastPullTimestamp={lastPullTimestamp}
+        UnReadNotiCount={UnReadNotiCount}
+        active={activeTab!}
+        setActive={setActiveTab!}
+        postError={postError!}
+        limitedPosts={limitedPosts!}
+        setlimitedPosts={setlimitedPosts!}
+        profile={profile!}
+        expired={expired}
+        username={username}
+        uid={uid}
+        posts={posts}
+        email={email}
+        account={account}
+      >
+        <Header
+          tabIndex={activeTab === "/" ? 0 : -1}
+          indicatorRef={indicatorRef}
+        />
+        <Tabs indicatorRef={indicatorRef} />
+        <audio
+          style={{ visibility: "hidden", display: "none" }}
+          ref={soundRef}
+          src={friendReqSound}
+        />
+      </AppProvider>
+    ) : (
+      <Spinner fullScreen navBar={false} />
+    );
+  }
 }

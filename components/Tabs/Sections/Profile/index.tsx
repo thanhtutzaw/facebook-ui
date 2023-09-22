@@ -1,3 +1,10 @@
+import EditProfileForm from "@/components/Input/EditProfileForm";
+import { AppContext } from "@/context/AppContext";
+import { useActive } from "@/hooks/useActiveTab";
+import { MYPOST_LIMIT } from "@/lib/QUERY_LIMIT";
+import { app, db, getPostWithMoreInfo } from "@/lib/firebase";
+import { changeProfile } from "@/lib/firestore/profile";
+import { Post, Props, account } from "@/types/interfaces";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getAuth } from "firebase/auth";
 import {
@@ -8,7 +15,7 @@ import {
   query,
   startAfter,
 } from "firebase/firestore";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import {
   ChangeEvent,
@@ -19,25 +26,18 @@ import {
   useRef,
   useState,
 } from "react";
-import { AppContext } from "../../../context/AppContext";
-import { useActive } from "../../../hooks/useActiveTab";
-import { app, db, getPostWithMoreInfo } from "../../../lib/firebase";
-import { changeProfile } from "../../../lib/firestore/profile";
-import { Post, Props, account } from "../../../types/interfaces";
 import Content from "./Content";
-import EditProfile from "./EditProfile";
 import ProfileInfo from "./ProfileInfo";
 import s from "./index.module.scss";
-import { MYPOST_LIMIT } from "../../../lib/QUERY_LIMIT";
 export default function Profile() {
   const {
     profile,
     account,
     uid,
-    selectMode: active,
+    selectMode,
     setselectMode: setactive,
   } = useContext(AppContext) as Props;
-  const { active: tab } = useActive();
+  const { active: activeTab } = useActive();
   const router = useRouter();
   const infoRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLHeadElement>(null);
@@ -45,20 +45,24 @@ export default function Profile() {
   const [sortby, setsortby] = useState<"new" | "old">("new");
   const auth = getAuth(app);
   const [isSticky, setIsSticky] = useState(false);
-  const [edit, setedit] = useState(false);
+  const [editToggle, setEditToggle] = useState(false);
 
   useEffect(() => {
-    if (tab !== "profile") {
+    if (activeTab !== "profile") {
       setactive?.(false);
     }
-    if (active) {
+    if (selectMode) {
       window.location.hash = "selecting";
     }
-    if (!active && tab === "profile" && window.location.hash === "#selecting") {
+    if (
+      !selectMode &&
+      activeTab === "profile" &&
+      window.location.hash === "#selecting"
+    ) {
       router.back();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setactive, tab, active]);
+  }, [setactive, activeTab, selectMode]);
 
   const fetchMyPost = useCallback(
     async function (pageParam: Post | null = null) {
@@ -90,7 +94,7 @@ export default function Profile() {
     useInfiniteQuery({
       queryKey: ["myPost", sortby, uid],
       queryFn: async ({ pageParam }) => await fetchMyPost(pageParam),
-      enabled: tab === "profile",
+      enabled: activeTab === "profile",
       keepPreviousData: true,
       getNextPageParam: (lastPage) =>
         lastPage?.hasMore
@@ -98,12 +102,12 @@ export default function Profile() {
           : undefined,
     });
   useEffect(() => {
-    if (!active) {
+    if (!selectMode) {
       setSort(false);
     }
-  }, [active]);
+  }, [selectMode]);
   const toggleEdit = () => {
-    setedit((prev) => !prev);
+    setEditToggle((prev) => !prev);
     setnewProfile(profile!);
     // setnewProfile(newProfile!);
   };
@@ -116,7 +120,7 @@ export default function Profile() {
       "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
   });
 
-  const handleEditForm = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleEditProfileForm = (e: ChangeEvent<HTMLInputElement>) => {
     const { type, value, name, files } = e.target;
     setnewProfile((prev) => ({
       ...prev,
@@ -132,7 +136,7 @@ export default function Profile() {
     try {
       await changeProfile(auth.currentUser!, newProfile, profile!);
       setupdating(false);
-      setedit(false);
+      setEditToggle(false);
     } catch (error) {
       console.log("Update Profile Error: " + error);
     }
@@ -157,27 +161,91 @@ export default function Profile() {
     >
       <motion.div
         // transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-        style={{ y: active ? -infoRef?.current?.clientHeight! : 0 }}
+        style={{ y: selectMode ? -infoRef?.current?.clientHeight! : 0 }}
         className={s.container}
       >
-        {/* {JSON.stringify(profile)} */}
         <ProfileInfo
-          handleChange={handleEditForm}
-          selectMode={active!}
+          handleChange={handleEditProfileForm}
+          selectMode={selectMode!}
           account={account!}
           profile={profile!}
-          edit={edit}
+          editToggle={editToggle}
           newProfile={newProfile}
           infoRef={infoRef}
         >
-          <EditProfile
-            updating={updating}
-            edit={edit}
-            handleSubmit={editProfile}
-            handleChange={handleEditForm}
-            newProfile={newProfile}
-            toggleEdit={toggleEdit}
-          />
+          {/* <motion.button
+            onClick={toggleEdit}
+            // initial={{ opacity: 0 }}
+            // animate={{ opacity: !editToggle ? 1 : 0 }}
+            // exit={{ opacity: 0 }}
+            className={s.editToggle}
+          >
+            <FontAwesomeIcon icon={faPen} />
+            Edit Profile
+          </motion.button> */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={editToggle ? "true" : "false"}
+              className={s.formContainer}
+              // initial={{
+              //   gridTemplateRows: "0fr",
+              // }}
+              // animate={{
+              //   gridTemplateRows: editToggle ? "1fr" : "0fr",
+              // }}
+              // exit={{
+              //   gridTemplateRows: "0fr",
+              // }}
+              initial={{ gridTemplateRows: "0fr" }}
+              animate={{ gridTemplateRows: editToggle ? "1fr" : "0fr" }}
+              exit={{ gridTemplateRows: "0fr" }}
+              transition={{ duration: 0.3 }}
+              // style={{
+              //   gridTemplateRows: editToggle ? "1fr" : "0fr",
+              // }}
+            >
+              {/* <div className={s.editProfile}>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+            </div> */}
+              {/* <AnimatePresence mode="sync"> */}
+              <EditProfileForm
+                updating={updating}
+                editToggle={editToggle}
+                handleSubmit={editProfile}
+                handleChange={handleEditProfileForm}
+                newProfile={newProfile}
+                toggleEdit={toggleEdit}
+              />
+              {/* </AnimatePresence> */}
+            </motion.div>
+          </AnimatePresence>
         </ProfileInfo>
 
         <Content
@@ -187,10 +255,10 @@ export default function Profile() {
           isSticky={isSticky}
           headerRef={headerRef}
           loading={isLoading}
-          tab={tab}
+          tab={activeTab}
           sort={sort}
           setSort={setSort}
-          selectMode={active!}
+          selectMode={selectMode!}
           setselectMode={setactive!}
           sortby={sortby}
           setsortby={setsortby}

@@ -1,3 +1,9 @@
+import { AppContext } from "@/context/AppContext";
+import { useActive } from "@/hooks/useActiveTab";
+import { NOTI_LIMIT } from "@/lib/QUERY_LIMIT";
+import { db } from "@/lib/firebase";
+import { getMessage } from "@/lib/firestore/notifications";
+import { NotiTypes, Props } from "@/types/interfaces";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   Timestamp,
@@ -13,15 +19,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useContext, useEffect } from "react";
-import { AppContext } from "../../../context/AppContext";
-import { useActive } from "../../../hooks/useActiveTab";
-import { db } from "../../../lib/firebase";
-import { getMessage } from "../../../lib/firestore/notifications";
-import { NotiTypes, Props } from "../../../types/interfaces";
-import Spinner from "../../Spinner";
-import t from "../../Tabs/Tabs.module.scss";
+import t from "../../Tabs.module.scss";
 import s from "./Notifications.module.scss";
-import { NOTI_LIMIT } from "../../../lib/QUERY_LIMIT";
+import Spinner from "@/components/Spinner";
 
 export default function Notifications() {
   const { active: tab } = useActive();

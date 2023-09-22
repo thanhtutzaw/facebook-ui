@@ -2,14 +2,14 @@ import { useQueries } from "@tanstack/react-query";
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import router from "next/router";
 import { useContext, useState } from "react";
-import { AppContext } from "../../../context/AppContext";
-import { useActive } from "../../../hooks/useActiveTab";
-import { db, getProfileByUID } from "../../../lib/firebase";
-import { Props, friends } from "../../../types/interfaces";
-import Spinner from "../../Spinner";
 import s from "./Friends.module.scss";
 import { Request } from "./Request";
 import { SuggestFriend } from "./SuggestFriend";
+import Spinner from "@/components/Spinner";
+import { AppContext } from "@/context/AppContext";
+import { useActive } from "@/hooks/useActiveTab";
+import { db, getProfileByUID } from "@/lib/firebase";
+import { Props, friends } from "@/types/interfaces";
 interface FriendProps {
   tabIndex: number;
 }
@@ -59,7 +59,7 @@ export default function Friend(props: FriendProps) {
     );
     try {
       const pendingFriends = await getDocs(pendingfriendsQuery);
-      return await Promise.all(
+      return (await Promise.all(
         pendingFriends.docs.map(async (doc) => {
           if (doc.data()) {
             const profile = await getProfileByUID(doc.id.toString());
@@ -77,7 +77,7 @@ export default function Friend(props: FriendProps) {
             return [];
           }
         })
-      ) as friends[];
+      )) as friends[];
     } catch (error) {
       console.log(error);
       throw new Error("Failed to fetch users");

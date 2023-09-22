@@ -2,10 +2,10 @@ import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { MouseEvent, useContext, useEffect, useRef, useState } from "react";
-import { AppContext } from "../../../../context/AppContext";
-import styles from "../../../../styles/Home.module.scss";
-import { Props } from "../../../../types/interfaces";
+import styles from "@/styles/Home.module.scss";
 import Card from "./Card";
+import { AppContext } from "@/context/AppContext";
+import { Props } from "@/types/interfaces";
 // type StoryProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 export default function Story({ email }: Props) {
   const { profile } = useContext(AppContext) as Props;

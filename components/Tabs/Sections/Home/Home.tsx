@@ -3,13 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useContext, useRef } from "react";
-import { AppContext } from "../../../context/AppContext";
-import { PageContext, PageProps } from "../../../context/PageContext";
-import styles from "../../../styles/Home.module.scss";
-import { Props } from "../../../types/interfaces";
+import { AppContext } from "@/context/AppContext";
+import { PageContext, PageProps } from "@/context/PageContext";
+import styles from "@/styles/Home.module.scss";
+import { Props } from "@/types/interfaces";
 import Newfeed from "./Newfeed";
 import Story from "./Story/Story";
-import useInfiniteScroll from "../../../hooks/useInfiniteScroll";
+import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 // type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
 // };
 export default function Home(props: { tabIndex: number }) {

@@ -1,14 +1,14 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useContext, useState } from "react";
-import { AppContext } from "../../../context/AppContext";
+import { AppContext } from "@/context/AppContext";
+import { PageContext, PageProps } from "@/context/PageContext";
 import {
   acceptFriends,
   rejectFriendRequest,
-} from "../../../lib/firestore/friends";
-import { useQueryClient } from "@tanstack/react-query";
-import { Props } from "../../../types/interfaces";
+} from "@/lib/firestore/friends";
+import { Props } from "@/types/interfaces";
 import Card from "./Card";
 import s from "./Friends.module.scss";
-import { PageContext, PageProps } from "../../../context/PageContext";
 interface RequestProps {
   f: any;
   setrequestCount?: Function;

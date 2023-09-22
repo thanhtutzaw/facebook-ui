@@ -1,13 +1,13 @@
+import { AppContext } from "@/context/AppContext";
+import { Post, Props } from "@/types/interfaces";
+import { faGear, faSort } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
-import s from "./index.module.scss";
-import SortDate from "./SortDate";
+import { RefObject, useContext } from "react";
 import { PostList } from "../Home/PostList";
-import { faSort, faGear } from "@fortawesome/free-solid-svg-icons";
-import { Post, Props } from "../../../types/interfaces";
-import { RefObject, useContext, useEffect } from "react";
-import Spinner from "../../Spinner";
-import { AppContext } from "../../../context/AppContext";
+import SortDate from "./SortDate";
+import s from "./index.module.scss";
+import Spinner from "@/components/Spinner";
 
 export default function Content(props: {
   profile: any;
@@ -54,7 +54,6 @@ export default function Content(props: {
       }}
       className={s.myPost}
     >
-      {/* {JSON.stringify(sortedPost)} */}
       <header
         style={{
           borderBottom: isSticky ? "1px solid #f1f1f1" : "initial",

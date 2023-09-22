@@ -6,8 +6,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useActive } from "../../../hooks/useActiveTab";
-import { signout } from "../../../lib/signout";
+import { useActive } from "@/hooks/useActiveTab";
+import { signout } from "@/lib/signout";
 import s from "../../Sections/Menu/menu.module.scss";
 import SwitchAccount from "./SwitchAccount";
 interface MenuProps {

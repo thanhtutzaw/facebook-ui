@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
-import { AppContext } from "../../../context/AppContext";
-import { addFriends } from "../../../lib/firestore/friends";
-import { Props, friends } from "../../../types/interfaces";
+import { AppContext } from "@/context/AppContext";
+import { addFriends } from "@/lib/firestore/friends";
+import { Props, friends } from "@/types/interfaces";
 import Card from "./Card";
 import { useQueryClient } from "@tanstack/react-query";
 import s from "./Friends.module.scss";
-import { PageContext, PageProps } from "../../../context/PageContext";
+import { PageContext, PageProps } from "@/context/PageContext";
 interface RequestProps {
   f: friends;
   tabIndex: number;

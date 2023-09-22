@@ -15,6 +15,7 @@ import { Post, Props } from "../types/interfaces";
 export const AppContext = createContext<Props | null>(null);
 export function AppProvider(props: Props) {
   const {
+    expired,
     friendReqCount,
     acceptedFriends,
     isFriendEmpty,
@@ -107,7 +108,7 @@ export function AppProvider(props: Props) {
         headerContainer.style.height = "60px";
       }
     };
-  }, [active]);
+  }, [active, expired]);
   return (
     <AppContext.Provider
       value={{

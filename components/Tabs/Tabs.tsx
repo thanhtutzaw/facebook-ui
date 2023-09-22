@@ -11,19 +11,19 @@ import {
 import { PageContext, PageProps } from "../../context/PageContext";
 import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
-import Home from "../Sections/Home/Home";
+import Home from "./Sections/Home/Home";
 import t from "./Tabs.module.scss";
-const Friends = dynamic(() => import("../Sections/Friends/Friends"), {
+const Friends = dynamic(() => import("./Sections/Friends/Friends"), {
   ssr: false,
 });
-const Watch = dynamic(() => import("../Sections/Watch"), { ssr: false });
-const Profile = dynamic(() => import("../Sections/Profile"), {
+const Watch = dynamic(() => import("./Sections/Watch"), { ssr: false });
+const Profile = dynamic(() => import("./Sections/Profile"), {
   ssr: false,
 });
 const Notifications = dynamic(
-  () => import("../Sections/Notifications/Notifications")
+  () => import("./Sections/Notifications/Notifications")
 );
-const Menu = dynamic(() => import("../Sections/Menu/menu"), { ssr: false });
+const Menu = dynamic(() => import("./Sections/Menu/menu"), { ssr: false });
 
 export default function Tabs(props: {
   indicatorRef: RefObject<HTMLDivElement>;

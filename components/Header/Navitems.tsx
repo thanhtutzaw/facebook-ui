@@ -44,7 +44,7 @@ export default function Navitems(props: {
   };
   const activeClass = active === TabName ? styles.active : "";
   const notiCount = parseInt(UnReadNotiCount!.toString());
-  const requestCount = parseInt(friendReqCount!.toString());
+  const friendRequestCount = parseInt(friendReqCount!.toString());
   return (
     <div onClick={changeTab} className={`${styles.navItems} ${activeClass}`}>
       <div role="button" aria-label={iconTitle} title={iconTitle}>
@@ -58,12 +58,12 @@ export default function Navitems(props: {
               </span>
             </>
           )}
-          {/* {requestCount} */}
-          {TabName === "friends" && requestCount > 0 && (
+          {/* {friendRequestCount} */}
+          {TabName === "friends" && friendRequestCount > 0 && (
             <>
               <span className={styles.badge}>
-                {Math.min(requestCount, 9)}
-                {requestCount > 9 && "+"}
+                {Math.min(friendRequestCount, 9)}
+                {friendRequestCount > 9 && "+"}
               </span>
             </>
           )}

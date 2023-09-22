@@ -1,4 +1,5 @@
 @import "../styles/mixins";
+
 .headerContainer {
   transition:
     transform 0.18s ease,
@@ -303,15 +304,48 @@
     min-width: 100%;
   }
 }
-.userContent {
+.pageErrorInfoContainer {
   padding: 0 1rem;
-  // text-align: center;
+  text-align: center;
   display: grid;
-  // align-content: center;
-  // color: gray;
   margin-top: 65px;
-  // height: calc(100vh - 65px);
+  h1 {
+    margin-bottom: 0;
+    font-size: clamp(25px, 9vw, 40px);
+    font-weight: 500;
+  }
+  .exclamation {
+    color: darkgray;
+    font-size: 2rem;
+    margin: 0.5rem 0;
+  }
+  .message{
+    font-size: clamp(16px, 1vw, 20px);
+  }
+  .goHome {
+    border: 0;
+    border-radius: 1rem;
+    background: transparent;
+    font-size: 1rem;
+    display: block;
+    justify-content: center;
+    text-align: center;
+    margin: 0 auo;
+    margin: auto;
+    padding: 0.5rem;
+    border-radius: 1rem;
+    color: var(--blue-origin);
+    
+
+    &:focus-visible {
+      outline-color: var(--blue-origin);
+    }
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
+
 .postContainer {
   > div,
   > div > div {
@@ -595,7 +629,7 @@
   top: 0;
   border-bottom: 1px solid rgb(235, 235, 235);
   z-index: 100;
-  
+
   h2,
   .title {
     margin-top: 0;

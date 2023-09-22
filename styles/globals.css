@@ -20,26 +20,7 @@
   white-space  : nowrap;
 }
 
-.goHome {
-  border         : 0;
-  border-radius  : 1rem;
-  background     : transparent;
-  font-size      : 1rem;
-  display        : block;
-  justify-content: center;
-  text-align     : center;
-  margin         : 0 auo;
-  margin         : auto;
-  padding        : 0.5rem;
-  border-radius  : 1rem;
-  color          : var;
-  color          : var(--blue-origin);
 
-  &:focus-visible {
-    outline-color: var(--blue-origin);
-
-  }
-}
 
 @media only screen and (orientation:landscape) and (pointer: coarse) {
   :root {
@@ -88,9 +69,13 @@ main {
   margin         : 1rem;
   display        : flex;
   justify-content: center;
-  align-items    : center;
   gap            : 10px;
   font-weight    : bold;
+  color          : #ff1212;
+  background     : #ff000012;
+  color          : #ff1212;
+  background     : #ff000012;
+  text-align     : left;
 }
 
 .error svg {

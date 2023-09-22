@@ -128,7 +128,7 @@ export default function Page(props: {
   }, [status, uid]);
 
   return (
-    <div className="user">
+    <>
       <BackHeader>
         <h2>
           {status === "friend"
@@ -139,7 +139,6 @@ export default function Page(props: {
           {friends.length > 0 && !firendLoading && friends.length}
         </h2>
       </BackHeader>
-
       <div
         style={{
           marginTop: "65px",
@@ -183,7 +182,7 @@ export default function Page(props: {
           <FriendList setFriends={setFriends} friends={friends} uid={uid} />
         )}
       </div>
-    </div>
+    </>
   );
 }
 
@@ -281,24 +280,6 @@ function FriendList({
                     <>
                       {friend.senderId === uid ? (
                         <>
-                          {/* <button
-                  onClick={async () => {
-                  try {
-                  await unFriend(uid, friend);
-                  router.replace(router.asPath, undefined, {
-                  scroll: false,
-                  });
-                  setFriends(
-                  friends.filter((f) => f.id !== friend.id)
-                  );
-                  queryClient.invalidateQueries(["suggestedFriends"]);
-                  } catch (error) {
-                  console.log(error);
-                  }
-                  }}
-                  >
-                  Delete
-                  </button> */}
                           <button
                             title="Cancel Request"
                             onClick={async (e) => {

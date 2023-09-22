@@ -7,8 +7,8 @@ import {
   useContext,
   useRef,
 } from "react";
-import { PageContext, PageProps } from "../../../context/PageContext";
-import { account } from "../../../types/interfaces";
+import { PageContext, PageProps } from "@/context/PageContext";
+import { account } from "@/types/interfaces";
 import s from "./index.module.scss";
 function ProfileInfo(props: {
   handleChange: ChangeEventHandler<HTMLInputElement>;
@@ -17,7 +17,7 @@ function ProfileInfo(props: {
   selectMode: boolean;
   children?: ReactNode;
   profile: account["profile"];
-  edit?: boolean;
+  editToggle?: boolean;
   newProfile?: account["profile"] | null;
 }) {
   const {
@@ -27,7 +27,7 @@ function ProfileInfo(props: {
     selectMode,
     children,
     profile,
-    edit,
+    editToggle,
     newProfile,
   } = props;
   const { setview } = useContext(PageContext) as PageProps;
@@ -72,14 +72,14 @@ function ProfileInfo(props: {
           profile?.lastName ?? ""
         }'s profile`}
         src={
-          edit
+          editToggle
             ? imageFile
             : (profile?.photoURL as string) ??
               "https://upload.wikimedia.org/wikipedia/commons/77c/Profile_avatar_placeholder_large.png"
         }
       />
       {/* {JSON.stringify()} */}
-      {edit && (
+      {editToggle && (
         <>
           <input
             style={{ visibility: "hidden", display: "none" }}
@@ -102,7 +102,7 @@ function ProfileInfo(props: {
         </>
       )}
       <h3>
-        {edit
+        {editToggle
           ? `${newProfile?.firstName ?? ""} ${newProfile?.lastName ?? ""}`
           : account?.displayName}
       </h3>
@@ -120,13 +120,13 @@ function ProfileInfo(props: {
         className={s.bio}
       >
         {/* Listen I didn&apos;t kill Mysterio. The drones did! */}
-        {/* {edit
+        {/* {editToggle
             ? newProfile.bio
             : profile?.bio === ""
             ? "No Bio Yet"
             : profile?.bio ??
               "Listen I didn&apos;t kill Mysterio. The drones did!"} */}
-        {edit
+        {editToggle
           ? newProfile?.bio
           : profile?.bio === "" || !profile?.bio
           ? "No Bio Yet"

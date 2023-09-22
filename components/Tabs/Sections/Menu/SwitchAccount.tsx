@@ -7,8 +7,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useContext, useState } from "react";
-import { AppContext } from "../../../context/AppContext";
-import { Props } from "../../../types/interfaces";
+import { AppContext } from "@/context/AppContext";
+import { Props } from "@/types/interfaces";
 import s from "../../Sections/Menu/menu.module.scss";
 import Image from "next/image";
 

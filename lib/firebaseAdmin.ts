@@ -1,4 +1,4 @@
-import { firestore } from "firebase-admin";
+import { firestore, auth } from "firebase-admin";
 var admin = require("firebase-admin");
 // var serviceAccount = require("../secret.json");
 if (!admin.apps.length) {
@@ -11,8 +11,9 @@ if (!admin.apps.length) {
   });
 }
 export async function verifyIdToken(token: string) {
+  let error;
   try {
-    let decodedToken = await admin.auth().verifyIdToken(token);
+    let decodedToken = await auth().verifyIdToken(token);
     // console.log("🎉running try in firebase admin");
     const convertSecondsToTime = (seconds: number) => {
       const days = Math.floor(seconds / (3600 * 24));
@@ -29,9 +30,10 @@ export async function verifyIdToken(token: string) {
     }
     // console.log("🎉 Token is valid");
     return decodedToken;
-  } catch (err) {
-    console.log("🎉 Firebase admin error", err);
-    throw err;
+  } catch (error) {
+    console.log("🎉 Firebase admin error", error);
+    // return error;
+    throw error;
   }
 }
 export async function getUserData(uid: string) {
@@ -40,11 +42,10 @@ export async function getUserData(uid: string) {
     const userRecord = await admin.auth().getUser(uid);
     return userRecord;
   } catch (error) {
-    console.error("Error retrieving user data:", error);
+    console.error(`{Error retrieving user data:(${uid})}`, error);
   }
 }
 export async function getFCMToken(uid: string) {
-  // Get the user's FCM token (replace with your user lookup logic)
   // const user = await admin.auth().getUser(uid);
   const user = await firestore().doc(`users/${uid}`).get();
   // const fcmToken = user.tokens?.fcmToken;
@@ -53,14 +54,4 @@ export async function getFCMToken(uid: string) {
 
   // const array = quotedArray.join(",");
   return fcmToken;
-  // getMess
-  // console.log({ withFCM: fcmToken });
 }
-// export async function sendPushNoti(params: type) {
-//   const notification = {
-//     token: fcmToken,
-//     notification: {
-//       body: message,
-//     },
-//   };
-// }

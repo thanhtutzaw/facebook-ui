@@ -24,20 +24,20 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useCallback, useContext, useState } from "react";
-import BackHeader from "../../components/Header/BackHeader";
-import { PostList } from "../../components/Sections/Home/PostList";
-import s from "../../components/Sections/Profile/index.module.scss";
-import { PageContext, PageProps } from "../../context/PageContext";
-import useInfiniteScroll from "../../hooks/useInfiniteScroll";
-import { MYPOST_LIMIT } from "../../lib/QUERY_LIMIT";
-import { db, fethUserDoc, getPostWithMoreInfo } from "../../lib/firebase";
-import { verifyIdToken } from "../../lib/firebaseAdmin";
+import BackHeader from "@/components/Header/BackHeader";
+import s from "@/components/Tabs/Sections/Profile/index.module.scss";
+import { PageContext, PageProps } from "@/context/PageContext";
+import useInfiniteScroll from "@/hooks/useInfiniteScroll";
+import { MYPOST_LIMIT } from "@/lib/QUERY_LIMIT";
+import { db, fethUserDoc, getPostWithMoreInfo } from "@/lib/firebase";
+import { verifyIdToken } from "@/lib/firebaseAdmin";
 import {
   acceptFriends,
   addFriends,
   unBlockFriend,
-} from "../../lib/firestore/friends";
-import { Post as PostType, account, friends } from "../../types/interfaces";
+} from "@/lib/firestore/friends";
+import { Post as PostType, account, friends } from "@/types/interfaces";
+import { PostList } from "@/components/Tabs/Sections/Home/PostList";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;

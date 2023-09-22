@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import styles from "../../Post/index.module.scss";
+import styles from "@/components/Post/index.module.scss";
 import s from "./index.module.scss";
-import useEscape from "../../../hooks/useEscape";
+import useEscape from "@/hooks/useEscape";
 export default function SortDate(props: {
   sort: boolean;
   sortby: string;

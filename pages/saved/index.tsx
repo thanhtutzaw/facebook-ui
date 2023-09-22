@@ -10,17 +10,17 @@ import {
   query,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
-import BackHeader from "../../components/Header/BackHeader";
-import { PostList } from "../../components/Sections/Home/PostList";
-import s from "../../components/Sections/Profile/index.module.scss";
-import { db, getProfileByUID, postInfo, postToJSON } from "../../lib/firebase";
-import { verifyIdToken } from "../../lib/firebaseAdmin";
+import BackHeader from "@/components/Header/BackHeader";
+import s from "@/components/Tabs/Sections/Profile/index.module.scss";
+import { db, getProfileByUID, postInfo, postToJSON } from "@/lib/firebase";
+import { verifyIdToken } from "@/lib/firebaseAdmin";
 import { Timestamp } from "@google-cloud/firestore";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import nookies from "nookies";
 import { useEffect, useState } from "react";
-import { SavedPost_LIMIT } from "../../lib/QUERY_LIMIT";
-import { Post, account } from "../../types/interfaces";
+import { SavedPost_LIMIT } from "@/lib/QUERY_LIMIT";
+import { Post, account } from "@/types/interfaces";
+import { PostList } from "@/components/Tabs/Sections/Home/PostList";
 type savedPostTypes = {
   authorId: string;
   postId: string;
@@ -107,7 +107,7 @@ export default function Page(props: {
     };
   }, [limitedPosts.length, uid]);
   return (
-    <div className="user">
+    <>
       <BackHeader>
         <h2>Saved Post</h2>
       </BackHeader>
@@ -121,6 +121,6 @@ export default function Page(props: {
       >
         <PostList profile={profile} posts={limitedPosts} />
       </div>
-    </div>
+    </>
   );
 }

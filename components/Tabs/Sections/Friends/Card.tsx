@@ -2,9 +2,9 @@ import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import { ReactNode, useContext } from "react";
-import { PageContext, PageProps } from "../../../context/PageContext";
-import { JSONTimestampToDate } from "../../../lib/firebase";
-import { account, friends } from "../../../types/interfaces";
+import { PageContext, PageProps } from "@/context/PageContext";
+import { JSONTimestampToDate } from "@/lib/firebase";
+import { account, friends } from "@/types/interfaces";
 import s from "./Friends.module.scss";
 export default function Card(props: { children: ReactNode; f: friends }) {
   const { f } = props;

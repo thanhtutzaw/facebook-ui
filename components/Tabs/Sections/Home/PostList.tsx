@@ -1,9 +1,9 @@
 import { User } from "firebase/auth";
 import { memo, useEffect } from "react";
-import { Post as PostType } from "../../../types/interfaces";
-import Post from "../../Post";
-import s from "../../Post/index.module.scss";
-import Spinner from "../../Spinner";
+import { Post as PostType } from "@/types/interfaces";
+import s from "@/components/Post/index.module.scss";
+import Post from "@/components/Post";
+import Spinner from "@/components/Spinner";
 export const PostList = memo(
   (props: {
     updatePost?: Function;

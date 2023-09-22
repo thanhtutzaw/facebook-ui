@@ -1,16 +1,13 @@
-import Link from "next/link";
-import BackHeader from "../components/Header/BackHeader";
-import s from "../styles/Home.module.scss";
 const ErrorPage = () => {
   return (
-    <div className="user">
+    <>
       {/* <div
         style={{
           textAlign: "center",
           alignContent: "center",
           height: "calc(100dvh - 65px)",
         }}
-        className={s.userContent}
+        className={s.pageErrorInfoContainer}
       >
         <h3
           style={{
@@ -23,7 +20,7 @@ const ErrorPage = () => {
           <button className="goHome">Go Home</button>
         </Link>
       </div> */}
-    </div>
+    </>
   );
 };
 
