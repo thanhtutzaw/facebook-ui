@@ -210,7 +210,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // context.res.end();
     return {
       props: {
-        postError: "postError",
+        postError,
         expired: expired,
         uid: tokenUID ?? "",
         acceptedFriends: [],
