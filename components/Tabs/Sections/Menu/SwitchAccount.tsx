@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useContext, useState } from "react";
 import { AppContext } from "@/context/AppContext";
-import { Props } from "@/types/interfaces";
+import { AppProps } from "@/types/interfaces";
 import s from "../../Sections/Menu/menu.module.scss";
 import Image from "next/image";
 
@@ -18,7 +18,7 @@ export default function SwitchAccount(props: {
 }) {
   const { setLoading, signout } = props;
   const auth = getAuth();
-  const { email } = useContext(AppContext) as Props;
+  const { email } = useContext(AppContext) as AppProps;
   const accounts = [
     {
       uid: "testuser@gmail.com",

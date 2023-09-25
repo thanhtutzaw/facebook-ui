@@ -1,19 +1,23 @@
 import { useRouter } from "next/router";
 import styles from "../../styles/Home.module.scss";
-import { Props } from "../../types/interfaces";
+import { AppProps, Tabs } from "../../types/interfaces";
 import { useContext } from "react";
 import { AppContext } from "../../context/AppContext";
+import { PageContext, PageProps } from "@/context/PageContext";
 
 export default function Navitems(props: {
-  active: Props["active"];
-  setActive: Function;
+  active: Tabs;
+  // setActive: Function;
   icon: JSX.Element;
   name: string;
   index: number;
 }) {
-  const { UnReadNotiCount, friendReqCount } = useContext(AppContext) as Props;
+  const { UnReadNotiCount, friendReqCount } = useContext(
+    AppContext
+  ) as AppProps;
+  const { setActive } = useContext(PageContext) as PageProps;
 
-  const { active, setActive, icon: TabIcon, name, index } = props;
+  const { active, icon: TabIcon, name, index } = props;
   const router = useRouter();
   let iconTitle = name === "/" ? "Home" : name;
   const TabName = name.toLowerCase();
@@ -43,6 +47,7 @@ export default function Navitems(props: {
     }
   };
   const activeClass = active === TabName ? styles.active : "";
+  // const activeClass = "";
   const notiCount = parseInt(UnReadNotiCount!.toString());
   const friendRequestCount = parseInt(friendReqCount!.toString());
   return (

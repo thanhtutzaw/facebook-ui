@@ -1,14 +1,14 @@
 import React, { Component, ReactNode } from "react";
 
-interface Props {
+interface ErrorBoundaryProps {
   children?: ReactNode;
 }
 
 interface State {
   hasError: boolean;
 }
-class ErrorBoundary extends Component<Props,State> {
-  constructor(props:any) {
+class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
+  constructor(props: any) {
     super(props);
 
     // Define a state variable to track whether is an error or not

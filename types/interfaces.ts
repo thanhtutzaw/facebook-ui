@@ -65,7 +65,8 @@ export interface sharePost {
   postId: string;
 }
 export interface sharedPost {
-  author: UserRecord | User;
+  // author: UserRecord | User;
+  author: author;
   authorId: string | number;
   id?: string | number;
   text: string;
@@ -96,7 +97,7 @@ export interface Post {
   comments: Comment[];
   createdAt: timeStamp;
   updatedAt: timeStamp;
-}
+} ;
 export interface Comment {
   isLiked?: boolean;
   like?: any;
@@ -108,7 +109,9 @@ export interface Comment {
   updatedAt?: timeStamp;
 }
 
-export interface Props {
+export interface AppProps {
+  queryPageData?:any;
+  token?:any;
   fcmToken?: string | string[];
   friendReqCount?: number | string;
   UnReadNotiCount?: number | string;
@@ -124,14 +127,15 @@ export interface Props {
   selectMode?: boolean;
   expired?: boolean;
   uid?: string;
-  active?:
-    | "home"
-    | "/"
-    | "friends"
-    | "watch"
-    | "profile"
-    | "notifications"
-    | "menu";
+  active?:Tabs;
+  // active?:
+  //   | "home"
+  //   | "/"
+  //   | "friends"
+  //   | "watch"
+  //   | "profile"
+  //   | "notifications"
+  //   | "menu";
   setActive?: Function;
   allUsers?: any;
   sortedPost?: Post[];
@@ -147,3 +151,11 @@ export interface Props {
   lastPullTimestamp?: timeStamp;
   updatedAt?: timeStamp;
 }
+export type Tabs =
+  | "home"
+  | "/"
+  | "friends"
+  | "watch"
+  | "profile"
+  | "notifications"
+  | "menu";

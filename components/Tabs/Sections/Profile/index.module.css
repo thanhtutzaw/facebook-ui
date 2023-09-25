@@ -16,6 +16,75 @@
   will-change: opacity;
   position: relative;
 }
+.container .info .formContainer {
+  min-height: 41px;
+  display: grid;
+  grid-template-rows: 0fr;
+}
+.container .info .formContainer .editProfile {
+  overflow: hidden;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: 1;
+  cursor: default;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 1rem;
+}
+.container .info .formContainer .editProfile > div {
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-inline: 1rem;
+  max-width: 420px;
+}
+.container .info .formContainer .editProfile button {
+  height: 50px;
+  background-color: transparent;
+  border: 1px solid rgb(180, 180, 180);
+  font-size: 1rem;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out, opacity 0.2s ease-in-out;
+}
+.container .info .formContainer .editProfile button:nth-child(2) {
+  background-color: var(--blue-origin);
+  color: white;
+}
+.container .info .formContainer .editProfile button:active {
+  opacity: 0.5;
+  transition: initial;
+}
+.container .info .formContainer .editProfile button:first-child {
+  color: #f03547;
+  border-color: #f03547;
+}
+.container .info .formContainer .editProfile button:first-child:hover {
+  color: white;
+  background-color: red;
+  border: 0;
+  outline: 0;
+}
+.container .info .formContainer .editProfile button:first-child:active {
+  color: white;
+  background-color: red;
+  border: 0;
+  outline: 0;
+}
+.container .info .formContainer .editProfile input {
+  border: 1px solid rgb(180, 180, 180);
+  outline: 0;
+  padding: 20px 10px;
+  border-radius: 10px;
+  font-size: 1rem;
+  justify-content: center;
+  display: flex;
+  transition: all 0.2s ease-in-out;
+}
+.container .info .formContainer .editProfile input:focus {
+  border: 1px solid black;
+}
 .container .info .changePic {
   background-color: transparent;
   border: 0;
@@ -64,6 +133,23 @@
   padding: 0 1rem;
   text-align: center;
 }
+.container .info .actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.container .info .pending {
+  color: dimgray;
+}
+.container .info .secondary {
+  background: var(--blue-origin) !important;
+  color: white;
+}
+.container .info .confirm {
+  background-color: rgba(46, 139, 86, 0.15) !important;
+  color: seagreen;
+}
 .container .info .editToggle {
   justify-content: center;
   align-items: center;
@@ -73,6 +159,7 @@
   padding: 10px;
   font-size: 18px;
   background-color: rgb(238, 238, 238);
+  gap: 5px;
 }
 .container .info .editToggle:not(:active) {
   transition: initial;
@@ -80,69 +167,6 @@
 .container .info .editToggle:active {
   background-color: rgb(229, 229, 229);
   transition: initial;
-}
-.container .info .editProfile {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  flex: 1;
-  cursor: default;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 1rem;
-}
-.container .info .editProfile > div {
-  gap: 10px;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding-inline: 1rem;
-  max-width: 420px;
-}
-.container .info .editProfile button {
-  height: 50px;
-  background-color: transparent;
-  border: 1px solid rgb(180, 180, 180);
-  font-size: 1rem;
-  border-radius: 10px;
-  transition: all 0.3s ease-in-out, opacity 0.2s ease-in-out;
-}
-.container .info .editProfile button:nth-child(2) {
-  background-color: var(--blue-origin);
-  color: white;
-}
-.container .info .editProfile button:active {
-  opacity: 0.5;
-  transition: initial;
-}
-.container .info .editProfile button:first-child {
-  color: #f03547;
-  border-color: #f03547;
-}
-.container .info .editProfile button:first-child:hover {
-  color: white;
-  background-color: red;
-  border: 0;
-  outline: 0;
-}
-.container .info .editProfile button:first-child:active {
-  color: white;
-  background-color: red;
-  border: 0;
-  outline: 0;
-}
-.container .info .editProfile input {
-  border: 1px solid rgb(180, 180, 180);
-  outline: 0;
-  padding: 20px 10px;
-  border-radius: 10px;
-  font-size: 1rem;
-  justify-content: center;
-  display: flex;
-  transition: all 0.2s ease-in-out;
-}
-.container .info .editProfile input:focus {
-  border: 1px solid black;
 }
 .container .profile {
   border-radius: 100%;

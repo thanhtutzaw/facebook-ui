@@ -6,18 +6,20 @@ import { useContext, useRef } from "react";
 import { AppContext } from "@/context/AppContext";
 import { PageContext, PageProps } from "@/context/PageContext";
 import styles from "@/styles/Home.module.scss";
-import { Props } from "@/types/interfaces";
+import { AppProps } from "@/types/interfaces";
 import Newfeed from "./Newfeed";
 import Story from "./Story/Story";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
-// type Props = InferGetServerSidePropsType<typeof getServerSideProps> & {
+// type AppProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 // };
 export default function Home(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const router = useRouter();
-  const { profile, postEnd, getMorePosts, active, email, headerContainerRef } =
-    useContext(AppContext) as Props;
-  const { setuploadButtonClicked } = useContext(PageContext) as PageProps;
+  const { profile, postEnd, getMorePosts, email, headerContainerRef } =
+    useContext(AppContext) as AppProps;
+  const { setuploadButtonClicked, active } = useContext(
+    PageContext
+  ) as PageProps;
   const previousScrollRef = useRef(0);
   // const { scrollRef } = useInfiniteScroll(getMorePosts!, postEnd!);
   return (
@@ -49,17 +51,29 @@ export default function Home(props: { tabIndex: number }) {
     >
       <Story email={email} />
       <div className={styles.postAction}>
-        <Image
-          className={styles.profile}
-          alt={"profile picture"}
-          width={200}
-          height={170}
-          style={{ width: "40px", height: "40px" }}
-          src={
-            (profile?.photoURL as string) ??
-            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-          }
-        />
+        <div
+          style={{
+            width: "40px",
+            position: "relative",
+            height: "40px",
+          }}
+        >
+          <Image
+            // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+            className={styles.profile}
+            alt={`${profile?.firstName ?? "Unknown User"} ${
+              profile?.lastName ?? ""
+            }'s profile picture`}
+            fill
+            // width={200}
+            // height={170}
+            // style={{ width: "40px", height: "40px" }}
+            src={
+              (profile?.photoURL as string) ??
+              "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+            }
+          />
+        </div>
         <input
           tabIndex={-1}
           aria-label="Go to Add Post page"

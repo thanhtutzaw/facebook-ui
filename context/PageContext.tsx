@@ -9,7 +9,7 @@ import {
 import { createContext } from "react";
 import { useQueryClient, QueryClient } from "@tanstack/react-query";
 import { User } from "firebase/auth";
-import { friends } from "../types/interfaces";
+import { Post, Tabs, friends } from "../types/interfaces";
 
 export type selectedId = {
   post: string;
@@ -20,6 +20,8 @@ export type selectedId = {
   } | null;
 };
 export interface PageProps {
+  newsFeedData?: Post[];
+  setnewsFeedData?: Function;
   currentUser: User | null;
   queryClient?: QueryClient;
   postError?: string;
@@ -28,7 +30,7 @@ export interface PageProps {
   setuploadButtonClicked?: Function;
   viewRef?: RefObject<HTMLDialogElement>;
   fileRef?: RefObject<HTMLInputElement>;
-  active: string;
+  active: Tabs;
   children?: ReactNode;
   setActive: Function;
   shareAction?: string;
@@ -70,6 +72,7 @@ export function PageProvider(props: PageProps) {
   const viewRef = useRef<HTMLDialogElement>(null);
   const [uploadButtonClicked, setuploadButtonClicked] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [newsFeedData, setnewsFeedData] = useState<Post[]>([]);
   useEffect(() => {
     function handleClickOutside(e: { target: any }) {
       if (!shareAction) return;
@@ -84,6 +87,8 @@ export function PageProvider(props: PageProps) {
   return (
     <PageContext.Provider
       value={{
+        newsFeedData,
+        setnewsFeedData,
         setnotiPermission,
         friends,
         setfriends,

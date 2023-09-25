@@ -3,7 +3,7 @@ import { useActive } from "@/hooks/useActiveTab";
 import { NOTI_LIMIT } from "@/lib/QUERY_LIMIT";
 import { db } from "@/lib/firebase";
 import { getMessage } from "@/lib/firestore/notifications";
-import { NotiTypes, Props } from "@/types/interfaces";
+import { NotiTypes, AppProps } from "@/types/interfaces";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   Timestamp,
@@ -27,7 +27,7 @@ export default function Notifications() {
   const { active: tab } = useActive();
   const { uid, lastPullTimestamp, UnReadNotiCount } = useContext(
     AppContext
-  ) as Props;
+  ) as AppProps;
   const fetchNoti = async function (pageParam: NotiTypes | null = null) {
     console.log("fetching noti");
     if (!uid) return;
@@ -168,9 +168,11 @@ function Noti({ noti }: { noti: NotiTypes }) {
   } = noti;
   return (
     <li
-      style={{
-        backgroundColor: !hasRead ? "rgb(228 228 228 / 50%)" : "initial",
-      }}
+      style={
+        {
+          // backgroundColor: !hasRead ? "rgb(228 228 228 / 50%)" : "initial",
+        }
+      }
       className={s.item}
     >
       <Link
@@ -178,11 +180,13 @@ function Noti({ noti }: { noti: NotiTypes }) {
         // href={`${url.match(/^[a-zA-Z]{1,}:\/\//) ? `/${url}` : `${url}`} `}
         href={url}
       >
+        <div className={`${s.new} ${!hasRead ? s.unRead : ""}`}></div>
         <Image
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            router.push(uid ?? "");
+            // router.push(uid ?? "");
+            router.push({ query: { user: uid } }, String(uid));
           }}
           className={s.profile}
           priority={false}
@@ -199,7 +203,8 @@ function Noti({ noti }: { noti: NotiTypes }) {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              router.push(uid ?? "");
+              // router.push(uid ?? "");
+              router.push({ query: { user: uid } }, String(uid));
             }}
             className={s.userName}
           >

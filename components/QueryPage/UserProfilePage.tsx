@@ -31,101 +31,21 @@ import {
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useCallback, useContext, useEffect, useState } from "react";
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  try {
-    const uid = context.query.user!;
-    const cookies = nookies.get(context);
-    const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
-    const user = await fethUserDoc(uid);
-    const userExist = user.exists();
-    const isFriendsQuery = doc(db, `users/${token.uid}/friends/${uid}`);
-    const friendDoc = await getDoc(isFriendsQuery);
-    let isFriend = false,
-      isBlocked = false,
-      isPending = false,
-      canAccept = false,
-      canUnBlock = false;
-    if (friendDoc.exists()) {
-      const relation = friendDoc.data() as friends;
-      isFriend = relation.status === "friend";
-      isPending = relation.status === "pending";
-      isBlocked = relation.status === "block";
-      canAccept = relation.senderId !== token.uid && !isFriend;
-      canUnBlock = relation.senderId === token.uid;
-    }
-    let mypostQuery = query(
-      collection(db, `/users/${uid}/posts`),
-      where("visibility", "in", ["Public"]),
-      orderBy("createdAt", "desc"),
-      limit(MYPOST_LIMIT)
-    );
-    if (isFriend) {
-      mypostQuery = query(
-        collection(db, `/users/${uid}/posts`),
-        where("visibility", "in", ["Friend", "Public"]),
-        orderBy("createdAt", "desc"),
-        limit(MYPOST_LIMIT)
-      );
-    }
-    const myPost = isBlocked
-      ? null
-      : await getPostWithMoreInfo(uid as string, mypostQuery);
-    if (userExist) {
-      const profile = user?.data().profile as account["profile"];
-      return {
-        props: {
-          token,
-          profile: profile ?? null,
-          myPost,
-          isFriend,
-          isBlocked,
-          isPending,
-          canAccept,
-          canUnBlock,
-        },
-      };
-    } else {
-      return {
-        notFound: true,
-      };
-    }
-  } catch (error) {
-    console.log("SSR Error " + error);
-    context.res.writeHead(302, { Location: "/login" });
-    context.res.end();
-    return {
-      props: {
-        token: null,
-        profile: [],
-        myPost: [],
-      },
-    };
-  }
-};
+import { useCallback, useContext, useState } from "react";
 
-export default function UserProfile({
+export default function UserProfilePage({
+  
   token,
-  profile,
-  myPost,
-  isFriend,
-  isBlocked,
-  isPending,
-  canAccept,
-  canUnBlock,
+  queryPageData,
 }: {
-  token: DecodedIdToken;
-  profile: account["profile"];
-  myPost: PostType[];
-  isFriend: Boolean;
-  isBlocked: Boolean;
-  isPending: Boolean;
-  canAccept: Boolean;
-  canUnBlock: Boolean;
+  
+  token: any;
+  queryPageData: any;
 }) {
   const queryClient = useQueryClient();
+  const { profile, myPost } = queryPageData;
 
   const statusComponents = {
     canAccept: (
@@ -207,56 +127,52 @@ export default function UserProfile({
     ),
   };
   const router = useRouter();
-  useEffect(() => {
-    // console.log(`in [user] ${{router}}`);
-    console.log(router);
-  }, [router]);
   const { setview, currentUser } = useContext(PageContext) as PageProps;
   const userName = `${profile?.firstName ?? "Unknown"} ${
     profile?.lastName ?? "User"
   }`;
-  const [limitedPosts, setlimitedPosts] = useState(myPost);
-  const [postLoading, setpostLoading] = useState(false);
+  // const [limitedPosts, setlimitedPosts] = useState(myPost);
+  // const [postLoading, setpostLoading] = useState(false);
   const [postEnd, setPostEnd] = useState(false);
-  const fetchMorePosts = useCallback(
-    async function () {
-      setpostLoading(true);
-      const post = limitedPosts?.[limitedPosts?.length - 1]!;
-      const date = new Timestamp(
-        post.createdAt.seconds,
-        post.createdAt.nanoseconds
-      );
-      const mypostQuery = query(
-        collection(db, `/users/${router.query.user}/posts`),
-        where("visibility", "in", ["Friend", "Public"]),
-        orderBy("createdAt", "desc"),
-        startAfter(date),
-        limit(MYPOST_LIMIT)
-      );
-      const finalPost = await getPostWithMoreInfo(token.uid!, mypostQuery)!;
-      setlimitedPosts(limitedPosts?.concat(finalPost!));
-      setpostLoading(false);
+  // const fetchMorePosts = useCallback(
+  //   async function () {
+  //     setpostLoading(true);
+  //     const post = limitedPosts?.[limitedPosts?.length - 1]!;
+  //     const date = new Timestamp(
+  //       post.createdAt.seconds,
+  //       post.createdAt.nanoseconds
+  //     );
+  //     const mypostQuery = query(
+  //       collection(db, `/users/${router.query.user}/posts`),
+  //       where("visibility", "in", ["Friend", "Public"]),
+  //       orderBy("createdAt", "desc"),
+  //       startAfter(date),
+  //       limit(MYPOST_LIMIT)
+  //     );
+  //     const finalPost = await getPostWithMoreInfo(token.uid!, mypostQuery)!;
+  //     setlimitedPosts(limitedPosts?.concat(finalPost!));
+  //     setpostLoading(false);
 
-      if (finalPost?.length! < MYPOST_LIMIT) {
-        setPostEnd(true);
-      }
-    },
-    [limitedPosts, router.query.user, token?.uid]
-  );
-  const { scrollRef } = useInfiniteScroll(postEnd, true, fetchMorePosts);
+  //     if (finalPost?.length! < MYPOST_LIMIT) {
+  //       setPostEnd(true);
+  //     }
+  //   },
+  //   [limitedPosts, router.query.user, token?.uid]
+  // );
+  const { scrollRef } = useInfiniteScroll(postEnd, true);
   const bio = profile?.bio === "" || !profile ? bioFallback : profile?.bio;
-  const otherUser = token?.uid !== router.query.user;
-  const status = canAccept
-    ? "canAccept"
-    : isPending
-    ? "pending"
-    : isFriend
-    ? "friend"
-    : "notFriend";
+  // const otherUser = token?.uid !== router.query.user;
+  // const status = canAccept
+  //   ? "canAccept"
+  //   : isPending
+  //   ? "pending"
+  //   : isFriend
+  //   ? "friend"
+  //   : "notFriend";
   return (
     <>
       <Head>
-        <title>{`${userName} | Facebook Next`}</title>
+        <title>{`${"test"} | Facebook Next`}</title>
         <meta
           name="description"
           content={`${userName} Facebook-Mobile-UI with Next.js`}
@@ -278,6 +194,9 @@ export default function UserProfile({
           }}
           className={s.container}
         >
+          {/* <h3>
+            test Interception route to prevent ssr data refetching (page router)
+          </h3> */}
           <div className={`${s.info}`} style={{ paddingBottom: "1rem" }}>
             <Image
               onClick={() => {
@@ -311,7 +230,7 @@ export default function UserProfile({
             >
               {bio}
             </p>
-            {isBlocked ? (
+            {/* {isBlocked ? (
               <>
                 <p style={{ color: "red" }}>This Account is Blocked </p>
                 {canUnBlock && (
@@ -348,13 +267,13 @@ export default function UserProfile({
                   </button>
                 </div>
               )
-            )}
+            )} */}
           </div>
           <PostList
-            postLoading={postLoading}
-            postEnd={postEnd}
+            // postLoading={postLoading}
+            // postEnd={postEnd}
             tabIndex={1}
-            posts={limitedPosts}
+            posts={myPost}
             profile={profile}
           />
         </div>

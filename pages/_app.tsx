@@ -1,5 +1,6 @@
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import {
@@ -8,6 +9,8 @@ import {
   onAuthStateChanged,
   onIdTokenChanged,
 } from "firebase/auth";
+import { getMessaging, onMessage } from "firebase/messaging";
+import { GetServerSideProps } from "next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -20,13 +23,9 @@ import { Welcome } from "../components/Welcome";
 import { PageProvider } from "../context/PageContext";
 import { useActive } from "../hooks/useActiveTab";
 import { app } from "../lib/firebase";
-
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { getMessaging, onMessage } from "firebase/messaging";
-import { GetServerSideProps } from "next";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import "../styles/globals.css";
-import { Props } from "../types/interfaces";
+import { AppProps as Props } from "../types/interfaces";
 config.autoAddCss = false;
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
@@ -139,8 +138,6 @@ export default function App({
           data: {
             click_action,
           },
-          // actions: [{ action: "see_post", title: "See Post" }],
-          // actons: [...actions],
           actions: JSON.parse(actions),
           renotify: tag !== "",
         };
@@ -249,6 +246,12 @@ export default function App({
       })
   );
   const [isPage, setisPage] = useState(currentUser?.uid);
+  // useEffect(() => {
+
+  // }, [active, expired]);
+  useEffect(() => {
+    console.log(router);
+  }, [router]);
   if (expired) return <Welcome expired={expired} />;
   return (
     <>
@@ -274,6 +277,7 @@ export default function App({
           <main>
             {/* <main style={{ scrollPadding: "5rem", scrollMargin: "5rem" }}> */}
             <Component {...pageProps} />
+
             {authUser?.uid && <ImageLargeView />}
           </main>
         </PageProvider>

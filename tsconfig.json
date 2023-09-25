@@ -9,10 +9,11 @@
       "@/styles/*": ["styles/*"],
       "@/types/*": ["types/*"],
       "@/pages/*": ["pages/*"],
-      "@/lib/*": ["lib/*"],
+      "@/lib/*": ["lib/*"]
     },
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "checkJs": true,
     "allowJs": true,
     "strictNullChecks": true,
     "skipLibCheck": true,
@@ -27,6 +28,15 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "lib/firebaseAuth.JS", "lib/firebase.ts", "pages/[user]/500.js", "next.config.js", "node_modules/index.d.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "lib/firebaseAuth.JS",
+    "lib/firebase.ts",
+    "pages/[user]/500.js",
+    "next.config.js",
+    "node_modules/index.d.ts"
+  ],
   "exclude": ["node_modules"]
 }

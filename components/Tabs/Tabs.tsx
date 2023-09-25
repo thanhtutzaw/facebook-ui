@@ -36,10 +36,10 @@ export default function Tabs(props: {
   ) as PageProps;
   const { active } = useActive();
 
-  useEffect(() => {
-    if (!active) return;
-    window.location.hash = active === "/" ? "#home" : `#${active}`;
-  }, [active]);
+  // useEffect(() => {
+  //   if (!active) return;
+  //   window.location.hash = active === "/" ? "#home" : `#${active}`;
+  // }, [active]);
   useEffect(() => {
     if (!canDrag) return;
     function dragStop() {

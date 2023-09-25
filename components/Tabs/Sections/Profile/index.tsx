@@ -4,7 +4,7 @@ import { useActive } from "@/hooks/useActiveTab";
 import { MYPOST_LIMIT } from "@/lib/QUERY_LIMIT";
 import { app, db, getPostWithMoreInfo } from "@/lib/firebase";
 import { changeProfile } from "@/lib/firestore/profile";
-import { Post, Props, account } from "@/types/interfaces";
+import { Post, AppProps, account } from "@/types/interfaces";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getAuth } from "firebase/auth";
 import {
@@ -36,7 +36,7 @@ export default function Profile() {
     uid,
     selectMode,
     setselectMode: setactive,
-  } = useContext(AppContext) as Props;
+  } = useContext(AppContext) as AppProps;
   const { active: activeTab } = useActive();
   const router = useRouter();
   const infoRef = useRef<HTMLDivElement>(null);

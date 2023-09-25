@@ -76,13 +76,13 @@ export default function Content(props: {
   const navigateToProfile = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    const isViewingAuthorProfile =
-      authorId === router.query.user ||
-      (router.query.user && router.query.post);
+    const { user, post } = router.query;
+    const isViewingAuthorProfile = authorId === user || (user && post);
     if (isViewingAuthorProfile || preventNavigate) return;
-    router.push({
-      pathname: `${authorId}`,
-    });
+    router.push({ query: { user: String(authorId) } }, String(authorId));
+    // router.push({
+    //   pathname: `${authorId}`,
+    // });
   };
   const [authUser, setauthUser] = useState<User | null>(null);
   useEffect(() => {

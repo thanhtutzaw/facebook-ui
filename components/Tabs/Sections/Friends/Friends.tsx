@@ -9,14 +9,14 @@ import Spinner from "@/components/Spinner";
 import { AppContext } from "@/context/AppContext";
 import { useActive } from "@/hooks/useActiveTab";
 import { db, getProfileByUID } from "@/lib/firebase";
-import { Props, friends } from "@/types/interfaces";
+import { AppProps, friends } from "@/types/interfaces";
 interface FriendProps {
   tabIndex: number;
 }
 export default function Friend(props: FriendProps) {
   const { tabIndex } = props;
   const { active: tab } = useActive();
-  const { uid, friendReqCount } = useContext(AppContext) as Props;
+  const { uid, friendReqCount } = useContext(AppContext) as AppProps;
 
   const fetchSuggestedFriends = async () => {
     if (!uid) return;

@@ -5,10 +5,10 @@ import { MouseEvent, useContext, useEffect, useRef, useState } from "react";
 import styles from "@/styles/Home.module.scss";
 import Card from "./Card";
 import { AppContext } from "@/context/AppContext";
-import { Props } from "@/types/interfaces";
+import { AppProps } from "@/types/interfaces";
 // type StoryProps = InferGetServerSidePropsType<typeof getServerSideProps>;
-export default function Story({ email }: Props) {
-  const { profile } = useContext(AppContext) as Props;
+export default function Story({ email }: AppProps) {
+  const { profile } = useContext(AppContext) as AppProps;
   const fileInput = useRef<HTMLInputElement>(null);
   const [draggable, setdraggable] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });

@@ -226,17 +226,33 @@ function FriendList({
         >
           <Link draggable={false} href={friend.id.toString()} key={friend.id}>
             <div className={s.cardContainer}>
-              <Image
-                className={s.profile}
-                alt={"name"}
-                width={50}
-                height={50}
-                src={
-                  friend.author?.photoURL
-                    ? (friend.author?.photoURL as string)
-                    : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-                }
-              />
+              <div
+                style={{
+                  width: "50px",
+                  position: "relative",
+                  height: "50px",
+                }}
+              >
+                <Image
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+                  fill
+                  // style={{
+
+                  // }}
+                  // className={s.profile}
+                  alt={`${friend.author?.firstName ?? "Unknow User"} ${
+                    friend.author?.lastName ?? ""
+                  }'s profile picture`}
+                  // width={100}
+                  // height={100}
+                  src={
+                    friend.author?.photoURL
+                      ? (friend.author?.photoURL as string)
+                      : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+                  }
+                  style={{ objectFit: "cover", width: "100%" }}
+                />
+              </div>
               <div className={s.infoContainer}>
                 <div className={s.info}>
                   <p>

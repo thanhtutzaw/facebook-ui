@@ -86,7 +86,7 @@ function EditProfileForm(props: {
         />
         <input
           onChange={handleChange}
-          defaultValue={newProfile?.bio}
+          defaultValue={newProfile?.bio ?? ""}
           id="bio"
           name="bio"
           type="text"

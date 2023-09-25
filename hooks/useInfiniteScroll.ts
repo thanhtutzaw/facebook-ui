@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 
 function useInfiniteScroll(
-  fetchMoreData: () => Promise<void>,
   hasMore: boolean,
-  scrollParent = false
+  scrollParent = false,
+  fetchMoreData?: () => Promise<void>,
 ) {
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -11,7 +11,7 @@ function useInfiniteScroll(
       const target = e.currentTarget as HTMLElement;
       const currentScroll = target.scrollTop;
       if (window.innerHeight + currentScroll + 1 >= target.scrollHeight) {
-        fetchMoreData();
+        fetchMoreData?.();
       }
       if (hasMore ) {
         element.removeEventListener("scroll", handleScroll);

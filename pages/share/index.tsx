@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
 
     const posts = await getDoc(postDoc);
     const post = await postToJSON(posts as DocumentSnapshot<DocumentData>);
-    const UserRecord = await getUserData(post.authorId);
+    const UserRecord = await getUserData(String(post.authorId));
     const userJSON = userToJSON(UserRecord) as UserRecord;
     const sharePost = {
       ...post,

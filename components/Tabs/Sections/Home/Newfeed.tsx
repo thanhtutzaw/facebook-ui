@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/context/AppContext";
 import { app } from "@/lib/firebase";
 import styles from "@/styles/Home.module.scss";
-import { Props } from "@/types/interfaces";
+import { AppProps } from "@/types/interfaces";
 import { PostList } from "./PostList";
 import { getServerSideProps } from "@/pages/index";
 // type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
@@ -16,7 +16,7 @@ type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 export default function Newfeed(props: NewfeedProps) {
   const { tabIndex } = props;
   const { profile, updatePost, posts, limitedPosts, postLoading, postEnd } =
-    useContext(AppContext) as Props;
+    useContext(AppContext) as AppProps;
   const [user, setuser] = useState<User | null>(null);
   // function updatePost(id:string) {
   //   console.log(id);

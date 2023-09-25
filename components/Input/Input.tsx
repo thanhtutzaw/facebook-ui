@@ -1,7 +1,7 @@
 import { HTMLAttributes, CSSProperties, ReactNode, RefObject } from "react";
 import s from "../../styles/Home.module.scss";
 
-interface Props {
+interface AppProps {
   style?: CSSProperties;
   contentEditable?: boolean;
   element?: RefObject<HTMLDivElement>;
@@ -14,7 +14,7 @@ export default function Input({
   children,
   text,
   ...props
-}: Props & HTMLAttributes<HTMLDivElement>) {
+}: AppProps & HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       {...props}

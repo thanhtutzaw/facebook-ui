@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import useEscape from "../../hooks/useEscape";
 import { deleteMultiplePost } from "../../lib/firestore/post";
-import { Props } from "../../types/interfaces";
+import { AppProps } from "../../types/interfaces";
 import BackHeader from "./BackHeader";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { useQueryClient } from "@tanstack/react-query";
@@ -11,7 +11,7 @@ import s from "../../styles/Home.module.scss";
 function SelectModal() {
   const { updatePost, uid, selectMode, setselectMode } = useContext(
     AppContext
-  ) as Props;
+  ) as AppProps;
   const { selectedId, setSelectedId } = useContext(PageContext) as PageProps;
 
   const router = useRouter();

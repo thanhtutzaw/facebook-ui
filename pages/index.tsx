@@ -32,30 +32,84 @@ import {
   db,
   fethUserDoc,
   getNewsFeed,
+  getPostWithMoreInfo,
   getProfileByUID,
   userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import friendReqSound from "../public/NotiSounds/chord.mp3";
-import { Props } from "../types/interfaces";
+import { AppProps, account, friends } from "../types/interfaces";
 
 import { getMessaging, getToken } from "firebase/messaging";
 import Spinner from "../components/Spinner";
 import { PageContext, PageProps } from "../context/PageContext";
 import { useActive } from "../hooks/useActiveTab";
-import { NewsFeed_LIMIT, UnReadNoti_LIMIT } from "../lib/QUERY_LIMIT";
-export const getServerSideProps: GetServerSideProps<Props> = async (
+import {
+  MYPOST_LIMIT,
+  NewsFeed_LIMIT,
+  UnReadNoti_LIMIT,
+} from "../lib/QUERY_LIMIT";
+import Link from "next/link";
+import SecondaryPage from "@/components/QueryPage";
+export const getServerSideProps: GetServerSideProps<AppProps> = async (
   context
 ) => {
   let expired = true;
   let tokenUID;
+  let queryPageData;
   try {
     const cookies = nookies.get(context);
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
-    // console.log(token.uid + " in index");
     expired = !token;
-    console.log({ cookies });
-    // console.log(!token);
+    const userQuery = context.query.user!;
+    if (userQuery) {
+      const user = await fethUserDoc(userQuery);
+      const userExist = user.exists();
+      const isFriendsQuery = doc(db, `users/${token.uid}/friends/${userQuery}`);
+      const friendDoc = await getDoc(isFriendsQuery);
+      let isFriend = false,
+        isBlocked = false,
+        isPending = false,
+        canAccept = false,
+        canUnBlock = false;
+      if (friendDoc.exists()) {
+        const relation = friendDoc.data() as friends;
+        isFriend = relation.status === "friend";
+        isPending = relation.status === "pending";
+        isBlocked = relation.status === "block";
+        canAccept = relation.senderId !== token.uid && !isFriend;
+        canUnBlock = relation.senderId === token.uid;
+      }
+      let mypostQuery = query(
+        collection(db, `/users/${userQuery}/posts`),
+        where("visibility", "in", ["Public"]),
+        orderBy("createdAt", "desc"),
+        limit(MYPOST_LIMIT)
+      );
+      if (isFriend) {
+        mypostQuery = query(
+          collection(db, `/users/${userQuery}/posts`),
+          where("visibility", "in", ["Friend", "Public"]),
+          orderBy("createdAt", "desc"),
+          limit(MYPOST_LIMIT)
+        );
+      }
+
+      if (user.exists()) {
+        const profile = user?.data().profile as account["profile"];
+        const myPost = isBlocked
+          ? null
+          : await getPostWithMoreInfo(userQuery as string, mypostQuery);
+        queryPageData = { profile, myPost };
+      } else {
+        queryPageData = null;
+      }
+      console.log(
+        `user query page(I can fetch user data for userQuery Page)`,
+        userQuery
+      );
+    }
+    // console.log({ cookies });
     const convertSecondsToTime = (seconds: number) => {
       const days = Math.floor(seconds / (3600 * 24));
       const hours = Math.floor((seconds % (3600 * 24)) / 3600);
@@ -79,7 +133,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       return { id: doc.data().id } as { id: string };
     });
     const feedUserWithAdmin = [{ id: uid }, ...feedUser];
-    console.log(feedUserWithAdmin);
+    // console.log(feedUserWithAdmin);
     const recentPosts = await Promise.all(
       feedUserWithAdmin.map(async (friend) => {
         const newsFeedQuery = query(
@@ -170,12 +224,14 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
     };
     const currentUserData = userToJSON(currentAccount);
-    // context.res.setHeader(
-    //   "Cache-Control",
-    //   "public, s-maxage=10, stale-while-revalidate=59"
-    // );
+    context.res.setHeader(
+      "Cache-Control",
+      "public, s-maxage=10, stale-while-revalidate=59"
+    );
     return {
       props: {
+        queryPageData,
+        token,
         expired: expired,
         uid,
         posts: newsFeedPosts,
@@ -210,6 +266,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     // context.res.end();
     return {
       props: {
+        queryPageData: null,
+        token: null,
         postError,
         expired: expired,
         uid: tokenUID ?? "",
@@ -225,6 +283,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   }
 };
 export default function Home({
+  queryPageData,
+  token,
   acceptedFriends,
   isFriendEmpty,
   postError,
@@ -236,14 +296,18 @@ export default function Home({
   profile,
   account,
   fcmToken,
-}: Props) {
+}: AppProps) {
   const indicatorRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const auth = getAuth(app);
   const [friendReqCount, setfriendReqCount] = useState(0);
-  const { setfriends, setnotiPermission } = useContext(
-    PageContext
-  ) as PageProps;
+  const {
+    newsFeedData,
+    setnewsFeedData,
+    setfriends,
+    setnotiPermission,
+    active: activeTab,
+  } = useContext(PageContext) as PageProps;
   // const [prevfriendReqCount, setprevfriendReqCount] = useState(0);
   useEffect(() => {
     const auth = getAuth(app);
@@ -259,6 +323,11 @@ export default function Home({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
   const [limitedPosts, setlimitedPosts] = useState(posts ?? []);
+  useEffect(() => {
+    if (posts && !newsFeedData) {
+      setnewsFeedData?.(posts);
+    }
+  }, [newsFeedData, posts, setnewsFeedData]);
 
   useEffect(() => {
     // const lastestPost = limitedPosts.concat(posts!);
@@ -301,7 +370,7 @@ export default function Home({
   const [UnReadNotiCount, setUnReadNotiCount] = useState(0);
   // const [friendReqLastPull, setfriendReqLastPull] = useState(Date.now);
   const [lastPullTimestamp, setlastPullTimestamp] =
-    useState<Props["lastPullTimestamp"]>(undefined);
+    useState<AppProps["lastPullTimestamp"]>(undefined);
   useEffect(() => {
     if (!uid) return;
     let unsubscribeNotifications: Unsubscribe;
@@ -481,23 +550,15 @@ export default function Home({
     setfriends?.(acceptedFriends);
   }, [acceptedFriends, setfriends]);
 
-  const { active: activeTab, setActive: setActiveTab } = useActive();
+  // const { active: activeTab, setActive: setActiveTab } = useActive();
   const [resourceError, setresourceError] = useState(postError);
-
-  if (resourceError !== '') {
+  const l = limitedPosts ? limitedPosts[0]?.id : "";
+  if (resourceError !== "") {
     return (
-      <Welcome
-        setresourceError={setresourceError}
-        postError={resourceError}
-      />
+      <Welcome setresourceError={setresourceError} postError={resourceError} />
     );
-  } else if (expired ) {
-    return (
-      <Welcome
-        setresourceError={setresourceError}
-        expired={expired!}
-      />
-    );
+  } else if (expired) {
+    return <Welcome setresourceError={setresourceError} expired={expired!} />;
   } else {
     return uid ? (
       <AppProvider
@@ -507,7 +568,6 @@ export default function Home({
         lastPullTimestamp={lastPullTimestamp}
         UnReadNotiCount={UnReadNotiCount}
         active={activeTab!}
-        setActive={setActiveTab!}
         postError={postError!}
         limitedPosts={limitedPosts!}
         setlimitedPosts={setlimitedPosts!}
@@ -529,6 +589,7 @@ export default function Home({
           ref={soundRef}
           src={friendReqSound}
         />
+        <SecondaryPage queryPageData={queryPageData} token={token} />
       </AppProvider>
     ) : (
       <Spinner fullScreen navBar={false} />

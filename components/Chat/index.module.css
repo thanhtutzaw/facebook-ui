@@ -11,6 +11,7 @@
   width: 100vw;
   max-width: var(--main-width);
   gap: 10px;
+  align-items: center;
 }
 .input input,
 .input button {
@@ -28,21 +29,19 @@
   padding: 10px;
 }
 .input button svg {
-  width: 35px;
-  height: 35px;
+  width: 25px;
+  height: 25px;
 }
 .input button:active {
   scale: 0.9;
   background-color: rgba(2, 105, 226, 0.2588235294);
 }
 .input input {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem;
   flex: 1 1;
   min-width: 10px;
   overflow: hidden;
   text-overflow: ellipsis;
-  /* box-shadow: 1px 5px 16px 6px rgba(211, 211, 211, 0.5215686275); */
-  /* border: 1px solid lightgray; */
   outline: 1px solid rgb(213, 213, 213);
 }
 .input input:focus-visible {
@@ -52,9 +51,33 @@
 
 .info {
   display: flex;
-  flex: 1;
+  flex: 1 1;
   align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.info .title {
-  margin-top: -7px;
+.info > a {
+  overflow: hidden;
+}
+.info > a p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile {
+  border-radius: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border: 0;
+  width: 38px;
+  height: 38px;
+  display: flex;
+}
+
+.chatHeader {
+  display: flex;
+  flex: 1 1 0%;
+  gap: 0.5rem;
+  align-items: center;
+  overflow: hidden;
 }/*# sourceMappingURL=index.module.css.map */

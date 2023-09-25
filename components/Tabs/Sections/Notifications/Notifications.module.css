@@ -3,6 +3,8 @@
   overflow: hidden;
   background-color: white;
   padding-bottom: 1rem;
+  display: grid;
+  align-content: center;
 }
 .container ul {
   padding: 0;
@@ -12,11 +14,23 @@
   background: white;
 }
 .container ul .item {
+  position: relative;
   padding: 0.8rem 1rem;
+  padding-left: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: white;
+}
+.container ul .item .new {
+  width: 4px;
+  height: 4px;
+  border-radius: 2px;
+  margin: 22px 6px 0;
+  margin-bottom: auto;
+}
+.container ul .item .unRead {
+  background-color: var(--blue-origin);
 }
 .container ul .item:hover {
   background-color: #efefef;

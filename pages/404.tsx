@@ -3,7 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import s from "../styles/Home.module.scss";
 import Head from "next/head";
+import { useRouter } from "next/router";
 function ErrorPage() {
+  const router= useRouter()
   return (
     <>
       <Head>
@@ -24,6 +26,7 @@ function ErrorPage() {
         <p className={s.message}>
           We can&apos;t find the page you are looking for
         </p>
+        <button onClick={()=>{router.back();}}>Back</button>
         <Link href="/" className={s.goHome}>
           Go to Home Page
         </Link>

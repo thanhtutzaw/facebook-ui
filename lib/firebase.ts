@@ -39,7 +39,7 @@ export function JSONTimestampToDate(date: Timestamp | Post["createdAt"]) {
 }
 export async function postToJSON(
   doc: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>
-) {
+): Promise<Post> {
   const data = doc.data() as Post;
   const createdAt = data?.createdAt as Timestamp;
   const updatedAt = data?.updatedAt as Timestamp;
@@ -131,9 +131,8 @@ export async function getProfileByUID(id: string) {
   const profileData = userDoc.data()!;
   return (profileData?.profile as account["profile"]) ?? null;
 }
-export async function postInfo(p: Post, uid: string) {
+export async function postInfo(p: Post, uid: string): Promise<Post> {
   if (p.authorId) {
-    // console.log("returning postInfo");
     const shareRef = collection(db, `users/${p.authorId}/posts/${p.id}/shares`);
     const shareDoc = await getDocs(shareRef);
     const shareCount = shareDoc.size ?? 0;
@@ -156,7 +155,7 @@ export async function postInfo(p: Post, uid: string) {
       sharePost: { ...p.sharePost, post: null },
       isLiked: isLiked.exists() ? true : false,
       isSaved: isSaved.exists() ? true : false,
-    };
+    } as Post;
     // console.log("posts with info are fetching");
     if (p.sharePost) {
       const sharedPostRef = doc(
@@ -210,7 +209,7 @@ export async function postInfo(p: Post, uid: string) {
       return { ...originalPost };
     }
   }
-  return null;
+  return p;
 }
 // export async function getNewsFeed(uid: string, newsFeedPosts?: any[]) {
 //   console.log("posts are fetched");
@@ -228,12 +227,15 @@ export async function postInfo(p: Post, uid: string) {
 //   console.log({ ...newsFeedPostswithoutAdmin, ...adminPosts });
 //   return null;
 // }
-export async function getNewsFeed(uid: string, newsFeedPosts?: any[]) {
+export async function getNewsFeed(
+  uid: string,
+  newsFeedPosts?: any[]
+): Promise<Post[] | undefined> {
   console.log("posts are fetched");
   if (newsFeedPosts) {
     const data = await Promise.all(
       newsFeedPosts.map(async (post) => {
-        if (!post.authorId) return null;
+        // if (!post.authorId) return null;
         const postRef = doc(db, `users/${post.authorId}/posts/${post.id}`);
         const postDoc = await getDoc(postRef);
         const postData = await postToJSON(postDoc);
@@ -241,7 +243,7 @@ export async function getNewsFeed(uid: string, newsFeedPosts?: any[]) {
         return postwithInfo;
       })
     );
-    return data as Post[];
+    return data;
   }
 }
 // export async function getPostsbyId(uid: string, newsFeedPosts?: any[]) {

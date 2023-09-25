@@ -19,13 +19,13 @@ import EmailIcon from "../../public/email.svg";
 import styles from "../../styles/Home.module.scss";
 import signupStyles from "../../components/Signup/index.module.scss";
 import { addProfile } from "../../lib/firestore/profile";
-import { Props, account } from "../../types/interfaces";
+import { AppProps, account } from "../../types/interfaces";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import nookies from "nookies";
 import { GetServerSideProps } from "next";
 import Spinner from "../../components/Spinner";
-export const getServerSideProps: GetServerSideProps<Props> = async (
+export const getServerSideProps: GetServerSideProps<AppProps> = async (
   context
 ) => {
   try {

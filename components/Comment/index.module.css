@@ -32,7 +32,7 @@
   padding: 0 0.8rem;
 }
 .container .item > *:first-child {
-  padding: 0.5rem 0.8rem !important;
+  padding: 0.5rem var(--padding-inline) !important;
 }
 .container .item .actions {
   display: flex;
@@ -55,18 +55,28 @@
 }
 
 .input {
+  height: 80px;
   background-color: rgb(234, 234, 234);
   background-color: rgb(229, 229, 229);
   background: white;
   border-top: 1px solid #dfdfdf;
   position: fixed;
   bottom: 0;
-  padding: 0.8rem;
+  padding: 0.8rem var(--padding-inline);
   display: flex;
   justify-content: space-between;
   width: 100vw;
   max-width: var(--main-width);
   gap: 10px;
+}
+.input .profile {
+  border-radius: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border: 0;
+  width: 45px;
+  height: 45px;
+  display: flex;
 }
 .input input,
 .input button {
@@ -82,6 +92,7 @@
   align-items: center;
   transition: all 0.1s ease-in-out;
   padding: 10px;
+  width: 47px;
 }
 .input button svg {
   width: 35px;

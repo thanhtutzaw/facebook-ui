@@ -129,6 +129,8 @@ export function Author(props: {
     comment,
     children,
   } = props;
+  const router = useRouter();
+
   return (
     <div
       style={{ userSelect: comment ? "initial" : "none" }}
@@ -161,11 +163,18 @@ export function Author(props: {
               fontSize: !children ? "18px" : "inherit",
               fontWeight: children ? "500" : "initial",
             }}
-            onClick={navigateToProfile}
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(
+                { query: { user: String(post?.authorId) } },
+                String(post?.authorId)
+              );
+            }}
           >
             {profile?.firstName ?? post?.authorId ?? comment?.authorId}{" "}
             {profile?.lastName ?? ""}
           </span>
+
           {post?.sharePost?.id && <>&nbsp; shared a Post</>}
         </p>
         {children}
@@ -181,6 +190,11 @@ export function Avatar({
   navigateToProfile?: MouseEventHandler<HTMLImageElement>;
   profile?: account["profile"];
 }) {
+  const profileFallback =
+    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+  const profilePicture = (profile?.photoURL as string)
+    ? (profile?.photoURL as string)
+    : profileFallback;
   return (
     <Image
       onClick={navigateToProfile}
@@ -192,11 +206,7 @@ export function Avatar({
       style={{
         objectFit: "cover",
       }}
-      src={
-        (profile?.photoURL as string)
-          ? (profile?.photoURL as string)
-          : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-      }
+      src={profilePicture}
     />
   );
 }

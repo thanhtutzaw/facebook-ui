@@ -2,11 +2,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useContext, useState } from "react";
 import { AppContext } from "@/context/AppContext";
 import { PageContext, PageProps } from "@/context/PageContext";
-import {
-  acceptFriends,
-  rejectFriendRequest,
-} from "@/lib/firestore/friends";
-import { Props } from "@/types/interfaces";
+import { acceptFriends, rejectFriendRequest } from "@/lib/firestore/friends";
+import { AppProps } from "@/types/interfaces";
 import Card from "./Card";
 import s from "./Friends.module.scss";
 interface RequestProps {
@@ -21,7 +18,7 @@ export function Request(props: RequestProps) {
 
   const [accept, setaccept] = useState(false);
   const [reject, setreject] = useState(false);
-  const { uid } = useContext(AppContext) as Props;
+  const { uid } = useContext(AppContext) as AppProps;
   async function handleConfirmRequest() {
     if (!uid) return;
     try {

@@ -17,7 +17,7 @@ import { AppContext } from "../../context/AppContext";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { useActive } from "../../hooks/useActiveTab";
 import s from "../../styles/Home.module.scss";
-import { Props } from "../../types/interfaces";
+import { AppProps } from "../../types/interfaces";
 import Navitems from "./Navitems";
 import SelectModal from "./SelectModal";
 const Logo = () => {
@@ -44,11 +44,9 @@ export default function Header(props: {
   const { indicatorRef, tabIndex } = props;
   const { active, setActive } = useActive();
   const [width, setwidth] = useState<number>();
-  const {
-    selectMode,
-    setselectMode,
-    headerContainerRef,
-  } = useContext(AppContext) as Props;
+  const { selectMode, setselectMode, headerContainerRef } = useContext(
+    AppContext
+  ) as AppProps;
   const { setSelectedId } = useContext(PageContext) as PageProps;
 
   useEffect(() => {
@@ -130,7 +128,7 @@ export default function Header(props: {
             {pages.map((page, index) => (
               <Navitems
                 key={page.name}
-                setActive={setActive}
+                // setActive={setActive}
                 active={active}
                 index={index}
                 name={page.name}
@@ -150,7 +148,7 @@ export default function Header(props: {
             exit={{ opacity: 0, width: "70%" }}
             className="selectModal"
             // style={{
-              
+
             // }}
           >
             <SelectModal />

@@ -19,16 +19,27 @@ export default function Card(props: { children: ReactNode; f: friends }) {
       style={{ pointerEvents: preventClick ? "none" : "initial" }}
     >
       <div className={s.card}>
-        <Image
-          className={s.profile}
-          alt={f.id.toString()}
-          width={100}
-          height={100}
-          src={
-            f.author?.photoURL ? (f.author?.photoURL as string) :
-            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-          }
-        />
+        <div
+          style={{
+            width: "80px",
+            position: "relative",
+            height: "80px",
+          }}
+        >
+          <Image
+            fill
+            style={{ objectFit: "cover" }}
+            className={s.profile}
+            alt={f.id.toString()}
+            // width={100}
+            // height={100}
+            src={
+              f.author?.photoURL
+                ? (f.author?.photoURL as string)
+                : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+            }
+          />
+        </div>
         <div className={s.right}>
           <div className={s.info}>
             <p>{userName}</p>

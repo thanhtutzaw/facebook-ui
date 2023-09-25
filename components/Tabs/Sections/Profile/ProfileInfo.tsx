@@ -10,6 +10,7 @@ import {
 import { PageContext, PageProps } from "@/context/PageContext";
 import { account } from "@/types/interfaces";
 import s from "./index.module.scss";
+export const bioFallback = "No Bio Yet";
 function ProfileInfo(props: {
   handleChange: ChangeEventHandler<HTMLInputElement>;
   account: UserRecord;
@@ -43,6 +44,9 @@ function ProfileInfo(props: {
     newProfile?.photoURL ??
     "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
   const file = newProfile?.photoURL as File;
+  
+  const newProfileBio = newProfile?.bio === "" ? bioFallback : newProfile?.bio;
+  const oldProfileBio = profile.bio === "" ? bioFallback : profile.bio;
   const imageFile = file.type
     ? URL.createObjectURL(file)!
     : (newProfile?.photoURL! as string);
@@ -119,18 +123,7 @@ function ProfileInfo(props: {
         }}
         className={s.bio}
       >
-        {/* Listen I didn&apos;t kill Mysterio. The drones did! */}
-        {/* {editToggle
-            ? newProfile.bio
-            : profile?.bio === ""
-            ? "No Bio Yet"
-            : profile?.bio ??
-              "Listen I didn&apos;t kill Mysterio. The drones did!"} */}
-        {editToggle
-          ? newProfile?.bio
-          : profile?.bio === "" || !profile?.bio
-          ? "No Bio Yet"
-          : profile?.bio}
+        {editToggle ? newProfileBio : oldProfileBio}
       </p>
       {children}
     </div>

@@ -1,5 +1,5 @@
 import { AppContext } from "@/context/AppContext";
-import { Post, Props } from "@/types/interfaces";
+import { Post, AppProps } from "@/types/interfaces";
 import { faGear, faSort } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
@@ -42,7 +42,7 @@ export default function Content(props: {
     setsortby,
     sortedPost,
   } = props;
-  const { updatePost } = useContext(AppContext) as Props;
+  const { updatePost } = useContext(AppContext) as AppProps;
   // useEffect(() => {
   //   console.log("profile rendering");
   // }, []);

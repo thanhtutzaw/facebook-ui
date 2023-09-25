@@ -44,14 +44,14 @@ import {
   Media,
   Post,
   Post as PostType,
-  Props,
+  AppProps,
   account,
   likes,
 } from "../../../types/interfaces";
 import { profile } from "console";
 import { PageContext, PageProps } from "../../../context/PageContext";
 export const Comment_LIMIT = 10;
-export const getServerSideProps: GetServerSideProps<Props> = async (
+export const getServerSideProps: GetServerSideProps<AppProps> = async (
   context
 ) => {
   // context.res.setHeader(
@@ -123,7 +123,7 @@ export default function Page(props: {
   post: PostType;
 }) {
   const { expired, uid, post } = props;
-  const { currentUser:profile } = useContext(PageContext) as PageProps;
+  const { currentUser: profile } = useContext(PageContext) as PageProps;
   const router = useRouter();
   const [visibility, setVisibility] = useState(post?.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
@@ -316,7 +316,7 @@ export default function Page(props: {
     [limitedComments, post?.authorId, post?.id]
   );
   const [Likes, setLikes] = useState<likes | []>([]);
-  const { scrollRef } = useInfiniteScroll(fetchMoreComment, commentEnd, true);
+  const { scrollRef } = useInfiniteScroll(commentEnd, true, fetchMoreComment);
 
   if (expired) return <Welcome expired={expired} />;
   return (

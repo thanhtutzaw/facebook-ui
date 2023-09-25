@@ -27,8 +27,8 @@
   height: 23px;
 }
 .container .switchAccountContainer {
+  transition: height 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0s;
   margin-top: auto;
-  /* height: 500px; */
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -60,9 +60,7 @@
 .container .switchAccountContainer header h2 {
   flex: 1;
   margin: 0;
-  /* font-size: 25px; */
   white-space: nowrap;
-  /* overflow: hidden; */
   text-overflow: ellipsis;
   font-size: clamp(21px, 1vw, 20px);
 }

@@ -10,10 +10,10 @@ import {
 import { createContext, useEffect, useRef, useState } from "react";
 import { NewsFeed_LIMIT } from "../lib/QUERY_LIMIT";
 import { db, getPostWithMoreInfo } from "../lib/firebase";
-import { Post, Props } from "../types/interfaces";
+import { Post, AppProps } from "../types/interfaces";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
-export const AppContext = createContext<Props | null>(null);
-export function AppProvider(props: Props) {
+export const AppContext = createContext<AppProps | null>(null);
+export function AppProvider(props: AppProps) {
   const {
     expired,
     friendReqCount,
@@ -119,7 +119,7 @@ export function AppProvider(props: Props) {
         profile,
         sortedPost,
         setsortedPost,
-        active,
+        // active,
         headerContainerRef,
         selectMode,
         setselectMode,
