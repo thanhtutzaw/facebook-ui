@@ -3,22 +3,23 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
 import { AnimatePresence, motion } from "framer-motion";
 import router from "next/router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { app } from "../../../lib/firebase";
 import { deletePost } from "../../../lib/firestore/post";
 import { Post } from "../../../types/interfaces";
 import { CopyLink } from "./Menu";
 import styles from "../index.module.scss";
 import { useQueryClient } from "@tanstack/react-query";
+import { PostProps, PostContext } from "../PostContext";
 export default function AdminMenu(props: {
   updatePost: Function;
   setshowAction: Function;
   showAction: string;
   authorId: string | number;
   id: string;
-  post?: Post;
 }) {
-  const { updatePost, post, setshowAction, authorId, id, showAction } = props;
+  const { updatePost, setshowAction, authorId, id, showAction } = props;
+  const { post } = useContext(PostContext) as PostProps;
   const auth = getAuth(app);
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();

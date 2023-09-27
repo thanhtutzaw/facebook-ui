@@ -24,7 +24,7 @@ import Input from "../../../components/Input/Input";
 import AuthorInfo from "../../../components/Post/AuthorInfo";
 import { Footer } from "../../../components/Post/Footer";
 import PhotoLayout from "../../../components/Post/PhotoLayout";
-import { SharePreview } from "../../../components/Post/SharePreview";
+import { SharePreview } from "../../../components/Post/SharePost/Preview";
 import { SocialCount } from "../../../components/Post/SocialCount";
 import { Welcome } from "../../../components/Welcome";
 import useInfiniteScroll from "../../../hooks/useInfiniteScroll";
@@ -371,14 +371,6 @@ export default function Page(props: {
           setFiles={setFiles}
         />
         <SharePreview post={post} />
-        {!canEdit && (
-          <SocialCount
-            Likes={Likes}
-            setLikes={setLikes}
-            likeCount={likeCount}
-            post={post}
-          />
-        )}
         {canEdit ? (
           <PostSettingFooterForm
             fileRef={fileRef}
@@ -388,16 +380,20 @@ export default function Page(props: {
             setVisibility={setVisibility}
           />
         ) : (
-          <Footer
-            profile={profile}
-            likeCount={likeCount}
-            setlikeCount={setlikeCount}
-            post={post}
-            style={{ borderBottom: "1px solid rgb(235, 235, 235)" }}
-          />
-        )}
-        {!canEdit && (
           <>
+            <SocialCount
+              Likes={Likes}
+              setLikes={setLikes}
+              likeCount={likeCount}
+              post={post}
+            />
+            <Footer
+              profile={profile}
+              likeCount={likeCount}
+              setlikeCount={setlikeCount}
+              style={{ borderBottom: "1px solid rgb(235, 235, 235)" }}
+              post={post}
+            />
             <Comment
               commentLoading={commentLoading}
               commentEnd={commentEnd}

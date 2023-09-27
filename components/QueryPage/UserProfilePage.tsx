@@ -16,6 +16,7 @@ import { Post as PostType, account, friends } from "@/types/interfaces";
 import { faCheck, faClock, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQueryClient } from "@tanstack/react-query";
+import { profile } from "console";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import {
   Timestamp,
@@ -36,17 +37,15 @@ import nookies from "nookies";
 import { useCallback, useContext, useState } from "react";
 
 export default function UserProfilePage({
-  
   token,
   queryPageData,
 }: {
-  
   token: any;
   queryPageData: any;
 }) {
   const queryClient = useQueryClient();
-  const { profile, myPost } = queryPageData;
-
+  // const { profile, myPost } = queryPageData;
+  // const profile = null;
   const statusComponents = {
     canAccept: (
       <button
@@ -128,9 +127,7 @@ export default function UserProfilePage({
   };
   const router = useRouter();
   const { setview, currentUser } = useContext(PageContext) as PageProps;
-  const userName = `${profile?.firstName ?? "Unknown"} ${
-    profile?.lastName ?? "User"
-  }`;
+
   // const [limitedPosts, setlimitedPosts] = useState(myPost);
   // const [postLoading, setpostLoading] = useState(false);
   const [postEnd, setPostEnd] = useState(false);
@@ -160,7 +157,7 @@ export default function UserProfilePage({
   //   [limitedPosts, router.query.user, token?.uid]
   // );
   const { scrollRef } = useInfiniteScroll(postEnd, true);
-  const bio = profile?.bio === "" || !profile ? bioFallback : profile?.bio;
+
   // const otherUser = token?.uid !== router.query.user;
   // const status = canAccept
   //   ? "canAccept"
@@ -169,13 +166,25 @@ export default function UserProfilePage({
   //   : isFriend
   //   ? "friend"
   //   : "notFriend";
+
+  // const userName = ;
+  if (!router.query.user) return null;
+  const { profile, myPost } = queryPageData;
+  const userName = `${profile?.firstName ?? "Unknown User"} ${
+    profile?.lastName ?? ""
+  }`;
+  const bio = profile?.bio === "" || !profile ? bioFallback : profile?.bio;
   return (
     <>
       <Head>
-        <title>{`${"test"} | Facebook Next`}</title>
+        <title>{`${`${profile?.firstName ?? "Unknown User"} ${
+          profile?.lastName ?? ""
+        }`} | Facebook Next`}</title>
         <meta
           name="description"
-          content={`${userName} Facebook-Mobile-UI with Next.js`}
+          content={`${`${profile?.firstName ?? "Unknown User"} ${
+            profile?.lastName ?? ""
+          }`} Facebook-Mobile-UI with Next.js`}
         />
         <meta
           name="viewport"

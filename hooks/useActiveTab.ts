@@ -1,17 +1,12 @@
+import { Tabs } from "@/types/interfaces";
 import { useState, useEffect } from "react";
+/**
+ *
+ * A hook that switch Tabs and update Active state by document's visibility
+ */
 export function useActive() {
-  const [active, setActive] = useState<
-    "home" | "/" | "friends" | "watch" | "profile" | "notifications" | "menu"
-  >("/");
-  function navigateTab(
-    targetTab:
-      | "home"
-      | "friends"
-      | "watch"
-      | "profile"
-      | "notifications"
-      | "menu"
-  ) {
+  const [active, setActive] = useState<Tabs>("/");
+  function navigateTab(targetTab: Tabs) {
     setActive(targetTab);
     const target = document.getElementById(targetTab);
     target?.scrollIntoView();

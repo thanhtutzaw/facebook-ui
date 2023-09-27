@@ -524,7 +524,7 @@
   }
 }
 
-.postAction {
+.addPost {
   // padding: 5px 0.8rem 1rem;
   padding: 5px var(--padding-inline) 1rem;
   gap: 10px;
@@ -699,10 +699,10 @@
     }
   }
 }
-.addPost > .input {
+.addPostForm > .input {
   padding-top: 1rem;
 }
-.addPost {
+.addPostForm {
   margin-block: 65px;
   video,
   img {

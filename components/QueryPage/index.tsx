@@ -14,11 +14,13 @@ function SecondaryPage({
   queryPageData: any;
 }) {
   const router = useRouter();
-  if (router.pathname !== "/" || JSON.stringify(router.query) === "{}")
-    return null;
+  const hidden =
+    router.pathname !== "/" || JSON.stringify(router.query) === "{}";
+  // if (hidden) return null;
   return (
     <div
       style={{
+        display: hidden ? "none" : "initial",
         position: "fixed",
         background: "rgba(0, 0, 0, 0.5)",
         inset: 0,
@@ -35,9 +37,8 @@ function SecondaryPage({
         // textTransform: "capitalize",
       }}
     >
-      {router.query.user && (
-        <UserProfilePage queryPageData={queryPageData} token={token} />
-      )}
+      {/* {router.query.user && ( */}
+      <UserProfilePage queryPageData={queryPageData} token={token} />
     </div>
   );
 }

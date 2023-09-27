@@ -48,7 +48,7 @@
         position: relative;
     }
 }
-.dialog {
+.imageDialog {
     touch-action: none;
     opacity: 0;
     user-select: none;
@@ -490,6 +490,13 @@
         background-color: #ededed;
     }
     .authorInfo {
+        // .subInfo {
+        //     display: flex;
+        //     margin: auto 0;
+        //     flex: 1;
+        //     word-break: break-word;
+        //     gap: 2px;
+        // }
         .moreInfo {
             display: flex;
             gap: 10px;
@@ -507,9 +514,10 @@
             cursor: pointer;
         }
         .name {
-            // &:is(:active, :hover) {
-            //     text-decoration: underline;
-            // }
+            flex: 1;
+            flex-wrap: wrap;
+            user-select: none;
+
             font-size: 18px;
             margin-bottom: 2px;
             > span {

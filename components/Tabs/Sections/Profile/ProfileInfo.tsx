@@ -52,9 +52,6 @@ function ProfileInfo(props: {
     : (newProfile?.photoURL! as string);
   return (
     <div ref={infoRef} className={`${s.info} ${selectMode ? s.active : ""}`}>
-      {/* <ImageLargeView
-        // view={}
-      /> */}
       <Image
         onClick={() => {
           setview?.({

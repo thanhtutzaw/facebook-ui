@@ -7,7 +7,7 @@ export function SelectVisiblity(
     <select
       {...rests}
       aria-label="Change visibility"
-      title="Who can view my post"
+      title="Who can view this post"
       tabIndex={-1}
     >
       <option value="Public" key="all">

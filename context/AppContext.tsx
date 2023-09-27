@@ -16,19 +16,12 @@ export const AppContext = createContext<AppProps | null>(null);
 export function AppProvider(props: AppProps) {
   const {
     expired,
-    friendReqCount,
     acceptedFriends,
-    isFriendEmpty,
-    lastPullTimestamp,
-    UnReadNotiCount,
     active,
     setlimitedPosts,
     limitedPosts,
-    account,
-    profile,
     uid,
     posts,
-    email,
   } = props;
   const [postLoading, setpostLoading] = useState(false);
   const [postEnd, setPostEnd] = useState(false);
@@ -112,26 +105,18 @@ export function AppProvider(props: AppProps) {
   return (
     <AppContext.Provider
       value={{
-        friendReqCount,
-        lastPullTimestamp,
-        updatePost,
-        UnReadNotiCount,
-        profile,
         sortedPost,
         setsortedPost,
-        // active,
         headerContainerRef,
         selectMode,
         setselectMode,
-        uid,
-        posts: limitedPosts!,
-        limitedPosts,
-        setlimitedPosts,
+        getMorePosts,
+        updatePost,
+        posts: limitedPosts,
         postLoading,
         postEnd,
-        email,
-        account,
-        getMorePosts,
+
+        ...props,
       }}
     >
       {props.children}

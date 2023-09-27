@@ -114,7 +114,6 @@ export default function Notifications() {
     //     })
     //   );
     console.log("updatedNoti");
-    // setLikes(withAuthor);
   }, [uid]);
   return (
     <div

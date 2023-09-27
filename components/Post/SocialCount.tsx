@@ -1,16 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import { Post, likes } from "../../types/interfaces";
-import { LikedUsers } from "./LikedUsers";
-import s from "./index.module.scss";
+import { useContext, useEffect, useRef, useState } from "react";
 import { fetchLikedUsers } from "../../lib/firestore/post";
-export function SocialCount(props: {
-  post: Post;
-  likeCount: number;
-  Likes: likes;
-  setLikes: Function;
-}) {
-  const { post, likeCount, Likes, setLikes } = props;
+import { LikedUsers } from "./LikedUsers";
+import { PostContext, PostProps } from "./PostContext";
+import s from "./index.module.scss";
+export function SocialCount(props: { post: any; Likes: any; setLikes: any; likeCount: any; }) {
+  const { post, Likes, setLikes, likeCount } = props;
+  // const {} = useContext(PostContext) as PostProps;
   // const [reaction, setReaction] = useState({
   //   like: ["1a", "2d"],
   // });

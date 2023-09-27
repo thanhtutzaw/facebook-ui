@@ -14,6 +14,7 @@ module.exports = {
   images: {
     domains: ['www.cvent-assets.com', 'upload.wikimedia.org', 'firebasestorage.googleapis.com', 'images.unsplash.com', 'cvent-assets.com', 'encrypted-tbn0.gstatic.com', 'www.femalefirst.co.uk'],
   },
+  // @ts-ignore
   webpack(config, options) {
     const { isServer } = options;
     config.module.rules.push({

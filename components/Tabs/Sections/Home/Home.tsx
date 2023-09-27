@@ -1,15 +1,14 @@
+import { AppContext } from "@/context/AppContext";
+import { PageContext, PageProps } from "@/context/PageContext";
+import styles from "@/styles/Home.module.scss";
+import { AppProps } from "@/types/interfaces";
 import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useContext, useRef } from "react";
-import { AppContext } from "@/context/AppContext";
-import { PageContext, PageProps } from "@/context/PageContext";
-import styles from "@/styles/Home.module.scss";
-import { AppProps } from "@/types/interfaces";
 import Newfeed from "./Newfeed";
 import Story from "./Story/Story";
-import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 // type AppProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 // };
 export default function Home(props: { tabIndex: number }) {
@@ -21,7 +20,6 @@ export default function Home(props: { tabIndex: number }) {
     PageContext
   ) as PageProps;
   const previousScrollRef = useRef(0);
-  // const { scrollRef } = useInfiniteScroll(getMorePosts!, postEnd!);
   return (
     <div
       // ref={scrollRef}
@@ -50,7 +48,7 @@ export default function Home(props: { tabIndex: number }) {
       }}
     >
       <Story email={email} />
-      <div className={styles.postAction}>
+      <div className={styles.addPost}>
         <div
           style={{
             width: "40px",

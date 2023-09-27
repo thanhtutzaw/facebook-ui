@@ -10,6 +10,7 @@ import ImageWithFallback from "../ImageWithFallback";
 import s from "./index.module.scss";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { PostContext, PostProps } from "./PostContext";
 
 export default function PhotoLayout(props: {
   margin?: boolean;
@@ -19,17 +20,17 @@ export default function PhotoLayout(props: {
   setdeleteFile?: Function;
   preview?: boolean;
   edit?: boolean;
-  post?: Post;
   dummyRef?: RefObject<HTMLDivElement>;
+  post?:Post,
 }) {
   const {
+    post,
     deleteFile,
     setdeleteFile,
     files,
     setFiles,
     preview = false,
     edit,
-    post,
   } = props;
   const { setview } = useContext(PageContext) as PageProps;
   const auth = getAuth(app);
@@ -166,10 +167,7 @@ export default function PhotoLayout(props: {
             src={media[0].url}
             alt={media[0].name ?? "Not Found"}
             style={{
-              // background: media[0].url ? "black" : "rgb(230, 230, 230)",
               objectFit: !media[0].url ? "initial" : "cover",
-              // objectFit: "contain",
-              // height: "auto",
               height: "100%",
             }}
           />

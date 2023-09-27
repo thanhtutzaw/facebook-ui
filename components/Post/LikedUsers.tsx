@@ -1,23 +1,22 @@
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  Timestamp,
   Unsubscribe,
   collection,
   limit,
   onSnapshot,
   orderBy,
-  query,
+  query
 } from "firebase/firestore";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { LikedUsers_LIMIT } from "../../lib/QUERY_LIMIT";
 import { JSONTimestampToDate, db, getProfileByUID } from "../../lib/firebase";
 import { Post, account, likes } from "../../types/interfaces";
 import Spinner from "../Spinner";
 import AuthorInfo from "./AuthorInfo";
-import { LikedUsers_LIMIT } from "../../lib/QUERY_LIMIT";
 
 export function LikedUsers({
   count,
@@ -36,27 +35,6 @@ export function LikedUsers({
   settogglereactionList: Function;
   togglereactionList: boolean;
 }) {
-  // useEffect(() => {
-  //   async function getLikes() {
-  //     setloading(true);
-  //     if (Likes.length > 0) return;
-  //     // if (likeCount > Likes.length) return;
-  //     try {
-  //       setloading(false);
-  //       console.log("fetching likes");
-
-  //       setLikes(await fetchLikedUsers(post));
-  //     } catch (error) {
-  //       console.log(error);
-  //       setloading(false);
-  //     }
-  //   }
-  //   getLikes();
-  //   return () => {
-  //     // setLikes([]);
-  //   };
-  // }, [Likes, likeCount, post, setLikes]);
-
   useEffect(() => {
     if (!togglereactionList) return;
     const likeRef = query(

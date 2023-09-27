@@ -5,6 +5,7 @@ import { Post as PostType, account, likes } from "../../types/interfaces";
 import Content from "./Content";
 import { Footer } from "./Footer";
 import s from "./index.module.scss";
+import PostProvider from "./PostContext";
 
 interface PostProps {
   updatePost?: Function;
@@ -54,36 +55,37 @@ export default function Post({
     selectMode ? s.selected : ""
   } ${shareMode ? s.share : ""}`;
   return (
-    <div className={postClass}>
-      <Content
-        Likes={Likes}
-        setLikes={setLikes}
-        updatePost={updatePost!}
-        likeCount={likeCount ?? 0}
-        preventNavigate={preventNavigate}
-        auth={auth!}
-        selectMode={selectMode!}
-        checked={checked}
-        client={client}
-        uncheckRef={uncheckRef}
-        setChecked={setChecked}
-        checkRef={checkRef}
-        showmore={showmore}
-        setShowmore={setShowmore}
-        post={post}
-        shareMode={shareMode}
-        tabIndex={tabIndex}
-      />
-      {!shareMode && (
-        <Footer
-          setLikes={setLikes}
+    <PostProvider
+      Likes={Likes}
+      setLikes={setLikes}
+      updatePost={updatePost!}
+      likeCount={likeCount ?? 0}
+      preventNavigate={preventNavigate}
+      auth={auth!}
+      selectMode={selectMode!}
+      checked={checked}
+      client={client}
+      uncheckRef={uncheckRef}
+      setChecked={setChecked}
+      checkRef={checkRef}
+      showmore={showmore}
+      setShowmore={setShowmore}
+      post={post}
+      shareMode={shareMode}
+      tabIndex={tabIndex}
+    >
+      <div className={postClass}>
+        <Content post={post}/>
+        {!shareMode && (
+          <Footer
+           setLikes={setLikes}
+           likeCount={likeCount}
           profile={currentUser}
-          likeCount={likeCount!}
           setlikeCount={setlikeCount}
-          post={post}
-          tabIndex={tabIndex}
-        />
-      )}
-    </div>
+            post={post}
+          />
+        )}
+      </div>
+    </PostProvider>
   );
 }

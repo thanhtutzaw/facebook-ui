@@ -36,10 +36,10 @@ export default function Tabs(props: {
   ) as PageProps;
   const { active } = useActive();
 
-  // useEffect(() => {
-  //   if (!active) return;
-  //   window.location.hash = active === "/" ? "#home" : `#${active}`;
-  // }, [active]);
+  useEffect(() => {
+    if (!active) return;
+    window.location.hash = active === "/" ? "#home" : `#${active}`;
+  }, [active]);
   useEffect(() => {
     if (!canDrag) return;
     function dragStop() {
@@ -64,7 +64,8 @@ export default function Tabs(props: {
     if (
       tagName === "a" ||
       tagName === "dialog" ||
-      target.parentElement?.tagName === "DIALOG" || tagName === "button"
+      target.parentElement?.tagName === "DIALOG" ||
+      tagName === "button"
     )
       return;
     // if (e.target.className == "Home_storyCard__3_T_R") return;

@@ -1,15 +1,16 @@
-import { Post as PostType } from "../../types/interfaces";
 import Link from "next/link";
-import Post from ".";
-import SharePostFallback from "./SharePostFallback";
 import { Router } from "next/router";
-import s from "../../components/Post/index.module.scss";
+import Post from "..";
+import { Post as PostType } from "../../../types/interfaces";
+import SharePostFallback from "./Fallback";
+import s from "@/components/Post/index.module.scss";
+
 export function SharePreview(props: {
   selectMode?: boolean;
-  post: PostType;
   query?: Router["query"];
+  post: PostType;
 }) {
-  const { selectMode, post, query } = props;
+  const { selectMode, query, post } = props;
   const sharePost = post.sharePost?.post!;
   const url = query
     ? `${query.author}/${query.id}`

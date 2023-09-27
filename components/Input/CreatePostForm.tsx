@@ -11,7 +11,7 @@ import s from "../../styles/Home.module.scss";
 import { Post as PostTypes } from "../../types/interfaces";
 import BackHeader from "../Header/BackHeader";
 import PhotoLayout from "../Post/PhotoLayout";
-import { SharePreview } from "../Post/SharePreview";
+import { SharePreview } from "../Post/SharePost/Preview";
 import PostSettingFooterForm from "./PostSettingFooterForm";
 import Input from "./Input";
 
@@ -24,17 +24,18 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const textRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[] | PostTypes["media"]>([]);
-  const [value, setvalue] = useState("");
-  const [visibility, setVisibility] = useState(value);
-  const { setLocal } = useLocalStorage("visibility", value);
+  // const [value, setvalue] = useState("");
+  const [visibility, setVisibility] = useState("Public");
+  const { getLocal } = useLocalStorage("visibility", visibility);
   const { friends, fileRef, uploadButtonClicked, setuploadButtonClicked } =
     useContext(PageContext) as PageProps;
 
   useEffect(() => {
-    setvalue(localStorage.getItem("visibility")!);
-    const value = localStorage.getItem("visibility");
+    // setvalue(localStorage.getItem("visibility")!);
+    // const value = localStorage.getItem("visibility");
+    const value = getLocal();
     setVisibility(value ?? "Public");
-  }, [visibility]);
+  }, [getLocal, visibility]);
 
   useEffect(() => {
     const input = textRef.current;
@@ -89,7 +90,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
         pointerEvents: loading ? "none" : "initial",
         cursor: loading ? "wait" : "default",
       }}
-      className={s.addPost}
+      className={s.addPostForm}
     >
       <BackHeader
         onClick={() => {
@@ -292,7 +293,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
         setFiles={setFiles}
         visibility={visibility}
         setVisibility={setVisibility}
-        setLocal={setLocal}
+        // setLocal={setLocal}
       />
     </div>
   );

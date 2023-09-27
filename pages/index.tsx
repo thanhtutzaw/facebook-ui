@@ -56,7 +56,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
 ) => {
   let expired = true;
   let tokenUID;
-  let queryPageData;
+  let queryPageData = null;
   try {
     const cookies = nookies.get(context);
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
@@ -95,7 +95,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
         );
       }
 
-      if (user.exists()) {
+      if (user.exists() && !expired) {
         const profile = user?.data().profile as account["profile"];
         const myPost = isBlocked
           ? null
@@ -301,6 +301,21 @@ export default function Home({
   const router = useRouter();
   const auth = getAuth(app);
   const [friendReqCount, setfriendReqCount] = useState(0);
+  const [queryPageCache, setqueryPageCache] = useState(
+    queryPageData ? [{ ...queryPageData }] : []
+  );
+  useEffect(() => {
+    if (queryPageData) {
+      // setqueryPageCache((: any) => [prev, ...queryPageData]);prev
+      // console.log([queryPageCache, queryPageData]);
+      // setqueryPageCache((prev) =>  {...queryPageData});
+      setqueryPageCache((prev) => [...prev, queryPageData]);
+    }
+  }, [queryPageData]);
+  useEffect(() => {
+    console.log(queryPageCache);
+  }, [queryPageCache]);
+
   const {
     newsFeedData,
     setnewsFeedData,
@@ -552,7 +567,6 @@ export default function Home({
 
   // const { active: activeTab, setActive: setActiveTab } = useActive();
   const [resourceError, setresourceError] = useState(postError);
-  const l = limitedPosts ? limitedPosts[0]?.id : "";
   if (resourceError !== "") {
     return (
       <Welcome setresourceError={setresourceError} postError={resourceError} />

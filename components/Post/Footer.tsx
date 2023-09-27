@@ -29,32 +29,27 @@ import { sendAppNoti } from "../../lib/firestore/notifications";
 import { addPost, likePost, unlikePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { PostContext, PostProps } from "./PostContext";
 export const Footer = (
   props: {
-    likeCount?: number;
     setLikes?: Function;
-    setlikeCount?: Function;
+    likeCount:number;
     post: Post;
+    setlikeCount?: Function;
     profile: User | null;
-    tabIndex?: number;
   } & StyleHTMLAttributes<HTMLDivElement>
 ) => {
-  const {
-    setLikes,
-    profile,
-    likeCount,
-    setlikeCount,
-    post,
-    tabIndex,
-    ...rests
-  } = props;
+  const { post, profile, setlikeCount,setLikes,likeCount, ...rest} = props;
   const router = useRouter();
-  const commentRef = useRef<HTMLDivElement>(null);
-  const [visibility, setvisibility] = useState("");
   const [reactionAction, setreactionAction] = useState("");
+  const commentRef = useRef<HTMLDivElement>(null);
+  const [visibility, setvisibility] = useState<string | null>("Public");
+  const { getLocal } = useLocalStorage("visibility", visibility);
   useEffect(() => {
-    setvisibility(localStorage.getItem("visibility")!);
-  }, []);
+    // setvisibility(localStorage.getItem("visibility")!);
+    setvisibility(getLocal());
+  }, [getLocal]);
   const [isLiked, setisLiked] = useState(post.isLiked);
 
   const { queryClient, dropdownRef, shareAction, setshareAction } = useContext(
@@ -62,8 +57,8 @@ export const Footer = (
   ) as PageProps;
   const { id, author: authorAccount, authorId } = post;
   const authorProfile = authorAccount as account["profile"];
-  const authorName = `${authorProfile?.firstName ?? "Unknow"} ${
-    authorProfile?.lastName ?? "User"
+  const authorName = `${authorProfile?.firstName ?? "Unknow User"} ${
+    authorProfile?.lastName ?? ""
   }`;
 
   const auth = getAuth(app);
@@ -83,13 +78,14 @@ export const Footer = (
         db,
         `users/${post.authorId}/posts/${post.id}/likes/${auth?.currentUser?.uid}`
       );
-      const isUserLikeThisPost = await getDoc(likeRef);
-      const likes = (await getCountFromServer(likeCollectionRef)).data().count;
-      if (isUserLikeThisPost.exists()) {
-        setlikeCount?.(likes);
+      const isUserLikeThisPost = (await getDoc(likeRef)).exists();
+      const likeCount = (await getCountFromServer(likeCollectionRef)).data()
+        .count;
+      if (isUserLikeThisPost) {
+        setlikeCount?.(likeCount);
         setisLiked(true);
       } else {
-        setlikeCount?.(likes);
+        setlikeCount?.(likeCount);
         setisLiked(false);
       }
     }
@@ -124,7 +120,7 @@ export const Footer = (
       //   }, 500);
       // }}
       ref={commentRef}
-      {...rests}
+      {...rest}
       className={styles.action}
     >
       <div
@@ -181,9 +177,7 @@ export const Footer = (
               setLikeLoading(false);
               const likes = (await getCountFromServer(likeCollectionRef)).data()
                 .count;
-              console.log({ likes });
               setlikeCount?.(likes);
-              console.log({ likeCount });
               if (uid === post.authorId) return;
               await sendAppNoti(
                 uid,
@@ -208,16 +202,15 @@ export const Footer = (
                   badge: "/badge.svg",
                   tag: `Likes-${post.id}`,
                   link: `/${post.authorId}/${post.id}`,
-                  actions: JSON.stringify([...NotiAction.friend_request]),
+                  
                   // webpush: {
                   //   fcm_options: {
-                  //     link: `https://facebook-ui-zee.vercel.app/${post.authorId}/${post.id}`,
+                  //     link: `https://facebook-ui-zee.vercel.app`,
                   //   },
                   // },
                 }),
               });
             }
-            console.log(likeCount);
             // router.replace(router.asPath, undefined, { scroll: false });
           }}
           aria-expanded={reactionAction !== ""}
@@ -376,7 +369,7 @@ export const Footer = (
                     window.document.body.style.cursor = "wait";
                     await handleShareNow(
                       uid,
-                      visibility,
+                      visibility ?? "Public",
                       sharePost,
                       post,
                       profile,

@@ -7,17 +7,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentData, DocumentReference } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { CSSProperties, MouseEventHandler, ReactNode } from "react";
+import { CSSProperties, MouseEventHandler, ReactNode, useContext } from "react";
 import { JSONTimestampToDate } from "../../lib/firebase";
 import { Comment, Post, account } from "../../types/interfaces";
-import Action from "../Comment/Action";
+import CommentAction from "../Comment/Action";
 import styles from "./index.module.scss";
+import { PostContext, PostProps } from "./PostContext";
 type layoutTypes = "row" | "column";
 
 export default function AuthorInfo(props: {
   navigateToProfile?: MouseEventHandler;
   profile?: account["profile"];
-  post?: Post;
   isAdmin?: boolean;
   commentRef?: DocumentReference<DocumentData>;
   postRef?: DocumentReference<DocumentData>;
@@ -25,8 +25,10 @@ export default function AuthorInfo(props: {
   style?: CSSProperties;
   children?: ReactNode;
   layout?: layoutTypes;
+  post?: Post;
 }) {
   const {
+    post,
     layout,
     profile,
     style,
@@ -36,7 +38,6 @@ export default function AuthorInfo(props: {
     comment,
     children,
     navigateToProfile,
-    post,
   } = props;
   const router = useRouter();
   if (post) {
@@ -95,7 +96,9 @@ export default function AuthorInfo(props: {
         >
           {children}
         </Author>
-        {isAdmin && <Action postRef={postRef!} commentRef={commentRef!} />}
+        {isAdmin && (
+          <CommentAction postRef={postRef!} commentRef={commentRef!} />
+        )}
       </div>
     );
   }
@@ -109,11 +112,11 @@ export default function AuthorInfo(props: {
       >
         {children}
       </Author>
-      {isAdmin && <Action postRef={postRef!} commentRef={commentRef!} />}
+      {isAdmin && <CommentAction postRef={postRef!} commentRef={commentRef!} />}
     </div>
   );
 }
-export function Author(props: {
+function Author(props: {
   navigateToProfile?: MouseEventHandler<HTMLImageElement>;
   profile?: account["profile"];
   post?: Post;
@@ -138,6 +141,7 @@ export function Author(props: {
     >
       <Avatar navigateToProfile={navigateToProfile} profile={profile} />
       <div
+        // className={styles.subInfo}
         style={{
           display: "flex",
           margin: " auto 0",
@@ -158,7 +162,6 @@ export function Author(props: {
         >
           <span
             style={{
-              // whiteSpace: "pre",
               color: comment ? "rgb(46 46 46)" : "initial",
               fontSize: !children ? "18px" : "inherit",
               fontWeight: children ? "500" : "initial",
@@ -183,7 +186,7 @@ export function Author(props: {
   );
 }
 
-export function Avatar({
+function Avatar({
   navigateToProfile,
   profile,
 }: {
@@ -200,7 +203,7 @@ export function Avatar({
       onClick={navigateToProfile}
       priority={false}
       className={styles.profile}
-      alt={`${profile?.firstName ?? "Unknown"} ${profile?.lastName ?? "User"}`}
+      alt={`${profile?.firstName ?? "Unknown User"} ${profile?.lastName ?? ""}`}
       width={200}
       height={200}
       style={{

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { deleteComment } from "../../lib/firestore/comment";
 import { DocumentReference, DocumentData } from "firebase/firestore";
 
-export default function Action(props: {
+export default function CommentAction(props: {
   commentRef: DocumentReference<DocumentData>;
   postRef: DocumentReference<DocumentData>;
 }) {

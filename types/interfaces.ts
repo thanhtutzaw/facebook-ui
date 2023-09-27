@@ -128,14 +128,6 @@ export interface AppProps {
   expired?: boolean;
   uid?: string;
   active?:Tabs;
-  // active?:
-  //   | "home"
-  //   | "/"
-  //   | "friends"
-  //   | "watch"
-  //   | "profile"
-  //   | "notifications"
-  //   | "menu";
   setActive?: Function;
   allUsers?: any;
   sortedPost?: Post[];

@@ -11,7 +11,6 @@ import s from "./index.module.scss";
 export function ImageLargeView(props: {
   view?: { src: string; name: string };
 }) {
-  // const { view } = props;
   const { viewRef, view, setview } = useContext(PageContext) as PageProps;
 
   const imgRef = useRef<HTMLImageElement>(null);
@@ -262,50 +261,15 @@ export function ImageLargeView(props: {
         setVisible(false);
         setview?.({ src: "", name: "" });
       }}
-      className={s.dialog}
+      className={s.imageDialog}
       ref={viewRef}
     >
       <AnimatePresence>
         {view.src && (
           <>
-            {visible && (
-              <motion.div
-              // initial={{ opacity: 0 }}
-              // transition={{ duration: 0.3 }}
-              // animate={{
-              //   opacity: visible ? 1 : 0,
-              // }}
-              // exit={{ opacity: 0 }}
-              // className={s.indicator}
-              >
-                {/* <img draggable={false} src={view.src} alt={view.name}></img>
-                <div
-                  style={{
-                    transition: "all .3s ease-in",
-                    backgroundColor: "rgba(0 0 0/.35)",
-                  }}
-                ></div> */}
-                {/* <animated.div
-                  className={s.mask}
-                  style={{
-                    scale: 1 / scale.get(),
-                    x: 2 / x.get(),
-                    y: 2 / x.get(),
-                    border: "2px solid white",
-                  }}
-                >
-                  <img
-                    draggable={false}
-                    className={s.indicator}
-                    style={{
-                      opacity: "0",
-                    }}
-                    src={view.src}
-                    alt={view.name}
-                  ></img>
-                </animated.div> */}
-              </motion.div>
-            )}
+            {/* {visible && (
+              <Indicator     />
+            )} */}
             <div className={s.viewContainer}>
               <AnimatePresence>
                 {!visible && (
@@ -360,5 +324,39 @@ export function ImageLargeView(props: {
         )}
       </AnimatePresence>
     </motion.dialog>
+  );
+}
+
+function Indicator({}) {
+  return (
+    <motion.div // className={s.indicator}
+    >
+      {/* <img draggable={false} src={view.src} alt={view.name}></img>
+    <div
+     style={{
+       transition: "all .3s ease-in",
+       backgroundColor: "rgba(0 0 0/.35)",
+     }}
+    ></div> */}
+      {/* <animated.div
+     className={s.mask}
+     style={{
+       scale: 1 / scale.get(),
+       x: 2 / x.get(),
+       y: 2 / x.get(),
+       border: "2px solid white",
+     }}
+    >
+     <img
+       draggable={false}
+       className={s.indicator}
+       style={{
+         opacity: "0",
+       }}
+       src={view.src}
+       alt={view.name}
+     ></img>
+    </animated.div> */}
+    </motion.div>
   );
 }

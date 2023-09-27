@@ -6,37 +6,19 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
-import { RefObject, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { app } from "../../lib/firebase";
-import { Post as PostType, likes } from "../../types/interfaces";
 import Input from "../Input/Input";
-import AdminMenu from "./Menu/AdminMenu";
 import AuthorInfo from "./AuthorInfo";
+import AdminMenu from "./Menu/AdminMenu";
 import Menu from "./Menu/Menu";
 import PhotoLayout from "./PhotoLayout";
-import { SharePreview } from "./SharePreview";
+import { PostContext, PostProps } from "./PostContext";
+import { SharePreview } from "./SharePost/Preview";
 import { SocialCount } from "./SocialCount";
 import s from "./index.module.scss";
-export default function Content(props: {
-  Likes: likes;
-  setLikes: Function;
-  tabIndex?: number;
-  updatePost: Function;
-  likeCount: number;
-  shareMode?: boolean;
-  preventNavigate?: boolean;
-  selectMode: boolean;
-  checked: boolean;
-  client: boolean;
-  uncheckRef: RefObject<HTMLButtonElement>;
-  setChecked: Function;
-  checkRef: RefObject<HTMLButtonElement>;
-  showmore: boolean;
-  setShowmore: Function;
-  post: PostType;
-  auth: User;
-}) {
+export default function Content({post}:{post:any}) {
   const {
     Likes,
     setLikes,
@@ -52,10 +34,10 @@ export default function Content(props: {
     checkRef,
     showmore,
     setShowmore,
-    post,
+    // post,
     shareMode,
-  } = props;
-  const { authorId, id, text, author, sharePost: share } = post;
+  } = useContext(PostContext) as PostProps;
+  const { authorId, id, text, sharePost: share } = post;
   const { preventClick, selectedId, setSelectedId, showAction, setshowAction } =
     useContext(PageContext) as PageProps;
   const router = useRouter();
@@ -80,9 +62,6 @@ export default function Content(props: {
     const isViewingAuthorProfile = authorId === user || (user && post);
     if (isViewingAuthorProfile || preventNavigate) return;
     router.push({ query: { user: String(authorId) } }, String(authorId));
-    // router.push({
-    //   pathname: `${authorId}`,
-    // });
   };
   const [authUser, setauthUser] = useState<User | null>(null);
   useEffect(() => {
@@ -108,7 +87,7 @@ export default function Content(props: {
         }
       }}
     >
-      <AuthorInfo navigateToProfile={navigateToProfile} post={post}>
+      <AuthorInfo post={post} navigateToProfile={navigateToProfile}>
         {!shareMode && (
           <>
             {!selectMode ? (
@@ -191,7 +170,6 @@ export default function Content(props: {
               showAction={showAction ?? ""}
               authorId={authorId!}
               id={id?.toString()!}
-              post={post}
             />
           ) : (
             <Menu
@@ -239,16 +217,14 @@ export default function Content(props: {
           contentEditable={false}
         />
       )}
-      <PhotoLayout post={post} files={post.media} preview />
+      <PhotoLayout files={post.media} preview />
       <SharePreview selectMode={selectMode} post={post} />
-      {/* {JSON.stringify(post.like)} */}
       <SocialCount
         Likes={Likes}
         setLikes={setLikes}
         likeCount={likeCount}
         post={post}
       />
-      {/* {post.likeCount} */}
     </span>
   );
 }
