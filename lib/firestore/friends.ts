@@ -125,7 +125,7 @@ export async function rejectFriendRequest(uid: string, f: friends) {
     // const reqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
     await updateDoc(reqCountRef, { count: increment(-1) });
   } catch (error) {
-    console.log(error);
+  console.log(error);
   }
 }
 export async function unBlockFriend(uid: string, f: friends) {

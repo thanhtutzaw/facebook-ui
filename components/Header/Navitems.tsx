@@ -49,7 +49,9 @@ export default function Navitems(props: {
   const activeClass = active === TabName ? styles.active : "";
   // const activeClass = "";
   const notiCount = parseInt(UnReadNotiCount!.toString());
-  const friendRequestCount = parseInt(friendReqCount!.toString());
+  const friendRequestCount = parseInt(
+    friendReqCount ? friendReqCount?.toString() : "0"
+  );
   return (
     <div onClick={changeTab} className={`${styles.navItems} ${activeClass}`}>
       <div role="button" aria-label={iconTitle} title={iconTitle}>
