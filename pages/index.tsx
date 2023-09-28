@@ -9,7 +9,6 @@ import {
   Timestamp,
   arrayUnion,
   collection,
-  collectionGroup,
   doc,
   getDoc,
   getDocs,
@@ -18,7 +17,7 @@ import {
   orderBy,
   query,
   updateDoc,
-  where,
+  where
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -39,19 +38,17 @@ import {
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import friendReqSound from "../public/NotiSounds/chord.mp3";
-import { AppProps, Post, account, friends } from "../types/interfaces";
+import { AppProps, account, friends } from "../types/interfaces";
 
-import { deleteToken, getMessaging, getToken } from "firebase/messaging";
+import SecondaryPage from "@/components/QueryPage";
+import { getMessaging, getToken } from "firebase/messaging";
 import Spinner from "../components/Spinner";
 import { PageContext, PageProps } from "../context/PageContext";
-import { useActive } from "../hooks/useActiveTab";
 import {
   MYPOST_LIMIT,
   NewsFeed_LIMIT,
   UnReadNoti_LIMIT,
 } from "../lib/QUERY_LIMIT";
-import Link from "next/link";
-import SecondaryPage from "@/components/QueryPage";
 export const getServerSideProps: GetServerSideProps<AppProps> = async (
   context
 ) => {

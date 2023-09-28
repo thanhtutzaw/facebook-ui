@@ -120,7 +120,7 @@ export async function acceptFriends(
 export async function rejectFriendRequest(uid: string, f: friends) {
   try {
     await unFriend(uid, f);
-    const reqCountRef = doc(db, `users/${f.id}/friendReqCount/reqCount`);
+    const reqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
     // await setDoc(reqCountRef, { count: increment(-1) });
     // const reqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
     await updateDoc(reqCountRef, { count: increment(-1) });

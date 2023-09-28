@@ -192,11 +192,11 @@ export default function App({
   }, []);
   useEffect(() => {
     const messaging = getMessaging(app);
-    const unsub = onAuthStateChanged(auth, (user) => {
+    const unsub = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         if (router.pathname === "/login/email") return;
+        await deleteToken(messaging);
         router.push("/login");
-        deleteToken(messaging);
       } else {
         if (!expired) return;
         router.push("/");
