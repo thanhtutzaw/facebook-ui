@@ -10,6 +10,7 @@ import {
 import { PageContext, PageProps } from "@/context/PageContext";
 import { account } from "@/types/interfaces";
 import s from "./index.module.scss";
+import { getFullName } from "@/lib/firestore/profile";
 export const bioFallback = "No Bio Yet";
 function ProfileInfo(props: {
   handleChange: ChangeEventHandler<HTMLInputElement>;
@@ -44,12 +45,18 @@ function ProfileInfo(props: {
     newProfile?.photoURL ??
     "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
   const file = newProfile?.photoURL as File;
-  
+
   const newProfileBio = newProfile?.bio === "" ? bioFallback : newProfile?.bio;
-  const oldProfileBio = profile.bio === "" ? bioFallback : profile.bio;
+  const oldProfileBio = profile?.bio === "" ? bioFallback : profile?.bio;
   const imageFile = file.type
     ? URL.createObjectURL(file)!
     : (newProfile?.photoURL! as string);
+  const userName = getFullName(profile);
+
+  // const name =
+  //   profile?.firstName || profile.lastName
+  //     ? `${profile?.firstName} ${profile?.lastName}`
+  //     : "Unknown User";
   return (
     <div ref={infoRef} className={`${s.info} ${selectMode ? s.active : ""}`}>
       <Image
@@ -58,7 +65,7 @@ function ProfileInfo(props: {
             src: profile.photoURL
               ? profile.photoURL
               : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-            name: `${profile?.firstName ?? "Unknown"} ${
+            name: `${profile?.firstName ?? "Unknown User"} ${
               profile?.lastName ?? ""
             }'s profile picture`,
           });
@@ -69,9 +76,7 @@ function ProfileInfo(props: {
         width={500}
         height={170}
         style={{ objectFit: "cover", width: "120px", height: "120px" }}
-        alt={`${profile?.firstName ?? "Unknown"} ${
-          profile?.lastName ?? ""
-        }'s profile`}
+        alt={`${userName}'s profile`}
         src={
           editToggle
             ? imageFile
@@ -79,7 +84,6 @@ function ProfileInfo(props: {
               "https://upload.wikimedia.org/wikipedia/commons/77c/Profile_avatar_placeholder_large.png"
         }
       />
-      {/* {JSON.stringify()} */}
       {editToggle && (
         <>
           <input
@@ -105,13 +109,8 @@ function ProfileInfo(props: {
       <h3>
         {editToggle
           ? `${newProfile?.firstName ?? ""} ${newProfile?.lastName ?? ""}`
-          : account?.displayName}
+          : userName}
       </h3>
-      {/* <h3 style={{ marginBottom: "18px" }}>
-          {email === "testuser@gmail.com"
-            ? "Peter 1"
-            : `${profile?.firstName ?? "Unknown"} ${profile?.lastName ?? ""}`}
-        </h3> */}
       <p
         style={{
           color: profile?.bio === "" ? "gray" : "initial",

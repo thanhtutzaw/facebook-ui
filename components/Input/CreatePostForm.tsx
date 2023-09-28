@@ -24,15 +24,21 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const textRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[] | PostTypes["media"]>([]);
-  // const [value, setvalue] = useState("");
-  const [visibility, setVisibility] = useState("Public");
-  const { getLocal } = useLocalStorage("visibility", visibility);
+  const [value, setvalue] = useState("");
+  const [visibility, setVisibility] = useState(value);
+  const { getLocal, setLocal } = useLocalStorage("visibility", value);
   const { friends, fileRef, uploadButtonClicked, setuploadButtonClicked } =
     useContext(PageContext) as PageProps;
 
+  // useEffect(() => {
+  //   // setvalue(localStorage.getItem("visibility")!);
+  //   // const value = localStorage.getItem("visibility");
+  //   const value = getLocal();
+
+  //   setVisibility(value ?? "Public");
+  // }, [getLocal]);
   useEffect(() => {
-    // setvalue(localStorage.getItem("visibility")!);
-    // const value = localStorage.getItem("visibility");
+    setvalue(localStorage.getItem("visibility")!);
     const value = getLocal();
     setVisibility(value ?? "Public");
   }, [getLocal, visibility]);
@@ -83,7 +89,6 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   useEffect(() => {
     setshareAction?.("");
   }, [setshareAction]);
-  // console.log(friends);
   return (
     <div
       style={{
@@ -293,7 +298,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
         setFiles={setFiles}
         visibility={visibility}
         setVisibility={setVisibility}
-        // setLocal={setLocal}
+        setLocal={setLocal}
       />
     </div>
   );

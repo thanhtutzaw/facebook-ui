@@ -3,6 +3,17 @@ import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { account } from "../../types/interfaces";
 import { db, storage } from "../firebase";
+export function getFullName(profile: account["profile"] | undefined): string {
+  if (!profile) return "Unknown User";
+  const { firstName: first, lastName: last } = profile;
+  if (first && !last) {
+    return `${first}`;
+  } else if (!first && last) {
+    return `${last}`;
+  }
+  const fullName = first || last ? `${first} ${last}` : "Unknown User";
+  return fullName;
+}
 export async function addProfile(user: User, profile: account["profile"]) {
   const Ref = doc(db, `users/${user.uid}`);
   const { firstName, lastName } = profile;
@@ -76,9 +87,11 @@ export async function changeProfile(
         }
       }
     } else {
-      alert(
-        `${type} is Invalid Type .\nJPEG , PNG , GIF and MP4 are only Allowed !`
-      );
+      if (type) {
+        alert(
+          `${type} is Invalid Type .\nJPEG , PNG , GIF and MP4 are only Allowed !`
+        );
+      }
     }
     // const url = photoURL as string;
 

@@ -32,31 +32,57 @@ export async function addPost(
   const Ref = !sharePost
     ? doc(collection(db, `users/${uid}/posts`))
     : doc(db, `users/${uid}/posts/${sharePost.refId}`);
-  if (friends) {
-    await Promise.all(
-      friends.map(async (friend) => {
-        const newsFeedRef = !sharePost
-          ? doc(collection(db, `users/${friend}/friends/${uid}/recentPosts`))
-          : doc(
-              db,
-              `users/${friend}/friends/${uid}/recentPosts/${sharePost.refId}`
-            );
-        const newsFeedPost = {
-          id: !sharePost ? Ref.id : sharePost.refId,
-          createdAt: serverTimestamp(),
-        };
-        await setDoc(newsFeedRef, newsFeedPost);
-      })
-    );
-  }
-  const adminNewsFeedRef = doc(
-    collection(db, `users/${uid}/friends/${uid}/recentPosts`)
-  );
-  const adminNewsFeedPost = {
+  const newsFeedPost = {
+    authorId: uid,
     id: !sharePost ? Ref.id : sharePost.refId,
     createdAt: serverTimestamp(),
   };
-  await setDoc(adminNewsFeedRef, adminNewsFeedPost);
+  if (friends?.length ?? 0 > 0) {
+    if (visibility !== "Public" || "Friend") {
+    } else {
+      console.log({ sharePost });
+      console.log({ friends });
+
+      friends?.map(async (friendId) => {
+        const recentPostRef = doc(
+          collection(db, `users/${friendId}/recentPosts`)
+        );
+        try {
+          await setDoc(recentPostRef, newsFeedPost);
+        } catch (error) {
+          console.log(error);
+          throw error;
+        }
+      });
+    }
+    // await Promise.all(
+    //   friends.map(async (friend) => {
+    //     const newsFeedRef = !sharePost
+    //       ? doc(collection(db, `users/${friend}/friends/${uid}/recentPosts`))
+    //       : doc(
+    //           db,
+    //           `users/${friend}/friends/${uid}/recentPosts/${sharePost.refId}`
+    //         );
+    //     const newsFeedPost = {
+    //       id: !sharePost ? Ref.id : sharePost.refId,
+    //       createdAt: serverTimestamp(),
+    //     };
+    //     await setDoc(newsFeedRef, newsFeedPost);
+    //   })
+    // );
+  }
+  const adminNewsFeedRef = doc(collection(db, `users/${uid}/recentPosts`));
+  // const adminNewsFeedPost = {
+  //   authorId:uid,
+  //   id: !sharePost ? Ref.id : sharePost.refId,
+  //   createdAt: serverTimestamp(),
+  // };
+  try {
+    await setDoc(adminNewsFeedRef, newsFeedPost);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
   const post = {
     authorId: uid,
     id: !sharePost ? Ref.id : sharePost.refId,
@@ -67,16 +93,23 @@ export async function addPost(
     updatedAt: "Invalid Date",
   };
   let data;
-  const sharersRef = doc(
-    db,
-    `users/${sharePost?.author}/posts/${sharePost?.id}/shares/${uid}`
-  );
   if (sharePost) {
+    const sharersRef = doc(
+      collection(
+        db,
+        `users/${sharePost?.author}/posts/${sharePost?.id}/shares/${uid}`
+      )
+    );
     data = {
       ...post,
       sharePost,
     };
-    await setDoc(sharersRef, { uid });
+    try {
+      await setDoc(sharersRef, { uid });
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   } else {
     data = { ...post };
   }

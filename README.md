@@ -32,7 +32,7 @@ Project is created with:
 :ballot_box_with_check: Friends Request , acceptable and blockable \
 :ballot_box_with_check: Friends Request Sound play in App Mode (Add to HomeScreen due to Browser Autoplay ploicy) \
 :ballot_box_with_check: Users will receive Inbox notifications when their posts are liked,commented and shared by other users \
-:ballot_box_with_check: Push notificatons to multiple devices with Service Worker and Firebase Cloud messaging for foreground and background modes \
+:ballot_box_with_check: Push notificatons to multiple devices with Service Worker and Firebase Cloud messaging for foreground and background notificatons
 
 ## User-Interface
 

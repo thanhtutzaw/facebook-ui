@@ -9,6 +9,7 @@ import {
   Timestamp,
   arrayUnion,
   collection,
+  collectionGroup,
   doc,
   getDoc,
   getDocs,
@@ -38,7 +39,7 @@ import {
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import friendReqSound from "../public/NotiSounds/chord.mp3";
-import { AppProps, account, friends } from "../types/interfaces";
+import { AppProps, Post, account, friends } from "../types/interfaces";
 
 import { deleteToken, getMessaging, getToken } from "firebase/messaging";
 import Spinner from "../components/Spinner";
@@ -129,29 +130,60 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     );
     const myFriendsSnap = await getDocs(myFriendsQuery);
     const acceptedFriends = myFriendsSnap.docs.map((doc) => doc.id);
+    console.log({ acceptedFriends });
     const feedUser = myFriendsSnap.docs.map((doc) => {
       return { id: doc.data().id } as { id: string };
     });
     const feedUserWithAdmin = [{ id: uid }, ...feedUser];
     // console.log(feedUserWithAdmin);
-    const recentPosts = await Promise.all(
-      feedUserWithAdmin.map(async (friend) => {
-        const newsFeedQuery = query(
-          collection(db, `users/${uid}/friends/${friend.id}/recentPosts`),
-          orderBy("createdAt", "desc"),
-          limit(NewsFeed_LIMIT)
-        );
-        return (await getDocs(newsFeedQuery)).docs.map((doc) => {
-          const authorId = doc.ref.parent.parent?.id;
-          return {
-            ...doc.data(),
-            authorId,
-          };
-        });
-      })
+    const userPostsSubCollectionRef = collection(db, `users/${uid}/friends`);
+
+    // Reference to the "recentPostSubCollection" subcollection within the user's "postsSubCollection"
+    const newsFeedQuery = query(
+      collection(db, `users/${uid}/recentPosts`),
+      orderBy("createdAt", "desc"),
+      limit(NewsFeed_LIMIT)
     );
+    let recentPosts;
+    try {
+      recentPosts = (await getDocs(newsFeedQuery)).docs.map((doc) => {
+        // const authorId = doc.ref.parent.parent?.id!;
+        return {
+          ...doc.data(),
+          // authorId ,
+        };
+      });
+    } catch (error) {
+      console.log("Recent Post Error - ", error);
+    }
+    // const recentPosts = await Promise.all(
+    // feedUserWithAdmin.map(async (friend) => {
+
+    // return (await getDocs(newsFeedQuery).docs.map((doc) => {
+    //   const authorId = doc.ref.parent.parent?.id;
+    //   return {
+    //     ...doc.data(),
+    //     authorId,
+    //   };
+    // });
+    // })
+    // feedUserWithAdmin.map(async (friend) => {
+    //   const newsFeedQuery = query(
+    //     collection(db, `users/${uid}/friends/${friend.id}/recentPosts`),
+    //     orderBy("createdAt", "desc"),
+    //     limit(NewsFeed_LIMIT)
+    //   );
+    //   return (await getDocs(newsFeedQuery)).docs.map((doc) => {
+    //     const authorId = doc.ref.parent.parent?.id;
+    //     return {
+    //       ...doc.data(),
+    //       authorId,
+    //     };
+    //   });
+    // })
+    // );
     // console.log(friendsDoc.reduce);
-    const posts = recentPosts.reduce((acc, cur) => acc.concat(cur), []);
+    // const posts = recentPosts.reduce((acc, cur) => acc.concat(cur), []);
     const newsFeedWithMe = [...acceptedFriends, uid];
     const isFriendEmpty = myFriendsSnap.empty;
     const friendsList = !isFriendEmpty ? newsFeedWithMe : [uid];
@@ -211,7 +243,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     // );
 
     const [newsFeedPosts, profileData, currentAccount] = await Promise.all([
-      getNewsFeed(uid, posts),
+      getNewsFeed(uid, recentPosts),
       // getPostWithMoreInfo(uid, postQuery),
       getProfileByUID(uid),
       getUserData(uid),
@@ -466,7 +498,6 @@ export default function Home({
           const token = await getToken(messaging, {
             vapidKey: process.env.NEXT_PUBLIC_MessageKey,
           });
-          // deleteToken()
           // console.log(process.env.NEXT_PUBLIC_MessageKey);
           if (token && uid) {
             console.log("FCM token:", token);
@@ -564,6 +595,7 @@ export default function Home({
 
   useEffect(() => {
     setfriends?.(acceptedFriends);
+    console.log(acceptedFriends);
   }, [acceptedFriends, setfriends]);
 
   // const { active: activeTab, setActive: setActiveTab } = useActive();

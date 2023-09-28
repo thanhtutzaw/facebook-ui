@@ -130,7 +130,7 @@ export default function Profile() {
     // console.log(type === "file");
   };
   const [updating, setupdating] = useState(false);
-  async function editProfile(e: FormEvent<HTMLFormElement>) {
+  async function updateProfileData(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setupdating(true);
     try {
@@ -204,41 +204,12 @@ export default function Profile() {
               //   gridTemplateRows: editToggle ? "1fr" : "0fr",
               // }}
             >
-              {/* <div className={s.editProfile}>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-            </div> */}
+              
               {/* <AnimatePresence mode="sync"> */}
               <EditProfileForm
                 updating={updating}
                 editToggle={editToggle}
-                handleSubmit={editProfile}
+                handleSubmit={updateProfileData}
                 handleChange={handleEditProfileForm}
                 newProfile={newProfile}
                 toggleEdit={toggleEdit}

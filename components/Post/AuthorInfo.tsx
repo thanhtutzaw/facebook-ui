@@ -13,6 +13,7 @@ import { Comment, Post, account } from "../../types/interfaces";
 import CommentAction from "../Comment/Action";
 import styles from "./index.module.scss";
 import { PostContext, PostProps } from "./PostContext";
+import { getFullName } from "@/lib/firestore/profile";
 type layoutTypes = "row" | "column";
 
 export default function AuthorInfo(props: {
@@ -174,8 +175,10 @@ function Author(props: {
               );
             }}
           >
-            {profile?.firstName ?? post?.authorId ?? comment?.authorId}{" "}
-            {profile?.lastName ?? ""}
+            {/* {post?.authorId ?? "Unknown"} */}
+            {getFullName(profile)}
+            {/* {profile?.firstName ?? post?.authorId ?? comment?.authorId}{" "}
+            {profile?.lastName ?? ""} */}
           </span>
 
           {post?.sharePost?.id && <>&nbsp; shared a Post</>}

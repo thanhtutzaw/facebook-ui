@@ -7,13 +7,13 @@ import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { Post } from "../../types/interfaces";
 function PostSettingFooterForm(props: {
   fileRef: RefObject<HTMLInputElement>;
+  setLocal?: Function;
   setFiles: Function;
   files: Post["media"] | File[];
   setVisibility: Function;
   visibility: string;
 }) {
-  const {fileRef, setFiles, files, setVisibility, visibility } =
-    props;
+  const {setLocal, fileRef, setFiles, files, setVisibility, visibility } = props;
   return (
     <div className={s.footer}>
       <button
@@ -31,14 +31,8 @@ function PostSettingFooterForm(props: {
         files={files as File[]}
         fileRef={fileRef}
       />
-      <SelectVisiblity
-          value={visibility}
-          onChange={(e) => {
-            setVisibility(e.target.value);
-            // setLocal?.(e.target.value);
-          }}
-        />
-      {/* {!setLocal ? (
+
+      {!setLocal ? (
         <SelectVisiblity
           defaultValue={visibility}
           onChange={(e) => {
@@ -46,8 +40,14 @@ function PostSettingFooterForm(props: {
           }}
         />
       ) : (
-        
-      )} */}
+        <SelectVisiblity
+          value={visibility}
+          onChange={(e) => {
+            setVisibility(e.target.value);
+            setLocal?.(e.target.value);
+          }}
+        />
+      )}
     </div>
   );
 }
