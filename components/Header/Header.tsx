@@ -128,7 +128,7 @@ export default function Header(props: {
             {pages.map((page, index) => (
               <Navitems
                 key={page.name}
-                // setActive={setActive}
+                setActive={setActive}
                 active={active}
                 index={index}
                 name={page.name}

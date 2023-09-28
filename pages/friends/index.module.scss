@@ -77,12 +77,16 @@
                         font-size: 16px;
                     }
                 }
+
                 .actions {
                     display: flex;
                     align-items: center;
                     flex-wrap: wrap;
                     gap: 0.5rem;
                     justify-content: center;
+                    &:has(> :last-child:nth-child(2)) {
+                        flex-wrap: nowrap;
+                    }
                     button {
                         border: 0;
                         padding: 0.5rem 1rem;
@@ -93,10 +97,14 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        gap:5px;
+                        gap: 5px;
                     }
-                    .confirm{
-                        color: seagreen;
+                    .confirm,
+                    .secondary {
+                        // color: seagreen;
+                        color: var(--blue-origin);
+                        border: 1px solid var(--blue-origin);
+                        background: transparent;
                     }
                     .danger {
                         color: red;
@@ -141,7 +149,7 @@
     box-shadow: 0 5px 12px rgba(136, 135, 135, 0.5);
     // min-height: 200px;
     max-height: 200px;
-    overflow-y:scroll;
+    overflow-y: scroll;
     &:has(> button:only-child) {
         padding-block: 0;
     }
@@ -152,7 +160,7 @@
         align-items: center;
         display: flex;
         justify-content: initial !important;
-        gap: 10px;
+        gap: 10px !important;
     }
 }
 .active {

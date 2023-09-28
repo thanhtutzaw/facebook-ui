@@ -49,6 +49,7 @@ import {
   NewsFeed_LIMIT,
   UnReadNoti_LIMIT,
 } from "../lib/QUERY_LIMIT";
+import { useActive } from "@/hooks/useActiveTab";
 export const getServerSideProps: GetServerSideProps<AppProps> = async (
   context
 ) => {
@@ -350,7 +351,7 @@ export default function Home({
     setnewsFeedData,
     setfriends,
     setnotiPermission,
-    active: activeTab,
+    // active: activeTab,
   } = useContext(PageContext) as PageProps;
   // const [prevfriendReqCount, setprevfriendReqCount] = useState(0);
   useEffect(() => {
@@ -595,7 +596,7 @@ export default function Home({
     console.log(acceptedFriends);
   }, [acceptedFriends, setfriends]);
 
-  // const { active: activeTab, setActive: setActiveTab } = useActive();
+  const { active: activeTab, setActive: setActiveTab } = useActive();
   const [resourceError, setresourceError] = useState(postError);
   if (resourceError !== "") {
     return (

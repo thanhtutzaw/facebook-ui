@@ -341,7 +341,7 @@ function FriendList({
                               queryClient.invalidateQueries(["pendingFriends"]);
                             }}
                             title="Accept"
-                            className={s.confirm}
+                            className={s.secondary}
                           >
                             <FontAwesomeIcon icon={faCheck} />
                             Accept

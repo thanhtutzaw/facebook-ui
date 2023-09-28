@@ -175,8 +175,14 @@
             color: white;
         }
         .confirm {
-            background-color: rgba(46, 139, 86, 0.15) !important;
-            color: seagreen;
+            // background-color: rgba(46, 139, 86, 0.15) !important;
+            // color: seagreen;
+            color: var(--blue-origin);
+    border: 1px solid var(--blue-origin) !important;
+    background: transparent !important;
+        }
+        button:active{
+            opacity: .6;
         }
         .editToggle {
             justify-content: center;
