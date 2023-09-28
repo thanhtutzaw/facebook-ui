@@ -40,7 +40,7 @@ import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import friendReqSound from "../public/NotiSounds/chord.mp3";
 import { AppProps, account, friends } from "../types/interfaces";
 
-import { getMessaging, getToken } from "firebase/messaging";
+import { deleteToken, getMessaging, getToken } from "firebase/messaging";
 import Spinner from "../components/Spinner";
 import { PageContext, PageProps } from "../context/PageContext";
 import { useActive } from "../hooks/useActiveTab";
@@ -466,6 +466,7 @@ export default function Home({
           const token = await getToken(messaging, {
             vapidKey: process.env.NEXT_PUBLIC_MessageKey,
           });
+          // deleteToken()
           // console.log(process.env.NEXT_PUBLIC_MessageKey);
           if (token && uid) {
             console.log("FCM token:", token);

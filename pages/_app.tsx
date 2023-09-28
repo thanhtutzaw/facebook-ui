@@ -9,7 +9,7 @@ import {
   onAuthStateChanged,
   onIdTokenChanged,
 } from "firebase/auth";
-import { getMessaging, onMessage } from "firebase/messaging";
+import { deleteToken, getMessaging, onMessage } from "firebase/messaging";
 import { GetServerSideProps } from "next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
@@ -191,10 +191,13 @@ export default function App({
     });
   }, []);
   useEffect(() => {
+     const messaging = getMessaging(app);
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) {
         if (router.pathname === "/login/email") return;
         router.push("/login");
+     deleteToken(messaging);
+
       } else {
         if (!expired) return;
         router.push("/");
