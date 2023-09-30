@@ -9,7 +9,7 @@ import {
   onAuthStateChanged,
   onIdTokenChanged,
 } from "firebase/auth";
-import { deleteToken, getMessaging, onMessage } from "firebase/messaging";
+import { getMessaging, onMessage } from "firebase/messaging";
 import { GetServerSideProps } from "next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
@@ -191,11 +191,10 @@ export default function App({
     });
   }, []);
   useEffect(() => {
-    const messaging = getMessaging(app);
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         if (router.pathname === "/login/email") return;
-        await deleteToken(messaging);
+
         router.push("/login");
       } else {
         if (!expired) return;
@@ -248,12 +247,7 @@ export default function App({
       })
   );
   const [isPage, setisPage] = useState(currentUser?.uid);
-  // useEffect(() => {
 
-  // }, [active, expired]);
-  useEffect(() => {
-    console.log(router);
-  }, [router]);
   if (expired) return <Welcome expired={expired} />;
   return (
     <>

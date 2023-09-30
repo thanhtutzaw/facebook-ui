@@ -125,10 +125,22 @@ export async function rejectFriendRequest(uid: string, f: friends) {
     // const reqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
     await updateDoc(reqCountRef, { count: increment(-1) });
   } catch (error) {
-  console.log(error);
+    console.log(error);
   }
 }
-export async function unBlockFriend(uid: string, f: friends) {
+export async function cancelFriendRequest(uid: string, f: friends) {
+  try {
+    await unFriend(uid, f);
+    const reqCountRef = doc(db, `users/${f.id}/friendReqCount/reqCount`);
+    // await setDoc(reqCountRef, { count: increment(-1) });
+    // const reqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
+    await updateDoc(reqCountRef, { count: increment(-1) });
+  } catch (error) {
+    console.log(error);
+  }
+}
+export async function unBlockFriend(uid: string, f: {id:string , senderId:string} | friends) {
+  console.log(uid , f.senderId);
   try {
     if (uid !== f.senderId) {
       alert(

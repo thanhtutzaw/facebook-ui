@@ -2,18 +2,18 @@ import { getAuth } from "firebase/auth";
 import { collection, doc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useRef, useState } from "react";
-import { PageContext, PageProps } from "../../context/PageContext";
-import useLocalStorage from "../../hooks/useLocalStorage";
-import { app, db } from "../../lib/firebase";
-import { addPost } from "../../lib/firestore/post";
-import { uploadMedia } from "../../lib/storage";
-import s from "../../styles/Home.module.scss";
-import { Post as PostTypes } from "../../types/interfaces";
-import BackHeader from "../Header/BackHeader";
+import { PageContext, PageProps } from "@/context/PageContext";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { app, db } from "@/lib/firebase";
+import { addPost } from "@/lib/firestore/post";
+import { uploadMedia } from "@/lib/storage";
+import s from "@/styles/Home.module.scss";
+import { Post as PostTypes } from "@/types/interfaces";
 import PhotoLayout from "../Post/PhotoLayout";
 import { SharePreview } from "../Post/SharePost/Preview";
-import PostSettingFooterForm from "./PostSettingFooterForm";
-import Input from "./Input";
+import PostSettingFooterForm from "./PostSettingFooter";
+import TextInput from "./Input/TextInput";
+import BackHeader from "../Header/BackHeader";
 
 export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const { sharePost } = props;
@@ -198,7 +198,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
           {loading ? "Saving..." : "Post"}
         </button>
       </BackHeader>
-      <Input
+      <TextInput
         style={{ direction: "ltr" }}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {

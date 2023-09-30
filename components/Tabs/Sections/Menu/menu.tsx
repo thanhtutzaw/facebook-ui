@@ -10,6 +10,9 @@ import { useActive } from "@/hooks/useActiveTab";
 import { signout } from "@/lib/signout";
 import s from "../../Sections/Menu/menu.module.scss";
 import SwitchAccount from "./SwitchAccount";
+import Spinner from "@/components/Spinner";
+import { app } from "@/lib/firebase";
+import { getMessaging, deleteToken } from "firebase/messaging";
 interface MenuProps {
   tabIndex: number;
 }
@@ -55,9 +58,11 @@ export default function Menu(props: MenuProps) {
         tabIndex={tabIndex}
         disabled={loading}
         className={`${s.item} ${s.logoutBtn}`}
-        onClick={() => {
+        onClick={async() => {
           setLoading(true);
           try {
+            const messaging = getMessaging(app);
+            await deleteToken(messaging);
             setTimeout(() => {
               signout();
               // setActive?.("/");
@@ -73,6 +78,12 @@ export default function Menu(props: MenuProps) {
           icon={faSignOut}
         />
         {loading ? "Signing out..." : "Sign out"}
+        {loading && (
+          <Spinner
+            style={{ margin: "0", opacity: ".5", marginLeft: "auto" }}
+            size={23}
+          />
+        )}
       </button>
       <SwitchAccount setLoading={setLoading} signout={signout} />
     </div>

@@ -7,10 +7,10 @@ import {
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import nookies from "nookies";
-import CreatePostForm from "../../components/Input/CreatePostForm";
 import { db, postToJSON, userToJSON } from "../../lib/firebase";
 import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
 import { Post } from "../../types/interfaces";
+import CreatePostForm from "@/components/Form/CreatePost";
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   try {
     const cookies = nookies.get(context);

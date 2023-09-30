@@ -3,6 +3,7 @@ self.addEventListener("notificationclick", function (event) {
     const { reply: inputText } = event;
     const { click_action } = event.notification.data;
     // console.log(event.action)
+    // const client = self.clients
     switch (event.action) {
         case `see_post`:
             event.notification.close();
@@ -12,7 +13,6 @@ self.addEventListener("notificationclick", function (event) {
             // clients.openWindow(click_action).then(function (client) {
             //     client.navigate(click_action);
             // });
-
             // event.waitUntil(clients.openWindow(click_action));
             // clients
             //     .matchAll({
@@ -30,14 +30,71 @@ self.addEventListener("notificationclick", function (event) {
             event.waitUntil(clients.openWindow(`https://facebook-ui-zee.vercel.app/${inputText}`))
             console.log("Submited content :", inputText);
             break;
-        default:
+        case `accept`:
             event.notification.close();
-            event.waitUntil(clients.openWindow(click_action));
+            // event.waitUntil(clients.openWindow(`https://facebook-ui-zee.vercel.app/api/hello`))
+            event.waitUntil(clients.openWindow(click_action))
+            console.log("accepted user ", event.notification);
+            break;
+        default:
+            event.waitUntil(
+                (async () => {
+                    // await clients.openWindow(click_action)
+                    const allClients = await clients.matchAll({
+                        includeUncontrolled: true,
+                    })
+                    let facebookClient;
+                    for (const client of allClients) {
+                        const url = new URL(client.url);
+                        console.log(url.pathname, click_action)
+                        if (url.pathname === click_action) {
+                            await client.focus();
+                            facebookClient = client;
+                            console.log(facebookClient)
+                            break;
+                        }
+                    }
+                    console.log(facebookClient)
+                    if (!facebookClient) {
+                        facebookClient = await clients.openWindow(click_action)
+                    }
+                    event.notification.close();
+                })(),
+            );
+            // event.waitUntil((async () => {
+            //     // clients.openWindow(click_action)
+            //     await clients.openWindow(click_action)
+            //     const allClients = await clients.matchAll({
+            //         includeUncontrolled: true,
+            //     })
+            //     let facebookClient;
+            //     for (const client of allClients) {
+            //         const url = new URL(client.url);
+            //         if (url.pathname === click_action) {
+            //             client.focus();
+            //             facebookClient = client;
+            //             break;
+            //         }
+            //     }
+            //     if (!facebookClient) {
+            //         facebookClient = await clients.openWindow(click_action)
+            //     }
+            //     event.notification.close();
+
+            // }))();
+            console.log(clients)
+            // clients.matchAll({
+            //     includeUncontrolled: true,
+            // }).then((client)=>);
+            // console.log(clients.matchAll({
+            //     type: "window",
+            // }))
             // window.open(click_action, "_self");
             break;
     }
 
 });
+
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js'); // Import the Firebase v9 compat library
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-messaging-compat.js'); // Import the Firebase v9 compat library for messaging
 

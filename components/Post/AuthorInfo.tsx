@@ -1,3 +1,4 @@
+import { getFullName } from "@/lib/firestore/profile";
 import {
   faEarth,
   faLock,
@@ -7,13 +8,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentData, DocumentReference } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { CSSProperties, MouseEventHandler, ReactNode, useContext } from "react";
+import { CSSProperties, MouseEventHandler, ReactNode } from "react";
 import { JSONTimestampToDate } from "../../lib/firebase";
 import { Comment, Post, account } from "../../types/interfaces";
 import CommentAction from "../Comment/Action";
 import styles from "./index.module.scss";
-import { PostContext, PostProps } from "./PostContext";
-import { getFullName } from "@/lib/firestore/profile";
 type layoutTypes = "row" | "column";
 
 export default function AuthorInfo(props: {
@@ -91,7 +90,7 @@ export default function AuthorInfo(props: {
         <Author
           comment={comment!}
           navigateToProfile={() => {
-            router.push(`/${authorId.toString()}`);
+            router.push(`/${String(authorId)}`);
           }}
           profile={profile}
         >
@@ -134,7 +133,6 @@ function Author(props: {
     children,
   } = props;
   const router = useRouter();
-
   return (
     <div
       style={{ userSelect: comment ? "initial" : "none" }}
@@ -169,10 +167,14 @@ function Author(props: {
             }}
             onClick={(e) => {
               e.stopPropagation();
-              router.push(
-                { query: { user: String(post?.authorId) } },
-                String(post?.authorId)
-              );
+              if (router.pathname === "/") {
+                router.push(
+                  { query: { user: String(post?.authorId) } },
+                  String(post?.authorId)
+                );
+              } else {
+                router.push(`/${String(post?.authorId)}`);
+              }
             }}
           >
             {/* {post?.authorId ?? "Unknown"} */}

@@ -16,30 +16,28 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import Comment from "../../../components/Comment";
-import CommentInput from "../../../components/Comment/Input";
-import BackHeader from "../../../components/Header/BackHeader";
-import PostSettingFooterForm from "../../../components/Input/PostSettingFooterForm";
-import Input from "../../../components/Input/Input";
-import AuthorInfo from "../../../components/Post/AuthorInfo";
-import { Footer } from "../../../components/Post/Footer";
-import PhotoLayout from "../../../components/Post/PhotoLayout";
-import { SharePreview } from "../../../components/Post/SharePost/Preview";
-import { SocialCount } from "../../../components/Post/SocialCount";
-import { Welcome } from "../../../components/Welcome";
-import useInfiniteScroll from "../../../hooks/useInfiniteScroll";
+import Comment from "@/components/Comment";
+import PostSettingFooterForm from "@/components/Form/PostSettingFooter";
+import TextInput from "@/components/Form/Input/TextInput";
+import AuthorInfo from "@/components/Post/AuthorInfo";
+import { Footer } from "@/components/Post/Footer";
+import PhotoLayout from "@/components/Post/PhotoLayout";
+import { SharePreview } from "@/components/Post/SharePost/Preview";
+import { SocialCount } from "@/components/Post/SocialCount";
+import { Welcome } from "@/components/Welcome";
+import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import {
   app,
   db,
   getProfileByUID,
   postInfo,
   postToJSON,
-} from "../../../lib/firebase";
-import { verifyIdToken } from "../../../lib/firebaseAdmin";
-import { fetchComments } from "../../../lib/firestore/comment";
-import { updatePost } from "../../../lib/firestore/post";
-import { deleteMedia, uploadMedia } from "../../../lib/storage";
-import s from "../../../styles/Home.module.scss";
+} from "@/lib/firebase";
+import { verifyIdToken } from "@/lib/firebaseAdmin";
+import { fetchComments } from "@/lib/firestore/comment";
+import { updatePost } from "@/lib/firestore/post";
+import { deleteMedia, uploadMedia } from "@/lib/storage";
+import s from "@/styles/Home.module.scss";
 import {
   Media,
   Post,
@@ -50,6 +48,8 @@ import {
 } from "../../../types/interfaces";
 import { profile } from "console";
 import { PageContext, PageProps } from "../../../context/PageContext";
+import CommentInput from "@/components/Comment/Input";
+import BackHeader from "@/components/Header/BackHeader";
 export const Comment_LIMIT = 10;
 export const getServerSideProps: GetServerSideProps<AppProps> = async (
   context
@@ -352,7 +352,7 @@ export default function Page(props: {
         className={s.container}
       >
         <AuthorInfo navigateToProfile={navigateToProfile} post={post} />
-        <Input
+        <TextInput
           style={{
             cursor: canEdit ? "initial" : "default",
           }}

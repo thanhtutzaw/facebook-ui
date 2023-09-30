@@ -32,7 +32,7 @@ function ProfileInfo(props: {
     editToggle,
     newProfile,
   } = props;
-  const { setview } = useContext(PageContext) as PageProps;
+  const { setview, currentUser } = useContext(PageContext) as PageProps;
   // const view =
   const imgFileRef = useRef<HTMLInputElement>(null);
 
@@ -80,7 +80,7 @@ function ProfileInfo(props: {
         src={
           editToggle
             ? imageFile
-            : (profile?.photoURL as string) ??
+            : currentUser?.photoURL ??
               "https://upload.wikimedia.org/wikipedia/commons/77c/Profile_avatar_placeholder_large.png"
         }
       />

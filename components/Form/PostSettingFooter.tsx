@@ -1,10 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { RefObject } from "react";
-import MediaInput from "./MediaInput";
 import { SelectVisiblity } from "../Post/SelectVisiblity";
 import s from "../../styles/Home.module.scss";
 import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { Post } from "../../types/interfaces";
+import MediaInput from "./Input/MediaInput";
 function PostSettingFooterForm(props: {
   fileRef: RefObject<HTMLInputElement>;
   setLocal?: Function;
@@ -13,7 +13,8 @@ function PostSettingFooterForm(props: {
   setVisibility: Function;
   visibility: string;
 }) {
-  const {setLocal, fileRef, setFiles, files, setVisibility, visibility } = props;
+  const { setLocal, fileRef, setFiles, files, setVisibility, visibility } =
+    props;
   return (
     <div className={s.footer}>
       <button

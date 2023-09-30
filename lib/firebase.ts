@@ -211,22 +211,6 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
   }
   return p;
 }
-// export async function getNewsFeed(uid: string, newsFeedPosts?: any[]) {
-//   console.log("posts are fetched");
-//   const newsFeedPostswithoutAdmin = await getPostsbyId(uid, newsFeedPosts);
-
-//   const adminPostsRef = query(
-//     collection(db, `users/${uid}/posts`),
-//     orderBy("createdAt", "desc"),
-//   );
-//   const postDoc = await getDocs(adminPostsRef);
-//   // const postData = await postToJSON(postDoc);
-//   const adminPosts = await Promise.all(
-//     postDoc.docs.map(async (doc) => await postToJSON(doc))
-//   );
-//   console.log({ ...newsFeedPostswithoutAdmin, ...adminPosts });
-//   return null;
-// }
 export async function getNewsFeed(
   uid: string,
   newsFeedPosts?: any[]
@@ -246,9 +230,6 @@ export async function getNewsFeed(
     return data;
   }
 }
-// export async function getPostsbyId(uid: string, newsFeedPosts?: any[]) {
-
-// }
 export async function getPostWithMoreInfo(
   uid: string,
   postQuery?: Query<DocumentData>,

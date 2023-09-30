@@ -4,11 +4,13 @@ function Spinner({
   navBar = true,
   fullScreen = false,
   size = 30,
+  color,
   style = { marginTop: !fullScreen ? "2rem" : "initial" },
 }: {
+  color?: string;
   navBar?: boolean;
   fullScreen?: boolean;
-  size?: any;
+  size?: number;
   style?: CSSProperties;
 }) {
   if (!fullScreen) {
@@ -19,7 +21,12 @@ function Spinner({
           style={{ display: "flex", justifyContent: "center" }}
         >
           <div
-            style={{ width: `${size}px`, height: `${size}px` }}
+            style={{
+              width: `${size}px`,
+              height: `${size}px`,
+              borderTopColor: `${color ?? "#0070f3"} !important`,
+              borderLeftColor: `${color ?? "#0070f3"} !important`,
+            }}
             className="spinner-icon"
           ></div>
         </div>
@@ -46,7 +53,12 @@ function Spinner({
           style={{ display: "flex", justifyContent: "center" }}
         >
           <div
-            style={{ width: `${size}px`, height: `${size}px` }}
+            style={{
+              width: `${size}px`,
+              height: `${size}px`,
+              borderTopColor: `${color ?? "#0070f3"} !important`,
+              borderLeftColor: `${color ?? "#0070f3"} !important`,
+            }}
             className="spinner-icon"
           ></div>
         </div>

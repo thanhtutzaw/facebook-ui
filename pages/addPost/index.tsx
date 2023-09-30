@@ -1,4 +1,5 @@
-import CreatePostForm from "../../components/Input/CreatePostForm";
+import CreatePostForm from "@/components/Form/CreatePost";
+
 export default function AddPost() {
   // const text = textRef.current?.innerHTML.replaceAll("<div>", "hello");
   // .replace(/<div>/g, "<br>")!

@@ -1,4 +1,5 @@
 import BackHeader from "@/components/Header/BackHeader";
+import Spinner from "@/components/Spinner";
 import { PostList } from "@/components/Tabs/Sections/Home/PostList";
 import { bioFallback } from "@/components/Tabs/Sections/Profile/ProfileInfo";
 import s from "@/components/Tabs/Sections/Profile/index.module.scss";
@@ -10,10 +11,21 @@ import { verifyIdToken } from "@/lib/firebaseAdmin";
 import {
   acceptFriends,
   addFriends,
+  blockFriend,
+  cancelFriendRequest,
   unBlockFriend,
+  unFriend,
 } from "@/lib/firestore/friends";
+import { getFullName } from "@/lib/firestore/profile";
 import { Post as PostType, account, friends } from "@/types/interfaces";
-import { faCheck, faClock, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBan,
+  faCheck,
+  faClock,
+  faClose,
+  faPlus,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQueryClient } from "@tanstack/react-query";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
@@ -28,12 +40,13 @@ import {
   startAfter,
   where,
 } from "firebase/firestore";
+import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { ReactNode, useCallback, useContext, useEffect, useState } from "react";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;
@@ -126,16 +139,25 @@ export default function UserProfile({
   canUnBlock: Boolean;
 }) {
   const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const userName = getFullName(profile);
+  const friendId = router.query.user;
+  const [friendMenuToggle, setFriendMenuToggle] = useState(false);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {}, [loading]);
 
   const statusComponents = {
     canAccept: (
       <button
         onClick={async () => {
-          const data = {
-            id: router.query.user,
-          } as friends;
-          await acceptFriends(token.uid, data, currentUser);
-          router.replace("/", undefined, { scroll: false });
+          if (!friendId) return;
+          await acceptFriends(
+            token.uid,
+            { id: friendId?.toString() },
+            currentUser
+          );
+          router.replace(router.asPath, undefined, { scroll: false });
           queryClient.refetchQueries(["pendingFriends"]);
           queryClient.invalidateQueries(["pendingFriends"]);
         }}
@@ -146,29 +168,34 @@ export default function UserProfile({
       </button>
     ),
     friend: (
-      <button
-        style={
-          {
-            // position: "relative",
+      <div style={{ position: "relative" }}>
+        <button
+          aria-label={`Friend with ${userName}`}
+          onClick={() => {
+            setFriendMenuToggle((prev) => !prev);
+          }}
+          style={
+            {
+              // position: "relative",
+            }
           }
-        }
-        className={s.editToggle}
-      >
-        <svg
-          width="20"
-          data-e2e=""
-          height="20"
-          viewBox="0 0 48 48"
-          fill="currentColor"
-          xmlns="http://www.w3.org/2000/svg"
+          className={s.editToggle}
         >
-          <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M13.0001 13C13.0001 9.68629 15.6864 7 19.0001 7C22.3139 7 25.0001 9.68629 25.0001 13C25.0001 16.3137 22.3139 19 19.0001 19C15.6864 19 13.0001 16.3137 13.0001 13ZM19.0001 3C13.4773 3 9.00015 7.47715 9.00015 13C9.00015 18.5228 13.4773 23 19.0001 23C24.523 23 29.0001 18.5228 29.0001 13C29.0001 7.47715 24.523 3 19.0001 3ZM5.19435 40.9681C6.70152 35.5144 10.0886 32.2352 13.9162 30.738C17.7125 29.2531 22.0358 29.4832 25.6064 31.2486C26.1015 31.4934 26.7131 31.338 26.9931 30.8619L28.0072 29.1381C28.2872 28.662 28.1294 28.0465 27.6384 27.7937C23.0156 25.4139 17.4034 25.0789 12.4591 27.0129C7.37426 29.0018 3.09339 33.3505 1.2883 40.0887C1.14539 40.6222 1.48573 41.1592 2.02454 41.2805L3.97575 41.7195C4.51457 41.8408 5.04724 41.5004 5.19435 40.9681ZM44.7074 30.1212C45.0979 29.7307 45.0979 29.0975 44.7074 28.707L43.2932 27.2928C42.9026 26.9023 42.2695 26.9023 41.8789 27.2928L30.0003 39.1715L25.1216 34.2928C24.7311 33.9023 24.0979 33.9023 23.7074 34.2928L22.2932 35.707C21.9026 36.0975 21.9026 36.7307 22.2932 37.1212L28.586 43.4141C29.3671 44.1952 30.6334 44.1952 31.4145 43.4141L44.7074 30.1212Z"
-          ></path>
-        </svg>
-        {/* <div>
+          <svg
+            width="20"
+            data-e2e=""
+            height="20"
+            viewBox="0 0 48 48"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M13.0001 13C13.0001 9.68629 15.6864 7 19.0001 7C22.3139 7 25.0001 9.68629 25.0001 13C25.0001 16.3137 22.3139 19 19.0001 19C15.6864 19 13.0001 16.3137 13.0001 13ZM19.0001 3C13.4773 3 9.00015 7.47715 9.00015 13C9.00015 18.5228 13.4773 23 19.0001 23C24.523 23 29.0001 18.5228 29.0001 13C29.0001 7.47715 24.523 3 19.0001 3ZM5.19435 40.9681C6.70152 35.5144 10.0886 32.2352 13.9162 30.738C17.7125 29.2531 22.0358 29.4832 25.6064 31.2486C26.1015 31.4934 26.7131 31.338 26.9931 30.8619L28.0072 29.1381C28.2872 28.662 28.1294 28.0465 27.6384 27.7937C23.0156 25.4139 17.4034 25.0789 12.4591 27.0129C7.37426 29.0018 3.09339 33.3505 1.2883 40.0887C1.14539 40.6222 1.48573 41.1592 2.02454 41.2805L3.97575 41.7195C4.51457 41.8408 5.04724 41.5004 5.19435 40.9681ZM44.7074 30.1212C45.0979 29.7307 45.0979 29.0975 44.7074 28.707L43.2932 27.2928C42.9026 26.9023 42.2695 26.9023 41.8789 27.2928L30.0003 39.1715L25.1216 34.2928C24.7311 33.9023 24.0979 33.9023 23.7074 34.2928L22.2932 35.707C21.9026 36.0975 21.9026 36.7307 22.2932 37.1212L28.586 43.4141C29.3671 44.1952 30.6334 44.1952 31.4145 43.4141L44.7074 30.1212Z"
+            ></path>
+          </svg>
+          {/* <div>
           <FontAwesomeIcon icon={faUser} />
           <FontAwesomeIcon
             style={{
@@ -179,42 +206,120 @@ export default function UserProfile({
             icon={faCheck}
           />
         </div> */}
-        Friends
-      </button>
+          Friends
+        </button>
+        <Menu
+          uid={token.uid}
+          friendId={friendId?.toString()!}
+          friendMenuToggle={friendMenuToggle}
+        >
+          <button
+            aria-label="Unfriend"
+            // className={s.danger}
+            onClick={async (e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              router.replace(router.asPath, undefined, { scroll: false });
+              await unFriend(token.uid, { id: String(friendId) });
+            }}
+          >
+            <FontAwesomeIcon icon={faUser} />
+            UnFriend
+          </button>
+          <button
+            aria-label="Block this user"
+            className={s.danger}
+            onClick={async (e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              router.replace(router.asPath, undefined, { scroll: false });
+              await blockFriend(token.uid, { id: String(friendId) });
+            }}
+          >
+            <FontAwesomeIcon icon={faBan} />
+            Block
+          </button>
+        </Menu>
+      </div>
     ),
     notFriend: (
       <button
+        key={loading ? "true" : "false"}
+        // disabled={loading}
         onClick={async () => {
+          setLoading(true);
           const data = {
             id: router.query.user,
           } as friends;
           await addFriends(token.uid, data, currentUser);
           router.replace(router.asPath, undefined, { scroll: false });
-          queryClient.refetchQueries(["pendingFriends"]);
           queryClient.invalidateQueries(["pendingFriends"]);
+          setLoading(false);
         }}
         className={`${s.editToggle} ${s.secondary}`}
       >
-        <FontAwesomeIcon icon={faPlus} />
-        Add Friend
+        {!loading ? (
+          <FontAwesomeIcon icon={faPlus} />
+        ) : (
+          <Spinner
+            key={loading ? "true" : "false"}
+            size={18}
+            style={{ margin: "0" }}
+            color={"white"}
+          />
+        )}
+        {!loading ? "Add Friend" : "Adding"}
       </button>
     ),
     pending: (
-      <button className={`${s.editToggle} ${s.pending}`}>
-        <FontAwesomeIcon icon={faClock} />
-        Pending
-      </button>
+      <div>
+        <button
+          onClick={() => {
+            setFriendMenuToggle((prev) => !prev);
+          }}
+          className={`${s.editToggle} ${s.pending}`}
+        >
+          <FontAwesomeIcon icon={faClock} />
+          Pending
+        </button>
+        <Menu
+          uid={token.uid}
+          friendId={friendId?.toString()!}
+          friendMenuToggle={friendMenuToggle}
+        >
+          <button
+            aria-label="Cancel friend request"
+            onClick={async (e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              await cancelFriendRequest(token.uid, { id: String(friendId) });
+              router.replace(router.asPath, undefined, { scroll: false });
+              setFriendMenuToggle(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faClose} />
+            Cancel Request
+          </button>
+          <button
+            aria-label="Block this user"
+            className={s.danger}
+            onClick={async (e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              router.replace(router.asPath, undefined, { scroll: false });
+              await blockFriend(token.uid, { id: String(friendId) });
+              setFriendMenuToggle(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faBan} />
+            Block
+          </button>
+        </Menu>
+      </div>
     ),
   };
-  const router = useRouter();
-  useEffect(() => {
-    // console.log(`in [user] ${{router}}`);
-    console.log(router);
-  }, [router]);
   const { setview, currentUser } = useContext(PageContext) as PageProps;
-  const userName = `${profile?.firstName ?? "Unknown"} ${
-    profile?.lastName ?? "User"
-  }`;
+
   const [limitedPosts, setlimitedPosts] = useState(myPost);
   const [postLoading, setpostLoading] = useState(false);
   const [postEnd, setPostEnd] = useState(false);
@@ -246,6 +351,7 @@ export default function UserProfile({
   const { scrollRef } = useInfiniteScroll(postEnd, true, fetchMorePosts);
   const bio = profile?.bio === "" || !profile ? bioFallback : profile?.bio;
   const otherUser = token?.uid !== router.query.user;
+
   const status = canAccept
     ? "canAccept"
     : isPending
@@ -269,7 +375,7 @@ export default function UserProfile({
         <link rel="manifest" href="/manifest.json" />
       </Head>
       <div ref={scrollRef} className="user">
-        <BackHeader></BackHeader>
+        <BackHeader style={{ zIndex: "200000" }}></BackHeader>
         <div
           style={{
             marginTop: "65px",
@@ -278,7 +384,7 @@ export default function UserProfile({
           }}
           className={s.container}
         >
-          <div className={`${s.info}`} style={{ paddingBottom: "1rem" }}>
+          <div className={`${s.info}`}>
             <Image
               onClick={() => {
                 setview?.({
@@ -325,6 +431,7 @@ export default function UserProfile({
                           });
                           await unBlockFriend(token.uid, {
                             id: router.query.user?.toString()!,
+                            senderId: token.uid,
                           });
                         }}
                       >
@@ -360,5 +467,45 @@ export default function UserProfile({
         </div>
       </div>
     </>
+  );
+}
+function Menu({
+  friendMenuToggle,
+  uid,
+  friendId,
+  children,
+}: {
+  friendId: string;
+  uid: string;
+  friendMenuToggle: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <AnimatePresence mode="wait">
+      {friendMenuToggle && (
+        <motion.div
+          className={s.menuContainer}
+          initial={{
+            opacity: 0,
+            scale: 0.8,
+          }}
+          animate={{
+            opacity: friendMenuToggle ? 1 : 0,
+            // opacity: showAction === id ? 1 : 0,
+            scale: 1,
+          }}
+          exit={{
+            opacity: 0,
+            scale: 0.8,
+          }}
+          transition={{
+            duration: 0.15,
+          }}
+          // className={styles.actions}
+        >
+          {children}
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

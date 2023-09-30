@@ -17,7 +17,7 @@ import {
   orderBy,
   query,
   updateDoc,
-  where
+  where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -499,13 +499,20 @@ export default function Home({
           // console.log(process.env.NEXT_PUBLIC_MessageKey);
           if (token && uid) {
             console.log("FCM token:", token);
-            const shouldStoreNewDeviceToken = fcmToken?.includes(token);
-            if (shouldStoreNewDeviceToken) return;
-            const userDoc = doc(db, `users/${uid}`);
+            // const shouldStoreNewDeviceToken = fcmToken?.includes(token);
+            // if (shouldStoreNewDeviceToken) return;
+            // const userDoc = doc(db, `users/${uid}`);
 
-            await updateDoc(userDoc, { fcmToken: arrayUnion(token) });
+            // await updateDoc(userDoc, { fcmToken: arrayUnion(token) });
 
-            console.log("stored token to db");
+            const isTokenStored = fcmToken?.includes(token);
+            if (!isTokenStored) {
+              const userDoc = doc(db, `users/${uid}`);
+
+              await updateDoc(userDoc, { fcmToken: arrayUnion(token) });
+
+              console.log("stored token to db");
+            }
           } else {
             console.log("No FCM token received.");
           }
@@ -526,6 +533,7 @@ export default function Home({
     async function getLastpull() {
       lastPull = (await getDoc(friendReqCountRef)).data()
         ?.lastPullTimestamp as Timestamp;
+      console.log(lastPull);
     }
     getLastpull();
     let unsubscribeFriendReqCount: Unsubscribe;

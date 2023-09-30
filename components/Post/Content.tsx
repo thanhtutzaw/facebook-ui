@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { app } from "../../lib/firebase";
-import Input from "../Input/Input";
+import TextInput from "../Form/Input/TextInput";
 import AuthorInfo from "./AuthorInfo";
 import AdminMenu from "./Menu/AdminMenu";
 import Menu from "./Menu/Menu";
@@ -18,7 +18,7 @@ import { PostContext, PostProps } from "./PostContext";
 import { SharePreview } from "./SharePost/Preview";
 import { SocialCount } from "./SocialCount";
 import s from "./index.module.scss";
-export default function Content({post}:{post:any}) {
+export default function Content({ post }: { post: any }) {
   const {
     Likes,
     setLikes,
@@ -61,7 +61,11 @@ export default function Content({post}:{post:any}) {
     const { user, post } = router.query;
     const isViewingAuthorProfile = authorId === user || (user && post);
     if (isViewingAuthorProfile || preventNavigate) return;
-    router.push({ query: { user: String(authorId) } }, String(authorId));
+    if (router.pathname === "/") {
+      router.push({ query: { user: String(authorId) } }, String(authorId));
+    } else {
+      router.push(`/${String(authorId)}`);
+    }
   };
   const [authUser, setauthUser] = useState<User | null>(null);
   useEffect(() => {
@@ -184,7 +188,7 @@ export default function Content({post}:{post:any}) {
         </>
       )}
       {text !== "" && (
-        <Input
+        <TextInput
           style={
             {
               // marginBottom: text === "" ? "0" : "5px",

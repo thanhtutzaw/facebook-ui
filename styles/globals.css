@@ -52,8 +52,8 @@ main {
 
 #nprogress .spinner-icon,
 .loading .spinner-icon {
-  border-top-color : #0070f3 !important;
-  border-left-color: #0070f3 !important;
+  /* border-top-color : #0070f3 !important; */
+  /* border-left-color: #0070f3 !important; */
 }
 
 .loading {

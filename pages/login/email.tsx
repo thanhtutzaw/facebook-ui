@@ -57,7 +57,7 @@ export default function Email() {
   return (
     <div className="emailLogin">
       <BackHeader
-        iconColor={"white"}
+        color={"white"}
         style={{ border: "0", backgroundColor: "transparent" }}
       />
       <motion.form

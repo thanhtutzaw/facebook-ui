@@ -11,6 +11,8 @@ import { AppContext } from "@/context/AppContext";
 import { AppProps } from "@/types/interfaces";
 import s from "../../Sections/Menu/menu.module.scss";
 import Image from "next/image";
+import { app } from "@/lib/firebase";
+import { getMessaging, deleteToken } from "firebase/messaging";
 
 export default function SwitchAccount(props: {
   setLoading: any;
@@ -81,6 +83,8 @@ export default function SwitchAccount(props: {
               setLoading(true);
 
               try {
+                const messaging = getMessaging(app);
+                await deleteToken(messaging);
                 await signout();
                 await signInWithEmailAndPassword(auth, a.email, a.password);
               } catch (error: any) {

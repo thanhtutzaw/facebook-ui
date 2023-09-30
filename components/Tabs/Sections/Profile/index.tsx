@@ -1,4 +1,4 @@
-import EditProfileForm from "@/components/Input/EditProfileForm";
+import EditProfileForm from "@/components/Form/EditProfile";
 import { AppContext } from "@/context/AppContext";
 import { useActive } from "@/hooks/useActiveTab";
 import { MYPOST_LIMIT } from "@/lib/QUERY_LIMIT";
@@ -204,7 +204,6 @@ export default function Profile() {
               //   gridTemplateRows: editToggle ? "1fr" : "0fr",
               // }}
             >
-              
               {/* <AnimatePresence mode="sync"> */}
               <EditProfileForm
                 updating={updating}

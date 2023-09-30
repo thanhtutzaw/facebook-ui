@@ -1,5 +1,5 @@
 import { HTMLAttributes, CSSProperties, ReactNode, RefObject } from "react";
-import s from "../../styles/Home.module.scss";
+import s from "@/styles/Home.module.scss";
 
 interface AppProps {
   style?: CSSProperties;
@@ -8,7 +8,7 @@ interface AppProps {
   children?: ReactNode;
   text?: string;
 }
-export default function Input({
+export default function TextInput({
   style,
   element,
   children,

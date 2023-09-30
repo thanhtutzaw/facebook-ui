@@ -87,7 +87,7 @@
                 .info {
                     flex: 1;
                     p {
-                        width: 50vw;
+                        max-width: 50vw;
                         overflow: hidden;
                         text-overflow: ellipsis;
                     }
@@ -96,6 +96,7 @@
                     color: rgb(0, 173, 0);
                     margin: auto 0;
                     background-color: transparent;
+                    background: repeating-linear-gradient(45deg, #00ad0021, transparent 100px);
                 }
                 &:hover {
                     background-color: darken($color: white, $amount: 10);

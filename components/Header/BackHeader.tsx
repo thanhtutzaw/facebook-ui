@@ -5,21 +5,31 @@ import { CSSProperties, MouseEventHandler, ReactNode } from "react";
 import s from "../../styles/Home.module.scss";
 function BackHeader(props: {
   style?: CSSProperties;
-  iconColor?: any;
+  color?: CSSProperties["color"];
   selectMode?: boolean;
   children?: ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
 }) {
   const router = useRouter();
-  const handleClick =
-    props.onClick ||
-    (() => {
-      router.back();
-    });
+  const handleClick = (e: any) => {
+    console.log(window.history);
+    // console.log(window.history.length <= 1);
+    if (window.history.length > 1) {
+      console.log("back route");
+      if (props.onClick) {
+        props.onClick(e);
+      } else {
+        router.back();
+      }
+    } else {
+      console.log("Redirect to /");
+      router.push("/");
+    }
+  };
   return (
     <div style={props.style} className={s.backHeader}>
       <button
-        style={{ color: props.iconColor }}
+        style={{ color: props.color }}
         title="Back"
         aria-label="Back Button"
         onClick={handleClick}

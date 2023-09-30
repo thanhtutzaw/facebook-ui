@@ -29,6 +29,7 @@ import { verifyIdToken } from "../../lib/firebaseAdmin";
 import {
   acceptFriends,
   blockFriend,
+  cancelFriendRequest,
   rejectFriendRequest,
   unBlockFriend,
   unFriend,
@@ -305,7 +306,7 @@ function FriendList({
                                 id: friend.id,
                               } as friends;
                               try {
-                                await rejectFriendRequest(uid, data);
+                                await cancelFriendRequest(uid, data);
                                 router.replace(router.asPath, undefined, {
                                   scroll: false,
                                 });
