@@ -31,7 +31,7 @@ function SecondaryPage({
         // display: "grid",
         // alignContent: "center",
         // placeItems: "center",
-        zIndex: "10000",
+        zIndex: "300000",
         // backdropFilter: "blur(2px)",
         // padding: "1rem",
         // textTransform: "capitalize",

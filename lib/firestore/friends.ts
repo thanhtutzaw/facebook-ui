@@ -78,14 +78,17 @@ export async function addFriends(
         message: `${
           currentUser?.displayName ?? "Unknow User"
         } send you a friend request.`,
-        // icon: "/_next/image?url=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Ffacebook-37f93.appspot.com%2Fo%2FprofilePictures%252Fezgif.com-crop.gif%3Falt%3Dmedia%26token%3Dbe48d949-7d75-4a3d-84f0-a970b26534cd&w=256&q=75",
         icon:
           currentUser?.photoURL_cropped ??
           currentUser?.photoURL ??
           "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
         badge: "/badge.svg",
         link: `/${receiptData.id}`,
-        actionPayload: JSON.stringify({ uid: f.id, f, currentUser }),
+        actionPayload: JSON.stringify({
+          uid: receiptData.id,
+          receiptData,
+          currentUser,
+        }),
         actions: JSON.stringify([...NotiAction.friend_request]),
         // webpush: {
         //   fcm_options: {
@@ -100,13 +103,14 @@ export async function addFriends(
   }
 }
 export async function acceptFriends(
-  uid: string,
+  senderData: string,
   f: friends,
   currentUser?: (User & { photoURL_cropped?: string }) | null
 ) {
-  const { author, ...data } = { ...f };
-  const acceptedData = {
-    ...data,
+  // const { author, ...data } = { ...f };
+  const friendData = {
+    // ...data,
+    id: f.id,
     status: "friend",
     updatedAt: serverTimestamp(),
   } as friends;
@@ -117,7 +121,7 @@ export async function acceptFriends(
   // console.log(`reqPath ${f.senderId}`);
   //72Gp1tmlBwRxdUe8EPKTk6iIgRh2 (No) //J3YKWcohocYfWyMMhz8PJDWOb3k1 ( Yes )
   try {
-    await setDoc(doc(db, `users/${uid}/friendReqCount/reqCount`), {
+    await setDoc(doc(db, `users/${senderData}/friendReqCount/reqCount`), {
       count: increment(-1),
     });
     // await updateDoc(doc(db, `users/${f.senderId}/friendReqCount/reqCount`), {
@@ -127,7 +131,7 @@ export async function acceptFriends(
   } catch (error) {
     console.error("Error updating count:", error);
   }
-  await updateFriendStatus(uid, acceptedData); //this run
+  await updateFriendStatus(senderData, friendData); //this run
   console.log("updated accepte");
   // const basePath = window?.location?.origin;
   // console.log(basePath);
@@ -206,15 +210,15 @@ export async function blockFriend(uid: string, f: friends) {
   await updateFriendStatus(uid, blockedData);
 }
 
-async function updateFriendStatus(uid: string, senderData: friends) {
-  const receiptData = { ...senderData, id: uid };
-  const { id: myId } = receiptData;
-  const { id: friendId } = senderData;
-  const senderRef = doc(db, `users/${myId}/friends/${friendId}`);
-  const receiptRef = doc(db, `users/${friendId}/friends/${myId}`);
+async function updateFriendStatus(senderId: string, receipt: friends) {
+  const adminData = { ...receipt, id: senderId };
+  // const { id: myId } = senderId;
+  const { id: friendId } = receipt;
+  const adminRef = doc(db, `users/${senderId}/friends/${friendId}`);
+  const receiptRef = doc(db, `users/${friendId}/friends/${senderId}`);
   try {
-    await updateDoc(senderRef, senderData);
-    await updateDoc(receiptRef, receiptData);
+    await updateDoc(adminRef, adminData);
+    await updateDoc(receiptRef, receipt);
     console.log("Updated Success");
   } catch (error) {
     console.log(error);
