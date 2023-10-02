@@ -1,7 +1,7 @@
 self.addEventListener("notificationclick", function (event) {
     console.log('notification click event', event);
     const { reply: inputText } = event;
-    const { click_action, payload } = event.notification.data;
+    const { click_action, actionPayload } = event.notification.data;
     // const client = self.clients
     event.notification.close();
     switch (event.action) {
@@ -29,19 +29,37 @@ self.addEventListener("notificationclick", function (event) {
             break;
         case `accept`:
             // event.waitUntil(clients.openWindow(`https://facebook-ui-zee.vercel.app/api/hello`))
-            event.waitUntil(async () => {
-                await fetch(`api/trigger_noti_action?action=accept`,
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-type": "application/json"
-                        },
-                        body: JSON.stringify(...payload)
-                    },
-                )
+            event.waitUntil(
 
-            })
-            console.log("accepted user ", event.notification);
+                // await fetch(`api/trigger_noti_action?action=accept`,
+                //     {
+                //         method: "POST",
+                //         headers: {
+                //             "Content-type": "application/json"
+                //         },
+                //         body: JSON.stringify(actionPayload)
+                //     },
+                // )
+                fetch('api/trigger_noti_action?action=accept', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(actionPayload)
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Accepted user');
+                        } else {
+                            console.error('Accept Action failed');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    })
+
+                // console.log("accepted user ", actionPayload);
+            )
             break;
         default:
             event.waitUntil(
@@ -90,7 +108,7 @@ messaging.onBackgroundMessage((payload) => {
         renotify: tag !== '',
         data: {
             click_action,
-            actionPayload
+            actionPayload: JSON.parse(actionPayload)
         },
         actions: JSON.parse(actions)
         // actions: [{ action: "see_post", title: "See Post" }, { action: "Input", title: "Input", type: 'input',placeHolder:'Type Something' }],

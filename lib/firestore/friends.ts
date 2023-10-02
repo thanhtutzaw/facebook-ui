@@ -85,7 +85,7 @@ export async function addFriends(
           "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
         badge: "/badge.svg",
         link: `/${receiptData.id}`,
-        actionPayload: JSON.stringify({ uid, f, currentUser }),
+        actionPayload: JSON.stringify({ uid: f.id, f, currentUser }),
         actions: JSON.stringify([...NotiAction.friend_request]),
         // webpush: {
         //   fcm_options: {
@@ -112,28 +112,43 @@ export async function acceptFriends(
   } as friends;
   // const receiptData = { ...acceptedData, id: uid };
   // await setDoc(reqCountRef, { count: increment(+1) });
-  const reqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
-  await setDoc(reqCountRef, { count: increment(-1) });
-  await updateFriendStatus(uid, acceptedData);
-
-  await fetch("/api/sendFCM", {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify({
-      recieptId: f.senderId,
-      message: `${
-        currentUser?.displayName ?? "Unknown User"
-      } accepted your friend request.`,
-      icon:
-        currentUser?.photoURL_cropped ??
-        currentUser?.photoURL ??
-        "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-      badge: "/badge.svg",
-      link: `/${uid}`,
-    }),
-  });
+  // const reqCountRef = ;
+  // await setDoc(reqCountRef, { count: increment(-1) });//this doesn't run
+  // console.log(`reqPath ${f.senderId}`);
+  //72Gp1tmlBwRxdUe8EPKTk6iIgRh2 (No) //J3YKWcohocYfWyMMhz8PJDWOb3k1 ( Yes )
+  try {
+    await setDoc(doc(db, `users/${uid}/friendReqCount/reqCount`), {
+      count: increment(-1),
+    });
+    // await updateDoc(doc(db, `users/${f.senderId}/friendReqCount/reqCount`), {
+    //   count: increment(-1),
+    // });
+    console.log("updated count");
+  } catch (error) {
+    console.error("Error updating count:", error);
+  }
+  await updateFriendStatus(uid, acceptedData); //this run
+  console.log("updated accepte");
+  // const basePath = window?.location?.origin;
+  // console.log(basePath);
+  // await fetch(`/api/sendFCM`, {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-type": "application/json",
+  //   },
+  //   body: JSON.stringify({
+  //     recieptId: f.senderId,
+  //     message: `${
+  //       currentUser?.displayName ?? "Unknown User"
+  //     } accepted your friend request.`,
+  //     icon:
+  //       currentUser?.photoURL_cropped ??
+  //       currentUser?.photoURL ??
+  //       "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+  //     badge: "/badge.svg",
+  //     link: `/${uid}`,
+  //   }),
+  // });
   console.log("accepted");
 }
 export async function rejectFriendRequest(uid: string, f: friends) {
@@ -200,6 +215,7 @@ async function updateFriendStatus(uid: string, senderData: friends) {
   try {
     await updateDoc(senderRef, senderData);
     await updateDoc(receiptRef, receiptData);
+    console.log("Updated Success");
   } catch (error) {
     console.log(error);
     throw error;
