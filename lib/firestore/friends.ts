@@ -139,7 +139,7 @@ export async function acceptFriends(
   console.log("updated accepte");
   // const basePath = window?.location?.origin;
   // console.log(basePath);
-  await fetch(`/api/sendFCM`, {
+  await fetch(`https://facebook-ui-zee.vercel.app/api/sendFCM`, {
     method: "POST",
     headers: {
       "Content-type": "application/json",
