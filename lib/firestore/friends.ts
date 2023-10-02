@@ -87,7 +87,11 @@ export async function addFriends(
         actionPayload: JSON.stringify({
           uid: senderData.id,
           f: receiptData,
-          currentUser,
+          currentUser: {
+            displayName: `${author?.firstName} ${author?.lastName}`,
+            photoURL: author?.photoURL,
+            photoURL_cropped: author?.photoURL_cropped,
+          },
         }),
         actions: JSON.stringify([...NotiAction.friend_request]),
         // webpush: {
@@ -135,24 +139,24 @@ export async function acceptFriends(
   console.log("updated accepte");
   // const basePath = window?.location?.origin;
   // console.log(basePath);
-  // await fetch(`/api/sendFCM`, {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-type": "application/json",
-  //   },
-  //   body: JSON.stringify({
-  //     recieptId: f.senderId,
-  //     message: `${
-  //       currentUser?.displayName ?? "Unknown User"
-  //     } accepted your friend request.`,
-  //     icon:
-  //       currentUser?.photoURL_cropped ??
-  //       currentUser?.photoURL ??
-  //       "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-  //     badge: "/badge.svg",
-  //     link: `/${uid}`,
-  //   }),
-  // });
+  await fetch(`/api/sendFCM`, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({
+      recieptId: f.senderId,
+      message: `${
+        currentUser?.displayName ?? "Unknown User"
+      } accepted your friend request.`,
+      icon:
+        currentUser?.photoURL_cropped ??
+        currentUser?.photoURL ??
+        "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+      badge: "/badge.svg",
+      link: `/${senderData}`,
+    }),
+  });
   console.log("accepted");
 }
 export async function rejectFriendRequest(uid: string, f: friends) {
