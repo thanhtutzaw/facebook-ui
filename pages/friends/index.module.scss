@@ -83,7 +83,7 @@
                     align-items: center;
                     flex-wrap: wrap;
                     gap: 0.5rem;
-                    justify-content: end;
+                    justify-content: flex-end;
                     flex: 1;
                     &:has(> :last-child:nth-child(2)) {
                         flex-wrap: nowrap;

@@ -37,6 +37,7 @@ import {
 import { friends } from "../../types/interfaces";
 import s from "./index.module.scss";
 import { AnimatePresence, motion } from "framer-motion";
+import { AcceptFriend, statusDataType } from "../[user]";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -180,7 +181,12 @@ export default function Page(props: {
             {status === "block" ? "Empty Blocked" : "Empty Friends"}
           </p>
         ) : (
-          <FriendList setFriends={setFriends} friends={friends} uid={uid} />
+          <FriendList
+            setstatus={setstatus}
+            setFriends={setFriends}
+            friends={friends}
+            uid={uid}
+          />
         )}
       </div>
     </>
@@ -188,10 +194,12 @@ export default function Page(props: {
 }
 
 function FriendList({
+  setstatus,
   setFriends,
   friends,
   uid,
 }: {
+  setstatus: Function;
   setFriends: Function;
   friends: friends[];
   uid: string;
@@ -216,6 +224,14 @@ function FriendList({
       console.log(error);
     }
   }
+  // const statusData: statusDataType = canAccept
+  //   ? "canAccept"
+  //   : isPending
+  //   ? "pending"
+  //   : isFriend
+  //   ? "friend"
+  //   : "notFriend";
+  // const [status, setstatus] = useState(statusData);
   return (
     <ul>
       {friends.map((friend) => (
@@ -237,15 +253,9 @@ function FriendList({
                 <Image
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
                   fill
-                  // style={{
-
-                  // }}
-                  // className={s.profile}
                   alt={`${friend.author?.firstName ?? "Unknow User"} ${
                     friend.author?.lastName ?? ""
                   }'s profile picture`}
-                  // width={100}
-                  // height={100}
                   src={
                     friend.author?.photoURL
                       ? (friend.author?.photoURL as string)
@@ -290,7 +300,7 @@ function FriendList({
                         }
                       }}
                     >
-                      Un Friend
+                      Unfriend
                     </button>
                   )}
                   {friend.status === "pending" && (
@@ -325,28 +335,21 @@ function FriendList({
                         </>
                       ) : (
                         <>
-                          <button
-                            aria-label="Accept"
+                          <AcceptFriend
                             onClick={async (e) => {
                               e.stopPropagation();
                               e.preventDefault();
-                              const data = {
-                                id: friend.id,
-                              } as friends;
-                              await acceptFriends(uid, data, currentUser);
-                              router.replace("/", undefined, {
+                              await acceptFriends(uid, friend, currentUser);
+                              router.replace(router.asPath, undefined, {
                                 scroll: false,
                               });
-                              updateFriendList(friend.id.toString());
+                              updateFriendList(String(friend.id));
+                              setstatus("friend");
                               queryClient.refetchQueries(["pendingFriends"]);
                               queryClient.invalidateQueries(["pendingFriends"]);
                             }}
-                            title="Accept"
                             className={s.secondary}
-                          >
-                            <FontAwesomeIcon icon={faCheck} />
-                            Accept
-                          </button>
+                          />
                           <button
                             title="Reject"
                             aria-label="Reject"
@@ -357,7 +360,7 @@ function FriendList({
                                 id: friend.id,
                               } as friends;
                               await rejectFriendRequest(uid, data);
-                              router.replace("/", undefined, {
+                              router.replace(router.asPath, undefined, {
                                 scroll: false,
                               });
                               updateFriendList(friend.id.toString());

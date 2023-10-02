@@ -4,7 +4,13 @@ import { fetchLikedUsers } from "../../lib/firestore/post";
 import { LikedUsers } from "./LikedUsers";
 import { PostContext, PostProps } from "./PostContext";
 import s from "./index.module.scss";
-export function SocialCount(props: { post: any; Likes: any; setLikes: any; likeCount: any; }) {
+import { Post } from "@/types/interfaces";
+export function SocialCount(props: {
+  post: Post;
+  Likes: any;
+  setLikes: Function;
+  likeCount: number;
+}) {
   const { post, Likes, setLikes, likeCount } = props;
   // const {} = useContext(PostContext) as PostProps;
   // const [reaction, setReaction] = useState({
@@ -14,6 +20,21 @@ export function SocialCount(props: { post: any; Likes: any; setLikes: any; likeC
   const commentCount = parseInt((post.commentCount?.toString() as string) ?? 0);
   const SocialUserDialogRef = useRef<HTMLDialogElement>(null);
   const [togglereactionList, settogglereactionList] = useState(false);
+  // useEffect(() => {
+  //   console.log(togglereactionList);
+  //   const handle = (e: any) => {
+  //     console.log(e);
+  //     if (togglereactionList && SocialUserDialogRef) {
+  //       console.log(e);
+
+  //       if (e.target === SocialUserDialogRef.current) {
+  //         settogglereactionList(false);
+  //       }
+  //     }
+  //   };
+  //   window.addEventListener("click", handle);
+  //   // return () => window.removeEventListener("click", handle);
+  // }, [togglereactionList]);
 
   useEffect(() => {
     togglereactionList
@@ -23,7 +44,7 @@ export function SocialCount(props: { post: any; Likes: any; setLikes: any; likeC
         }, 200);
   }, [togglereactionList]);
 
-  useEffect(() => {}, [likeCount]);
+  // useEffect(() => {}, [likeCount]);
   const [socialUserListLoading, setSocialUserListLoading] = useState(false);
   const countExist = shareCount > 0 || likeCount > 0 || commentCount > 0;
   if (!countExist) return <></>;
@@ -63,35 +84,29 @@ export function SocialCount(props: { post: any; Likes: any; setLikes: any; likeC
           )}
         </div>
       ) : null}
-      <AnimatePresence
-        onExitComplete={() => {
-          console.log("animation exited");
-        }}
-      >
+      <AnimatePresence>
         <motion.dialog
           key={post.id}
-          // exit={{ y: 800 }}
           exit={{ opacity: 0 }}
-          // initial={{ opacity: 1, y: 800 }}
           initial={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           animate={{
             opacity: togglereactionList ? 1 : 0,
-            // y: !togglereactionList ? 800 : 0,
           }}
           className={s.SocialUserDialog}
           ref={SocialUserDialogRef}
           onClose={(e) => {
             settogglereactionList?.(false);
-
             e.currentTarget.style.opacity = "0";
-            // e.currentTarget.style.transform = "translateY(400px)";
           }}
           onMouseDown={(e) => {
             e.stopPropagation();
           }}
           onClick={(e) => {
             e.stopPropagation();
+            if (e.target === SocialUserDialogRef.current) {
+              settogglereactionList(false);
+            }
           }}
         >
           <AnimatePresence mode="wait">

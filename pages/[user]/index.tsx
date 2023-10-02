@@ -46,7 +46,15 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import {
+  HTMLAttributes,
+  HtmlHTMLAttributes,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 export type statusDataType = "canAccept" | "pending" | "friend" | "notFriend";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -149,23 +157,26 @@ export default function UserProfile({
 
   const statusComponents = {
     canAccept: (
-      <button
+      <AcceptFriend
         onClick={async () => {
           if (!friendId) return;
           await acceptFriends(
             token.uid,
-            { id: friendId?.toString() },
+            {
+              senderId: friendId?.toString(),
+              id: friendId?.toString(),
+            },
             currentUser
           );
-          router.replace(router.asPath, undefined, { scroll: false });
+          router.replace(router.asPath, undefined, {
+            scroll: false,
+          });
+          setstatus("friend");
           queryClient.refetchQueries(["pendingFriends"]);
           queryClient.invalidateQueries(["pendingFriends"]);
         }}
         className={`${s.editToggle} ${s.confirm}`}
-      >
-        <FontAwesomeIcon icon={faCheck} />
-        Accept
-      </button>
+      />
     ),
     friend: (
       <div style={{ position: "relative" }}>
@@ -220,6 +231,7 @@ export default function UserProfile({
               e.stopPropagation();
               e.preventDefault();
               router.replace(router.asPath, undefined, { scroll: false });
+              setstatus("notFriend");
               await unFriend(token.uid, { id: String(friendId) });
             }}
           >
@@ -580,4 +592,38 @@ function NotFriendBtn(props: {
     children,
   } = props;
   return <>{children}</>;
+}
+
+export function AcceptFriend(props: {} & HTMLAttributes<HTMLButtonElement>) {
+  const { ...rest } = props;
+  const [loading, setloading] = useState(false);
+  return (
+    <button
+      {...rest}
+      aria-label="Accept"
+      title="Accept"
+      style={{ transition: "all .2s ease-in-out" }}
+      onClick={async (e) => {
+        // console.log("loading");
+        setloading(true);
+        await rest.onClick?.(e);
+        // console.log("loading finished");
+        setloading(false);
+      }}
+    >
+      {!loading ? (
+        <FontAwesomeIcon icon={faCheck} />
+      ) : (
+        // <FontAwesomeIcon
+        //   style={{
+        //     display: !loading ? "block" : "none",
+        //   }}
+        //   icon={faPlus}
+        // />
+        // <Spin loading={loading} />
+        <Spinner style={{ margin: 0 }} size={20} />
+      )}
+      {!loading ? "Accept" : "Accepting"}
+    </button>
+  );
 }

@@ -34,13 +34,13 @@ import { PostContext, PostProps } from "./PostContext";
 export const Footer = (
   props: {
     setLikes?: Function;
-    likeCount:number;
+    likeCount: number;
     post: Post;
     setlikeCount?: Function;
     profile: User | null;
   } & StyleHTMLAttributes<HTMLDivElement>
 ) => {
-  const { post, profile, setlikeCount,setLikes,likeCount, ...rest} = props;
+  const { post, profile, setlikeCount, setLikes, likeCount, ...rest } = props;
   const router = useRouter();
   const [reactionAction, setreactionAction] = useState("");
   const commentRef = useRef<HTMLDivElement>(null);
@@ -52,7 +52,7 @@ export const Footer = (
   }, [getLocal]);
   const [isLiked, setisLiked] = useState(post.isLiked);
 
-  const { queryClient, dropdownRef, shareAction, setshareAction } = useContext(
+  const {currentUser, queryClient, dropdownRef, shareAction, setshareAction } = useContext(
     PageContext
   ) as PageProps;
   const { id, author: authorAccount, authorId } = post;
@@ -195,13 +195,14 @@ export const Footer = (
                   message: `${
                     profile?.displayName ?? "Unknown User"
                   } liked this post`,
-                  icon: profile?.photoURL
-                    ? profile.photoURL
-                    : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+                  icon:
+                    currentUser?.photoURL_cropped ??
+                    currentUser?.photoURL ??
+                    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
                   badge: "/badge.svg",
                   tag: `Likes-${post.id}`,
                   link: `/${post.authorId}/${post.id}`,
-                  
+
                   // webpush: {
                   //   fcm_options: {
                   //     link: `https://facebook-ui-zee.vercel.app`,

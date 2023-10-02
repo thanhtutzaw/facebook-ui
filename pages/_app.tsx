@@ -115,7 +115,9 @@ export default function App({
       console.log("getting foreground");
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
-        alert(JSON.stringify(payload));
+        alert(
+          `Foreground push notification received:  ${JSON.stringify(payload)}`
+        );
         // Handle the received push notification while the app is in the foreground
         const {
           title,

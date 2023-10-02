@@ -117,9 +117,9 @@ export async function acceptFriends(
       message: `${
         currentUser?.displayName ?? "Unknown User"
       } accepted your friend request.`,
-      icon: currentUser?.photoURL_cropped
-        ? currentUser?.photoURL_cropped
-        : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+      icon:        currentUser?.photoURL_cropped ??
+        currentUser?.photoURL ??
+        "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
       badge: "/badge.svg",
       link: `/${uid}`,
     }),
@@ -164,9 +164,10 @@ export async function unBlockFriend(
     console.log(error);
   }
 }
-export async function unFriend(uid: string, f: friends) {
-  await deleteDoc(doc(db, `users/${uid}/friends/${f.id}`));
-  await deleteDoc(doc(db, `users/${f.id}/friends/${uid}`));
+export async function unFriend(uid: string, f: { id: friends["id"] }) {
+  // if(!f?.id && typeof f.id !=="string") return;
+  await deleteDoc(doc(db, `users/${uid}/friends/${String(f.id)}`));
+  await deleteDoc(doc(db, `users/${String(f.id)}/friends/${uid}`));
 }
 export async function blockFriend(uid: string, f: friends) {
   const { author, ...data } = { ...f };
