@@ -67,8 +67,9 @@ export default function Home(props: { tabIndex: number }) {
             // height={170}
             // style={{ width: "40px", height: "40px" }}
             src={
-              (profile?.photoURL as string) ??
-              "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+              profile?.photoURL
+                ? (profile?.photoURL as string)
+                : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
             }
           />
         </div>

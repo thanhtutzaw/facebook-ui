@@ -48,24 +48,18 @@ export default function Notifications() {
 
     try {
       const snapShot = await getDocs(notiQuery);
+      if (snapShot.empty) return;
       const noti = snapShot.docs.map((doc) => {
         const data = doc.data() as NotiTypes;
         const date = data.createdAt as Timestamp;
         const createdDate = date.toDate().getTime();
         const lastPullData = lastPullTimestamp as Timestamp;
-        const lastPull = lastPullData?.toDate().getTime();
-        // const hasRead =;
-        // const lastPull = new Timestamp(
-        //   lastPullTimestamp?.nanoseconds!,
-        //   lastPullTimestamp?.seconds!
-        // )
-        // console.log(lastPull);
-        // console.log("hasRead", );
+        const lastPull = lastPullData ? lastPullData?.toDate().getTime() : null;
         return {
           id: doc.id,
           ...doc.data(),
           ...getMessage(data.type),
-          hasRead: createdDate < lastPull,
+          hasRead: lastPull ? createdDate < lastPull : true,
         };
       }) as NotiTypes[];
       const hasMore = noti.length > NOTI_LIMIT;

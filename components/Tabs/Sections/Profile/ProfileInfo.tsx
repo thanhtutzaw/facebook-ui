@@ -52,11 +52,6 @@ function ProfileInfo(props: {
     ? URL.createObjectURL(file)!
     : (newProfile?.photoURL! as string);
   const userName = getFullName(profile);
-
-  // const name =
-  //   profile?.firstName || profile.lastName
-  //     ? `${profile?.firstName} ${profile?.lastName}`
-  //     : "Unknown User";
   return (
     <div ref={infoRef} className={`${s.info} ${selectMode ? s.active : ""}`}>
       <Image
@@ -65,11 +60,8 @@ function ProfileInfo(props: {
             src: profile.photoURL
               ? profile.photoURL
               : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-            name: `${profile?.firstName ?? "Unknown User"} ${
-              profile?.lastName ?? ""
-            }'s profile picture`,
+            name: `${userName}'s profile picture`,
           });
-          // viewRef.current?.showModal();
         }}
         priority={false}
         className={s.profile}

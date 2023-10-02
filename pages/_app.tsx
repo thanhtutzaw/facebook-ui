@@ -205,6 +205,8 @@ export default function App({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const [croppedProfilePicture, setcroppedProfilePicture] =
+    useState<User["photoURL"]>("");
   const [currentUser, setcurrentUser] = useState<User | null>(null);
   useEffect(() => {
     const auth = getAuth(app);
@@ -263,12 +265,13 @@ export default function App({
       </Head>
       <QueryClientProvider client={queryClient}>
         <PageProvider
-          setnotiPermission={setnotiPermission}
-          currentUser={currentUser}
-          isPage={currentUser?.uid}
-          setisPage={setisPage}
           active={active}
           setActive={setActive}
+          setisPage={setisPage}
+          currentUser={currentUser}
+          isPage={currentUser?.uid}
+          setcurrentUser={setcurrentUser}
+          setnotiPermission={setnotiPermission}
         >
           <main>
             {/* <main style={{ scrollPadding: "5rem", scrollMargin: "5rem" }}> */}

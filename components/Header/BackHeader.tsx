@@ -12,17 +12,17 @@ function BackHeader(props: {
 }) {
   const router = useRouter();
   const handleClick = (e: any) => {
-    console.log(window.history);
+    // console.log(window.history);
     // console.log(window.history.length <= 1);
     if (window.history.length > 1) {
-      console.log("back route");
+      // console.log("back route");
       if (props.onClick) {
         props.onClick(e);
       } else {
         router.back();
       }
     } else {
-      console.log("Redirect to /");
+      // console.log("Redirect to /");
       router.push("/");
     }
   };

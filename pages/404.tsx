@@ -26,7 +26,6 @@ function ErrorPage() {
         <p className={s.message}>
           We can&apos;t find the page you are looking for
         </p>
-        <button onClick={()=>{router.back();}}>Back</button>
         <Link href="/" className={s.goHome}>
           Go to Home Page
         </Link>

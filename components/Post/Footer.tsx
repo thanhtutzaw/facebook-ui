@@ -90,7 +90,6 @@ export const Footer = (
       }
     }
     try {
-      console.log("getting like count");
       getLikeCount();
     } catch (error: any) {
       if (error.code === "quota-exceeded") {

@@ -16,16 +16,16 @@ export default function useLocalStorage<T>(key: string, value: T) {
   //     setLocal();
   //   };
   // }, [stringifiedValue, key]);
-function setLocal(value:any) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
+  function setLocal(value: any) {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
   const getLocal = useCallback((): T | null => {
     const value = localStorage.getItem(key);
-    console.log(value ? JSON.parse(value) : null);
+    // console.log(value ? JSON.parse(value) : null);
     return value ? JSON.parse(value) : null;
   }, [key]);
   function deleteLocal() {
     localStorage.removeItem(key);
   }
-  return { getLocal, deleteLocal ,setLocal };
+  return { getLocal, deleteLocal, setLocal };
 }

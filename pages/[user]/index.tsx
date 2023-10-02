@@ -47,6 +47,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { ReactNode, useCallback, useContext, useEffect, useState } from "react";
+export type statusDataType = "canAccept" | "pending" | "friend" | "notFriend";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;
@@ -145,7 +146,6 @@ export default function UserProfile({
   const friendId = router.query.user;
   const [friendMenuToggle, setFriendMenuToggle] = useState(false);
   const [loading, setLoading] = useState(false);
-  useEffect(() => {}, [loading]);
 
   const statusComponents = {
     canAccept: (
@@ -242,35 +242,9 @@ export default function UserProfile({
         </Menu>
       </div>
     ),
-    notFriend: (
-      <button
-        key={loading ? "true" : "false"}
-        // disabled={loading}
-        onClick={async () => {
-          setLoading(true);
-          const data = {
-            id: router.query.user,
-          } as friends;
-          await addFriends(token.uid, data, currentUser);
-          router.replace(router.asPath, undefined, { scroll: false });
-          queryClient.invalidateQueries(["pendingFriends"]);
-          setLoading(false);
-        }}
-        className={`${s.editToggle} ${s.secondary}`}
-      >
-        {!loading ? (
-          <FontAwesomeIcon icon={faPlus} />
-        ) : (
-          <Spinner
-            key={loading ? "true" : "false"}
-            size={18}
-            style={{ margin: "0" }}
-            color={"white"}
-          />
-        )}
-        {!loading ? "Add Friend" : "Adding"}
-      </button>
-    ),
+    // notFriend: (
+
+    // ),
     pending: (
       <div>
         <button
@@ -295,6 +269,7 @@ export default function UserProfile({
               await cancelFriendRequest(token.uid, { id: String(friendId) });
               router.replace(router.asPath, undefined, { scroll: false });
               setFriendMenuToggle(false);
+              setstatus("notFriend");
             }}
           >
             <FontAwesomeIcon icon={faClose} />
@@ -352,13 +327,14 @@ export default function UserProfile({
   const bio = profile?.bio === "" || !profile ? bioFallback : profile?.bio;
   const otherUser = token?.uid !== router.query.user;
 
-  const status = canAccept
+  const statusData: statusDataType = canAccept
     ? "canAccept"
     : isPending
     ? "pending"
     : isFriend
     ? "friend"
     : "notFriend";
+  const [status, setstatus] = useState(statusData);
   return (
     <>
       <Head>
@@ -444,7 +420,49 @@ export default function UserProfile({
             ) : (
               otherUser && (
                 <div className={s.actions}>
-                  {statusComponents[status]}
+                  {status === "notFriend" ? (
+                    <NotFriendBtn
+                      loading={loading}
+                      setLoading={setLoading}
+                      addFriends={addFriends}
+                      currentUser={currentUser}
+                      undefined={undefined}
+                      setstatus={setstatus}
+                      faPlus={faPlus}
+                    >
+                      <button
+                        key={loading ? "true" : "false"} // disabled={loading}
+                        onClick={async () => {
+                          setLoading(true);
+                          const data = {
+                            id: router.query.user,
+                          } as friends;
+                          await addFriends(token.uid, data, currentUser);
+                          router.replace(router.asPath, undefined, {
+                            scroll: false,
+                          });
+                          queryClient.invalidateQueries(["pendingFriends"]);
+                          setLoading(false);
+                          setstatus("pending");
+                        }}
+                        className={`${s.editToggle} ${s.secondary}`}
+                      >
+                        {!loading ? (
+                          <FontAwesomeIcon
+                            style={{
+                              display: !loading ? "block" : "none",
+                            }}
+                            icon={faPlus}
+                          />
+                        ) : (
+                          <Spin loading={loading} />
+                        )}
+                        {!loading ? "Add Friend" : "Adding"}
+                      </button>
+                    </NotFriendBtn>
+                  ) : (
+                    statusComponents[status]
+                  )}
                   <button
                     onClick={() => {
                       router.push(`/chat/${router.query.user}`);
@@ -508,4 +526,58 @@ function Menu({
       )}
     </AnimatePresence>
   );
+}
+
+function Spin(props: { loading: boolean }): JSX.Element {
+  const { loading } = props;
+  return (
+    // <Spinner
+    //   key={loading ? "true" : "false"}
+    //   size={18}
+    //   style={{
+    //     margin: "0",
+    //     display: loading ? "block" : "none",
+    //   }}
+    //   color={"white"}
+    // />
+    <div className="loading" style={{ margin: "0" }}>
+      <div
+        className="spinner"
+        style={{ display: "flex", justifyContent: "center" }}
+      >
+        <div
+          style={{
+            width: `${18}px`,
+            height: `${18}px`,
+            borderTopColor: "white",
+            borderLeftColor: "white",
+          }}
+          className="spinner-icon"
+        ></div>
+      </div>
+    </div>
+  );
+}
+
+function NotFriendBtn(props: {
+  loading: any;
+  setLoading: any;
+  addFriends: any;
+  currentUser: any;
+  undefined: any;
+  setstatus: any;
+  faPlus: any;
+  children: any;
+}) {
+  const {
+    loading,
+    setLoading,
+    addFriends,
+    currentUser,
+    undefined,
+    setstatus,
+    faPlus,
+    children,
+  } = props;
+  return <>{children}</>;
 }

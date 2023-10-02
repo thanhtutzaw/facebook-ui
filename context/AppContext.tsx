@@ -38,8 +38,8 @@ export function AppProvider(props: AppProps) {
     if (posts && !limitedPosts) {
       setlimitedPosts?.(posts);
     }
-    console.log(posts);
-    console.log(limitedPosts);
+    // console.log(posts);
+    // console.log(limitedPosts);
   }, [limitedPosts, posts, setlimitedPosts]);
   const getMorePosts = async () => {
     setpostLoading(true);

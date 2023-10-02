@@ -22,7 +22,7 @@ export type selectedId = {
 export interface PageProps {
   newsFeedData?: Post[];
   setnewsFeedData?: Function;
-  currentUser: User | null;
+  currentUser: (User & { photoURL_cropped?: string }) | null;
   queryClient?: QueryClient;
   postError?: string;
   dropdownRef?: RefObject<HTMLDivElement>;
@@ -40,6 +40,7 @@ export interface PageProps {
   setshareAction?: Function;
   setshowAction?: Function;
   view?: any;
+  setcurrentUser: Function;
   setview?: Function;
   // preventClick?: MutableRefObject<boolean>;
   preventClick?: boolean;
@@ -60,6 +61,7 @@ export function PageProvider(props: PageProps) {
     isPage,
     setisPage,
     setnotiPermission,
+    setcurrentUser,
   } = props;
   const [friends, setfriends] = useState<friends[]>([]);
   const queryClient = useQueryClient();
@@ -87,6 +89,7 @@ export function PageProvider(props: PageProps) {
   return (
     <PageContext.Provider
       value={{
+        setcurrentUser,
         newsFeedData,
         setnewsFeedData,
         setnotiPermission,

@@ -22,7 +22,7 @@ import {
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
@@ -99,7 +99,11 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
         const myPost = isBlocked
           ? null
           : await getPostWithMoreInfo(userQuery as string, mypostQuery);
-        queryPageData = { profile, myPost };
+        queryPageData = { profile,  myPost, isFriend,
+    isBlocked,
+    isPending,
+    canAccept,
+    canUnBlock, };
       } else {
         queryPageData = null;
       }
@@ -254,6 +258,10 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
         : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
     };
     const currentUserData = userToJSON(currentAccount);
+
+    // const blob = new Blob([await encodedProfileURL.arrayBuffer()]);
+    // const url = URL.createObjectURL(blob);
+    // console.log(url);
     context.res.setHeader(
       "Cache-Control",
       "public, s-maxage=10, stale-while-revalidate=59"
@@ -334,6 +342,36 @@ export default function Home({
   const [queryPageCache, setqueryPageCache] = useState(
     queryPageData ? [{ ...queryPageData }] : []
   );
+  const {
+    newsFeedData,
+    setnewsFeedData,
+    setfriends,
+    setnotiPermission,
+    currentUser,
+    setcurrentUser,
+    // active: activeTab,
+  } = useContext(PageContext) as PageProps;
+  ``;
+  // useEffect(() => {
+  //   const UserWithCropped = {
+  //     ...currentUser,
+  //     photoURL_cropped: profile?.photoURL_cropped,
+  //   };
+  //   // console.log(UserWithCropped);
+  //   setcurrentUser()
+  // }, [currentUser, profile?.photoURL_cropped, setcurrentUser]);
+  const updateCurrentUser = useCallback(() => {
+    const UserWithCropped = {
+      ...currentUser,
+      photoURL_cropped: profile?.photoURL_cropped,
+    };
+    setcurrentUser?.(UserWithCropped);
+  }, [currentUser, profile?.photoURL_cropped, setcurrentUser]);
+
+  useEffect(() => {
+    updateCurrentUser();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     if (queryPageData) {
       // setqueryPageCache((: any) => [prev, ...queryPageData]);prev
@@ -346,13 +384,6 @@ export default function Home({
     console.log(queryPageCache);
   }, [queryPageCache]);
 
-  const {
-    newsFeedData,
-    setnewsFeedData,
-    setfriends,
-    setnotiPermission,
-    // active: activeTab,
-  } = useContext(PageContext) as PageProps;
   // const [prevfriendReqCount, setprevfriendReqCount] = useState(0);
   useEffect(() => {
     const auth = getAuth(app);
@@ -601,7 +632,6 @@ export default function Home({
 
   useEffect(() => {
     setfriends?.(acceptedFriends);
-    console.log(acceptedFriends);
   }, [acceptedFriends, setfriends]);
 
   const { active: activeTab, setActive: setActiveTab } = useActive();

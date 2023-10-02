@@ -54,7 +54,6 @@ export async function changeProfile(
         console.log(error);
       }
     }
-
     // get photo url from cloud storage HERE
     const profileImageFile = photoURL as File;
     const { type, size, name } = profileImageFile;
@@ -69,6 +68,9 @@ export async function changeProfile(
         return;
       }
       const uploadedUrl = await uploadProfilePicture(profileImageFile);
+      const width = 256,
+        height = 256;
+
       if (uploadedUrl !== originalProfile?.photoURL ?? "") {
         try {
           await setDoc(Ref, {
@@ -80,6 +82,21 @@ export async function changeProfile(
               photoURL: uploadedUrl ?? "",
             },
           });
+          if (uploadedUrl) {
+            const cropResponse = await fetch(
+              `/api/crop_image?imageUrl=${encodeURIComponent(
+                uploadedUrl
+              )}&width=${width}&height=${height}`
+            );
+            console.log(`cropped_image : ${cropResponse}`);
+            await uploadCroppedImage(
+              cropResponse,
+              name,
+              width,
+              height,
+              type,
+              uploadedUrl);
+          }
           await updateProfilePicture(user, uploadedUrl ?? "");
           console.log(" profile picture Updated ");
         } catch (error) {
@@ -112,11 +129,51 @@ export async function changeProfile(
   } catch (error) {
     console.error(error);
   }
+
+  async function uploadCroppedImage(
+    cropResponse: Response,
+    name: string,
+    width: number,
+    height: number,
+    type: string,
+    uploadedUrl: string,
+  ) {
+    const croppedBlob = await cropResponse.arrayBuffer();
+    // const croppedArrayBuffer = new Blob([await cropResponse.arrayBuffer()]);
+    console.log(croppedBlob);
+    const storageRef = ref(storage);
+    // const [baseName, extension] = name.split(".");
+    const lastDotIndex = name.lastIndexOf(".");
+    const baseName = name.slice(0, lastDotIndex);
+    const extension = name.slice(lastDotIndex + 1);
+    const modifiedName = `${baseName}_width${width}_height${height}.${extension}`;
+    const cropRef = ref(storageRef, `profilePictures/${modifiedName}`);
+    if (cropResponse.status === 200) {
+      const contentType = cropResponse.headers.get("Content-Type");
+      console.log("Content-Type:", contentType);
+      const data = await uploadBytes(cropRef, croppedBlob, {
+        contentType: type ?? contentType ?? "application/octet-stream",
+      });
+      const uploadedUrlCropped = await getDownloadURL(cropRef);
+      console.log(uploadedUrlCropped);
+      await setDoc(Ref, {
+        profile: {
+          ...NewProfile,
+          bio: bio ?? "",
+          firstName: firstName ?? "",
+          lastName: lastName ?? "",
+          photoURL: uploadedUrl ?? "",
+          photoURL_cropped: uploadedUrlCropped ?? "",
+        },
+      });
+    }
+  }
 }
 async function uploadProfilePicture(file: File) {
   const storageRef = ref(storage);
   const fileRef = ref(storageRef, `profilePictures/${file.name}`);
   try {
+    console.log({ file });
     const snapshot = await uploadBytes(fileRef, file);
     return await getDownloadURL(snapshot.ref);
   } catch (error) {

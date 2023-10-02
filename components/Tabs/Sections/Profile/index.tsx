@@ -92,7 +92,7 @@ export default function Profile() {
   );
   const { fetchNextPage, isLoading, error, data, hasNextPage } =
     useInfiniteQuery({
-      queryKey: ["myPost", sortby, uid],
+      queryKey: ["myPost", sortby, uid, profile?.photoURL],
       queryFn: async ({ pageParam }) => await fetchMyPost(pageParam),
       enabled: activeTab === "profile",
       keepPreviousData: true,
@@ -126,11 +126,10 @@ export default function Profile() {
       ...prev,
       [name]: type === "file" ? e.target.files?.[0] : value,
     }));
-    console.log(newProfile);
     // console.log(type === "file");
   };
   const [updating, setupdating] = useState(false);
-  async function updateProfileData(e: FormEvent<HTMLFormElement>) {
+  async function submitProfile(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setupdating(true);
     try {
@@ -208,7 +207,7 @@ export default function Profile() {
               <EditProfileForm
                 updating={updating}
                 editToggle={editToggle}
-                handleSubmit={updateProfileData}
+                handleSubmit={submitProfile}
                 handleChange={handleEditProfileForm}
                 newProfile={newProfile}
                 toggleEdit={toggleEdit}

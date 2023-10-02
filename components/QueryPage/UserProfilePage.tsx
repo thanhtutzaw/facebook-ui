@@ -12,6 +12,7 @@ import {
   addFriends,
   unBlockFriend,
 } from "@/lib/firestore/friends";
+import UserProfile from "@/pages/[user]";
 import { Post as PostType, account, friends } from "@/types/interfaces";
 import { faCheck, faClock, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -126,7 +127,7 @@ export default function UserProfilePage({
     ),
   };
   const router = useRouter();
-  const { setview, currentUser } = useContext(PageContext) as PageProps;
+  const { setview, currentUser} = useContext(PageContext) as PageProps;
 
   // const [limitedPosts, setlimitedPosts] = useState(myPost);
   // const [postLoading, setpostLoading] = useState(false);
@@ -169,124 +170,146 @@ export default function UserProfilePage({
 
   // const userName = ;
   if (!router.query.user) return null;
-  const { profile, myPost } = queryPageData;
-  const userName = `${profile?.firstName ?? "Unknown User"} ${
-    profile?.lastName ?? ""
-  }`;
-  const bio = profile?.bio === "" || !profile ? bioFallback : profile?.bio;
+  const {
+    profile,
+    myPost,
+    isFriend,
+    isBlocked,
+    isPending,
+    canAccept,
+    canUnBlock,
+  } = queryPageData;
+  // const userName = `${profile?.firstName ?? "Unknown User"} ${
+  //   profile?.lastName ?? ""
+  // }`;
+  // const bio = profile?.bio === "" || !profile ? bioFallback : profile?.bio;
+
+  
   return (
-    <>
-      <Head>
-        <title>{`${`${profile?.firstName ?? "Unknown User"} ${
-          profile?.lastName ?? ""
-        }`} | Facebook Next`}</title>
-        <meta
-          name="description"
-          content={`${`${profile?.firstName ?? "Unknown User"} ${
-            profile?.lastName ?? ""
-          }`} Facebook-Mobile-UI with Next.js`}
-        />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, user-scalable=no"
-        />
-        <link rel="icon" href="/logo.svg" />
-        <link rel="manifest" href="/manifest.json" />
-      </Head>
-      <div ref={scrollRef} className="user">
-        <BackHeader></BackHeader>
-        <div
-          style={{
-            marginTop: "65px",
-            height: "calc(100vh - 65px)",
-            backgroundColor: "#dadada",
-          }}
-          className={s.container}
-        >
-          {/* <h3>
-            test Interception route to prevent ssr data refetching (page router)
-          </h3> */}
-          <div className={`${s.info}`} style={{ paddingBottom: "1rem" }}>
-            <Image
-              onClick={() => {
-                setview?.({
-                  src: profile?.photoURL
-                    ? profile?.photoURL
-                    : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-                  name: `${userName}'s profile`,
-                });
-              }}
-              priority={false}
-              className={s.profile}
-              width={500}
-              height={170}
-              style={{ objectFit: "cover", width: "120px", height: "120px" }}
-              alt={`${userName}'s profile`}
-              src={
-                (profile?.photoURL as string)
-                  ? (profile?.photoURL as string)
-                  : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-              }
-            />
-            <h3 style={{ marginBottom: "18px" }}>{userName}</h3>
-            <p
-              style={{
-                color: profile?.bio === "" ? "gray" : "initial",
-                // minHeight: "24px",
-                wordBreak: "break-word",
-              }}
-              className={s.bio}
-            >
-              {bio}
-            </p>
-            {/* {isBlocked ? (
-              <>
-                <p style={{ color: "red" }}>This Account is Blocked </p>
-                {canUnBlock && (
-                  <>
-                    <div className={s.actions}>
-                      <button
-                        className={s.editToggle}
-                        onClick={async () => {
-                          router.replace(router.asPath, undefined, {
-                            scroll: false,
-                          });
-                          await unBlockFriend(token.uid, {
-                            id: router.query.user?.toString()!,
-                          });
-                        }}
-                      >
-                        Unblock
-                      </button>
-                    </div>
-                  </>
-                )}
-              </>
-            ) : (
-              otherUser && (
-                <div className={s.actions}>
-                  {statusComponents[status]}
-                  <button
-                    onClick={() => {
-                      router.push(`/chat/${router.query.user}`);
-                    }}
-                    className={s.editToggle}
-                  >
-                    Send Message
-                  </button>
-                </div>
-              )
-            )} */}
-          </div>
-          <PostList
-            // postLoading={postLoading}
-            // postEnd={postEnd}
-            tabIndex={1}
-            posts={myPost}
-            profile={profile}
-          />
-        </div>
-      </div>
-    </>
+    <UserProfile
+      token={token}
+      profile={profile}
+      myPost={myPost}
+      isFriend={isFriend}
+      isBlocked={isBlocked}
+      isPending={isPending}
+      canAccept={canAccept}
+      canUnBlock={canUnBlock}
+    />
   );
+  // return (
+  //   <>
+  //     <Head>
+  //       <title>{`${`${profile?.firstName ?? "Unknown User"} ${
+  //         profile?.lastName ?? ""
+  //       }`} | Facebook Next`}</title>
+  //       <meta
+  //         name="description"
+  //         content={`${`${profile?.firstName ?? "Unknown User"} ${
+  //           profile?.lastName ?? ""
+  //         }`} Facebook-Mobile-UI with Next.js`}
+  //       />
+  //       <meta
+  //         name="viewport"
+  //         content="width=device-width, initial-scale=1.0, user-scalable=no"
+  //       />
+  //       <link rel="icon" href="/logo.svg" />
+  //       <link rel="manifest" href="/manifest.json" />
+  //     </Head>
+  //     <div ref={scrollRef} className="user">
+  //       <BackHeader></BackHeader>
+  //       <div
+  //         style={{
+  //           marginTop: "65px",
+  //           height: "calc(100vh - 65px)",
+  //           backgroundColor: "#dadada",
+  //         }}
+  //         className={s.container}
+  //       >
+  //         {/* <h3>
+  //           test Interception route to prevent ssr data refetching (page router)
+  //         </h3> */}
+  //         <div className={`${s.info}`} style={{ paddingBottom: "1rem" }}>
+  //           <Image
+  //             onClick={() => {
+  //               setview?.({
+  //                 src: profile?.photoURL
+  //                   ? profile?.photoURL
+  //                   : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+  //                 name: `${userName}'s profile`,
+  //               });
+  //             }}
+  //             priority={false}
+  //             className={s.profile}
+  //             width={500}
+  //             height={170}
+  //             style={{ objectFit: "cover", width: "120px", height: "120px" }}
+  //             alt={`${userName}'s profile`}
+  //             src={
+  //               (profile?.photoURL as string)
+  //                 ? (profile?.photoURL as string)
+  //                 : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+  //             }
+  //           />
+  //           <h3 style={{ marginBottom: "18px" }}>{userName}</h3>
+  //           <p
+  //             style={{
+  //               color: profile?.bio === "" ? "gray" : "initial",
+  //               // minHeight: "24px",
+  //               wordBreak: "break-word",
+  //             }}
+  //             className={s.bio}
+  //           >
+  //             {bio}
+  //           </p>
+  //           {/* {isBlocked ? (
+  //             <>
+  //               <p style={{ color: "red" }}>This Account is Blocked </p>
+  //               {canUnBlock && (
+  //                 <>
+  //                   <div className={s.actions}>
+  //                     <button
+  //                       className={s.editToggle}
+  //                       onClick={async () => {
+  //                         router.replace(router.asPath, undefined, {
+  //                           scroll: false,
+  //                         });
+  //                         await unBlockFriend(token.uid, {
+  //                           id: router.query.user?.toString()!,
+  //                         });
+  //                       }}
+  //                     >
+  //                       Unblock
+  //                     </button>
+  //                   </div>
+  //                 </>
+  //               )}
+  //             </>
+  //           ) : (
+  //             otherUser && (
+  //               <div className={s.actions}>
+  //                 {statusComponents[status]}
+  //                 <button
+  //                   onClick={() => {
+  //                     router.push(`/chat/${router.query.user}`);
+  //                   }}
+  //                   className={s.editToggle}
+  //                 >
+  //                   Send Message
+  //                 </button>
+  //               </div>
+  //             )
+  //           )} */}
+  //         </div>
+  //         <PostList
+  //           // postLoading={postLoading}
+  //           // postEnd={postEnd}
+  //           tabIndex={1}
+  //           posts={myPost}
+  //           profile={profile}
+  //         />
+  //       </div>
+  //     </div>
+  //   </>
+  // );
 }

@@ -32,6 +32,7 @@ export type account = {
     lastName: string | "";
     bio: string | "";
     photoURL: string | "" | File;
+    photoURL_cropped?: string | "";
   };
 };
 export type notiContentTypes = "post_reaction" | "comment" | "share";

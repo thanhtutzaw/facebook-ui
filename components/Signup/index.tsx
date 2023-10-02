@@ -26,9 +26,6 @@ export default function Signup(props: {
       onClick={(e) => {
         e.stopPropagation();
       }}
-      // onError={(error) => {
-      //   console.log(error);
-      // }}
       onSubmit={handleSubmit}
       key="label2"
       initial={{ opacity: 0, scale: 0.5 }}

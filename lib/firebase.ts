@@ -110,14 +110,15 @@ export function commentDateToJSON(data: Comment) {
     createdAt: createdAt?.toJSON() || 0,
   };
 }
-export function userToJSON(obj: any): any {
+export function userToJSON<T>(obj: T): any {
   if (Array.isArray(obj)) {
-    return obj.map((item: any) => userToJSON(item));
+    return obj.map((item) => userToJSON(item));
   } else if (typeof obj === "object" && obj !== null) {
     const modifiedObj = { ...obj };
     for (const key in modifiedObj) {
       if (Object.prototype.hasOwnProperty.call(modifiedObj, key)) {
         modifiedObj[key] = userToJSON(modifiedObj[key]);
+        // encodedProfileURL
       }
     }
     return modifiedObj;

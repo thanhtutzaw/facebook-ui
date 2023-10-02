@@ -60,7 +60,6 @@ export default function ChatInput({
           //   settext("");
           //   setaddLoading(false);
           // } catch (error: any) {
-          //   console.log(error);
           //   setaddLoading(false);
           // }
         }}
