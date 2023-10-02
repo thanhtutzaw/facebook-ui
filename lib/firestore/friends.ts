@@ -85,7 +85,7 @@ export async function addFriends(
         badge: "/badge.svg",
         link: `/${receiptData.id}`,
         actionPayload: JSON.stringify({
-          uid: receiptData.id,
+          uid: senderData.id,
           f: receiptData,
           currentUser,
         }),
