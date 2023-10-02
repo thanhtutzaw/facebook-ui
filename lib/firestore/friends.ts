@@ -86,7 +86,7 @@ export async function addFriends(
         link: `/${receiptData.id}`,
         actionPayload: JSON.stringify({
           uid: receiptData.id,
-          receiptData,
+          f: receiptData,
           currentUser,
         }),
         actions: JSON.stringify([...NotiAction.friend_request]),
