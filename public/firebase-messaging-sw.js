@@ -1,7 +1,7 @@
 self.addEventListener("notificationclick", function (event) {
     console.log('notification click event', event);
     const { reply: inputText } = event;
-    const { click_action } = event.notification.data;
+    const { click_action, payload } = event.notification.data;
     // const client = self.clients
     event.notification.close();
     switch (event.action) {
@@ -29,7 +29,18 @@ self.addEventListener("notificationclick", function (event) {
             break;
         case `accept`:
             // event.waitUntil(clients.openWindow(`https://facebook-ui-zee.vercel.app/api/hello`))
-            event.waitUntil((openTab(click_action))())
+            event.waitUntil(async () => {
+                await fetch(`api/trigger_noti_action?action=accept`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-type": "application/json"
+                        },
+                        body: JSON.stringify(...payload)
+                    },
+                )
+
+            })
             console.log("accepted user ", event.notification);
             break;
         default:
@@ -70,7 +81,7 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
     // console.log({ NotiAction })
     console.log("FCM Background Noti ", payload)
-    const { title, body, icon, webpush, badge, click_action, link, tag, actions } = payload.data;
+    const { title, body, icon, webpush, badge, click_action, link, tag, actions, actionPayload } = payload.data;
     const notificationOptions = {
         body: body ?? "Notifications from facebook .",
         icon: icon ?? "/logo.svg",
@@ -78,7 +89,8 @@ messaging.onBackgroundMessage((payload) => {
         tag: tag ?? "",
         renotify: tag !== '',
         data: {
-            click_action
+            click_action,
+            actionPayload
         },
         actions: JSON.parse(actions)
         // actions: [{ action: "see_post", title: "See Post" }, { action: "Input", title: "Input", type: 'input',placeHolder:'Type Something' }],

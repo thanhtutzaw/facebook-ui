@@ -37,7 +37,8 @@ import {
 import { friends } from "../../types/interfaces";
 import s from "./index.module.scss";
 import { AnimatePresence, motion } from "framer-motion";
-import { AcceptFriend, statusDataType } from "../[user]";
+import { statusDataType } from "../[user]";
+import { AcceptFriend } from "../../components/Button/AcceptFriend";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);

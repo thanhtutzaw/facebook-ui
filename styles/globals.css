@@ -29,13 +29,13 @@
 }
 
 main {
-  width                : 100vw;
-  max-width            : var(--main-width);
-  overflow             : auto;
-  height               : 100dvh;
-  scroll-behavior      : smooth;
-  transition           : scale 0.3s cubic-bezier(1, 0.14, 0.01, 1.09), opacity 0.3s cubic-bezier(1, 0.14, 0.01, 1.09);
-  background-color     : white;
+  width                   : 100vw;
+  max-width               : var(--main-width);
+  overflow                : auto;
+  height                  : 100dvh;
+  scroll-behavior         : smooth;
+  transition              : scale 0.3s cubic-bezier(1, 0.14, 0.01, 1.09), opacity 0.3s cubic-bezier(1, 0.14, 0.01, 1.09);
+  background-color        : white;
   /* scroll-padding-bottom: 500px; */
 }
 
@@ -50,11 +50,6 @@ main {
 
 }
 
-#nprogress .spinner-icon,
-.loading .spinner-icon {
-  /* border-top-color : #0070f3 !important; */
-  /* border-left-color: #0070f3 !important; */
-}
 
 .loading {
   pointer-events: none;

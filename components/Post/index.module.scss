@@ -610,15 +610,15 @@
     }
 }
 .profile {
-    // width: 38px;
     width: 45px;
-    // height: 38px;
     height: 45px;
     border-radius: 50%;
     border: 0;
     background-color: rgb(221, 221, 221);
     margin: initial !important;
     // margin-top: 2px !important;
+    outline: 1px solid rgba(128, 128, 128, 0.168627451);
+    // border:34px solid red;
 }
 
 .action {

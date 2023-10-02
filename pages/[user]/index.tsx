@@ -1,5 +1,4 @@
 import BackHeader from "@/components/Header/BackHeader";
-import Spinner from "@/components/Spinner";
 import { PostList } from "@/components/Tabs/Sections/Home/PostList";
 import { bioFallback } from "@/components/Tabs/Sections/Profile/ProfileInfo";
 import s from "@/components/Tabs/Sections/Profile/index.module.scss";
@@ -20,7 +19,6 @@ import { getFullName } from "@/lib/firestore/profile";
 import { Post as PostType, account, friends } from "@/types/interfaces";
 import {
   faBan,
-  faCheck,
   faClock,
   faClose,
   faPlus,
@@ -47,7 +45,6 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import {
-  HTMLAttributes,
   HtmlHTMLAttributes,
   ReactNode,
   useCallback,
@@ -55,6 +52,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { AcceptFriend } from "../../components/Button/AcceptFriend";
 export type statusDataType = "canAccept" | "pending" | "friend" | "notFriend";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -443,8 +441,12 @@ export default function UserProfile({
                       faPlus={faPlus}
                     >
                       <button
+                        disabled={loading}
                         key={loading ? "true" : "false"} // disabled={loading}
                         onClick={async () => {
+                          // if(!)
+                          
+                          
                           setLoading(true);
                           const data = {
                             id: router.query.user,
@@ -592,38 +594,4 @@ function NotFriendBtn(props: {
     children,
   } = props;
   return <>{children}</>;
-}
-
-export function AcceptFriend(props: {} & HTMLAttributes<HTMLButtonElement>) {
-  const { ...rest } = props;
-  const [loading, setloading] = useState(false);
-  return (
-    <button
-      {...rest}
-      aria-label="Accept"
-      title="Accept"
-      style={{ transition: "all .2s ease-in-out" }}
-      onClick={async (e) => {
-        // console.log("loading");
-        setloading(true);
-        await rest.onClick?.(e);
-        // console.log("loading finished");
-        setloading(false);
-      }}
-    >
-      {!loading ? (
-        <FontAwesomeIcon icon={faCheck} />
-      ) : (
-        // <FontAwesomeIcon
-        //   style={{
-        //     display: !loading ? "block" : "none",
-        //   }}
-        //   icon={faPlus}
-        // />
-        // <Spin loading={loading} />
-        <Spinner style={{ margin: 0 }} size={20} />
-      )}
-      {!loading ? "Accept" : "Accepting"}
-    </button>
-  );
 }

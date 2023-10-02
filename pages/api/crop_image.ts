@@ -1,9 +1,7 @@
-// pages/api/crop-image.js
-
 import sharp from "sharp";
 
 export default async function handler(
-  req: { query: { imageUrl: any; width: any; height: any } },
+  req: { query: { imageUrl: string; width?: string; height?: string } },
   res: {
     setHeader: (arg0: string, arg1: string) => void;
     end: (arg0: Buffer) => void;
@@ -24,22 +22,25 @@ export default async function handler(
     const imageMetaData = await sharp(imageBuffer).metadata();
     const imageType = imageMetaData.format;
     console.log({ imageMetaData });
+    const originalBufer = await sharp(imageBuffer).toBuffer();
     if (!width && !height) {
-      const originalBufer = await sharp(imageBuffer).toBuffer();
+      res.end(originalBufer);
+      return;
+    } else if (width && height) {
+      // Perform the cropping
+      const croppedImageBuffer = await sharp(imageBuffer)
+        .resize(parseInt(width), parseInt(height))
+        .toBuffer();
+      console.log(imageType);
+      // Set the response content type to image
+      res.setHeader("Content-Type", imageType ?? "JPEG");
+
+      // Send the cropped image as the response
+      res.end(croppedImageBuffer);
+    } else {
       res.end(originalBufer);
       return;
     }
-    // Perform the cropping
-
-    const croppedImageBuffer = await sharp(imageBuffer)
-      .resize(parseInt(width), parseInt(height))
-      .toBuffer();
-    console.log(imageType);
-    // Set the response content type to image
-    res.setHeader("Content-Type", imageType ?? "JPEG");
-
-    // Send the cropped image as the response
-    res.end(croppedImageBuffer);
   } catch (error) {
     console.error(error);
     res.status(500).end("Internal Server Error");

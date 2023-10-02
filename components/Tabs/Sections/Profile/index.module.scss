@@ -254,6 +254,7 @@
     .profile {
         border-radius: 100%;
         object-fit: cover;
+        outline: 1px solid rgba(128, 128, 128, 0.168627451);
     }
     .myPost {
         > div > div {

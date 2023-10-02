@@ -19,6 +19,13 @@ export async function addFriends(
   // profile:account["profile"],
   currentUser?: (User & { photoURL_cropped?: string }) | null
 ) {
+  const isFriendsQuery = doc(db, `users/${uid}/friends/${f.id}`);
+  const friendDoc = await getDoc(isFriendsQuery);
+  if (friendDoc.exists()) {
+    alert("Fail to Add . User already added , blocked or pending state .");
+    window.location.reload();
+    return;
+  }
   const { author, ...data } = { ...f };
   const reqCountRef = doc(db, `users/${f.id}/friendReqCount/reqCount`);
   console.log({ currentUser });
@@ -60,6 +67,7 @@ export async function addFriends(
       await setDoc(reqCountRef, { count: 1, updatedAt: serverTimestamp() });
     }
     console.log({ currentUser });
+    console.log(`send fcm to ${senderData.id}`);
     await fetch("/api/sendFCM", {
       method: "POST",
       headers: {
@@ -77,6 +85,7 @@ export async function addFriends(
           "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
         badge: "/badge.svg",
         link: `/${receiptData.id}`,
+        actionPayload: JSON.stringify({ uid, f, currentUser }),
         actions: JSON.stringify([...NotiAction.friend_request]),
         // webpush: {
         //   fcm_options: {
@@ -117,13 +126,15 @@ export async function acceptFriends(
       message: `${
         currentUser?.displayName ?? "Unknown User"
       } accepted your friend request.`,
-      icon:        currentUser?.photoURL_cropped ??
+      icon:
+        currentUser?.photoURL_cropped ??
         currentUser?.photoURL ??
         "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
       badge: "/badge.svg",
       link: `/${uid}`,
     }),
   });
+  console.log("accepted");
 }
 export async function rejectFriendRequest(uid: string, f: friends) {
   try {

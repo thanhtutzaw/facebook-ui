@@ -36,6 +36,7 @@ export default async function handler(
     tag,
     badge,
     link,
+    actionPayload,
     actions,
   } = req.body;
   const registrationTokens = await getFCMToken(recieptId);
@@ -51,6 +52,7 @@ export default async function handler(
         tag: tag ?? "",
         // bodyLocArgs: ['FooCorp', '11.80', '835.67', '1.43'],
         click_action: link ?? "/",
+        actionPayload: actionPayload ?? JSON.stringify([]),
         actions: actions ?? JSON.stringify([]),
       },
       webpush: {
