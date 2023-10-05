@@ -366,7 +366,7 @@ export default function Home({
       }
     });
     return () => unsub();
-  }, [auth, expired, router]);
+  }, [auth, expired]);
   const [limitedPosts, setlimitedPosts] = useState(posts ?? []);
   useEffect(() => {
     if (posts && !newsFeedData) {
@@ -403,7 +403,7 @@ export default function Home({
     if (!uid) {
       // router.push("/login");
     }
-  }, [expired, router, uid]);
+  }, [expired, uid]);
   const [UnReadNotiCount, setUnReadNotiCount] = useState(0);
   const [lastPullTimestamp, setlastPullTimestamp] =
     useState<AppProps["lastPullTimestamp"]>(undefined);
