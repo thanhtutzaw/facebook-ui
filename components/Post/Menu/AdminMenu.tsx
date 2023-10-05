@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
 import { AnimatePresence, motion } from "framer-motion";
 import router from "next/router";
-import { useContext, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { app } from "../../../lib/firebase";
 import { deletePost } from "../../../lib/firestore/post";
 import { Post } from "../../../types/interfaces";
@@ -13,13 +13,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { PostProps, PostContext } from "../PostContext";
 export default function AdminMenu(props: {
   updatePost: Function;
-  setshowAction: Function;
-  showAction: string;
   authorId: string | number;
   id: string;
 }) {
-  const { updatePost, setshowAction, authorId, id, showAction } = props;
-  const { post } = useContext(PostContext) as PostProps;
+  const { updatePost,authorId, id} = props;
+  const { post , toggleMenu, settoggleMenu} = useContext(PostContext) as PostProps;
   const auth = getAuth(app);
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
@@ -29,12 +27,12 @@ export default function AdminMenu(props: {
   //     queryClient.invalidateQueries(["myPost"]);
   //     console.log("Delete Mutate Success " + data);
   //     setLoading(false);
-  //     setshowAction?.("");
+  //     settoggleMenu?.("");
   //   },
   // });
   return (
     <AnimatePresence>
-      {showAction === id && (
+      {toggleMenu === id && (
         <motion.div
           key={id}
           initial={{
@@ -42,7 +40,7 @@ export default function AdminMenu(props: {
             scale: 0.8,
           }}
           animate={{
-            opacity: showAction === id ? 1 : 0,
+            opacity: toggleMenu === id ? 1 : 0,
             scale: 1,
           }}
           exit={{
@@ -55,8 +53,8 @@ export default function AdminMenu(props: {
           className={styles.actions}
         >
           <CopyLink
-            showAction={showAction}
-            setshowAction={setshowAction}
+            toggleMenu={toggleMenu}
+            settoggleMenu={settoggleMenu}
             authorId={authorId.toString()}
             id={id.toString()}
           />
@@ -69,7 +67,7 @@ export default function AdminMenu(props: {
                 pathname: `${authorId}/${id?.toString()}`,
                 query: { edit: true },
               });
-              setshowAction("");
+              settoggleMenu("");
             }}
           >
             <FontAwesomeIcon icon={faEdit} />
@@ -93,7 +91,7 @@ export default function AdminMenu(props: {
                 });
                 // queryClient.invalidateQueries(["myPost"]);
                 setLoading(false);
-                setshowAction?.("");
+                settoggleMenu?.("");
                 queryClient.refetchQueries(["myPost"]);
                 queryClient.invalidateQueries(["myPost"]);
                 // deletePostMutation.mutate({
@@ -104,7 +102,7 @@ export default function AdminMenu(props: {
                 if (loading) return;
                 updatePost(id);
               } catch (error: any) {
-                setshowAction?.("");
+                settoggleMenu?.("");
                 console.error(error);
                 setLoading(false);
               }

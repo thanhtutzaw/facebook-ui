@@ -1,14 +1,13 @@
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import { User } from "firebase/auth";
 import {
-  useRef,
-  useState,
   ReactNode,
   RefObject,
+  createContext,
   useEffect,
-  MutableRefObject,
+  useRef,
+  useState
 } from "react";
-import { createContext } from "react";
-import { useQueryClient, QueryClient } from "@tanstack/react-query";
-import { User } from "firebase/auth";
 import { Post, Tabs, friends } from "../types/interfaces";
 
 export type selectedId = {
@@ -20,6 +19,7 @@ export type selectedId = {
   } | null;
 };
 export interface PageProps {
+  friendReqCount: number;
   newsFeedData?: Post[];
   setnewsFeedData?: Function;
   currentUser: (User & { photoURL_cropped?: string }) | null;
@@ -29,24 +29,21 @@ export interface PageProps {
   uploadButtonClicked?: boolean;
   setuploadButtonClicked?: Function;
   viewRef?: RefObject<HTMLDialogElement>;
+  indicatorRef?: RefObject<HTMLDivElement>;
   fileRef?: RefObject<HTMLInputElement>;
   active: Tabs;
   children?: ReactNode;
   setActive: Function;
   shareAction?: string;
-  showAction?: string;
   selectedId?: selectedId[];
   setSelectedId?: Function;
   setshareAction?: Function;
-  setshowAction?: Function;
   view?: any;
   setcurrentUser: Function;
   setview?: Function;
   // preventClick?: MutableRefObject<boolean>;
   preventClick?: boolean;
-  isPage?: any;
   setnotiPermission?: Function;
-  setisPage?: Function;
   friends?: friends[] | [];
   setpreventClick?: Function;
   setfriends?: Function;
@@ -55,17 +52,15 @@ export const PageContext = createContext<PageProps | null>(null);
 
 export function PageProvider(props: PageProps) {
   const {
+    friendReqCount,
     active,
     setActive,
     currentUser,
-    isPage,
-    setisPage,
     setnotiPermission,
     setcurrentUser,
   } = props;
   const [friends, setfriends] = useState<friends[]>([]);
   const queryClient = useQueryClient();
-  const [showAction, setshowAction] = useState("");
   const [shareAction, setshareAction] = useState("");
   const [selectedId, setSelectedId] = useState([]);
   const [preventClick, setpreventClick] = useState(false);
@@ -74,6 +69,8 @@ export function PageProvider(props: PageProps) {
   const viewRef = useRef<HTMLDialogElement>(null);
   const [uploadButtonClicked, setuploadButtonClicked] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const indicatorRef = useRef<HTMLDivElement>(null);
+
   const [newsFeedData, setnewsFeedData] = useState<Post[]>([]);
   useEffect(() => {
     function handleClickOutside(e: { target: any }) {
@@ -89,15 +86,15 @@ export function PageProvider(props: PageProps) {
   return (
     <PageContext.Provider
       value={{
+        indicatorRef,
+        friendReqCount,
         setcurrentUser,
         newsFeedData,
         setnewsFeedData,
         setnotiPermission,
         friends,
         setfriends,
-        isPage,
         currentUser,
-        setisPage,
         queryClient,
         dropdownRef,
         preventClick,
@@ -107,8 +104,6 @@ export function PageProvider(props: PageProps) {
         selectedId,
         setSelectedId,
         shareAction,
-        showAction,
-        setshowAction,
         setshareAction,
         uploadButtonClicked,
         setuploadButtonClicked,

@@ -25,13 +25,10 @@ const Notifications = dynamic(
 );
 const Menu = dynamic(() => import("./Sections/Menu/menu"), { ssr: false });
 
-export default function Tabs(props: {
-  indicatorRef: RefObject<HTMLDivElement>;
-}) {
-  const { indicatorRef } = props;
+export default function Tabs() {
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
-  const { preventClick, setpreventClick } = useContext(
+  const { indicatorRef, setpreventClick } = useContext(
     PageContext
   ) as PageProps;
   const { active } = useActive();

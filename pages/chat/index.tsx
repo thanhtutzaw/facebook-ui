@@ -50,7 +50,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function Page(props: { acceptedFriends: any[] }) {
   const { acceptedFriends } = props;
-  const { isPage, setisPage } = useContext(PageContext) as PageProps;
   return (
     <div className="user">
       <BackHeader>
@@ -64,11 +63,6 @@ export default function Page(props: { acceptedFriends: any[] }) {
         }}
         className={s.container}
       >
-        {/* {JSON.stringify(isPage)} */}
-        {/* <button onClick={() => setisPage?.(isPage?.concat([9, 10]))}>
-          change
-        </button> */}
-        {/* {JSON.stringify(acceptedFriends)} */}
         <ul>
           {acceptedFriends.map((friend) => (
             <li key={friend.id} aria-label="Go to Friends Profile">

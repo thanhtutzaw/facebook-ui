@@ -114,7 +114,6 @@ export interface AppProps {
   queryPageData?:any;
   token?:any;
   fcmToken?: string | string[];
-  friendReqCount?: number | string;
   UnReadNotiCount?: number | string;
   acceptedFriends?: string[];
   isFriendEmpty?: boolean;

@@ -10,13 +10,15 @@ import { AppContext } from "@/context/AppContext";
 import { useActive } from "@/hooks/useActiveTab";
 import { db, getProfileByUID } from "@/lib/firebase";
 import { AppProps, friends } from "@/types/interfaces";
+import { PageContext, PageProps } from "@/context/PageContext";
 interface FriendProps {
   tabIndex: number;
 }
 export default function Friend(props: FriendProps) {
   const { tabIndex } = props;
   const { active: tab } = useActive();
-  const { uid, friendReqCount } = useContext(AppContext) as AppProps;
+  const { uid } = useContext(AppContext) as AppProps;
+  const { friendReqCount } = useContext(PageContext) as PageProps;
 
   const fetchSuggestedFriends = async () => {
     if (!uid) return;

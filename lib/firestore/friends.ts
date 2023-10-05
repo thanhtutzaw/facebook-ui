@@ -1,3 +1,4 @@
+import { User } from "firebase/auth";
 import {
   deleteDoc,
   doc,
@@ -7,11 +8,9 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { account, friends } from "../../types/interfaces";
-import { db } from "../firebase";
+import { friends } from "../../types/interfaces";
 import { NotiAction } from "../NotiAction";
-import { User } from "firebase/auth";
-import { resizeImage } from "../resizeImage";
+import { db } from "../firebase";
 
 export async function addFriends(
   uid: string,
@@ -111,6 +110,7 @@ export async function acceptFriends(
   f: friends,
   currentUser?: (User & { photoURL_cropped?: string }) | null
 ) {
+  console.log({ currentUser });
   // const { author, ...data } = { ...f };
   const friendData = {
     // ...data,
@@ -128,43 +128,41 @@ export async function acceptFriends(
     await setDoc(doc(db, `users/${senderData}/friendReqCount/reqCount`), {
       count: increment(-1),
     });
-    // await updateDoc(doc(db, `users/${f.senderId}/friendReqCount/reqCount`), {
-    //   count: increment(-1),
-    // });
-    console.log("updated count");
   } catch (error) {
-    console.error("Error updating count:", error);
+    console.error("Error updating req count:", error);
   }
-  await updateFriendStatus(senderData, friendData); //this run
-  console.log("updated accepte");
-  // const basePath = window?.location?.origin;
-  // console.log(basePath);
-  await fetch(`https://facebook-ui-zee.vercel.app/api/sendFCM`, {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify({
-      recieptId: f.senderId,
-      message: `${
-        currentUser?.displayName ?? "Unknown User"
-      } accepted your friend request.`,
-      icon:
-        currentUser?.photoURL_cropped ??
-        currentUser?.photoURL ??
-        "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-      badge: "/badge.svg",
-      link: `/${senderData}`,
-    }),
-  });
-  console.log("accepted");
+  await updateFriendStatus(senderData, friendData);
+  console.log("is production " + process.env.NODE_ENV);
+  await fetch(
+    `${
+      process.env.NODE_ENV === "production"
+        ? "https://facebook-ui-zee.vercel.app/"
+        : "http://3000/"
+    }api/sendFCM`,
+    {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        recieptId: f.senderId,
+        message: `${
+          currentUser?.displayName ?? "Unknown User"
+        } accepted your friend request.`,
+        icon:
+          currentUser?.photoURL_cropped ??
+          currentUser?.photoURL ??
+          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+        badge: "/badge.svg",
+        link: `/${senderData}`,
+      }),
+    }
+  );
 }
 export async function rejectFriendRequest(uid: string, f: friends) {
   try {
     await unFriend(uid, f);
     const reqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
-    // await setDoc(reqCountRef, { count: increment(-1) });
-    // const reqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
     await updateDoc(reqCountRef, { count: increment(-1) });
   } catch (error) {
     console.log(error);
@@ -174,8 +172,6 @@ export async function cancelFriendRequest(uid: string, f: friends) {
   try {
     await unFriend(uid, f);
     const reqCountRef = doc(db, `users/${f.id}/friendReqCount/reqCount`);
-    // await setDoc(reqCountRef, { count: increment(-1) });
-    // const reqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
     await updateDoc(reqCountRef, { count: increment(-1) });
   } catch (error) {
     console.log(error);
@@ -199,7 +195,6 @@ export async function unBlockFriend(
   }
 }
 export async function unFriend(uid: string, f: { id: friends["id"] }) {
-  // if(!f?.id && typeof f.id !=="string") return;
   await deleteDoc(doc(db, `users/${uid}/friends/${String(f.id)}`));
   await deleteDoc(doc(db, `users/${String(f.id)}/friends/${uid}`));
 }
@@ -211,12 +206,20 @@ export async function blockFriend(uid: string, f: friends) {
     updatedAt: serverTimestamp(),
     senderId: uid,
   } as friends;
+  if (f.status === "pending") {
+    try {
+      await setDoc(doc(db, `users/${f.id}/friendReqCount/reqCount`), {
+        count: increment(-1),
+      });
+    } catch (error) {
+      console.error("Error updating req count:", error);
+    }
+  }
   await updateFriendStatus(uid, blockedData);
 }
 
 async function updateFriendStatus(senderId: string, receipt: friends) {
   const adminData = { ...receipt, id: senderId };
-  // const { id: myId } = senderId;
   const { id: friendId } = receipt;
   const adminRef = doc(db, `users/${senderId}/friends/${friendId}`);
   const receiptRef = doc(db, `users/${friendId}/friends/${senderId}`);

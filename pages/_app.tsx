@@ -3,6 +3,9 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
+import friendReqSound from "../public/NotiSounds/chord.mp3";
+
+import useFriendRequest from "@/hooks/useFriendRequest";
 import {
   User,
   getAuth,
@@ -22,7 +25,7 @@ import { ImageLargeView } from "../components/Post/ImageLargeView";
 import { Welcome } from "../components/Welcome";
 import { PageProvider } from "../context/PageContext";
 import { useActive } from "../hooks/useActiveTab";
-import { app } from "../lib/firebase";
+import { app, getProfileByUID } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import "../styles/globals.css";
 import { AppProps as Props } from "../types/interfaces";
@@ -58,12 +61,6 @@ export default function App({
   expired,
 }: AppProps & { uid: DecodedIdToken["uid"]; expired: boolean }) {
   const router = useRouter();
-  // useEffect(() => {
-  //   if (expired) {
-  //     router.push("/");
-  //     console.log("expired and pushed(_app.tsx)");
-  //   }
-  // }, [expired, router]);
   useEffect(() => {
     const handleRouteStart = () => nProgress?.start();
     const handleRouteDone = () => nProgress?.done();
@@ -76,49 +73,31 @@ export default function App({
       router.events.off("routeChangeError", handleRouteDone);
     };
   }, [router.events]);
-
-  // const requestNotificationPermission = async () => {
-  //   try {
-  //     const permission = await Notification.requestPermission();
-  //     if (permission === "granted") {
-  //       // console.log(await navigator.serviceWorker.controller);
-  //       // alert("Notification permission granted.");
-  //       console.log("Notification permission granted.");
-  //       return true;
-  //     } else {
-  //       // alert("Notification permission denied.");
-  //       console.log("Notification permission denied.");
-  //       return false;
-  //     }
-  //   } catch (error) {
-  //     console.error("Error requesting notification permission:", error);
-  //     return false;
-  //   }
-  // };
-  if (typeof window !== "undefined") {
-    navigator.serviceWorker.ready
-      .then((reg) => {
-        console.log("sw ready");
-        alert("Sw ready");
-        reg.showNotification("foreground title");
-      })
-      .catch((error) => {
-        console.log(error);
-        alert("sw not ready !");
-      });
-  }
+  // if (typeof window !== "undefined") {
+  //   navigator.serviceWorker.ready
+  //     .then((reg) => {
+  //       alert("Sw ready");
+  //       reg.showNotification("foreground title");
+  //     })
+  //     .catch((error) => {
+  //       alert("sw not ready !");
+  //     });
+  // }
   const [notiPermission, setnotiPermission] = useState(false);
   useEffect(() => {
+    const isReady = async () => {
+      await navigator.serviceWorker.ready;
+    };
+    isReady();
     if (!notiPermission) return;
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       const messaging = getMessaging(app);
       console.log("getting foreground");
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
-        alert(
-          `Foreground push notification received:  ${JSON.stringify(payload)}`
-        );
-        // Handle the received push notification while the app is in the foreground
+        // alert(
+        //   `Foreground push notification received:  ${JSON.stringify(payload)}`
+        // );
         const {
           title,
           body,
@@ -129,8 +108,8 @@ export default function App({
           link,
           tag,
           actions,
+          actionPayload,
         } = payload.data as any;
-
         const notificationTitle = title ?? "Facebook";
         const notificationOptions = {
           body: body ?? "Notifications from facebook .",
@@ -139,19 +118,16 @@ export default function App({
           tag: tag ?? "",
           data: {
             click_action,
+            actionPayload: JSON.parse(actionPayload),
           },
-          actions: JSON.parse(actions),
+          // actions: JSON.parse(actions),
           renotify: tag !== "",
         };
-        console.log("serviceWorker" in navigator); // true
+        console.log(
+          `serviceWorker in navigator ${"serviceWorker" in navigator}`
+        ); // true
         console.log(navigator.serviceWorker);
-        //         controller:null
-        // oncontrollerchange:null
-        // onmessage:null
-        // onmessageerror:null
-        // ready:Promise {<pending>}
-
-        navigator.serviceWorker.ready // this code didn't run
+        navigator.serviceWorker.ready
           .then((reg) => {
             console.log("sw ready", reg);
             alert("Sw ready");
@@ -161,6 +137,8 @@ export default function App({
             console.log(error);
             alert("sw not ready !");
           });
+        new Notification(notificationTitle, notificationOptions); // this line only work in Desktop but actions are not allowed
+
         // if (
         //   "serviceWorker" in navigator &&
         //   navigator.serviceWorker.controller
@@ -177,7 +155,6 @@ export default function App({
         //   notificationTitle,
         //   notificationOptions
         // );
-        // new Notification(notificationTitle, notificationOptions); // this line only work in Desktop
         return () => {
           if (unsubscribe) unsubscribe();
         };
@@ -185,31 +162,31 @@ export default function App({
     }
   }, [notiPermission]);
   const auth = getAuth(app);
-  const [authUser, setauthUser] = useState<User | null>(null);
-  useEffect(() => {
-    const auth = getAuth(app);
-    onAuthStateChanged(auth, (user) => {
-      setauthUser(user);
-    });
-  }, []);
+
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         if (router.pathname === "/login/email") return;
-
         router.push("/login");
       } else {
         if (!expired) return;
         router.push("/");
-        // console.log("expired , user exist and pushed");
       }
     });
     return () => unsub();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth, expired, router]);
+  const [currentUser, setcurrentUser] = useState<
+    (User & { photoURL_cropped?: string }) | null
+  >(null);
+  useEffect(() => {
+    const auth = getAuth(app);
+    onAuthStateChanged(auth, (user) => {
+      setcurrentUser(user);
+    });
   }, []);
-  const [croppedProfilePicture, setcroppedProfilePicture] =
-    useState<User["photoURL"]>("");
-  const [currentUser, setcurrentUser] = useState<User | null>(null);
+  // const [currentProfile, setcurrentProfile] = useState<
+  //   account["profile"] | null
+  // >(null);
   useEffect(() => {
     const auth = getAuth(app);
     const unsubscribe = onIdTokenChanged(auth, async (user) => {
@@ -228,7 +205,6 @@ export default function App({
           secure: true,
           sameSite: "none",
         });
-        // console.log(user);
         setcurrentUser(user);
       } catch (error) {
         console.log("Error refreshing ID token:", error);
@@ -239,6 +215,47 @@ export default function App({
       unsubscribe();
     };
   }, []);
+  useEffect(() => {
+    if (currentUser?.uid) {
+      const getProfile = async () => {
+        const profileData = await getProfileByUID(String(currentUser?.uid));
+        const profile = {
+          ...profileData,
+          photoURL: profileData.photoURL
+            ? profileData.photoURL
+            : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+        };
+        console.log("hi");
+        const croppedURL = profile.photoURL_cropped;
+        setcurrentUser({ ...currentUser, photoURL_cropped: croppedURL });
+        // setcurrentUser((prev)=>{prev,photoURL_cropped:croppedURL})
+      };
+      getProfile();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser?.uid]);
+
+  // const updateCurrentUser = useCallback(() => {
+  //   const UserWithCropped = {
+  //     ...currentUser,
+  //     photoURL_cropped: currentProfile?.photoURL_cropped,
+  //   };
+  //   setcurrentUser?.(UserWithCropped as typeof currentUser);
+  //   console.log(currentUser);
+  // }, [currentProfile, currentUser]);
+
+  // useEffect(() => {
+  //   updateCurrentUser();
+  // }, []);
+  // useEffect(() => {
+  //   console.log(currentUser);
+  // }, [currentUser]);
+  // useEffect(() => {
+  //   console.log(currentProfile);
+  // }, [currentProfile]);
+  const { friendReqCount, soundRef } = useFriendRequest(
+    String(currentUser?.uid)
+  );
   const { active, setActive } = useActive();
   const [queryClient] = useState(
     () =>
@@ -250,7 +267,6 @@ export default function App({
         },
       })
   );
-  const [isPage, setisPage] = useState(currentUser?.uid);
 
   if (expired) return <Welcome expired={expired} />;
   return (
@@ -267,19 +283,21 @@ export default function App({
       </Head>
       <QueryClientProvider client={queryClient}>
         <PageProvider
+          friendReqCount={friendReqCount}
           active={active}
           setActive={setActive}
-          setisPage={setisPage}
           currentUser={currentUser}
-          isPage={currentUser?.uid}
           setcurrentUser={setcurrentUser}
           setnotiPermission={setnotiPermission}
         >
           <main>
-            {/* <main style={{ scrollPadding: "5rem", scrollMargin: "5rem" }}> */}
             <Component {...pageProps} />
-
-            {authUser?.uid && <ImageLargeView />}
+            {currentUser?.uid && <ImageLargeView />}
+            <audio
+              style={{ visibility: "hidden", display: "none" }}
+              ref={soundRef}
+              src={friendReqSound}
+            />
           </main>
         </PageProvider>
         <ReactQueryDevtools initialIsOpen={true} />

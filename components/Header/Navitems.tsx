@@ -12,10 +12,10 @@ export default function Navitems(props: {
   name: string;
   index: number;
 }) {
-  const { UnReadNotiCount, friendReqCount } = useContext(
+  const { UnReadNotiCount } = useContext(
     AppContext
   ) as AppProps;
-  // const { setActive } = useContext(PageContext) as PageProps;
+  const { friendReqCount } = useContext(PageContext) as PageProps;
 
   // const { active, icon: TabIcon, name, index } = props;
   const { active, setActive, icon: TabIcon, name, index } = props;

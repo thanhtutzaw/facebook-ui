@@ -3,25 +3,31 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { doc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { db } from "../../../lib/firebase";
 import { addSavedPost, unSavePost } from "../../../lib/firestore/savedPost";
 import styles from "../index.module.scss";
+import { PostContext, PostProps } from "../PostContext";
 export default function Menu(props: {
-  setshowAction: Function;
-  showAction: string;
   authorId: string;
   id: string;
   uid: string;
   isSaved: boolean;
 }) {
-  const { uid, isSaved, setshowAction, authorId, id, showAction } = props;
+  const { uid, isSaved, authorId, id } = props;
+  const { toggleMenu, settoggleMenu } = useContext(PostContext) as PostProps;
   const [loading, setLoading] = useState(false);
   const [saveToggle, setsaveToggle] = useState(isSaved);
   const router = useRouter();
   return (
     <AnimatePresence>
-      {showAction === id && (
+      {toggleMenu === id && (
         <motion.div
           key={id}
           initial={{
@@ -29,7 +35,7 @@ export default function Menu(props: {
             scale: 0.8,
           }}
           animate={{
-            opacity: showAction === id ? 1 : 0,
+            opacity: toggleMenu === id ? 1 : 0,
             scale: 1,
           }}
           exit={{
@@ -42,8 +48,8 @@ export default function Menu(props: {
           className={styles.actions}
         >
           <CopyLink
-            setshowAction={setshowAction}
-            showAction={showAction}
+            settoggleMenu={settoggleMenu}
+            toggleMenu={toggleMenu}
             authorId={authorId.toString()}
             id={id.toString()}
           />
@@ -73,7 +79,7 @@ export default function Menu(props: {
                   router.replace(router.asPath);
                 }
               }
-              setshowAction("");
+              settoggleMenu("");
             }}
           >
             <FontAwesomeIcon icon={faBookmark} />
@@ -86,25 +92,25 @@ export default function Menu(props: {
 }
 
 export function CopyLink(props: {
-  setshowAction: Function;
-  showAction: string;
+  settoggleMenu: Dispatch<SetStateAction<string>>;
+  toggleMenu: string;
   authorId: string;
   id: string;
 }) {
   const [copied, setcopied] = useState(false);
-  const { setshowAction, showAction, authorId, id } = props;
+  const { settoggleMenu, toggleMenu, authorId, id } = props;
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (copied) {
         setcopied(false);
-        setshowAction(false);
+        settoggleMenu("");
       }
     }, 1000);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [copied, setshowAction]);
+  }, [copied, settoggleMenu]);
 
   return (
     <>

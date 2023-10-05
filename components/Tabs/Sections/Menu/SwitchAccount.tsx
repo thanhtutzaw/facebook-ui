@@ -13,14 +13,18 @@ import s from "../../Sections/Menu/menu.module.scss";
 import Image from "next/image";
 import { app } from "@/lib/firebase";
 import { getMessaging, deleteToken } from "firebase/messaging";
+import { useRouter } from "next/router";
+import { signout } from "@/lib/signout";
+import Spinner from "@/components/Spinner";
 
 export default function SwitchAccount(props: {
-  setLoading: any;
+  setLoading: Function;
   signout: Function;
+  loading: boolean;
 }) {
-  const { setLoading, signout } = props;
+  const { setLoading, signout, loading } = props;
   const auth = getAuth();
-  const { email } = useContext(AppContext) as AppProps;
+  const { email: currentEmail } = useContext(AppContext) as AppProps;
   const accounts = [
     {
       uid: "testuser@gmail.com",
@@ -45,6 +49,9 @@ export default function SwitchAccount(props: {
     },
   ];
   const [toggleSwitchAcc, setToggleSwitchAcc] = useState(false);
+  const router = useRouter();
+  const [checked, setchecked] = useState(currentEmail);
+
   return (
     <div
       style={{
@@ -75,41 +82,17 @@ export default function SwitchAccount(props: {
         )}
       </header>
       <ul className={s.content}>
-        {accounts.map((a, i) => (
-          <li
-            onClick={async (e) => {
-              e.stopPropagation();
-              if (email === a.email) return;
-              setLoading(true);
-
-              try {
-                const messaging = getMessaging(app);
-                await deleteToken(messaging);
-                await signout();
-                await signInWithEmailAndPassword(auth, a.email, a.password);
-              } catch (error: any) {
-                setLoading(false);
-                console.error(error);
-                alert(error.message);
-              }
-            }}
-            key={i}
-          >
-            <Image width={30} height={30} src="logo.svg" alt={a.email} />
-            <div className={s.info}>
-              <p>{a.email}</p>
-              <p>
-                {a.password} {a.default ? "(Default)" : ""}
-              </p>
-            </div>
-            {email === a.email && (
-              <button title="Current Account">
-                <div>
-                  <FontAwesomeIcon icon={faCheck} />
-                </div>
-              </button>
-            )}
-          </li>
+        {accounts.map((a, index) => (
+          <AccountItem
+            key={index}
+            setLoading={setLoading}
+            currentEmail={currentEmail}
+            a={a}
+            checked={checked}
+            setchecked={setchecked}
+            loading={loading}
+            auth={auth}
+          />
         ))}
       </ul>
       <footer>
@@ -125,5 +108,70 @@ export default function SwitchAccount(props: {
         </p>
       </footer>
     </div>
+  );
+}
+
+function AccountItem(props: {
+  setLoading: any;
+  currentEmail: any;
+  a: any;
+  loading: any;
+  auth: any;
+  checked: any;
+  setchecked: Function;
+}) {
+  const { checked, setchecked, setLoading, currentEmail, a, loading, auth } =
+    props;
+  const router = useRouter();
+  return (
+    <li
+      className={loading && checked === a.email ? s.disabled : ""}
+      onClick={async (e) => {
+        e.stopPropagation();
+        if (currentEmail === a.email) return;
+        setLoading(true);
+        setchecked(a.email);
+        try {
+          const messaging = getMessaging(app);
+          await deleteToken(messaging);
+          await signout();
+          await signInWithEmailAndPassword(auth, a.email, a.password);
+          router.replace(router.asPath);
+          setLoading(false);
+        } catch (error: any) {
+          setLoading(false);
+          console.error(error);
+          alert(error.message);
+        }
+      }}
+    >
+      <Image width={30} height={30} src="logo.svg" alt={a.email} />
+      <div className={s.info}>
+        <p>{a.email}</p>
+        <p>
+          {a.password} {a.default ? "(Default)" : ""}
+        </p>
+      </div>
+      {/* {currentEmail === a.email && !loading && (
+        <button title="Current Account">
+          <div>
+            <FontAwesomeIcon icon={faCheck} />
+          </div>
+        </button>
+      )} */}
+      {checked === a.email && (
+        <>
+          {loading && checked !== currentEmail ? (
+            <Spinner style={{ margin: "0" }} />
+          ) : (
+            <button title="Current Account">
+              <div>
+                <FontAwesomeIcon icon={faCheck} />
+              </div>
+            </button>
+          )}
+        </>
+      )}
+    </li>
   );
 }

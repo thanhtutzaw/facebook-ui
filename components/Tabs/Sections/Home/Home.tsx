@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { useContext, useRef } from "react";
 import Newfeed from "./Newfeed";
 import Story from "./Story/Story";
+import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 // type AppProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 // };
 export default function Home(props: { tabIndex: number }) {
@@ -20,9 +21,10 @@ export default function Home(props: { tabIndex: number }) {
     PageContext
   ) as PageProps;
   const previousScrollRef = useRef(0);
+  const { scrollRef } = useInfiniteScroll(postEnd!, false, getMorePosts);
   return (
     <div
-      // ref={scrollRef}
+      ref={scrollRef}
       id="/"
       className={styles.home}
       onScroll={async (e) => {

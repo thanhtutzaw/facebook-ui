@@ -53,6 +53,7 @@ import {
   useState,
 } from "react";
 import { AcceptFriend } from "../../components/Button/AcceptFriend";
+import { updateCurrentUser } from "firebase/auth";
 export type statusDataType = "canAccept" | "pending" | "friend" | "notFriend";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -152,12 +153,29 @@ export default function UserProfile({
   const friendId = router.query.user;
   const [friendMenuToggle, setFriendMenuToggle] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { setview, currentUser, setcurrentUser } = useContext(
+    PageContext
+  ) as PageProps;
 
+  // const updateCurrentUser = useCallback(() => {
+  //   const UserWithCropped = {
+  //     ...currentUser,
+  //     photoURL_cropped: profile?.photoURL_cropped,
+  //   };
+  //   setcurrentUser?.(UserWithCropped);
+  //   // console.log(currentUser);
+  // }, [currentUser, profile?.photoURL_cropped, setcurrentUser]);
+
+  // useEffect(() => {
+  //   updateCurrentUser();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
   const statusComponents = {
     canAccept: (
       <AcceptFriend
         onClick={async () => {
           if (!friendId) return;
+          console.log({ currentUser });
           await acceptFriends(
             token.uid,
             {
@@ -303,7 +321,6 @@ export default function UserProfile({
       </div>
     ),
   };
-  const { setview, currentUser } = useContext(PageContext) as PageProps;
 
   const [limitedPosts, setlimitedPosts] = useState(myPost);
   const [postLoading, setpostLoading] = useState(false);
@@ -311,6 +328,7 @@ export default function UserProfile({
   const fetchMorePosts = useCallback(
     async function () {
       setpostLoading(true);
+      console.log("post loading");
       const post = limitedPosts?.[limitedPosts?.length - 1]!;
       const date = new Timestamp(
         post.createdAt.seconds,
@@ -324,7 +342,9 @@ export default function UserProfile({
         limit(MYPOST_LIMIT)
       );
       const finalPost = await getPostWithMoreInfo(token.uid!, mypostQuery)!;
+      console.log({ limitedPosts });
       setlimitedPosts(limitedPosts?.concat(finalPost!));
+      console.log({ finalPost });
       setpostLoading(false);
 
       if (finalPost?.length! < MYPOST_LIMIT) {
@@ -445,8 +465,7 @@ export default function UserProfile({
                         key={loading ? "true" : "false"} // disabled={loading}
                         onClick={async () => {
                           // if(!)
-                          
-                          
+
                           setLoading(true);
                           const data = {
                             id: router.query.user,
@@ -523,7 +542,6 @@ function Menu({
           }}
           animate={{
             opacity: friendMenuToggle ? 1 : 0,
-            // opacity: showAction === id ? 1 : 0,
             scale: 1,
           }}
           exit={{

@@ -14,19 +14,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // const { title, recieptId, link, message, icon, ...rest } = req.body;
-  // const registrationTokens = await getFCMToken(recieptId);
-  // if (!registrationTokens) return;
-  // try {
-  //   const messageNoti = {
-  //     tokens: registrationTokens,
-  //     data: {
-  //       title: title ?? "Facebook",
-  //       click_action: link ?? "/",
-  //       icon,
-  //       body: message ?? "Notification from Facebook",
-  //       ...rest,
-  //     },
   const {
     title,
     recieptId,
@@ -50,7 +37,6 @@ export default async function handler(
         icon,
         badge,
         tag: tag ?? "",
-        // bodyLocArgs: ['FooCorp', '11.80', '835.67', '1.43'],
         click_action: link ?? "/",
         actionPayload: actionPayload ?? JSON.stringify([]),
         actions: actions ?? JSON.stringify([]),

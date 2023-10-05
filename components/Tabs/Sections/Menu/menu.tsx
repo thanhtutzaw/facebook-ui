@@ -85,7 +85,7 @@ export default function Menu(props: MenuProps) {
           />
         )}
       </button>
-      <SwitchAccount setLoading={setLoading} signout={signout} />
+      <SwitchAccount loading={loading} setLoading={setLoading} signout={signout} />
     </div>
   );
 }

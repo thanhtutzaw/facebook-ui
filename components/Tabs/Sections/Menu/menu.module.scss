@@ -81,9 +81,12 @@
                 display: flex;
                 gap: 0.5rem;
                 flex-direction: row;
-                align-items: flex-start;
+                // align-items: flex-start;
+                align-items: center;
+
                 padding-block: 0.5rem;
                 font-size: clamp(18px, 1vw, 20px);
+
                 .info {
                     flex: 1;
                     p {
@@ -133,4 +136,9 @@
             color: rgb(255, 67, 67) !important;
         }
     }
+}
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    background-color: #f2f2f2;
 }

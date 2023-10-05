@@ -19,15 +19,17 @@ export function Request(props: RequestProps) {
   const [accept, setaccept] = useState(false);
   const [reject, setreject] = useState(false);
   const { uid } = useContext(AppContext) as AppProps;
+  const [ConfirmLoaing, setConfirmLoaing] = useState(false);
   async function handleConfirmRequest() {
     if (!uid) return;
+    setConfirmLoaing(true);
     try {
       await acceptFriends(uid, f, currentUser);
+      setConfirmLoaing(false);
       setaccept(true);
-      // setrequestCount((prev: number) => prev - 1);
       queryClient.invalidateQueries(["pendingFriends"]);
-      // queryClient.refetchQueries(["pendingFriends"]);
     } catch (error) {
+      setConfirmLoaing(false);
       console.log(error);
     }
   }
@@ -53,6 +55,7 @@ export function Request(props: RequestProps) {
         ) : (
           <>
             <button
+              disabled={ConfirmLoaing}
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();

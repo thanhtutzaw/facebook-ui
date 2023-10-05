@@ -13,7 +13,9 @@ import {
   limit,
   orderBy,
   query,
+  serverTimestamp,
   startAfter,
+  updateDoc,
 } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
@@ -37,7 +39,7 @@ export default function Notifications() {
       limit(NOTI_LIMIT + 1)
     );
     const userDoc = doc(db, `users/${uid}`);
-    // await updateDoc(userDoc, { lastPullTimestamp: serverTimestamp() });
+    await updateDoc(userDoc, { lastPullTimestamp: serverTimestamp() });
     if (pageParam) {
       const date = new Timestamp(
         pageParam.createdAt.seconds,

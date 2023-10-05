@@ -29,17 +29,18 @@ export default function Post({
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
-  const { showAction, setshowAction, currentUser } = useContext(
+  const {currentUser } = useContext(
     PageContext
   ) as PageProps;
-
+  
+  const [toggleMenu, settoggleMenu] = useState("");
   useEffect(() => {
     if (selectMode) {
-      showAction && setshowAction?.("");
+      toggleMenu && settoggleMenu?.("");
     } else {
       checked && setChecked(false);
     }
-  }, [selectMode, checked, setshowAction, showAction]);
+  }, [selectMode, checked, settoggleMenu, toggleMenu]);
 
   const [client, setclient] = useState(false);
   useEffect(() => {
@@ -56,6 +57,8 @@ export default function Post({
   } ${shareMode ? s.share : ""}`;
   return (
     <PostProvider
+      toggleMenu={toggleMenu}
+      settoggleMenu={settoggleMenu}
       Likes={Likes}
       setLikes={setLikes}
       updatePost={updatePost!}
@@ -75,13 +78,13 @@ export default function Post({
       tabIndex={tabIndex}
     >
       <div className={postClass}>
-        <Content post={post}/>
+        <Content post={post} />
         {!shareMode && (
           <Footer
-           setLikes={setLikes}
-           likeCount={likeCount}
-          profile={currentUser}
-          setlikeCount={setlikeCount}
+            setLikes={setLikes}
+            likeCount={likeCount}
+            profile={currentUser}
+            setlikeCount={setlikeCount}
             post={post}
           />
         )}

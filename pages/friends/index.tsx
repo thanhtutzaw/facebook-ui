@@ -447,7 +447,6 @@ function Menu({
           }}
           animate={{
             opacity: friend.id === toggleFriendMenu ? 1 : 0,
-            // opacity: showAction === id ? 1 : 0,
             scale: 1,
           }}
           exit={{
@@ -471,58 +470,6 @@ function Menu({
             <FontAwesomeIcon icon={faBan} />
             Block
           </button>
-          {/* <button
-                onClick={async (e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  router.push({
-                    pathname: `${authorId}/${id?.toString()}`,
-                    query: { edit: true },
-                  });
-                  setshowAction("");
-                }}
-              >
-                <FontAwesomeIcon icon={faEdit} />
-                Edit
-              </button>
-              <button
-                disabled={loading}
-                onClick={async (e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  if (auth.currentUser?.uid !== authorId) {
-                    alert("Not Allowed ! Mismatch userId and authorId");
-                    throw new Error("Not Allowed");
-                  }
-                  setLoading(true);
-                  try {
-                    await deletePost({
-                      uid: auth.currentUser.uid,
-                      postid: id,
-                      post,
-                    });
-                    // queryClient.invalidateQueries(["myPost"]);
-                    setLoading(false);
-                    setshowAction?.("");
-                    queryClient.refetchQueries(["myPost"]);
-                    queryClient.invalidateQueries(["myPost"]);
-                    // deletePostMutation.mutate({
-                    //   uid: auth.currentUser.uid,
-                    //   postid: id!,
-                    //   post,
-                    // });
-                    if (loading) return;
-                    updatePost(id);
-                  } catch (error: any) {
-                    setshowAction?.("");
-                    console.error(error);
-                    setLoading(false);
-                  }
-                }}
-              >
-                <FontAwesomeIcon icon={faTrash} />
-                {loading ? "Deleting" : "Delete"}
-              </button> */}
         </motion.div>
       )}
     </AnimatePresence>

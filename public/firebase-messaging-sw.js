@@ -30,16 +30,6 @@ self.addEventListener("notificationclick", function (event) {
         case `accept`:
             // event.waitUntil(clients.openWindow(`https://facebook-ui-zee.vercel.app/api/hello`))
             event.waitUntil(
-
-                // await fetch(`api/trigger_noti_action?action=accept`,
-                //     {
-                //         method: "POST",
-                //         headers: {
-                //             "Content-type": "application/json"
-                //         },
-                //         body: JSON.stringify(actionPayload)
-                //     },
-                // )
                 fetch('api/trigger_noti_action?action=accept', {
                     method: 'POST',
                     headers: {
@@ -57,8 +47,6 @@ self.addEventListener("notificationclick", function (event) {
                     .catch(error => {
                         console.error('Error:', error);
                     })
-
-                // console.log("accepted user ", actionPayload);
             )
             break;
         default:
@@ -85,19 +73,39 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
-
+// let data
 // messaging.onMessage((payload) => {
+//     console.log(`${payload} from sw.js`)
+//     data=payload
 //     const { title, body, icon } = payload.notification;
-//     alert("foreground sw")
+//     alert("foreground sw.js")
 //     const notificationOptions = {
-//         body: body || "Default body",
-//         icon: icon || "/logo.svg",
+//         body: body,
+//         icon: icon,
 //     };
 
-//     self.registration.showNotification(title, notificationOptions);
+//     // self.registration.showNotification(title, notificationOptions);
+//     const promiseChain = self.registration.showNotification(title, notificationOptions).then(({ data }) => {
+//         console.log(data)
+//         console.log('push success onmessage');
+//     }).catch(() => {
+//         console.log('push fail');
+//     });
+//     event.waitUntil(promiseChain);
+// });
+// self.addEventListener('push', function (event) {
+//     // const data = event.data.json();
+//     // console.log(data)
+//     console.log({ self })
+//     const promiseChain = self.registration.showNotification(data.title, data.option).then((data) => {
+//         console.log('push success');
+//         console.log(data)
+//     }).catch(() => {
+//         console.log('push fail');
+//     });
+//     event.waitUntil(promiseChain);
 // });
 messaging.onBackgroundMessage((payload) => {
-    // console.log({ NotiAction })
     console.log("FCM Background Noti ", payload)
     const { title, body, icon, webpush, badge, click_action, link, tag, actions, actionPayload } = payload.data;
     const notificationOptions = {
@@ -111,15 +119,15 @@ messaging.onBackgroundMessage((payload) => {
             actionPayload: JSON.parse(actionPayload)
         },
         actions: JSON.parse(actions)
-        // actions: [{ action: "see_post", title: "See Post" }, { action: "Input", title: "Input", type: 'input',placeHolder:'Type Something' }],
     };
-    console.log(notificationOptions)
     self.registration.showNotification(title, notificationOptions)
 })
 function openTab(url) {
     return async () => {
+        console.log(self)
         const allClients = await clients.matchAll({
             includeUncontrolled: true,
+            type: 'window'
         });
         let facebookClient;
         for (const client of allClients) {
@@ -135,6 +143,7 @@ function openTab(url) {
         // console.log(facebookClient);
         if (!facebookClient) {
             facebookClient = await clients.openWindow(url);
+            // window.open(url, '_blank');
         }
 
     };

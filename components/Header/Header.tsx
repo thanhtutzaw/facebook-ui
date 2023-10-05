@@ -38,16 +38,15 @@ export const pages = [
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
 export default function Header(props: {
-  indicatorRef: RefObject<HTMLDivElement>;
   tabIndex: number;
 }) {
-  const { indicatorRef, tabIndex } = props;
+  const { tabIndex } = props;
   const { active, setActive } = useActive();
   const [width, setwidth] = useState<number>();
   const { selectMode, setselectMode, headerContainerRef } = useContext(
     AppContext
   ) as AppProps;
-  const { setSelectedId } = useContext(PageContext) as PageProps;
+  const {indicatorRef, setSelectedId } = useContext(PageContext) as PageProps;
 
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];

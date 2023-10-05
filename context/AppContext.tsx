@@ -1,15 +1,17 @@
 import {
   Timestamp,
+  collection,
   collectionGroup,
+  getDocs,
   limit,
   orderBy,
   query,
   startAfter,
   where,
 } from "firebase/firestore";
-import { createContext, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { NewsFeed_LIMIT } from "../lib/QUERY_LIMIT";
-import { db, getPostWithMoreInfo } from "../lib/firebase";
+import { db, getNewsFeed, getPostWithMoreInfo } from "../lib/firebase";
 import { Post, AppProps } from "../types/interfaces";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
 export const AppContext = createContext<AppProps | null>(null);
@@ -41,35 +43,80 @@ export function AppProvider(props: AppProps) {
     // console.log(posts);
     // console.log(limitedPosts);
   }, [limitedPosts, posts, setlimitedPosts]);
-  const getMorePosts = async () => {
-    setpostLoading(true);
-    const post = posts?.[posts?.length - 1]!;
-    const date = new Timestamp(
-      post.createdAt.seconds,
-      post.createdAt.nanoseconds
-    );
-    // const postQuery = query(
-    //   collectionGroup(db, `posts`),
-    //   where("visibility", "in", ["Friend", "Public"]),
-    //   orderBy("createdAt", "desc"),
-    //   startAfter(date),
-    // );
-    const postQuery = query(
-      collectionGroup(db, `posts`),
-      // where("visibility", "in", ["Friend", "Public"]),
-      where("authorId", "in", acceptedFriends ? acceptedFriends : ["0"]),
-      orderBy("createdAt", "desc"),
-      startAfter(date),
-      limit(NewsFeed_LIMIT)
-    );
-    const finalPost = (await getPostWithMoreInfo(uid!, postQuery)) ?? [];
+  const getMorePosts = useCallback(
+    async function () {
+      console.log(limitedPosts?.length! > NewsFeed_LIMIT);
+      // if (limitedPosts?.length! > NewsFeed_LIMIT) {
+      // }
+      // if (limitedPosts?.length! > NewsFeed_LIMIT) {
+      //   setpostLoading(true);
+      // }
+      const post = limitedPosts?.[limitedPosts?.length! - 1]!;
+      const date = new Timestamp(
+        post.createdAt.seconds,
+        post.createdAt.nanoseconds
+      );
+      const newsFeedQuery = query(
+        collection(db, `users/${uid}/recentPosts`),
+        orderBy("createdAt", "desc"),
+        startAfter(date),
+        limit(NewsFeed_LIMIT)
+      );
+      let recentPosts;
+      try {
+        if (postEnd) return;
+        recentPosts = (await getDocs(newsFeedQuery)).docs.map((doc) => {
+          return {
+            ...doc.data(),
+          };
+        });
+        recentPosts.shift();
+      } catch (error) {
+        console.log("Recent Post Error - ", error);
+      }
+      const finalPost = await getNewsFeed(String(uid), recentPosts);
+      // const data = finalPost!.pop();
+      setlimitedPosts?.(limitedPosts?.concat(finalPost!));
+      setpostLoading(false);
+      if (
+        finalPost?.length! < NewsFeed_LIMIT ||
+        limitedPosts?.length! < NewsFeed_LIMIT
+      ) {
+        setPostEnd(true);
+        // finalPost?.pop();
+      }
+    },
+    [limitedPosts, postEnd, setlimitedPosts, uid]
+  );
+  // const  = async () => {
+  //   console.log("getting............");
+  //   setpostLoading(true);
+  //   console.log(limitedPosts?.length);
+  //   const post = limitedPosts?.[limitedPosts?.length - 1]!;
+  //   console.log(post);
+  //   const date = new Timestamp(
+  //     post.createdAt.seconds,
+  //     post.createdAt.nanoseconds
+  //   );
+  //   console.log(post.createdAt);
+  //   // const postQuery = query(
+  //   //   collectionGroup(db, `posts`),
+  //   //   where("visibility", "in", ["Friend", "Public"]),
+  //   //   orderBy("createdAt", "desc"),
+  //   //   startAfter(date),
+  //   // );
+  //   // const postQuery = query(
+  //   //   collectionGroup(db, `posts`),
+  //   //   // where("visibility", "in", ["Friend", "Public"]),
+  //   //   where("authorId", "in", acceptedFriends ? acceptedFriends : ["0"]),
+  //   //   orderBy("createdAt", "desc"),
+  //   //   startAfter(date),
+  //   //   limit(NewsFeed_LIMIT)
+  //   // );
 
-    setlimitedPosts?.(limitedPosts?.concat(finalPost));
-    setpostLoading(false);
-    if (finalPost.length < NewsFeed_LIMIT) {
-      setPostEnd(true);
-    }
-  };
+  //   // const finalPost = (await getPostWithMoreInfo(uid!, newsFeedQuery)) ?? [];
+
+  // };
   useEffect(() => {
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];

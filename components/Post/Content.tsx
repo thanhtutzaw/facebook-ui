@@ -38,8 +38,9 @@ export default function Content({ post }: { post: any }) {
     shareMode,
   } = useContext(PostContext) as PostProps;
   const { authorId, id, text, sharePost: share } = post;
-  const { preventClick, selectedId, setSelectedId, showAction, setshowAction } =
+  const { preventClick, selectedId, setSelectedId } =
     useContext(PageContext) as PageProps;
+  const { toggleMenu, settoggleMenu } = useContext(PostContext) as PostProps;
   const router = useRouter();
   const seemore =
     text?.match(/<br\s*[/]?>/gi)?.length! > 4 ||
@@ -99,15 +100,15 @@ export default function Content({ post }: { post: any }) {
                 <button
                   tabIndex={tabIndex}
                   className={s.dot}
-                  aria-expanded={showAction !== ""}
+                  aria-expanded={toggleMenu !== ""}
                   aria-label="open post option dropdown"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    if (showAction === "") {
-                      setshowAction?.(id?.toString());
+                    if (toggleMenu === "") {
+                      settoggleMenu?.(id?.toString());
                     } else {
-                      setshowAction?.("");
+                      settoggleMenu?.("");
                     }
                   }}
                 >
@@ -170,15 +171,11 @@ export default function Content({ post }: { post: any }) {
           {isAdmin ? (
             <AdminMenu
               updatePost={updatePost!}
-              setshowAction={setshowAction!}
-              showAction={showAction ?? ""}
               authorId={authorId!}
               id={id?.toString()!}
             />
           ) : (
             <Menu
-              setshowAction={setshowAction!}
-              showAction={showAction ?? ""}
               authorId={authorId?.toString()!}
               id={id?.toString()!}
               isSaved={post.isSaved}
