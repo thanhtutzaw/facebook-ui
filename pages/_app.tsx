@@ -174,7 +174,7 @@ export default function App({
       }
     });
     return () => unsub();
-  }, [auth, expired]);
+  }, [expired]);
   const [currentUser, setcurrentUser] = useState<
     (User & { photoURL_cropped?: string }) | null
   >(null);

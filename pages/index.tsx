@@ -366,7 +366,7 @@ export default function Home({
       }
     });
     return () => unsub();
-  }, [auth, expired]);
+  }, [expired]);
   const [limitedPosts, setlimitedPosts] = useState(posts ?? []);
   useEffect(() => {
     if (posts && !newsFeedData) {
