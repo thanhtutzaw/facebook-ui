@@ -366,7 +366,8 @@ export default function Home({
       }
     });
     return () => unsub();
-  }, [expired]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth, expired]);
   const [limitedPosts, setlimitedPosts] = useState(posts ?? []);
   useEffect(() => {
     if (posts && !newsFeedData) {
