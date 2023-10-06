@@ -489,7 +489,7 @@ export default function Home({
           // click_action,
           // link,
           // tag,
-          // actions,
+          // action,
           // actionPayload,
         } = payload.notification!;
         // const{title,body} = payload.notification!;

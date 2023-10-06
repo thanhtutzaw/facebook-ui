@@ -1,7 +1,8 @@
 self.addEventListener("notificationclick", function (event) {
     console.log('notification click event', event);
     const { reply: inputText } = event;
-    const { click_action, actionPayload } = event.notification.data;
+    // const { click_action, actionPayload } = event.notification.data.FCM_MSG
+    const { click_action } = event.notification.data.FCM_MSG.notification;
     // const client = self.clients
     event.notification.close();
     switch (event.action) {
@@ -107,7 +108,8 @@ const messaging = firebase.messaging();
 // });
 messaging.onBackgroundMessage((payload) => {
     console.log("FCM Background Noti ", payload)
-    const { title, body, icon, webpush, badge, click_action, link, tag, actions, actionPayload } = payload.data;
+    // const { title, body, icon, webpush, badge, click_action, link, tag, actions, actionPayload } = payload.data;
+    const { title, body, icon, webpush, badge, click_action, link, tag, actions, actionPayload } = payload.notification;
     const notificationOptions = {
         body: body ?? "Notifications from facebook .",
         icon: icon ?? "/logo.svg",
@@ -122,7 +124,7 @@ messaging.onBackgroundMessage((payload) => {
     };
     self.registration.showNotification(title, notificationOptions)
 })
-function openTab(url) {
+function openTab(link) {
     return async () => {
         console.log(self)
         const allClients = await clients.matchAll({
@@ -132,8 +134,8 @@ function openTab(url) {
         let facebookClient;
         for (const client of allClients) {
             const url = new URL(client.url);
-            console.log(url.pathname, url);
-            if (url.pathname === url) {
+            console.log(url.pathname, link);
+            if (url.pathname === link) {
                 await client.focus();
                 facebookClient = client;
                 console.log(facebookClient);

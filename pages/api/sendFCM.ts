@@ -39,7 +39,8 @@ export default async function handler(
         // tag: tag ?? "",
         // click_action: link ?? "/",
         // actionPayload: actionPayload ?? JSON.stringify([]),
-        // actions: actions ?? JSON.stringify([]),
+        actions: actions ?? JSON.stringify([]),
+        action: actions ?? JSON.stringify([]),
       },
       // data: {
       //   title: title ?? "Facebook",
@@ -57,9 +58,11 @@ export default async function handler(
           image: icon,
         },
         notification: {
-          body: "This is a message from FCM to web",
+          title: title ?? "Facebook",
+          body: message,
           requireInteraction: true,
           badge,
+          actions: actions ?? JSON.stringify([]),
         },
         fcm_options: {
           link: link,
