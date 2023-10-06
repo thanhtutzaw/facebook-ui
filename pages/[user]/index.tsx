@@ -462,10 +462,8 @@ export default function UserProfile({
                     >
                       <button
                         disabled={loading}
-                        key={loading ? "true" : "false"} // disabled={loading}
+                        key={loading ? "true" : "false"}
                         onClick={async () => {
-                          // if(!)
-
                           setLoading(true);
                           const data = {
                             id: router.query.user,
@@ -481,16 +479,11 @@ export default function UserProfile({
                         className={`${s.editToggle} ${s.secondary}`}
                       >
                         {!loading ? (
-                          <FontAwesomeIcon
-                            style={{
-                              display: !loading ? "block" : "none",
-                            }}
-                            icon={faPlus}
-                          />
+                          <FontAwesomeIcon icon={faPlus} />
                         ) : (
                           <Spin loading={loading} />
                         )}
-                        {!loading ? "Add Friend" : "Adding"}
+                        {!loading ? "Add Friend" : "Adding..."}
                       </button>
                     </NotFriendBtn>
                   ) : (
@@ -581,10 +574,10 @@ function Spin(props: { loading: boolean }): JSX.Element {
           style={{
             width: `${18}px`,
             height: `${18}px`,
-            borderTopColor: "white",
-            borderLeftColor: "white",
+            borderTopColor: "white !important",
+            borderLeftColor: "white !important",
           }}
-          className="spinner-icon"
+          className="spinner-icon white"
         ></div>
       </div>
     </div>

@@ -31,7 +31,7 @@ export default async function handler(
   try {
     const messageNoti = {
       tokens: registrationTokens,
-      data: {
+      notification: {
         title: title ?? "Facebook",
         body: message,
         icon,

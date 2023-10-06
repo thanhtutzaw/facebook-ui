@@ -40,7 +40,7 @@ import { AppProps, account, friends } from "../types/interfaces";
 
 import SecondaryPage from "@/components/QueryPage";
 import { useActive } from "@/hooks/useActiveTab";
-import { getMessaging, getToken } from "firebase/messaging";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import Spinner from "../components/Spinner";
 import { PageContext, PageProps } from "../context/PageContext";
 import {
@@ -342,8 +342,13 @@ export default function Home({
   // const [queryPageCache, setqueryPageCache] = useState(
   //   queryPageData ? [{ ...queryPageData }] : []
   // );
-  const { newsFeedData, setnewsFeedData, setfriends, setnotiPermission } =
-    useContext(PageContext) as PageProps;
+  const {
+    notiPermission,
+    newsFeedData,
+    setnewsFeedData,
+    setfriends,
+    setnotiPermission,
+  } = useContext(PageContext) as PageProps;
   ``;
 
   // useEffect(() => {
@@ -451,7 +456,93 @@ export default function Home({
   //     // );
   //   }
   // }, [uid]);
+  useEffect(() => {
+    const isReady = async () => {
+      await navigator.serviceWorker.ready;
+    };
+    isReady();
+    if (!notiPermission) return;
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      // navigator.serviceWorker.ready
+      //   .then((reg) => {
+      //     console.log("sw ready", reg);
+      //     alert("Sw ready");
+      //     reg.showNotification(notificationTitle, notificationOptions);
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //     alert("sw not ready !");
+      //   });
+      const messaging = getMessaging(app);
+      console.log("getting foreground");
+      const unsubscribe = onMessage(messaging, (payload) => {
+        console.log("Foreground push notification received:", payload);
+        // alert(
+        //   `Foreground push notification received:  ${JSON.stringify(payload)}`
+        // );
+        const {
+          title,
+          body,
+          icon,
+          // webpush,
+          // badge,
+          // click_action,
+          // link,
+          // tag,
+          // actions,
+          // actionPayload,
+        } = payload.notification!;
+        // const{title,body} = payload.notification!;
+        const notificationTitle = title ?? "Facebook";
+        const notificationOptions = {
+          body: body ?? "Notifications from facebook .",
+          icon: icon ?? "/logo.svg",
+          // badge,
+          // tag: tag ?? "",
+          // data: {
+          //   click_action,
+          //   actionPayload: JSON.parse(actionPayload),
+          // },
+          // // actions: JSON.parse(actions),
+          // renotify: tag !== "",
+        };
+        console.log(
+          `serviceWorker in navigator ${"serviceWorker" in navigator}`
+        ); // true
+        console.log(navigator.serviceWorker);
 
+        console.log("Before showNotification code");
+        navigator.serviceWorker.ready.then((registration) => {
+          console.log("Inside showNotification code");
+          //this code didn't run
+          registration.showNotification(notificationTitle, notificationOptions);
+        });
+        console.log("After showNotification code");
+        // new Notification(notificationTitle, notificationOptions);
+        // this line only work in Desktop but actions are not allowed
+
+        // if (
+        //   "serviceWorker" in navigator &&
+        //   navigator.serviceWorker.controller
+        // ) {
+        //   navigator.serviceWorker.controller.postMessage({
+        //     type: "showNotification",
+        //     title: notificationTitle,
+        //     options: notificationOptions,
+        //   });
+        // } else {
+        //   alert("noti can't show");
+        // }
+        // new ServiceWorkerRegistration().showNotification(
+        //   notificationTitle,
+        //   notificationOptions
+        // );
+        return () => {
+          if (unsubscribe) unsubscribe();
+        };
+      });
+    }
+  }, [notiPermission]);
   useEffect(() => {
     const requestNotificationPermission = async () => {
       try {

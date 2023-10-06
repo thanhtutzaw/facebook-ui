@@ -21,7 +21,7 @@ export default function PhotoLayout(props: {
   preview?: boolean;
   edit?: boolean;
   dummyRef?: RefObject<HTMLDivElement>;
-  post?:Post,
+  post: Post;
 }) {
   const {
     post,

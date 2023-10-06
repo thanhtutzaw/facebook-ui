@@ -84,83 +84,7 @@ export default function App({
   //     });
   // }
   const [notiPermission, setnotiPermission] = useState(false);
-  useEffect(() => {
-    const isReady = async () => {
-      await navigator.serviceWorker.ready;
-    };
-    isReady();
-    if (!notiPermission) return;
-    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
-      const messaging = getMessaging(app);
-      console.log("getting foreground");
-      const unsubscribe = onMessage(messaging, (payload) => {
-        console.log("Foreground push notification received:", payload);
-        // alert(
-        //   `Foreground push notification received:  ${JSON.stringify(payload)}`
-        // );
-        const {
-          title,
-          body,
-          icon,
-          webpush,
-          badge,
-          click_action,
-          link,
-          tag,
-          actions,
-          actionPayload,
-        } = payload.data as any;
-        const notificationTitle = title ?? "Facebook";
-        const notificationOptions = {
-          body: body ?? "Notifications from facebook .",
-          icon: icon ?? "/logo.svg",
-          badge,
-          tag: tag ?? "",
-          data: {
-            click_action,
-            actionPayload: JSON.parse(actionPayload),
-          },
-          // actions: JSON.parse(actions),
-          renotify: tag !== "",
-        };
-        console.log(
-          `serviceWorker in navigator ${"serviceWorker" in navigator}`
-        ); // true
-        console.log(navigator.serviceWorker);
-        navigator.serviceWorker.ready
-          .then((reg) => {
-            console.log("sw ready", reg);
-            alert("Sw ready");
-            reg.showNotification(notificationTitle, notificationOptions);
-          })
-          .catch((error) => {
-            console.log(error);
-            alert("sw not ready !");
-          });
-        new Notification(notificationTitle, notificationOptions); // this line only work in Desktop but actions are not allowed
-
-        // if (
-        //   "serviceWorker" in navigator &&
-        //   navigator.serviceWorker.controller
-        // ) {
-        //   navigator.serviceWorker.controller.postMessage({
-        //     type: "showNotification",
-        //     title: notificationTitle,
-        //     options: notificationOptions,
-        //   });
-        // } else {
-        //   alert("noti can't show");
-        // }
-        // new ServiceWorkerRegistration().showNotification(
-        //   notificationTitle,
-        //   notificationOptions
-        // );
-        return () => {
-          if (unsubscribe) unsubscribe();
-        };
-      });
-    }
-  }, [notiPermission]);
+  
   const auth = getAuth(app);
 
   useEffect(() => {
@@ -225,34 +149,14 @@ export default function App({
             ? profileData.photoURL
             : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
         };
-        console.log("hi");
         const croppedURL = profile.photoURL_cropped;
         setcurrentUser({ ...currentUser, photoURL_cropped: croppedURL });
-        // setcurrentUser((prev)=>{prev,photoURL_cropped:croppedURL})
       };
       getProfile();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser?.uid]);
 
-  // const updateCurrentUser = useCallback(() => {
-  //   const UserWithCropped = {
-  //     ...currentUser,
-  //     photoURL_cropped: currentProfile?.photoURL_cropped,
-  //   };
-  //   setcurrentUser?.(UserWithCropped as typeof currentUser);
-  //   console.log(currentUser);
-  // }, [currentProfile, currentUser]);
-
-  // useEffect(() => {
-  //   updateCurrentUser();
-  // }, []);
-  // useEffect(() => {
-  //   console.log(currentUser);
-  // }, [currentUser]);
-  // useEffect(() => {
-  //   console.log(currentProfile);
-  // }, [currentProfile]);
   const { friendReqCount, soundRef } = useFriendRequest(
     String(currentUser?.uid)
   );
@@ -288,6 +192,7 @@ export default function App({
           setActive={setActive}
           currentUser={currentUser}
           setcurrentUser={setcurrentUser}
+          notiPermission={notiPermission}
           setnotiPermission={setnotiPermission}
         >
           <main>

@@ -218,7 +218,7 @@ export default function Content({ post }: { post: any }) {
           contentEditable={false}
         />
       )}
-      <PhotoLayout files={post.media} preview />
+      <PhotoLayout post={post} files={post.media} preview />
       <SharePreview selectMode={selectMode} post={post} />
       <SocialCount
         Likes={Likes}

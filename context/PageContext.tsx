@@ -19,6 +19,7 @@ export type selectedId = {
   } | null;
 };
 export interface PageProps {
+  notiPermission: boolean;
   friendReqCount: number;
   newsFeedData?: Post[];
   setnewsFeedData?: Function;
@@ -52,12 +53,7 @@ export const PageContext = createContext<PageProps | null>(null);
 
 export function PageProvider(props: PageProps) {
   const {
-    friendReqCount,
-    active,
-    setActive,
-    currentUser,
-    setnotiPermission,
-    setcurrentUser,
+    ...rest
   } = props;
   const [friends, setfriends] = useState<friends[]>([]);
   const queryClient = useQueryClient();
@@ -87,14 +83,15 @@ export function PageProvider(props: PageProps) {
     <PageContext.Provider
       value={{
         indicatorRef,
-        friendReqCount,
-        setcurrentUser,
+        // friendReqCount,
+        // setcurrentUser,
         newsFeedData,
         setnewsFeedData,
-        setnotiPermission,
+        // notiPermission,
+        // setnotiPermission,
         friends,
         setfriends,
-        currentUser,
+        // currentUser,
         queryClient,
         dropdownRef,
         preventClick,
@@ -109,8 +106,9 @@ export function PageProvider(props: PageProps) {
         setuploadButtonClicked,
         viewRef,
         fileRef,
-        active,
-        setActive,
+        // active,
+        // setActive,
+        ...props,
       }}
     >
       {props.children}
