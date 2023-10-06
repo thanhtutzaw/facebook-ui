@@ -36,7 +36,8 @@ export default async function handler(
         body: message,
         badge,
         icon,
-        tag,
+        // tag,
+        // actionPayload: actionPayload ?? JSON.stringify([]),
         // icon,
         // badge,
         // tag: tag ?? "",
@@ -67,7 +68,7 @@ export default async function handler(
           requireInteraction: true,
           badge,
           icon,
-          tag,
+          // tag,
           // actions: actions ?? JSON.stringify([]),
         },
         fcm_options: {
