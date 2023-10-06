@@ -144,7 +144,7 @@ function openTab(link) {
         }
         // console.log(facebookClient);
         if (!facebookClient) {
-            facebookClient = await clients.openWindow(url);
+            facebookClient = await clients.openWindow(link);
             // window.open(url, '_blank');
         }
 
