@@ -41,6 +41,16 @@ export default async function handler(
         actionPayload: actionPayload ?? JSON.stringify([]),
         actions: actions ?? JSON.stringify([]),
       },
+      data: {
+        title: title ?? "Facebook",
+        body: message,
+        icon,
+        badge,
+        tag: tag ?? "",
+        click_action: link ?? "/",
+        actionPayload: actionPayload ?? JSON.stringify([]),
+        actions: actions ?? JSON.stringify([]),
+      },
       webpush: {
         headers: {
           image: icon,
