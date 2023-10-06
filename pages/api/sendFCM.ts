@@ -40,7 +40,7 @@ export default async function handler(
         // click_action: link ?? "/",
         // actionPayload: actionPayload ?? JSON.stringify([]),
         // actions: actions ?? JSON.stringify([]),
-        action: actions ?? JSON.stringify([]),
+        // action: actions ?? JSON.stringify([]),
       },
       // data: {
       //   title: title ?? "Facebook",
@@ -59,13 +59,14 @@ export default async function handler(
         },
         notification: {
           // title: title ?? "Facebook",
+          title: title ?? "Facebook",
           body: message,
           requireInteraction: true,
           badge,
           // actions: actions ?? JSON.stringify([]),
         },
         fcm_options: {
-          link: link,
+          link,
         },
       },
       android: {
