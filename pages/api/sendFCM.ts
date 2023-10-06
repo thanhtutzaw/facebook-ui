@@ -66,7 +66,7 @@ export default async function handler(
           image: icon,
         },
         notification: {
-          body: "This is a message from FCM to web",
+          body: message,
           requireInteraction: true,
           // badge,
           // title: title ?? "Facebook",
