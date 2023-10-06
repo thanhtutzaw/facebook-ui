@@ -35,7 +35,7 @@ export default async function handler(
         title: title ?? "Facebook",
         body: message,
         badge,
-        icon,
+        // icon,
         // tag,
         // actionPayload: actionPayload ?? JSON.stringify([]),
         // icon,
