@@ -34,6 +34,9 @@ export default async function handler(
       notification: {
         title: title ?? "Facebook",
         body: message,
+        badge,
+        icon,
+        tag,
         // icon,
         // badge,
         // tag: tag ?? "",
@@ -63,6 +66,8 @@ export default async function handler(
           body: message,
           requireInteraction: true,
           badge,
+          icon,
+          tag,
           // actions: actions ?? JSON.stringify([]),
         },
         fcm_options: {
