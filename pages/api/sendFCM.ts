@@ -1,6 +1,10 @@
 import admin from "firebase-admin";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getFCMToken } from "../../lib/firebaseAdmin";
+import {
+  MulticastMessage,
+  WebpushConfig,
+} from "firebase-admin/lib/messaging/messaging-api";
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -63,7 +67,6 @@ export default async function handler(
         },
         notification: {
           // title: title ?? "Facebook",
-          title: title ?? "Facebook",
           body: message,
           requireInteraction: true,
           badge,
@@ -82,7 +85,7 @@ export default async function handler(
           bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
         },
       },
-    };
+    } as MulticastMessage;
     console.log({ messageNoti });
 
     const response = await admin.messaging().sendEachForMulticast(messageNoti);
