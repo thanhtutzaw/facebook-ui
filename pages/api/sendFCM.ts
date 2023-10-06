@@ -39,7 +39,7 @@ export default async function handler(
         // tag: tag ?? "",
         // click_action: link ?? "/",
         // actionPayload: actionPayload ?? JSON.stringify([]),
-        actions: actions ?? JSON.stringify([]),
+        // actions: actions ?? JSON.stringify([]),
         action: actions ?? JSON.stringify([]),
       },
       // data: {
@@ -62,7 +62,7 @@ export default async function handler(
           body: message,
           requireInteraction: true,
           badge,
-          actions: actions ?? JSON.stringify([]),
+          // actions: actions ?? JSON.stringify([]),
         },
         fcm_options: {
           link: link,
