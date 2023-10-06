@@ -174,8 +174,7 @@ export default function App({
       }
     });
     return () => unsub();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [auth, expired, router]);
   const [currentUser, setcurrentUser] = useState<
     (User & { photoURL_cropped?: string }) | null
   >(null);

@@ -3,7 +3,6 @@
   --main-width       : 700px;
   /* --padding-inline:clamp(0.5rem, 2vw, 0.8rem); */
   --padding-inline   : clamp(0.5rem, 1vw, 0.8rem);
-  /* --main-width    : 500px; */
 }
 
 * {
@@ -50,6 +49,11 @@ main {
 
 }
 
+#nprogress .spinner-icon,
+.loading .spinner-icon {
+  border-top-color : #0070f3 !important;
+  border-left-color: #0070f3 !important;
+}
 
 .loading {
   pointer-events: none;
