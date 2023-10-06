@@ -38,7 +38,7 @@ export default async function handler(
       notification: {
         title: title ?? "Facebook",
         body: message,
-        badge,
+        // badge,
         // icon,
         // tag,
         // actionPayload: actionPayload ?? JSON.stringify([]),
@@ -68,7 +68,7 @@ export default async function handler(
         notification: {
           body: "This is a message from FCM to web",
           requireInteraction: true,
-          badge,
+          // badge,
           // title: title ?? "Facebook",
           // body: message,
           // requireInteraction: true,
@@ -81,14 +81,14 @@ export default async function handler(
           link: link,
         },
       },
-      android: {
-        ttl: 3600000,
-        notification: {
-          bodyLocKey: "STOCK_NOTIFICATION_BODY",
-          bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
-        },
-      },
-    } as MulticastMessage;
+      // android: {
+      //   ttl: 3600000,
+      //   notification: {
+      //     bodyLocKey: "STOCK_NOTIFICATION_BODY",
+      //     bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+      //   },
+      // },
+    } ;
     console.log({ messageNoti });
 
     const response = await admin.messaging().sendEachForMulticast(messageNoti);
