@@ -66,16 +66,19 @@ export default async function handler(
           image: icon,
         },
         notification: {
-          // title: title ?? "Facebook",
-          body: message,
+          body: "This is a message from FCM to web",
           requireInteraction: true,
           badge,
+          // title: title ?? "Facebook",
+          // body: message,
+          // requireInteraction: true,
+          // badge,
           // icon,
           // tag,
           // actions: actions ?? JSON.stringify([]),
         },
         fcm_options: {
-          link,
+          link: link,
         },
       },
       android: {
