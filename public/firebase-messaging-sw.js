@@ -133,6 +133,7 @@ function openTab(link) {
         });
         let facebookClient;
         for (const client of allClients) {
+            console.log({ client, allClients })
             const url = new URL(client.url);
             console.log(url.pathname, link);
             if (url.pathname === link) {
@@ -140,6 +141,8 @@ function openTab(link) {
                 facebookClient = client;
                 console.log(facebookClient);
                 break;
+            } else {
+                await client.openWindow(link);
             }
         }
         // console.log(facebookClient);
