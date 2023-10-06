@@ -58,7 +58,7 @@ export default async function handler(
           image: icon,
         },
         notification: {
-          title: title ?? "Facebook",
+          // title: title ?? "Facebook",
           body: message,
           requireInteraction: true,
           badge,
