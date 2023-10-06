@@ -67,7 +67,7 @@ export default async function handler(
           body: message,
           requireInteraction: true,
           badge,
-          icon,
+          // icon,
           // tag,
           // actions: actions ?? JSON.stringify([]),
         },
