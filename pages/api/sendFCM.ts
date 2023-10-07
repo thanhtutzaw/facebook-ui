@@ -71,7 +71,7 @@ export default async function handler(
           requireInteraction: true,
           badge,
           icon,
-          actions: actions ?? JSON.stringify([]),
+          actions: JSON.parse(actions) ?? JSON.stringify([]),
           // tag,
           // actions: actions ?? JSON.stringify([]),
         },
