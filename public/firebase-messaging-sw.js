@@ -130,6 +130,7 @@ messaging.onBackgroundMessage((payload) => {
         icon: icon ?? "/logo.svg",
         badge,
         tag: tag ?? "",
+        renotify: tag !== '',
         // data: {
         //     click_action,
         //     actionPayload: JSON.parse(actionPayload)
