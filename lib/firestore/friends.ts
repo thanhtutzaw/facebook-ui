@@ -147,6 +147,7 @@ export async function acceptFriends(
           "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
         badge: "/badge.svg",
         link: `/${senderData}`,
+        actions: JSON.stringify([]),
       }),
     }
   );
