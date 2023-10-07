@@ -38,6 +38,7 @@ export default async function handler(
       notification: {
         title: title ?? "Facebook",
         body: message,
+
         // badge,
         // icon,
         // tag,
@@ -75,11 +76,12 @@ export default async function handler(
           data: {
             actionPayload: JSON.parse(actionPayload) ?? {},
           },
-          // tag,
+          tag: tag ?? "",
+          renotify: tag !== "",
           // actions: actions ?? JSON.stringify([]),
         },
         fcm_options: {
-          link: link,
+          link,
         },
       },
       android: {
