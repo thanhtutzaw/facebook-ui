@@ -106,19 +106,15 @@ export async function acceptFriends(
   currentUser?: (User & { photoURL_cropped?: string }) | null
 ) {
   console.log({ currentUser });
-  // const { author, ...data } = { ...f };
+  if (f.status !== "pending") {
+    alert("Already Accepted!");
+    return;
+  }
   const friendData = {
-    // ...data,
     id: f.id,
     status: "friend",
     updatedAt: serverTimestamp(),
   } as friends;
-  // const receiptData = { ...acceptedData, id: uid };
-  // await setDoc(reqCountRef, { count: increment(+1) });
-  // const reqCountRef = ;
-  // await setDoc(reqCountRef, { count: increment(-1) });//this doesn't run
-  // console.log(`reqPath ${f.senderId}`);
-  //72Gp1tmlBwRxdUe8EPKTk6iIgRh2 (No) //J3YKWcohocYfWyMMhz8PJDWOb3k1 ( Yes )
   try {
     await setDoc(doc(db, `users/${senderData}/friendReqCount/reqCount`), {
       count: increment(-1),
@@ -132,24 +128,28 @@ export async function acceptFriends(
     process.env.NODE_ENV === "production"
       ? "https://facebook-ui-zee.vercel.app"
       : "http://localhost:3000";
-  await fetch(`${hostName}/api/sendFCM`, {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify({
-      recieptId: f.senderId,
-      message: `${
-        currentUser?.displayName ?? "Unknown User"
-      } accepted your friend request.`,
-      icon:
-        currentUser?.photoURL_cropped ??
-        currentUser?.photoURL ??
-        "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-      badge: "/badge.svg",
-      link: `/${senderData}`,
-    }),
-  });
+  console.log(hostName);
+  await fetch(
+    `${hostName ?? "https://facebook-ui-zee.vercel.app"}/api/sendFCM`,
+    {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        recieptId: f.senderId,
+        message: `${
+          currentUser?.displayName ?? "Unknown User"
+        } accepted your friend request.`,
+        icon:
+          currentUser?.photoURL_cropped ??
+          currentUser?.photoURL ??
+          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+        badge: "/badge.svg",
+        link: `/${senderData}`,
+      }),
+    }
+  );
 }
 export async function rejectFriendRequest(uid: string, f: friends) {
   try {

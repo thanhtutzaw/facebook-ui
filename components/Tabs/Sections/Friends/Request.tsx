@@ -24,6 +24,13 @@ export function Request(props: RequestProps) {
     if (!uid) return;
     setConfirmLoaing(true);
     try {
+      if (f.status !== "pending") {
+        alert("Already Accepted!");
+        setaccept(true);
+        queryClient.invalidateQueries(["pendingFriends"]);
+        queryClient.invalidateQueries(["suggestedFriends"]);
+        return;
+      }
       await acceptFriends(uid, f, currentUser);
       setConfirmLoaing(false);
       setaccept(true);
