@@ -32,6 +32,7 @@ export default async function handler(
   } = req.body;
   const registrationTokens = await getFCMToken(recieptId);
   if (!registrationTokens) return;
+  console.log(`${actions} in api/sendFCM`);
   try {
     const messageNoti = {
       tokens: registrationTokens,

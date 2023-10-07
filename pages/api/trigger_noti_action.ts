@@ -13,7 +13,6 @@ export default async function handler(
       case "accept":
         const { uid, f, currentUser } = req.body;
         await acceptFriends(uid, f, currentUser);
-        console.log(req.body);
         break;
       case "reply":
         break;

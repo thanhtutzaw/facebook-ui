@@ -41,6 +41,7 @@ self.addEventListener("notificationclick", function (event) {
                     .then(response => {
                         if (response.ok) {
                             console.log('Accepted user');
+                            console.log({ body: JSON.stringify(data.actionPayload) })
                         } else {
                             console.error('Accept Action failed');
                         }
