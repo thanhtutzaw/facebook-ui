@@ -77,7 +77,7 @@ export default async function handler(
             actionPayload: JSON.parse(actionPayload) ?? {},
           },
           tag: tag ?? "",
-          renotify: tag !== "",
+          renotify: false,
           // actions: actions ?? JSON.stringify([]),
         },
         fcm_options: {
