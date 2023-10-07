@@ -129,9 +129,7 @@ messaging.onBackgroundMessage((payload) => {
         body: body ?? "Notifications from facebook .",
         icon: icon ?? "/logo.svg",
         badge,
-        // tag: tag ?? "",
-        // renotify: tag !== '',
-        
+        tag: tag ?? "",
         // data: {
         //     click_action,
         //     actionPayload: JSON.parse(actionPayload)
