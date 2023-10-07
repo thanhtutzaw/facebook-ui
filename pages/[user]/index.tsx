@@ -175,7 +175,7 @@ export default function UserProfile({
       <AcceptFriend
         onClick={async () => {
           if (!friendId) return;
-          console.log({ currentUser });
+          // console.log({ currentUser });
           await acceptFriends(
             token.uid,
             {

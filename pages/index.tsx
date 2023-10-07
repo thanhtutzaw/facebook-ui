@@ -485,25 +485,35 @@ export default function Home({
           body,
           icon,
           // webpush,
-          // badge,
           // click_action,
           // link,
-          // tag,
           // action,
           // actionPayload,
         } = payload.notification!;
         const notificationTitle = title ?? "Facebook";
+        // const notificationOptions = {
+        //   body: body ?? "Notifications from facebook .",
+        //   icon: icon ?? "/logo.svg",
+        //   // badge,
+        //   // tag: tag ?? "",
+        //   // data: {
+        //   //   click_action,
+        //   //   actionPayload: JSON.parse(actionPayload),
+        //   // },
+        //   // // actions: JSON.parse(actions),
+        //   // renotify: tag !== "",
+        // };
         const notificationOptions = {
           body: body ?? "Notifications from facebook .",
           icon: icon ?? "/logo.svg",
           // badge,
           // tag: tag ?? "",
-          // data: {
-          //   click_action,
-          //   actionPayload: JSON.parse(actionPayload),
-          // },
-          // // actions: JSON.parse(actions),
           // renotify: tag !== "",
+          // data: {
+          //     click_action,
+          //     actionPayload: JSON.parse(actionPayload)
+          // },
+          // actions: JSON.parse(actions)
         };
         console.log(
           `serviceWorker in navigator ${"serviceWorker" in navigator}`

@@ -32,7 +32,8 @@ export default async function handler(
   } = req.body;
   const registrationTokens = await getFCMToken(recieptId);
   if (!registrationTokens) return;
-  console.log(`${actions} in api/sendFCM`);
+  // console.log(`${actions} in api/sendFCM`);
+  // console.log(req.body);
   try {
     const messageNoti = {
       tokens: registrationTokens,
@@ -73,9 +74,10 @@ export default async function handler(
           requireInteraction: true,
           badge,
           icon,
-          actions: actions ? JSON.parse(actions) : [],
+          actions: typeof actions === "string" ? JSON.parse(actions) : [],
           data: {
-            actionPayload: JSON.parse(actionPayload) ?? {},
+            actionPayload:
+              typeof actions === "string" ? JSON.parse(actionPayload) : {},
           },
           tag: tag ?? "",
           renotify: false,

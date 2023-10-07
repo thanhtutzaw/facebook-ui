@@ -52,9 +52,8 @@ export const Footer = (
   }, [getLocal]);
   const [isLiked, setisLiked] = useState(post.isLiked);
 
-  const {currentUser, queryClient, dropdownRef, shareAction, setshareAction } = useContext(
-    PageContext
-  ) as PageProps;
+  const { currentUser, queryClient, dropdownRef, shareAction, setshareAction } =
+    useContext(PageContext) as PageProps;
   const { id, author: authorAccount, authorId } = post;
   const authorProfile = authorAccount as account["profile"];
   const authorName = `${authorProfile?.firstName ?? "Unknow User"} ${
@@ -185,31 +184,36 @@ export const Footer = (
                 "post_reaction",
                 `${authorId}/${id}`
               );
-              await fetch("/api/sendFCM", {
-                method: "POST",
-                headers: {
-                  "Content-type": "application/json",
-                },
-                body: JSON.stringify({
-                  recieptId: post.authorId.toString(),
-                  message: `${
-                    profile?.displayName ?? "Unknown User"
-                  } liked this post`,
-                  icon:
-                    currentUser?.photoURL_cropped ??
-                    currentUser?.photoURL ??
-                    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-                  badge: "/badge.svg",
-                  tag: `Likes-${post.id}`,
-                  link: `/${post.authorId}/${post.id}`,
-
-                  // webpush: {
-                  //   fcm_options: {
-                  //     link: `https://facebook-ui-zee.vercel.app`,
-                  //   },
-                  // },
-                }),
-              });
+              try {
+                console.log("Sending Notification");
+                await fetch("/api/sendFCM", {
+                  method: "POST",
+                  headers: {
+                    "Content-type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    recieptId: post.authorId.toString(),
+                    message: `${
+                      profile?.displayName ?? "Unknown User"
+                    } liked this post`,
+                    icon:
+                      currentUser?.photoURL_cropped ??
+                      currentUser?.photoURL ??
+                      "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+                    badge: "/badge.svg",
+                    tag: `Likes-${post.id}`,
+                    link: `/${post.authorId}/${post.id}`,
+                    // webpush: {
+                    //   fcm_options: {
+                    //     link: `https://facebook-ui-zee.vercel.app`,
+                    //   },
+                    // },
+                  }),
+                });
+                console.log("Notification Sended successfully.");
+              } catch (error) {
+                console.log(error);
+              }
             }
             // router.replace(router.asPath, undefined, { scroll: false });
           }}

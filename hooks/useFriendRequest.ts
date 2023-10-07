@@ -20,7 +20,7 @@ function useFriendRequest( uid:string) {
     async function getLastpull() {
       lastPull = (await getDoc(friendReqCountRef)).data()
         ?.lastPullTimestamp as Timestamp;
-      console.log(lastPull);
+      // console.log(lastPull);
     }
     getLastpull();
     let unsubscribeFriendReqCount: Unsubscribe;

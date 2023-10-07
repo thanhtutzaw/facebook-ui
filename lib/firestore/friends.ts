@@ -27,7 +27,6 @@ export async function addFriends(
   }
   const { author, ...data } = { ...f };
   const reqCountRef = doc(db, `users/${f.id}/friendReqCount/reqCount`);
-  console.log({ currentUser });
   const senderData = {
     ...data,
     status: "pending",
@@ -65,36 +64,40 @@ export async function addFriends(
     } else {
       await setDoc(reqCountRef, { count: 1, updatedAt: serverTimestamp() });
     }
-    console.log({ currentUser });
-    console.log(`send fcm to ${senderData.id}`);
-    await fetch("/api/sendFCM", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        recieptId: senderData.id,
-        message: `${
-          currentUser?.displayName ?? "Unknow User"
-        } send you a friend request.`,
-        icon:
-          currentUser?.photoURL_cropped ??
-          currentUser?.photoURL ??
-          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-        badge: "/badge.svg",
-        link: `/${receiptData.id}`,
-        actionPayload: JSON.stringify({
-          uid: senderData.id,
-          f: receiptData,
-          currentUser: {
-            displayName: `${author?.firstName} ${author?.lastName}`,
-            photoURL: author?.photoURL,
-            photoURL_cropped: author?.photoURL_cropped,
-          },
+    try {
+      console.log("Sending Notification");
+      await fetch("/api/sendFCM", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          recieptId: senderData.id,
+          message: `${
+            currentUser?.displayName ?? "Unknow User"
+          } send you a friend request.`,
+          icon:
+            currentUser?.photoURL_cropped ??
+            currentUser?.photoURL ??
+            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+          badge: "/badge.svg",
+          link: `/${receiptData.id}`,
+          actionPayload: JSON.stringify({
+            uid: senderData.id,
+            f: receiptData,
+            currentUser: {
+              displayName: `${author?.firstName} ${author?.lastName}`,
+              photoURL: author?.photoURL,
+              photoURL_cropped: author?.photoURL_cropped,
+            },
+          }),
+          actions: JSON.stringify([...NotiAction.friend_request]),
         }),
-        actions: JSON.stringify([...NotiAction.friend_request]),
-      }),
-    });
+      });
+      console.log("Notification Sended successfully.");
+    } catch (error) {
+      console.log(error);
+    }
   } catch (error) {
     console.log(error);
     throw error;
@@ -105,7 +108,6 @@ export async function acceptFriends(
   f: friends,
   currentUser?: (User & { photoURL_cropped?: string }) | null
 ) {
-  console.log({ currentUser });
   if (f.status !== "pending") {
     alert("Already Accepted!");
     return;
@@ -123,34 +125,38 @@ export async function acceptFriends(
     console.error("Error updating req count:", error);
   }
   await updateFriendStatus(senderData, friendData);
-  console.log("is production " + process.env.NODE_ENV);
+  // console.log("is production " + process.env.NODE_ENV);
   const hostName =
     process.env.NODE_ENV === "production"
       ? "https://facebook-ui-zee.vercel.app"
       : "http://localhost:3000";
-  console.log(hostName);
-  await fetch(
-    `${hostName ?? "https://facebook-ui-zee.vercel.app"}/api/sendFCM`,
-    {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        recieptId: f.senderId,
-        message: `${
-          currentUser?.displayName ?? "Unknown User"
-        } accepted your friend request.`,
-        icon:
-          currentUser?.photoURL_cropped ??
-          currentUser?.photoURL ??
-          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-        badge: "/badge.svg",
-        link: `/${senderData}`,
-        actions: JSON.stringify([]),
-      }),
-    }
-  );
+  try {
+    console.log("Sending Notification");
+    await fetch(
+      `${hostName ?? "https://facebook-ui-zee.vercel.app"}/api/sendFCM`,
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          recieptId: f.senderId,
+          message: `${
+            currentUser?.displayName ?? "Unknown User"
+          } accepted your friend request.`,
+          icon:
+            currentUser?.photoURL_cropped ??
+            currentUser?.photoURL ??
+            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+          badge: "/badge.svg",
+          link: `/${senderData}`,
+        }),
+      }
+    );
+    console.log("Notification Sended successfully.");
+  } catch (error) {
+    console.log(error);
+  }
 }
 export async function rejectFriendRequest(uid: string, f: friends) {
   try {
@@ -219,7 +225,7 @@ async function updateFriendStatus(senderId: string, receipt: friends) {
   try {
     await updateDoc(adminRef, adminData);
     await updateDoc(receiptRef, receipt);
-    console.log("Updated Success");
+    console.log("Friend status updated successfully to - " + receipt.status);
   } catch (error) {
     console.log(error);
     throw error;

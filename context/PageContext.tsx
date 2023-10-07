@@ -83,15 +83,10 @@ export function PageProvider(props: PageProps) {
     <PageContext.Provider
       value={{
         indicatorRef,
-        // friendReqCount,
-        // setcurrentUser,
         newsFeedData,
         setnewsFeedData,
-        // notiPermission,
-        // setnotiPermission,
         friends,
         setfriends,
-        // currentUser,
         queryClient,
         dropdownRef,
         preventClick,
