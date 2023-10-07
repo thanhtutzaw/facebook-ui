@@ -492,7 +492,6 @@ export default function Home({
           // action,
           // actionPayload,
         } = payload.notification!;
-        // const{title,body} = payload.notification!;
         const notificationTitle = title ?? "Facebook";
         const notificationOptions = {
           body: body ?? "Notifications from facebook .",

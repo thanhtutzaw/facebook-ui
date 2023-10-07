@@ -93,11 +93,6 @@ export async function addFriends(
           },
         }),
         actions: JSON.stringify([...NotiAction.friend_request]),
-        // webpush: {
-        //   fcm_options: {
-        //     link: `https://facebook-ui-zee.vercel.app/${post.authorId}/${post.id}`,
-        //   },
-        // },
       }),
     });
   } catch (error) {

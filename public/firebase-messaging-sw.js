@@ -2,7 +2,7 @@ self.addEventListener("notificationclick", function (event) {
     console.log('notification click event', event);
     const { reply: inputText } = event;
     // const { click_action, actionPayload } = event.notification.data.FCM_MSG
-    const { click_action } = event.notification.data.FCM_MSG.notification;
+    const { click_action, data } = event.notification.data.FCM_MSG.notification;
     // const client = self.clients
     event.notification.close();
     switch (event.action) {
@@ -36,7 +36,7 @@ self.addEventListener("notificationclick", function (event) {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(actionPayload)
+                    body: JSON.stringify(data.actionPayload)
                 })
                     .then(response => {
                         if (response.ok) {
@@ -137,7 +137,7 @@ messaging.onBackgroundMessage((payload) => {
             actionPayload: JSON.parse(actionPayload)
         },
         // actions: JSON.parse(actions)
-        
+
     };
     self.registration.showNotification(title, notificationOptions)
 })
