@@ -33,9 +33,9 @@ export async function sendAppNoti(
 
 export const getMessage = (type: notiContentTypes) => {
   const messages: Record<notiContentTypes, string> = {
-    post_reaction: `reacted this post.`,
-    comment: `commented on this post.`,
-    share: `shared this post.`,
+    post_reaction: `reacted your post.`,
+    comment: `commented on your post.`,
+    share: `shared your post.`,
   };
   return { message: messages[type] || "" };
 };

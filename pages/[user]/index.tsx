@@ -174,20 +174,26 @@ export default function UserProfile({
         onClick={async () => {
           if (!friendId) return;
           // console.log({ currentUser });
-          await acceptFriends(
-            token.uid,
-            {
-              senderId: friendId?.toString(),
-              id: friendId?.toString(),
-            },
-            currentUser
-          );
-          router.replace(router.asPath, undefined, {
-            scroll: false,
-          });
+          try {
+            await acceptFriends(
+              token.uid,
+              {
+                senderId: friendId?.toString(),
+                id: friendId?.toString(),
+                status:'pending',
+              },
+              currentUser
+            );
+            router.replace(router.asPath, undefined, {
+              scroll: false,
+            });
           setstatus("friend");
-          queryClient.refetchQueries(["pendingFriends"]);
-          queryClient.invalidateQueries(["pendingFriends"]);
+queryClient.refetchQueries(["pendingFriends"]);
+queryClient.invalidateQueries(["pendingFriends"]);
+          } catch (error) {
+            console.error(error);
+          }
+          
         }}
         className={`${s.editToggle} ${s.confirm}`}
       />
@@ -456,8 +462,9 @@ export default function UserProfile({
                         onClick={async () => {
                           setLoading(true);
                           const data = {
-                            id: router.query.user,
-                          } as friends;
+                            id: String(router.query.user),
+                            author:profile,
+                          } ;
                           await addFriends(token.uid, data, currentUser);
                           router.replace(router.asPath, undefined, {
                             scroll: false,

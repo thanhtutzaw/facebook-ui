@@ -45,13 +45,13 @@ export function AppProvider(props: AppProps) {
   }, [limitedPosts, posts, setlimitedPosts]);
   const getMorePosts = useCallback(
     async function () {
-      console.log(limitedPosts?.length! > NewsFeed_LIMIT);
+      // console.log();
       // if (limitedPosts?.length! > NewsFeed_LIMIT) {
       // }
       // if (limitedPosts?.length! > NewsFeed_LIMIT) {
       //   setpostLoading(true);
       // }
-      setpostLoading(true);
+      setpostLoading(limitedPosts?.length! > NewsFeed_LIMIT);
       const post = limitedPosts?.[limitedPosts?.length! - 1]!;
       const date = new Timestamp(
         post.createdAt.seconds,

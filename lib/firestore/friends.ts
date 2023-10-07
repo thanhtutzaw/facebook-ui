@@ -11,10 +11,21 @@ import {
 import { friends } from "../../types/interfaces";
 import { NotiAction } from "../NotiAction";
 import { db } from "../firebase";
+type FriendsWithAuthor<T> = T extends { author: any }
+  ? T
+  : T & { author: friends["author"] };
+type FriendsWithNonNullableAuthor = friends & {
+  author: friends["author"];
+};
+type NonNullableFriendsAuthor = Omit<friends, "author"> & {
+  author: NonNullable<friends["author"]>;
+};
 
 export async function addFriends(
   uid: string,
   f: friends,
+  // f: FriendsWithAuthor<friends>,
+  // f: friends & {author:friends["author"]},
   // profile:account["profile"],
   currentUser?: (User & { photoURL_cropped?: string }) | null
 ) {
@@ -65,6 +76,7 @@ export async function addFriends(
     } else {
       await setDoc(reqCountRef, { count: 1, updatedAt: serverTimestamp() });
     }
+    console.log({ author });
     try {
       console.log("Sending Notification");
       await fetch("/api/sendFCM", {
@@ -87,12 +99,16 @@ export async function addFriends(
             uid: senderData.id,
             f: receiptData,
             currentUser: {
-              displayName: `${author?.firstName} ${author?.lastName}`,
+              displayName:
+                !author?.firstName || !author.lastName
+                  ? "Unknown User"
+                  : `${author?.firstName} ${author?.lastName}`,
               photoURL: author?.photoURL,
               photoURL_cropped: author?.photoURL_cropped,
             },
           }),
           actions: JSON.stringify([...NotiAction.friend_request]),
+          requireInteraction: true,
         }),
       });
       console.log("Notification Sended successfully.");
@@ -110,8 +126,10 @@ export async function acceptFriends(
   currentUser?: (User & { photoURL_cropped?: string }) | null
 ) {
   if (f.status !== "pending") {
-    alert("Already Accepted!");
-    return;
+    console.log({ f });
+    alert("Already Accepted! in funciton");
+    // return;
+    throw new Error("Already Accepted!");
   }
   const friendData = {
     id: f.id,
@@ -126,7 +144,6 @@ export async function acceptFriends(
     console.error("Error updating req count:", error);
   }
   await updateFriendStatus(senderData, friendData);
-  // console.log("is production " + process.env.NODE_ENV);
   const hostName =
     process.env.NODE_ENV === "production"
       ? "https://facebook-ui-zee.vercel.app"

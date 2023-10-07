@@ -57,7 +57,7 @@ main {
 }
 
 #nprogress .spinner-icon,
-.loading .spinner-icon {
+.loading .spinner-icon:not(.white) {
   border-top-color : #0070f3 !important;
   border-left-color: #0070f3 !important;
 }

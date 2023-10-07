@@ -29,6 +29,7 @@ export default async function handler(
     link,
     actionPayload,
     actions,
+    requireInteraction,
   } = req.body;
   const registrationTokens = await getFCMToken(recieptId);
   if (!registrationTokens) return;
@@ -71,7 +72,7 @@ export default async function handler(
         notification: {
           title: title ?? "Facebook",
           body: message,
-          requireInteraction: true,
+          requireInteraction : requireInteraction ?requireInteraction: false,
           badge,
           icon,
           actions: typeof actions === "string" ? JSON.parse(actions) : [],

@@ -527,7 +527,7 @@ export default function Home({
           registration.showNotification(notificationTitle, notificationOptions);
         });
         console.log("After showNotification code");
-        // new Notification(notificationTitle, notificationOptions);
+        new Notification(notificationTitle, notificationOptions);
         // this line only work in Desktop but actions are not allowed
 
         // if (

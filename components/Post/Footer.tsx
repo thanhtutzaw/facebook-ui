@@ -25,7 +25,7 @@ import {
 import { PageContext, PageProps } from "../../context/PageContext";
 import { NotiAction } from "../../lib/NotiAction";
 import { app, db } from "../../lib/firebase";
-import { sendAppNoti } from "../../lib/firestore/notifications";
+import { getMessage, sendAppNoti } from "../../lib/firestore/notifications";
 import { addPost, likePost, unlikePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
@@ -135,10 +135,8 @@ export const Footer = (
         <button
           disabled={likeLoading}
           style={{
-            border: likeLoading ? "2px solid red" : "initial",
             pointerEvents: likeLoading ? "none" : "initial",
           }}
-          // onClick={async () => await handleLikeUnlike()}
           onClick={async () => {
             const uid = auth.currentUser?.uid;
             if (!uid) {
@@ -195,7 +193,7 @@ export const Footer = (
                     recieptId: post.authorId.toString(),
                     message: `${
                       profile?.displayName ?? "Unknown User"
-                    } liked this post`,
+                    } liked your post.`,
                     icon:
                       currentUser?.photoURL_cropped ??
                       currentUser?.photoURL ??
@@ -203,11 +201,6 @@ export const Footer = (
                     badge: "/badge.svg",
                     tag: `Likes-${post.id}`,
                     link: `/${post.authorId}/${post.id}`,
-                    // webpush: {
-                    //   fcm_options: {
-                    //     link: `https://facebook-ui-zee.vercel.app`,
-                    //   },
-                    // },
                   }),
                 });
                 console.log("Notification Sended successfully.");
@@ -215,7 +208,6 @@ export const Footer = (
                 console.log(error);
               }
             }
-            // router.replace(router.asPath, undefined, { scroll: false });
           }}
           aria-expanded={reactionAction !== ""}
           aria-label="Like this Post"
@@ -372,6 +364,7 @@ export const Footer = (
                   try {
                     window.document.body.style.cursor = "wait";
                     await handleShareNow(
+                      currentUser,
                       uid,
                       visibility ?? "Public",
                       sharePost,
@@ -414,6 +407,7 @@ export const Footer = (
 };
 
 async function handleShareNow(
+  currentUser: any,
   uid: string,
   visibility: string,
   sharePost: { refId: string; author: string; id: string },
@@ -421,13 +415,42 @@ async function handleShareNow(
   profile: User | null,
   authorName: string
 ) {
+  const url = `${uid}/${sharePost.refId}`;
   await addPost(uid, visibility, "", [], sharePost);
   await sendAppNoti(
     uid,
     post?.authorId.toString()!,
     profile!,
     "share",
-    `${uid}/${sharePost.refId}`,
+    url,
     `${authorName} : ${post.text}`
   );
+
+  if (uid === post.authorId) return;
+
+  try {
+    console.log("Sending Notification");
+    await fetch("/api/sendFCM", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        recieptId: post.authorId.toString(),
+        message: `${profile?.displayName ?? "Unknown User"} ${getMessage(
+          "share"
+        )}`,
+        icon:
+          currentUser?.photoURL_cropped ??
+          currentUser?.photoURL ??
+          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+        badge: "/badge.svg",
+        tag: `shares-${sharePost.refId}`,
+        link: url,
+      }),
+    });
+    console.log("Notification Sended successfully.");
+  } catch (error) {
+    console.log(error);
+  }
 }

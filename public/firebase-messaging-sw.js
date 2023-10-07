@@ -4,6 +4,7 @@ self.addEventListener("notificationclick", function (event) {
     // const { click_action, actionPayload } = event.notification.data.FCM_MSG
     const { click_action, data } = event.notification.data.FCM_MSG.notification;
     // const client = self.clients
+    console.log({data})
     event.notification.close();
     switch (event.action) {
         case `see_post`:
