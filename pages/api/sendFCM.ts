@@ -66,14 +66,12 @@ export default async function handler(
           image: icon,
         },
         notification: {
+          title: title ?? "Facebook",
           body: message,
           requireInteraction: true,
-          // badge,
-          // title: title ?? "Facebook",
-          // body: message,
-          // requireInteraction: true,
-          // badge,
-          // icon,
+          badge,
+          icon,
+          actions: actions ?? JSON.stringify([]),
           // tag,
           // actions: actions ?? JSON.stringify([]),
         },
@@ -81,14 +79,14 @@ export default async function handler(
           link: link,
         },
       },
-      // android: {
-      //   ttl: 3600000,
-      //   notification: {
-      //     bodyLocKey: "STOCK_NOTIFICATION_BODY",
-      //     bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
-      //   },
-      // },
-    } ;
+      android: {
+        ttl: 3600000,
+        notification: {
+          bodyLocKey: "STOCK_NOTIFICATION_BODY",
+          bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+        },
+      },
+    } as MulticastMessage;
     console.log({ messageNoti });
 
     const response = await admin.messaging().sendEachForMulticast(messageNoti);

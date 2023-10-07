@@ -133,31 +133,28 @@ export async function acceptFriends(
   }
   await updateFriendStatus(senderData, friendData);
   console.log("is production " + process.env.NODE_ENV);
-  await fetch(
-    `${
-      process.env.NODE_ENV === "production"
-        ? "https://facebook-ui-zee.vercel.app/"
-        : "http://3000/"
-    }api/sendFCM`,
-    {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        recieptId: f.senderId,
-        message: `${
-          currentUser?.displayName ?? "Unknown User"
-        } accepted your friend request.`,
-        icon:
-          currentUser?.photoURL_cropped ??
-          currentUser?.photoURL ??
-          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-        badge: "/badge.svg",
-        link: `/${senderData}`,
-      }),
-    }
-  );
+  const hostName =
+    process.env.NODE_ENV === "production"
+      ? "https://facebook-ui-zee.vercel.app"
+      : "http://localhost:3000";
+  await fetch(`${hostName}/api/sendFCM`, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({
+      recieptId: f.senderId,
+      message: `${
+        currentUser?.displayName ?? "Unknown User"
+      } accepted your friend request.`,
+      icon:
+        currentUser?.photoURL_cropped ??
+        currentUser?.photoURL ??
+        "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+      badge: "/badge.svg",
+      link: `/${senderData}`,
+    }),
+  });
 }
 export async function rejectFriendRequest(uid: string, f: friends) {
   try {

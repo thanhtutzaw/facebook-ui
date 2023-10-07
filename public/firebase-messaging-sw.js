@@ -58,7 +58,6 @@ self.addEventListener("notificationclick", function (event) {
     }
 
 });
-
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js'); // Import the Firebase v9 compat library
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-messaging-compat.js'); // Import the Firebase v9 compat library for messaging
 
@@ -110,6 +109,22 @@ messaging.onBackgroundMessage((payload) => {
     console.log("FCM Background Noti ", payload)
     // const { title, body, icon, webpush, badge, click_action, link, tag, actions, actionPayload } = payload.data;
     const { title, body, icon, webpush, badge, click_action, link, tag, actions, actionPayload } = payload.notification;
+    /**
+     * @property {NotificationAction[]} [actions] An array of notification actions.
+     * @property {string} [badge] A string that represents the badge to be displayed on the notification.
+     * @property {string} [body] The body of the notification.
+     * @property {any} [data] Any data that you want to associate with the notification.
+     * @property {NotificationDirection} [dir] The direction of the notification text.
+     * @property {string} [icon] The icon to be displayed for the notification.
+     * @property {string} [image] The image to be displayed for the notification.
+     * @property {string} [lang] The language of the notification text.
+     * @property {boolean} [renotify] A boolean that indicates whether the notification should be redisplayed if the user has dismissed it.
+     * @property {boolean} [requireInteraction] A boolean that indicates whether the user must interact with the notification before it is dismissed.
+     * @property {boolean | null} [silent] A boolean that indicates whether the notification should be silent.
+     * @property {string} [tag] A string that can be used to identify the notification.
+     * @property {EpochTimeStamp} [timestamp] The timestamp of the notification.
+     * @property {VibratePattern} [vibrate] A vibration pattern for the notification.
+     */
     const notificationOptions = {
         body: body ?? "Notifications from facebook .",
         icon: icon ?? "/logo.svg",
@@ -120,10 +135,13 @@ messaging.onBackgroundMessage((payload) => {
             click_action,
             actionPayload: JSON.parse(actionPayload)
         },
-        // actions: JSON.parse(actions)
+        actions: JSON.parse(actions)
     };
     self.registration.showNotification(title, notificationOptions)
 })
+/**
+ * @param {string} link
+ */
 function openTab(link) {
     return async () => {
         console.log(self)
@@ -131,10 +149,12 @@ function openTab(link) {
             includeUncontrolled: true,
             type: 'window'
         });
+        console.log(clients)
         let facebookClient;
         for (const client of allClients) {
             console.log({ client, allClients })
             const url = new URL(client.url);
+            console.log(url)
             console.log(url.pathname, link);
             if (url.pathname === link) {
                 await client.focus();
@@ -142,7 +162,8 @@ function openTab(link) {
                 console.log(facebookClient);
                 break;
             } else {
-                await client.openWindow(link);
+                // await client.openWindow(link);
+                // await clients.openWindow(link)
             }
         }
         // console.log(facebookClient);

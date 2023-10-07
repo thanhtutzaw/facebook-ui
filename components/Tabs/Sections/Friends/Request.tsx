@@ -28,6 +28,7 @@ export function Request(props: RequestProps) {
       setConfirmLoaing(false);
       setaccept(true);
       queryClient.invalidateQueries(["pendingFriends"]);
+      queryClient.invalidateQueries(["suggestedFriends"]);
     } catch (error) {
       setConfirmLoaing(false);
       console.log(error);
