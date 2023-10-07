@@ -136,7 +136,8 @@ messaging.onBackgroundMessage((payload) => {
             click_action,
             actionPayload: JSON.parse(actionPayload)
         },
-        actions: JSON.parse(actions)
+        // actions: JSON.parse(actions)
+        
     };
     self.registration.showNotification(title, notificationOptions)
 })
