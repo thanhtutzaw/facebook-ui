@@ -51,6 +51,7 @@ export function AppProvider(props: AppProps) {
       // if (limitedPosts?.length! > NewsFeed_LIMIT) {
       //   setpostLoading(true);
       // }
+      setpostLoading(true);
       const post = limitedPosts?.[limitedPosts?.length! - 1]!;
       const date = new Timestamp(
         post.createdAt.seconds,
