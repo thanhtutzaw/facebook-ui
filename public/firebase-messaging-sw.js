@@ -108,7 +108,6 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
     console.log("FCM Background Noti ", payload)
     // const { title, body, icon, webpush, badge, click_action, link, tag, actions, actionPayload } = payload.data;
-    console.log(payload.notification.actions)
     const { title, body, icon, webpush, badge, click_action, link, tag, actions, actionPayload } = payload.notification;
     /**
      * @property {NotificationAction[]} [actions] An array of notification actions.
@@ -132,10 +131,10 @@ messaging.onBackgroundMessage((payload) => {
         badge,
         tag: tag ?? "",
         renotify: tag !== '',
-        data: {
-            click_action,
-            actionPayload: JSON.parse(actionPayload)
-        },
+        // data: {
+        //     click_action,
+        //     actionPayload: JSON.parse(actionPayload)
+        // },
         // actions: JSON.parse(actions)
 
     };
