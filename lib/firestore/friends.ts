@@ -52,6 +52,7 @@ export async function addFriends(
       ? currentUser?.photoURL
       : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
   }`;
+  console.log({ currentUser });
   try {
     await setDoc(senderRef, senderData);
     await setDoc(receiptRef, receiptData);

@@ -45,15 +45,13 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import {
-  HtmlHTMLAttributes,
+  ReactElement,
   ReactNode,
   useCallback,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import { AcceptFriend } from "../../components/Button/AcceptFriend";
-import { updateCurrentUser } from "firebase/auth";
 export type statusDataType = "canAccept" | "pending" | "friend" | "notFriend";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -451,15 +449,7 @@ export default function UserProfile({
               otherUser && (
                 <div className={s.actions}>
                   {status === "notFriend" ? (
-                    <NotFriendBtn
-                      loading={loading}
-                      setLoading={setLoading}
-                      addFriends={addFriends}
-                      currentUser={currentUser}
-                      undefined={undefined}
-                      setstatus={setstatus}
-                      faPlus={faPlus}
-                    >
+                    <NotFriendBtn>
                       <button
                         disabled={loading}
                         key={loading ? "true" : "false"}
@@ -584,25 +574,7 @@ function Spin(props: { loading: boolean }): JSX.Element {
   );
 }
 
-function NotFriendBtn(props: {
-  loading: any;
-  setLoading: any;
-  addFriends: any;
-  currentUser: any;
-  undefined: any;
-  setstatus: any;
-  faPlus: any;
-  children: any;
-}) {
-  const {
-    loading,
-    setLoading,
-    addFriends,
-    currentUser,
-    undefined,
-    setstatus,
-    faPlus,
-    children,
-  } = props;
+function NotFriendBtn(props: { children: ReactElement }) {
+  const { children } = props;
   return <>{children}</>;
 }
