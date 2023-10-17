@@ -118,16 +118,26 @@ if (!admin.apps.length) {
     }),
   });
 }
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export interface NotiApiRequest extends NextApiRequest {
+  body: {
+    title?: string;
+    recieptId: string | number;
+    message?: string;
+    icon?: string;
+    tag?: string;
+    badge?: string;
+    link?: string;
+    actionPayload?: string;
+    actions?: string;
+    requireInteraction?: boolean;
+  };
+}
+export default async function handler(req: NotiApiRequest, res: NextApiResponse) {
   const {
     title,
     recieptId,
     message,
     icon,
-    webpush,
     tag,
     badge,
     link,
@@ -135,7 +145,8 @@ export default async function handler(
     actions,
     requireInteraction,
   } = req.body;
-  const registrationTokens = await getFCMToken(recieptId);
+
+  const registrationTokens = await getFCMToken(String(recieptId));
   if (!registrationTokens) return;
   // console.log(`${actions} in api/sendFCM`);
   // console.log(req.body);
@@ -182,7 +193,8 @@ export default async function handler(
           actions: typeof actions === "string" ? JSON.parse(actions) : [],
           data: {
             actionPayload:
-              typeof actions === "string" ? JSON.parse(actionPayload) : {},
+              typeof actions === "string" && actionPayload? JSON.parse(actionPayload)
+                : {},
           },
           tag: tag ?? "",
           renotify: false,
