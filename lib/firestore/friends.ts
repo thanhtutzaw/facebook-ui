@@ -113,6 +113,7 @@ export async function addFriends(
         },
         body: JSON.stringify(body),
       });
+      console.log({ body });
       console.log("Notification Sended successfully.");
     } catch (error) {
       console.log(error);
@@ -154,9 +155,9 @@ export async function acceptFriends(
     if (!f.senderId) return;
     const body: NotiApiRequest["body"] = {
       recieptId: f.senderId,
-      message: `${currentUser?.displayName ?? "Unknown User"} ${getMessage(
-        "acceptedFriend"
-      )}`,
+      message: `${currentUser?.displayName ?? "Unknown User"} ${
+        getMessage("acceptedFriend").message
+      }`,
       icon:
         currentUser?.photoURL_cropped ??
         currentUser?.photoURL ??
@@ -174,6 +175,8 @@ export async function acceptFriends(
         body: JSON.stringify(body),
       }
     );
+    console.log({ body: JSON.stringify(body) });
+    console.log({ body });
     console.log("Notification Sended successfully.");
   } catch (error) {
     console.log(error);

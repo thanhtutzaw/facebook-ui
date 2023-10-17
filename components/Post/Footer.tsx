@@ -188,7 +188,7 @@ export const Footer = (
                   recieptId: post.authorId.toString(),
                   message: `${
                     profile?.displayName ?? "Unknown User"
-                  } ${getMessage("share")}`,
+                  } ${getMessage("share").message}`,
                   icon:
                     currentUser?.photoURL_cropped ??
                     currentUser?.photoURL ??
@@ -434,7 +434,7 @@ async function handleShareNow(
       recieptId: post.authorId.toString(),
       message: `${profile?.displayName ?? "Unknown User"} ${getMessage(
         "share"
-      )}`,
+      ).message}`,
       icon: currentUser?.photoURL_cropped ?? currentUser?.photoURL,
       tag: `shares-${sharePost.refId}`,
       link: url,

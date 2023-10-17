@@ -43,6 +43,8 @@ export default async function handler(
     actions,
     requireInteraction = false,
   } = body;
+  console.log({ body });
+  console.log(body.actions);
   const registrationTokens = await getFCMToken(String(recieptId));
   if (!registrationTokens) return;
   try {
