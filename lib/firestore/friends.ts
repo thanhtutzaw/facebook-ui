@@ -80,40 +80,39 @@ export async function addFriends(
     }
     console.log({ author });
     try {
-      const body: NotiApiRequest["body"] = {
-        recieptId: senderData.id,
-        message: `${
-          currentUser?.displayName ?? "Unknow User"
-        } send you a friend request.`,
-        icon:
-          currentUser?.photoURL_cropped ??
-          currentUser?.photoURL ??
-          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-        link: `/${receiptData.id}`,
-        actionPayload: JSON.stringify({
-          uid: senderData.id,
-          f: receiptData,
-          currentUser: {
-            displayName:
-              !author?.firstName || !author.lastName
-                ? "Unknown User"
-                : `${author?.firstName} ${author?.lastName}`,
-            photoURL: author?.photoURL,
-            photoURL_cropped: author?.photoURL_cropped,
-          },
-        }),
-        actions: JSON.stringify([...NotiAction.friend_request]),
-        requireInteraction: true,
-      };
+      // const body: NotiApiRequest["body"] = ;
       console.log("Sending Notification");
       await fetch("/api/sendFCM", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          recieptId: senderData.id,
+          message: `${
+            currentUser?.displayName ?? "Unknow User"
+          } send you a friend request.`,
+          icon:
+            currentUser?.photoURL_cropped ??
+            currentUser?.photoURL ??
+            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+          link: `/${receiptData.id}`,
+          actionPayload: JSON.stringify({
+            uid: senderData.id,
+            f: receiptData,
+            currentUser: {
+              displayName:
+                !author?.firstName || !author.lastName
+                  ? "Unknown User"
+                  : `${author?.firstName} ${author?.lastName}`,
+              photoURL: author?.photoURL,
+              photoURL_cropped: author?.photoURL_cropped,
+            },
+          }),
+          actions: JSON.stringify([...NotiAction.friend_request]),
+          requireInteraction: true,
+        }),
       });
-      console.log({ body });
       console.log("Notification Sended successfully.");
     } catch (error) {
       console.log(error);

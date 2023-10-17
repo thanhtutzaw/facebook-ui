@@ -129,10 +129,11 @@ messaging.onBackgroundMessage((payload) => {
      */
     const notificationOptions = {
         body: body ?? "Notifications from facebook .",
-        icon: icon ?? "/logo.svg",
+        // icon: icon ?? "/logo.svg",
         badge,
-        tag: tag ?? "",
-        renotify: false,
+        // tag: tag ?? "",
+        // renotify: false,
+
         // data: {
         //     click_action,
         //     actionPayload: JSON.parse(actionPayload)
@@ -140,7 +141,7 @@ messaging.onBackgroundMessage((payload) => {
         // actions: JSON.parse(actions)
 
     };
-    self.registration.showNotification(title, notificationOptions)
+    // self.registration.showNotification(title, notificationOptions)
 })
 /**
  * @param {string} link

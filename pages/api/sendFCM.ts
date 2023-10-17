@@ -132,7 +132,10 @@ export interface NotiApiRequest extends NextApiRequest {
     requireInteraction?: boolean;
   };
 }
-export default async function handler(req: NotiApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NotiApiRequest,
+  res: NextApiResponse
+) {
   const {
     title,
     recieptId,
@@ -185,15 +188,16 @@ export default async function handler(req: NotiApiRequest, res: NextApiResponse)
           image: icon,
         },
         notification: {
-          title: title ?? "Facebook",
-          body: message,
+          // title: title ?? "Facebook",
+          // body: message,
           requireInteraction: requireInteraction ? requireInteraction : false,
           badge,
           icon,
           actions: typeof actions === "string" ? JSON.parse(actions) : [],
           data: {
             actionPayload:
-              typeof actions === "string" && actionPayload? JSON.parse(actionPayload)
+              typeof actions === "string" && actionPayload
+                ? JSON.parse(actionPayload)
                 : {},
           },
           tag: tag ?? "",
