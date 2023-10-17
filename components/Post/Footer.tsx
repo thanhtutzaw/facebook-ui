@@ -31,6 +31,7 @@ import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { PostContext, PostProps } from "./PostContext";
+import { NotiApiRequest } from "@/pages/api/sendFCM";
 export const Footer = (
   props: {
     setLikes?: Function;
@@ -183,25 +184,25 @@ export const Footer = (
                 `${authorId}/${id}`
               );
               try {
+                const body: NotiApiRequest["body"] = {
+                  recieptId: post.authorId.toString(),
+                  message: `${
+                    profile?.displayName ?? "Unknown User"
+                  } ${getMessage("share")}`,
+                  icon:
+                    currentUser?.photoURL_cropped ??
+                    currentUser?.photoURL ??
+                    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+                  tag: `Likes-${post.id}`,
+                  link: `/${post.authorId}/${post.id}`,
+                };
                 console.log("Sending Notification");
                 await fetch("/api/sendFCM", {
                   method: "POST",
                   headers: {
                     "Content-type": "application/json",
                   },
-                  body: JSON.stringify({
-                    recieptId: post.authorId.toString(),
-                    message: `${
-                      profile?.displayName ?? "Unknown User"
-                    } liked your post.`,
-                    icon:
-                      currentUser?.photoURL_cropped ??
-                      currentUser?.photoURL ??
-                      "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-                    badge: "/badge.svg",
-                    tag: `Likes-${post.id}`,
-                    link: `/${post.authorId}/${post.id}`,
-                  }),
+                  body: JSON.stringify(body),
                 });
                 console.log("Notification Sended successfully.");
               } catch (error) {
@@ -429,25 +430,22 @@ async function handleShareNow(
   if (uid === post.authorId) return;
 
   try {
+    const body: NotiApiRequest["body"] = {
+      recieptId: post.authorId.toString(),
+      message: `${profile?.displayName ?? "Unknown User"} ${getMessage(
+        "share"
+      )}`,
+      icon: currentUser?.photoURL_cropped ?? currentUser?.photoURL,
+      tag: `shares-${sharePost.refId}`,
+      link: url,
+    };
     console.log("Sending Notification");
     await fetch("/api/sendFCM", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
       },
-      body: JSON.stringify({
-        recieptId: post.authorId.toString(),
-        message: `${profile?.displayName ?? "Unknown User"} ${getMessage(
-          "share"
-        )}`,
-        icon:
-          currentUser?.photoURL_cropped ??
-          currentUser?.photoURL ??
-          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-        badge: "/badge.svg",
-        tag: `shares-${sharePost.refId}`,
-        link: url,
-      }),
+      body: JSON.stringify(body),
     });
     console.log("Notification Sended successfully.");
   } catch (error) {

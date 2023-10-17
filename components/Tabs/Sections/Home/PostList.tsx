@@ -69,7 +69,7 @@ export const PostList = memo(
             {posts?.length === 0 ? "Empty Post" : "No more posts"}
           </p>
         )}
-        {!postLoading && !postEnd ? null : postLoading ? (
+        {!postLoading && !postEnd ? null : postLoading && !postEnd ? (
           <Spinner />
         ) : (
           <p

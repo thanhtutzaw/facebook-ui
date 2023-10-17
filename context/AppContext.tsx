@@ -24,6 +24,7 @@ export function AppProvider(props: AppProps) {
     limitedPosts,
     uid,
     posts,
+    hasMore,
   } = props;
   const [postLoading, setpostLoading] = useState(false);
   const [postEnd, setPostEnd] = useState(false);
@@ -45,13 +46,11 @@ export function AppProvider(props: AppProps) {
   }, [limitedPosts, posts, setlimitedPosts]);
   const getMorePosts = useCallback(
     async function () {
-      // console.log();
-      // if (limitedPosts?.length! > NewsFeed_LIMIT) {
-      // }
-      // if (limitedPosts?.length! > NewsFeed_LIMIT) {
-      //   setpostLoading(true);
-      // }
-      setpostLoading(limitedPosts?.length! > NewsFeed_LIMIT);
+      console.log("getting more news feed posts .......");
+
+      // setpostLoading(limitedPosts?.length! > NewsFeed_LIMIT);
+      setpostLoading(true);
+      console.log(limitedPosts?.length! > NewsFeed_LIMIT);
       const post = limitedPosts?.[limitedPosts?.length! - 1]!;
       const date = new Timestamp(
         post.createdAt.seconds,
@@ -61,34 +60,47 @@ export function AppProvider(props: AppProps) {
         collection(db, `users/${uid}/recentPosts`),
         orderBy("createdAt", "desc"),
         startAfter(date),
-        limit(NewsFeed_LIMIT)
+        limit(NewsFeed_LIMIT + 1)
       );
       let recentPosts;
       try {
-        if (postEnd) return;
+        // if (postEnd) return;
         recentPosts = (await getDocs(newsFeedQuery)).docs.map((doc) => {
           return {
             ...doc.data(),
           };
         });
+        // setpostLoading(true);
         recentPosts.shift();
       } catch (error) {
         console.log("Recent Post Error - ", error);
       }
       const finalPost = await getNewsFeed(String(uid), recentPosts);
-      // const data = finalPost!.pop();
       setlimitedPosts?.(limitedPosts?.concat(finalPost!));
       setpostLoading(false);
-      if (
-        finalPost?.length! < NewsFeed_LIMIT ||
-        limitedPosts?.length! < NewsFeed_LIMIT
-      ) {
-        setPostEnd(true);
-        // finalPost?.pop();
-      }
+      console.log({ end: finalPost?.length! < NewsFeed_LIMIT });
+      setPostEnd(finalPost?.length! < NewsFeed_LIMIT);
+      console.log({ postEnd });
+      console.log({ finalPost });
+      // setPostEnd(finalPost?.length! < NewsFeed_LIMIT);
+
+      // setPostEnd(finalPost?.length! <= NewsFeed_LIMIT);
+      // if (limitedPosts?.length! > NewsFeed_LIMIT) {
+      // }
+      // if (
+      //   finalPost?.length! < NewsFeed_LIMIT ||
+      //   limitedPosts?.length! < NewsFeed_LIMIT
+      // ) {
+      //   // setPostEnd(true);
+      //   // finalPost?.pop();
+      // }
     },
     [limitedPosts, postEnd, setlimitedPosts, uid]
   );
+  useEffect(() => {
+    console.log({ postEnd });
+  }, [postEnd]);
+
   // const  = async () => {
   //   console.log("getting............");
   //   setpostLoading(true);

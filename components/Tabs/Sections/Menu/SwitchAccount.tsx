@@ -136,7 +136,8 @@ function AccountItem(props: {
           await deleteToken(messaging);
           await signout();
           await signInWithEmailAndPassword(auth, a.email, a.password);
-          router.replace(router.asPath);
+          // router.replace("/");
+          router.reload();
           setLoading(false);
         } catch (error: any) {
           setLoading(false);

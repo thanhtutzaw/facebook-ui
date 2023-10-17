@@ -81,14 +81,14 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
         collection(db, `/users/${userQuery}/posts`),
         where("visibility", "in", ["Public"]),
         orderBy("createdAt", "desc"),
-        limit(MYPOST_LIMIT)
+        limit(MYPOST_LIMIT + 1)
       );
       if (isFriend) {
         mypostQuery = query(
           collection(db, `/users/${userQuery}/posts`),
           where("visibility", "in", ["Friend", "Public"]),
           orderBy("createdAt", "desc"),
-          limit(MYPOST_LIMIT)
+          limit(MYPOST_LIMIT + 1)
         );
       }
 
@@ -146,10 +146,10 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     const newsFeedQuery = query(
       collection(db, `users/${uid}/recentPosts`),
       orderBy("createdAt", "desc"),
-      limit(NewsFeed_LIMIT)
+      limit(NewsFeed_LIMIT + 1)
     );
-
-    let recentPosts;
+    let recentPosts,
+      hasMore = false;
     try {
       recentPosts = (await getDocs(newsFeedQuery)).docs.map((doc) => {
         // const authorId = doc.ref.parent.parent?.id!;
@@ -158,9 +158,12 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
           // authorId ,
         };
       });
-      // if (recentPosts.length > NewsFeed_LIMIT) {
-      //   recentPosts.pop();
-      // }
+      console.log(recentPosts.length);
+      console.log({ recentPosts });
+      hasMore = recentPosts.length > NewsFeed_LIMIT;
+      if (hasMore) {
+        recentPosts.pop();
+      }
     } catch (error) {
       console.log("Recent Post Error - ", error);
     }
@@ -191,65 +194,11 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     //   });
     // })
     // );
-    // console.log(friendsDoc.reduce);
     // const posts = recentPosts.reduce((acc, cur) => acc.concat(cur), []);
     const newsFeedWithMe = [...acceptedFriends, uid];
     const isFriendEmpty = myFriendsSnap.empty;
-    const friendsList = !isFriendEmpty ? newsFeedWithMe : [uid];
-    // const data = await Promise.all(
-    //   acceptedFriends2.map(async ({ id, updatedAt }) => {
-    //     // console.log(id);
-    //     const postQuery = query(
-    //       collection(db, `users/${id}/posts`),
-    //       where("visibility", "in", ["Friend", "Public"]),
-    //       orderBy("createdAt", "desc"),
-    //     );
-    //     const ddocs = await getDocs(postQuery)
-    //     return await Promise.all(
-    //       ddocs.docs.map(async (doc) => doc.id)
-    //     );
-    //   })
-    // );
-    // const startNewsFeedDate = myFriendsSnap.docs[1]
-    //   .data()
-    //   .updatedAt.toJSON() as Timestamp;
-    // const startNewsFeedDate = myFriendsSnap.docs[0].data()
-    //   .updatedAt as Timestamp;
-    // const date = new Timestamp(
-    //   startNewsFeedDate.seconds,
-    //   startNewsFeedDate.nanoseconds
-    // );
-    // const date = new Timestamp(
-    //   startNewsFeedDate.seconds,
-    //   startNewsFeedDate.nanoseconds
-    // );
-    // console.log(startNewsFeedDate);
-    // const startNewsFeed = new Timestamp(1693404110, 291000000);
-    // const startNewsFeed = new Timestamp(
-    //   startNewsFeedDate.seconds,
-    //   startNewsFeedDate.nanoseconds
-    // );
-    // console.log(myFriendsSnap.docs[0].data());
-    // let expired = false;
-    // const postQuery = query(
-    //   collectionGroup(db, `posts`),
-    //   where("authorId", "in", friendsList),
-    //   // where("visibility", "in", ["Friend", "Public"]),
-    //   where("updatedAt", ">=", new Timestamp(1693409835, 2000000)),
-    //   orderBy("createdAt", "desc"),
-    // );
-    // const myFriendsQuery = query(
-    //   collection(db, `users/${uid}/friends`),
-    //   where("status", "==", "friend"),
-    //   orderBy("updatedAt", "desc")
-    // );
-    // const postQuery = query(
-    //   collectionGroup(db, `posts`),
-    //   // where("authorId", "in", friendsList),
-    //   // where("visibility", "in", ["Friend", "Public"]),
-    //   // where("updatedAt", ">=", new Timestamp(1693409835, 2000000)),
-    //   orderBy("createdAt", "desc"),
-    // );
+    // const friendsList = !isFriendEmpty ? newsFeedWithMe : [uid];
+    console.log({ hasMore });
 
     const [newsFeedPosts, profileData, currentAccount] = await Promise.all([
       getNewsFeed(uid, recentPosts),
@@ -271,6 +220,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     );
     return {
       props: {
+        hasMore,
         queryPageData,
         token,
         expired: expired,
@@ -336,6 +286,7 @@ export default function Home({
   profile,
   account,
   fcmToken,
+  hasMore,
 }: AppProps) {
   const router = useRouter();
   const auth = getAuth(app);
@@ -371,6 +322,7 @@ export default function Home({
       }
     });
     return () => unsub();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
   const [limitedPosts, setlimitedPosts] = useState(posts ?? []);
   useEffect(() => {
@@ -629,6 +581,7 @@ export default function Home({
   } else {
     return uid ? (
       <AppProvider
+        hasMore={hasMore}
         acceptedFriends={acceptedFriends}
         isFriendEmpty={isFriendEmpty}
         lastPullTimestamp={lastPullTimestamp}

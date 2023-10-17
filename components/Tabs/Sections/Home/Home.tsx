@@ -15,13 +15,13 @@ import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 export default function Home(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const router = useRouter();
-  const { profile, postEnd, getMorePosts, email, headerContainerRef } =
+  const { profile, postEnd, getMorePosts, email, headerContainerRef, hasMore } =
     useContext(AppContext) as AppProps;
   const { setuploadButtonClicked, active } = useContext(
     PageContext
   ) as PageProps;
   const previousScrollRef = useRef(0);
-  const { scrollRef } = useInfiniteScroll(postEnd!, false, getMorePosts);
+  const { scrollRef } = useInfiniteScroll(hasMore!, false, getMorePosts, postEnd!);
   return (
     <div
       ref={scrollRef}

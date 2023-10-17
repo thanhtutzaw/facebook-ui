@@ -35,7 +35,11 @@ export type account = {
     photoURL_cropped?: string | "";
   };
 };
-export type notiContentTypes = "post_reaction" | "comment" | "share";
+export type notiContentTypes =
+  | "post_reaction"
+  | "comment"
+  | "share"
+  | "acceptedFriend";
 export type author = UserRecord | User | account["profile"] | null;
 
 export type NotiTypes = {
@@ -112,6 +116,7 @@ export interface Comment {
 
 export interface AppProps {
   queryPageData?:any;
+  hasMore?:boolean;
   token?:any;
   fcmToken?: string | string[];
   UnReadNotiCount?: number | string;

@@ -228,6 +228,7 @@ export async function getNewsFeed(
         return postwithInfo;
       })
     );
+    
     return data;
   }
 }

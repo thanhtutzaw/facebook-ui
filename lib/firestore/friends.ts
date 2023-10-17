@@ -11,6 +11,8 @@ import {
 import { friends } from "../../types/interfaces";
 import { NotiAction } from "../NotiAction";
 import { db } from "../firebase";
+import { NotiApiRequest } from "@/pages/api/sendFCM";
+import { getMessage } from "./notifications";
 type FriendsWithAuthor<T> = T extends { author: any }
   ? T
   : T & { author: friends["author"] };
@@ -78,38 +80,38 @@ export async function addFriends(
     }
     console.log({ author });
     try {
+      const body: NotiApiRequest["body"] = {
+        recieptId: senderData.id,
+        message: `${
+          currentUser?.displayName ?? "Unknow User"
+        } send you a friend request.`,
+        icon:
+          currentUser?.photoURL_cropped ??
+          currentUser?.photoURL ??
+          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+        link: `/${receiptData.id}`,
+        actionPayload: JSON.stringify({
+          uid: senderData.id,
+          f: receiptData,
+          currentUser: {
+            displayName:
+              !author?.firstName || !author.lastName
+                ? "Unknown User"
+                : `${author?.firstName} ${author?.lastName}`,
+            photoURL: author?.photoURL,
+            photoURL_cropped: author?.photoURL_cropped,
+          },
+        }),
+        actions: JSON.stringify([...NotiAction.friend_request]),
+        requireInteraction: true,
+      };
       console.log("Sending Notification");
       await fetch("/api/sendFCM", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify({
-          recieptId: senderData.id,
-          message: `${
-            currentUser?.displayName ?? "Unknow User"
-          } send you a friend request.`,
-          icon:
-            currentUser?.photoURL_cropped ??
-            currentUser?.photoURL ??
-            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-          badge: "/badge.svg",
-          link: `/${receiptData.id}`,
-          actionPayload: JSON.stringify({
-            uid: senderData.id,
-            f: receiptData,
-            currentUser: {
-              displayName:
-                !author?.firstName || !author.lastName
-                  ? "Unknown User"
-                  : `${author?.firstName} ${author?.lastName}`,
-              photoURL: author?.photoURL,
-              photoURL_cropped: author?.photoURL_cropped,
-            },
-          }),
-          actions: JSON.stringify([...NotiAction.friend_request]),
-          requireInteraction: true,
-        }),
+        body: JSON.stringify(body),
       });
       console.log("Notification Sended successfully.");
     } catch (error) {
@@ -149,6 +151,18 @@ export async function acceptFriends(
       ? "https://facebook-ui-zee.vercel.app"
       : "http://localhost:3000";
   try {
+    if (!f.senderId) return;
+    const body: NotiApiRequest["body"] = {
+      recieptId: f.senderId,
+      message: `${currentUser?.displayName ?? "Unknown User"} ${getMessage(
+        "acceptedFriend"
+      )}`,
+      icon:
+        currentUser?.photoURL_cropped ??
+        currentUser?.photoURL ??
+        "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+      link: `/${senderData}`,
+    };
     console.log("Sending Notification");
     await fetch(
       `${hostName ?? "https://facebook-ui-zee.vercel.app"}/api/sendFCM`,
@@ -157,18 +171,7 @@ export async function acceptFriends(
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify({
-          recieptId: f.senderId,
-          message: `${
-            currentUser?.displayName ?? "Unknown User"
-          } accepted your friend request.`,
-          icon:
-            currentUser?.photoURL_cropped ??
-            currentUser?.photoURL ??
-            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-          badge: "/badge.svg",
-          link: `/${senderData}`,
-        }),
+        body: JSON.stringify(body),
       }
     );
     console.log("Notification Sended successfully.");

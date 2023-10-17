@@ -86,10 +86,12 @@ export default function Profile() {
       if (hasMore) {
         posts.pop();
       }
+      console.log({ hasMore });
       return { posts, hasMore };
     },
     [sortby, uid]
   );
+
   const { fetchNextPage, isLoading, error, data, hasNextPage } =
     useInfiniteQuery({
       queryKey: ["myPost", sortby, uid, profile?.photoURL],
@@ -101,6 +103,10 @@ export default function Profile() {
           ? lastPage.posts![lastPage?.posts?.length! - 1]
           : undefined,
     });
+  useEffect(() => {
+    console.log({ hasNextPage });
+  }, [hasNextPage]);
+
   useEffect(() => {
     if (!selectMode) {
       setSort(false);

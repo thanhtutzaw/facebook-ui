@@ -15,8 +15,15 @@ type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 };
 export default function Newfeed(props: NewfeedProps) {
   const { tabIndex } = props;
-  const { profile, updatePost, posts, limitedPosts, postLoading, postEnd } =
-    useContext(AppContext) as AppProps;
+  const {
+    profile,
+    updatePost,
+    posts,
+    limitedPosts,
+    postLoading,
+    postEnd,
+    hasMore,
+  } = useContext(AppContext) as AppProps;
   const [user, setuser] = useState<User | null>(null);
   // function updatePost(id:string) {
   //   console.log(id);
@@ -37,7 +44,7 @@ export default function Newfeed(props: NewfeedProps) {
       <PostList
         profile={profile}
         updatePost={updatePost}
-        postLoading={postLoading}
+        postLoading={hasMore}
         postEnd={postEnd}
         auth={user!}
         posts={limitedPosts?.length === 0 ? posts! : limitedPosts!}

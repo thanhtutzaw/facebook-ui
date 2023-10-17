@@ -28,55 +28,36 @@ export async function addPost(
   sharePost?: { refId: string; author: string; id: string } | null,
   friends?: friends[]
 ) {
-  // const Ref = doc(collection(db, `users/${uid}/posts`));
   const Ref = !sharePost
     ? doc(collection(db, `users/${uid}/posts`))
     : doc(db, `users/${uid}/posts/${sharePost.refId}`);
+  const postId = !sharePost ? Ref.id : sharePost.refId;
   const newsFeedPost = {
     authorId: uid,
-    id: !sharePost ? Ref.id : sharePost.refId,
+    id: postId,
     createdAt: serverTimestamp(),
   };
-  if (friends?.length ?? 0 > 0) {
+  const hasFriends = friends && friends?.length > 0;
+  if (hasFriends) {
     if (visibility !== "Public" || "Friend") {
     } else {
       console.log({ sharePost });
       console.log({ friends });
 
       friends?.map(async (friendId) => {
-        const recentPostRef = doc(
+        const friendNewsFeedRef = doc(
           collection(db, `users/${friendId}/recentPosts`)
         );
         try {
-          await setDoc(recentPostRef, newsFeedPost);
+          await setDoc(friendNewsFeedRef, newsFeedPost);
         } catch (error) {
           console.log(error);
           throw error;
         }
       });
     }
-    // await Promise.all(
-    //   friends.map(async (friend) => {
-    //     const newsFeedRef = !sharePost
-    //       ? doc(collection(db, `users/${friend}/friends/${uid}/recentPosts`))
-    //       : doc(
-    //           db,
-    //           `users/${friend}/friends/${uid}/recentPosts/${sharePost.refId}`
-    //         );
-    //     const newsFeedPost = {
-    //       id: !sharePost ? Ref.id : sharePost.refId,
-    //       createdAt: serverTimestamp(),
-    //     };
-    //     await setDoc(newsFeedRef, newsFeedPost);
-    //   })
-    // );
   }
   const adminNewsFeedRef = doc(collection(db, `users/${uid}/recentPosts`));
-  // const adminNewsFeedPost = {
-  //   authorId:uid,
-  //   id: !sharePost ? Ref.id : sharePost.refId,
-  //   createdAt: serverTimestamp(),
-  // };
   try {
     await setDoc(adminNewsFeedRef, newsFeedPost);
   } catch (error) {
@@ -85,10 +66,11 @@ export async function addPost(
   }
   const post = {
     authorId: uid,
-    id: !sharePost ? Ref.id : sharePost.refId,
-    text: text,
+    id: postId,
+    // id: !sharePost ? Ref.id : sharePost.refId,
+    text,
     media: files,
-    visibility: visibility,
+    visibility,
     createdAt: serverTimestamp(),
     updatedAt: "Invalid Date",
   };
@@ -114,10 +96,10 @@ export async function addPost(
     data = { ...post };
   }
   try {
-    console.log({ data });
+    console.log({ addedPost: data });
     return await setDoc(Ref, data);
   } catch (error: any) {
-    alert("Adding Post Failed !" + error.message);
+    alert("Post upload failed !" + error.message);
   }
 }
 export async function updatePost(

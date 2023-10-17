@@ -8,7 +8,8 @@ import { useEffect, useRef } from "react";
 export default function useInfiniteScroll(
   hasMore: boolean,
   scrollParent = false,
-  fetchMoreData?: () => Promise<void>
+  fetchMoreData?: () => Promise<void>,
+  postEnd = false
 ) {
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -16,9 +17,11 @@ export default function useInfiniteScroll(
       const target = e.currentTarget as HTMLElement;
       const currentScroll = target.scrollTop;
       if (window.innerHeight + currentScroll + 1 >= target.scrollHeight) {
-        fetchMoreData?.();
+        if (hasMore) {
+          fetchMoreData?.();
+        }
       }
-      if (hasMore) {
+      if (postEnd) {
         element.removeEventListener("scroll", handleScroll);
       }
     }
@@ -29,6 +32,6 @@ export default function useInfiniteScroll(
     return () => {
       element?.removeEventListener("scroll", handleScroll);
     };
-  }, [fetchMoreData, hasMore, scrollParent]);
+  }, [fetchMoreData, hasMore, postEnd, scrollParent]);
   return { scrollRef };
 }

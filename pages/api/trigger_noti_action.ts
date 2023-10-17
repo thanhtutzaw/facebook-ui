@@ -11,7 +11,7 @@ export default async function handler(
   try {
     switch (action) {
       case "accept":
-        const { uid, f, currentUser } = req.body;
+        const { uid, f, currentUser } = req.body ;
         await acceptFriends(uid, f, currentUser);
         break;
       case "reply":

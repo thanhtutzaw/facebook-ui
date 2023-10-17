@@ -84,7 +84,7 @@ export default function App({
   //     });
   // }
   const [notiPermission, setnotiPermission] = useState(false);
-  
+
   const auth = getAuth(app);
 
   useEffect(() => {
@@ -98,7 +98,19 @@ export default function App({
       }
     });
     return () => unsub();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
+  // useEffect(() => {
+  //   const unsub = onAuthStateChanged(auth, async (user) => {
+  //     if (!user) {
+  //       router.push("/login");
+  //     } else {
+  //       router.push("/");
+  //     }
+  //   });
+  //   return () => unsub();
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [auth]);
   const [currentUser, setcurrentUser] = useState<
     (User & { photoURL_cropped?: string }) | null
   >(null);
@@ -107,7 +119,7 @@ export default function App({
     onAuthStateChanged(auth, (user) => {
       setcurrentUser(user);
     });
-  }, []);
+  }, [auth]);
   // const [currentProfile, setcurrentProfile] = useState<
   //   account["profile"] | null
   // >(null);

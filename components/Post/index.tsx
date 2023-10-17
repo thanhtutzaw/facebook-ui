@@ -29,10 +29,8 @@ export default function Post({
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
-  const {currentUser } = useContext(
-    PageContext
-  ) as PageProps;
-  
+  const { currentUser } = useContext(PageContext) as PageProps;
+
   const [toggleMenu, settoggleMenu] = useState("");
   useEffect(() => {
     if (selectMode) {
@@ -52,9 +50,10 @@ export default function Post({
   );
   const [Likes, setLikes] = useState<likes | []>([]);
   if (!post) return <></>;
-  const postClass = `${s.item} ${checked ? s.checked : ""} ${
-    selectMode ? s.selected : ""
-  } ${shareMode ? s.share : ""}`;
+  const selectStyle = selectMode ? ` ${s.selected}` : "";
+  const shareStyle = shareMode ? ` ${s.share}` : "";
+  const checkStyle = checked ? ` ${s.checked}` : "";
+  const postClass = `${s.item}${checkStyle}${selectStyle}${shareStyle}`;
   return (
     <PostProvider
       toggleMenu={toggleMenu}

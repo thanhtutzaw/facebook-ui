@@ -79,7 +79,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       collection(db, `/users/${uid}/posts`),
       where("visibility", "in", ["Public"]),
       orderBy("createdAt", "desc"),
-      limit(MYPOST_LIMIT)
+      limit(MYPOST_LIMIT+1)
     );
     if (isFriend) {
       mypostQuery = query(
@@ -180,20 +180,19 @@ export default function UserProfile({
               {
                 senderId: friendId?.toString(),
                 id: friendId?.toString(),
-                status:'pending',
+                status: "pending",
               },
               currentUser
             );
             router.replace(router.asPath, undefined, {
               scroll: false,
             });
-          setstatus("friend");
-queryClient.refetchQueries(["pendingFriends"]);
-queryClient.invalidateQueries(["pendingFriends"]);
+            setstatus("friend");
+            queryClient.refetchQueries(["pendingFriends"]);
+            queryClient.invalidateQueries(["pendingFriends"]);
           } catch (error) {
             console.error(error);
           }
-          
         }}
         className={`${s.editToggle} ${s.confirm}`}
       />
@@ -331,8 +330,8 @@ queryClient.invalidateQueries(["pendingFriends"]);
   const [postEnd, setPostEnd] = useState(false);
   const fetchMorePosts = useCallback(
     async function () {
-      setpostLoading(true);
-      console.log("post loading");
+      setpostLoading(limitedPosts.length > MYPOST_LIMIT);
+      console.log("getting more post...");
       const post = limitedPosts?.[limitedPosts?.length - 1]!;
       const date = new Timestamp(
         post.createdAt.seconds,
@@ -343,19 +342,20 @@ queryClient.invalidateQueries(["pendingFriends"]);
         where("visibility", "in", ["Friend", "Public"]),
         orderBy("createdAt", "desc"),
         startAfter(date),
-        limit(MYPOST_LIMIT)
+        limit(MYPOST_LIMIT+1)
       );
       const finalPost = await getPostWithMoreInfo(token.uid!, mypostQuery)!;
       console.log({ limitedPosts });
       setlimitedPosts(limitedPosts?.concat(finalPost!));
       console.log({ finalPost });
       setpostLoading(false);
+      setPostEnd(finalPost?.length! < MYPOST_LIMIT);
 
-      if (finalPost?.length! < MYPOST_LIMIT) {
-        setPostEnd(true);
-      }
+      // if (finalPost?.length! < MYPOST_LIMIT) {
+      //   setPostEnd(true);
+      // }
     },
-    [limitedPosts, router.query.user, token?.uid]
+    [limitedPosts, router.query.user, token.uid]
   );
   const { scrollRef } = useInfiniteScroll(postEnd, true, fetchMorePosts);
   const bio = profile?.bio === "" || !profile ? bioFallback : profile?.bio;
@@ -463,8 +463,8 @@ queryClient.invalidateQueries(["pendingFriends"]);
                           setLoading(true);
                           const data = {
                             id: String(router.query.user),
-                            author:profile,
-                          } ;
+                            author: profile,
+                          };
                           await addFriends(token.uid, data, currentUser);
                           router.replace(router.asPath, undefined, {
                             scroll: false,
