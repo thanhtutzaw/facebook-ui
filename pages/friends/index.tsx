@@ -1,8 +1,7 @@
 import {
   faBan,
-  faCheck,
   faEllipsisV,
-  faTrash,
+  faTrash
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQueryClient } from "@tanstack/react-query";
@@ -15,12 +14,14 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useContext, useEffect, useState } from "react";
+import { AcceptFriend } from "../../components/Button/AcceptFriend";
 import BackHeader from "../../components/Header/BackHeader";
 import Spinner from "../../components/Spinner";
 import { PageContext, PageProps } from "../../context/PageContext";
@@ -36,9 +37,6 @@ import {
 } from "../../lib/firestore/friends";
 import { friends } from "../../types/interfaces";
 import s from "./index.module.scss";
-import { AnimatePresence, motion } from "framer-motion";
-import { statusDataType } from "../[user]";
-import { AcceptFriend } from "../../components/Button/AcceptFriend";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -225,14 +223,6 @@ function FriendList({
       console.log(error);
     }
   }
-  // const statusData: statusDataType = canAccept
-  //   ? "canAccept"
-  //   : isPending
-  //   ? "pending"
-  //   : isFriend
-  //   ? "friend"
-  //   : "notFriend";
-  // const [status, setstatus] = useState(statusData);
   return (
     <ul>
       {friends.map((friend) => (
@@ -268,9 +258,9 @@ function FriendList({
               <div className={s.infoContainer}>
                 <div className={s.info}>
                   <p>
-                    {`${friend.author?.firstName ?? friend.id} ${
-                      friend.author?.lastName
-                    }`}
+                    {friend.author?.firstName || friend.author?.lastName
+                      ? `${friend.author?.firstName} ${friend.author?.lastName}`
+                      : friend.id}
                   </p>
                   <p className={s.date}>
                     {friend.date &&

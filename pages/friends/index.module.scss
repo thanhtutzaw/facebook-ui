@@ -6,6 +6,7 @@
     display: flex;
     gap: 0.5rem;
     overflow-x: scroll;
+    z-index: 100;
     background-color: white;
     * {
         min-width: 50px;
@@ -66,6 +67,7 @@
                                 text-overflow: ellipsis;
                                 -webkit-box-orient: vertical;
                                 overflow: hidden;
+                                word-break: break-word;
                             }
                             display: flex;
                             flex-direction: column;
