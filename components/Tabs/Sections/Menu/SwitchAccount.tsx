@@ -1,28 +1,27 @@
+import Spinner from "@/components/Spinner";
+import { AppContext } from "@/context/AppContext";
+import { app } from "@/lib/firebase";
+import { signout } from "@/lib/signout";
+import { AppProps } from "@/types/interfaces";
 import {
-  faAngleUp,
   faAngleDown,
+  faAngleUp,
   faCheck,
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { useContext, useState } from "react";
-import { AppContext } from "@/context/AppContext";
-import { AppProps } from "@/types/interfaces";
-import s from "../../Sections/Menu/menu.module.scss";
+import { getMessaging } from "firebase/messaging";
 import Image from "next/image";
-import { app } from "@/lib/firebase";
-import { getMessaging, deleteToken } from "firebase/messaging";
 import { useRouter } from "next/router";
-import { signout } from "@/lib/signout";
-import Spinner from "@/components/Spinner";
+import { useContext, useState } from "react";
+import s from "../../Sections/Menu/menu.module.scss";
 
 export default function SwitchAccount(props: {
   setLoading: Function;
-  signout: Function;
   loading: boolean;
 }) {
-  const { setLoading, signout, loading } = props;
+  const { setLoading, loading } = props;
   const auth = getAuth();
   const { email: currentEmail } = useContext(AppContext) as AppProps;
   const accounts = [
@@ -133,8 +132,7 @@ function AccountItem(props: {
         setchecked(a.email);
         try {
           const messaging = getMessaging(app);
-          await deleteToken(messaging);
-          await signout();
+          await signout(messaging);
           await signInWithEmailAndPassword(auth, a.email, a.password);
           // router.replace("/");
           router.reload();

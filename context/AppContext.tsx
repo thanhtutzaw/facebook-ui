@@ -102,7 +102,6 @@ export function AppProvider(props: AppProps) {
   }, [postEnd]);
 
   // const  = async () => {
-  //   console.log("getting............");
   //   setpostLoading(true);
   //   console.log(limitedPosts?.length);
   //   const post = limitedPosts?.[limitedPosts?.length - 1]!;

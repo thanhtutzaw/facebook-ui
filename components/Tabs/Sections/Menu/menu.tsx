@@ -58,13 +58,12 @@ export default function Menu(props: MenuProps) {
         tabIndex={tabIndex}
         disabled={loading}
         className={`${s.item} ${s.logoutBtn}`}
-        onClick={async() => {
+        onClick={async () => {
           setLoading(true);
           try {
             const messaging = getMessaging(app);
-            await deleteToken(messaging);
             setTimeout(() => {
-              signout();
+              signout(messaging);
               // setActive?.("/");
             }, 700);
           } catch (error) {
@@ -85,7 +84,10 @@ export default function Menu(props: MenuProps) {
           />
         )}
       </button>
-      <SwitchAccount loading={loading} setLoading={setLoading} signout={signout} />
+      <SwitchAccount
+        loading={loading}
+        setLoading={setLoading}
+      />
     </div>
   );
 }

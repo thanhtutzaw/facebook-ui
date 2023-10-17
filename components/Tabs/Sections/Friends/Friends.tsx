@@ -147,22 +147,24 @@ export default function Friend(props: FriendProps) {
           ))}
         </div>
       )}
-      <div className={s.suggest}>
-        <h2 className={s.header}>
-          <p>People you may know</p>
-        </h2>
-        {suggestedFriends.isLoading ? (
-          <Spinner />
-        ) : suggestedFriends.error ? (
-          <p className="error">Unexpected Error Occured !</p>
-        ) : (
-          <>
-            {suggested?.map((f: any) => (
-              <SuggestFriend key={f.id} f={f} tabIndex={tabIndex} />
-            ))}
-          </>
-        )}
-      </div>
+      {suggested && suggested.length > 0 && (
+        <div className={s.suggest}>
+          <h2 className={s.header}>
+            <p>People you may know</p>
+          </h2>
+          {suggestedFriends.isLoading ? (
+            <Spinner />
+          ) : suggestedFriends.error ? (
+            <p className="error">Unexpected Error Occured !</p>
+          ) : (
+            <>
+              {suggested?.map((f: any) => (
+                <SuggestFriend key={f.id} f={f} tabIndex={tabIndex} />
+              ))}
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -426,7 +426,6 @@ export default function Home({
       //     alert("sw not ready !");
       //   });
       const messaging = getMessaging(app);
-      console.log("getting foreground");
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
         // alert(
