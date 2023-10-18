@@ -264,6 +264,7 @@ export function ImageLargeView() {
         api.set({ x: 0, y: 0, scale: 1 });
         setVisible(false);
         setsingleImageModal?.({ src: "", name: "" });
+        setLoading(true);
       }}
       className={s.imageDialog}
       ref={modalRef}

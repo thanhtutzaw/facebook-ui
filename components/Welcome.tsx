@@ -77,8 +77,6 @@ export function Welcome({
           <p
             style={{
               userSelect: "none",
-              // opacity: "0",
-              // animation: "blink 1s infinite ease-in-out",
               color: "gray",
             }}
           >
