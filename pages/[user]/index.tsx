@@ -79,7 +79,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       collection(db, `/users/${uid}/posts`),
       where("visibility", "in", ["Public"]),
       orderBy("createdAt", "desc"),
-      limit(MYPOST_LIMIT+1)
+      limit(MYPOST_LIMIT + 1)
     );
     if (isFriend) {
       mypostQuery = query(
@@ -171,9 +171,9 @@ export default function UserProfile({
   const statusComponents = {
     canAccept: (
       <AcceptFriend
+        // style={{ color: "red !important" }}
         onClick={async () => {
-          if (!friendId) return;
-          // console.log({ currentUser });
+          if (!friendId || !currentUser) return;
           try {
             await acceptFriends(
               token.uid,
@@ -342,7 +342,7 @@ export default function UserProfile({
         where("visibility", "in", ["Friend", "Public"]),
         orderBy("createdAt", "desc"),
         startAfter(date),
-        limit(MYPOST_LIMIT+1)
+        limit(MYPOST_LIMIT + 1)
       );
       const finalPost = await getPostWithMoreInfo(token.uid!, mypostQuery)!;
       console.log({ limitedPosts });
@@ -460,6 +460,7 @@ export default function UserProfile({
                         disabled={loading}
                         key={loading ? "true" : "false"}
                         onClick={async () => {
+                          if (!currentUser) return;
                           setLoading(true);
                           const data = {
                             id: String(router.query.user),
