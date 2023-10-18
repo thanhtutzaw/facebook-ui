@@ -1,20 +1,23 @@
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { animated, useSpring } from "@react-spring/web";
-import { useGesture } from "@use-gesture/react";
+import { UserGestureConfig, useGesture } from "@use-gesture/react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useContext, useEffect, useRef, useState } from "react";
 import { setTimeout } from "timers";
 import { PageContext, PageProps } from "../../context/PageContext";
 import s from "./index.module.scss";
-export function ImageLargeView(props: {
-  view?: { src: string; name: string };
-}) {
-  const { viewRef, view, setview } = useContext(PageContext) as PageProps;
-
+import Spinner from "../Spinner";
+export function ImageLargeView() {
+  const {
+    singleImageModalRef: modalRef,
+    singleImageModal,
+    setsingleImageModal,
+  } = useContext(PageContext) as PageProps;
+  const { src: imageURL, name: imageName } = { ...singleImageModal };
+  const [loading, setLoading] = useState(true);
   const imgRef = useRef<HTMLImageElement>(null);
-
   const [drag, setdrag] = useState(false);
   const [{ x, y, scale }, api] = useSpring(() => ({
     x: 0,
@@ -25,6 +28,25 @@ export function ImageLargeView(props: {
   // const imageBound = imgRef.current?.getBoundingClientRect()!;
   // const container = imgRef.current?.parentElement?.getBoundingClientRect()!;
   // const newWidth = (imageBound?.width - imgRef.current?.clientWidth!) / 2;
+  const gestureConfig: UserGestureConfig = {
+    wheel: {
+      from: () => [x.get(), y.get()],
+      // bounds: {100},
+      // from: () => [0, 0],
+    },
+    drag: {
+      axis: scale.get() <= 1.3 ? "y" : undefined,
+      from: () => [
+        scale.get() === 1 ? 0 : x.get(),
+        scale.get() === 1 ? 0 : y.get(),
+      ],
+      // rubberband: true,
+    },
+    pinch: {
+      target: imgRef,
+      from: () => [0, 0],
+    },
+  };
   const bind = useGesture(
     {
       onDrag: ({ down, touches, offset: [mx, my], movement: [m], cancel }) => {
@@ -84,7 +106,7 @@ export function ImageLargeView(props: {
 
         setTimeout(() => {
           if (!snap || scale.get() > 1) return;
-          viewRef?.current?.close();
+          modalRef?.current?.close();
         }, 300);
       },
       onPinch: ({ movement: m, origin: [ox, oy], offset: [s, r], cancel }) => {
@@ -128,6 +150,7 @@ export function ImageLargeView(props: {
         event,
       }) => {
         // if(scale > 1)
+        // if(scale.get() < 1) return;
         // if (m2 > 0) return;
         if (scale.get() < 2) {
           api.start({ x: 0, y: 0, scale: 1 });
@@ -205,38 +228,19 @@ export function ImageLargeView(props: {
         }
       },
     },
-    {
-      wheel: {
-        from: () => [x.get(), y.get()],
-        // bounds: {100},
-        // from: () => [0, 0],
-      },
-      drag: {
-        axis: scale.get() <= 1.3 ? "y" : undefined,
-        from: () => [
-          scale.get() === 1 ? 0 : x.get(),
-          scale.get() === 1 ? 0 : y.get(),
-        ],
-        // rubberband: true,
-      },
-      pinch: {
-        target: imgRef,
-        from: () => [0, 0],
-      },
-    }
+    gestureConfig
   );
   useEffect(() => {
     setdrag(false);
   }, [scale, x, y]);
   useEffect(() => {
-    if (view.src) {
-      viewRef?.current?.showModal();
+    if (imageURL) {
+      modalRef?.current?.showModal();
     } else {
-      viewRef?.current?.close();
-      setview?.({});
+      modalRef?.current?.close();
+      setsingleImageModal?.({});
     }
-  }, [view.src, view.name, viewRef, setview]);
-
+  }, [imageURL, imageName, modalRef, setsingleImageModal]);
   return (
     <motion.dialog
       onPointerDown={(e) => {
@@ -251,7 +255,7 @@ export function ImageLargeView(props: {
       initial={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
       animate={{
-        opacity: view.src ? 1 : 0,
+        opacity: imageURL ? 1 : 0,
       }}
       style={{ opacity: 0, transition: "all .2s ease-in-out" }}
       exit={{ opacity: 0 }}
@@ -259,38 +263,19 @@ export function ImageLargeView(props: {
         e.currentTarget.style.opacity = "0";
         api.set({ x: 0, y: 0, scale: 1 });
         setVisible(false);
-        setview?.({ src: "", name: "" });
+        setsingleImageModal?.({ src: "", name: "" });
       }}
       className={s.imageDialog}
-      ref={viewRef}
+      ref={modalRef}
     >
       <AnimatePresence>
-        {view.src && (
+        {imageURL && (
           <>
             {/* {visible && (
-              <Indicator     />
+              <Indicator />
             )} */}
             <div className={s.viewContainer}>
-              <AnimatePresence>
-                {!visible && (
-                  <form method="dialog">
-                    <motion.button
-                      initial={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      animate={{
-                        opacity: !visible ? 1 : 0,
-                      }}
-                      exit={{ opacity: 0 }}
-                      title="Close"
-                      aria-label="Close Photo View modal"
-                      tabIndex={-1}
-                      className={s.closeDialog}
-                    >
-                      <FontAwesomeIcon icon={faClose} />
-                    </motion.button>
-                  </form>
-                )}
-              </AnimatePresence>
+              {!visible && <CloseBtn visible={visible} />}
               <animated.div
                 {...bind()}
                 draggable={false}
@@ -308,16 +293,25 @@ export function ImageLargeView(props: {
                 }}
                 ref={imgRef}
               >
-                {view.src && (
-                  <Image
-                    style={{ touchAction: "none" }}
-                    priority={false}
-                    draggable={false}
-                    fill
-                    src={view.src}
-                    alt={view.name}
-                  ></Image>
+                {loading && (
+                  <Spinner
+                    navBar={false}
+                    fullScreen
+                    style={{ zIndex: "1000000", margin: "0" }}
+                  />
                 )}
+                <Image
+                  onLoadingComplete={() => {
+                    setLoading(false);
+                  }}
+                  loading="eager"
+                  style={{ touchAction: "none" }}
+                  priority={false}
+                  draggable={false}
+                  fill
+                  src={imageURL}
+                  alt={imageName ?? "Image not found!"}
+                />
               </animated.div>
             </div>
           </>
@@ -331,7 +325,7 @@ function Indicator({}) {
   return (
     <motion.div // className={s.indicator}
     >
-      {/* <img draggable={false} src={view.src} alt={view.name}></img>
+      {/* <img draggable={false} src={imageURL} alt={imageName}></img>
     <div
      style={{
        transition: "all .3s ease-in",
@@ -353,10 +347,37 @@ function Indicator({}) {
        style={{
          opacity: "0",
        }}
-       src={view.src}
-       alt={view.name}
+       src={imageURL}
+       alt={imageName}
      ></img>
     </animated.div> */}
     </motion.div>
+  );
+}
+
+function CloseBtn({ visible }: { visible: boolean }) {
+  return (
+    <form method="dialog">
+      <motion.button
+        initial={{
+          opacity: 0,
+        }}
+        transition={{
+          duration: 0.3,
+        }}
+        animate={{
+          opacity: !visible ? 1 : 0,
+        }}
+        exit={{
+          opacity: 0,
+        }}
+        title="Close"
+        aria-label="Close Photo View modal"
+        tabIndex={-1}
+        className={s.closeDialog}
+      >
+        <FontAwesomeIcon icon={faClose} />
+      </motion.button>
+    </form>
   );
 }

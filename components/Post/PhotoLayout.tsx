@@ -32,7 +32,7 @@ export default function PhotoLayout(props: {
     preview = false,
     edit,
   } = props;
-  const { setview } = useContext(PageContext) as PageProps;
+  const { setsingleImageModal } = useContext(PageContext) as PageProps;
   const auth = getAuth(app);
   // useEffect(() => {
   //   window.onpopstate = () => {
@@ -69,7 +69,7 @@ export default function PhotoLayout(props: {
               <div
                 onClick={() => {
                   if (file.type === "video/mp4") return;
-                  setview?.({
+                  setsingleImageModal?.({
                     src: !file.url ? URL.createObjectURL(file) : file.url,
                     name: file.name,
                   });
@@ -121,7 +121,7 @@ export default function PhotoLayout(props: {
                       setFiles?.([...files.slice(0, i), ...files.slice(i + 1)]);
                       // setFiles(files.filter((_, index) => index !== i));
                       // setFiles(files.splice(i, 1));
-                      setview?.({ src: "", name: "" });
+                      setsingleImageModal?.({ src: "", name: "" });
                     }}
                     title="Remove media"
                     aria-label="Remove media"

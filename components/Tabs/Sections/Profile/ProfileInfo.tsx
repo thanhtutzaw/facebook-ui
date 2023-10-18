@@ -32,8 +32,9 @@ function ProfileInfo(props: {
     editToggle,
     newProfile,
   } = props;
-  const { setview, currentUser } = useContext(PageContext) as PageProps;
-  // const view =
+  const { setsingleImageModal, currentUser } = useContext(
+    PageContext
+  ) as PageProps;
   const imgFileRef = useRef<HTMLInputElement>(null);
 
   // email === "testuser@gmail.com"
@@ -56,7 +57,7 @@ function ProfileInfo(props: {
     <div ref={infoRef} className={`${s.info} ${selectMode ? s.active : ""}`}>
       <Image
         onClick={() => {
-          setview?.({
+          setsingleImageModal?.({
             src: profile.photoURL
               ? profile.photoURL
               : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",

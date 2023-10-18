@@ -151,7 +151,7 @@ export default function UserProfile({
   const friendId = router.query.user;
   const [friendMenuToggle, setFriendMenuToggle] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { setview, currentUser, setcurrentUser } = useContext(
+  const { setsingleImageModal, currentUser, setcurrentUser } = useContext(
     PageContext
   ) as PageProps;
 
@@ -397,7 +397,7 @@ export default function UserProfile({
           <div className={`${s.info}`}>
             <Image
               onClick={() => {
-                setview?.({
+                setsingleImageModal?.({
                   src: profile?.photoURL
                     ? profile?.photoURL
                     : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",

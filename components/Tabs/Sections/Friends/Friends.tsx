@@ -149,9 +149,11 @@ export default function Friend(props: FriendProps) {
       )}
       {/* {suggested && suggested.length > 0 && ( */}
       <div className={s.suggest}>
-        <h2 className={s.header}>
-          <p>People you may know</p>
-        </h2>
+        {suggested.length > 0 && (
+          <h2 className={s.header}>
+            <p>People you may know</p>
+          </h2>
+        )}
         {suggestedFriends.isLoading ? (
           <Spinner />
         ) : suggestedFriends.error ? (

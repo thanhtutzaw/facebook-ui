@@ -6,7 +6,7 @@ import {
   createContext,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { Post, Tabs, friends } from "../types/interfaces";
 
@@ -18,6 +18,10 @@ export type selectedId = {
     author: string | null;
   } | null;
 };
+interface singleImageModalType {
+  src: string;
+  name: string;
+}
 export interface PageProps {
   notiPermission: boolean;
   friendReqCount: number;
@@ -29,7 +33,6 @@ export interface PageProps {
   dropdownRef?: RefObject<HTMLDivElement>;
   uploadButtonClicked?: boolean;
   setuploadButtonClicked?: Function;
-  viewRef?: RefObject<HTMLDialogElement>;
   indicatorRef?: RefObject<HTMLDivElement>;
   fileRef?: RefObject<HTMLInputElement>;
   active: Tabs;
@@ -39,9 +42,10 @@ export interface PageProps {
   selectedId?: selectedId[];
   setSelectedId?: Function;
   setshareAction?: Function;
-  view?: any;
   setcurrentUser: Function;
-  setview?: Function;
+  singleImageModalRef?: RefObject<HTMLDialogElement>;
+  singleImageModal?: singleImageModalType;
+  setsingleImageModal?: Function;
   // preventClick?: MutableRefObject<boolean>;
   preventClick?: boolean;
   setnotiPermission?: Function;
@@ -52,17 +56,19 @@ export interface PageProps {
 export const PageContext = createContext<PageProps | null>(null);
 
 export function PageProvider(props: PageProps) {
-  const {
-    ...rest
-  } = props;
+  const { ...rest } = props;
   const [friends, setfriends] = useState<friends[]>([]);
   const queryClient = useQueryClient();
   const [shareAction, setshareAction] = useState("");
   const [selectedId, setSelectedId] = useState([]);
   const [preventClick, setpreventClick] = useState(false);
-  const [view, setview] = useState({ src: "", name: "" });
+  const [singleImageModal, setsingleImageModal] =
+    useState<singleImageModalType>({
+      src: "",
+      name: "",
+    });
   const fileRef = useRef<HTMLInputElement>(null);
-  const viewRef = useRef<HTMLDialogElement>(null);
+  const singleImageModalRef = useRef<HTMLDialogElement>(null);
   const [uploadButtonClicked, setuploadButtonClicked] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
@@ -91,18 +97,16 @@ export function PageProvider(props: PageProps) {
         dropdownRef,
         preventClick,
         setpreventClick,
-        view,
-        setview,
+        singleImageModal,
+        setsingleImageModal,
         selectedId,
         setSelectedId,
         shareAction,
         setshareAction,
         uploadButtonClicked,
         setuploadButtonClicked,
-        viewRef,
+        singleImageModalRef,
         fileRef,
-        // active,
-        // setActive,
         ...props,
       }}
     >

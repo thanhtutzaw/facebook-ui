@@ -11,7 +11,9 @@ import { PageContext, PageProps } from "../../context/PageContext";
 import s from "./index.module.scss";
 export function ViewModal(props: { view: { src: string; name: string } }) {
   const { view } = props;
-  const { viewRef } = useContext(PageContext) as PageProps;
+  const { singleImageModalRef: modalRef } = useContext(
+    PageContext
+  ) as PageProps;
   // const [scalevalue, setscalevalue] = useState(-100);
   const [zoom, setZoom] = useState({ scale: 1 });
   const imgRef = useRef<HTMLImageElement>(null);
@@ -69,7 +71,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           setTimeout(() => {
             if (!snap || scale.get() > 1) return;
             // if (zoom.scale > 1) return;
-            viewRef?.current?.close();
+            modalRef?.current?.close();
           }, 300);
         // {
         //   // axis: "y",
@@ -345,22 +347,22 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
     };
   }, [canDrag]);
   // useEffect(() => {
-  //   if (viewRef?.current?.open) {
+  //   if (modalRef?.current?.open) {
   //     api.update({
   //       x: 0,
   //       y: 0,
   //     });
   //   }
-  // }, [api, viewRef]);
+  // }, [api, modalRef]);
 
   // useEffect(() => {
   //   if (point.y < -400) {
   //     setTimeout(() => {
-  //       viewRef?.current?.close();
+  //       modalRef?.current?.close();
   //     }, 300);
   //     // setpoint({ x: 0, y: 0 });
   //   }
-  // }, [point.y, viewRef]);
+  // }, [point.y, modalRef]);
 
   // useGesture(
   //   {
@@ -386,7 +388,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
   //     // },
   //   },
   //   {
-  //     target: viewRef,
+  //     target: modalRef,
   //   }
   // );
 
@@ -422,7 +424,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           if (point.y < -400) {
             // setpoint({ x: 0, y: -15000 });
             // setTimeout(() => {
-            viewRef?.current?.close();
+            modalRef?.current?.close();
             // }, 300);
             // setpoint({ x: 0, y: -500 });
           }
@@ -446,7 +448,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         //   if (point.y < -400) {
         //     // setpoint({ x: 0, y: -15000 });
         //     // setTimeout(() => {
-        //     viewRef?.current?.close();
+        //     modalRef?.current?.close();
         //     // }, 300);
         //     // setpoint({ x: 0, y: -500 });
         //   }
@@ -477,7 +479,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
         initial={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
         animate={{
-          opacity: viewRef?.current?.open ? 1 : 0,
+          opacity: modalRef?.current?.open ? 1 : 0,
         }}
         exit={{ opacity: 0 }}
         onClose={() => {
@@ -528,7 +530,7 @@ export function ViewModal(props: { view: { src: string; name: string } }) {
           // }
         }}
         className={s.dialog}
-        ref={viewRef}
+        ref={modalRef}
       >
         <h1
           style={{
