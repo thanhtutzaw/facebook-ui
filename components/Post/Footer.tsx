@@ -91,7 +91,7 @@ export const Footer = (
       }
       console.error(error);
     }
-  }, [uid, authorId, id, post.likeCount, setlikeCount, likedUserURL]);
+  }, [authorId, id, likedUserURL, setlikeCount, uid]);
   const [likeLoading, setLikeLoading] = useState(false);
   // const debounceLikeUnlike = useRef(debounce(handleLikeUnlike(), 1000)).current;
   return (

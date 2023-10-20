@@ -145,6 +145,7 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
     );
     const likesRef = collection(db, `users/${authorId}/posts/${p.id}/likes`);
     const likeCount = (await getCountFromServer(likesRef)).data().count;
+    // getting total like count from collection Vs likeCount: 2
     const savedByUserRef = doc(db, `users/${uid}/savedPost/${p.id}`);
 
     const [isLiked, isSaved, postProfile] = await Promise.all([
@@ -165,8 +166,6 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
       isLiked: isUserLikeThisPost,
       isSaved: isSaved.exists() ? true : false,
     } as Post;
-    // console.log(originalPost.isLiked);
-    // console.log("posts with info are fetching");
     if (p.sharePost) {
       const { author, id } = p.sharePost;
       const sharedPostRef = doc(db, `users/${author}/posts/${id}`);

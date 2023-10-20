@@ -46,7 +46,6 @@ import {
   account,
   likes,
 } from "../../../types/interfaces";
-import { profile } from "console";
 import { PageContext, PageProps } from "../../../context/PageContext";
 import CommentInput from "@/components/Comment/Input";
 import BackHeader from "@/components/Header/BackHeader";
@@ -117,12 +116,12 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
 };
 export default function Page(props: {
   expired: boolean;
-  // profile: account["profile"];
   uid: string;
   post: PostType;
+  profile:any;
 }) {
-  const { expired, uid, post } = props;
-  const { currentUser: profile } = useContext(PageContext) as PageProps;
+  const { expired, uid, post , profile} = props;
+  // const { currentUser: profile } = useContext(PageContext) as PageProps;
   const router = useRouter();
   const [visibility, setVisibility] = useState(post?.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
@@ -401,6 +400,7 @@ export default function Page(props: {
               comments={limitedComments}
             />
             <CommentInput
+            profile={profile}
               setlimitedComments={setlimitedComments}
               post={post}
               uid={uid!}

@@ -8,18 +8,20 @@ import { PageContext, PageProps } from "../../context/PageContext";
 import { db } from "../../lib/firebase";
 import { addComment } from "../../lib/firestore/comment";
 import { sendAppNoti } from "../../lib/firestore/notifications";
-import { Post } from "../../types/interfaces";
+import { Post, account } from "../../types/interfaces";
 import s from "./index.module.scss";
+import { User } from "firebase/auth";
 export default function CommentInput(props: {
   setlimitedComments: any;
   uid?: string;
   postId: string;
   authorId: string;
   post?: Post;
-  // profile?: account["profile"];
+
+  profile?: account["profile"];
 }) {
+  const { setlimitedComments, post, uid, authorId, postId ,profile} = props;
   const { currentUser } = useContext(PageContext) as PageProps;
-  const { setlimitedComments, post, uid, authorId, postId } = props;
   const [text, settext] = useState("");
   const commentRef = doc(
     collection(db, `users/${authorId}/posts/${postId}/comments`)
@@ -88,9 +90,7 @@ export default function CommentInput(props: {
         priority
         alt={currentUser?.displayName ?? "Unknow User"}
         src={
-          currentUser?.photoURL
-            ? currentUser.photoURL
-            : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+          profile?.photoURL as string ?? "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
         }
       />
       <input
