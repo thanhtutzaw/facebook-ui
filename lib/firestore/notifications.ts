@@ -2,6 +2,7 @@ import { User } from "firebase/auth";
 import { collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { notiContentTypes } from "../../types/interfaces";
 import { db } from "../firebase";
+import { NotiApiRequest } from "@/pages/api/sendFCM";
 export interface AppNoti {
   uid: string;
   receiptId: string | number;
@@ -26,7 +27,7 @@ export async function sendAppNoti(data: AppNoti) {
   };
   await setDoc(notifRef, notiData);
 }
-export async function sendFCM<T>(data: T) {
+export async function sendFCM<T extends NotiApiRequest["body"]>(data:T) {
   const productionURL = "https://facebook-ui-zee.vercel.app";
   const localURL = "http://localhost:3000";
   const isProduction = process.env.NODE_ENV === "production";
@@ -47,7 +48,9 @@ export async function sendFCM<T>(data: T) {
   if (!response.ok) {
     throw new Error("Notification response failed!");
   }
-  return response.json() as T;
+  // return response.json() as unknown as T;
+  const responseData: T = await response.json();
+  return responseData;
 }
 export const getMessage = (type: notiContentTypes) => {
   const messages: Record<notiContentTypes, string> = {

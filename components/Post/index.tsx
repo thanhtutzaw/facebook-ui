@@ -30,6 +30,7 @@ export default function Post({
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
   const { currentUser } = useContext(PageContext) as PageProps;
+  const [client, setclient] = useState(false);
 
   const [toggleMenu, settoggleMenu] = useState("");
   useEffect(() => {
@@ -40,7 +41,6 @@ export default function Post({
     }
   }, [selectMode, checked, settoggleMenu, toggleMenu]);
 
-  const [client, setclient] = useState(false);
   useEffect(() => {
     setclient(true);
   }, []);

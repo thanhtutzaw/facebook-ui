@@ -62,7 +62,6 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
     const { uid } = token as DecodedIdToken;
-    console.log(uid);
     const { user: authorId, post: postId } = context.query;
     let expired = false;
 
@@ -403,7 +402,6 @@ export default function Page(props: {
             />
             <CommentInput
               setlimitedComments={setlimitedComments}
-              // profile={profile}
               post={post}
               uid={uid!}
               authorId={post.authorId?.toString() ?? null}

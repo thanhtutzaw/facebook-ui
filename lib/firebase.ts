@@ -9,6 +9,7 @@ import {
   Timestamp,
   collection,
   doc,
+  getCountFromServer,
   getDoc,
   getDocs,
   getFirestore,
@@ -140,21 +141,24 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
     const shareCount = shareDoc.size ?? 0;
     const likedByUserRef = doc(
       db,
-      `users/${p.authorId}/posts/${p.id}/likes/${uid}`
+      `users/${authorId}/posts/${p.id}/likes/${uid}`
     );
+    const likesRef = collection(db, `users/${authorId}/posts/${p.id}/likes`);
+    const likeCount = (await getCountFromServer(likesRef)).data().count;
     const savedByUserRef = doc(db, `users/${uid}/savedPost/${p.id}`);
 
     const [isLiked, isSaved, postProfile] = await Promise.all([
       getDoc(likedByUserRef),
       getDoc(savedByUserRef),
-      getProfileByUID(p.authorId.toString()),
+      getProfileByUID(authorId.toString()),
     ]);
 
     const isUserLikeThisPost = (await getDoc(likedByUserRef)).exists();
 
     const originalPost = {
       ...p,
-      likeCount: p.likeCount ?? 0,
+      // likeCount: p.likeCount ?? 0,
+      likeCount: likeCount,
       author: { ...postProfile },
       shareCount,
       sharePost: { ...p.sharePost, post: null },
@@ -162,7 +166,6 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
       isSaved: isSaved.exists() ? true : false,
     } as Post;
     // console.log(originalPost.isLiked);
-    console.log(`users/${p.authorId}/posts/${p.id}/likes/${uid}`);
     // console.log("posts with info are fetching");
     if (p.sharePost) {
       const { author, id } = p.sharePost;

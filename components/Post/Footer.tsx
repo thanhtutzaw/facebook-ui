@@ -68,32 +68,19 @@ export const Footer = (
   }`;
 
   const auth = getAuth(app);
+  const uid = auth?.currentUser?.uid;
   const postRef = doc(db, `users/${authorId}/posts/${id}`);
-  const likeRef = doc(
-    db,
-    `users/${post.authorId}/posts/${post.id}/likes/${auth?.currentUser?.uid}`
-  );
+  const likeRef = doc(db, `users/${authorId}/posts/${id}/likes/${uid}`);
+  const likedUserURL = `users/${authorId}/posts/${id}/likes`;
+  const likedUserRef = collection(db, likedUserURL);
   useEffect(() => {
-    const likeCollectionRef = collection(
-      db,
-      `users/${post.authorId}/posts/${post.id}/likes`
-    );
-
+    const likedUserRef = collection(db, likedUserURL);
     async function getLikeCount() {
-      const likeRef = doc(
-        db,
-        `users/${post.authorId}/posts/${post.id}/likes/${auth?.currentUser?.uid}`
-      );
-      const isUserLikeThisPost = (await getDoc(likeRef)).exists();
-      const likeCount = (await getCountFromServer(likeCollectionRef)).data()
-        .count;
-      if (isUserLikeThisPost) {
-        setlikeCount?.(likeCount);
-        setisLiked(true);
-      } else {
-        setlikeCount?.(likeCount);
-        setisLiked(false);
-      }
+      const likeRef = doc(db, `users/${authorId}/posts/${id}/likes/${uid}`);
+      const isUserLikeThisPost = uid ? (await getDoc(likeRef)).exists() : false;
+      const likeCount = (await getCountFromServer(likedUserRef)).data().count;
+      setlikeCount?.(likeCount);
+      setisLiked(isUserLikeThisPost);
     }
     try {
       getLikeCount();
@@ -104,17 +91,7 @@ export const Footer = (
       }
       console.error(error);
     }
-  }, [
-    auth?.currentUser?.uid,
-    post.authorId,
-    post.id,
-    post.likeCount,
-    setlikeCount,
-  ]);
-  // const [reaction, setReaction] = useState({
-  //   like: ["1a", "2d"],
-  // });
-
+  }, [uid, authorId, id, post.likeCount, setlikeCount, likedUserURL]);
   const [likeLoading, setLikeLoading] = useState(false);
   // const debounceLikeUnlike = useRef(debounce(handleLikeUnlike(), 1000)).current;
   return (
@@ -153,10 +130,6 @@ export const Footer = (
             setisLiked((prev) => !prev);
             queryClient?.invalidateQueries(["myPost"]);
             setLikeLoading(true);
-            const likeCollectionRef = collection(
-              db,
-              `users/${post.authorId}/posts/${post.id}/likes`
-            );
             if (isLiked) {
               setLikes?.([]);
               await unlikePost(likeCount ?? 0, postRef, likeRef);
@@ -165,35 +138,34 @@ export const Footer = (
               setLikes?.([]);
               await likePost(postRef, likeRef, uid);
               await updateLikeState();
-              if (uid === post.authorId) return;
+              if (uid === authorId) return;
               await sendAppNoti({
                 uid,
-                receiptId: post.authorId,
+                receiptId: authorId,
                 profile,
                 type: "post_reaction",
                 url: `${authorId}/${id}`,
               });
               try {
-                const body: NotiApiRequest["body"] = {
-                  recieptId: post.authorId.toString(),
+                await sendFCM({
+                  recieptId: authorId.toString(),
                   message: `${profile?.displayName ?? "Unknown User"} ${
-                    getMessage("share").message
+                    getMessage("post_reaction").message
                   }`,
                   icon:
                     currentUser?.photoURL_cropped ??
                     currentUser?.photoURL ??
                     "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-                  tag: `Likes-${post.id}`,
-                  link: `/${post.authorId}/${post.id}`,
-                };
-                await sendFCM(body);
+                  tag: `Likes-${id}`,
+                  link: `/${authorId}/${id}`,
+                });
               } catch (error) {
                 console.log(error);
               }
             }
             async function updateLikeState() {
               setLikeLoading(false);
-              const likes = (await getCountFromServer(likeCollectionRef)).data()
+              const likes = (await getCountFromServer(likedUserRef)).data()
                 .count;
               setlikeCount?.(likes);
             }
@@ -374,11 +346,11 @@ export const Footer = (
                       content: `${authorName} : ${post.text}`,
                     });
 
-                    if (uid === post.authorId) return;
+                    if (uid === authorId) return;
 
                     try {
                       const body: NotiApiRequest["body"] = {
-                        recieptId: post.authorId.toString(),
+                        recieptId: authorId.toString(),
                         message: `${profile?.displayName ?? "Unknown User"} ${
                           getMessage("share").message
                         }`,
