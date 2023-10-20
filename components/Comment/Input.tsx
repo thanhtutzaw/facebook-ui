@@ -46,15 +46,14 @@ export default function CommentInput(props: {
             postRef,
             previousCommentCount
           );
-          // console.log(`${authorId}/${post?.id}/#comment-${commentRef.id}`);
-          await sendAppNoti(
+          await sendAppNoti({
             uid,
-            post?.authorId.toString()!,
-            currentUser!,
-            "comment",
-            `${authorId}/${post?.id}/#comment-${commentRef.id}`,
-            text
-          );
+            receiptId: post?.authorId.toString()!,
+            profile: currentUser!,
+            type: "comment",
+            url: `${authorId}/${post?.id}/#comment-${commentRef.id}`,
+            content: text,
+          });
           // const date = addedComment.createdAt;
           // const comment = {
           //   ...addedComment,

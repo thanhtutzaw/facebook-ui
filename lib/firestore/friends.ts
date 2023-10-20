@@ -1,3 +1,4 @@
+import { NotiApiRequest } from "@/pages/api/sendFCM";
 import { User } from "firebase/auth";
 import {
   deleteDoc,
@@ -11,8 +12,7 @@ import {
 import { friends } from "../../types/interfaces";
 import { NotiAction } from "../NotiAction";
 import { db } from "../firebase";
-import { NotiApiRequest } from "@/pages/api/sendFCM";
-import { getMessage } from "./notifications";
+import { getMessage, sendFCM } from "./notifications";
 type FriendsWithAuthor<T> = T extends { author: any }
   ? T
   : T & { author: friends["author"] };
@@ -80,40 +80,32 @@ export async function addFriends(
     }
     console.log({ author });
     try {
-      // const body: NotiApiRequest["body"] = ;
-      console.log("Sending Notification");
-      await fetch("/api/sendFCM", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          recieptId: senderData.id,
-          message: `${
-            currentUser?.displayName ?? "Unknow User"
-          } send you a friend request.`,
-          icon:
-            currentUser?.photoURL_cropped ??
-            currentUser?.photoURL ??
-            "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
-          link: `/${receiptData.id}`,
-          actionPayload: JSON.stringify({
-            uid: senderData.id,
-            f: receiptData,
-            currentUser: {
-              displayName:
-                !author?.firstName || !author.lastName
-                  ? "Unknown User"
-                  : `${author?.firstName} ${author?.lastName}`,
-              photoURL: author?.photoURL,
-              photoURL_cropped: author?.photoURL_cropped,
-            },
-          }),
-          actions: JSON.stringify([...NotiAction.friend_request]),
-          requireInteraction: true,
+      const body: NotiApiRequest["body"] = {
+        recieptId: senderData.id,
+        message: `${
+          currentUser?.displayName ?? "Unknow User"
+        } send you a friend request.`,
+        icon:
+          currentUser?.photoURL_cropped ??
+          currentUser?.photoURL ??
+          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+        link: `/${receiptData.id}`,
+        actionPayload: JSON.stringify({
+          uid: senderData.id,
+          f: receiptData,
+          currentUser: {
+            displayName:
+              !author?.firstName || !author.lastName
+                ? "Unknown User"
+                : `${author?.firstName} ${author?.lastName}`,
+            photoURL: author?.photoURL,
+            photoURL_cropped: author?.photoURL_cropped,
+          },
         }),
-      });
-      console.log("Notification Sended successfully.");
+        actions: JSON.stringify([...NotiAction.friend_request]),
+        requireInteraction: true,
+      };
+      await sendFCM(body);
     } catch (error) {
       console.log(error);
     }
@@ -130,7 +122,6 @@ export async function acceptFriends(
   if (f.status !== "pending") {
     console.log({ f });
     alert("Already Accepted! in funciton");
-    // return;
     throw new Error("Already Accepted!");
   }
   const friendData = {
@@ -146,10 +137,7 @@ export async function acceptFriends(
     console.error("Error updating req count:", error);
   }
   await updateFriendStatus(senderData, friendData);
-  const hostName =
-    process.env.NODE_ENV === "production"
-      ? "https://facebook-ui-zee.vercel.app"
-      : "http://localhost:3000";
+
   try {
     if (!f.senderId) return;
     const body: NotiApiRequest["body"] = {
@@ -163,20 +151,7 @@ export async function acceptFriends(
         "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
       link: `/${senderData}`,
     };
-    console.log("Sending Notification");
-    await fetch(
-      `${hostName ?? "https://facebook-ui-zee.vercel.app"}/api/sendFCM`,
-      {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }
-    );
-    console.log({ body: JSON.stringify(body) });
-    console.log({ body });
-    console.log("Notification Sended successfully.");
+    await sendFCM(body);
   } catch (error) {
     console.log(error);
   }

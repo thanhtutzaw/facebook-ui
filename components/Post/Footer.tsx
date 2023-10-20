@@ -1,3 +1,5 @@
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { NotiApiRequest } from "@/pages/api/sendFCM";
 import {
   faComment,
   faPen,
@@ -23,15 +25,15 @@ import {
   useState,
 } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { NotiAction } from "../../lib/NotiAction";
 import { app, db } from "../../lib/firebase";
-import { getMessage, sendAppNoti } from "../../lib/firestore/notifications";
+import {
+  getMessage,
+  sendAppNoti,
+  sendFCM
+} from "../../lib/firestore/notifications";
 import { addPost, likePost, unlikePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { PostContext, PostProps } from "./PostContext";
-import { NotiApiRequest } from "@/pages/api/sendFCM";
 export const Footer = (
   props: {
     setLikes?: Function;
@@ -47,6 +49,7 @@ export const Footer = (
   const commentRef = useRef<HTMLDivElement>(null);
   const [visibility, setvisibility] = useState<string | null>("Public");
   const { getLocal } = useLocalStorage("visibility", visibility);
+
   useEffect(() => {
     // setvisibility(localStorage.getItem("visibility")!);
     setvisibility(getLocal());
@@ -144,9 +147,7 @@ export const Footer = (
               alert("Error : User Not Found . Sign up and Try Again ! ");
               return;
             }
-            // setlikeCount?.(post.likeCount);
             setisLiked((prev) => !prev);
-            // queryClient?.refetchQueries(["myPost"]);
             queryClient?.invalidateQueries(["myPost"]);
             setLikeLoading(true);
             const likeCollectionRef = collection(
@@ -155,16 +156,13 @@ export const Footer = (
             );
 
             if (isLiked) {
-              // setisLiked(false);
               setLikes?.([]);
 
               setLikeLoading(false);
               await unlikePost(likeCount ?? 0, postRef, likeRef);
               const likes = (await getCountFromServer(likeCollectionRef)).data()
                 .count;
-              console.log({ likes });
               setlikeCount?.(likes);
-              console.log({ likeCount });
               // setlikeCount?.(parseInt(post.likeCount.toString()) - 1);
             } else {
               // setlikeCount?.(parseInt(post.likeCount.toString()));
@@ -176,19 +174,19 @@ export const Footer = (
                 .count;
               setlikeCount?.(likes);
               if (uid === post.authorId) return;
-              await sendAppNoti(
+              await sendAppNoti({
                 uid,
-                post.authorId,
-                profile!,
-                "post_reaction",
-                `${authorId}/${id}`
-              );
+                receiptId: post.authorId,
+                profile,
+                type: "post_reaction",
+                url: `${authorId}/${id}`,
+              });
               try {
                 const body: NotiApiRequest["body"] = {
                   recieptId: post.authorId.toString(),
-                  message: `${
-                    profile?.displayName ?? "Unknown User"
-                  } ${getMessage("share").message}`,
+                  message: `${profile?.displayName ?? "Unknown User"} ${
+                    getMessage("share").message
+                  }`,
                   icon:
                     currentUser?.photoURL_cropped ??
                     currentUser?.photoURL ??
@@ -196,15 +194,7 @@ export const Footer = (
                   tag: `Likes-${post.id}`,
                   link: `/${post.authorId}/${post.id}`,
                 };
-                console.log("Sending Notification");
-                await fetch("/api/sendFCM", {
-                  method: "POST",
-                  headers: {
-                    "Content-type": "application/json",
-                  },
-                  body: JSON.stringify(body),
-                });
-                console.log("Notification Sended successfully.");
+                await sendFCM(body);
               } catch (error) {
                 console.log(error);
               }
@@ -364,15 +354,44 @@ export const Footer = (
                   };
                   try {
                     window.document.body.style.cursor = "wait";
-                    await handleShareNow(
-                      currentUser,
+                    const url = `${uid}/${sharePost.refId}`;
+                    // const data= {uid,visibility,sharePost}
+                    await addPost(
                       uid,
                       visibility ?? "Public",
-                      sharePost,
-                      post,
-                      profile,
-                      authorName
+                      "",
+                      [],
+                      sharePost
                     );
+
+                    await sendAppNoti({
+                      uid,
+                      receiptId: post?.authorId.toString()!,
+                      profile,
+                      type: "share",
+                      url,
+                      content: `${authorName} : ${post.text}`,
+                    });
+
+                    if (uid === post.authorId) return;
+
+                    try {
+                      const body: NotiApiRequest["body"] = {
+                        recieptId: post.authorId.toString(),
+                        message: `${profile?.displayName ?? "Unknown User"} ${
+                          getMessage("share").message
+                        }`,
+                        icon:
+                          currentUser?.photoURL_cropped ??
+                          currentUser?.photoURL!,
+                        tag: `shares-${sharePost.refId}`,
+                        link: url,
+                      };
+                      await sendFCM(body);
+                    } catch (error) {
+                      console.log(error);
+                    }
+
                     router.replace("/", undefined, { scroll: false });
                     setshareAction?.("");
                     // queryClient?.invalidateQueries(["myPost"]);
@@ -415,40 +434,4 @@ async function handleShareNow(
   post: Post,
   profile: User | null,
   authorName: string
-) {
-  const url = `${uid}/${sharePost.refId}`;
-  await addPost(uid, visibility, "", [], sharePost);
-  await sendAppNoti(
-    uid,
-    post?.authorId.toString()!,
-    profile!,
-    "share",
-    url,
-    `${authorName} : ${post.text}`
-  );
-
-  if (uid === post.authorId) return;
-
-  try {
-    const body: NotiApiRequest["body"] = {
-      recieptId: post.authorId.toString(),
-      message: `${profile?.displayName ?? "Unknown User"} ${getMessage(
-        "share"
-      ).message}`,
-      icon: currentUser?.photoURL_cropped ?? currentUser?.photoURL,
-      tag: `shares-${sharePost.refId}`,
-      link: url,
-    };
-    console.log("Sending Notification");
-    await fetch("/api/sendFCM", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
-    console.log("Notification Sended successfully.");
-  } catch (error) {
-    console.log(error);
-  }
-}
+) {}
