@@ -1,3 +1,4 @@
+
 import { User } from "firebase/auth";
 import { memo, useEffect } from "react";
 import { Post as PostType } from "@/types/interfaces";

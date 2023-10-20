@@ -134,6 +134,7 @@ export async function getProfileByUID(id: string) {
 }
 export async function postInfo(p: Post, uid: string): Promise<Post> {
   if (p.authorId) {
+    const { authorId } = p;
     const shareRef = collection(db, `users/${p.authorId}/posts/${p.id}/shares`);
     const shareDoc = await getDocs(shareRef);
     const shareCount = shareDoc.size ?? 0;
@@ -148,43 +149,47 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
       getDoc(savedByUserRef),
       getProfileByUID(p.authorId.toString()),
     ]);
+
+    const isUserLikeThisPost = (await getDoc(likedByUserRef)).exists();
+
     const originalPost = {
       ...p,
       likeCount: p.likeCount ?? 0,
       author: { ...postProfile },
       shareCount,
       sharePost: { ...p.sharePost, post: null },
-      isLiked: isLiked.exists() ? true : false,
+      isLiked: isUserLikeThisPost,
       isSaved: isSaved.exists() ? true : false,
     } as Post;
+    // console.log(originalPost.isLiked);
+    console.log(`users/${p.authorId}/posts/${p.id}/likes/${uid}`);
     // console.log("posts with info are fetching");
     if (p.sharePost) {
-      const sharedPostRef = doc(
-        db,
-        `users/${p.sharePost?.author}/posts/${p.sharePost?.id}`
-      );
+      const { author, id } = p.sharePost;
+      const sharedPostRef = doc(db, `users/${author}/posts/${id}`);
       const shareDoc = await getDoc(sharedPostRef);
       const isSharedPostAvailable = shareDoc.exists();
 
       const sharedPost = await postToJSON(shareDoc);
-      const SharedPostShareRef = collection(
+      const { authorId, likeCount } = sharedPost;
+      const SharedPostRef = collection(
         db,
-        `users/${sharedPost.authorId}/posts/${sharedPost.id}/shares`
+        `users/${authorId}/posts/${sharedPost.id}/shares`
       );
       const sharelikedByUser = doc(
         db,
-        `users/${sharedPost.authorId}/posts/${sharedPost.id}/likes/${uid}`
+        `users/${authorId}/posts/${sharedPost.id}/likes/${uid}`
       );
       const [isSharePostLiked, sharePostProfile, SharedPostShareDoc] =
         await Promise.all([
           getDoc(sharelikedByUser),
-          getProfileByUID(sharedPost.authorId.toString()),
-          getDocs(SharedPostShareRef),
+          getProfileByUID(authorId.toString()),
+          getDocs(SharedPostRef),
         ]);
 
       const sharePost = {
         ...sharedPost,
-        likeCount: sharedPost.likeCount ?? 0,
+        likeCount: likeCount ?? 0,
         author: { ...sharePostProfile },
         shareCount: SharedPostShareDoc.size ?? 0,
         isLiked: isSharePostLiked.exists() ? true : false,
@@ -228,7 +233,7 @@ export async function getNewsFeed(
         return postwithInfo;
       })
     );
-    
+
     return data;
   }
 }

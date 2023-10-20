@@ -209,7 +209,6 @@ export async function deleteMultiplePost(uid: string, selctedId: selectedId[]) {
   }
 }
 export async function likePost(
-  likeCount: number,
   postRef: DocumentReference<DocumentData>,
   likeRef: DocumentReference<DocumentData>,
   uid: string
@@ -222,6 +221,22 @@ export async function likePost(
   });
   await batch.commit();
   console.log("liked post");
+}
+export async function unlikePost(
+  likeCount: number,
+  postRef: DocumentReference<DocumentData>,
+  likeRef: DocumentReference<DocumentData>
+) {
+  if (likeCount <= 0) return;
+  const batch = writeBatch(db);
+
+  batch.delete(likeRef);
+  batch.update(postRef, {
+    likeCount: likeCount > 0 ? increment(-1) : likeCount,
+    // likeCount: likeCount > 0 ? likeCount : likeCount,
+  });
+  await batch.commit();
+  console.log("unliked post");
 }
 export async function fetchLikedUsers(p: Post) {
   const likeRef = query(
@@ -247,20 +262,4 @@ export async function fetchLikedUsers(p: Post) {
     console.log(error);
     throw Error;
   }
-}
-export async function unlikePost(
-  likeCount: number,
-  postRef: DocumentReference<DocumentData>,
-  likeRef: DocumentReference<DocumentData>
-) {
-  if (likeCount <= 0) return;
-  const batch = writeBatch(db);
-
-  batch.delete(likeRef);
-  batch.update(postRef, {
-    likeCount: likeCount > 0 ? increment(-1) : likeCount,
-    // likeCount: likeCount > 0 ? likeCount : likeCount,
-  });
-  await batch.commit();
-  console.log("unliked post");
 }

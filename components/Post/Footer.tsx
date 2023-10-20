@@ -29,7 +29,7 @@ import { app, db } from "../../lib/firebase";
 import {
   getMessage,
   sendAppNoti,
-  sendFCM
+  sendFCM,
 } from "../../lib/firestore/notifications";
 import { addPost, likePost, unlikePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
@@ -55,6 +55,9 @@ export const Footer = (
     setvisibility(getLocal());
   }, [getLocal]);
   const [isLiked, setisLiked] = useState(post.isLiked);
+  // useEffect(() => {
+  //   console.log(post.isLiked);
+  // }, [post.isLiked]);
 
   const { currentUser, queryClient, dropdownRef, shareAction, setshareAction } =
     useContext(PageContext) as PageProps;
@@ -154,25 +157,14 @@ export const Footer = (
               db,
               `users/${post.authorId}/posts/${post.id}/likes`
             );
-
             if (isLiked) {
               setLikes?.([]);
-
-              setLikeLoading(false);
               await unlikePost(likeCount ?? 0, postRef, likeRef);
-              const likes = (await getCountFromServer(likeCollectionRef)).data()
-                .count;
-              setlikeCount?.(likes);
-              // setlikeCount?.(parseInt(post.likeCount.toString()) - 1);
+              await updateLikeState();
             } else {
-              // setlikeCount?.(parseInt(post.likeCount.toString()));
               setLikes?.([]);
-
-              await likePost(likeCount ?? 0, postRef, likeRef, uid);
-              setLikeLoading(false);
-              const likes = (await getCountFromServer(likeCollectionRef)).data()
-                .count;
-              setlikeCount?.(likes);
+              await likePost(postRef, likeRef, uid);
+              await updateLikeState();
               if (uid === post.authorId) return;
               await sendAppNoti({
                 uid,
@@ -199,6 +191,12 @@ export const Footer = (
                 console.log(error);
               }
             }
+            async function updateLikeState() {
+              setLikeLoading(false);
+              const likes = (await getCountFromServer(likeCollectionRef)).data()
+                .count;
+              setlikeCount?.(likes);
+            }
           }}
           aria-expanded={reactionAction !== ""}
           aria-label="Like this Post"
@@ -208,6 +206,9 @@ export const Footer = (
         >
           <FontAwesomeIcon icon={faThumbsUp} />
           <p>Like</p>
+          {/* {`isLike-${post.isLiked ? "true" : "false"}`}
+          <br />
+          {`likedstate-${isLiked ? "true" : "false"}`} */}
         </button>
         <AnimatePresence>
           {reactionAction === id && (
@@ -426,12 +427,12 @@ export const Footer = (
   );
 };
 
-async function handleShareNow(
-  currentUser: any,
-  uid: string,
-  visibility: string,
-  sharePost: { refId: string; author: string; id: string },
-  post: Post,
-  profile: User | null,
-  authorName: string
-) {}
+// async function handleShareNow(
+//   currentUser: any,
+//   uid: string,
+//   visibility: string,
+//   sharePost: { refId: string; author: string; id: string },
+//   post: Post,
+//   profile: User | null,
+//   authorName: string
+// ) {}

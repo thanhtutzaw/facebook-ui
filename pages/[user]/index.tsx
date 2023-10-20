@@ -91,7 +91,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
     const myPost = isBlocked
       ? null
-      : await getPostWithMoreInfo(uid as string, mypostQuery);
+      : await getPostWithMoreInfo(token.uid, mypostQuery);
+    console.log(myPost?.map((p) => {
+      return{
+        liked:p.isLiked,
+        count:p.likeCount
+      }
+    }));
     if (userExist) {
       const profile = user?.data().profile as account["profile"];
       return {
