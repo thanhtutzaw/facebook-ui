@@ -1,16 +1,17 @@
+import Spinner from "@/components/Spinner";
+import { AppContext } from "@/context/AppContext";
+import { PageContext, PageProps } from "@/context/PageContext";
+import { useActive } from "@/hooks/useActiveTab";
+import { db, getProfileByUID } from "@/lib/firebase";
+import { checkProfile } from "@/lib/firestore/profile";
+import { AppProps, friends } from "@/types/interfaces";
 import { useQueries } from "@tanstack/react-query";
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import router from "next/router";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import s from "./Friends.module.scss";
 import { Request } from "./Request";
 import { SuggestFriend } from "./SuggestFriend";
-import Spinner from "@/components/Spinner";
-import { AppContext } from "@/context/AppContext";
-import { useActive } from "@/hooks/useActiveTab";
-import { db, getProfileByUID } from "@/lib/firebase";
-import { AppProps, friends } from "@/types/interfaces";
-import { PageContext, PageProps } from "@/context/PageContext";
 interface FriendProps {
   tabIndex: number;
 }
@@ -70,9 +71,7 @@ export default function Friend(props: FriendProps) {
               ...doc.data(),
               author: {
                 ...profile,
-                photoURL: profile.photoURL
-                  ? profile.photoURL
-                  : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+                photoURL: checkProfile(String(profile.photoURL)),
               },
             } as friends;
           } else {

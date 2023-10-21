@@ -6,13 +6,13 @@ import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import friendReqSound from "../public/NotiSounds/chord.mp3";
 
 import useFriendRequest from "@/hooks/useFriendRequest";
+import { checkProfile } from "@/lib/firestore/profile";
 import {
   User,
   getAuth,
   onAuthStateChanged,
   onIdTokenChanged,
 } from "firebase/auth";
-import { getMessaging, onMessage } from "firebase/messaging";
 import { GetServerSideProps } from "next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
@@ -157,9 +157,7 @@ export default function App({
         const profileData = await getProfileByUID(String(currentUser?.uid));
         const profile = {
           ...profileData,
-          photoURL: profileData.photoURL
-            ? profileData.photoURL
-            : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+          photoURL: checkProfile(String(profileData.photoURL)),
         };
         const croppedURL = profile.photoURL_cropped;
         setcurrentUser({ ...currentUser, photoURL_cropped: croppedURL });

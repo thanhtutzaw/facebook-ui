@@ -1,11 +1,12 @@
+import { AppContext } from "@/context/AppContext";
+import { checkProfile } from "@/lib/firestore/profile";
+import styles from "@/styles/Home.module.scss";
+import { AppProps } from "@/types/interfaces";
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { MouseEvent, useContext, useEffect, useRef, useState } from "react";
-import styles from "@/styles/Home.module.scss";
 import Card from "./Card";
-import { AppContext } from "@/context/AppContext";
-import { AppProps } from "@/types/interfaces";
 // type StoryProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 export default function Story({ email }: AppProps) {
   const { profile } = useContext(AppContext) as AppProps;
@@ -105,12 +106,9 @@ export default function Story({ email }: AppProps) {
               //     ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
               //     : photoURL
               //     ? photoURL
-              //     : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+              //     : "httpsupload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
               // }
-              src={
-                (profile?.photoURL as string) ??
-                "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-              }
+              src={checkProfile(String(profile?.photoURL))}
             />
           </div>
 

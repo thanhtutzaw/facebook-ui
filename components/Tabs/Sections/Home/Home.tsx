@@ -1,5 +1,7 @@
 import { AppContext } from "@/context/AppContext";
 import { PageContext, PageProps } from "@/context/PageContext";
+import useInfiniteScroll from "@/hooks/useInfiniteScroll";
+import { checkProfile } from "@/lib/firestore/profile";
 import styles from "@/styles/Home.module.scss";
 import { AppProps } from "@/types/interfaces";
 import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
@@ -9,7 +11,6 @@ import { useRouter } from "next/router";
 import { useContext, useRef } from "react";
 import Newfeed from "./Newfeed";
 import Story from "./Story/Story";
-import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 // type AppProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 // };
 export default function Home(props: { tabIndex: number }) {
@@ -21,7 +22,12 @@ export default function Home(props: { tabIndex: number }) {
     PageContext
   ) as PageProps;
   const previousScrollRef = useRef(0);
-  const { scrollRef } = useInfiniteScroll(hasMore!, false, getMorePosts, postEnd!);
+  const { scrollRef } = useInfiniteScroll(
+    hasMore!,
+    false,
+    getMorePosts,
+    postEnd!
+  );
   return (
     <div
       ref={scrollRef}
@@ -68,11 +74,7 @@ export default function Home(props: { tabIndex: number }) {
             // width={200}
             // height={170}
             // style={{ width: "40px", height: "40px" }}
-            src={
-              profile?.photoURL
-                ? (profile?.photoURL as string)
-                : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-            }
+            src={checkProfile(String(profile?.photoURL))}
           />
         </div>
         <input

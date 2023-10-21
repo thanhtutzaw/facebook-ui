@@ -40,6 +40,7 @@ import { AppProps, account, friends } from "../types/interfaces";
 
 import SecondaryPage from "@/components/QueryPage";
 import { useActive } from "@/hooks/useActiveTab";
+import { checkProfile } from "@/lib/firestore/profile";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import Spinner from "../components/Spinner";
 import { PageContext, PageProps } from "../context/PageContext";
@@ -208,9 +209,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     const fcmToken = (await fethUserDoc(uid)).data()?.fcmToken ?? null;
     const profile = {
       ...profileData,
-      photoURL: profileData.photoURL
-        ? profileData.photoURL
-        : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+      photoURL: checkProfile(String(profileData.photoURL)),
     };
     const currentUserData = userToJSON(currentAccount);
 

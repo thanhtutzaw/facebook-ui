@@ -132,7 +132,7 @@ export async function getProfileByUID(id: string) {
   const userDoc = await fethUserDoc(id);
   const profileData = userDoc.data()!;
   return (profileData?.profile as account["profile"]) ?? null;
-}
+} 
 export async function postInfo(p: Post, uid: string): Promise<Post> {
   if (p.authorId) {
     const { authorId } = p;

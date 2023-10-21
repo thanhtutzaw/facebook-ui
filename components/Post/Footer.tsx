@@ -1,4 +1,5 @@
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { checkProfile } from "@/lib/firestore/profile";
 import { NotiApiRequest } from "@/pages/api/sendFCM";
 import {
   faComment,
@@ -40,10 +41,17 @@ export const Footer = (
     likeCount: number;
     post: Post;
     setlikeCount?: Function;
-    profile: User | null;
+    currentUser: User | null;
   } & StyleHTMLAttributes<HTMLDivElement>
 ) => {
-  const { post, profile, setlikeCount, setLikes, likeCount, ...rest } = props;
+  const {
+    post,
+    currentUser:profile,
+    setlikeCount,
+    setLikes,
+    likeCount,
+    ...rest
+  } = props;
   const router = useRouter();
   const [reactionAction, setreactionAction] = useState("");
   const commentRef = useRef<HTMLDivElement>(null);
@@ -152,10 +160,9 @@ export const Footer = (
                   message: `${profile?.displayName ?? "Unknown User"} ${
                     getMessage("post_reaction").message
                   }`,
-                  icon:
-                    currentUser?.photoURL_cropped ??
-                    currentUser?.photoURL ??
-                    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+                  icon: checkProfile(
+                    currentUser?.photoURL_cropped ?? currentUser?.photoURL
+                  ),
                   tag: `Likes-${id}`,
                   link: `/${authorId}/${id}`,
                 });

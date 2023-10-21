@@ -1,3 +1,4 @@
+import { checkProfile } from "@/lib/firestore/profile";
 import { faArrowAltCircleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { collection, doc } from "firebase/firestore";
@@ -10,7 +11,6 @@ import { addComment } from "../../lib/firestore/comment";
 import { sendAppNoti } from "../../lib/firestore/notifications";
 import { Post, account } from "../../types/interfaces";
 import s from "./index.module.scss";
-import { User } from "firebase/auth";
 export default function CommentInput(props: {
   setlimitedComments: any;
   uid?: string;
@@ -20,7 +20,7 @@ export default function CommentInput(props: {
 
   profile?: account["profile"];
 }) {
-  const { setlimitedComments, post, uid, authorId, postId ,profile} = props;
+  const { setlimitedComments, post, uid, authorId, postId, profile } = props;
   const { currentUser } = useContext(PageContext) as PageProps;
   const [text, settext] = useState("");
   const commentRef = doc(
@@ -89,9 +89,9 @@ export default function CommentInput(props: {
         height={200}
         priority
         alt={currentUser?.displayName ?? "Unknow User"}
-        src={
-          profile?.photoURL as string ?? "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-        }
+        src={checkProfile(
+          profile ? (profile?.photoURL as string) : currentUser?.photoURL
+        )}
       />
       <input
         onChange={(e) => {

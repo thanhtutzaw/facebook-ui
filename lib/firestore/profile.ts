@@ -1,3 +1,4 @@
+import { profileFallback } from "@/components/Post/AuthorInfo";
 import { User, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -95,7 +96,8 @@ export async function changeProfile(
               width,
               height,
               type,
-              uploadedUrl);
+              uploadedUrl
+            );
           }
           await updateProfilePicture(user, uploadedUrl ?? "");
           console.log(" profile picture Updated ");
@@ -136,7 +138,7 @@ export async function changeProfile(
     width: number,
     height: number,
     type: string,
-    uploadedUrl: string,
+    uploadedUrl: string
   ) {
     const croppedBlob = await cropResponse.arrayBuffer();
     // const croppedArrayBuffer = new Blob([await cropResponse.arrayBuffer()]);
@@ -187,4 +189,16 @@ async function updateName(user: User, firstName: string, lastName: string) {
   await updateProfile(user, {
     displayName: `${firstName} ${lastName}`,
   });
+}
+export function checkProfile(
+  url?: string | null | account["profile"]["photoURL"]
+) {
+  // console.log(typeof url);
+  if (typeof url === "undefined" || url === "undefined" || !url) {
+    return profileFallback;
+  } else if (typeof url !== "string") {
+    return url.toString() ?? profileFallback;
+  } else {
+    return url ?? profileFallback;
+  }
 }

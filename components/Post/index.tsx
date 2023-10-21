@@ -82,7 +82,7 @@ export default function Post({
           <Footer
             setLikes={setLikes}
             likeCount={likeCount}
-            profile={currentUser}
+            currentUser={currentUser}
             setlikeCount={setlikeCount}
             post={post}
           />

@@ -1,3 +1,6 @@
+import { PageContext, PageProps } from "@/context/PageContext";
+import { checkProfile, getFullName } from "@/lib/firestore/profile";
+import { account } from "@/types/interfaces";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import Image from "next/image";
 import {
@@ -7,10 +10,7 @@ import {
   useContext,
   useRef,
 } from "react";
-import { PageContext, PageProps } from "@/context/PageContext";
-import { account } from "@/types/interfaces";
 import s from "./index.module.scss";
-import { getFullName } from "@/lib/firestore/profile";
 export const bioFallback = "No Bio Yet";
 function ProfileInfo(props: {
   handleChange: ChangeEventHandler<HTMLInputElement>;
@@ -41,10 +41,6 @@ function ProfileInfo(props: {
   //   ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
   //   : photoURL
   //   ? photoURL
-  //   : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
-  const photo =
-    newProfile?.photoURL ??
-    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
   const file = newProfile?.photoURL as File;
 
   const newProfileBio = newProfile?.bio === "" ? bioFallback : newProfile?.bio;
@@ -58,9 +54,7 @@ function ProfileInfo(props: {
       <Image
         onClick={() => {
           setsingleImageModal?.({
-            src: profile.photoURL
-              ? profile.photoURL
-              : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+            src: checkProfile(String(profile.photoURL)),
             name: `${userName}'s profile picture`,
           });
         }}

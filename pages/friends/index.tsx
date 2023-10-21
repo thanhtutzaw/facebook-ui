@@ -1,8 +1,5 @@
-import {
-  faBan,
-  faEllipsisV,
-  faTrash
-} from "@fortawesome/free-solid-svg-icons";
+import { checkProfile } from "@/lib/firestore/profile";
+import { faBan, faEllipsisV, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQueryClient } from "@tanstack/react-query";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
@@ -247,11 +244,7 @@ function FriendList({
                   alt={`${friend.author?.firstName ?? "Unknow User"} ${
                     friend.author?.lastName ?? ""
                   }'s profile picture`}
-                  src={
-                    friend.author?.photoURL
-                      ? (friend.author?.photoURL as string)
-                      : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-                  }
+                  src={checkProfile(friend.author?.photoURL)}
                   style={{ objectFit: "cover", width: "100%" }}
                 />
               </div>

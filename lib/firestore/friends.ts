@@ -1,4 +1,3 @@
-import { NotiApiRequest } from "@/pages/api/sendFCM";
 import { User } from "firebase/auth";
 import {
   deleteDoc,
@@ -13,6 +12,7 @@ import { friends } from "../../types/interfaces";
 import { NotiAction } from "../NotiAction";
 import { db } from "../firebase";
 import { getMessage, sendFCM } from "./notifications";
+import { checkProfile } from "./profile";
 type FriendsWithAuthor<T> = T extends { author: any }
   ? T
   : T & { author: friends["author"] };
@@ -60,12 +60,7 @@ export async function addFriends(
   // const senderName = `${author?.firstName ?? "Unknown User"} ${
   //   author?.lastName ?? " "
   // }`;
-  const senderProfilePicture = `${
-    currentUser?.photoURL
-      ? currentUser?.photoURL
-      : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-  }`;
-  console.log({ currentUser });
+
   try {
     await setDoc(senderRef, senderData);
     await setDoc(receiptRef, receiptData);
@@ -80,15 +75,14 @@ export async function addFriends(
     }
     console.log({ author });
     try {
-      const body: NotiApiRequest["body"] = {
+      await sendFCM({
         recieptId: senderData.id,
         message: `${
           currentUser?.displayName ?? "Unknow User"
         } send you a friend request.`,
-        icon:
-          currentUser?.photoURL_cropped ??
-          currentUser?.photoURL ??
-          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+        icon: checkProfile(
+          currentUser?.photoURL_cropped ?? currentUser?.photoURL
+        ),
         link: `/${receiptData.id}`,
         actionPayload: JSON.stringify({
           uid: senderData.id,
@@ -104,8 +98,7 @@ export async function addFriends(
         }),
         actions: JSON.stringify([...NotiAction.friend_request]),
         requireInteraction: true,
-      };
-      await sendFCM(body);
+      });
     } catch (error) {
       console.log(error);
     }
@@ -140,18 +133,16 @@ export async function acceptFriends(
 
   try {
     if (!f.senderId) return;
-    const body: NotiApiRequest["body"] = {
+    await sendFCM({
       recieptId: f.senderId,
       message: `${currentUser?.displayName ?? "Unknown User"} ${
         getMessage("acceptedFriend").message
       }`,
-      icon:
-        currentUser?.photoURL_cropped ??
-        currentUser?.photoURL ??
-        "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+      icon: checkProfile(
+        currentUser?.photoURL_cropped ?? currentUser?.photoURL
+      ),
       link: `/${senderData}`,
-    };
-    await sendFCM(body);
+    });
   } catch (error) {
     console.log(error);
   }

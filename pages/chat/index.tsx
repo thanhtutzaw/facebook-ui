@@ -1,3 +1,4 @@
+import { checkProfile } from "@/lib/firestore/profile";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -9,8 +10,6 @@ import BackHeader from "../../components/Header/BackHeader";
 import { db, userToJSON } from "../../lib/firebase";
 import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
 import s from "./index.module.scss";
-import { useContext } from "react";
-import { PageContext, PageProps } from "../../context/PageContext";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -72,10 +71,7 @@ export default function Page(props: { acceptedFriends: any[] }) {
                   alt={"name"}
                   width={50}
                   height={50}
-                  src={
-                    friend.author.photoURL ??
-                    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-                  }
+                  src={checkProfile(friend.author.photoURL)}
                 />
                 <p className="textOverflow">
                   {friend.author.displayName ?? friend.id}

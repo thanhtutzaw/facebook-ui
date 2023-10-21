@@ -1,3 +1,4 @@
+import { checkProfile } from "@/lib/firestore/profile";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,11 +28,7 @@ export function ChatHeader({ account }: { account: UserRecord }) {
             marginTop: "2px !important",
             margin: "0",
           }}
-          src={
-            account?.photoURL
-              ? account?.photoURL
-              : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-          }
+          src={checkProfile(account?.photoURL)}
         />
       </Link>
       <div className={s.info}>

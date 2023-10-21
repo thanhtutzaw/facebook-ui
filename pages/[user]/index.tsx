@@ -15,7 +15,7 @@ import {
   unBlockFriend,
   unFriend,
 } from "@/lib/firestore/friends";
-import { getFullName } from "@/lib/firestore/profile";
+import { checkProfile, getFullName } from "@/lib/firestore/profile";
 import { Post as PostType, account, friends } from "@/types/interfaces";
 import {
   faBan,
@@ -92,12 +92,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const myPost = isBlocked
       ? null
       : await getPostWithMoreInfo(token.uid, mypostQuery);
-    console.log(myPost?.map((p) => {
-      return{
-        liked:p.isLiked,
-        count:p.likeCount
-      }
-    }));
+    console.log(
+      myPost?.map((p) => {
+        return {
+          liked: p.isLiked,
+          count: p.likeCount,
+        };
+      })
+    );
     if (userExist) {
       const profile = user?.data().profile as account["profile"];
       return {
@@ -404,9 +406,7 @@ export default function UserProfile({
             <Image
               onClick={() => {
                 setsingleImageModal?.({
-                  src: profile?.photoURL
-                    ? profile?.photoURL
-                    : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+                  src: checkProfile(profile?.photoURL),
                   name: `${userName}'s profile`,
                 });
               }}
@@ -416,11 +416,7 @@ export default function UserProfile({
               height={170}
               style={{ objectFit: "cover", width: "120px", height: "120px" }}
               alt={`${userName}'s profile`}
-              src={
-                (profile?.photoURL as string)
-                  ? (profile?.photoURL as string)
-                  : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-              }
+              src={checkProfile(profile?.photoURL)}
             />
             <h3 style={{ marginBottom: "18px" }}>{userName}</h3>
             <p

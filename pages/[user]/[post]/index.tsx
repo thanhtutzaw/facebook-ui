@@ -1,3 +1,22 @@
+import Comment from "@/components/Comment";
+import CommentInput from "@/components/Comment/Input";
+import TextInput from "@/components/Form/Input/TextInput";
+import PostSettingFooterForm from "@/components/Form/PostSettingFooter";
+import BackHeader from "@/components/Header/BackHeader";
+import AuthorInfo from "@/components/Post/AuthorInfo";
+import { Footer } from "@/components/Post/Footer";
+import PhotoLayout from "@/components/Post/PhotoLayout";
+import { SharePreview } from "@/components/Post/SharePost/Preview";
+import { SocialCount } from "@/components/Post/SocialCount";
+import { Welcome } from "@/components/Welcome";
+import useInfiniteScroll from "@/hooks/useInfiniteScroll";
+import { app, db, getProfileByUID, postInfo, postToJSON } from "@/lib/firebase";
+import { verifyIdToken } from "@/lib/firebaseAdmin";
+import { fetchComments } from "@/lib/firestore/comment";
+import { updatePost } from "@/lib/firestore/post";
+import { checkProfile } from "@/lib/firestore/profile";
+import { deleteMedia, uploadMedia } from "@/lib/storage";
+import s from "@/styles/Home.module.scss";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { getAuth } from "firebase/auth";
 import {
@@ -16,39 +35,15 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import Comment from "@/components/Comment";
-import PostSettingFooterForm from "@/components/Form/PostSettingFooter";
-import TextInput from "@/components/Form/Input/TextInput";
-import AuthorInfo from "@/components/Post/AuthorInfo";
-import { Footer } from "@/components/Post/Footer";
-import PhotoLayout from "@/components/Post/PhotoLayout";
-import { SharePreview } from "@/components/Post/SharePost/Preview";
-import { SocialCount } from "@/components/Post/SocialCount";
-import { Welcome } from "@/components/Welcome";
-import useInfiniteScroll from "@/hooks/useInfiniteScroll";
+import { PageContext, PageProps } from "../../../context/PageContext";
 import {
-  app,
-  db,
-  getProfileByUID,
-  postInfo,
-  postToJSON,
-} from "@/lib/firebase";
-import { verifyIdToken } from "@/lib/firebaseAdmin";
-import { fetchComments } from "@/lib/firestore/comment";
-import { updatePost } from "@/lib/firestore/post";
-import { deleteMedia, uploadMedia } from "@/lib/storage";
-import s from "@/styles/Home.module.scss";
-import {
+  AppProps,
   Media,
   Post,
   Post as PostType,
-  AppProps,
   account,
   likes,
 } from "../../../types/interfaces";
-import { PageContext, PageProps } from "../../../context/PageContext";
-import CommentInput from "@/components/Comment/Input";
-import BackHeader from "@/components/Header/BackHeader";
 export const Comment_LIMIT = 10;
 export const getServerSideProps: GetServerSideProps<AppProps> = async (
   context
@@ -71,9 +66,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     const profileData = (await getProfileByUID(uid)) as account["profile"];
     const profile = {
       ...profileData,
-      photoURL: profileData.photoURL
-        ? profileData.photoURL
-        : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+      photoURL: checkProfile(String(profileData.photoURL)),
     };
     const commentQuery = query(
       collection(
@@ -118,10 +111,10 @@ export default function Page(props: {
   expired: boolean;
   uid: string;
   post: PostType;
-  profile:any;
+  profile: account["profile"] ;
 }) {
-  const { expired, uid, post , profile} = props;
-  // const { currentUser: profile } = useContext(PageContext) as PageProps;
+  const { expired, uid, post, profile } = props;
+  const { currentUser } = useContext(PageContext) as PageProps;
   const router = useRouter();
   const [visibility, setVisibility] = useState(post?.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
@@ -386,7 +379,7 @@ export default function Page(props: {
               post={post}
             />
             <Footer
-              profile={profile}
+              currentUser={currentUser}
               likeCount={likeCount}
               setlikeCount={setlikeCount}
               style={{ borderBottom: "1px solid rgb(235, 235, 235)" }}
@@ -400,7 +393,7 @@ export default function Page(props: {
               comments={limitedComments}
             />
             <CommentInput
-            profile={profile}
+              profile={profile}
               setlimitedComments={setlimitedComments}
               post={post}
               uid={uid!}
