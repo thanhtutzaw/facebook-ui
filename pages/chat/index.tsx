@@ -10,6 +10,8 @@ import BackHeader from "../../components/Header/BackHeader";
 import { db, userToJSON } from "../../lib/firebase";
 import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
 import s from "./index.module.scss";
+import { friends } from "@/types/interfaces";
+import { User } from "firebase/auth";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -29,7 +31,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           author: {
             ...accountJSON,
           },
-        };
+        } as TAcceptedFriends;
       })
     );
     return {
@@ -46,8 +48,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 };
-
-export default function Page(props: { acceptedFriends: any[] }) {
+interface TAcceptedFriends {
+  id: string;
+  author: UserRecord;
+}
+export default function Page(props: { acceptedFriends: TAcceptedFriends[] }) {
   const { acceptedFriends } = props;
   return (
     <div className="user">
@@ -71,17 +76,16 @@ export default function Page(props: { acceptedFriends: any[] }) {
                   alt={"name"}
                   width={50}
                   height={50}
-                  src={checkPhotoURL(friend.author.photoURL)}
+                  src={checkPhotoURL(friend?.author?.photoURL)}
                 />
                 <p className="textOverflow">
-                  {friend.author.displayName ?? friend.id}
+                  {friend?.author?.displayName ?? friend.id}
                 </p>
-                Active Now
+                <p style={{ fontSize: "16px" }}>Active Now</p>
               </Link>
             </li>
           ))}
         </ul>
-        {/* {JSON.stringify(savedPosts)} */}
       </div>
     </div>
   );

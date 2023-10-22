@@ -135,7 +135,6 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     );
     const myFriendsSnap = await getDocs(myFriendsQuery);
     const acceptedFriends = myFriendsSnap.docs.map((doc) => doc.id);
-    console.log({ acceptedFriends });
     const feedUser = myFriendsSnap.docs.map((doc) => {
       return { id: doc.data().id } as { id: string };
     });
@@ -159,8 +158,6 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
           // authorId ,
         };
       });
-      console.log(recentPosts.length);
-      console.log({ recentPosts });
       hasMore = recentPosts.length > NewsFeed_LIMIT;
       if (hasMore) {
         recentPosts.pop();
@@ -199,7 +196,6 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     const newsFeedWithMe = [...acceptedFriends, uid];
     const isFriendEmpty = myFriendsSnap.empty;
     // const friendsList = !isFriendEmpty ? newsFeedWithMe : [uid];
-    console.log({ hasMore });
 
     const [newsFeedPosts, profileData, currentAccount] = await Promise.all([
       getNewsFeed(uid, recentPosts),

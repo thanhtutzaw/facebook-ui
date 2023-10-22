@@ -3,7 +3,7 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-import friendReqSound from "../public/NotiSounds/chord.mp3";
+import friendReqSound from "../public/assets/chord.mp3";
 
 import useFriendRequest from "@/hooks/useFriendRequest";
 import { checkPhotoURL } from "@/lib/firestore/profile";

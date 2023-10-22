@@ -35,6 +35,9 @@ import {
 import { addPost, likePost, unlikePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
+import popfx from "public/assets/bubble.mp3";
+import useSound from "use-sound";
+
 export const Footer = (
   props: {
     setLikes?: Function;
@@ -102,6 +105,7 @@ export const Footer = (
   }, [authorId, id, likedUserURL, setlikeCount, uid]);
   const [likeLoading, setLikeLoading] = useState(false);
   // const debounceLikeUnlike = useRef(debounce(handleLikeUnlike(), 1000)).current;
+  const [playLikeSound] = useSound(popfx);
   return (
     <div
       // onMouseLeave={() => {
@@ -143,6 +147,7 @@ export const Footer = (
               await unlikePost(likeCount ?? 0, postRef, likeRef);
               await updateLikeState();
             } else {
+              playLikeSound();
               setLikes?.([]);
               await likePost(postRef, likeRef, uid);
               await updateLikeState();
