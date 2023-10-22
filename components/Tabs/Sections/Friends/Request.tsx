@@ -34,8 +34,8 @@ export function Request(props: RequestProps) {
         queryClient.invalidateQueries(["suggestedFriends"]);
         return;
       }
-      playAcceptSound();
       await acceptFriends(uid, f, currentUser);
+      playAcceptSound();
       setConfirmLoaing(false);
       setaccept(true);
       queryClient.invalidateQueries(["pendingFriends"]);

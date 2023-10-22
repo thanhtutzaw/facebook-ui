@@ -187,7 +187,7 @@ export default function UserProfile({
         onClick={async () => {
           if (!friendId || !currentUser) return;
           try {
-            playAcceptSound()
+            
             await acceptFriends(
               token.uid,
               {
@@ -197,6 +197,7 @@ export default function UserProfile({
               },
               currentUser
             );
+            playAcceptSound();
             router.replace(router.asPath, undefined, {
               scroll: false,
             });

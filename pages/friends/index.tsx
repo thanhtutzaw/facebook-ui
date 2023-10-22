@@ -328,11 +328,12 @@ function FriendList({
                             onClick={async (e) => {
                               e.stopPropagation();
                               e.preventDefault();
-                              playAcceptSound();
                               await acceptFriends(uid, friend, currentUser);
                               router.replace(router.asPath, undefined, {
                                 scroll: false,
                               });
+                              playAcceptSound();
+
                               updateFriendList(String(friend.id));
                               setstatus("friend");
                               queryClient.refetchQueries(["pendingFriends"]);
