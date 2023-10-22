@@ -1,6 +1,13 @@
 import { User } from "firebase/auth";
-import { Dispatch, ReactNode, RefObject, SetStateAction, createContext, useState } from "react";
-import { Post as PostType, likes } from "../../types/interfaces";
+import {
+  Dispatch,
+  ReactNode,
+  RefObject,
+  SetStateAction,
+  createContext,
+  useState,
+} from "react";
+import { Post as PostType, likes } from "../types/interfaces";
 export type PostProps = {
   Likes: likes;
   setLikes: Function;
@@ -25,8 +32,6 @@ export type PostProps = {
 };
 export const PostContext = createContext<any | null>(null);
 export default function PostProvider(props: PostProps) {
-  
-
   return (
     <PostContext.Provider value={{ ...props }}>
       {props.children}

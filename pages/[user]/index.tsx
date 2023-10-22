@@ -52,6 +52,9 @@ import {
   useState,
 } from "react";
 import { AcceptFriend } from "../../components/Button/AcceptFriend";
+import confirm from "public/assets/confirm-beep.mp3";
+import useSound from "use-sound";
+
 export type statusDataType = "canAccept" | "pending" | "friend" | "notFriend";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -154,6 +157,7 @@ export default function UserProfile({
 }) {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const [playAcceptSound] = useSound(confirm);
 
   const userName = getFullName(profile);
   const friendId = router.query.user;
@@ -183,6 +187,7 @@ export default function UserProfile({
         onClick={async () => {
           if (!friendId || !currentUser) return;
           try {
+            playAcceptSound()
             await acceptFriends(
               token.uid,
               {

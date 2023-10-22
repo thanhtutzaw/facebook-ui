@@ -57,7 +57,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
   let queryPageData = null;
   try {
     const cookies = nookies.get(context);
-    const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
+    const token = await verifyIdToken(cookies.token);
     expired = !token;
     const userQuery = context.query.user!;
     if (userQuery) {
@@ -125,7 +125,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
       return { days, hours, minutes, seconds: remainingSeconds };
     };
     // console.log(convertSecondsToTime(token.exp));
-    const { name: username, email, uid } = token;
+    const { name, email, uid } = token;
     tokenUID = uid;
     // console.log("isVerify " + token.email_verified);
     const myFriendsQuery = query(
@@ -221,8 +221,6 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
         expired: expired,
         uid,
         posts: newsFeedPosts,
-        email,
-        username: username ?? "Unknown",
         profile,
         account: currentUserData ?? null,
         postError: "",
@@ -259,8 +257,6 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
         acceptedFriends: [],
         posts: [],
         isFriendEmpty: false,
-        email: "",
-        username: "",
         profile: null,
         account: null,
       },
@@ -276,8 +272,6 @@ export default function Home({
   expired,
   uid,
   posts,
-  email,
-  username,
   profile,
   account,
   fcmToken,
@@ -586,10 +580,8 @@ export default function Home({
         setlimitedPosts={setlimitedPosts!}
         profile={profile!}
         expired={expired}
-        username={username}
         uid={uid}
         posts={posts}
-        email={email}
         account={account}
       >
         <Header tabIndex={activeTab === "/" ? 0 : -1} />

@@ -1,11 +1,12 @@
 import UserProfile from "@/pages/[user]";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { useRouter } from "next/router";
 
 export default function UserProfilePage({
   token,
   queryPageData,
 }: {
-  token: any;
+  token: DecodedIdToken;
   queryPageData: any;
 }) {
   const router = useRouter();

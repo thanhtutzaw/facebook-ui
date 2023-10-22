@@ -24,6 +24,8 @@ import Spinner from "../../components/Spinner";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { db, getProfileByUID } from "../../lib/firebase";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
+import confirm from "public/assets/confirm-beep.mp3";
+
 import {
   acceptFriends,
   blockFriend,
@@ -34,6 +36,7 @@ import {
 } from "../../lib/firestore/friends";
 import { friends } from "../../types/interfaces";
 import s from "./index.module.scss";
+import useSound from "use-sound";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -200,6 +203,7 @@ function FriendList({
   friends: friends[];
   uid: string;
 }) {
+  const [playAcceptSound] = useSound(confirm);
   const router = useRouter();
   const [toggleFriendMenu, settoggleFriendMenu] = useState("");
   const queryClient = useQueryClient();
@@ -244,6 +248,7 @@ function FriendList({
                   alt={`${friend.author?.firstName ?? "Unknow User"} ${
                     friend.author?.lastName ?? ""
                   }'s profile picture`}
+                  loading="lazy"
                   src={checkPhotoURL(friend.author?.photoURL)}
                   style={{ objectFit: "cover", width: "100%" }}
                 />
@@ -323,6 +328,7 @@ function FriendList({
                             onClick={async (e) => {
                               e.stopPropagation();
                               e.preventDefault();
+                              playAcceptSound();
                               await acceptFriends(uid, friend, currentUser);
                               router.replace(router.asPath, undefined, {
                                 scroll: false,

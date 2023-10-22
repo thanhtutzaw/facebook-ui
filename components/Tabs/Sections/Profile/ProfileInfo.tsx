@@ -37,7 +37,6 @@ function ProfileInfo(props: {
   ) as PageProps;
   const imgFileRef = useRef<HTMLInputElement>(null);
 
-  // email === "testuser@gmail.com"
   //   ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
   //   : photoURL
   //   ? photoURL

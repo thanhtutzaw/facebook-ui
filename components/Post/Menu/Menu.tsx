@@ -13,7 +13,7 @@ import {
 import { db } from "../../../lib/firebase";
 import { addSavedPost, unSavePost } from "../../../lib/firestore/savedPost";
 import styles from "../index.module.scss";
-import { PostContext, PostProps } from "../PostContext";
+import { PostContext, PostProps } from "../../../context/PostContext";
 export default function Menu(props: {
   authorId: string;
   id: string;

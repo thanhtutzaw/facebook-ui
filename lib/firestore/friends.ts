@@ -117,6 +117,7 @@ export async function acceptFriends(
     alert("Already Accepted! in funciton");
     throw new Error("Already Accepted!");
   }
+  
   const friendData = {
     id: f.id,
     status: "friend",

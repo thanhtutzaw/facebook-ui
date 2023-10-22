@@ -2,6 +2,7 @@ import { Timestamp } from "firebase/firestore";
 import { ReactNode, RefObject } from "react";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { User } from "firebase/auth";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 type timeStamp =
   | {
       seconds: number;
@@ -117,7 +118,7 @@ export interface Comment {
 export interface AppProps {
   queryPageData?:any;
   hasMore?:boolean;
-  token?:any;
+  token?:DecodedIdToken | null;
   fcmToken?: string | string[];
   UnReadNotiCount?: number | string;
   acceptedFriends?: string[];
@@ -126,7 +127,6 @@ export interface AppProps {
   setlimitedPosts?: Function;
   limitedPosts?: Post[];
   updatePost?: Function;
-  username?: string;
   children?: ReactNode;
   setselectMode?: Function;
   selectMode?: boolean;
@@ -138,7 +138,7 @@ export interface AppProps {
   sortedPost?: Post[];
   setsortedPost?: Function;
   posts?: Post[];
-  email?: string | null;
+  // email?: string | null;
   headerContainerRef?: RefObject<HTMLDivElement>;
   profile?: account["profile"] | null;
   account?: UserRecord | null;

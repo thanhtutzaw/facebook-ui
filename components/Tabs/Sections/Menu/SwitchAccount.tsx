@@ -23,7 +23,8 @@ export default function SwitchAccount(props: {
 }) {
   const { setLoading, loading } = props;
   const auth = getAuth();
-  const { email: currentEmail } = useContext(AppContext) as AppProps;
+  const { token } = useContext(AppContext) as AppProps;
+  const { email: currentEmail } = { ...token };
   const accounts = [
     {
       uid: "testuser@gmail.com",
@@ -48,7 +49,6 @@ export default function SwitchAccount(props: {
     },
   ];
   const [toggleSwitchAcc, setToggleSwitchAcc] = useState(false);
-  const router = useRouter();
   const [checked, setchecked] = useState(currentEmail);
 
   return (
@@ -151,13 +151,6 @@ function AccountItem(props: {
           {a.password} {a.default ? "(Default)" : ""}
         </p>
       </div>
-      {/* {currentEmail === a.email && !loading && (
-        <button title="Current Account">
-          <div>
-            <FontAwesomeIcon icon={faCheck} />
-          </div>
-        </button>
-      )} */}
       {checked === a.email && (
         <>
           {loading && checked !== currentEmail ? (

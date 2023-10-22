@@ -6,6 +6,8 @@ import { acceptFriends, rejectFriendRequest } from "@/lib/firestore/friends";
 import { AppProps } from "@/types/interfaces";
 import Card from "./Card";
 import s from "./Friends.module.scss";
+import confirm from "public/assets/confirm-beep.mp3";
+import useSound from "use-sound";
 interface RequestProps {
   f: any;
   setrequestCount?: Function;
@@ -20,6 +22,7 @@ export function Request(props: RequestProps) {
   const [reject, setreject] = useState(false);
   const { uid } = useContext(AppContext) as AppProps;
   const [ConfirmLoaing, setConfirmLoaing] = useState(false);
+  const [playAcceptSound] = useSound(confirm);
   async function handleConfirmRequest() {
     if (!uid) return;
     setConfirmLoaing(true);
@@ -31,6 +34,7 @@ export function Request(props: RequestProps) {
         queryClient.invalidateQueries(["suggestedFriends"]);
         return;
       }
+      playAcceptSound();
       await acceptFriends(uid, f, currentUser);
       setConfirmLoaing(false);
       setaccept(true);

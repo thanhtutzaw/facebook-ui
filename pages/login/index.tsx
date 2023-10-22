@@ -30,8 +30,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
 ) => {
   try {
     const cookies = nookies.get(context);
-    const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
-    // console.log(token.email + "in app.tsx");
+    const token = await verifyIdToken(cookies.token);
     let expired = false;
     console.log(token.uid + " in app.tsx");
     return {

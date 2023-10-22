@@ -1,6 +1,7 @@
 import React from "react";
 import { useRouter } from "next/router";
 import UserProfilePage from "./UserProfilePage";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 /**
  * For better page transition UX and prevent SSR refetch .
  * Interception Route (Page Router)
@@ -10,17 +11,17 @@ function SecondaryPage({
   token,
   queryPageData,
 }: {
-  token: any;
+  token?: DecodedIdToken | null;
   queryPageData: any;
 }) {
   const router = useRouter();
-  const hidden =
+  const isVisible =
     router.pathname !== "/" || JSON.stringify(router.query) === "{}";
-  // if (hidden) return null;
+    if(!token) return null;
   return (
     <div
       style={{
-        display: hidden ? "none" : "initial",
+        display: isVisible ? "none" : "initial",
         position: "fixed",
         background: "rgba(0, 0, 0, 0.5)",
         inset: 0,
@@ -33,11 +34,9 @@ function SecondaryPage({
         // placeItems: "center",
         zIndex: "300000",
         // backdropFilter: "blur(2px)",
-        // padding: "1rem",
         // textTransform: "capitalize",
       }}
     >
-      {/* {router.query.user && ( */}
       <UserProfilePage queryPageData={queryPageData} token={token} />
     </div>
   );

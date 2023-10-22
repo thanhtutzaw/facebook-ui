@@ -14,7 +14,7 @@ import AuthorInfo from "./AuthorInfo";
 import AdminMenu from "./Menu/AdminMenu";
 import Menu from "./Menu/Menu";
 import PhotoLayout from "./PhotoLayout";
-import { PostContext, PostProps } from "./PostContext";
+import { PostContext, PostProps } from "../../context/PostContext";
 import { SharePreview } from "./SharePost/Preview";
 import { SocialCount } from "./SocialCount";
 import s from "./index.module.scss";
@@ -38,8 +38,9 @@ export default function Content({ post }: { post: any }) {
     shareMode,
   } = useContext(PostContext) as PostProps;
   const { authorId, id, text, sharePost: share } = post;
-  const { preventClick, selectedId, setSelectedId } =
-    useContext(PageContext) as PageProps;
+  const { preventClick, selectedId, setSelectedId } = useContext(
+    PageContext
+  ) as PageProps;
   const { toggleMenu, settoggleMenu } = useContext(PostContext) as PostProps;
   const router = useRouter();
   const seemore =

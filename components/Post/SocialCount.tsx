@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useContext, useEffect, useRef, useState } from "react";
 import { fetchLikedUsers } from "../../lib/firestore/post";
 import { LikedUsers } from "./LikedUsers";
-import { PostContext, PostProps } from "./PostContext";
+import { PostContext, PostProps } from "../../context/PostContext";
 import s from "./index.module.scss";
 import { Post } from "@/types/interfaces";
 export function SocialCount(props: {

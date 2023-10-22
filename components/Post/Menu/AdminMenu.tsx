@@ -10,14 +10,16 @@ import { Post } from "../../../types/interfaces";
 import { CopyLink } from "./Menu";
 import styles from "../index.module.scss";
 import { useQueryClient } from "@tanstack/react-query";
-import { PostProps, PostContext } from "../PostContext";
+import { PostProps, PostContext } from "../../../context/PostContext";
 export default function AdminMenu(props: {
   updatePost: Function;
   authorId: string | number;
   id: string;
 }) {
-  const { updatePost,authorId, id} = props;
-  const { post , toggleMenu, settoggleMenu} = useContext(PostContext) as PostProps;
+  const { updatePost, authorId, id } = props;
+  const { post, toggleMenu, settoggleMenu } = useContext(
+    PostContext
+  ) as PostProps;
   const auth = getAuth(app);
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();

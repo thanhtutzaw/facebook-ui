@@ -10,7 +10,7 @@ import ImageWithFallback from "../ImageWithFallback";
 import s from "./index.module.scss";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { PostContext, PostProps } from "./PostContext";
+import { PostContext, PostProps } from "../../context/PostContext";
 
 export default function PhotoLayout(props: {
   margin?: boolean;
@@ -159,7 +159,6 @@ export default function PhotoLayout(props: {
               );
             }}
             // id={`${post?.authorId?.toString()}/${post?.id?.toString()}#media-${media[0].url}`}
-            priority
             media={media}
             width={700}
             height={394}
@@ -170,6 +169,7 @@ export default function PhotoLayout(props: {
               objectFit: !media[0].url ? "initial" : "cover",
               height: "100%",
             }}
+            loading="lazy"
           />
         </div>
       )}
@@ -186,7 +186,6 @@ export default function PhotoLayout(props: {
                 );
               }}
               // id={`${post?.authorId}/${post?.id?.toString()}#media-${media[1].url}`}
-              priority
               media={media}
               width={700}
               height={394}
@@ -218,7 +217,6 @@ export default function PhotoLayout(props: {
                   );
                 }}
                 // id={`${post?.authorId}/${post?.id?.toString()}#media-${media[2].url}`}
-                priority
                 media={media}
                 width={700}
                 height={394}

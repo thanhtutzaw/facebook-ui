@@ -16,7 +16,7 @@ import Story from "./Story/Story";
 export default function Home(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const router = useRouter();
-  const { profile, postEnd, getMorePosts, email, headerContainerRef, hasMore } =
+  const { profile, postEnd, getMorePosts,headerContainerRef, hasMore } =
     useContext(AppContext) as AppProps;
   const { setuploadButtonClicked, active } = useContext(
     PageContext
@@ -55,7 +55,7 @@ export default function Home(props: { tabIndex: number }) {
         }
       }}
     >
-      <Story email={email} />
+      <Story />
       <div className={styles.addPost}>
         <div
           style={{

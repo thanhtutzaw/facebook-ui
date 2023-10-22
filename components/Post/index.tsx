@@ -5,7 +5,7 @@ import { Post as PostType, account, likes } from "../../types/interfaces";
 import Content from "./Content";
 import { Footer } from "./Footer";
 import s from "./index.module.scss";
-import PostProvider from "./PostContext";
+import PostProvider from "../../context/PostContext";
 
 interface PostProps {
   updatePost?: Function;
