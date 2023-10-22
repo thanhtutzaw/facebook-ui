@@ -15,7 +15,7 @@ import {
   unBlockFriend,
   unFriend,
 } from "@/lib/firestore/friends";
-import { checkProfile, getFullName } from "@/lib/firestore/profile";
+import { checkPhotoURL, getFullName } from "@/lib/firestore/profile";
 import { Post as PostType, account, friends } from "@/types/interfaces";
 import {
   faBan,
@@ -406,7 +406,7 @@ export default function UserProfile({
             <Image
               onClick={() => {
                 setsingleImageModal?.({
-                  src: checkProfile(profile?.photoURL),
+                  src: checkPhotoURL(profile?.photoURL),
                   name: `${userName}'s profile`,
                 });
               }}
@@ -416,7 +416,7 @@ export default function UserProfile({
               height={170}
               style={{ objectFit: "cover", width: "120px", height: "120px" }}
               alt={`${userName}'s profile`}
-              src={checkProfile(profile?.photoURL)}
+              src={checkPhotoURL(profile?.photoURL)}
             />
             <h3 style={{ marginBottom: "18px" }}>{userName}</h3>
             <p

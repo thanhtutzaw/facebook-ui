@@ -3,7 +3,7 @@ import { AppContext } from "@/context/AppContext";
 import { useActive } from "@/hooks/useActiveTab";
 import { MYPOST_LIMIT } from "@/lib/QUERY_LIMIT";
 import { app, db, getPostWithMoreInfo } from "@/lib/firebase";
-import { changeProfile, checkProfile } from "@/lib/firestore/profile";
+import { changeProfile, checkPhotoURL } from "@/lib/firestore/profile";
 import { AppProps, Post, account } from "@/types/interfaces";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getAuth } from "firebase/auth";
@@ -121,7 +121,7 @@ export default function Profile() {
     firstName: profile?.firstName ?? "",
     lastName: profile?.lastName ?? "",
     bio: profile?.bio ?? "",
-    photoURL: checkProfile(String(profile?.photoURL)),
+    photoURL: checkPhotoURL(profile?.photoURL),
   });
 
   const handleEditProfileForm = (e: ChangeEvent<HTMLInputElement>) => {

@@ -3,7 +3,7 @@ import { AppContext } from "@/context/AppContext";
 import { PageContext, PageProps } from "@/context/PageContext";
 import { useActive } from "@/hooks/useActiveTab";
 import { db, getProfileByUID } from "@/lib/firebase";
-import { checkProfile } from "@/lib/firestore/profile";
+import { checkPhotoURL } from "@/lib/firestore/profile";
 import { AppProps, friends } from "@/types/interfaces";
 import { useQueries } from "@tanstack/react-query";
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
@@ -25,7 +25,6 @@ export default function Friend(props: FriendProps) {
     if (!uid) return;
     const myFriendsQuery = query(collection(db, `users/${uid}/friends`));
     const myFriends = (await getDocs(myFriendsQuery)).docs.map((doc) => doc.id);
-    // console.log("should not be in suggest", myFriends);
     // including friends , pending , blocked (users) string[]
     const suggestedFriendsQuery = query(
       collection(db, `users`),
@@ -56,7 +55,7 @@ export default function Friend(props: FriendProps) {
     const pendingfriendsQuery = query(
       collection(db, `users/${uid}/friends`),
       where("status", "==", "pending"),
-      where("senderId", "!=", uid), // do not display requset when you send the friend request
+      where("senderId", "!=", uid),
       orderBy("senderId", "asc"),
       orderBy("createdAt", "desc")
     );
@@ -71,7 +70,7 @@ export default function Friend(props: FriendProps) {
               ...doc.data(),
               author: {
                 ...profile,
-                photoURL: checkProfile(String(profile.photoURL)),
+                photoURL: checkPhotoURL(profile.photoURL),
               },
             } as friends;
           } else {
@@ -102,13 +101,6 @@ export default function Friend(props: FriendProps) {
   const suggested = suggestedFriends.data ?? [];
   const pending = pendingFriends.data ?? [];
 
-  const Requests = [
-    { id: 1, author: { firstName: "Aunt May" } },
-    { id: 2, author: { firstName: "Peter 2" } },
-    { id: 3, author: { firstName: "Peter 3" } },
-  ];
-  // const [requestCount, setrequestCount] = useState(pending.length);
-  // const Suggestions = ["Captain America", "Iron Man", "Thor"];
   return (
     <div className={s.container}>
       <div
@@ -137,16 +129,10 @@ export default function Friend(props: FriendProps) {
             </p>
           </h2>
           {pending.map((f) => (
-            <Request
-              // setrequestCount={setrequestCount}
-              key={f.id.toString()}
-              f={f}
-              tabIndex={tabIndex}
-            />
+            <Request key={f.id.toString()} f={f} tabIndex={tabIndex} />
           ))}
         </div>
       )}
-      {/* {suggested && suggested.length > 0 && ( */}
       <div className={s.suggest}>
         {suggested.length > 0 && (
           <h2 className={s.header}>

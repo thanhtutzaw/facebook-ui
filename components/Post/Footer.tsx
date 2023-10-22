@@ -1,5 +1,5 @@
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { checkProfile } from "@/lib/firestore/profile";
+import { checkPhotoURL } from "@/lib/firestore/profile";
 import { NotiApiRequest } from "@/pages/api/sendFCM";
 import {
   faComment,
@@ -46,7 +46,7 @@ export const Footer = (
 ) => {
   const {
     post,
-    currentUser:profile,
+    currentUser: profile,
     setlikeCount,
     setLikes,
     likeCount,
@@ -160,7 +160,7 @@ export const Footer = (
                   message: `${profile?.displayName ?? "Unknown User"} ${
                     getMessage("post_reaction").message
                   }`,
-                  icon: checkProfile(
+                  icon: checkPhotoURL(
                     currentUser?.photoURL_cropped ?? currentUser?.photoURL
                   ),
                   tag: `Likes-${id}`,

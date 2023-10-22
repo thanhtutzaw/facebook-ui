@@ -1,4 +1,4 @@
-import { checkProfile } from "@/lib/firestore/profile";
+import { checkPhotoURL } from "@/lib/firestore/profile";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -71,7 +71,7 @@ export default function Page(props: { acceptedFriends: any[] }) {
                   alt={"name"}
                   width={50}
                   height={50}
-                  src={checkProfile(friend.author.photoURL)}
+                  src={checkPhotoURL(friend.author.photoURL)}
                 />
                 <p className="textOverflow">
                   {friend.author.displayName ?? friend.id}

@@ -1,4 +1,4 @@
-import { checkProfile } from "@/lib/firestore/profile";
+import { checkPhotoURL } from "@/lib/firestore/profile";
 import { faBan, faEllipsisV, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQueryClient } from "@tanstack/react-query";
@@ -244,7 +244,7 @@ function FriendList({
                   alt={`${friend.author?.firstName ?? "Unknow User"} ${
                     friend.author?.lastName ?? ""
                   }'s profile picture`}
-                  src={checkProfile(friend.author?.photoURL)}
+                  src={checkPhotoURL(friend.author?.photoURL)}
                   style={{ objectFit: "cover", width: "100%" }}
                 />
               </div>

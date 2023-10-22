@@ -1,5 +1,5 @@
 import { AppContext } from "@/context/AppContext";
-import { checkProfile } from "@/lib/firestore/profile";
+import { checkPhotoURL } from "@/lib/firestore/profile";
 import styles from "@/styles/Home.module.scss";
 import { AppProps } from "@/types/interfaces";
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
@@ -108,7 +108,7 @@ export default function Story({ email }: AppProps) {
               //     ? photoURL
               //     : "httpsupload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
               // }
-              src={checkProfile(String(profile?.photoURL))}
+              src={checkPhotoURL(profile?.photoURL)}
             />
           </div>
 

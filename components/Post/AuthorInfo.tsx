@@ -1,4 +1,4 @@
-import { checkProfile, getFullName } from "@/lib/firestore/profile";
+import { checkPhotoURL, getFullName } from "@/lib/firestore/profile";
 import {
   faEarth,
   faLock,
@@ -14,8 +14,7 @@ import { Comment, Post, account } from "../../types/interfaces";
 import CommentAction from "../Comment/Action";
 import styles from "./index.module.scss";
 type layoutTypes = "row" | "column";
-export const profileFallback :string=
-  "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+
 export default function AuthorInfo(props: {
   navigateToProfile?: MouseEventHandler;
   profile?: account["profile"];
@@ -199,7 +198,7 @@ function Avatar({
   navigateToProfile?: MouseEventHandler<HTMLImageElement>;
   profile?: account["profile"];
 }) {
-  const profilePicture = checkProfile(String(profile?.photoURL));
+  const profilePicture = checkPhotoURL(profile?.photoURL);
   return (
     <Image
       onClick={navigateToProfile}

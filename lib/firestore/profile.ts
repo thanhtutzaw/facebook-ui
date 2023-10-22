@@ -1,4 +1,3 @@
-import { profileFallback } from "@/components/Post/AuthorInfo";
 import { User, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -190,15 +189,13 @@ async function updateName(user: User, firstName: string, lastName: string) {
     displayName: `${firstName} ${lastName}`,
   });
 }
-export function checkProfile(
+export function checkPhotoURL(
   url?: string | null | account["profile"]["photoURL"]
 ) {
-  // console.log(typeof url);
-  if (typeof url === "undefined" || url === "undefined" || !url) {
-    return profileFallback;
-  } else if (typeof url !== "string") {
-    return url.toString() ?? profileFallback;
-  } else {
-    return url ?? profileFallback;
+  if (url === "undefined" || !url) {
+    return photoURLFallback;
   }
+  return url.toString();
 }
+export const photoURLFallback: string =
+  "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";

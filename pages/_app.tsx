@@ -6,7 +6,7 @@ import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import friendReqSound from "../public/NotiSounds/chord.mp3";
 
 import useFriendRequest from "@/hooks/useFriendRequest";
-import { checkProfile } from "@/lib/firestore/profile";
+import { checkPhotoURL } from "@/lib/firestore/profile";
 import {
   User,
   getAuth,
@@ -157,7 +157,7 @@ export default function App({
         const profileData = await getProfileByUID(String(currentUser?.uid));
         const profile = {
           ...profileData,
-          photoURL: checkProfile(String(profileData.photoURL)),
+          photoURL: checkPhotoURL(profileData.photoURL),
         };
         const croppedURL = profile.photoURL_cropped;
         setcurrentUser({ ...currentUser, photoURL_cropped: croppedURL });

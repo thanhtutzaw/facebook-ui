@@ -1,7 +1,7 @@
 import { AppContext } from "@/context/AppContext";
 import { PageContext, PageProps } from "@/context/PageContext";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
-import { checkProfile } from "@/lib/firestore/profile";
+import { checkPhotoURL } from "@/lib/firestore/profile";
 import styles from "@/styles/Home.module.scss";
 import { AppProps } from "@/types/interfaces";
 import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
@@ -74,7 +74,7 @@ export default function Home(props: { tabIndex: number }) {
             // width={200}
             // height={170}
             // style={{ width: "40px", height: "40px" }}
-            src={checkProfile(String(profile?.photoURL))}
+            src={checkPhotoURL(profile?.photoURL)}
           />
         </div>
         <input

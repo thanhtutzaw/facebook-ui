@@ -1,6 +1,6 @@
 import { PageContext, PageProps } from "@/context/PageContext";
 import { JSONTimestampToDate } from "@/lib/firebase";
-import { checkProfile } from "@/lib/firestore/profile";
+import { checkPhotoURL } from "@/lib/firestore/profile";
 import { account, friends } from "@/types/interfaces";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
@@ -36,7 +36,7 @@ export default function Card(props: { children: ReactNode; f: friends }) {
             alt={f.id.toString()}
             // width={100}
             // height={100}
-            src={checkProfile(f.author?.photoURL as string)}
+            src={checkPhotoURL(f.author?.photoURL as string)}
           />
         </div>
         <div className={s.right}>

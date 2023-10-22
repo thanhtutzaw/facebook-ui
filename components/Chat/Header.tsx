@@ -1,4 +1,4 @@
-import { checkProfile } from "@/lib/firestore/profile";
+import { checkPhotoURL } from "@/lib/firestore/profile";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,7 +28,7 @@ export function ChatHeader({ account }: { account: UserRecord }) {
             marginTop: "2px !important",
             margin: "0",
           }}
-          src={checkProfile(account?.photoURL)}
+          src={checkPhotoURL(account?.photoURL)}
         />
       </Link>
       <div className={s.info}>

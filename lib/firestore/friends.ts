@@ -12,7 +12,7 @@ import { friends } from "../../types/interfaces";
 import { NotiAction } from "../NotiAction";
 import { db } from "../firebase";
 import { getMessage, sendFCM } from "./notifications";
-import { checkProfile } from "./profile";
+import { checkPhotoURL } from "./profile";
 type FriendsWithAuthor<T> = T extends { author: any }
   ? T
   : T & { author: friends["author"] };
@@ -80,7 +80,7 @@ export async function addFriends(
         message: `${
           currentUser?.displayName ?? "Unknow User"
         } send you a friend request.`,
-        icon: checkProfile(
+        icon: checkPhotoURL(
           currentUser?.photoURL_cropped ?? currentUser?.photoURL
         ),
         link: `/${receiptData.id}`,
@@ -138,7 +138,7 @@ export async function acceptFriends(
       message: `${currentUser?.displayName ?? "Unknown User"} ${
         getMessage("acceptedFriend").message
       }`,
-      icon: checkProfile(
+      icon: checkPhotoURL(
         currentUser?.photoURL_cropped ?? currentUser?.photoURL
       ),
       link: `/${senderData}`,

@@ -4,7 +4,7 @@ import { useActive } from "@/hooks/useActiveTab";
 import { NOTI_LIMIT } from "@/lib/QUERY_LIMIT";
 import { db } from "@/lib/firebase";
 import { getMessage } from "@/lib/firestore/notifications";
-import { checkProfile } from "@/lib/firestore/profile";
+import { checkPhotoURL } from "@/lib/firestore/profile";
 import { AppProps, NotiTypes } from "@/types/interfaces";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
@@ -189,7 +189,7 @@ function Noti({ noti }: { noti: NotiTypes }) {
           alt={userName ?? "Unknown User"}
           width={200}
           height={200}
-          src={checkProfile(photoURL)}
+          src={checkPhotoURL(photoURL)}
         />
         <div className={s.message}>
           <span

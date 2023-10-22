@@ -14,7 +14,7 @@ import { app, db, getProfileByUID, postInfo, postToJSON } from "@/lib/firebase";
 import { verifyIdToken } from "@/lib/firebaseAdmin";
 import { fetchComments } from "@/lib/firestore/comment";
 import { updatePost } from "@/lib/firestore/post";
-import { checkProfile } from "@/lib/firestore/profile";
+import { checkPhotoURL } from "@/lib/firestore/profile";
 import { deleteMedia, uploadMedia } from "@/lib/storage";
 import s from "@/styles/Home.module.scss";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
@@ -66,7 +66,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     const profileData = (await getProfileByUID(uid)) as account["profile"];
     const profile = {
       ...profileData,
-      photoURL: checkProfile(String(profileData.photoURL)),
+      photoURL: checkPhotoURL(profileData.photoURL),
     };
     const commentQuery = query(
       collection(
@@ -111,7 +111,7 @@ export default function Page(props: {
   expired: boolean;
   uid: string;
   post: PostType;
-  profile: account["profile"] ;
+  profile: account["profile"];
 }) {
   const { expired, uid, post, profile } = props;
   const { currentUser } = useContext(PageContext) as PageProps;

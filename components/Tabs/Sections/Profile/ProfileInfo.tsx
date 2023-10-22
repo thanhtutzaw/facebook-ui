@@ -1,5 +1,5 @@
 import { PageContext, PageProps } from "@/context/PageContext";
-import { checkProfile, getFullName } from "@/lib/firestore/profile";
+import { checkPhotoURL, getFullName } from "@/lib/firestore/profile";
 import { account } from "@/types/interfaces";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import Image from "next/image";
@@ -54,7 +54,7 @@ function ProfileInfo(props: {
       <Image
         onClick={() => {
           setsingleImageModal?.({
-            src: checkProfile(String(profile.photoURL)),
+            src: checkPhotoURL(profile.photoURL),
             name: `${userName}'s profile picture`,
           });
         }}

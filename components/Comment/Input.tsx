@@ -1,4 +1,4 @@
-import { checkProfile } from "@/lib/firestore/profile";
+import { checkPhotoURL } from "@/lib/firestore/profile";
 import { faArrowAltCircleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { collection, doc } from "firebase/firestore";
@@ -89,7 +89,7 @@ export default function CommentInput(props: {
         height={200}
         priority
         alt={currentUser?.displayName ?? "Unknow User"}
-        src={checkProfile(
+        src={checkPhotoURL(
           profile ? (profile?.photoURL as string) : currentUser?.photoURL
         )}
       />
