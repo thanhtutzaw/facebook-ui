@@ -45,7 +45,7 @@ import {
   likes,
 } from "../../../types/interfaces";
 export const Comment_LIMIT = 10;
-export const getServerSideProps: GetServerSideProps<AppProps> = async (
+export const getServerSideProps: GetServerSideProps = async (
   context
 ) => {
   // context.res.setHeader(

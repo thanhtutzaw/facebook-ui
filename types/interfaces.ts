@@ -116,11 +116,11 @@ export interface Comment {
 }
 
 export interface AppProps {
-  queryPageData?:any;
-  hasMore?:boolean;
-  token?:DecodedIdToken | null;
+  queryPageData?: any;
+  hasMore?: boolean;
+  token?: DecodedIdToken | null;
   fcmToken?: string | string[];
-  UnReadNotiCount?: number | string;
+  UnReadNotiCount?: number;
   acceptedFriends?: string[];
   isFriendEmpty?: boolean;
   postError?: string;
@@ -132,10 +132,11 @@ export interface AppProps {
   selectMode?: boolean;
   expired?: boolean;
   uid?: string;
-  active?:Tabs;
+  active?: Tabs;
   setActive?: Function;
   allUsers?: any;
   sortedPost?: Post[];
+  setUnReadNotiCount?: Function;
   setsortedPost?: Function;
   posts?: Post[];
   // email?: string | null;

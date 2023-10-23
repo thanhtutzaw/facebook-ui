@@ -6,7 +6,7 @@ import { db } from "@/lib/firebase";
 import { getMessage } from "@/lib/firestore/notifications";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { AppProps, NotiTypes } from "@/types/interfaces";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Timestamp,
   collection,
@@ -22,25 +22,31 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import t from "../../Tabs.module.scss";
 import s from "./Notifications.module.scss";
 
 export default function Notifications() {
   const { active: tab } = useActive();
-  const { uid, lastPullTimestamp, UnReadNotiCount } = useContext(
-    AppContext
-  ) as AppProps;
+  const {
+    uid: currentUid,
+    lastPullTimestamp,
+    UnReadNotiCount,
+    setUnReadNotiCount,
+  } = useContext(AppContext) as AppProps;
   const fetchNoti = async function (pageParam: NotiTypes | null = null) {
     console.log("fetching noti");
-    if (!uid) return;
+    if (!currentUid) return;
     let notiQuery = query(
-      collection(db, `/users/${uid}/notifications`),
+      collection(db, `/users/${currentUid}/notifications`),
       orderBy("createdAt", "desc"),
       limit(NOTI_LIMIT + 1)
     );
-    const userDoc = doc(db, `users/${uid}`);
+    const userDoc = doc(db, `users/${currentUid}`);
     await updateDoc(userDoc, { lastPullTimestamp: serverTimestamp() });
+    // if (UnReadNotiCount === 1 && UnReadNotiCount > 0) {
+    // setUnReadNotiCount?.(0);
+    // }
     if (pageParam) {
       const date = new Timestamp(
         pageParam.createdAt.seconds,
@@ -62,18 +68,26 @@ export default function Notifications() {
           id: doc.id,
           ...doc.data(),
           ...getMessage(data.type),
-          hasRead: lastPull ? createdDate < lastPull : true,
+          hasRead: doc.data().hasRead ? doc.data().hasRead : false,
         };
       }) as NotiTypes[];
       const hasMore = noti.length > NOTI_LIMIT;
       if (hasMore) {
         noti.pop();
       }
+      setUnReadNotiCount?.(0);
       return { noti, hasMore };
     } catch (error) {
       console.error(error);
     }
   };
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (UnReadNotiCount ?? 0 > 0) {
+      queryClient.invalidateQueries(["notifications"]);
+      queryClient.refetchQueries(["notifications"]);
+    }
+  }, [UnReadNotiCount, queryClient]);
 
   const { fetchNextPage, hasNextPage, isLoading, error, data } =
     useInfiniteQuery({
@@ -82,7 +96,7 @@ export default function Notifications() {
         return await fetchNoti(pageParam);
       },
       enabled: tab === "notifications",
-      keepPreviousData: true,
+      // keepPreviousData: true,
       getNextPageParam: (lastPage) =>
         lastPage?.hasMore
           ? lastPage.noti![lastPage?.noti?.length! - 1]
@@ -93,7 +107,7 @@ export default function Notifications() {
   useEffect(() => {
     // if (!togglereactionList) return;
     let notiQuery = query(
-      collection(db, `/users/${uid}/notifications`),
+      collection(db, `/users/${currentUid}/notifications`),
       orderBy("createdAt", "desc"),
       limit(NOTI_LIMIT + 1)
     );
@@ -111,7 +125,19 @@ export default function Notifications() {
     //     })
     //   );
     console.log("updatedNoti");
-  }, [uid]);
+  }, [currentUid]);
+  function updateReadNoti(noti: NotiTypes) {
+    const ref = doc(db, `users/${currentUid}/notifications/${noti.id}`);
+    const { message, ...rest } = noti;
+    const readedData = {
+      ...rest,
+      hasRead: true,
+    };
+    queryClient.invalidateQueries(["notifications"]);
+    // queryClient.refetchQueries(["notifications"]);
+    console.log({ readedData });
+    updateDoc(ref, readedData);
+  }
   return (
     <div
       id="notifications"
@@ -140,7 +166,7 @@ export default function Notifications() {
         ) : (
           <ul>
             {noti?.map((n) => (
-              <Noti key={n.id} noti={n} />
+              <Noti updateReadNoti={updateReadNoti} key={n.id} noti={n} />
             ))}
           </ul>
         )}
@@ -149,7 +175,13 @@ export default function Notifications() {
     </div>
   );
 }
-function Noti({ noti }: { noti: NotiTypes }) {
+function Noti({
+  noti,
+  updateReadNoti,
+}: {
+  noti: NotiTypes;
+  updateReadNoti: (noti: NotiTypes) => void;
+}) {
   const router = useRouter();
   const {
     hasRead,
@@ -162,8 +194,16 @@ function Noti({ noti }: { noti: NotiTypes }) {
     userName,
     createdAt,
   } = noti;
+  const [visited, setVisited] = useState(hasRead);
+
   return (
     <li
+      onClick={() => {
+        if (!hasRead) {
+          updateReadNoti(noti);
+          setVisited(true);
+        }
+      }}
       style={
         {
           // backgroundColor: !hasRead ? "rgb(228 228 228 / 50%)" : "initial",
@@ -176,7 +216,10 @@ function Noti({ noti }: { noti: NotiTypes }) {
         // href={`${url.match(/^[a-zA-Z]{1,}:\/\//) ? `/${url}` : `${url}`} `}
         href={url}
       >
-        <div className={`${s.new} ${!hasRead ? s.unRead : ""}`}></div>
+        {/*  */}
+        {/* {visited ? "vistied" : "notvisited"} */}
+        {/* {hasRead ? "hasRead" : " nothasRead"} */}
+        <div className={`${s.new} ${hasRead === false ? s.unRead : ""}`}></div>
         <Image
           onClick={(e) => {
             e.preventDefault();

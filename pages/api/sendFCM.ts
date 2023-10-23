@@ -34,7 +34,6 @@
 //   const {
 //     title = "Facebook",
 //     recieptId,
-//     message = "New Notifications from Facebook.",
 //     tag = "",
 //     badge = "/badge.svg",
 //     link = "/",

@@ -367,17 +367,12 @@ export default function Home({
           where("createdAt", ">", lastPull),
           limit(UnReadNoti_LIMIT)
         );
-        // const count = (await getCountFromServer(notiCountQuery)).data().count;
         // if (UnReadNotiCount >= 10) return;
         console.log("noti listening realtime - unRead" + UnReadNotiCount);
-        unsubscribeNotifications = onSnapshot(
-          notiCountQuery,
-          (querySnapshot) => {
-            console.log(querySnapshot.docs.map((doc) => doc.data()));
-            setUnReadNotiCount(querySnapshot.size); // getting unRead noti count
-            // setUnReadNotiCount(count); // getting unRead noti count
-          }
-        );
+        unsubscribeNotifications = onSnapshot(notiCountQuery, (latestNoti) => {
+          // console.log(querySnapshot.docs.map((doc) => doc.data()));
+          setUnReadNotiCount(latestNoti.size); // getting unRead noti count
+        });
       } catch (error) {
         console.log(error);
       }
@@ -432,7 +427,6 @@ export default function Home({
         } = payload.notification!;
         const notificationTitle = title ?? "Facebook";
         // const notificationOptions = {
-        //   body: body ?? "Notifications from facebook .",
         //   icon: icon ?? "/logo.svg",
         //   // badge,
         //   // tag: tag ?? "",
@@ -573,7 +567,8 @@ export default function Home({
         acceptedFriends={acceptedFriends}
         isFriendEmpty={isFriendEmpty}
         lastPullTimestamp={lastPullTimestamp}
-        UnReadNotiCount={UnReadNotiCount}
+        UnReadNotiCount={UnReadNotiCount} 
+        setUnReadNotiCount={setUnReadNotiCount} 
         active={activeTab!}
         postError={postError!}
         limitedPosts={limitedPosts!}

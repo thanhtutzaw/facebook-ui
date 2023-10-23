@@ -129,7 +129,6 @@ messaging.onBackgroundMessage((payload) => {
      */
     const notificationOptions = {
         body: body ?? "Notifications from facebook .",
-        // icon: icon ?? "/logo.svg",
         badge,
         // tag: tag ?? "",
         // renotify: false,

@@ -13,6 +13,8 @@ import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
 import Home from "./Sections/Home/Home";
 import t from "./Tabs.module.scss";
+import { AppContext } from "@/context/AppContext";
+import { AppProps } from "@/types/interfaces";
 const Friends = dynamic(() => import("./Sections/Friends/Friends"), {
   ssr: false,
 });
@@ -31,12 +33,24 @@ export default function Tabs() {
   const { indicatorRef, setpreventClick } = useContext(
     PageContext
   ) as PageProps;
+  const { setUnReadNotiCount, UnReadNotiCount } = useContext(
+    AppContext
+  ) as AppProps;
   const { active } = useActive();
 
   useEffect(() => {
     if (!active) return;
     window.location.hash = active === "/" ? "#home" : `#${active}`;
+    // if (active === "notifications") {
+    //   setUnReadNotiCount?.(0);
+    // }
   }, [active]);
+  // useEffect(() => {
+  //   if (active === "notifications") {
+  //     setUnReadNotiCount?.(0);
+  //   }
+  // }, [active, UnReadNotiCount, setUnReadNotiCount]);
+
   useEffect(() => {
     if (!canDrag) return;
     function dragStop() {
