@@ -18,7 +18,9 @@ import { PostContext, PostProps } from "../../context/PostContext";
 import { SharePreview } from "./SharePost/Preview";
 import { SocialCount } from "./SocialCount";
 import s from "./index.module.scss";
-export default function Content({ post }: { post: any }) {
+import PostFallback from "./Fallback";
+import { Post } from "@/types/interfaces";
+export default function Content({ post }: { post: Post }) {
   const {
     Likes,
     setLikes,
@@ -34,7 +36,6 @@ export default function Content({ post }: { post: any }) {
     checkRef,
     showmore,
     setShowmore,
-    // post,
     shareMode,
   } = useContext(PostContext) as PostProps;
   const { authorId, id, text, sharePost: share } = post;
@@ -107,7 +108,7 @@ export default function Content({ post }: { post: any }) {
                     e.preventDefault();
                     e.stopPropagation();
                     if (toggleMenu === "") {
-                      settoggleMenu?.(id?.toString());
+                      settoggleMenu?.(String(id));
                     } else {
                       settoggleMenu?.("");
                     }
@@ -185,7 +186,15 @@ export default function Content({ post }: { post: any }) {
           )}
         </>
       )}
-      {text !== "" && (
+      {post.deletedByAuthor && (
+        <PostFallback
+          canRemove={{
+            uid: String(authUser?.uid),
+            deleteURL: `users/${authorId}/recentPosts/${id}`,
+          }}
+        />
+      )}
+      {text !== "" && text && (
         <TextInput
           style={
             {

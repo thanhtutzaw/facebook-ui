@@ -2,14 +2,13 @@ import Spinner from "@/components/Spinner";
 import { AppContext } from "@/context/AppContext";
 import { useActive } from "@/hooks/useActiveTab";
 import { NOTI_LIMIT } from "@/lib/QUERY_LIMIT";
-import { db } from "@/lib/firebase";
+import { db, getCollectionPath, getPath } from "@/lib/firebase";
 import { getMessage } from "@/lib/firestore/notifications";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { AppProps, NotiTypes } from "@/types/interfaces";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Timestamp,
-  collection,
   doc,
   getDocs,
   limit,
@@ -38,11 +37,11 @@ export default function Notifications() {
     console.log("fetching noti");
     if (!currentUid) return;
     let notiQuery = query(
-      collection(db, `/users/${currentUid}/notifications`),
+      getPath("notifications", { uid: currentUid }),
       orderBy("createdAt", "desc"),
       limit(NOTI_LIMIT + 1)
     );
-    const userDoc = doc(db, `users/${currentUid}`);
+    const userDoc = doc(db, getCollectionPath.users({ uid: currentUid }));
     await updateDoc(userDoc, { lastPullTimestamp: serverTimestamp() });
     // if (UnReadNotiCount === 1 && UnReadNotiCount > 0) {
     // setUnReadNotiCount?.(0);
@@ -107,7 +106,7 @@ export default function Notifications() {
   useEffect(() => {
     // if (!togglereactionList) return;
     let notiQuery = query(
-      collection(db, `/users/${currentUid}/notifications`),
+      getPath("notifications", { uid: currentUid }),
       orderBy("createdAt", "desc"),
       limit(NOTI_LIMIT + 1)
     );
@@ -127,7 +126,7 @@ export default function Notifications() {
     console.log("updatedNoti");
   }, [currentUid]);
   function updateReadNoti(noti: NotiTypes) {
-    const ref = doc(db, `users/${currentUid}/notifications/${noti.id}`);
+    const ref = doc(db, `${getCollectionPath.notifications}/${noti.id}`);
     const { message, ...rest } = noti;
     const readedData = {
       ...rest,

@@ -7,7 +7,7 @@ import {
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import nookies from "nookies";
-import { db, postToJSON, userToJSON } from "../../lib/firebase";
+import { db, getCollectionPath, postToJSON, userToJSON } from "../../lib/firebase";
 import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
 import { Post } from "../../types/interfaces";
 import CreatePostForm from "@/components/Form/CreatePost";
@@ -17,7 +17,10 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
     const token = await verifyIdToken(cookies.token);
     const { uid } = token;
     const { author: authorId, id: postId } = context.query;
-    const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
+    const postDoc = doc(
+      db,
+      `${getCollectionPath.posts({ uid: String(authorId) })}/${postId}`
+    );
 
     const posts = await getDoc(postDoc);
     const post = await postToJSON(posts as DocumentSnapshot<DocumentData>);

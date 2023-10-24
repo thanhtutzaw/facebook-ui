@@ -10,7 +10,15 @@ import { SharePreview } from "@/components/Post/SharePost/Preview";
 import { SocialCount } from "@/components/Post/SocialCount";
 import { Welcome } from "@/components/Welcome";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
-import { app, db, getProfileByUID, postInfo, postToJSON } from "@/lib/firebase";
+import {
+  app,
+  db,
+  getCollectionPath,
+  getPath,
+  getProfileByUID,
+  postInfo,
+  postToJSON,
+} from "@/lib/firebase";
 import { verifyIdToken } from "@/lib/firebaseAdmin";
 import { fetchComments } from "@/lib/firestore/comment";
 import { updatePost } from "@/lib/firestore/post";
@@ -37,7 +45,6 @@ import nookies from "nookies";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { PageContext, PageProps } from "../../../context/PageContext";
 import {
-  AppProps,
   Media,
   Post,
   Post as PostType,
@@ -45,9 +52,7 @@ import {
   likes,
 } from "../../../types/interfaces";
 export const Comment_LIMIT = 10;
-export const getServerSideProps: GetServerSideProps = async (
-  context
-) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   // context.res.setHeader(
   //   "Cache-Control",
   //   "public, s-maxage=10, stale-while-revalidate=59"
@@ -59,6 +64,10 @@ export const getServerSideProps: GetServerSideProps = async (
     const { user: authorId, post: postId } = context.query;
     let expired = false;
 
+    // const postRef = doc(
+    //   db,
+    //   `${getCollectionPath.posts({ uid: String(authorId) })}/${postId}`
+    // );
     const postRef = doc(db, `users/${authorId}/posts/${postId}`);
     const postDoc = await getDoc(postRef);
     const p = await postToJSON(postDoc as DocumentSnapshot<DocumentData>);
@@ -69,14 +78,19 @@ export const getServerSideProps: GetServerSideProps = async (
       photoURL: checkPhotoURL(profileData.photoURL),
     };
     const commentQuery = query(
-      collection(
-        db,
-        `users/${newPost?.authorId}/posts/${newPost?.id}/comments`
-      ),
+      getPath("comments", {
+        authorId: String(newPost?.authorId),
+        postId: String(newPost?.id),
+      }),
       orderBy("createdAt", "desc"),
-      limit(Comment_LIMIT)
+      limit(Comment_LIMIT + 1)
     );
-    const comments = await fetchComments(commentQuery);
+    let hasMore = false;
+    let comments = await fetchComments(commentQuery);
+    hasMore = (comments?.length ?? 0) > Comment_LIMIT;
+    if (hasMore) {
+      comments?.pop();
+    }
     const withComment = { ...newPost, comments };
     if (
       !postDoc.exists() ||
@@ -88,6 +102,7 @@ export const getServerSideProps: GetServerSideProps = async (
     } else {
       return {
         props: {
+          hasMore,
           profile,
           expired,
           uid,
@@ -99,6 +114,7 @@ export const getServerSideProps: GetServerSideProps = async (
     console.log("SSR Error in user/post " + error);
     return {
       props: {
+        hasMore: false,
         profile: null,
         expired: true,
         uid: "",
@@ -108,12 +124,13 @@ export const getServerSideProps: GetServerSideProps = async (
   }
 };
 export default function Page(props: {
+  hasMore: boolean;
   expired: boolean;
   uid: string;
   post: PostType;
   profile: account["profile"];
 }) {
-  const { expired, uid, post, profile } = props;
+  const { hasMore, expired, uid, post, profile } = props;
   const { currentUser } = useContext(PageContext) as PageProps;
   const router = useRouter();
   const [visibility, setVisibility] = useState(post?.visibility!);
@@ -279,35 +296,42 @@ export default function Page(props: {
     async function () {
       console.log("fetching more comment");
       setcommentLoading(true);
-      const comment = limitedComments?.[limitedComments?.length - 1]!;
-      if (!comment) return;
-      if (limitedComments.length > Comment_LIMIT) {
-        setcommentLoading(true);
-      }
-      //  else {
-      //   setcommentLoading(false);
+      const comment = limitedComments?.[limitedComments?.length - 1];
+      // if (!comment) return;
+      // if (limitedComments.length > Comment_LIMIT) {
       // }
       const date = new Timestamp(
         comment.createdAt.seconds,
         comment.createdAt.nanoseconds
       );
       const commentQuery = query(
-        collection(db, `users/${post?.authorId}/posts/${post?.id}/comments`),
+        getPath("comments", {
+          authorId: String(post?.authorId),
+          postId: String(post?.id),
+        }),
         orderBy("createdAt", "desc"),
         startAfter(date),
-        limit(Comment_LIMIT)
+        limit(Comment_LIMIT + 1)
       );
       const comments = await fetchComments(commentQuery);
-      setlimitedComments(limitedComments.concat(comments));
+      // comments?.shift();
+      setlimitedComments(limitedComments.concat(comments ?? []));
+      console.log(comments?.length);
+      console.log({ limitedComments });
       setcommentLoading(false);
-      if (comments?.length! < Comment_LIMIT) {
-        setcommentEnd(true);
-      }
+      setcommentEnd(comments?.length! < Comment_LIMIT);
+      // if () {
+      // }
     },
     [limitedComments, post?.authorId, post?.id]
   );
   const [Likes, setLikes] = useState<likes | []>([]);
-  const { scrollRef } = useInfiniteScroll(commentEnd, true, fetchMoreComment);
+  const { scrollRef } = useInfiniteScroll(
+    hasMore,
+    true,
+    fetchMoreComment,
+    commentEnd
+  );
 
   if (expired) return <Welcome expired={expired} />;
   return (
@@ -336,7 +360,7 @@ export default function Page(props: {
         style={{
           marginBottom: canEdit
             ? "65px"
-            : limitedComments.length <= Comment_LIMIT || commentEnd
+            : limitedComments?.length <= Comment_LIMIT || commentEnd
             ? "80px"
             : "130px",
         }}
@@ -386,6 +410,7 @@ export default function Page(props: {
               post={post}
             />
             <Comment
+              hasMore={hasMore}
               commentLoading={commentLoading}
               commentEnd={commentEnd}
               post={post}

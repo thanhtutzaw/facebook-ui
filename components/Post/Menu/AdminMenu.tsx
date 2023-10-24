@@ -88,8 +88,10 @@ export default function AdminMenu(props: {
               try {
                 await deletePost({
                   uid: auth.currentUser.uid,
-                  postid: id,
                   post,
+                  deleteURL: `users/${auth.currentUser.uid}/posts/${String(
+                    id
+                  )}`,
                 });
                 // queryClient.invalidateQueries(["myPost"]);
                 setLoading(false);

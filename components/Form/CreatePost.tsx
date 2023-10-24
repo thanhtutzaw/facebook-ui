@@ -1,19 +1,19 @@
-import { getAuth } from "firebase/auth";
-import { collection, doc } from "firebase/firestore";
-import { useRouter } from "next/router";
-import { useContext, useEffect, useRef, useState } from "react";
 import { PageContext, PageProps } from "@/context/PageContext";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { app, db } from "@/lib/firebase";
+import { app, getPath } from "@/lib/firebase";
 import { addPost } from "@/lib/firestore/post";
 import { uploadMedia } from "@/lib/storage";
 import s from "@/styles/Home.module.scss";
 import { Post as PostTypes } from "@/types/interfaces";
+import { getAuth } from "firebase/auth";
+import { doc } from "firebase/firestore";
+import { useRouter } from "next/router";
+import { useContext, useEffect, useRef, useState } from "react";
+import BackHeader from "../Header/BackHeader";
 import PhotoLayout from "../Post/PhotoLayout";
 import { SharePreview } from "../Post/SharePost/Preview";
-import PostSettingFooterForm from "./PostSettingFooter";
 import TextInput from "./Input/TextInput";
-import BackHeader from "../Header/BackHeader";
+import PostSettingFooterForm from "./PostSettingFooter";
 
 export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const { sharePost } = props;
@@ -29,6 +29,22 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const { getLocal, setLocal } = useLocalStorage("visibility", value);
   const { friends, fileRef, uploadButtonClicked, setuploadButtonClicked } =
     useContext(PageContext) as PageProps;
+  const submitRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const input = textRef.current;
+    function handleKeyPress(e: KeyboardEvent) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        submitRef.current?.click();
+      }
+    }
+    input?.addEventListener("keydown", (e) => {
+      handleKeyPress(e);
+    });
+    return () => {
+      input?.removeEventListener("keydown", handleKeyPress);
+    };
+  }, []);
 
   // useEffect(() => {
   //   // setvalue(localStorage.getItem("visibility")!);
@@ -121,6 +137,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
           </h2>
         </div>
         <button
+          ref={submitRef}
           disabled={loading}
           type="submit"
           className={s.submit}
@@ -170,21 +187,23 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
               setLoading(true);
               window.document.body.style.cursor = "wait";
               const media = await uploadMedia(files as File[]);
-              const shareRef = doc(collection(db, `users/${uid}/posts`));
+              const shareRef = doc(getPath("posts", { uid }));
               const sharePostData = {
                 id: sharePost?.id?.toString()!,
                 author: sharePost?.authorId?.toString()!,
                 sharer: [{ id: uid }],
                 refId: shareRef.id,
               };
-              await addPost(
+              await addPost({
                 uid,
-                visibility,
-                replace.current,
-                media,
-                sharePost ? sharePostData : null,
-                friends
-              );
+                post: {
+                  visibility,
+                  text: replace.current,
+                  media,
+                },
+                sharePost: sharePost ? sharePostData : null,
+                friends,
+              });
               router.replace("/", undefined, { scroll: false });
               window.document.body.style.cursor = "initial";
             } catch (error: any) {

@@ -26,7 +26,7 @@ import {
   useState,
 } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { app, db } from "../../lib/firebase";
+import { app, db, getCollectionPath, getPath } from "../../lib/firebase";
 import {
   getMessage,
   sendAppNoti,
@@ -80,14 +80,20 @@ export const Footer = (
 
   const auth = getAuth(app);
   const uid = auth?.currentUser?.uid;
-  const postRef = doc(db, `users/${authorId}/posts/${id}`);
-  const likeRef = doc(db, `users/${authorId}/posts/${id}/likes/${uid}`);
-  const likedUserURL = `users/${authorId}/posts/${id}/likes`;
+  const postRef = doc(
+    db,
+    `${getCollectionPath.posts({ uid: String(authorId) })}/${id}`
+  );
+  const likedUserURL = getCollectionPath.likes({
+    authorId: String(authorId),
+    postId: String(id),
+  });
+  const likeRef = doc(db, `${likedUserURL}/${uid}`);
   const likedUserRef = collection(db, likedUserURL);
   useEffect(() => {
     const likedUserRef = collection(db, likedUserURL);
     async function getLikeCount() {
-      const likeRef = doc(db, `users/${authorId}/posts/${id}/likes/${uid}`);
+      const likeRef = doc(db, `${likedUserURL}/${uid}`);
       const isUserLikeThisPost = uid ? (await getDoc(likeRef)).exists() : false;
       const likeCount = (await getCountFromServer(likedUserRef)).data().count;
       setlikeCount?.(likeCount);
@@ -331,7 +337,7 @@ export const Footer = (
                     alert("Error : User Not Found . Sign up and Try Again ! ");
                     return;
                   }
-                  const shareRef = doc(collection(db, `users/${uid}/posts`));
+                  const shareRef = doc(getPath("posts", { uid }));
                   const sharePost = {
                     refId: shareRef.id,
                     author: authorId.toString(),
@@ -340,14 +346,13 @@ export const Footer = (
                   try {
                     window.document.body.style.cursor = "wait";
                     const url = `${uid}/${sharePost.refId}`;
-                    // const data= {uid,visibility,sharePost}
-                    await addPost(
+                    await addPost({
                       uid,
-                      visibility ?? "Public",
-                      "",
-                      [],
-                      sharePost
-                    );
+                      post: {
+                        visibility: visibility ?? "Public",
+                      },
+                      sharePost,
+                    });
 
                     await sendAppNoti({
                       uid,

@@ -1,4 +1,3 @@
-import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import {
   AuthErrorCodes,
   Unsubscribe,
@@ -7,7 +6,6 @@ import {
 } from "firebase/auth";
 import {
   arrayUnion,
-  collection,
   doc,
   getDoc,
   getDocs,
@@ -30,13 +28,15 @@ import {
   app,
   db,
   fethUserDoc,
+  getCollectionPath,
   getNewsFeed,
+  getPath,
   getPostWithMoreInfo,
   getProfileByUID,
   userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import { AppProps, account, friends } from "../types/interfaces";
+import { AppProps, RecentPosts, account, friends } from "../types/interfaces";
 
 import SecondaryPage from "@/components/QueryPage";
 import { useActive } from "@/hooks/useActiveTab";
@@ -62,8 +62,11 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     const userQuery = context.query.user!;
     if (userQuery) {
       const user = await fethUserDoc(userQuery);
-      const userExist = user.exists();
-      const isFriendsQuery = doc(db, `users/${token.uid}/friends/${userQuery}`);
+      // const userExist = user.exists();
+      const isFriendsQuery = doc(
+        db,
+        `${getCollectionPath.friends({ uid: token.uid })}/${userQuery}`
+      );
       const friendDoc = await getDoc(isFriendsQuery);
       let isFriend = false,
         isBlocked = false,
@@ -79,14 +82,14 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
         canUnBlock = relation.senderId === token.uid;
       }
       let mypostQuery = query(
-        collection(db, `/users/${userQuery}/posts`),
+        getPath("posts", { uid: userQuery[0] }),
         where("visibility", "in", ["Public"]),
         orderBy("createdAt", "desc"),
         limit(MYPOST_LIMIT + 1)
       );
       if (isFriend) {
         mypostQuery = query(
-          collection(db, `/users/${userQuery}/posts`),
+          getPath("posts", { uid: userQuery[0] }),
           where("visibility", "in", ["Friend", "Public"]),
           orderBy("createdAt", "desc"),
           limit(MYPOST_LIMIT + 1)
@@ -129,7 +132,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     tokenUID = uid;
     // console.log("isVerify " + token.email_verified);
     const myFriendsQuery = query(
-      collection(db, `users/${uid}/friends`),
+      getPath("friends", { uid }),
       where("status", "==", "friend"),
       orderBy("updatedAt", "desc")
     );
@@ -140,22 +143,21 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     });
     const feedUserWithAdmin = [{ id: uid }, ...feedUser];
     // console.log(feedUserWithAdmin);
-    const userPostsSubCollectionRef = collection(db, `users/${uid}/friends`);
+    // const userPostsSubCollectionRef =  getPath("friends",{uid});
 
     // Reference to the "recentPostSubCollection" subcollection within the user's "postsSubCollection"
     const newsFeedQuery = query(
-      collection(db, `users/${uid}/recentPosts`),
+      getPath("recentPosts", { uid }),
       orderBy("createdAt", "desc"),
       limit(NewsFeed_LIMIT + 1)
     );
-    let recentPosts,
+    let recentPosts: RecentPosts[] = [],
       hasMore = false;
     try {
       recentPosts = (await getDocs(newsFeedQuery)).docs.map((doc) => {
-        // const authorId = doc.ref.parent.parent?.id!;
         return {
-          ...doc.data(),
-          // authorId ,
+          ...(doc.data() as any),
+          createdAt: doc.data().createdAt?.toJSON() || 0,
         };
       });
       hasMore = recentPosts.length > NewsFeed_LIMIT;
@@ -170,33 +172,24 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     // feedUserWithAdmin.map(async (friend) => {
 
     // return (await getDocs(newsFeedQuery).docs.map((doc) => {
-    //   const authorId = doc.ref.parent.parent?.id;
     //   return {
-    //     ...doc.data(),
-    //     authorId,
     //   };
     // });
     // })
     // feedUserWithAdmin.map(async (friend) => {
     //   const newsFeedQuery = query(
-    //     collection(db, `users/${uid}/friends/${friend.id}/recentPosts`),
-    //     orderBy("createdAt", "desc"),
     //     limit(NewsFeed_LIMIT)
     //   );
     //   return (await getDocs(newsFeedQuery)).docs.map((doc) => {
     //     const authorId = doc.ref.parent.parent?.id;
     //     return {
-    //       ...doc.data(),
-    //       authorId,
     //     };
     //   });
     // })
     // );
     // const posts = recentPosts.reduce((acc, cur) => acc.concat(cur), []);
-    const newsFeedWithMe = [...acceptedFriends, uid];
-    const isFriendEmpty = myFriendsSnap.empty;
-    // const friendsList = !isFriendEmpty ? newsFeedWithMe : [uid];
 
+    const isFriendEmpty = myFriendsSnap.empty;
     const [newsFeedPosts, profileData, currentAccount] = await Promise.all([
       getNewsFeed(uid, recentPosts),
       getProfileByUID(uid),
@@ -357,13 +350,13 @@ export default function Home({
     if (!uid) return;
     let unsubscribeNotifications: Unsubscribe;
     const fetchNotiCount = async () => {
-      const userDoc = doc(db, `users/${uid}`);
+      const userDoc = doc(db, getCollectionPath.users({ uid }));
       try {
         const doc = await getDoc(userDoc);
         const lastPull = doc.data()?.lastPullTimestamp ?? Date.now();
         setlastPullTimestamp(lastPull);
         const notiCountQuery = query(
-          collection(db, `/users/${uid}/notifications`),
+          getPath("notifications", { uid }),
           where("createdAt", ">", lastPull),
           limit(UnReadNoti_LIMIT)
         );
@@ -523,13 +516,12 @@ export default function Home({
             console.log("FCM token:", token);
             // const shouldStoreNewDeviceToken = fcmToken?.includes(token);
             // if (shouldStoreNewDeviceToken) return;
-            // const userDoc = doc(db, `users/${uid}`);
 
             // await updateDoc(userDoc, { fcmToken: arrayUnion(token) });
 
             const isTokenStored = fcmToken?.includes(token);
             if (!isTokenStored) {
-              const userDoc = doc(db, `users/${uid}`);
+              const userDoc = doc(db, getCollectionPath.users({ uid }));
 
               await updateDoc(userDoc, { fcmToken: arrayUnion(token) });
 
@@ -567,8 +559,8 @@ export default function Home({
         acceptedFriends={acceptedFriends}
         isFriendEmpty={isFriendEmpty}
         lastPullTimestamp={lastPullTimestamp}
-        UnReadNotiCount={UnReadNotiCount} 
-        setUnReadNotiCount={setUnReadNotiCount} 
+        UnReadNotiCount={UnReadNotiCount}
+        setUnReadNotiCount={setUnReadNotiCount}
         active={activeTab!}
         postError={postError!}
         limitedPosts={limitedPosts!}

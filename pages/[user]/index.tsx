@@ -5,7 +5,13 @@ import s from "@/components/Tabs/Sections/Profile/index.module.scss";
 import { PageContext, PageProps } from "@/context/PageContext";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import { MYPOST_LIMIT } from "@/lib/QUERY_LIMIT";
-import { db, fethUserDoc, getPostWithMoreInfo } from "@/lib/firebase";
+import {
+  db,
+  fethUserDoc,
+  getCollectionPath,
+  getPath,
+  getPostWithMoreInfo,
+} from "@/lib/firebase";
 import { verifyIdToken } from "@/lib/firebaseAdmin";
 import {
   acceptFriends,
@@ -29,7 +35,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import {
   Timestamp,
-  collection,
   doc,
   getDoc,
   limit,
@@ -44,6 +49,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import nookies from "nookies";
+import confirm from "public/assets/confirm-beep.mp3";
 import {
   ReactElement,
   ReactNode,
@@ -51,9 +57,8 @@ import {
   useContext,
   useState,
 } from "react";
-import { AcceptFriend } from "../../components/Button/AcceptFriend";
-import confirm from "public/assets/confirm-beep.mp3";
 import useSound from "use-sound";
+import { AcceptFriend } from "../../components/Button/AcceptFriend";
 
 export type statusDataType = "canAccept" | "pending" | "friend" | "notFriend";
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -63,7 +68,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
     const user = await fethUserDoc(uid);
     const userExist = user.exists();
-    const isFriendsQuery = doc(db, `users/${token.uid}/friends/${uid}`);
+    const isFriendsQuery = doc(
+      db,
+      `${getCollectionPath.friends({ uid: token.uid })}/${uid}`
+    );
     const friendDoc = await getDoc(isFriendsQuery);
     let isFriend = false,
       isBlocked = false,
@@ -79,14 +87,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       canUnBlock = relation.senderId === token.uid;
     }
     let mypostQuery = query(
-      collection(db, `/users/${uid}/posts`),
+      getPath("posts", { uid: uid[0] }),
       where("visibility", "in", ["Public"]),
       orderBy("createdAt", "desc"),
       limit(MYPOST_LIMIT + 1)
     );
     if (isFriend) {
       mypostQuery = query(
-        collection(db, `/users/${uid}/posts`),
+        getPath("posts", { uid: uid[0] }),
         where("visibility", "in", ["Friend", "Public"]),
         orderBy("createdAt", "desc"),
         limit(MYPOST_LIMIT)
@@ -187,7 +195,6 @@ export default function UserProfile({
         onClick={async () => {
           if (!friendId || !currentUser) return;
           try {
-            
             await acceptFriends(
               token.uid,
               {
@@ -352,7 +359,7 @@ export default function UserProfile({
         post.createdAt.nanoseconds
       );
       const mypostQuery = query(
-        collection(db, `/users/${router.query.user}/posts`),
+        getPath("posts", { uid: String(router.query.user) }),
         where("visibility", "in", ["Friend", "Public"]),
         orderBy("createdAt", "desc"),
         startAfter(date),

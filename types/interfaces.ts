@@ -87,6 +87,7 @@ export interface sharedPost {
   likeCount: string | number;
 }
 export interface Post {
+  deletedByAuthor?: boolean;
   likeCount: string | number;
   commentCount?: string | number;
   isSaved: boolean;
@@ -103,7 +104,7 @@ export interface Post {
   comments: Comment[];
   createdAt: timeStamp;
   updatedAt: timeStamp;
-} ;
+}
 export interface Comment {
   isLiked?: boolean;
   like?: any;
@@ -113,6 +114,11 @@ export interface Comment {
   text: string;
   createdAt: timeStamp;
   updatedAt?: timeStamp;
+}
+export interface RecentPosts {
+  id: string;
+  authorId: string;
+  createdAt: Post["createdAt"];
 }
 
 export interface AppProps {

@@ -8,7 +8,7 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
-import { app, db } from "../../lib/firebase";
+import { app, db, getCollectionPath } from "../../lib/firebase";
 
 export async function addSavedPost(authorId: string, postId: string) {
   const uid = getAuth(app).currentUser?.uid;
@@ -16,9 +16,12 @@ export async function addSavedPost(authorId: string, postId: string) {
     alert("Auth User Required.");
     return;
   }
-  const authorRef = doc(db, `users/${authorId}`);
-  const postRef = doc(db, `users/${authorId}/posts/${postId}`);
-  const Ref = doc(db, `users/${uid}/savedPost/${postId}`);
+  const authorRef = doc(db, getCollectionPath.users({ uid: authorId }));
+  const postRef = doc(
+    db,
+    `${getCollectionPath.posts({ uid: authorId })}/${postId}`
+  );
+  const Ref = doc(db, `${getCollectionPath.savedPost({uid})}/${postId}`);
   const data = {
     authorId,
     postId,

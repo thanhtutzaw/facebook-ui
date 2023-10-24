@@ -2,7 +2,7 @@ import { User, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { account } from "../../types/interfaces";
-import { db, storage } from "../firebase";
+import { db, getCollectionPath, storage } from "../firebase";
 export function getFullName(profile: account["profile"] | undefined): string {
   if (!profile) return "Unknown User";
   const { firstName: first, lastName: last } = profile;
@@ -15,7 +15,7 @@ export function getFullName(profile: account["profile"] | undefined): string {
   return fullName;
 }
 export async function addProfile(user: User, profile: account["profile"]) {
-  const Ref = doc(db, `users/${user.uid}`);
+  const Ref = doc(db, getCollectionPath.users({ uid: user.uid }));
   const { firstName, lastName } = profile;
   const data = {
     profile: {
@@ -36,7 +36,7 @@ export async function changeProfile(
   NewProfile: account["profile"],
   originalProfile: account["profile"]
 ) {
-  const Ref = doc(db, `users/${user.uid}`);
+  const Ref = doc(db, getCollectionPath.users({ uid: user.uid }));
   const { firstName, lastName, bio, photoURL } = NewProfile;
   try {
     if (bio !== originalProfile?.bio ?? "") {

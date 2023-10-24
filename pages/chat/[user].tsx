@@ -13,7 +13,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const uid = context.query.user!;
 
     const user = await fethUserDoc(uid);
-    // const userQuery = doc(db, `users/${uid}`);
     // const user = await getDoc(userQuery);
     const account = (await getUserData(uid as string))! as UserRecord;
     const accountJSON = userToJSON(account);

@@ -1,18 +1,15 @@
 import {
   Timestamp,
-  collection,
-  collectionGroup,
   getDocs,
   limit,
   orderBy,
   query,
   startAfter,
-  where,
 } from "firebase/firestore";
 import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { NewsFeed_LIMIT } from "../lib/QUERY_LIMIT";
-import { db, getNewsFeed, getPostWithMoreInfo } from "../lib/firebase";
-import { Post, AppProps } from "../types/interfaces";
+import { getNewsFeed, getPath } from "../lib/firebase";
+import { AppProps, Post, RecentPosts } from "../types/interfaces";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
 export const AppContext = createContext<AppProps | null>(null);
 export function AppProvider(props: AppProps) {
@@ -33,44 +30,35 @@ export function AppProvider(props: AppProps) {
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const [sortedPost, setsortedPost] = useState<Post[]>([]);
   const updatePost = (id: string) => {
-    console.log(id);
     setlimitedPosts?.((prev: Post[]) => prev.filter((post) => post.id !== id));
-    console.log(limitedPosts);
   };
   useEffect(() => {
     if (posts && !limitedPosts) {
       setlimitedPosts?.(posts);
     }
-    // console.log(posts);
-    // console.log(limitedPosts);
   }, [limitedPosts, posts, setlimitedPosts]);
   const getMorePosts = useCallback(
     async function () {
       console.log("getting more news feed posts .......");
-
-      // setpostLoading(limitedPosts?.length! > NewsFeed_LIMIT);
       setpostLoading(true);
-      console.log(limitedPosts?.length! > NewsFeed_LIMIT);
       const post = limitedPosts?.[limitedPosts?.length! - 1]!;
       const date = new Timestamp(
-        post.createdAt.seconds,
-        post.createdAt.nanoseconds
+        post?.createdAt.seconds,
+        post?.createdAt.nanoseconds
       );
       const newsFeedQuery = query(
-        collection(db, `users/${uid}/recentPosts`),
+        getPath("recentPosts", { uid }),
         orderBy("createdAt", "desc"),
         startAfter(date),
         limit(NewsFeed_LIMIT + 1)
       );
-      let recentPosts;
+      let recentPosts: RecentPosts[] = [];
       try {
-        // if (postEnd) return;
         recentPosts = (await getDocs(newsFeedQuery)).docs.map((doc) => {
           return {
-            ...doc.data(),
+            ...(doc.data() as RecentPosts),
           };
         });
-        // setpostLoading(true);
         recentPosts.shift();
       } catch (error) {
         console.log("Recent Post Error - ", error);
@@ -81,7 +69,6 @@ export function AppProvider(props: AppProps) {
       console.log({ end: finalPost?.length! < NewsFeed_LIMIT });
       setPostEnd(finalPost?.length! < NewsFeed_LIMIT);
       console.log({ postEnd });
-      console.log({ finalPost });
       // setPostEnd(finalPost?.length! < NewsFeed_LIMIT);
 
       // setPostEnd(finalPost?.length! <= NewsFeed_LIMIT);

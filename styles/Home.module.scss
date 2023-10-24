@@ -319,7 +319,7 @@
     font-size: 2rem;
     margin: 0.5rem 0;
   }
-  .message{
+  .message {
     font-size: clamp(16px, 1vw, 20px);
   }
   .goHome {
@@ -335,7 +335,6 @@
     padding: 0.5rem;
     border-radius: 1rem;
     color: var(--blue-origin);
-    
 
     &:focus-visible {
       outline-color: var(--blue-origin);
@@ -525,7 +524,6 @@
 }
 
 .addPost {
-  // padding: 5px 0.8rem 1rem;
   padding: 5px var(--padding-inline) 1rem;
   gap: 10px;
   align-items: center;
@@ -536,7 +534,7 @@
   input {
     cursor: pointer;
     // width: 100%;
-    flex:1;
+    flex: 1;
     // font-size: calc(12px + 1.5vmin);
     font-size: clamp(0.7em, 3vw, 1em);
     border-radius: 100px;
@@ -790,21 +788,11 @@
     }
   }
 }
-// .addPost > a,
-// .container > a {
-//   -webkit-tap-highlight-color: rgba(0, 113, 243, 0.3);
-//   display: flex;
-//   width: 90%;
-//   margin: 0 auto 1rem;
-// }
 .container {
   margin-block: 65px;
 }
 .input {
-  // padding: 0 0.8rem;
   padding: 0 var(--padding-inline);
-  // padding-bottom: 0.8rem;
-  // margin-bottom: 5px;
   margin-bottom: var(--padding-inline);
   outline: 0;
   border: 0;

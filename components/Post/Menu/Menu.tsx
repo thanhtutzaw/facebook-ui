@@ -10,7 +10,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { db } from "../../../lib/firebase";
+import { db, getCollectionPath } from "../../../lib/firebase";
 import { addSavedPost, unSavePost } from "../../../lib/firestore/savedPost";
 import styles from "../index.module.scss";
 import { PostContext, PostProps } from "../../../context/PostContext";
@@ -72,7 +72,10 @@ export default function Menu(props: {
                   setLoading(false);
                 }
               } else {
-                const savedByUserRef = doc(db, `users/${uid}/savedPost/${id}`);
+                const savedByUserRef = doc(
+                  db,
+                  `${getCollectionPath.savedPost({ uid })}/${id}`
+                );
                 await unSavePost(savedByUserRef);
                 setsaveToggle(false);
                 if (router.pathname !== "/") {

@@ -2,18 +2,17 @@ import EditProfileForm from "@/components/Form/EditProfile";
 import { AppContext } from "@/context/AppContext";
 import { useActive } from "@/hooks/useActiveTab";
 import { MYPOST_LIMIT } from "@/lib/QUERY_LIMIT";
-import { app, db, getPostWithMoreInfo } from "@/lib/firebase";
+import { app, getPath, getPostWithMoreInfo } from "@/lib/firebase";
 import { changeProfile, checkPhotoURL } from "@/lib/firestore/profile";
 import { AppProps, Post, account } from "@/types/interfaces";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getAuth } from "firebase/auth";
 import {
   Timestamp,
-  collection,
   limit,
   orderBy,
   query,
-  startAfter,
+  startAfter
 } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
@@ -69,7 +68,7 @@ export default function Profile() {
       console.log("fetching");
       if (!uid) return;
       let postQuery = query(
-        collection(db, `/users/${uid}/posts`),
+        getPath("posts", { uid }),
         orderBy("createdAt", sortby === "old" ? "asc" : "desc"),
         limit(MYPOST_LIMIT + 1)
       );

@@ -1,8 +1,10 @@
 import { initializeApp } from "firebase/app";
 import { AuthErrorCodes } from "firebase/auth";
 import {
+  CollectionReference,
   DocumentData,
   DocumentSnapshot,
+  Firestore,
   Query,
   QueryDocumentSnapshot,
   QuerySnapshot,
@@ -15,7 +17,8 @@ import {
   getFirestore,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { Comment, Post, account } from "../types/interfaces";
+import { Comment, Post, RecentPosts, account } from "../types/interfaces";
+import path from "path";
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -30,8 +33,122 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore();
 const storage = getStorage(app);
 export { app, db, storage };
+// type CollectionFunctions = {
+//   friends: (hello: string) => CollectionReference<DocumentData>;
+//   posts: (uid: string) => CollectionReference<DocumentData>;
+//   likes: (postId: string) => CollectionReference<DocumentData>;
+//   messages: (userId: string) => CollectionReference<DocumentData>;
+// };
+export const collectionBasePath = collection(db, `users`);
+export const getCollectionPath = {
+  users: ({ uid }: { uid?: string }) => `users/${uid}`,
+  savedPost: ({ uid }: { uid?: string }) =>
+    `${getCollectionPath.users({ uid })}/savedPost`,
+  friendReqCount: ({ uid }: { uid?: string }) =>
+    `${getCollectionPath.users({ uid })}/friendReqCount`,
+  notifications: ({ uid }: { uid?: string }) =>
+    `${getCollectionPath.users({ uid })}/notifications`,
+  friends: ({ uid }: { uid?: string }) =>
+    `${getCollectionPath.users({ uid })}/friends`,
+  posts: ({ uid }: { uid?: string }) =>
+    `${getCollectionPath.users({ uid })}/posts`,
+  recentPosts: ({ uid }: { uid?: string }) =>
+    `${getCollectionPath.users({ uid })}/recentPosts`,
+  comments: ({ authorId, postId }: { authorId?: string; postId?: string }) =>
+    `${getCollectionPath.posts({ uid: authorId })}/${postId}/comments`,
+  likes: ({ authorId, postId }: { authorId?: string; postId?: string }) =>
+    `${getCollectionPath.posts({ uid: authorId })}/${postId}/likes`,
+  shares: ({
+    authorId,
+    postId,
+    sharerId,
+  }: {
+    authorId?: string;
+    postId?: string;
+    sharerId?: string;
+  }) =>
+    `${getCollectionPath.posts({
+      uid: authorId,
+    })}/${postId}/shares/${sharerId}`,
+  // messages: ({ uid }: { uid: string }) => `users/${uid}/messages`,
+  // return collection(db, path[collectionRef], ...rest);
+  // return path;
+};
+export function getPath<T extends keyof typeof getCollectionPath>(
+  type: T,
+  // params: (typeof getCollectionPath)[T]
+  // params: Parameters<(typeof getCollectionPath)[T]>
+  params: Parameters<(typeof getCollectionPath)[T]>[0]
+) {
+  const pathGenerator = getCollectionPath[type];
+
+  if (!pathGenerator) {
+    throw new Error(`Invalid collection type: ${type}`);
+  }
+
+  // if (pathGenerator.length !== params.length) {
+  //   throw new Error(`Invalid number of parameters for ${type}`);
+  // }
+
+  // Now use the 'collection' function with the generated path
+  // return ;
+  return collection(db, pathGenerator(params));
+  // pathGenerator(params)
+}
+
+// export function getPath(
+//   type: keyof typeof getCollectionPath,
+//   params: string[]
+// ) {
+//   const pathGenerator = getCollectionPath[type];
+
+//   if (!pathGenerator) {
+//     throw new Error(`Invalid collection type: ${type}`);
+//   }
+
+//   // if (params.length === 0) {
+//   //   return collection(db, pathGenerator({uid:""})); // If no params are provided, use an empty string
+//   // }
+
+//   // Call the path generator function with the provided parameters
+//   const path = pathGenerator({...params});
+
+//   // Now use the 'collection' function with the generated path
+// }
+// export function getPath(
+//   type: keyof typeof getCollectionPath,
+//   ...params: string[]
+// ) {
+//   const pathGenerator = getCollectionPath[type];
+//   if (!pathGenerator) {
+//     throw new Error(`Invalid collection type: ${type}`);
+//   }
+
+//   if (params.length === 0) {
+//     return pathGenerator; // Return the path generator function
+//   }
+
+//   // const path = [pathGenerator(...params)].join("/");
+//     // const path = params.reduce(
+//     //   (result, param) => `${result}/${param}`,
+//     //   pathGenerator()
+//     // );
+
+//   // const path = pathGenerator(...params);
+//   // const path = [pathGenerator(...params)].join('/');
+
+//   // Now use the 'collection' function with the generated path
+//   //  return collection(db, pathGenerator(params));
+// }
+export function getDocPath(uid: string, docRef: keyof typeof path, id: string) {
+  const path = {
+    posts: `users/${uid}/posts`,
+    friends: `users/${uid}/friends`,
+  };
+  return doc(db, `${path[docRef]}/${id}`);
+}
 export async function fethUserDoc(uid: string | string[]) {
-  const userQuery = doc(db, `users/${uid}`);
+  const userQuery = doc(db, getCollectionPath.users({ uid: String(uid) }));
   const user = await getDoc(userQuery);
   return user!;
 }
@@ -132,7 +249,7 @@ export async function getProfileByUID(id: string) {
   const userDoc = await fethUserDoc(id);
   const profileData = userDoc.data()!;
   return (profileData?.profile as account["profile"]) ?? null;
-} 
+}
 export async function postInfo(p: Post, uid: string): Promise<Post> {
   if (p.authorId) {
     const { authorId } = p;
@@ -146,7 +263,10 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
     const likesRef = collection(db, `users/${authorId}/posts/${p.id}/likes`);
     const likeCount = (await getCountFromServer(likesRef)).data().count;
     // getting total like count from collection Vs likeCount: 2
-    const savedByUserRef = doc(db, `users/${uid}/savedPost/${p.id}`);
+    const savedByUserRef = doc(
+      db,
+      `${getCollectionPath.savedPost({ uid })}/${p.id}`
+    );
 
     const [isLiked, isSaved, postProfile] = await Promise.all([
       getDoc(likedByUserRef),
@@ -168,7 +288,10 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
     } as Post;
     if (p.sharePost) {
       const { author, id } = p.sharePost;
-      const sharedPostRef = doc(db, `users/${author}/posts/${id}`);
+      const sharedPostRef = doc(
+        db,
+        `${getCollectionPath.posts({ uid: author })}/${id}`
+      );
       const shareDoc = await getDoc(sharedPostRef);
       const isSharedPostAvailable = shareDoc.exists();
 
@@ -221,22 +344,49 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
 }
 export async function getNewsFeed(
   uid: string,
-  newsFeedPosts?: any[]
+  recentPosts?: RecentPosts[]
 ): Promise<Post[] | undefined> {
   console.log("posts are fetched");
-  if (newsFeedPosts) {
+  console.log(recentPosts);
+  if (recentPosts) {
     const data = await Promise.all(
-      newsFeedPosts.map(async (post) => {
+      recentPosts.map(async (recentPost) => {
+        const { id, authorId, createdAt } = recentPost;
         // if (!post.authorId) return null;
-        const postRef = doc(db, `users/${post.authorId}/posts/${post.id}`);
+        const postRef = doc(
+          db,
+          `${getCollectionPath.posts({ uid: authorId })}/${id}`
+        );
         const postDoc = await getDoc(postRef);
-        const postData = await postToJSON(postDoc);
-        const postwithInfo = await postInfo(postData, uid);
-        return postwithInfo;
+        if (postDoc.exists()) {
+          const postData = await postToJSON(postDoc);
+          // const postData2 = {
+          //   ...postData,
+          //   createdAt: recentPost.createdAt,
+          // };
+          const postwithInfo = await postInfo(postData, uid);
+          const withRecentPostDate = {
+            ...postwithInfo,
+            // createdAt:JSONTimestampToDate(createdAt).toJSON()
+            // createdAt:new Timestamp(createdAt.seconds,createdAt.nanoseconds),
+          };
+          return withRecentPostDate;
+        } else {
+          // const postwithInfo = await postInfo(recentPost, uid);
+          const postProfile = await getProfileByUID(authorId.toString());
+          return {
+            ...recentPost,
+            author: {
+              ...postProfile,
+            },
+            deletedByAuthor: true,
+          };
+        }
       })
     );
-
-    return data;
+    // console.log(data.filter((p) => p));
+    // return data.filter((p) => p) as Post[];
+    return data as Post[];
   }
 }
 export async function getPostWithMoreInfo(

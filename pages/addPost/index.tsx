@@ -1,11 +1,11 @@
 import CreatePostForm from "@/components/Form/CreatePost";
 
 export default function AddPost() {
+  return <CreatePostForm />;
   // const text = textRef.current?.innerHTML.replaceAll("<div>", "hello");
   // .replace(/<div>/g, "<br>")!
   // const [replacedStr, setReplacedStr] = useState(originalStr);
   // const [replacedStr, setReplacedStr] = useState("<h1>u</h1>");
-  return <CreatePostForm />;
 
   // const replace = str.replaceAll(/<div>/g, "<br>");
 

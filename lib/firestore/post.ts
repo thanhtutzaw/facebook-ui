@@ -2,7 +2,6 @@ import {
   DocumentData,
   DocumentReference,
   Timestamp,
-  collection,
   deleteDoc,
   doc,
   getDoc,
@@ -18,69 +17,83 @@ import {
 } from "firebase/firestore";
 import { selectedId } from "../../context/PageContext";
 import { Post, friends, likes } from "../../types/interfaces";
-import { db, getProfileByUID } from "../firebase";
 import { LikedUsers_LIMIT } from "../QUERY_LIMIT";
-export async function addPost(
-  uid: string,
-  visibility: string,
-  text: string,
-  files?: any[],
-  sharePost?: { refId: string; author: string; id: string } | null,
-  friends?: friends[]
-) {
+import {
+  db,
+  getCollectionPath,
+  getDocPath,
+  getPath,
+  getProfileByUID,
+} from "../firebase";
+type TAddPost = {
+  uid: string;
+  post: {
+    text?: Post["text"];
+    visibility: Post["visibility"] | string;
+    media?: Post["media"];
+  };
+  sharePost?: { refId: string; author: string; id: string } | null;
+  friends?: friends[];
+};
+export async function addPost({ uid, post, sharePost, friends }: TAddPost) {
+  // const h = getCollectionPath<{db:Firestore,path:string}>(uid, "posts");
   const Ref = !sharePost
-    ? doc(collection(db, `users/${uid}/posts`))
-    : doc(db, `users/${uid}/posts/${sharePost.refId}`);
+    ? // ? doc(getPath("friends",{uid}))
+      doc(getPath("friends", { uid }))
+    : getDocPath(uid, "posts", sharePost.refId);
   const postId = !sharePost ? Ref.id : sharePost.refId;
   const newsFeedPost = {
     authorId: uid,
     id: postId,
     createdAt: serverTimestamp(),
   };
-  const hasFriends = friends && friends?.length > 0;
-  if (hasFriends) {
-    if (visibility !== "Public" || "Friend") {
-    } else {
-      console.log({ sharePost });
-      console.log({ friends });
-
-      friends?.map(async (friendId) => {
-        const friendNewsFeedRef = doc(
-          collection(db, `users/${friendId}/recentPosts`)
-        );
-        try {
-          await setDoc(friendNewsFeedRef, newsFeedPost);
-        } catch (error) {
-          console.log(error);
-          throw error;
-        }
-      });
+  const haveFriends = friends && friends?.length > 0;
+  if (haveFriends) {
+    if (post.visibility === "Public" || "Friend") {
+      if (post.visibility !== "Onlyme") {
+        friends?.map(async (friendId) => {
+          const friendNewsFeedRef = doc(
+            getPath("recentPosts", { uid: String(friendId) })
+          );
+          try {
+            await setDoc(friendNewsFeedRef, newsFeedPost);
+            console.log(`added post to ${friendId}`);
+          } catch (error) {
+            console.log(error);
+            throw error;
+          }
+        });
+      }
     }
   }
-  const adminNewsFeedRef = doc(collection(db, `users/${uid}/recentPosts`));
+  const adminNewsFeedRef = doc(getPath("recentPosts", { uid }));
   try {
     await setDoc(adminNewsFeedRef, newsFeedPost);
   } catch (error) {
     console.log(error);
     throw error;
   }
-  const post = {
+  const postData = {
     authorId: uid,
     id: postId,
     // id: !sharePost ? Ref.id : sharePost.refId,
-    text,
-    media: files,
-    visibility,
+    ...post,
     createdAt: serverTimestamp(),
     updatedAt: "Invalid Date",
   };
   let data;
   if (sharePost) {
     const sharersRef = doc(
-      collection(
-        db,
-        `users/${sharePost?.author}/posts/${sharePost?.id}/shares/${uid}`
-      )
+      // getCollectionPath(sharePost?.author,"posts",sharePost.id,`/shares/${uid}`)
+      // getCollectionPath.shares(, sharePost.id, uid)
+      getPath("shares", {
+        authorId: sharePost.author,
+        postId: sharePost.id,
+        sharerId: uid,
+      })
+      //   db,
+      //   `users/${sharePost?.author}/posts/${sharePost?.id}`
+      // )
     );
     data = {
       ...post,
@@ -93,7 +106,7 @@ export async function addPost(
       throw error;
     }
   } else {
-    data = { ...post };
+    data = { ...postData };
   }
   try {
     console.log({ addedPost: data });
@@ -102,6 +115,7 @@ export async function addPost(
     alert("Post upload failed !" + error.message);
   }
 }
+
 export async function updatePost(
   uid: string,
   text: string,
@@ -110,7 +124,7 @@ export async function updatePost(
   myPost: Post,
   visibility: string
 ) {
-  const Ref = doc(db, `users/${uid}/posts/${id}`);
+  const Ref = doc(db, `${getCollectionPath.posts({ uid })}/${id}`);
   let data;
   const post = {
     authorId: myPost.authorId,
@@ -140,23 +154,24 @@ export async function updatePost(
     alert("Updating Post Failed !" + error.message);
   }
 }
-export async function deletePost(data: any) {
-  const { uid, postid, post } = data;
-  const Ref = doc(db, `users/${uid}/posts/${postid.toString()}`);
-  const exist = (await getDoc(Ref)).exists();
-  if (!exist) {
-    alert("Delete Error : Data Not Found");
-    throw new Error("Delete Error : Data Not Found");
+export async function deletePost(data: {
+  uid: string;
+  deleteURL: string;
+  post?: Post;
+}) {
+  const { uid, deleteURL, post } = data;
+  const Ref = doc(db, deleteURL);
+  const isPostAvailable = (await getDoc(Ref)).exists();
+  if (!isPostAvailable) {
+    alert("Delete Error! Post already deleted.");
+    throw new Error("Delete Error! Post already deleted.");
   }
-  if (post.sharePost?.id) {
-    const id = post.sharePost.id;
+  if (post && post.sharePost?.id) {
+    const sharePostId = post.sharePost.id;
     const shareRef = doc(
       db,
-      `users/${post.sharePost.author}/posts/${id}/shares/${uid}`
+      `users/${post.sharePost.author}/posts/${sharePostId}/shares/${uid}`
     );
-    // console.log(
-    //   "Delete this sharedPost" +  + post.sharePost.post?.id
-    // );
     await deleteDoc(shareRef);
   }
   try {
@@ -186,9 +201,11 @@ export async function deleteMultiplePost(uid: string, selctedId: selectedId[]) {
         );
         batch.delete(sharePostRef);
       }
-      const postRef = doc(db, `users/${author}/posts/${post}`);
+      const postRef = doc(
+        db,
+        `${getCollectionPath.posts({ uid: author })}/${post}`
+      );
       batch.delete(postRef);
-      // console.log(post, author, share?.post, share?.author);
       // if (post.sharePost?.id) {
       //   const id = post.sharePost.id;
       //   const shareRef = doc(
@@ -240,7 +257,7 @@ export async function unlikePost(
 }
 export async function fetchLikedUsers(p: Post) {
   const likeRef = query(
-    collection(db, `users/${p.authorId}/posts/${p.id}/likes`),
+    getPath("likes", { authorId: String(p.authorId), postId: String(p.id) }),
     orderBy("createdAt", "desc"),
     limit(LikedUsers_LIMIT)
   );

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Router } from "next/router";
 import Post from "..";
 import { Post as PostType } from "../../../types/interfaces";
-import SharePostFallback from "./Fallback";
+import PostFallback from "../Fallback";
 import s from "@/components/Post/index.module.scss";
 
 export function SharePreview(props: {
@@ -16,7 +16,7 @@ export function SharePreview(props: {
     ? `${query.author}/${query.id}`
     : `/${sharePost?.authorId}/${sharePost?.id}`;
   if (post?.sharePost?.id && post.sharePost?.post === null)
-    return <SharePostFallback />;
+    return <PostFallback />;
   return (
     <>
       {post?.sharePost?.post || query ? (

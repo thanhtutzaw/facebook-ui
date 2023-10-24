@@ -2,11 +2,15 @@ import Spinner from "@/components/Spinner";
 import { AppContext } from "@/context/AppContext";
 import { PageContext, PageProps } from "@/context/PageContext";
 import { useActive } from "@/hooks/useActiveTab";
-import { db, getProfileByUID } from "@/lib/firebase";
+import {
+  collectionBasePath,
+  getPath,
+  getProfileByUID
+} from "@/lib/firebase";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { AppProps, friends } from "@/types/interfaces";
 import { useQueries } from "@tanstack/react-query";
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import { getDocs, orderBy, query, where } from "firebase/firestore";
 import router from "next/router";
 import { useContext } from "react";
 import s from "./Friends.module.scss";
@@ -23,11 +27,11 @@ export default function Friend(props: FriendProps) {
 
   const fetchSuggestedFriends = async () => {
     if (!uid) return;
-    const myFriendsQuery = query(collection(db, `users/${uid}/friends`));
+    const myFriendsQuery = query(getPath("friends", { uid }));
     const myFriends = (await getDocs(myFriendsQuery)).docs.map((doc) => doc.id);
     // including friends , pending , blocked (users) string[]
     const suggestedFriendsQuery = query(
-      collection(db, `users`),
+      collectionBasePath,
       where("__name__", "not-in", [uid, ...myFriends])
       // if not friends , pending , blocked or thisAccount , display all users as suggestedAccount
     );
@@ -53,7 +57,7 @@ export default function Friend(props: FriendProps) {
   const fetchPendingFriends = async () => {
     if (!uid) return;
     const pendingfriendsQuery = query(
-      collection(db, `users/${uid}/friends`),
+      getPath("friends", { uid }),
       where("status", "==", "pending"),
       where("senderId", "!=", uid),
       orderBy("senderId", "asc"),

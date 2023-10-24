@@ -42,7 +42,6 @@ export default function Navitems(props: {
         top: 0,
         behavior: "smooth",
       });
-      // if (active !== "home") return;
       if (tab.scrollTop >= 60) return;
       if (active === "/") {
         console.log("refreshing new data in Newsfeed");
@@ -50,25 +49,12 @@ export default function Navitems(props: {
       } else if (active === "friends") {
         router.replace("/#friends", undefined, { scroll: false });
       } else if (TabName === "notifications") {
-        // setNotiCount(0);
-        // if (UnReadNotiCount ?? 0 > 0) {
-        // }
         setUnReadNotiCount?.(0);
         queryClient.invalidateQueries(["notifications"]);
         queryClient.refetchQueries(["notifications"]);
       }
     }
   };
-  // useEffect(() => {
-  //   if (active === "notifications") {
-  //     setUnReadNotiCount?.(0);
-  //   }
-  // }, [active, setUnReadNotiCount]);
-  // useEffect(() => {
-  //   if (active && active === "notifications") {
-  //     setUnReadNotiCount?.(0);
-  //   }
-  // }, [active, setUnReadNotiCount]);
 
   const activeClass = active === TabName ? styles.active : "";
   const friendRequestCount = parseInt(
@@ -85,30 +71,33 @@ export default function Navitems(props: {
       (notiCount ?? 0) > 0 ? `${iconTitle} (${notiCount})` : iconTitle
     }`,
   };
+  const badge = {
+    home: null,
+    "/": null,
+    friends: friendRequestCount > 0 && (
+      <span className={styles.badge}>
+        {Math.min(friendRequestCount, 9)}
+        {friendRequestCount > 9 && "+"}
+      </span>
+    ),
+    watch: null,
+    profile: null,
+    menu: null,
+    notifications: active !== "notifications" && (notiCount ?? 0) >= 1 && (
+      <>
+        <span className={styles.badge}>
+          {Math.min(notiCount ?? 0, 9)}
+          {(notiCount ?? 0) > 9 && "+"}
+        </span>
+      </>
+    ),
+  };
   return (
     <div onClick={changeTab} className={`${styles.navItems} ${activeClass}`}>
       <div role="button" aria-label={iconTitle} title={navTitle[TabName]}>
         <div style={{ position: "relative" }}>
           {TabIcon}
-          {/* {UnReadNotiCount},{notiCount} */}
-          {TabName === "notifications" &&
-            active !== "notifications" &&
-            (notiCount ?? 0) >= 1 && (
-              <>
-                <span className={styles.badge}>
-                  {Math.min(notiCount ?? 0, 9)}
-                  {(notiCount ?? 0) > 9 && "+"}
-                </span>
-              </>
-            )}
-          {TabName === "friends" && friendRequestCount > 0 && (
-            <>
-              <span className={styles.badge}>
-                {Math.min(friendRequestCount, 9)}
-                {friendRequestCount > 9 && "+"}
-              </span>
-            </>
-          )}
+          {badge[TabName]}
         </div>
       </div>
     </div>

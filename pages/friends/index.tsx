@@ -5,11 +5,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import {
   Timestamp,
-  collection,
   getDocs,
   orderBy,
   query,
-  where,
+  where
 } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
@@ -17,15 +16,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import nookies from "nookies";
+import confirm from "public/assets/confirm-beep.mp3";
 import { useContext, useEffect, useState } from "react";
 import { AcceptFriend } from "../../components/Button/AcceptFriend";
 import BackHeader from "../../components/Header/BackHeader";
 import Spinner from "../../components/Spinner";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { db, getProfileByUID } from "../../lib/firebase";
+import { getPath, getProfileByUID } from "../../lib/firebase";
 import { verifyIdToken } from "../../lib/firebaseAdmin";
-import confirm from "public/assets/confirm-beep.mp3";
 
+import useSound from "use-sound";
 import {
   acceptFriends,
   blockFriend,
@@ -36,7 +36,6 @@ import {
 } from "../../lib/firestore/friends";
 import { friends } from "../../types/interfaces";
 import s from "./index.module.scss";
-import useSound from "use-sound";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -44,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const { uid } = token;
     const myFriendsQuery = query(
-      collection(db, `users/${uid}/friends`),
+      getPath("friends", { uid }),
       where("status", "==", "friend"),
       orderBy("updatedAt", "desc")
     );
@@ -91,13 +90,13 @@ export default function Page(props: {
   useEffect(() => {
     async function fetchSortedFriends() {
       let myFriendsQuery = query(
-        collection(db, `users/${uid}/friends`),
+        getPath("friends", { uid }),
         where("status", "==", status),
         orderBy(status === "pending" ? "createdAt" : "updatedAt", "desc")
       );
       if (status === "block") {
         myFriendsQuery = query(
-          collection(db, `users/${uid}/friends`),
+          getPath("friends", { uid }),
           where("status", "==", "block"),
           where("senderId", "==", uid.toString()),
           orderBy("updatedAt", "desc")

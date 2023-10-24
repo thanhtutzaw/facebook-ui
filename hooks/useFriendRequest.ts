@@ -1,13 +1,12 @@
-import { db } from "@/lib/firebase";
+import { db, getCollectionPath, getPath } from "@/lib/firebase";
 import {
-  doc,
   Timestamp,
-  getDoc,
   Unsubscribe,
-  collection,
-  onSnapshot,
+  doc,
+  getDoc,
+  onSnapshot
 } from "firebase/firestore";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function useFriendRequest( uid:string) {
   const [friendReqCount, setfriendReqCount] = useState(0);
@@ -15,7 +14,7 @@ function useFriendRequest( uid:string) {
 
   useEffect(() => {
     if (!uid) return;
-    const friendReqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
+    const friendReqCountRef = doc(db, `${getCollectionPath.friendReqCount({uid})}/reqCount`);
     let lastPull: Timestamp | null = null;
     async function getLastpull() {
       lastPull = (await getDoc(friendReqCountRef)).data()
@@ -25,7 +24,7 @@ function useFriendRequest( uid:string) {
     getLastpull();
     let unsubscribeFriendReqCount: Unsubscribe;
     const fetchFriendReqCount = async () => {
-      const pendingRef = collection(db, `users/${uid}/friendReqCount`);
+      const pendingRef = getPath("friendReqCount",{uid});
       try {
         if (friendReqCount >= 10) return;
         unsubscribeFriendReqCount = onSnapshot(pendingRef, (snap) => {

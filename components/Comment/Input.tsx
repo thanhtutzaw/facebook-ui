@@ -1,12 +1,12 @@
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { faArrowAltCircleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { collection, doc } from "firebase/firestore";
+import { doc } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { db } from "../../lib/firebase";
+import { db, getCollectionPath, getPath } from "../../lib/firebase";
 import { addComment } from "../../lib/firestore/comment";
 import { sendAppNoti } from "../../lib/firestore/notifications";
 import { Post, account } from "../../types/interfaces";
@@ -23,13 +23,14 @@ export default function CommentInput(props: {
   const { setlimitedComments, post, uid, authorId, postId, profile } = props;
   const { currentUser } = useContext(PageContext) as PageProps;
   const [text, settext] = useState("");
-  const commentRef = doc(
-    collection(db, `users/${authorId}/posts/${postId}/comments`)
-  );
+  const commentRef = doc(getPath("comments", { authorId, postId }));
   const router = useRouter();
   const [addLoading, setaddLoading] = useState(false);
-  const postRef = doc(db, `users/${authorId}/posts/${postId}`);
-  const previousCommentCount = post?.comments.length ?? 0;
+  const postRef = doc(
+    db,
+    `${getCollectionPath.posts({ uid: authorId })}/${postId}`
+  );
+  const previousCommentCount = post?.comments?.length ?? 0;
   return (
     <form
       onSubmit={async (e) => {

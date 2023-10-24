@@ -1,6 +1,21 @@
+import BackHeader from "@/components/Header/BackHeader";
+import { PostList } from "@/components/Tabs/Sections/Home/PostList";
+import s from "@/components/Tabs/Sections/Profile/index.module.scss";
+import { SavedPost_LIMIT } from "@/lib/QUERY_LIMIT";
+import {
+  db,
+  getCollectionPath,
+  getPath,
+  getProfileByUID,
+  postInfo,
+  postToJSON,
+} from "@/lib/firebase";
+import { verifyIdToken } from "@/lib/firebaseAdmin";
+import { Post, account } from "@/types/interfaces";
+import { Timestamp } from "@google-cloud/firestore";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import {
   Unsubscribe,
-  collection,
   doc,
   getDoc,
   getDocs,
@@ -10,17 +25,8 @@ import {
   query,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
-import BackHeader from "@/components/Header/BackHeader";
-import s from "@/components/Tabs/Sections/Profile/index.module.scss";
-import { db, getProfileByUID, postInfo, postToJSON } from "@/lib/firebase";
-import { verifyIdToken } from "@/lib/firebaseAdmin";
-import { Timestamp } from "@google-cloud/firestore";
-import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import nookies from "nookies";
 import { useEffect, useState } from "react";
-import { SavedPost_LIMIT } from "@/lib/QUERY_LIMIT";
-import { Post, account } from "@/types/interfaces";
-import { PostList } from "@/components/Tabs/Sections/Home/PostList";
 type savedPostTypes = {
   authorId: string;
   postId: string;
@@ -34,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const { uid } = token;
     const currentUserProfile = await getProfileByUID(uid);
     const savedPostsQuery = query(
-      collection(db, `users/${uid}/savedPost`),
+      getPath("savedPost", { uid }),
       orderBy("createdAt", "desc"),
       limit(SavedPost_LIMIT)
     );
@@ -43,7 +49,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const posts = await Promise.all(
       data.map(async (s: any) => {
         const { authorId, postId } = s;
-        const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
+        const postDoc = doc(
+          db,
+          `${getCollectionPath.posts({ uid: authorId })}/${postId}`
+        );
         const posts = await getDoc(postDoc);
 
         const post = await postToJSON(posts);
@@ -83,7 +92,7 @@ export default function Page(props: {
   useEffect(() => {
     let unsubscribe: Unsubscribe;
     const savedPostsQuery = query(
-      collection(db, `users/${uid}/savedPost`),
+      getPath("savedPost", { uid }),
       orderBy("createdAt", "desc"),
       limit(limitedPosts.length > 0 ? limitedPosts.length : SavedPost_LIMIT)
     );
@@ -92,7 +101,10 @@ export default function Page(props: {
       const posts = (await Promise.all(
         data.map(async (s) => {
           const { authorId, postId } = s;
-          const postDoc = doc(db, `users/${authorId}/posts/${postId}`);
+          const postDoc = doc(
+            db,
+            `${getCollectionPath.posts({ uid: authorId })}/${postId}`
+          );
           const posts = await getDoc(postDoc);
 
           const post = await postToJSON(posts);
