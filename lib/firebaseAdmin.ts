@@ -1,4 +1,5 @@
 import { firestore, auth } from "firebase-admin";
+import { getCollectionPath } from "./firebase";
 var admin = require("firebase-admin");
 // var serviceAccount = require("../secret.json");
 if (!admin.apps.length) {
@@ -47,11 +48,12 @@ export async function getUserData(uid: string) {
 }
 export async function getFCMToken(uid: string) {
   // const user = await admin.auth().getUser(uid);
-  const user = await firestore().doc(`users/${uid}`).get();
+  const user = await firestore()
+    .doc(`${getCollectionPath.users({ uid })}`)
+    .get();
   // const fcmToken = user.tokens?.fcmToken;
   const fcmToken = (user.data()?.fcmToken as string[]) ?? null;
   // const quotedArray = fcmToken.map((element) => `"${element}"`);
-
   // const array = quotedArray.join(",");
   return fcmToken;
 }

@@ -68,7 +68,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     //   db,
     //   `${getCollectionPath.posts({ uid: String(authorId) })}/${postId}`
     // );
-    const postRef = doc(db, `users/${authorId}/posts/${postId}`);
+    const postRef = doc(
+      db,
+      `${getCollectionPath.posts({ uid: String(authorId) })}/${postId}`
+    );
     const postDoc = await getDoc(postRef);
     const p = await postToJSON(postDoc as DocumentSnapshot<DocumentData>);
     const newPost = (await postInfo(p, uid)) as Post;
@@ -326,12 +329,12 @@ export default function Page(props: {
     [limitedComments, post?.authorId, post?.id]
   );
   const [Likes, setLikes] = useState<likes | []>([]);
-  const { scrollRef } = useInfiniteScroll(
+  const { scrollRef } = useInfiniteScroll({
     hasMore,
-    true,
-    fetchMoreComment,
-    commentEnd
-  );
+    scrollParent: true,
+    fetchMoreData: fetchMoreComment,
+    postEnd: commentEnd,
+  });
 
   if (expired) return <Welcome expired={expired} />;
   return (

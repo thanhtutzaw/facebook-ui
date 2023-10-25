@@ -378,7 +378,11 @@ export default function UserProfile({
     },
     [limitedPosts, router.query.user, token.uid]
   );
-  const { scrollRef } = useInfiniteScroll(postEnd, true, fetchMorePosts);
+  const { scrollRef } = useInfiniteScroll({
+    hasMore: postEnd,
+    scrollParent: true,
+    fetchMoreData: fetchMorePosts,
+  });
   const bio = profile?.bio === "" || !profile ? bioFallback : profile?.bio;
   const otherUser = token?.uid !== router.query.user;
 

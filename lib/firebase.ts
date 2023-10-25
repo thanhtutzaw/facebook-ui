@@ -1,10 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { AuthErrorCodes } from "firebase/auth";
 import {
-  CollectionReference,
   DocumentData,
   DocumentSnapshot,
-  Firestore,
   Query,
   QueryDocumentSnapshot,
   QuerySnapshot,
@@ -18,7 +16,6 @@ import {
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { Comment, Post, RecentPosts, account } from "../types/interfaces";
-import path from "path";
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -39,9 +36,11 @@ export { app, db, storage };
 //   likes: (postId: string) => CollectionReference<DocumentData>;
 //   messages: (userId: string) => CollectionReference<DocumentData>;
 // };
-export const collectionBasePath = collection(db, `users`);
+const basePath = "users";
+// type id = string | number;
+export const collectionBasePath = collection(db, `${basePath}`);
 export const getCollectionPath = {
-  users: ({ uid }: { uid?: string }) => `users/${uid}`,
+  users: ({ uid }: { uid?: string }) => `${basePath}/${uid}`,
   savedPost: ({ uid }: { uid?: string }) =>
     `${getCollectionPath.users({ uid })}/savedPost`,
   friendReqCount: ({ uid }: { uid?: string }) =>
@@ -57,22 +56,13 @@ export const getCollectionPath = {
   comments: ({ authorId, postId }: { authorId?: string; postId?: string }) =>
     `${getCollectionPath.posts({ uid: authorId })}/${postId}/comments`,
   likes: ({ authorId, postId }: { authorId?: string; postId?: string }) =>
-    `${getCollectionPath.posts({ uid: authorId })}/${postId}/likes`,
-  shares: ({
-    authorId,
-    postId,
-    sharerId,
-  }: {
-    authorId?: string;
-    postId?: string;
-    sharerId?: string;
-  }) =>
+    `${getCollectionPath.posts({ uid: String(authorId) })}/${String(
+      postId
+    )}/likes`,
+  shares: ({ authorId, postId }: { authorId?: string; postId?: string }) =>
     `${getCollectionPath.posts({
-      uid: authorId,
-    })}/${postId}/shares/${sharerId}`,
-  // messages: ({ uid }: { uid: string }) => `users/${uid}/messages`,
-  // return collection(db, path[collectionRef], ...rest);
-  // return path;
+      uid: String(authorId),
+    })}/${String(postId)}/shares`,
 };
 export function getPath<T extends keyof typeof getCollectionPath>(
   type: T,
@@ -85,15 +75,8 @@ export function getPath<T extends keyof typeof getCollectionPath>(
   if (!pathGenerator) {
     throw new Error(`Invalid collection type: ${type}`);
   }
-
-  // if (pathGenerator.length !== params.length) {
-  //   throw new Error(`Invalid number of parameters for ${type}`);
-  // }
-
   // Now use the 'collection' function with the generated path
-  // return ;
   return collection(db, pathGenerator(params));
-  // pathGenerator(params)
 }
 
 // export function getPath(
@@ -140,13 +123,13 @@ export function getPath<T extends keyof typeof getCollectionPath>(
 //   // Now use the 'collection' function with the generated path
 //   //  return collection(db, pathGenerator(params));
 // }
-export function getDocPath(uid: string, docRef: keyof typeof path, id: string) {
-  const path = {
-    posts: `users/${uid}/posts`,
-    friends: `users/${uid}/friends`,
-  };
-  return doc(db, `${path[docRef]}/${id}`);
-}
+// export function getDocPath(uid: string, docRef: keyof typeof path, id: string) {
+//   const path = {
+//     posts: `${getCollectionPath.users({uid})}/posts`,
+//     friends: `${getCollectionPath.users({uid})}/friends`,
+//   };
+//   return doc(db, `${path[docRef]}/${id}`);
+// }
 export async function fethUserDoc(uid: string | string[]) {
   const userQuery = doc(db, getCollectionPath.users({ uid: String(uid) }));
   const user = await getDoc(userQuery);
@@ -252,15 +235,30 @@ export async function getProfileByUID(id: string) {
 }
 export async function postInfo(p: Post, uid: string): Promise<Post> {
   if (p.authorId) {
-    const { authorId } = p;
-    const shareRef = collection(db, `users/${p.authorId}/posts/${p.id}/shares`);
+    const { authorId, id } = p;
+    const shareRef = collection(
+      db,
+      `${getCollectionPath.shares({
+        authorId: String(authorId),
+        postId: String(id),
+      })}`
+    );
     const shareDoc = await getDocs(shareRef);
     const shareCount = shareDoc.size ?? 0;
     const likedByUserRef = doc(
       db,
-      `users/${authorId}/posts/${p.id}/likes/${uid}`
+      `${getCollectionPath.likes({
+        authorId: String(authorId),
+        postId: String(p.id),
+      })}/${uid}`
     );
-    const likesRef = collection(db, `users/${authorId}/posts/${p.id}/likes`);
+    const likesRef = collection(
+      db,
+      `${getCollectionPath.likes({
+        authorId: String(authorId),
+        postId: String(p.id),
+      })}`
+    );
     const likeCount = (await getCountFromServer(likesRef)).data().count;
     // getting total like count from collection Vs likeCount: 2
     const savedByUserRef = doc(
@@ -299,11 +297,17 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
       const { authorId, likeCount } = sharedPost;
       const SharedPostRef = collection(
         db,
-        `users/${authorId}/posts/${sharedPost.id}/shares`
+        getCollectionPath.shares({
+          authorId: String(authorId),
+          postId: String(sharedPost.id),
+        })
       );
       const sharelikedByUser = doc(
         db,
-        `users/${authorId}/posts/${sharedPost.id}/likes/${uid}`
+        `${getCollectionPath.likes({
+          authorId: String(authorId),
+          postId: String(sharedPost.id),
+        })}/${uid}`
       );
       const [isSharePostLiked, sharePostProfile, SharedPostShareDoc] =
         await Promise.all([

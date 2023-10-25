@@ -16,18 +16,18 @@ import Story from "./Story/Story";
 export default function Home(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const router = useRouter();
-  const { profile, postEnd, getMorePosts,headerContainerRef, hasMore } =
+  const { profile, postEnd, getMorePosts, headerContainerRef, hasMore } =
     useContext(AppContext) as AppProps;
   const { setuploadButtonClicked, active } = useContext(
     PageContext
   ) as PageProps;
   const previousScrollRef = useRef(0);
-  const { scrollRef } = useInfiniteScroll(
-    hasMore!,
-    false,
-    getMorePosts,
-    postEnd!
-  );
+  const { scrollRef } = useInfiniteScroll({
+    hasMore: hasMore!,
+    scrollParent: false,
+    fetchMoreData: getMorePosts,
+    postEnd: postEnd!,
+  });
   return (
     <div
       ref={scrollRef}

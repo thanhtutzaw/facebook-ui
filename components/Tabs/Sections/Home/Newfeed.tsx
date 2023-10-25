@@ -10,10 +10,10 @@ import { getServerSideProps } from "@/pages/index";
 // type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 //   tabIndex: number;
 // };
-type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
-  tabIndex: number;
-};
-export default function Newfeed(props: NewfeedProps) {
+// type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
+//   tabIndex: number;
+// };
+export default function Newfeed(props: {tabIndex:number}) {
   const { tabIndex } = props;
   const {
     profile,

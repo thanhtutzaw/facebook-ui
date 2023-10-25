@@ -18,13 +18,7 @@ import {
 import { selectedId } from "../../context/PageContext";
 import { Post, friends, likes } from "../../types/interfaces";
 import { LikedUsers_LIMIT } from "../QUERY_LIMIT";
-import {
-  db,
-  getCollectionPath,
-  getDocPath,
-  getPath,
-  getProfileByUID,
-} from "../firebase";
+import { db, getCollectionPath, getPath, getProfileByUID } from "../firebase";
 type TAddPost = {
   uid: string;
   post: {
@@ -38,9 +32,8 @@ type TAddPost = {
 export async function addPost({ uid, post, sharePost, friends }: TAddPost) {
   // const h = getCollectionPath<{db:Firestore,path:string}>(uid, "posts");
   const Ref = !sharePost
-    ? // ? doc(getPath("friends",{uid}))
-      doc(getPath("friends", { uid }))
-    : getDocPath(uid, "posts", sharePost.refId);
+    ? doc(getPath("friends", { uid }))
+    : doc(db, `${getCollectionPath.posts({ uid })}/${sharePost.refId}`);
   const postId = !sharePost ? Ref.id : sharePost.refId;
   const newsFeedPost = {
     authorId: uid,
@@ -84,16 +77,11 @@ export async function addPost({ uid, post, sharePost, friends }: TAddPost) {
   let data;
   if (sharePost) {
     const sharersRef = doc(
-      // getCollectionPath(sharePost?.author,"posts",sharePost.id,`/shares/${uid}`)
-      // getCollectionPath.shares(, sharePost.id, uid)
-      getPath("shares", {
+      db,
+      `${getCollectionPath.shares({
         authorId: sharePost.author,
         postId: sharePost.id,
-        sharerId: uid,
-      })
-      //   db,
-      //   `users/${sharePost?.author}/posts/${sharePost?.id}`
-      // )
+      })}/${uid}`
     );
     data = {
       ...post,
@@ -170,7 +158,10 @@ export async function deletePost(data: {
     const sharePostId = post.sharePost.id;
     const shareRef = doc(
       db,
-      `users/${post.sharePost.author}/posts/${sharePostId}/shares/${uid}`
+      `${getCollectionPath.shares({
+        authorId: post.sharePost.author,
+        postId: sharePostId,
+      })}/${uid}`
     );
     await deleteDoc(shareRef);
   }
@@ -195,9 +186,13 @@ export async function deleteMultiplePost(uid: string, selctedId: selectedId[]) {
       const { post, author, share } = chunk[j];
 
       if (share?.author && share.post) {
+        const { author: shareAuthorId, post: sharePostId } = share;
         const sharePostRef = doc(
           db,
-          `users/${share?.author}/posts/${share?.post}/shares/${uid}`
+          `${getCollectionPath.shares({
+            authorId: shareAuthorId,
+            postId: sharePostId,
+          })}/${uid}`
         );
         batch.delete(sharePostRef);
       }
@@ -208,10 +203,7 @@ export async function deleteMultiplePost(uid: string, selctedId: selectedId[]) {
       batch.delete(postRef);
       // if (post.sharePost?.id) {
       //   const id = post.sharePost.id;
-      //   const shareRef = doc(
-      //     db,
-      //     `users/${post.sharePost.author}/posts/${id}/shares/${uid}`
-      //   );
+
       //   // console.log(
       //   //   "Delete this sharedPost" +  + post.sharePost.post?.id
       //   // );

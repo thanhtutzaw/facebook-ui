@@ -1,16 +1,23 @@
 import { useEffect, useRef } from "react";
+
+interface InfiniteScroll {
+  hasMore: boolean;
+  scrollParent: boolean;
+  fetchMoreData?: () => Promise<void>;
+  postEnd?: boolean;
+}
 /**
  * A hook that listen scroll event for InfiniteScroll (Client)
  * @param [scrollParent=false]
  * @param fetchMoreData
  * @param hasMore
  */
-export default function useInfiniteScroll(
-  hasMore: boolean,
-  scrollParent = false,
-  fetchMoreData?: () => Promise<void>,
-  postEnd = false
-) {
+export default function useInfiniteScroll({
+  hasMore,
+  scrollParent,
+  fetchMoreData,
+  postEnd,
+}: InfiniteScroll) {
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     function handleScroll(e: Event) {

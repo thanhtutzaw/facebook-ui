@@ -4,17 +4,20 @@ import {
   Unsubscribe,
   doc,
   getDoc,
-  onSnapshot
+  onSnapshot,
 } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 
-function useFriendRequest( uid:string) {
+export default function useFriendRequest(uid: string) {
   const [friendReqCount, setfriendReqCount] = useState(0);
   const soundRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     if (!uid) return;
-    const friendReqCountRef = doc(db, `${getCollectionPath.friendReqCount({uid})}/reqCount`);
+    const friendReqCountRef = doc(
+      db,
+      `${getCollectionPath.friendReqCount({ uid })}/reqCount`
+    );
     let lastPull: Timestamp | null = null;
     async function getLastpull() {
       lastPull = (await getDoc(friendReqCountRef)).data()
@@ -24,7 +27,7 @@ function useFriendRequest( uid:string) {
     getLastpull();
     let unsubscribeFriendReqCount: Unsubscribe;
     const fetchFriendReqCount = async () => {
-      const pendingRef = getPath("friendReqCount",{uid});
+      const pendingRef = getPath("friendReqCount", { uid });
       try {
         if (friendReqCount >= 10) return;
         unsubscribeFriendReqCount = onSnapshot(pendingRef, (snap) => {
@@ -83,5 +86,3 @@ function useFriendRequest( uid:string) {
   }, [uid, friendReqCount]);
   return { friendReqCount, soundRef };
 }
-
-export default useFriendRequest;

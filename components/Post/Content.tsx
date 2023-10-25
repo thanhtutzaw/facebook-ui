@@ -8,7 +8,7 @@ import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { app } from "../../lib/firebase";
+import { app, getCollectionPath } from "../../lib/firebase";
 import TextInput from "../Form/Input/TextInput";
 import AuthorInfo from "./AuthorInfo";
 import AdminMenu from "./Menu/AdminMenu";
@@ -190,7 +190,9 @@ export default function Content({ post }: { post: Post }) {
         <PostFallback
           canRemove={{
             uid: String(authUser?.uid),
-            deleteURL: `users/${authorId}/recentPosts/${id}`,
+            deleteURL: `${getCollectionPath.recentPosts({
+              uid: String(authorId),
+            })}/${id}`,
           }}
         />
       )}

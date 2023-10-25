@@ -1,16 +1,15 @@
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useQueryClient } from "@tanstack/react-query";
 import { getAuth } from "firebase/auth";
 import { AnimatePresence, motion } from "framer-motion";
 import router from "next/router";
-import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { app } from "../../../lib/firebase";
+import { useContext, useState } from "react";
+import { PostContext, PostProps } from "../../../context/PostContext";
+import { app, getCollectionPath } from "../../../lib/firebase";
 import { deletePost } from "../../../lib/firestore/post";
-import { Post } from "../../../types/interfaces";
-import { CopyLink } from "./Menu";
 import styles from "../index.module.scss";
-import { useQueryClient } from "@tanstack/react-query";
-import { PostProps, PostContext } from "../../../context/PostContext";
+import { CopyLink } from "./Menu";
 export default function AdminMenu(props: {
   updatePost: Function;
   authorId: string | number;
@@ -89,11 +88,10 @@ export default function AdminMenu(props: {
                 await deletePost({
                   uid: auth.currentUser.uid,
                   post,
-                  deleteURL: `users/${auth.currentUser.uid}/posts/${String(
-                    id
-                  )}`,
+                  deleteURL: `${getCollectionPath.posts({
+                    uid: auth.currentUser.uid,
+                  })}/${String(id)}`,
                 });
-                // queryClient.invalidateQueries(["myPost"]);
                 setLoading(false);
                 settoggleMenu?.("");
                 queryClient.refetchQueries(["myPost"]);
