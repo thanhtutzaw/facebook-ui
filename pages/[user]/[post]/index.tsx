@@ -11,6 +11,7 @@ import { SocialCount } from "@/components/Post/SocialCount";
 import { Welcome } from "@/components/Welcome";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import {
+  DescQuery,
   app,
   db,
   getCollectionPath,
@@ -51,7 +52,8 @@ import {
   account,
   likes,
 } from "../../../types/interfaces";
-export const Comment_LIMIT = 10;
+import { Comment_LIMIT } from "@/lib/QUERY_LIMIT";
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // context.res.setHeader(
   //   "Cache-Control",
@@ -63,11 +65,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const { uid } = token as DecodedIdToken;
     const { user: authorId, post: postId } = context.query;
     let expired = false;
-
-    // const postRef = doc(
-    //   db,
-    //   `${getCollectionPath.posts({ uid: String(authorId) })}/${postId}`
-    // );
     const postRef = doc(
       db,
       `${getCollectionPath.posts({ uid: String(authorId) })}/${postId}`
@@ -80,13 +77,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       ...profileData,
       photoURL: checkPhotoURL(profileData.photoURL),
     };
-    const commentQuery = query(
+    const commentQuery = DescQuery(
       getPath("comments", {
         authorId: String(newPost?.authorId),
         postId: String(newPost?.id),
       }),
-      orderBy("createdAt", "desc"),
-      limit(Comment_LIMIT + 1)
+      Comment_LIMIT + 1
     );
     let hasMore = false;
     let comments = await fetchComments(commentQuery);
@@ -216,7 +212,7 @@ export default function Page(props: {
   useEffect(() => {
     setClient(true);
   }, []);
-  const [loading, setLoading] = useState(false);
+  const [updateLoading, setUpdateLoading] = useState(false);
 
   let newMedia: PostType["media"] = [];
   const isPostOwner = post?.authorId === uid;
@@ -252,7 +248,7 @@ export default function Page(props: {
       deleteFile?.length === 0
     )
       return;
-    setLoading(true);
+    setUpdateLoading(true);
     try {
       try {
         const uploadedFiles = await uploadMedia(files as File[]);
@@ -300,31 +296,25 @@ export default function Page(props: {
       console.log("fetching more comment");
       setcommentLoading(true);
       const comment = limitedComments?.[limitedComments?.length - 1];
-      // if (!comment) return;
-      // if (limitedComments.length > Comment_LIMIT) {
-      // }
+
       const date = new Timestamp(
         comment.createdAt.seconds,
         comment.createdAt.nanoseconds
       );
-      const commentQuery = query(
+      const commentQuery = DescQuery(
         getPath("comments", {
           authorId: String(post?.authorId),
           postId: String(post?.id),
         }),
-        orderBy("createdAt", "desc"),
-        startAfter(date),
-        limit(Comment_LIMIT + 1)
+        Comment_LIMIT + 1,
+        startAfter(date)
       );
       const comments = await fetchComments(commentQuery);
-      // comments?.shift();
       setlimitedComments(limitedComments.concat(comments ?? []));
       console.log(comments?.length);
       console.log({ limitedComments });
       setcommentLoading(false);
       setcommentEnd(comments?.length! < Comment_LIMIT);
-      // if () {
-      // }
     },
     [limitedComments, post?.authorId, post?.id]
   );
@@ -351,11 +341,11 @@ export default function Page(props: {
             tabIndex={1}
             aria-label="update post"
             type="submit"
-            disabled={loading}
+            disabled={updateLoading}
             className={s.submit}
             onClick={updateHandler}
           >
-            {loading ? "Saving..." : "Save"}
+            {updateLoading ? "Saving..." : "Save"}
           </button>
         )}
       </BackHeader>

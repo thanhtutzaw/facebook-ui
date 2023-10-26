@@ -546,7 +546,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
     &:focus-visible {
-      outline: 1px solid var(--blue-origin);
+      // outline: 1px solid var(--blue-origin);
+      outline:1px solid #eaeaea;
     }
   }
   .addMedia {

@@ -77,21 +77,57 @@ export default function AdminMenu(props: {
           <button
             disabled={loading}
             onClick={async (e) => {
+              const uid = auth?.currentUser?.uid;
               e.preventDefault();
               e.stopPropagation();
-              if (auth.currentUser?.uid !== authorId) {
+              if (uid !== authorId) {
                 alert("Not Allowed ! Mismatch userId and authorId");
                 throw new Error("Not Allowed");
               }
               setLoading(true);
               try {
-                await deletePost({
-                  uid: auth.currentUser.uid,
-                  post,
-                  deleteURL: `${getCollectionPath.posts({
-                    uid: auth.currentUser.uid,
-                  })}/${String(id)}`,
-                });
+                console.log({ post });
+                // const deleteURL = post.deletedByAuthor
+                //   ? `${getCollectionPath.recentPosts({
+                //       uid: String(post.authorId),
+                //     })}/${post.recentId}`
+                //   : `${getCollectionPath.posts({
+                //       uid,
+                //     })}/${String(id)}`;
+                if (!post.deletedByAuthor) {
+                  await deletePost({
+                    uid,
+                    post,
+                    deleteURL: `${getCollectionPath.posts({
+                      uid,
+                    })}/${String(id)}`,
+                  });
+                }
+                if (post.recentId) {
+                  await deletePost({
+                    uid,
+                    deleteURL: `${getCollectionPath.recentPosts({
+                      uid: String(post.authorId),
+                    })}/${post.recentId}`,
+                    post,
+                  });
+                }
+                // await deletePost({
+                //   uid,
+                //   post,
+                //   deleteURL,
+                // });
+                // if (!post.deletedByAuthor) {
+                //   const deleteURL = `${getCollectionPath.recentPosts({
+                //     uid,
+                //   })}/${post.recentId}`;
+                //   await deletePost({
+                //     uid,
+                //     post,
+                //     deleteURL,
+                //   });
+                //   updatePost(id);
+                // }
                 setLoading(false);
                 settoggleMenu?.("");
                 queryClient.refetchQueries(["myPost"]);
@@ -101,8 +137,17 @@ export default function AdminMenu(props: {
                 //   postid: id!,
                 //   post,
                 // });
+                if (post.recentId) {
+                  updatePost(id);
+                }else{
+                  updatePost(id,true)
+                }
                 if (loading) return;
-                updatePost(id);
+                // if (post.deletedByAuthor) {
+                //   updatePost(post.recentId, post.deletedByAuthor);
+                // } else {
+
+                // }
               } catch (error: any) {
                 settoggleMenu?.("");
                 console.error(error);

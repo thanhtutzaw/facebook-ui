@@ -8,7 +8,7 @@ import {
 } from "firebase/firestore";
 import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { NewsFeed_LIMIT } from "../lib/QUERY_LIMIT";
-import { getNewsFeed, getPath } from "../lib/firebase";
+import { DescQuery, getNewsFeed, getPath } from "../lib/firebase";
 import { AppProps, Post, RecentPosts } from "../types/interfaces";
 // const AppContext = createContext<{ user: User | null }>({ user: null });
 export const AppContext = createContext<AppProps | null>(null);
@@ -29,8 +29,18 @@ export function AppProvider(props: AppProps) {
   const [selectMode, setselectMode] = useState(false);
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const [sortedPost, setsortedPost] = useState<Post[]>([]);
-  const updatePost = (id: string) => {
+  const updatePost = (id: string, deletedByAuthor?: boolean) => {
+    // if (deletedByAuthor) {
+    //   setlimitedPosts?.((prev: Post[]) => {
+    //     prev.map((p) => {
+    //       if (p.id === id) {
+    //         return [...prev, { deletedByAuthor: true }];
+    //       }
+    //     });
+    //   });
+    // }
     setlimitedPosts?.((prev: Post[]) => prev.filter((post) => post.id !== id));
+    console.log(limitedPosts);
   };
   useEffect(() => {
     if (posts && !limitedPosts) {
@@ -46,11 +56,10 @@ export function AppProvider(props: AppProps) {
         post?.createdAt.seconds,
         post?.createdAt.nanoseconds
       );
-      const newsFeedQuery = query(
+      const newsFeedQuery = DescQuery(
         getPath("recentPosts", { uid }),
-        orderBy("createdAt", "desc"),
-        startAfter(date),
-        limit(NewsFeed_LIMIT + 1)
+        NewsFeed_LIMIT + 1,
+        startAfter(date)
       );
       let recentPosts: RecentPosts[] = [];
       try {
@@ -90,9 +99,7 @@ export function AppProvider(props: AppProps) {
 
   // const  = async () => {
   //   setpostLoading(true);
-  //   console.log(limitedPosts?.length);
   //   const post = limitedPosts?.[limitedPosts?.length - 1]!;
-  //   console.log(post);
   //   const date = new Timestamp(
   //     post.createdAt.seconds,
   //     post.createdAt.nanoseconds
@@ -101,14 +108,12 @@ export function AppProvider(props: AppProps) {
   //   // const postQuery = query(
   //   //   collectionGroup(db, `posts`),
   //   //   where("visibility", "in", ["Friend", "Public"]),
-  //   //   orderBy("createdAt", "desc"),
   //   //   startAfter(date),
   //   // );
   //   // const postQuery = query(
   //   //   collectionGroup(db, `posts`),
   //   //   // where("visibility", "in", ["Friend", "Public"]),
   //   //   where("authorId", "in", acceptedFriends ? acceptedFriends : ["0"]),
-  //   //   orderBy("createdAt", "desc"),
   //   //   startAfter(date),
   //   //   limit(NewsFeed_LIMIT)
   //   // );

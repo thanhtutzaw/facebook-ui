@@ -6,6 +6,7 @@ import { PageContext, PageProps } from "@/context/PageContext";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import { MYPOST_LIMIT } from "@/lib/QUERY_LIMIT";
 import {
+  DescQuery,
   db,
   fethUserDoc,
   getCollectionPath,
@@ -86,18 +87,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       canAccept = relation.senderId !== token.uid && !isFriend;
       canUnBlock = relation.senderId === token.uid;
     }
-    let mypostQuery = query(
-      getPath("posts", { uid: uid[0] }),
+    let mypostQuery = DescQuery(
+      getPath("posts", { uid: String(uid) }),
+      MYPOST_LIMIT + 1,
       where("visibility", "in", ["Public"]),
-      orderBy("createdAt", "desc"),
-      limit(MYPOST_LIMIT + 1)
     );
     if (isFriend) {
-      mypostQuery = query(
-        getPath("posts", { uid: uid[0] }),
+      mypostQuery = DescQuery(
+        getPath("posts", { uid: String(uid) }),
+        MYPOST_LIMIT + 1,
         where("visibility", "in", ["Friend", "Public"]),
-        orderBy("createdAt", "desc"),
-        limit(MYPOST_LIMIT)
       );
     }
     const myPost = isBlocked
@@ -260,8 +259,6 @@ export default function UserProfile({
           Friends
         </button>
         <Menu
-          uid={token.uid}
-          friendId={friendId?.toString()!}
           friendMenuToggle={friendMenuToggle}
         >
           <button
@@ -309,8 +306,6 @@ export default function UserProfile({
           Pending
         </button>
         <Menu
-          uid={token.uid}
-          friendId={friendId?.toString()!}
           friendMenuToggle={friendMenuToggle}
         >
           <button
@@ -498,7 +493,7 @@ export default function UserProfile({
                         {!loading ? (
                           <FontAwesomeIcon icon={faPlus} />
                         ) : (
-                          <Spin loading={loading} />
+                          <Spin/>
                         )}
                         {!loading ? "Add Friend" : "Adding..."}
                       </button>
@@ -532,12 +527,8 @@ export default function UserProfile({
 }
 function Menu({
   friendMenuToggle,
-  uid,
-  friendId,
   children,
 }: {
-  friendId: string;
-  uid: string;
   friendMenuToggle: boolean;
   children: ReactNode;
 }) {
@@ -570,8 +561,7 @@ function Menu({
   );
 }
 
-function Spin(props: { loading: boolean }): JSX.Element {
-  const { loading } = props;
+function Spin(){
   return (
     // <Spinner
     //   key={loading ? "true" : "false"}

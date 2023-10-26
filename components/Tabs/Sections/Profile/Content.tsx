@@ -10,7 +10,7 @@ import s from "./index.module.scss";
 import Spinner from "@/components/Spinner";
 
 export default function Content(props: {
-  profile: any;
+ 
   hasNextPage?: boolean;
   error?: any;
   infoRef: RefObject<HTMLHeadElement>;
@@ -27,7 +27,7 @@ export default function Content(props: {
   sortedPost: Post[];
 }) {
   const {
-    profile,
+   
     hasNextPage,
     tab,
     error,
@@ -42,11 +42,7 @@ export default function Content(props: {
     setsortby,
     sortedPost,
   } = props;
-  const { updatePost } = useContext(AppContext) as AppProps;
-  // useEffect(() => {
-  //   console.log("profile rendering");
-  // }, []);
-
+  const { updatePost , profile } = useContext(AppContext) as AppProps;
   return (
     <div
       style={{

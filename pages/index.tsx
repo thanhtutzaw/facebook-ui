@@ -25,6 +25,7 @@ import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
 import { AppProvider } from "../context/AppContext";
 import {
+  DescQuery,
   app,
   db,
   fethUserDoc,
@@ -62,7 +63,6 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     const userQuery = context.query.user!;
     if (userQuery) {
       const user = await fethUserDoc(userQuery);
-      // const userExist = user.exists();
       const isFriendsQuery = doc(
         db,
         `${getCollectionPath.friends({ uid: token.uid })}/${userQuery}`
@@ -82,14 +82,14 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
         canUnBlock = relation.senderId === token.uid;
       }
       let mypostQuery = query(
-        getPath("posts", { uid: userQuery[0] }),
+        getPath("posts", { uid: String(userQuery) }),
         where("visibility", "in", ["Public"]),
         orderBy("createdAt", "desc"),
         limit(MYPOST_LIMIT + 1)
       );
       if (isFriend) {
         mypostQuery = query(
-          getPath("posts", { uid: userQuery[0] }),
+          getPath("posts", { uid: String(userQuery) }),
           where("visibility", "in", ["Friend", "Public"]),
           orderBy("createdAt", "desc"),
           limit(MYPOST_LIMIT + 1)
@@ -146,10 +146,9 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     // const userPostsSubCollectionRef =  getPath("friends",{uid});
 
     // Reference to the "recentPostSubCollection" subcollection within the user's "postsSubCollection"
-    const newsFeedQuery = query(
+    const newsFeedQuery = DescQuery(
       getPath("recentPosts", { uid }),
-      orderBy("createdAt", "desc"),
-      limit(NewsFeed_LIMIT + 1)
+      NewsFeed_LIMIT + 1
     );
     let recentPosts: RecentPosts[] = [],
       hasMore = false;
@@ -157,6 +156,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
       recentPosts = (await getDocs(newsFeedQuery)).docs.map((doc) => {
         return {
           ...(doc.data() as any),
+          recentId:doc.id,
           createdAt: doc.data().createdAt?.toJSON() || 0,
         };
       });
@@ -195,6 +195,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
       getProfileByUID(uid),
       getUserData(uid),
     ]);
+    console.log(newsFeedPosts);
     const fcmToken = (await fethUserDoc(uid)).data()?.fcmToken ?? null;
     const profile = {
       ...profileData,
@@ -223,7 +224,6 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
       },
     };
   } catch (error: any) {
-    console.log(tokenUID);
     // expired = !error.code
     expired =
       error.code === "auth/argument-error" ||

@@ -87,6 +87,7 @@ export interface sharedPost {
   likeCount: string | number;
 }
 export interface Post {
+  recentId?: string;
   deletedByAuthor?: boolean;
   likeCount: string | number;
   commentCount?: string | number;
@@ -117,6 +118,7 @@ export interface Comment {
 }
 export interface RecentPosts {
   id: string;
+  recentId: string;
   authorId: string;
   createdAt: Post["createdAt"];
 }

@@ -251,7 +251,6 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
           // range.setEnd(range.endContainer, endOffset);
           // selection.removeAllRanges();
           // selection.addRange(range);
-          // console.log(e.currentTarget.innerHTML);
         }}
         onKeyUp={(e) => {
           // e.currentTarget.innerHTML = e.currentTarget.innerHTML

@@ -16,7 +16,29 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import s from "../../Sections/Menu/menu.module.scss";
-
+const accounts = [
+  {
+    uid: "testuser@gmail.com",
+    email: "testuser@gmail.com",
+    password: "111111",
+    default: true,
+  },
+  {
+    uid: "user5@gmail.com",
+    email: "user5@gmail.com",
+    password: "111111",
+  },
+  {
+    uid: "hellokitty2@gmail.com",
+    email: "hellokitty2@gmail.com",
+    password: "1111112",
+  },
+  {
+    uid: "wong@gmail.com",
+    email: "wong@gmail.com",
+    password: "111111",
+  },
+];
 export default function SwitchAccount(props: {
   setLoading: Function;
   loading: boolean;
@@ -25,29 +47,7 @@ export default function SwitchAccount(props: {
   const auth = getAuth();
   const { token } = useContext(AppContext) as AppProps;
   const { email: currentEmail } = { ...token };
-  const accounts = [
-    {
-      uid: "testuser@gmail.com",
-      email: "testuser@gmail.com",
-      password: "111111",
-      default: true,
-    },
-    {
-      uid: "user5@gmail.com",
-      email: "user5@gmail.com",
-      password: "111111",
-    },
-    {
-      uid: "hellokitty2@gmail.com",
-      email: "hellokitty2@gmail.com",
-      password: "1111112",
-    },
-    {
-      uid: "wong@gmail.com",
-      email: "wong@gmail.com",
-      password: "111111",
-    },
-  ];
+
   const [toggleSwitchAcc, setToggleSwitchAcc] = useState(false);
   const [checked, setchecked] = useState(currentEmail);
 

@@ -10,9 +10,9 @@ import {
 import { Post as PostType, likes } from "../types/interfaces";
 export type PostProps = {
   Likes: likes;
+  updatePost: Function;
   setLikes: Function;
   tabIndex?: number;
-  updatePost: Function;
   likeCount: number;
   shareMode?: boolean;
   preventNavigate?: boolean;

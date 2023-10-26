@@ -18,7 +18,7 @@ import {
 import { selectedId } from "../../context/PageContext";
 import { Post, friends, likes } from "../../types/interfaces";
 import { LikedUsers_LIMIT } from "../QUERY_LIMIT";
-import { db, getCollectionPath, getPath, getProfileByUID } from "../firebase";
+import { DescQuery, db, getCollectionPath, getPath, getProfileByUID } from "../firebase";
 type TAddPost = {
   uid: string;
   post: {
@@ -32,7 +32,7 @@ type TAddPost = {
 export async function addPost({ uid, post, sharePost, friends }: TAddPost) {
   // const h = getCollectionPath<{db:Firestore,path:string}>(uid, "posts");
   const Ref = !sharePost
-    ? doc(getPath("friends", { uid }))
+    ? doc(getPath("posts", { uid }))
     : doc(db, `${getCollectionPath.posts({ uid })}/${sharePost.refId}`);
   const postId = !sharePost ? Ref.id : sharePost.refId;
   const newsFeedPost = {
@@ -59,6 +59,7 @@ export async function addPost({ uid, post, sharePost, friends }: TAddPost) {
       }
     }
   }
+  console.log(uid);
   const adminNewsFeedRef = doc(getPath("recentPosts", { uid }));
   try {
     await setDoc(adminNewsFeedRef, newsFeedPost);
@@ -248,10 +249,8 @@ export async function unlikePost(
   console.log("unliked post");
 }
 export async function fetchLikedUsers(p: Post) {
-  const likeRef = query(
+  const likeRef = DescQuery(
     getPath("likes", { authorId: String(p.authorId), postId: String(p.id) }),
-    orderBy("createdAt", "desc"),
-    limit(LikedUsers_LIMIT)
   );
   try {
     const likeDoc = await getDocs(likeRef);

@@ -3,6 +3,7 @@ import { PostList } from "@/components/Tabs/Sections/Home/PostList";
 import s from "@/components/Tabs/Sections/Profile/index.module.scss";
 import { SavedPost_LIMIT } from "@/lib/QUERY_LIMIT";
 import {
+  DescQuery,
   db,
   getCollectionPath,
   getPath,
@@ -39,10 +40,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
     const { uid } = token;
     const currentUserProfile = await getProfileByUID(uid);
-    const savedPostsQuery = query(
-      getPath("savedPost", { uid }),
-      orderBy("createdAt", "desc"),
-      limit(SavedPost_LIMIT)
+    const savedPostsQuery = DescQuery(
+      getPath("savedPost", { uid })
     );
     const saved = await getDocs(savedPostsQuery);
     const data = saved.docs.map((doc) => doc.data()) as savedPostTypes[];
@@ -91,10 +90,9 @@ export default function Page(props: {
 
   useEffect(() => {
     let unsubscribe: Unsubscribe;
-    const savedPostsQuery = query(
+    const savedPostsQuery = DescQuery(
       getPath("savedPost", { uid }),
-      orderBy("createdAt", "desc"),
-      limit(limitedPosts.length > 0 ? limitedPosts.length : SavedPost_LIMIT)
+      limitedPosts.length > 0 ? limitedPosts.length : SavedPost_LIMIT
     );
     unsubscribe = onSnapshot(savedPostsQuery, async (snapshot) => {
       const data = snapshot.docs.map((doc) => doc.data()) as savedPostTypes[];

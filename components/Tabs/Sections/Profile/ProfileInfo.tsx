@@ -1,7 +1,7 @@
+import { AppContext } from "@/context/AppContext";
 import { PageContext, PageProps } from "@/context/PageContext";
 import { checkPhotoURL, getFullName } from "@/lib/firestore/profile";
-import { account } from "@/types/interfaces";
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import { AppProps, account } from "@/types/interfaces";
 import Image from "next/image";
 import {
   ChangeEventHandler,
@@ -14,27 +14,24 @@ import s from "./index.module.scss";
 export const bioFallback = "No Bio Yet";
 function ProfileInfo(props: {
   handleChange: ChangeEventHandler<HTMLInputElement>;
-  account: UserRecord;
   infoRef?: RefObject<HTMLDivElement>;
   selectMode: boolean;
   children?: ReactNode;
-  profile: account["profile"];
   editToggle?: boolean;
   newProfile?: account["profile"] | null;
 }) {
   const {
     handleChange,
-    account,
     infoRef,
     selectMode,
     children,
-    profile,
     editToggle,
     newProfile,
   } = props;
   const { setsingleImageModal, currentUser } = useContext(
     PageContext
   ) as PageProps;
+  const { profile } = useContext(AppContext) as AppProps;
   const imgFileRef = useRef<HTMLInputElement>(null);
 
   //   ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"
@@ -53,7 +50,7 @@ function ProfileInfo(props: {
       <Image
         onClick={() => {
           setsingleImageModal?.({
-            src: checkPhotoURL(profile.photoURL),
+            src: checkPhotoURL(profile?.photoURL),
             name: `${userName}'s profile picture`,
           });
         }}

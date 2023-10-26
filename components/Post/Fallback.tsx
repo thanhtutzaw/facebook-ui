@@ -1,14 +1,20 @@
 import { deletePost } from "@/lib/firestore/post";
+import Spinner from "../Spinner";
+import { useState } from "react";
 
 export default function PostFallback({
   canRemove,
+  updatePost,
 }: {
   canRemove?: {
+    id: string;
     uid: string;
     deleteURL: string;
   };
+  updatePost?: Function;
 }) {
   const { uid, deleteURL } = { ...canRemove };
+  const [loading, setLoading] = useState(false);
   return (
     <div
       style={{
@@ -29,21 +35,40 @@ export default function PostFallback({
       >
         This post is unavailable because it was deleted.
         {canRemove ? (
-          <button
-            style={{
-              background: "transparent",
-              marginLeft: ".5rem",
-              border: "1px solid black",
-            }}
-            onClick={async () => {
-              await deletePost({
-                uid:String(uid),
-                deleteURL:String(deleteURL),
-              });
-            }}
-          >
-            Remove
-          </button>
+          <>
+            {loading ? (
+              <button
+                style={{
+                  background: "transparent",
+                  marginLeft: ".5rem",
+                  border: "0",
+                }}
+              >
+                <Spinner size={14} style={{ margin: "0" }} />
+              </button>
+            ) : (
+              <button
+                style={{
+                  background: "transparent",
+                  marginLeft: ".5rem",
+                  border: "1px solid black",
+                }}
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  setLoading(true);
+                  await deletePost({
+                    uid: String(uid),
+                    deleteURL: String(deleteURL),
+                  });
+                  setLoading(false);
+                  updatePost?.(canRemove.id);
+                }}
+              >
+                Remove
+              </button>
+            )}
+          </>
         ) : null}
       </p>
     </div>

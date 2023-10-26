@@ -3,7 +3,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { account } from "../../types/interfaces";
 import { db, getCollectionPath, storage } from "../firebase";
-export function getFullName(profile: account["profile"] | undefined): string {
+export function getFullName(profile: account["profile"] | undefined | null): string {
   if (!profile) return "Unknown User";
   const { firstName: first, lastName: last } = profile;
   if (first && !last) {

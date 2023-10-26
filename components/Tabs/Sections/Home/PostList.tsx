@@ -17,7 +17,6 @@ export const PostList = memo(
     postLoading?: boolean;
     postEnd?: boolean;
   }) => {
-    // console.log("postList is rendering");
     useEffect(() => {
       console.log("postList is rendering");
     }, []);

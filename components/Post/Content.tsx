@@ -22,10 +22,10 @@ import PostFallback from "./Fallback";
 import { Post } from "@/types/interfaces";
 export default function Content({ post }: { post: Post }) {
   const {
+    updatePost,
     Likes,
     setLikes,
     tabIndex,
-    updatePost,
     likeCount,
     preventNavigate,
     selectMode,
@@ -188,11 +188,13 @@ export default function Content({ post }: { post: Post }) {
       )}
       {post.deletedByAuthor && (
         <PostFallback
+          updatePost={updatePost!}
           canRemove={{
             uid: String(authUser?.uid),
             deleteURL: `${getCollectionPath.recentPosts({
               uid: String(authorId),
-            })}/${id}`,
+            })}/${post.recentId}`,
+            id: String(id),
           }}
         />
       )}

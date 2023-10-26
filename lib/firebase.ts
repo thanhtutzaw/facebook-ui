@@ -3,7 +3,9 @@ import { AuthErrorCodes } from "firebase/auth";
 import {
   DocumentData,
   DocumentSnapshot,
+  OrderByDirection,
   Query,
+  QueryConstraint,
   QueryDocumentSnapshot,
   QuerySnapshot,
   Timestamp,
@@ -13,9 +15,13 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  limit,
+  orderBy,
+  query,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { Comment, Post, RecentPosts, account } from "../types/interfaces";
+import { Default_Query_LIMIT } from "./QUERY_LIMIT";
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -78,7 +84,19 @@ export function getPath<T extends keyof typeof getCollectionPath>(
   // Now use the 'collection' function with the generated path
   return collection(db, pathGenerator(params));
 }
-
+export function DescQuery<T>(
+  customQuery: Query<T>,
+  queryLimit?: number,
+  // customOrder?: OrderByDirection,
+  ...rest: QueryConstraint[]
+) {
+  return query(
+    customQuery,
+    orderBy("createdAt", "desc"),
+    limit(queryLimit ?? Default_Query_LIMIT),
+    ...rest
+  );
+}
 // export function getPath(
 //   type: keyof typeof getCollectionPath,
 //   params: string[]
@@ -351,11 +369,11 @@ export async function getNewsFeed(
   recentPosts?: RecentPosts[]
 ): Promise<Post[] | undefined> {
   console.log("posts are fetched");
-  console.log(recentPosts);
   if (recentPosts) {
     const data = await Promise.all(
       recentPosts.map(async (recentPost) => {
-        const { id, authorId, createdAt } = recentPost;
+        const { id, recentId, authorId, createdAt } = recentPost;
+        console.log(recentPost);
         // if (!post.authorId) return null;
         const postRef = doc(
           db,
@@ -364,22 +382,25 @@ export async function getNewsFeed(
         const postDoc = await getDoc(postRef);
         if (postDoc.exists()) {
           const postData = await postToJSON(postDoc);
-          // const postData2 = {
-          //   ...postData,
-          //   createdAt: recentPost.createdAt,
+          const postData2 ={
+            ...postData,
+            id:recentPost.id,
+            recentId:recentPost.recentId
+          }
+          const postwithInfo = await postInfo(postData2, uid);
+          // const withRecentPostDate = {
+          //   ...postwithInfo,
+          //   // createdAt:JSONTimestampToDate(createdAt).toJSON()
+          //   // createdAt:new Timestamp(createdAt.seconds,createdAt.nanoseconds),
           // };
-          const postwithInfo = await postInfo(postData, uid);
-          const withRecentPostDate = {
-            ...postwithInfo,
-            // createdAt:JSONTimestampToDate(createdAt).toJSON()
-            // createdAt:new Timestamp(createdAt.seconds,createdAt.nanoseconds),
-          };
-          return withRecentPostDate;
+          return postwithInfo;
         } else {
           // const postwithInfo = await postInfo(recentPost, uid);
           const postProfile = await getProfileByUID(authorId.toString());
           return {
             ...recentPost,
+            id: recentPost.recentId,
+            recentId: recentPost.recentId,
             author: {
               ...postProfile,
             },

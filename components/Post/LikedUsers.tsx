@@ -1,21 +1,26 @@
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  OrderByDirection,
+  Query,
+  QueryConstraint,
+  QueryLimitConstraint,
   Unsubscribe,
   limit,
   onSnapshot,
   orderBy,
-  query
+  query,
 } from "firebase/firestore";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { LikedUsers_LIMIT } from "../../lib/QUERY_LIMIT";
+import { Default_Query_LIMIT, LikedUsers_LIMIT } from "../../lib/QUERY_LIMIT";
 import {
+  DescQuery,
   JSONTimestampToDate,
   getPath,
-  getProfileByUID
+  getProfileByUID,
 } from "../../lib/firebase";
 import { Post, account, likes } from "../../types/interfaces";
 import Spinner from "../Spinner";
@@ -40,13 +45,11 @@ export function LikedUsers({
 }) {
   useEffect(() => {
     if (!togglereactionList) return;
-    const likeRef = query(
+    const likeRef = DescQuery(
       getPath("likes", {
         authorId: String(post.authorId),
         postId: String(post.id),
-      }),
-      orderBy("createdAt", "desc"),
-      limit(LikedUsers_LIMIT)
+      })
     );
     let unsubscribe: Unsubscribe;
     unsubscribe = onSnapshot(likeRef, async (snapshot) => {
@@ -133,3 +136,4 @@ export function LikedUsers({
     </>
   );
 }
+

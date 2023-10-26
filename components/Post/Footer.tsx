@@ -66,9 +66,6 @@ export const Footer = (
     setvisibility(getLocal());
   }, [getLocal]);
   const [isLiked, setisLiked] = useState(post.isLiked);
-  // useEffect(() => {
-  //   console.log(post.isLiked);
-  // }, [post.isLiked]);
 
   const { currentUser, queryClient, dropdownRef, shareAction, setshareAction } =
     useContext(PageContext) as PageProps;
