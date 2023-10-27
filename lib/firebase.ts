@@ -3,7 +3,6 @@ import { AuthErrorCodes } from "firebase/auth";
 import {
   DocumentData,
   DocumentSnapshot,
-  OrderByDirection,
   Query,
   QueryConstraint,
   QueryDocumentSnapshot,
@@ -17,7 +16,7 @@ import {
   getFirestore,
   limit,
   orderBy,
-  query,
+  query
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { Comment, Post, RecentPosts, account } from "../types/interfaces";
@@ -43,7 +42,6 @@ export { app, db, storage };
 //   messages: (userId: string) => CollectionReference<DocumentData>;
 // };
 const basePath = "users";
-// type id = string | number;
 export const collectionBasePath = collection(db, `${basePath}`);
 export const getCollectionPath = {
   users: ({ uid }: { uid?: string }) => `${basePath}/${uid}`,
@@ -382,11 +380,11 @@ export async function getNewsFeed(
         const postDoc = await getDoc(postRef);
         if (postDoc.exists()) {
           const postData = await postToJSON(postDoc);
-          const postData2 ={
+          const postData2 = {
             ...postData,
-            id:recentPost.id,
-            recentId:recentPost.recentId
-          }
+            id: recentPost.id,
+            recentId: recentPost.recentId,
+          };
           const postwithInfo = await postInfo(postData2, uid);
           // const withRecentPostDate = {
           //   ...postwithInfo,

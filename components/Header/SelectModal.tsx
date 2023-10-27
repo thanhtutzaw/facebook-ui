@@ -1,13 +1,13 @@
+import useQueryFn from "@/hooks/useQueryFn";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
+import { PageContext, PageProps } from "../../context/PageContext";
 import useEscape from "../../hooks/useEscape";
 import { deleteMultiplePost } from "../../lib/firestore/post";
+import s from "../../styles/Home.module.scss";
 import { AppProps } from "../../types/interfaces";
 import BackHeader from "./BackHeader";
-import { PageContext, PageProps } from "../../context/PageContext";
-import { useQueryClient } from "@tanstack/react-query";
-import s from "../../styles/Home.module.scss";
 function SelectModal() {
   const { updatePost, uid, selectMode, setselectMode } = useContext(
     AppContext
@@ -36,8 +36,7 @@ function SelectModal() {
       router.events.off("routeChangeError", handleRouteDone);
     };
   }, [router.events, setSelectedId, setselectMode, loading]);
-  const queryClient = useQueryClient();
-
+  const { queryFn } = useQueryFn();
   return (
     <BackHeader
       selectMode={selectMode!}
@@ -61,8 +60,8 @@ function SelectModal() {
           setLoading(true);
           try {
             await deleteMultiplePost(uid, selectedId);
-            queryClient.refetchQueries(["myPost"]);
-            queryClient.invalidateQueries(["myPost"]);
+            queryFn.refetchQueries("myPost");
+            queryFn.invalidate("myPost");
 
             setLoading(false);
             setSelectedId?.([]);

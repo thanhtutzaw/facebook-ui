@@ -155,7 +155,8 @@ export async function deletePost(data: {
   post: Post;
 }) {
   const { uid, deleteURL, post } = data;
-  if (uid !== post?.authorId) {
+  console.log({ data });
+  if (!post.deletedByAuthor && uid !== post?.authorId) {
     alert("Unauthorized user!");
     return;
   }

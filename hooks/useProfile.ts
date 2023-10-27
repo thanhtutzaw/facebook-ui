@@ -2,7 +2,7 @@ import { AppContext } from "@/context/AppContext";
 import { MYPOST_LIMIT } from "@/lib/QUERY_LIMIT";
 import { app, getPath, getPostWithMoreInfo } from "@/lib/firebase";
 import { changeProfile, checkPhotoURL } from "@/lib/firestore/profile";
-import { AppProps, Post, account } from "@/types/interfaces";
+import { AppProps, Post, QueryKey, account } from "@/types/interfaces";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getAuth } from "firebase/auth";
 import {
@@ -61,7 +61,6 @@ function useProfile() {
 
   const fetchMyPost = useCallback(
     async function (pageParam: Post | null = null) {
-      console.log("fetching");
       if (!uid) return;
       let postQuery = query(
         getPath("posts", { uid }),
@@ -88,7 +87,7 @@ function useProfile() {
   );
   const { fetchNextPage, isLoading, error, data, hasNextPage } =
     useInfiniteQuery({
-      queryKey: ["myPost", sortby, uid, profile?.photoURL],
+      queryKey: [QueryKey.myPost, sortby, uid, profile?.photoURL],
       queryFn: async ({ pageParam }) => await fetchMyPost(pageParam),
       enabled: activeTab === "profile",
       keepPreviousData: true,

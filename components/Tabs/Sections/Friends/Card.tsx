@@ -16,7 +16,6 @@ export default function Card(props: { children: ReactNode; f: friends }) {
   return (
     <Link
       scroll={false}
-      // href={f.id?.toString() ?? ""}
       as={String(f.id)}
       href={{ query: { user: String(f.id) } }}
       style={{ pointerEvents: preventClick ? "none" : "initial" }}

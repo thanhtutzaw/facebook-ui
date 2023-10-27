@@ -1,6 +1,6 @@
+import useQueryFn from "@/hooks/useQueryFn";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useQueryClient } from "@tanstack/react-query";
 import { getAuth } from "firebase/auth";
 import { AnimatePresence, motion } from "framer-motion";
 import router from "next/router";
@@ -21,11 +21,10 @@ export default function AdminMenu(props: {
   ) as PostProps;
   const auth = getAuth(app);
   const [loading, setLoading] = useState(false);
-  const queryClient = useQueryClient();
+  const { queryFn } = useQueryFn();
   // const deletePostMutation = useMutation({
   //   mutationFn: async (data: any) => await deletePost(data),
   //   onSuccess: (data) => {
-  //     queryClient.invalidateQueries(["myPost"]);
   //     console.log("Delete Mutate Success " + data);
   //     setLoading(false);
   //     settoggleMenu?.("");
@@ -130,8 +129,8 @@ export default function AdminMenu(props: {
                 // }
                 setLoading(false);
                 settoggleMenu?.("");
-                queryClient.refetchQueries(["myPost"]);
-                queryClient.invalidateQueries(["myPost"]);
+                queryFn.refetchQueries("myPost");
+                queryFn.invalidate("myPost");
                 // deletePostMutation.mutate({
                 //   uid: auth.currentUser.uid,
                 //   postid: id!,
@@ -139,8 +138,8 @@ export default function AdminMenu(props: {
                 // });
                 if (post.recentId) {
                   updatePost(id);
-                }else{
-                  updatePost(id,true)
+                } else {
+                  updatePost(id, true);
                 }
                 if (loading) return;
                 // if (post.deletedByAuthor) {

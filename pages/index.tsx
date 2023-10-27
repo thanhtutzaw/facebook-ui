@@ -364,7 +364,7 @@ export default function Home({
           limit(UnReadNoti_LIMIT)
         );
         // if (UnReadNotiCount >= 10) return;
-        console.log("noti listening realtime - unRead" + UnReadNotiCount);
+        // console.log("noti listening realtime - unRead" + UnReadNotiCount);
         unsubscribeNotifications = onSnapshot(notiCountQuery, (latestNoti) => {
           // console.log(querySnapshot.docs.map((doc) => doc.data()));
           setUnReadNotiCount(latestNoti.size); // getting unRead noti count

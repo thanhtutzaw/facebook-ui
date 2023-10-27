@@ -140,6 +140,7 @@ export default function PhotoLayout(props: {
   const media = files as Post["media"];
 
   if (!files || !media) return <></>;
+  if (media.length === 0) return <></>;
   return (
     <div className={s.preview} style={{ objectFit: "contain" }}>
       {media[0] && (

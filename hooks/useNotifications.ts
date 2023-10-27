@@ -2,8 +2,8 @@ import { AppContext } from "@/context/AppContext";
 import { NOTI_LIMIT } from "@/lib/QUERY_LIMIT";
 import { DescQuery, db, getCollectionPath, getPath } from "@/lib/firebase";
 import { getMessage } from "@/lib/firestore/notifications";
-import { AppProps, NotiTypes } from "@/types/interfaces";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { AppProps, Noti, QueryKey } from "@/types/interfaces";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   Timestamp,
   doc,
@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore";
 import { useContext, useEffect } from "react";
 import { useActive } from "./useActiveTab";
+import useQueryFn from "./useQueryFn";
 function useNotifications() {
   const { active: tab } = useActive();
   const {
@@ -23,8 +24,7 @@ function useNotifications() {
     UnReadNotiCount,
     setUnReadNotiCount,
   } = useContext(AppContext) as AppProps;
-  const fetchNoti = async function (pageParam: NotiTypes | null = null) {
-    console.log("fetching noti");
+  const fetchNoti = async function (pageParam: Noti | null = null) {
     if (!currentUid) return;
     let notiQuery = DescQuery(
       getPath("notifications", { uid: currentUid }),
@@ -46,40 +46,41 @@ function useNotifications() {
     try {
       const snapShot = await getDocs(notiQuery);
       if (snapShot.empty) return;
-      const noti = snapShot.docs.map((doc) => {
-        const data = doc.data() as NotiTypes;
-        const date = data.createdAt as Timestamp;
-        const createdDate = date.toDate().getTime();
-        const lastPullData = lastPullTimestamp as Timestamp;
-        const lastPull = lastPullData ? lastPullData?.toDate().getTime() : null;
+      const notifications = snapShot.docs.map((doc) => {
+        const data = doc.data() as Noti;
+        // const date = data.createdAt as Timestamp;
+        // const createdDate = date.toDate().getTime();
+        // const lastPullData = lastPullTimestamp as Timestamp;
+        // const lastPull = lastPullData ? lastPullData?.toDate().getTime() : null;
         return {
           id: doc.id,
           ...doc.data(),
           ...getMessage(data.type),
           hasRead: doc.data().hasRead ? doc.data().hasRead : false,
         };
-      }) as NotiTypes[];
-      const hasMore = noti.length > NOTI_LIMIT;
+      }) as Noti[];
+      const hasMore = notifications.length > NOTI_LIMIT;
       if (hasMore) {
-        noti.pop();
+        notifications.pop();
       }
       setUnReadNotiCount?.(0);
-      return { noti, hasMore };
+      return { notifications, hasMore };
     } catch (error) {
       console.error(error);
     }
   };
-  const queryClient = useQueryClient();
+  const { queryFn } = useQueryFn();
   useEffect(() => {
     if (UnReadNotiCount ?? 0 > 0) {
-      queryClient.invalidateQueries(["notifications"]);
-      queryClient.refetchQueries(["notifications"]);
+      queryFn.refetchQueries("noti");
+      queryFn.invalidate("noti");
+      console.log("updaing in useNoti hooks");
     }
-  }, [UnReadNotiCount, queryClient]);
+  }, [UnReadNotiCount, queryFn]);
 
   const { fetchNextPage, hasNextPage, isLoading, error, data } =
     useInfiniteQuery({
-      queryKey: ["notifications"],
+      queryKey: [QueryKey.noti],
       queryFn: async ({ pageParam }) => {
         return await fetchNoti(pageParam);
       },
@@ -87,45 +88,50 @@ function useNotifications() {
       // keepPreviousData: true,
       getNextPageParam: (lastPage) =>
         lastPage?.hasMore
-          ? lastPage.noti![lastPage?.noti?.length! - 1]
+          ? lastPage.notifications![lastPage?.notifications?.length! - 1]
           : undefined,
     });
 
-  const noti = data?.pages.flatMap((page) => page?.noti ?? []);
-  useEffect(() => {
-    // if (!togglereactionList) return;
-    // let notiQuery = query(
-    //   getPath("notifications", { uid: currentUid }),
-    //   limit(NOTI_LIMIT + 1)
-    // );
-    // let unsubscribe: Unsubscribe;
-    // unsubscribe = onSnapshot(notiQuery, async (snapshot) => {
-    //   const notis = snapshot.docs.map((doc) => doc.data()) as NotiTypes;
-    //   const withAuthor = await Promise.all(
-    //     likes.map(async (l) => {
-    //       if (l.uid) {
-    //         const author = await getProfileByUID(l.uid?.toString());
-    //         return { ...l, author };
-    //       } else {
-    //         return { ...l, author: null };
-    //       }
-    //     })
-    //   );
-    console.log("updatedNoti");
-  }, [currentUid]);
-  function updateReadNoti(noti: NotiTypes) {
-    const ref = doc(db, `${getCollectionPath.notifications}/${noti.id}`);
+  const notifications = data?.pages.flatMap(
+    (page) => page?.notifications ?? []
+  );
+  // useEffect(() => {
+  //   // let unsubscribe: Unsubscribe;
+  //   // unsubscribe = onSnapshot(notiQuery, async (snapshot) => {
+  //   //   const notis = snapshot.docs.map((doc) => doc.data()) as Noti;
+  //   //   const withAuthor = await Promise.all(
+  //   //     likes.map(async (l) => {
+  //   //       if (l.uid) {
+  //   //         const author = await getProfileByUID(l.uid?.toString());
+  //   //         return { ...l, author };
+  //   //       } else {
+  //   //         return { ...l, author: null };
+  //   //       }
+  //   //     })
+  //   //   );
+  // }, [currentUid]);
+  function updateReadNoti(noti: Noti) {
+    const ref = doc(
+      db,
+      `${getCollectionPath.notifications({ uid: currentUid })}/${noti.id}`
+    );
     const { message, ...rest } = noti;
     const readedData = {
       ...rest,
       hasRead: true,
     };
-    queryClient.invalidateQueries(["notifications"]);
+    queryFn.invalidate("noti");
     // queryClient.refetchQueries(["notifications"]);
-    console.log({ readedData });
     updateDoc(ref, readedData);
   }
-  return {isLoading, hasNextPage, error, updateReadNoti,fetchNextPage, noti };
+  return {
+    isLoading,
+    hasNextPage,
+    error,
+    updateReadNoti,
+    fetchNextPage,
+    notifications,
+  };
 }
 
 export default useNotifications;

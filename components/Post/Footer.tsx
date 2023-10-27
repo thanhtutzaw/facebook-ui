@@ -37,6 +37,7 @@ import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
 import popfx from "public/assets/bubble.mp3";
 import useSound from "use-sound";
+import useQueryFn from "@/hooks/useQueryFn";
 
 export const Footer = (
   props: {
@@ -60,7 +61,7 @@ export const Footer = (
   const commentRef = useRef<HTMLDivElement>(null);
   const [visibility, setvisibility] = useState<string | null>("Public");
   const { getLocal } = useLocalStorage("visibility", visibility);
-
+const {queryFn} = useQueryFn()
   useEffect(() => {
     // setvisibility(localStorage.getItem("visibility")!);
     setvisibility(getLocal());
@@ -143,7 +144,7 @@ export const Footer = (
               return;
             }
             setisLiked((prev) => !prev);
-            queryClient?.invalidateQueries(["myPost"]);
+            queryFn.invalidate("myPost");
             setLikeLoading(true);
             if (isLiked) {
               setLikes?.([]);
@@ -381,7 +382,6 @@ export const Footer = (
 
                     router.replace("/", undefined, { scroll: false });
                     setshareAction?.("");
-                    // queryClient?.invalidateQueries(["myPost"]);
                     window.document.body.style.cursor = "initial";
                   } catch (error: any) {
                     alert(error.message);

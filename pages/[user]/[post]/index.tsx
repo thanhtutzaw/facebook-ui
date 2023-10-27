@@ -293,7 +293,6 @@ export default function Page(props: {
   const [commentLoading, setcommentLoading] = useState(false);
   const fetchMoreComment = useCallback(
     async function () {
-      console.log("fetching more comment");
       setcommentLoading(true);
       const comment = limitedComments?.[limitedComments?.length - 1];
 

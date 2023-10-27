@@ -1,7 +1,7 @@
 import Spinner from "@/components/Spinner";
 import useNotifications from "@/hooks/useNotifications";
 import { checkPhotoURL } from "@/lib/firestore/profile";
-import { NotiTypes } from "@/types/interfaces";
+import { Noti } from "@/types/interfaces";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,7 +11,7 @@ import t from "../../Tabs.module.scss";
 import s from "./Notifications.module.scss";
 
 export default function Notifications() {
-  const { isLoading, hasNextPage, error, updateReadNoti, fetchNextPage, noti } =
+  const { isLoading, hasNextPage, error, updateReadNoti, fetchNextPage, notifications } =
     useNotifications();
   return (
     <div
@@ -36,12 +36,12 @@ export default function Notifications() {
           <p style={{ textAlign: "center", color: "red" }}>
             Unexpected Error !
           </p>
-        ) : noti?.length === 0 ? (
+        ) : notifications?.length === 0 ? (
           <p style={{ textAlign: "center" }}>Empty Notifications</p>
         ) : (
           <ul>
-            {noti?.map((n) => (
-              <NotiItem updateReadNoti={updateReadNoti} key={n.id} noti={n} />
+            {notifications?.map((noti:Noti) => (
+              <NotiItem updateReadNoti={updateReadNoti} key={noti.id} noti={noti} />
             ))}
           </ul>
         )}
@@ -54,8 +54,8 @@ function NotiItem({
   noti,
   updateReadNoti,
 }: {
-  noti: NotiTypes;
-  updateReadNoti: (noti: NotiTypes) => void;
+  noti: Noti;
+  updateReadNoti: ReturnType<typeof useNotifications>["updateReadNoti"];
 }) {
   const router = useRouter();
   const {

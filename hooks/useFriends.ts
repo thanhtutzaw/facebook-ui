@@ -2,12 +2,11 @@ import { AppContext } from "@/context/AppContext";
 import { PageContext, PageProps } from "@/context/PageContext";
 import { collectionBasePath, getPath, getProfileByUID } from "@/lib/firebase";
 import { checkPhotoURL } from "@/lib/firestore/profile";
-import { AppProps, friends } from "@/types/interfaces";
+import { AppProps, QueryKey, friends } from "@/types/interfaces";
 import { useQueries } from "@tanstack/react-query";
 import { getDocs, orderBy, query, where } from "firebase/firestore";
 import { useContext } from "react";
 import { useActive } from "./useActiveTab";
-
 function useFriends() {
   const { active: tab } = useActive();
   const { uid } = useContext(AppContext) as AppProps;
@@ -79,12 +78,12 @@ function useFriends() {
   const [suggestedFriends, pendingFriends] = useQueries({
     queries: [
       {
-        queryKey: ["suggestedFriends", uid, friendReqCount],
+        queryKey: [QueryKey.suggestedFriends, uid, friendReqCount],
         queryFn: async () => await fetchSuggestedFriends(),
         enabled: tab === "friends",
       },
       {
-        queryKey: ["pendingFriends", uid, friendReqCount],
+        queryKey: [QueryKey.pendingFriends, uid, friendReqCount],
         queryFn: async () => await fetchPendingFriends(),
         enabled: tab === "friends",
       },

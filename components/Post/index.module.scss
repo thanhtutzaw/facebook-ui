@@ -158,11 +158,12 @@
 }
 .preview {
     display: flex;
-    background-color: black;
+    // background-color: black;
     justify-content: center;
     align-items: center;
     color: white;
     overflow: hidden;
+    background-color: rgb(243, 243, 243);
     > div:not(:first-child) {
         min-width: 50%;
         // min-height: 196px;

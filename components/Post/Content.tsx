@@ -188,12 +188,12 @@ export default function Content({ post }: { post: Post }) {
       )}
       {post.deletedByAuthor && (
         <PostFallback
-        post={post}
+          post={post}
           updatePost={updatePost!}
           canRemove={{
             uid: String(authUser?.uid),
             deleteURL: `${getCollectionPath.recentPosts({
-              uid: String(authorId),
+              uid: authUser?.uid,
             })}/${post.recentId}`,
             id: String(id),
           }}

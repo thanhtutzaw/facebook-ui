@@ -3,6 +3,13 @@ import { ReactNode, RefObject } from "react";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { User } from "firebase/auth";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
+export const QueryKey = {
+  noti: "notifications",
+  myPost: "myPost",
+  suggestedFriends: "suggestedFriends",
+  pendingFriends: "pendingFriends",
+};
+
 type timeStamp =
   | {
       seconds: number;
@@ -43,7 +50,7 @@ export type notiContentTypes =
   | "acceptedFriend";
 export type author = UserRecord | User | account["profile"] | null;
 
-export type NotiTypes = {
+export type Noti = {
   hasRead?: boolean;
   uid: string;
   message: string;
@@ -124,7 +131,7 @@ export interface RecentPosts {
 }
 
 export interface AppProps {
-  setprofileSrc?:Function;
+  setprofileSrc?: Function;
   profileSrc?: string;
   queryPageData?: any;
   hasMore?: boolean;

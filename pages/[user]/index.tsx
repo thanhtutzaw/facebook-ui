@@ -4,6 +4,7 @@ import { bioFallback } from "@/components/Tabs/Sections/Profile/ProfileInfo";
 import s from "@/components/Tabs/Sections/Profile/index.module.scss";
 import { PageContext, PageProps } from "@/context/PageContext";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
+import useQueryFn from "@/hooks/useQueryFn";
 import { MYPOST_LIMIT } from "@/lib/QUERY_LIMIT";
 import {
   DescQuery,
@@ -32,7 +33,6 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useQueryClient } from "@tanstack/react-query";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import {
   Timestamp,
@@ -162,7 +162,7 @@ export default function UserProfile({
   canAccept: Boolean;
   canUnBlock: Boolean;
 }) {
-  const queryClient = useQueryClient();
+  const {queryFn} = useQueryFn();
   const router = useRouter();
   const [playAcceptSound] = useSound(confirm);
 
@@ -208,8 +208,8 @@ export default function UserProfile({
               scroll: false,
             });
             setstatus("friend");
-            queryClient.refetchQueries(["pendingFriends"]);
-            queryClient.invalidateQueries(["pendingFriends"]);
+            queryFn.invalidate("pendingFriends")
+            queryFn.refetchQueries("pendingFriends")
           } catch (error) {
             console.error(error);
           }
@@ -484,7 +484,7 @@ export default function UserProfile({
                           router.replace(router.asPath, undefined, {
                             scroll: false,
                           });
-                          queryClient.invalidateQueries(["pendingFriends"]);
+                          queryFn.invalidate("pendingFriends");
                           setLoading(false);
                           setstatus("pending");
                         }}

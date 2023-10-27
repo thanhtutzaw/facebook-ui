@@ -1,15 +1,16 @@
+import { AcceptFriend } from "@/components/Button/AcceptFriend";
+import BackHeader from "@/components/Header/BackHeader";
+import Spinner from "@/components/Spinner";
+import { PageContext, PageProps } from "@/context/PageContext";
+import useQueryFn from "@/hooks/useQueryFn";
+import { getPath, getProfileByUID } from "@/lib/firebase";
+import { verifyIdToken } from "@/lib/firebaseAdmin";
 import { checkPhotoURL } from "@/lib/firestore/profile";
+import { friends } from "@/types/interfaces";
 import { faBan, faEllipsisV, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useQueryClient } from "@tanstack/react-query";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-import {
-  Timestamp,
-  getDocs,
-  orderBy,
-  query,
-  where
-} from "firebase/firestore";
+import { Timestamp, getDocs, orderBy, query, where } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
@@ -18,13 +19,6 @@ import { useRouter } from "next/router";
 import nookies from "nookies";
 import confirm from "public/assets/confirm-beep.mp3";
 import { useContext, useEffect, useState } from "react";
-import { AcceptFriend } from "../../components/Button/AcceptFriend";
-import BackHeader from "../../components/Header/BackHeader";
-import Spinner from "../../components/Spinner";
-import { PageContext, PageProps } from "../../context/PageContext";
-import { getPath, getProfileByUID } from "../../lib/firebase";
-import { verifyIdToken } from "../../lib/firebaseAdmin";
-
 import useSound from "use-sound";
 import {
   acceptFriends,
@@ -33,9 +27,9 @@ import {
   rejectFriendRequest,
   unBlockFriend,
   unFriend,
-} from "../../lib/firestore/friends";
-import { friends } from "../../types/interfaces";
+} from "@/lib/firestore/friends";
 import s from "./index.module.scss";
+type TqueryFn = ReturnType<typeof useQueryFn>["queryFn"];
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -87,6 +81,7 @@ export default function Page(props: {
   const [friends, setFriends] = useState(acceptedFriends);
   const [status, setstatus] = useState<friends["status"]>("friend");
   const [firendLoading, setFirendLoading] = useState(false);
+  const { queryFn } = useQueryFn();
   useEffect(() => {
     async function fetchSortedFriends() {
       let myFriendsQuery = query(
@@ -180,6 +175,7 @@ export default function Page(props: {
           </p>
         ) : (
           <FriendList
+            queryFn={queryFn}
             setstatus={setstatus}
             setFriends={setFriends}
             friends={friends}
@@ -192,11 +188,13 @@ export default function Page(props: {
 }
 
 function FriendList({
+  queryFn,
   setstatus,
   setFriends,
   friends,
   uid,
 }: {
+  queryFn: TqueryFn;
   setstatus: Function;
   setFriends: Function;
   friends: friends[];
@@ -205,7 +203,6 @@ function FriendList({
   const [playAcceptSound] = useSound(confirm);
   const router = useRouter();
   const [toggleFriendMenu, settoggleFriendMenu] = useState("");
-  const queryClient = useQueryClient();
   const { currentUser } = useContext(PageContext) as PageProps;
   function updateFriendList(id: string) {
     return setFriends(friends.filter((f) => f.id !== id));
@@ -217,8 +214,8 @@ function FriendList({
         scroll: false,
       });
       updateFriendList(friend.id.toString());
-      queryClient.invalidateQueries(["pendingFriends"]);
-      queryClient.invalidateQueries(["suggestedFriends"]);
+      queryFn.invalidate("pendingFriends");
+      queryFn.invalidate("suggestedFriends");
     } catch (error) {
       console.log(error);
     }
@@ -281,7 +278,7 @@ function FriendList({
                           router.replace(router.asPath, undefined, {
                             scroll: false,
                           });
-                          queryClient.invalidateQueries(["suggestedFriends"]);
+                          queryFn.invalidate("suggestedFriends");
                           updateFriendList(friend.id.toString());
                         } catch (error) {
                           console.log(error);
@@ -309,10 +306,8 @@ function FriendList({
                                   scroll: false,
                                 });
                                 updateFriendList(friend.id.toString());
-                                queryClient.refetchQueries(["pendingFriends"]);
-                                queryClient.refetchQueries([
-                                  "suggestedFriends",
-                                ]); // queryClient.invalidateQueries(["pendingFriends"]);
+                                queryFn.refetchQueries("pendingFriends");
+                                queryFn.refetchQueries("suggestedFriends");
                               } catch (error) {
                                 console.log(error);
                               }
@@ -335,8 +330,8 @@ function FriendList({
 
                               updateFriendList(String(friend.id));
                               setstatus("friend");
-                              queryClient.refetchQueries(["pendingFriends"]);
-                              queryClient.invalidateQueries(["pendingFriends"]);
+                              queryFn.invalidate("pendingFriends");
+                              queryFn.refetchQueries("pendingFriends");
                             }}
                             className={s.secondary}
                           />
@@ -354,8 +349,8 @@ function FriendList({
                                 scroll: false,
                               });
                               updateFriendList(friend.id.toString());
-                              queryClient.refetchQueries(["pendingFriends"]);
-                              queryClient.invalidateQueries(["pendingFriends"]);
+                              queryFn.invalidate("pendingFriends");
+                              queryFn.refetchQueries("pendingFriends");
                             }}
                           >
                             <FontAwesomeIcon icon={faTrash} />

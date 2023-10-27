@@ -1,10 +1,10 @@
+import { PageContext, PageProps } from "@/context/PageContext";
 import { useRouter } from "next/router";
-import styles from "../../styles/Home.module.scss";
-import { AppProps, Tabs } from "../../types/interfaces";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
-import { PageContext, PageProps } from "@/context/PageContext";
-import { useQueryClient } from "@tanstack/react-query";
+import styles from "../../styles/Home.module.scss";
+import { AppProps, Tabs } from "../../types/interfaces";
+import useQueryFn from "@/hooks/useQueryFn";
 
 export default function Navitems(props: {
   active: Tabs;
@@ -13,6 +13,7 @@ export default function Navitems(props: {
   name: string;
   index: number;
 }) {
+  const { queryFn } = useQueryFn();
   const { UnReadNotiCount, setUnReadNotiCount } = useContext(
     AppContext
   ) as AppProps;
@@ -26,7 +27,6 @@ export default function Navitems(props: {
   const router = useRouter();
   let iconTitle = name === "/" ? "Home" : name;
   const TabName = name.toLowerCase() as Tabs;
-  const queryClient = useQueryClient();
   const changeTab = () => {
     setActive?.(TabName);
     window.location.hash = TabName === "/" ? "#home" : `#${TabName}`;
@@ -50,8 +50,8 @@ export default function Navitems(props: {
         router.replace("/#friends", undefined, { scroll: false });
       } else if (TabName === "notifications") {
         setUnReadNotiCount?.(0);
-        queryClient.invalidateQueries(["notifications"]);
-        queryClient.refetchQueries(["notifications"]);
+        queryFn.invalidate("noti");
+        queryFn.refetchQueries("noti");
       }
     }
   };

@@ -1,13 +1,13 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { useContext, useState } from "react";
 import { AppContext } from "@/context/AppContext";
 import { PageContext, PageProps } from "@/context/PageContext";
+import useQueryFn from "@/hooks/useQueryFn";
 import { acceptFriends, rejectFriendRequest } from "@/lib/firestore/friends";
 import { AppProps } from "@/types/interfaces";
+import confirm from "public/assets/confirm-beep.mp3";
+import { useContext, useState } from "react";
+import useSound from "use-sound";
 import Card from "./Card";
 import s from "./Friends.module.scss";
-import confirm from "public/assets/confirm-beep.mp3";
-import useSound from "use-sound";
 interface RequestProps {
   f: any;
   setrequestCount?: Function;
@@ -15,9 +15,8 @@ interface RequestProps {
 }
 export function Request(props: RequestProps) {
   const { f, tabIndex, setrequestCount } = props;
-  const queryClient = useQueryClient();
   const { currentUser } = useContext(PageContext) as PageProps;
-
+  const { queryFn } = useQueryFn();
   const [accept, setaccept] = useState(false);
   const [reject, setreject] = useState(false);
   const { uid } = useContext(AppContext) as AppProps;
@@ -30,16 +29,16 @@ export function Request(props: RequestProps) {
       if (f.status !== "pending") {
         alert("Already Accepted!");
         setaccept(true);
-        queryClient.invalidateQueries(["pendingFriends"]);
-        queryClient.invalidateQueries(["suggestedFriends"]);
+        queryFn.invalidate("pendingFriends");
+        queryFn.invalidate("suggestedFriends");
         return;
       }
       await acceptFriends(uid, f, currentUser);
       playAcceptSound();
       setConfirmLoaing(false);
       setaccept(true);
-      queryClient.invalidateQueries(["pendingFriends"]);
-      queryClient.invalidateQueries(["suggestedFriends"]);
+      queryFn.invalidate("pendingFriends");
+      queryFn.invalidate("suggestedFriends");
     } catch (error) {
       setConfirmLoaing(false);
       console.log(error);
@@ -50,9 +49,7 @@ export function Request(props: RequestProps) {
     try {
       await rejectFriendRequest(uid, f);
       setreject(true);
-      // setrequestCount((prev: number) => prev - 1);
-      queryClient.invalidateQueries(["pendingFriends"]);
-      // queryClient.refetchQueries(["pendingFriends"]);
+      queryFn.invalidate("pendingFriends");
     } catch (error) {
       console.log(error);
     }
