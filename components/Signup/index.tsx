@@ -4,19 +4,21 @@ import styles from "./index.module.scss";
 import Info from "./Info";
 import NewAccount from "./NewAccount";
 export default function Signup(props: {
+  signupLoading:boolean;
   handleSubmit: FormEventHandler<HTMLFormElement>;
   handleChange: ChangeEventHandler<HTMLInputElement>;
-  signup: any;
+  toggleSignUp: boolean;
   Account: any;
-  setAccount: any;
+  setAccount: Function;
   emailLoading: boolean;
   emailRef: any;
 }) {
   const {
+    signupLoading,
     emailLoading,
     handleSubmit,
     handleChange,
-    signup,
+    toggleSignUp,
     Account,
     setAccount,
     emailRef,
@@ -29,14 +31,13 @@ export default function Signup(props: {
       onSubmit={handleSubmit}
       key="label2"
       initial={{ opacity: 0, scale: 0.5 }}
-      animate={{ opacity: !signup ? 0 : 1, scale: !signup ? 0.5 : 1 }}
+      animate={{ opacity: !toggleSignUp ? 0 : 1, scale: !toggleSignUp ? 0.5 : 1 }}
       exit={{ opacity: 0, scale: 0.5 }}
       className={styles.emailForm}
     >
       <div className={styles.newAccount}>
         <NewAccount
           handleChange={handleChange}
-          // key={signup ? "true" : "false"}
           Account={Account}
           setAccount={setAccount}
           emailRef={emailRef}
@@ -56,6 +57,7 @@ export default function Signup(props: {
       </div>
       <div className={styles.userInfo}>
         <Info
+          signupLoading={signupLoading}
           handleChange={handleChange}
           Account={Account}
           setAccount={setAccount}

@@ -16,7 +16,7 @@ export function SharePreview(props: {
     ? `${query.author}/${query.id}`
     : `/${sharePost?.authorId}/${sharePost?.id}`;
   if (post?.sharePost?.id && post.sharePost?.post === null)
-    return <PostFallback />;
+    return <PostFallback post={post} />;
   return (
     <>
       {post?.sharePost?.post || query ? (

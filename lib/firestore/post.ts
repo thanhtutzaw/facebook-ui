@@ -18,7 +18,13 @@ import {
 import { selectedId } from "../../context/PageContext";
 import { Post, friends, likes } from "../../types/interfaces";
 import { LikedUsers_LIMIT } from "../QUERY_LIMIT";
-import { DescQuery, db, getCollectionPath, getPath, getProfileByUID } from "../firebase";
+import {
+  DescQuery,
+  db,
+  getCollectionPath,
+  getPath,
+  getProfileByUID,
+} from "../firebase";
 type TAddPost = {
   uid: string;
   post: {
@@ -146,9 +152,13 @@ export async function updatePost(
 export async function deletePost(data: {
   uid: string;
   deleteURL: string;
-  post?: Post;
+  post: Post;
 }) {
   const { uid, deleteURL, post } = data;
+  if (uid !== post?.authorId) {
+    alert("Unauthorized user!");
+    return;
+  }
   const Ref = doc(db, deleteURL);
   const isPostAvailable = (await getDoc(Ref)).exists();
   if (!isPostAvailable) {
@@ -250,7 +260,7 @@ export async function unlikePost(
 }
 export async function fetchLikedUsers(p: Post) {
   const likeRef = DescQuery(
-    getPath("likes", { authorId: String(p.authorId), postId: String(p.id) }),
+    getPath("likes", { authorId: String(p.authorId), postId: String(p.id) })
   );
   try {
     const likeDoc = await getDocs(likeRef);

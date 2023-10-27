@@ -1,13 +1,15 @@
 import { ChangeEventHandler, RefObject } from "react";
 import styles from "./index.module.scss";
 import { account } from "../../types/interfaces";
+import Spinner from "../Spinner";
 export default function Info(props: {
+  signupLoading: boolean;
   handleChange: ChangeEventHandler<HTMLInputElement>;
   Account: account;
   setAccount: Function;
   emailRef: RefObject<HTMLInputElement>;
 }) {
-  const { handleChange, Account, setAccount, emailRef } = props;
+  const { signupLoading, handleChange, Account, setAccount, emailRef } = props;
   return (
     <>
       <h2>Account Info</h2>
@@ -40,6 +42,7 @@ export default function Info(props: {
       />
       <div className={styles.backbtnContainer}>
         <button
+          disabled={signupLoading}
           tabIndex={1}
           onClick={(e) => {
             e.preventDefault();
@@ -59,8 +62,17 @@ export default function Info(props: {
           type="submit"
           className={styles.nextForm}
           aria-label="final step"
+          style={{
+            backgroundColor: signupLoading
+              ? "transparent"
+              : "var(--blue-origin)",
+          }}
         >
-          Done
+          {signupLoading ? (
+            <Spinner size={18} style={{ margin: "0" }} />
+          ) : (
+            "Done"
+          )}
         </button>
       </div>
     </>

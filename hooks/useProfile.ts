@@ -25,6 +25,8 @@ import {
 import { useActive } from "./useActiveTab";
 function useProfile() {
   const {
+    profileSrc,
+    setprofileSrc,
     profile,
     uid,
     selectMode,
@@ -118,15 +120,24 @@ function useProfile() {
       [name]: type === "file" ? e.target.files?.[0] : value,
     }));
   };
+  // const [src, setSrc] = useState(String(profile?.photoURL));
+
+
   const [updating, setupdating] = useState(false);
   async function submitProfile(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setupdating(true);
     try {
-      await changeProfile(auth.currentUser!, newProfile, profile!);
+      const changedProfile = await changeProfile(
+        auth.currentUser!,
+        newProfile,
+        profile!
+      );
       setupdating(false);
       setEditToggle(false);
+      setprofileSrc?.(String(changedProfile?.uploadedUrl));
     } catch (error) {
+      setprofileSrc?.(String(profile?.photoURL));
       console.log("Update Profile Error: " + error);
     }
     router.replace("/", undefined, { scroll: false });

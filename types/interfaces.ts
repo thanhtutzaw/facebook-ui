@@ -124,6 +124,8 @@ export interface RecentPosts {
 }
 
 export interface AppProps {
+  setprofileSrc?:Function;
+  profileSrc?: string;
   queryPageData?: any;
   hasMore?: boolean;
   token?: DecodedIdToken | null;

@@ -1,6 +1,6 @@
 import { AppContext } from "@/context/AppContext";
 import { PageContext, PageProps } from "@/context/PageContext";
-import { checkPhotoURL, getFullName } from "@/lib/firestore/profile";
+import { checkPhotoURL, getFullName, photoURLFallback } from "@/lib/firestore/profile";
 import { AppProps, account } from "@/types/interfaces";
 import Image from "next/image";
 import {
@@ -13,6 +13,7 @@ import {
 import s from "./index.module.scss";
 export const bioFallback = "No Bio Yet";
 function ProfileInfo(props: {
+  src:string;
   handleChange: ChangeEventHandler<HTMLInputElement>;
   infoRef?: RefObject<HTMLDivElement>;
   selectMode: boolean;
@@ -21,6 +22,7 @@ function ProfileInfo(props: {
   newProfile?: account["profile"] | null;
 }) {
   const {
+    src,
     handleChange,
     infoRef,
     selectMode,
@@ -60,12 +62,7 @@ function ProfileInfo(props: {
         height={170}
         style={{ objectFit: "cover", width: "120px", height: "120px" }}
         alt={`${userName}'s profile`}
-        src={
-          editToggle
-            ? imageFile
-            : currentUser?.photoURL ??
-              "https://upload.wikimedia.org/wikipedia/commons/77c/Profile_avatar_placeholder_large.png"
-        }
+        src={editToggle ? imageFile : src}
       />
       {editToggle && (
         <>

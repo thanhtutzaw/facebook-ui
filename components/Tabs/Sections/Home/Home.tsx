@@ -16,7 +16,7 @@ import Story from "./Story/Story";
 export default function Home(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const router = useRouter();
-  const { profile, postEnd, getMorePosts, headerContainerRef, hasMore } =
+  const {profileSrc, profile, postEnd, getMorePosts, headerContainerRef, hasMore } =
     useContext(AppContext) as AppProps;
   const { setuploadButtonClicked, active } = useContext(
     PageContext
@@ -74,7 +74,7 @@ export default function Home(props: { tabIndex: number }) {
             // width={200}
             // height={170}
             // style={{ width: "40px", height: "40px" }}
-            src={checkPhotoURL(profile?.photoURL)}
+            src={checkPhotoURL(profileSrc ?? profile?.photoURL)}
           />
         </div>
         <input

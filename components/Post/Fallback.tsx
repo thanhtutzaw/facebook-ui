@@ -1,11 +1,14 @@
 import { deletePost } from "@/lib/firestore/post";
 import Spinner from "../Spinner";
 import { useState } from "react";
+import { Post } from "@/types/interfaces";
 
 export default function PostFallback({
+  post,
   canRemove,
   updatePost,
 }: {
+  post:Post,
   canRemove?: {
     id: string;
     uid: string;
@@ -60,6 +63,7 @@ export default function PostFallback({
                   await deletePost({
                     uid: String(uid),
                     deleteURL: String(deleteURL),
+                    post
                   });
                   setLoading(false);
                   updatePost?.(canRemove.id);

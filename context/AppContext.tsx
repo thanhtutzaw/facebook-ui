@@ -14,6 +14,8 @@ import { AppProps, Post, RecentPosts } from "../types/interfaces";
 export const AppContext = createContext<AppProps | null>(null);
 export function AppProvider(props: AppProps) {
   const {
+    setprofileSrc,
+    profileSrc,
     expired,
     acceptedFriends,
     active,
@@ -156,6 +158,8 @@ export function AppProvider(props: AppProps) {
   return (
     <AppContext.Provider
       value={{
+        setprofileSrc,
+        profileSrc,
         sortedPost,
         setsortedPost,
         headerContainerRef,

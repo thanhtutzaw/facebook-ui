@@ -10,10 +10,11 @@ export async function signin(email: string, password: string) {
       password
     );
     // const user = userCredential.user;
-    return null;
-  } catch (error: any) {
+    // return null;
+    return { userCredential, signinError: null };
+  } catch (signinError: any) {
     // const errorMessage = error.message;
-    console.error({ error });
-    return error;
+    console.error({ signinError });
+    return { userCredential: null, signinError: signinError as FirebaseError };
   }
 }

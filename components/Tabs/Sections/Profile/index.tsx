@@ -7,10 +7,10 @@ import { useContext } from "react";
 import Content from "./Content";
 import ProfileInfo from "./ProfileInfo";
 import s from "./index.module.scss";
+import { checkPhotoURL } from "@/lib/firestore/profile";
 export default function Profile() {
   const {
-    // profile,
-    account,
+    profileSrc,
     selectMode,
     setselectMode: setactive,
   } = useContext(AppContext) as AppProps;
@@ -59,6 +59,7 @@ export default function Profile() {
         className={s.container}
       >
         <ProfileInfo
+          src={checkPhotoURL(profileSrc)}
           handleChange={handleEditProfileForm}
           selectMode={selectMode!}
           editToggle={editToggle}

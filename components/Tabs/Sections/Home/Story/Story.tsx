@@ -9,7 +9,7 @@ import { MouseEvent, useContext, useEffect, useRef, useState } from "react";
 import Card from "./Card";
 // type StoryProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 export default function Story() {
-  const { profile, token } = useContext(AppContext) as AppProps;
+  const { profile, token , profileSrc } = useContext(AppContext) as AppProps;
   const { email } = { ...token };
   const fileInput = useRef<HTMLInputElement>(null);
   const [draggable, setdraggable] = useState(false);
@@ -108,7 +108,7 @@ export default function Story() {
               //     ? photoURL
               //     : "httpsupload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
               // }
-              src={checkPhotoURL(profile?.photoURL)}
+              src={checkPhotoURL(profileSrc ?? profile?.photoURL)}
             />
           </div>
 

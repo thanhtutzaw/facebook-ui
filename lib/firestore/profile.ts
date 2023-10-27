@@ -3,7 +3,10 @@ import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { account } from "../../types/interfaces";
 import { db, getCollectionPath, storage } from "../firebase";
-export function getFullName(profile: account["profile"] | undefined | null): string {
+import fallback from 'public/assets/avatar_placeholder.png'
+export function getFullName(
+  profile: account["profile"] | undefined | null
+): string {
   if (!profile) return "Unknown User";
   const { firstName: first, lastName: last } = profile;
   if (first && !last) {
@@ -16,16 +19,17 @@ export function getFullName(profile: account["profile"] | undefined | null): str
 }
 export async function addProfile(user: User, profile: account["profile"]) {
   const Ref = doc(db, getCollectionPath.users({ uid: user.uid }));
+
   const { firstName, lastName } = profile;
-  const data = {
+  const initialProfile = {
     profile: {
       ...profile,
       bio: "",
     },
   };
-  console.log({ data });
+  console.log({ initialProfile });
   try {
-    await setDoc(Ref, data);
+    await setDoc(Ref, initialProfile);
     await updateName(user, firstName, lastName);
   } catch (error) {
     console.error(error);
@@ -99,6 +103,7 @@ export async function changeProfile(
             );
           }
           await updateProfilePicture(user, uploadedUrl ?? "");
+          return { uploadedUrl };
           console.log(" profile picture Updated ");
         } catch (error) {
           console.log(error);
@@ -197,5 +202,5 @@ export function checkPhotoURL(
   }
   return url.toString();
 }
-export const photoURLFallback: string =
-  "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+export const photoURLFallback: string = fallback.src;
+  // "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";

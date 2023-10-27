@@ -1,22 +1,17 @@
-import React, { FormEvent, FormEventHandler, useEffect, useState } from "react";
+import {
+  AuthErrorCodes,
+  getAuth,
+  onAuthStateChanged
+} from "firebase/auth";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { FormEvent, useEffect, useState } from "react";
+import BackHeader from "../../components/Header/BackHeader";
 import NewAccount from "../../components/Signup/NewAccount";
 import s from "../../components/Signup/index.module.scss";
-import BackHeader from "../../components/Header/BackHeader";
-import { signin } from "../../lib/signin";
-import { useRouter } from "next/router";
-import {
-  AuthError,
-  AuthErrorCodes,
-  EmailAuthProvider,
-  ErrorFn,
-  getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
 import { app } from "../../lib/firebase";
-import { motion } from "framer-motion";
-import { FirebaseError } from "firebase/app";
-import Link from "next/link";
+import { signin } from "../../lib/signin";
 
 export default function Email() {
   const router = useRouter();
@@ -42,10 +37,10 @@ export default function Email() {
     seterror("");
     setloading(true);
     try {
-      const error = (await signin(email, password)) as FirebaseError;
-      if (error) {
-        seterror(error.code);
-        console.error(error);
+      const {signinError} = (await signin(email, password));
+      if (signinError) {
+        seterror(signinError.code);
+        console.error(signinError);
         setloading(false);
       } else {
       }

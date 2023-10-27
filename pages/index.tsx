@@ -156,7 +156,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
       recentPosts = (await getDocs(newsFeedQuery)).docs.map((doc) => {
         return {
           ...(doc.data() as any),
-          recentId:doc.id,
+          recentId: doc.id,
           createdAt: doc.data().createdAt?.toJSON() || 0,
         };
       });
@@ -272,6 +272,9 @@ export default function Home({
 }: AppProps) {
   const router = useRouter();
   const auth = getAuth(app);
+  const [profileSrc, setprofileSrc] = useState(
+    checkPhotoURL(profile?.photoURL)
+  );
   // const [queryPageCache, setqueryPageCache] = useState(
   //   queryPageData ? [{ ...queryPageData }] : []
   // );
@@ -555,6 +558,8 @@ export default function Home({
   } else {
     return uid ? (
       <AppProvider
+        setprofileSrc={setprofileSrc}
+        profileSrc={profileSrc}
         hasMore={hasMore}
         acceptedFriends={acceptedFriends}
         isFriendEmpty={isFriendEmpty}
