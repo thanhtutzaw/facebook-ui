@@ -201,9 +201,10 @@ function Avatar({
   const profilePicture = checkPhotoURL(profile?.photoURL);
   return (
     <Image
+      loading="lazy"
       onClick={navigateToProfile}
       priority={false}
-      className={styles.profile}
+      className={`${styles.profile}`}
       alt={`${profile?.firstName ?? "Unknown User"} ${profile?.lastName ?? ""}`}
       width={200}
       height={200}

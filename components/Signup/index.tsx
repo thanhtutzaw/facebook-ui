@@ -4,7 +4,7 @@ import styles from "./index.module.scss";
 import Info from "./Info";
 import NewAccount from "./NewAccount";
 export default function Signup(props: {
-  signupLoading:boolean;
+  signupLoading: boolean;
   handleSubmit: FormEventHandler<HTMLFormElement>;
   handleChange: ChangeEventHandler<HTMLInputElement>;
   toggleSignUp: boolean;
@@ -31,9 +31,13 @@ export default function Signup(props: {
       onSubmit={handleSubmit}
       key="label2"
       initial={{ opacity: 0, scale: 0.5 }}
-      animate={{ opacity: !toggleSignUp ? 0 : 1, scale: !toggleSignUp ? 0.5 : 1 }}
+      animate={{
+        opacity: !toggleSignUp ? 0 : 1,
+        scale: !toggleSignUp ? 0.5 : 1,
+      }}
       exit={{ opacity: 0, scale: 0.5 }}
-      className={styles.emailForm}
+      className={`
+        ${styles.emailForm}`}
     >
       <div className={styles.newAccount}>
         <NewAccount

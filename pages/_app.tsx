@@ -167,9 +167,7 @@ export default function App({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser?.uid]);
 
-  const { friendReqCount, soundRef } = useFriendRequest(
-    String(currentUser?.uid)
-  );
+  const { friendReqCount,soundRef } = useFriendRequest(String(currentUser?.uid));
   const { active, setActive } = useActive();
   const [queryClient] = useState(
     () =>
@@ -211,7 +209,6 @@ export default function App({
             <audio
               style={{ visibility: "hidden", display: "none" }}
               ref={soundRef}
-              src={friendReqSound}
             />
           </main>
         </PageProvider>

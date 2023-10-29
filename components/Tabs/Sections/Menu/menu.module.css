@@ -1,0 +1,142 @@
+.container {
+  display: flex;
+  gap: 0.8rem;
+  padding: 1rem;
+  flex-direction: column;
+  background: #f3f3f3;
+  min-height: calc(100dvh - 140px);
+  -webkit-tap-highlight-color: transparent;
+}
+.container > button {
+  gap: 0.5rem;
+}
+.container > * {
+  background-color: white;
+  cursor: pointer;
+  height: 65px;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+}
+.container button {
+  border: 0;
+}
+.container button > svg {
+  width: 23px;
+  height: 23px;
+}
+.container .switchAccountContainer {
+  transition: height 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0s;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 inherit;
+  box-shadow: 0 2px 2px rgba(58, 58, 58, 0.171);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  overflow: hidden;
+  padding: 0;
+}
+.container .switchAccountContainer button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+}
+.container .switchAccountContainer header {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.container .switchAccountContainer header h2 {
+  flex: 1;
+  margin: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: clamp(21px, 1vw, 20px);
+}
+.container .switchAccountContainer footer {
+  width: 100%;
+}
+.container .switchAccountContainer header,
+.container .switchAccountContainer .content > li {
+  padding-inline: 1rem;
+}
+.container .switchAccountContainer .content {
+  all: unset;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  flex: 1;
+  width: 100%;
+}
+.container .switchAccountContainer .content li {
+  list-style: none;
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: row;
+  align-items: center;
+  padding-block: 0.5rem;
+  font-size: clamp(18px, 1vw, 20px);
+}
+.container .switchAccountContainer .content li .info {
+  flex: 1;
+}
+.container .switchAccountContainer .content li .info p {
+  max-width: 50vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.container .switchAccountContainer .content li > button {
+  color: rgb(0, 173, 0);
+  margin: auto 0;
+  background-color: transparent;
+  background: repeating-linear-gradient(45deg, rgba(0, 173, 0, 0.1294117647), transparent 100px);
+}
+.container .switchAccountContainer .content li:hover {
+  background-color: #e6e6e6;
+}
+.container .switchAccountContainer .content li:active {
+  background-color: #eaeaea;
+  background-color: #f2f2f2;
+}
+.container .switchAccountContainer .content li img {
+  margin: auto 0;
+  width: 40px;
+  height: 40px;
+}
+.container .switchAccountContainer .content li div > * {
+  margin: 0;
+}
+.container .item {
+  box-shadow: 0 2px 2px rgba(58, 58, 58, 0.08);
+  cursor: pointer;
+  font-size: 18px;
+}
+.container .item:hover {
+  background-color: #eaeaea;
+}
+.container .item:active {
+  opacity: 0.7;
+}
+.container .logoutBtn {
+  color: rgb(255, 67, 67);
+}
+.container .logoutBtn svg {
+  color: rgb(255, 67, 67) !important;
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  background-color: #f2f2f2;
+}/*# sourceMappingURL=menu.module.css.map */

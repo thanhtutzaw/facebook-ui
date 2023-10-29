@@ -1,11 +1,9 @@
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Head from "next/head";
 import Link from "next/link";
 import s from "../styles/Home.module.scss";
-import Head from "next/head";
-import { useRouter } from "next/router";
 function ErrorPage() {
-  const router= useRouter()
   return (
     <>
       <Head>
@@ -18,15 +16,25 @@ function ErrorPage() {
         <link rel="icon" href="/logo.svg" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <div className={s.pageErrorInfoContainer}>
-        <p className={s.exclamation}>
+      <div
+        className={`px-4 text-center grid mt-[65px] ${s.pageErrorInfoContainer}`}
+      >
+        <p className={`text-[rgb(169,169,169)] text-[2rem] my-2`}>
           <FontAwesomeIcon icon={faExclamationCircle} />
         </p>
-        <h1>404 - Couldn&apos;t find this Account</h1>
-        <p className={s.message}>
+        <h1 className="mb-0 font-medium [font-size:_clamp(25px,9vw,40px)]">
+          404 - Couldn&apos;t find this Account
+        </h1>
+        <p className={`[font-size:_clamp(16px,1vw,20px)]`}>
           We can&apos;t find the page you are looking for
         </p>
-        <Link href="/" className={s.goHome}>
+        <Link
+          href="/"
+          className={`
+          focus-visible:outline-primary
+    hover:underline
+          border-0 bg-transparent text-base  text-center p-2 rounded-2xl text-primary`}
+        >
           Go to Home Page
         </Link>
       </div>

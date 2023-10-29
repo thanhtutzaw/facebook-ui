@@ -1,41 +1,31 @@
 @import "../styles/mixins";
 
-.headerContainer {
-  transition:
-    transform 0.18s ease,
-    height 0.15s ease;
-  will-change: height, transform;
-  transform: translateY(0px);
-  position: sticky;
-  top: -60px;
-  z-index: 200;
-  .header {
-    max-width: var(--main-width);
-    background-color: white;
-    scroll-snap-align: start;
-    transition: background-color 0.2s ease-in-out;
-    .action {
+.header {
+  max-width: var(--main-width);
+  background-color: white;
+  scroll-snap-align: start;
+  transition: background-color 0.2s ease-in-out;
+  .action {
+    display: flex;
+    gap: 0.7rem;
+    margin-right: 0.7rem;
+    > button {
+      cursor: pointer;
+      border-radius: 50px;
+      overflow: auto;
+      border: none;
+      text-align: left;
+      padding: 0.5rem;
       display: flex;
-      gap: 0.7rem;
-      margin-right: 0.7rem;
-      > button {
-        cursor: pointer;
-        border-radius: 50px;
-        overflow: auto;
-        border: none;
-        text-align: left;
-        padding: 0.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: rgb(245, 223, 223);
-        background-color: transparent;
-        border: 0;
-        font-size: 18px;
-        width: 40px;
-        height: 40px;
-        background-color: rgb(243, 243, 243);
-      }
+      align-items: center;
+      justify-content: center;
+      color: rgb(245, 223, 223);
+      background-color: transparent;
+      border: 0;
+      font-size: 18px;
+      width: 40px;
+      height: 40px;
+      background-color: rgb(243, 243, 243);
     }
   }
 }
@@ -47,12 +37,12 @@
   align-items: center;
   height: 60px;
   background-color: white;
-  .logo {
-    color: var(--blue-origin);
-    font-weight: bold;
-    font-size: clamp(1.6em, 2vw, 3em);
-    margin-left: 0.7rem;
-  }
+  // .logo {
+  //   color: var(--blue-origin);
+  //   font-weight: bold;
+
+  //   margin-left: 0.7rem;
+  // }
 }
 
 .nav {
@@ -120,137 +110,127 @@
   }
 }
 
-.login {
-  height: 100dvh;
+.login{
+.closeSignup {
+  background-color: var(--blue-origin);
+  border: 0;
+  padding: 0.5rem;
   display: flex;
-  flex-direction: column;
+  width: 45px;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
-  // padding-bottom: 2rem;
-  .closeSignup {
-    opacity: 1;
-    background-color: var(--blue-origin);
-    border: 0;
-    padding: 0.5rem;
-    display: flex;
-    width: 45px;
-    justify-content: center;
-    align-items: center;
-    height: 45px;
-    // font-size: 1rem;
-    border-radius: 50%;
-    color: white;
-    position: relative;
-    opacity: 0;
-    font-size: 1.8rem;
-    &:active {
-      opacity: 0.5 !important;
-      transition: opacity 0.3s ease-in-out;
-    }
-  }
-  .or {
-    position: relative;
-    user-select: none;
-  }
-  .emailLoginLink {
-    text-decoration: underline;
-    color: var(--blue-origin) !important;
-    cursor: pointer;
-    user-select: none;
-    &:focus-visible {
-      outline-color: var(--blue-origin);
-    }
-  }
-  .Loginlabel {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    border: 0;
-    border-radius: 50px;
-    // width:300px !important;
-    // height: 100% !important;
-    // width: 100% !important;
-    font-size: 1rem;
-    padding: 0;
-    background-color: rgb(209, 209, 209);
-    background-color: transparent;
-    color: white;
-
-    // height: 300px;
-  }
-  .emailLogin {
-    gap: 10px;
-    // padding: 0.7rem;
-    color: white;
-    background-color: rgb(0, 122, 246);
-    border-radius: 50px;
-    outline: none;
-    cursor: pointer;
-    box-shadow: rgba(0, 0, 0, 0.12) 0px 2px 20px;
-    word-break: break-word;
-    white-space: nowrap;
-    will-change: padding;
-    -webkit-tap-highlight-color: transparent;
-    min-width: 260px;
-    z-index: 100;
-    &:has(.Loginlabel:focus) {
-      outline: 2px solid var(--blue-origin);
-      outline-offset: 2px;
-    }
-    &:focus-visible {
-      outline: 1px solid black;
-    }
-    &:active:not(.emailForm) {
-      scale: 1.1;
-    }
-  }
-  .SecondaryloginBtn {
-    z-index: 100;
-  }
-  .SecondaryloginBtn {
-    display: flex;
-    gap: 10px;
-
-    cursor: pointer;
-    // width: 300px;
-    height: 75px;
-    padding: 0.7rem;
-    background-color: white;
-    color: var(--blue-origin);
-    border: 1px solid var(--blue-origin);
-    font-size: 1rem;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 33px;
-    font-family:
-      system-ui,
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      Roboto,
-      Oxygen,
-      Ubuntu,
-      Cantarell,
-      "Open Sans",
-      "Helvetica Neue",
-      sans-serif;
-    transition: all 0.3s ease-in-out;
-
-    &:hover {
-      background-color: var(--blue-origin);
-      color: white;
-    }
-    &:active {
-      background-color: #0c60c2;
-      color: white;
-    }
+  height: 45px;
+  border-radius: 50%;
+  color: white;
+  position: relative;
+  opacity: 0;
+  font-size: 1.8rem;
+  
+  &:active {
+    opacity: 0.5 !important;
+    transition: opacity 0.3s ease-in-out;
   }
 }
+.or {
+  position: relative;
+  user-select: none;
+}
+// .emailLoginLink {
+//   text-decoration: underline;
+//   cursor: pointer;
+//   user-select: none;
+//   &:focus-visible {
+//     outline-color: var(--blue-origin);
+//   }
+// }
+.Loginlabel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 50px;
+  // width:300px !important;
+  // height: 100% !important;
+  // width: 100% !important;
+  font-size: 1rem;
+  padding: 0;
+  background-color: rgb(209, 209, 209);
+  background-color: transparent;
+  color: white;
 
+  // height: 300px;
+}
+.emailLogin {
+  gap: 10px;
+  // padding: 0.7rem;
+  color: white;
+  background-color: rgb(0, 122, 246);
+  border-radius: 50px;
+  outline: none;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 2px 20px;
+  word-break: break-word;
+  white-space: nowrap;
+  will-change: padding;
+  -webkit-tap-highlight-color: transparent;
+  min-width: 260px;
+  z-index: 100;
+  &:has(.Loginlabel:focus) {
+    outline: 2px solid var(--blue-origin);
+    outline-offset: 2px;
+  }
+  &:focus-visible {
+    outline: 1px solid black;
+  }
+  &:active:not(.emailForm) {
+    scale: 1.1;
+  }
+}
+.SecondaryloginBtn {
+  z-index: 100;
+}
+.SecondaryloginBtn {
+  display: flex;
+  gap: 10px;
+
+  cursor: pointer;
+  // width: 300px;
+  height: 75px;
+  padding: 0.7rem;
+  background-color: white;
+  color: var(--blue-origin);
+  border: 1px solid var(--blue-origin);
+  font-size: 1rem;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 33px;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Open Sans",
+    "Helvetica Neue",
+    sans-serif;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    background-color: var(--blue-origin);
+    color: white;
+  }
+  &:active {
+    background-color: #0c60c2;
+    color: white;
+  }
+}
+}
 // @media only screen and (min-width: 500px) {
 @media only screen and (hover: hover) and (pointer: fine) {
   .nav .navItems:hover > div {
@@ -304,47 +284,6 @@
     min-width: 100%;
   }
 }
-.pageErrorInfoContainer {
-  padding: 0 1rem;
-  text-align: center;
-  display: grid;
-  margin-top: 65px;
-  h1 {
-    margin-bottom: 0;
-    font-size: clamp(25px, 9vw, 40px);
-    font-weight: 500;
-  }
-  .exclamation {
-    color: darkgray;
-    font-size: 2rem;
-    margin: 0.5rem 0;
-  }
-  .message {
-    font-size: clamp(16px, 1vw, 20px);
-  }
-  .goHome {
-    border: 0;
-    border-radius: 1rem;
-    background: transparent;
-    font-size: 1rem;
-    display: block;
-    justify-content: center;
-    text-align: center;
-    margin: 0 auo;
-    margin: auto;
-    padding: 0.5rem;
-    border-radius: 1rem;
-    color: var(--blue-origin);
-
-    &:focus-visible {
-      outline-color: var(--blue-origin);
-    }
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
-
 .postContainer {
   > div,
   > div > div {
@@ -552,11 +491,11 @@
     }
   }
   .addMedia {
-    border-radius: 100px;
-    border: 0;
-    background-color: transparent;
-    padding: 0.5rem;
-    height: 45px;
+    // border-radius: 100px;
+    // border: 0;
+    // background-color: transparent;
+    // padding: 0.5rem;
+    // height: 45px;
     @include mouse() {
       &:hover {
         background-color: rgb(240, 240, 240);

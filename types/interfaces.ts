@@ -9,7 +9,10 @@ export const QueryKey = {
   suggestedFriends: "suggestedFriends",
   pendingFriends: "pendingFriends",
 };
-
+export interface TAcceptedFriends {
+  id: string;
+  author: UserRecord;
+}
 type timeStamp =
   | {
       seconds: number;
@@ -133,7 +136,7 @@ export interface RecentPosts {
 export interface AppProps {
   setprofileSrc?: Function;
   profileSrc?: string;
-  queryPageData?: any;
+  queryPageData?: unknown;
   hasMore?: boolean;
   token?: DecodedIdToken | null;
   fcmToken?: string | string[];
@@ -156,7 +159,6 @@ export interface AppProps {
   setUnReadNotiCount?: Function;
   setsortedPost?: Function;
   posts?: Post[];
-  // email?: string | null;
   headerContainerRef?: RefObject<HTMLDivElement>;
   profile?: account["profile"] | null;
   account?: UserRecord | null;

@@ -29,6 +29,7 @@ export default function Card(props: { children: ReactNode; f: friends }) {
           }}
         >
           <Image
+          loading="lazy"
             fill
             style={{ objectFit: "cover" }}
             className={s.profile}

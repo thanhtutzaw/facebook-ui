@@ -17,7 +17,7 @@ export function DevelopedByThanHtutZaw({
           }}
           transition={{ duration: toggleSignUp ? 0.4 : 0.8 }}
           tabIndex={-1}
-          className="githublink"
+          className={"absolute bottom-0 p-4 text-base text-primary"}
           href="https://github.com/thanhtutzaw"
           target="_blank"
           rel="noreferrer"

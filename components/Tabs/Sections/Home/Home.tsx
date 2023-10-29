@@ -16,8 +16,14 @@ import Story from "./Story/Story";
 export default function Home(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const router = useRouter();
-  const {profileSrc, profile, postEnd, getMorePosts, headerContainerRef, hasMore } =
-    useContext(AppContext) as AppProps;
+  const {
+    profileSrc,
+    profile,
+    postEnd,
+    getMorePosts,
+    headerContainerRef,
+    hasMore,
+  } = useContext(AppContext) as AppProps;
   const { setuploadButtonClicked, active } = useContext(
     PageContext
   ) as PageProps;
@@ -102,7 +108,14 @@ export default function Home(props: { tabIndex: number }) {
             setuploadButtonClicked?.(true);
           }}
           tabIndex={-1}
-          className={styles.addMedia}
+          className={`rounded-full
+    border-0
+    bg-transparent
+    p-2
+    h-9
+    w-9
+    items-center
+    justify-center flex ${styles.addMedia}`}
         >
           <FontAwesomeIcon color="#0070f3" icon={faPhotoFilm} />
         </button>

@@ -12,7 +12,16 @@ export default function Info(props: {
   const { signupLoading, handleChange, Account, setAccount, emailRef } = props;
   return (
     <>
-      <h2>Account Info</h2>
+      <h2
+      className={`text-black
+        overflow-hidden
+        overflow-ellipsis
+        text-[1.4rem]
+        mt-[revert]
+        text-center
+        font-medium
+        mb-2`}
+      >Account Information</h2>
       <input
         onChange={handleChange}
         onKeyDown={(e) => {

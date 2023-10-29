@@ -1,11 +1,6 @@
 .container {
     transition: transform 0.3s ease-in-out;
     height: 0;
-    // padding: 1rem;
-    // height: 100%;
-    // .myPost > div {
-    //     margin: 0.5rem 0;
-    // }
     .info {
         transition: all 0.3s ease-in-out;
         display: flex;
@@ -240,7 +235,9 @@
             border: 0;
             padding: 10px;
             font-size: 18px;
-            background-color: rgb(238, 238, 238);
+            background-color: rgb(238, 238, 238) ;
+            line-height: normal;
+            font-family: Arial, Helvetica, sans-serif;
             gap: 0.5rem;
             &:not(:active) {
                 transition: initial;
@@ -256,6 +253,8 @@
         border-radius: 100%;
         object-fit: cover;
         outline: 1px solid rgba(128, 128, 128, 0.168627451);
+        // background-color: rgb(241, 241, 241);
+    // background-color: rgb(var(--avatarBg));
     }
     .myPost {
         > div > div {

@@ -33,7 +33,7 @@ export default function Friend(props: FriendProps) {
       </div>
       {pending.length > 0 && (
         <div className={s.request}>
-          <h2 className={s.header}>
+          <h2 className={`bold-title ${s.header}`}>
             <p>
               Friends Requests{" "}
               <span style={{ color: "red" }}>{pending.length}</span>
@@ -46,7 +46,7 @@ export default function Friend(props: FriendProps) {
       )}
       <div className={s.suggest}>
         {suggested.length > 0 && (
-          <h2 className={s.header}>
+          <h2 className={`bold-title ${s.header}`}>
             <p>People you may know</p>
           </h2>
         )}

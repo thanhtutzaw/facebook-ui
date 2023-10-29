@@ -1,21 +1,10 @@
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  OrderByDirection,
-  Query,
-  QueryConstraint,
-  QueryLimitConstraint,
-  Unsubscribe,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
-} from "firebase/firestore";
+import { Unsubscribe, onSnapshot } from "firebase/firestore";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { Default_Query_LIMIT, LikedUsers_LIMIT } from "../../lib/QUERY_LIMIT";
 import {
   DescQuery,
   JSONTimestampToDate,
@@ -92,8 +81,8 @@ export function LikedUsers({
         </motion.button>
       </header>
       {!loading ? (
-        Likes?.length > 0 ? (
-          <div>
+        Likes?.length > 0 && (
+          <ul>
             {Likes.map((l) => (
               <Link href={l.uid.toString()} key={l.uid.toString()}>
                 <AuthorInfo
@@ -116,10 +105,7 @@ export function LikedUsers({
                 </AuthorInfo>
               </Link>
             ))}
-            {/* <Spinner style={{ marginTop: "10px" }} /> */}
-          </div>
-        ) : (
-          <></>
+          </ul>
         )
       ) : (
         <div
@@ -136,4 +122,3 @@ export function LikedUsers({
     </>
   );
 }
-

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { DevelopedByThanHtutZaw } from "./DevelopedByThanHtutZaw";
 
 export function Welcome({
-  expired=false,
+  expired = false,
   postError = "",
   setresourceError,
 }: {
@@ -67,16 +67,10 @@ export function Welcome({
         </>
       ) : (
         <>
-          <h2
-            style={{
-              userSelect: "none",
-            }}
-          >
-            Welcome Back 🎉
-          </h2>
+          <h2 className="select-none">Welcome Back 🎉</h2>
           <p
+            className="select-none"
             style={{
-              userSelect: "none",
               color: "gray",
             }}
           >

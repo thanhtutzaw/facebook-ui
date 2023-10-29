@@ -17,13 +17,11 @@ export function AppProvider(props: AppProps) {
     setprofileSrc,
     profileSrc,
     expired,
-    acceptedFriends,
     active,
     setlimitedPosts,
     limitedPosts,
     uid,
     posts,
-    hasMore,
   } = props;
   const [postLoading, setpostLoading] = useState(false);
   const [postEnd, setPostEnd] = useState(false);

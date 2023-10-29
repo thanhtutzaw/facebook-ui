@@ -10,6 +10,7 @@ import BackHeader from "../../components/Header/BackHeader";
 import { collectionBasePath, userToJSON } from "../../lib/firebase";
 import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
 import s from "./index.module.scss";
+import { TAcceptedFriends } from "@/types/interfaces";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
@@ -46,10 +47,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 };
-interface TAcceptedFriends {
-  id: string;
-  author: UserRecord;
-}
+
 export default function Page(props: { acceptedFriends: TAcceptedFriends[] }) {
   const { acceptedFriends } = props;
   return (
@@ -58,19 +56,14 @@ export default function Page(props: { acceptedFriends: TAcceptedFriends[] }) {
         <h2>Messages</h2>
       </BackHeader>
       <div
-        style={{
-          marginTop: "65px",
-          height: "calc(100vh - 65px)",
-          backgroundColor: "#dadada",
-        }}
-        className={s.container}
+        className={`h-[calc(100vh-65px)] mt-[65px] bg-[#dadada] ${s.container}`}
       >
         <ul>
           {acceptedFriends.map((friend) => (
             <li key={friend.id} aria-label="Go to Friends Profile">
               <Link href={`chat/${friend.id}`} key={friend.id}>
                 <Image
-                  className={s.profile}
+                  className={`rounded-full h-[50px]`}
                   alt={"name"}
                   width={50}
                   height={50}

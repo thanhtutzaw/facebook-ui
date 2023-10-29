@@ -1,29 +1,27 @@
-import { AppContext } from "@/context/AppContext";
-import { NOTI_LIMIT } from "@/lib/QUERY_LIMIT";
+import { NOTI_LIMIT, UnReadNoti_LIMIT } from "@/lib/QUERY_LIMIT";
 import { DescQuery, db, getCollectionPath, getPath } from "@/lib/firebase";
 import { getMessage } from "@/lib/firestore/notifications";
 import { AppProps, Noti, QueryKey } from "@/types/interfaces";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   Timestamp,
+  Unsubscribe,
   doc,
+  getDoc,
   getDocs,
+  limit,
+  onSnapshot,
   query,
   serverTimestamp,
   startAfter,
   updateDoc,
+  where,
 } from "firebase/firestore";
-import { useContext, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useActive } from "./useActiveTab";
 import useQueryFn from "./useQueryFn";
-function useNotifications() {
+function useNotifications(currentUid: string) {
   const { active: tab } = useActive();
-  const {
-    uid: currentUid,
-    lastPullTimestamp,
-    UnReadNotiCount,
-    setUnReadNotiCount,
-  } = useContext(AppContext) as AppProps;
   const fetchNoti = async function (pageParam: Noti | null = null) {
     if (!currentUid) return;
     let notiQuery = DescQuery(
@@ -33,7 +31,6 @@ function useNotifications() {
     const userDoc = doc(db, getCollectionPath.users({ uid: currentUid }));
     await updateDoc(userDoc, { lastPullTimestamp: serverTimestamp() });
     // if (UnReadNotiCount === 1 && UnReadNotiCount > 0) {
-    // setUnReadNotiCount?.(0);
     // }
     if (pageParam) {
       const date = new Timestamp(
@@ -70,6 +67,9 @@ function useNotifications() {
     }
   };
   const { queryFn } = useQueryFn();
+  const [UnReadNotiCount, setUnReadNotiCount] = useState(0);
+  const [lastPullTimestamp, setlastPullTimestamp] =
+    useState<AppProps["lastPullTimestamp"]>(undefined);
   useEffect(() => {
     if (UnReadNotiCount ?? 0 > 0) {
       queryFn.refetchQueries("noti");
@@ -110,6 +110,36 @@ function useNotifications() {
   //   //     })
   //   //   );
   // }, [currentUid]);
+
+  useEffect(() => {
+    if (!currentUid) return;
+    let unsubscribeNotifications: Unsubscribe;
+    const fetchNotiCount = async () => {
+      const userDoc = doc(db, getCollectionPath.users({ uid: currentUid }));
+      try {
+        const doc = await getDoc(userDoc);
+        const lastPull = doc.data()?.lastPullTimestamp ?? Date.now();
+        setlastPullTimestamp(lastPull);
+        const notiCountQuery = query(
+          getPath("notifications", { uid: currentUid }),
+          where("createdAt", ">", lastPull),
+          limit(UnReadNoti_LIMIT)
+        );
+        // if (UnReadNotiCount >= 10) return;
+        // console.log("noti listening realtime - unRead" + UnReadNotiCount);
+        unsubscribeNotifications = onSnapshot(notiCountQuery, (latestNoti) => {
+          // console.log(querySnapshot.docs.map((doc) => doc.data()));
+          setUnReadNotiCount(latestNoti.size); // getting unRead noti count
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchNotiCount();
+    return () => {
+      if (unsubscribeNotifications) unsubscribeNotifications();
+    };
+  }, [UnReadNotiCount, currentUid]);
   function updateReadNoti(noti: Noti) {
     const ref = doc(
       db,
@@ -125,6 +155,8 @@ function useNotifications() {
     updateDoc(ref, readedData);
   }
   return {
+    UnReadNotiCount,
+    setUnReadNotiCount,
     isLoading,
     hasNextPage,
     error,

@@ -41,7 +41,7 @@ export default function Comment(props: {
           <></>
         )} */}
       </ul>
-      {!hasMore && !commentEnd && (
+      {/* {!hasMore && !commentEnd && (
         <p
           style={{
             textAlign: "center",
@@ -50,7 +50,7 @@ export default function Comment(props: {
         >
           {comments?.length !== 0 && "No more Comment"}
         </p>
-      )}
+      )} */}
       {!hasMore && !commentEnd ? null : hasMore && !commentEnd ? (
         <Spinner style={{ marginTop: "0" }} />
       ) : (

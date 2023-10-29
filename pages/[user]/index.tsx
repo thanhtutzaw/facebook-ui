@@ -90,26 +90,32 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     let mypostQuery = DescQuery(
       getPath("posts", { uid: String(uid) }),
       MYPOST_LIMIT + 1,
-      where("visibility", "in", ["Public"]),
+      where("visibility", "in", ["Public"])
     );
     if (isFriend) {
       mypostQuery = DescQuery(
         getPath("posts", { uid: String(uid) }),
         MYPOST_LIMIT + 1,
-        where("visibility", "in", ["Friend", "Public"]),
+        where("visibility", "in", ["Friend", "Public"])
       );
     }
+    let hasMore = false;
     const myPost = isBlocked
       ? null
       : await getPostWithMoreInfo(token.uid, mypostQuery);
-    console.log(
-      myPost?.map((p) => {
-        return {
-          liked: p.isLiked,
-          count: p.likeCount,
-        };
-      })
-    );
+    // myPost?.shift();
+    hasMore = (myPost?.length ?? 0) > MYPOST_LIMIT;
+    if (hasMore) {
+      myPost?.pop();
+    }
+    // console.log(
+    //   myPost?.map((p) => {
+    //     return {
+    //       liked: p.isLiked,
+    //       count: p.likeCount,
+    //     };
+    //   })
+    // );
     if (userExist) {
       const profile = user?.data().profile as account["profile"];
       return {
@@ -162,7 +168,7 @@ export default function UserProfile({
   canAccept: Boolean;
   canUnBlock: Boolean;
 }) {
-  const {queryFn} = useQueryFn();
+  const { queryFn } = useQueryFn();
   const router = useRouter();
   const [playAcceptSound] = useSound(confirm);
 
@@ -208,8 +214,8 @@ export default function UserProfile({
               scroll: false,
             });
             setstatus("friend");
-            queryFn.invalidate("pendingFriends")
-            queryFn.refetchQueries("pendingFriends")
+            queryFn.invalidate("pendingFriends");
+            queryFn.refetchQueries("pendingFriends");
           } catch (error) {
             console.error(error);
           }
@@ -258,9 +264,7 @@ export default function UserProfile({
         </div> */}
           Friends
         </button>
-        <Menu
-          friendMenuToggle={friendMenuToggle}
-        >
+        <Menu friendMenuToggle={friendMenuToggle}>
           <button
             aria-label="Unfriend"
             // className={s.danger}
@@ -305,9 +309,7 @@ export default function UserProfile({
           <FontAwesomeIcon icon={faClock} />
           Pending
         </button>
-        <Menu
-          friendMenuToggle={friendMenuToggle}
-        >
+        <Menu friendMenuToggle={friendMenuToggle}>
           <button
             aria-label="Cancel friend request"
             onClick={async (e) => {
@@ -361,6 +363,7 @@ export default function UserProfile({
         limit(MYPOST_LIMIT + 1)
       );
       const finalPost = await getPostWithMoreInfo(token.uid!, mypostQuery)!;
+      finalPost?.shift();
       console.log({ limitedPosts });
       setlimitedPosts(limitedPosts?.concat(finalPost!));
       console.log({ finalPost });
@@ -422,15 +425,14 @@ export default function UserProfile({
                   name: `${userName}'s profile`,
                 });
               }}
-              priority={false}
-              className={s.profile}
+              className={`bg-avatarBg  ${s.profile}`}
               width={500}
               height={170}
               style={{ objectFit: "cover", width: "120px", height: "120px" }}
               alt={`${userName}'s profile`}
               src={checkPhotoURL(profile?.photoURL)}
             />
-            <h3 style={{ marginBottom: "18px" }}>{userName}</h3>
+            <h3 className="font-semibold text-base">{userName}</h3>
             <p
               style={{
                 color: profile?.bio === "" ? "gray" : "initial",
@@ -493,7 +495,7 @@ export default function UserProfile({
                         {!loading ? (
                           <FontAwesomeIcon icon={faPlus} />
                         ) : (
-                          <Spin/>
+                          <Spin />
                         )}
                         {!loading ? "Add Friend" : "Adding..."}
                       </button>
@@ -561,7 +563,7 @@ function Menu({
   );
 }
 
-function Spin(){
+function Spin() {
   return (
     // <Spinner
     //   key={loading ? "true" : "false"}

@@ -19,8 +19,16 @@ function NewAccount(props: {
   return (
     <>
       <h2
+      className={`text-black
+        overflow-hidden
+        overflow-ellipsis
+        text-[1.4rem]
+        mt-[revert]
+        text-center
+        font-medium
+        mb-2`}
         style={{
-          textAlign: title ? "center" : "initial",
+          // textAlign: title ? "center" : "initial",
           marginTop: title ? "0" : "revert",
         }}
       >

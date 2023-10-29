@@ -10,7 +10,6 @@ import s from "./index.module.scss";
 import Spinner from "@/components/Spinner";
 
 export default function Content(props: {
- 
   hasNextPage?: boolean;
   error?: any;
   infoRef: RefObject<HTMLHeadElement>;
@@ -27,7 +26,6 @@ export default function Content(props: {
   sortedPost: Post[];
 }) {
   const {
-   
     hasNextPage,
     tab,
     error,
@@ -42,7 +40,7 @@ export default function Content(props: {
     setsortby,
     sortedPost,
   } = props;
-  const { updatePost , profile } = useContext(AppContext) as AppProps;
+  const { updatePost, profile } = useContext(AppContext) as AppProps;
   return (
     <div
       style={{
@@ -56,9 +54,9 @@ export default function Content(props: {
           // top: selectMode ? infoRef?.current?.clientHeight! : 0,
         }}
         ref={headerRef}
-        className={s.header}
+        className={`${s.header}`}
       >
-        <h2>My Posts</h2>
+        <h2 className="bold-title">My Posts</h2>
 
         <button
           aria-expanded={sort}
@@ -134,7 +132,6 @@ export default function Content(props: {
             tabIndex={1}
             postLoading={hasNextPage}
           />
-          
         </>
       )}
     </div>

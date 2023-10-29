@@ -51,11 +51,9 @@ export default function PostFallback({
               </button>
             ) : (
               <button
-                style={{
-                  background: "transparent",
-                  marginLeft: ".5rem",
-                  border: "1px solid black",
-                }}
+                className="bg-transparent
+                 ml-2
+                border-[1px]  border-black border-solid px-1"
                 onClick={async (e) => {
                   e.stopPropagation();
                   e.preventDefault();

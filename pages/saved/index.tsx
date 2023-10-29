@@ -20,10 +20,7 @@ import {
   doc,
   getDoc,
   getDocs,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
+  onSnapshot
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import nookies from "nookies";
@@ -126,6 +123,7 @@ export default function Page(props: {
           marginTop: "65px",
           height: "calc(100vh - 65px)",
           backgroundColor: "#dadada",
+          overflow: "scroll",
         }}
         className={s.container}
       >

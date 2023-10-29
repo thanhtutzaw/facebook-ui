@@ -83,6 +83,6 @@ export default function useFriendRequest(uid: string) {
     return () => {
       if (unsubscribeFriendReqCount) unsubscribeFriendReqCount();
     };
-  }, [uid, friendReqCount]);
+  }, [friendReqCount, uid]);
   return { friendReqCount, soundRef };
 }

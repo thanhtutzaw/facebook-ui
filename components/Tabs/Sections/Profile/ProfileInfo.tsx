@@ -57,7 +57,7 @@ function ProfileInfo(props: {
           });
         }}
         priority={false}
-        className={s.profile}
+        className={`bg-avatarBg ${s.profile}`}
         width={500}
         height={170}
         style={{ objectFit: "cover", width: "120px", height: "120px" }}
@@ -86,7 +86,7 @@ function ProfileInfo(props: {
           </button>
         </>
       )}
-      <h3>
+      <h3 className="font-semibold text-base">
         {editToggle
           ? `${newProfile?.firstName ?? ""} ${newProfile?.lastName ?? ""}`
           : userName}

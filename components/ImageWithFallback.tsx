@@ -1,9 +1,10 @@
 import Image, { ImageProps } from "next/image";
-import { HTMLAttributes, useState } from "react";
+import { CSSProperties, HTMLAttributes, useState } from "react";
 import { Media } from "../types/interfaces";
 
 const ImageWithFallback = (
   props: {
+    // style2:CSSProperties
     id?: string;
     src: string;
     alt: string;
@@ -11,12 +12,16 @@ const ImageWithFallback = (
     media?: Media[];
   } & ImageProps & HTMLAttributes<HTMLImageElement>
 ) => {
+  const [loading, setLoading] = useState(true)
   const { media, alt, src, ...rest } = props;
   const [imgSrc, setImgSrc] = useState(src);
   const fallbackSrc =
     "https://www.cvent-assets.com/brand-page-guestside-site/assets/images/venue-card-placeholder.png";
   return (
     <Image
+    className={loading ? "bg-primary" : ''}
+    // style={{style2, border : loading ? '1px solid red' : '5px solid green'}}
+    onLoadingComplete={()=>setLoading(false)}
       //   style={{
       //     filter: imgSrc === fallbackSrc ? "invert(1)" : "initial",
       //   }}

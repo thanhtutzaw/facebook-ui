@@ -135,11 +135,8 @@ export default function Page(props: {
         </h2>
       </BackHeader>
       <div
-        style={{
-          marginTop: "65px",
-          minHeight: "calc(100vh - 65px)",
-        }}
-        className={s.container}
+        className={`mt-[65px]
+          min-h-[calc(100vh - 65px)] ${s.container}`}
       >
         <nav className={s.nav}>
           <button
@@ -170,7 +167,7 @@ export default function Page(props: {
         {firendLoading ? (
           <Spinner style={{ marginBlock: "1rem", paddingBlock: "1rem" }} />
         ) : friends.length <= 0 ? (
-          <p style={{ textAlign: "center", padding: "1rem" }}>
+          <p className="p-4 text-center">
             {status === "block" ? "Empty Blocked" : "Empty Friends"}
           </p>
         ) : (
@@ -231,13 +228,7 @@ function FriendList({
         >
           <Link draggable={false} href={friend.id.toString()} key={friend.id}>
             <div className={s.cardContainer}>
-              <div
-                style={{
-                  width: "50px",
-                  position: "relative",
-                  height: "50px",
-                }}
-              >
+              <div className="w-[50px] h-[50px] relative">
                 <Image
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
                   fill
@@ -246,7 +237,7 @@ function FriendList({
                   }'s profile picture`}
                   loading="lazy"
                   src={checkPhotoURL(friend.author?.photoURL)}
-                  style={{ objectFit: "cover", width: "100%" }}
+                  className="object-cover w-full"
                 />
               </div>
               <div className={s.infoContainer}>
@@ -440,7 +431,6 @@ function Menu({
           transition={{
             duration: 0.15,
           }}
-          // className={styles.actions}
         >
           <button
             aria-label="Block"

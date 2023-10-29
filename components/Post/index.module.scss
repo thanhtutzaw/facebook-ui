@@ -136,6 +136,7 @@
     }
     img {
         background-color: black;
+        
         display: block;
         max-width: 100%;
         object-fit: contain;
@@ -172,9 +173,10 @@
         display: flex;
         aspect-ratio: 16/9;
         object-fit: contain;
-        // object-fit: cover;
         max-width: 100%;
         margin: 0 auto;
+        // background-color: #eaeaea;
+        background-color: black;
     }
     > div:not(:only-child) {
         aspect-ratio: 9/10;
@@ -587,6 +589,7 @@
         padding: 0.5rem 1rem;
         transition: all 0.02s ease-in-out;
         text-align: left;
+        align-items: center;
         // svg {
         //     -webkit-text-fill-color: transparent !important;
         //     -webkit-text-stroke: black !important; // can be any color
@@ -615,6 +618,8 @@
     margin: initial !important;
     // margin-top: 2px !important;
     outline: 1px solid rgba(128, 128, 128, 0.168627451);
+    // background-color: rgb(241, 241, 241);
+    background-color: #e1e1e1;
     // border:34px solid red;
 }
 
@@ -626,6 +631,9 @@
     // border-block: 1px solid rgb(235, 235, 235);
     border-top: 1px solid #e4e4e4;
     .socialButton {
+        p {
+            font-size: 16px;
+        }
         transition: color 0.2s ease-in-out;
         &:active {
             opacity: 0.6;

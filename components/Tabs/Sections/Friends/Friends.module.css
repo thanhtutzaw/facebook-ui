@@ -1,0 +1,122 @@
+.container {
+  background-color: white;
+  padding: 0;
+  padding-bottom: 0.5rem;
+  min-height: calc(100dvh - 140px);
+}
+.container > div:first-child > button:first-child {
+  margin-left: 0;
+}
+.container > div:first-child > button:active {
+  animation: card 0.2s ease-in-out !important;
+}
+@keyframes card {
+  0% {
+    scale: 1;
+  }
+  50% {
+    scale: 0.95;
+  }
+  100% {
+    scale: 1;
+  }
+}
+.container > .action button {
+  margin: 0 8px;
+  padding: 10px;
+  height: initial;
+}
+.container button {
+  flex: 1;
+  height: 50px;
+  border: 0;
+  border-radius: 10px;
+  font-size: clamp(16px, 2.1vw, 20px);
+}
+.container .request .header,
+.container .suggest .header {
+  padding-inline: 1rem;
+  background-color: rgb(255, 255, 255);
+  overflow: auto;
+  gap: 20px;
+  height: 65px;
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+.container .request .header p,
+.container .suggest .header p {
+  margin: 0;
+}
+.container .request .header .length,
+.container .suggest .header .length {
+  color: red;
+}
+.container .request .card,
+.container .suggest .card {
+  padding-block: 1rem;
+  display: flex;
+  flex: 1 1;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  padding-inline: 2px;
+  margin-inline: 1rem;
+}
+.container .request .card .profile,
+.container .suggest .card .profile {
+  width: 80px;
+  height: 80px;
+  border-radius: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  outline: 1px solid rgba(128, 128, 128, 0.168627451);
+}
+.container .request .card .date,
+.container .suggest .card .date {
+  color: gray;
+  font-size: 16px;
+}
+.container .request .card p,
+.container .suggest .card p {
+  margin: 0;
+}
+.container .request .card .right,
+.container .suggest .card .right {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 10px;
+}
+.container .request .card .right .info,
+.container .suggest .card .right .info {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.container .request .card .right .info > p:first-child,
+.container .suggest .card .right .info > p:first-child {
+  max-width: 55vw;
+  width: 100%;
+  /* min-width: 100vw; */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1 1;
+  white-space: nowrap;
+}
+.container .request .card .right .action,
+.container .suggest .card .right .action {
+  gap: 10px;
+  display: flex;
+}
+.container .request .card .right .action .primary,
+.container .suggest .card .right .action .primary {
+  background-color: var(--blue-origin);
+  color: white;
+}
+.container .request .card .right .action :not(.primary):focus-visible,
+.container .suggest .card .right .action :not(.primary):focus-visible {
+  outline: 0 !important;
+  border: 1px solid var(--blue-origin) !important;
+}/*# sourceMappingURL=Friends.module.css.map */

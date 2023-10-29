@@ -55,7 +55,10 @@ export default function Login({ uid }: { uid: string }) {
     emailRef,
   } = useLogin();
   return (
-    <section className={styles.login}>
+    <section
+      className={` h-[100dvh]
+    flex flex-col justify-center items-center gap-4 ${styles.login}`}
+    >
       {uid ? (
         <Spinner fullScreen />
       ) : (
@@ -90,7 +93,8 @@ export default function Login({ uid }: { uid: string }) {
                   if (!toggleSignUp) return;
                   settoggleSignUp(false);
                 }}
-                className={styles.closeSignup}
+                className={`font-['Arial,_Helvetica,_sans-serif']
+                bg-primary text-white border-none p-2 flex w-9 justify-center items-center h-9 rounded-full relative opacity-0 text-3xl active:opacity-50 transition-opacity duration-300 ease-in-out`}
                 initial={{ opacity: 0, bottom: "-90px" }}
                 animate={{
                   opacity: !toggleSignUp ? 0 : 1,
@@ -103,7 +107,7 @@ export default function Login({ uid }: { uid: string }) {
             ) : (
               <motion.span
                 key={"or"}
-                className={styles.or}
+                className={`relative select-none`}
                 style={{ position: "relative", top: "-80px" }}
                 initial={{ opacity: 1, top: "-80px" }}
                 animate={{
@@ -181,7 +185,11 @@ export default function Login({ uid }: { uid: string }) {
                         className={signupStyles.error}
                       >
                         <h4
-                          style={{ margin: "0", color: "red" }}
+                          style={{
+                            margin: "0",
+                            color: "red",
+                            marginTop: ".5rem",
+                          }}
                         >{`Error (${error})`}</h4>
                         {/* {error === AuthErrorCodes.USER_DELETED && (
                           <Link
@@ -210,7 +218,12 @@ export default function Login({ uid }: { uid: string }) {
               )}
             </AnimatePresence>
           </div>
-          <Link href="login/email" className={styles.emailLoginLink}>
+          <Link
+            href="login/email"
+            className={
+              "text-primary underline cursor-pointer select-none focus-visible:outline-primary "
+            }
+          >
             Log in using Email
           </Link>{" "}
         </>

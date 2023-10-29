@@ -1,8 +1,4 @@
-import {
-  AuthErrorCodes,
-  getAuth,
-  onAuthStateChanged
-} from "firebase/auth";
+import { AuthErrorCodes, getAuth, onAuthStateChanged } from "firebase/auth";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -37,7 +33,7 @@ export default function Email() {
     seterror("");
     setloading(true);
     try {
-      const {signinError} = (await signin(email, password));
+      const { signinError } = await signin(email, password);
       if (signinError) {
         seterror(signinError.code);
         console.error(signinError);
@@ -67,8 +63,6 @@ export default function Email() {
           damping: 10,
           stiffness: 100,
         }}
-        // transition={{ duration: 5 }}
-        // animate={{ opacity: !signup ? 0 : 1, scale: !signup ? 0.5 : 1 }}
       >
         <div
           style={{
@@ -77,36 +71,26 @@ export default function Email() {
           }}
         >
           {error && (
-            <>
-              <motion.div
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: !error ? 0.5 : 1, opacity: !error ? 0 : 1 }}
-                exit={{ scale: 0.5, opacity: 0 }}
-                className={s.error}
-              >
-                <h4
-                  style={{ margin: "0", color: "red" }}
-                >{`Error (${error})`}</h4>
-                {error === AuthErrorCodes.USER_DELETED && (
-                  <Link
-                    style={{
-                      color: "var(--blue-origin)",
-                    }}
-                    href="/login"
-                  >
-                    Create New Account
-                  </Link>
-                )}
-              </motion.div>
-            </>
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: !error ? 0.5 : 1, opacity: !error ? 0 : 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              className={s.error}
+            >
+              <h4 className="m-0 text-red-500">{`Error (${error})`}</h4>
+              {error === AuthErrorCodes.USER_DELETED && (
+                <Link className="text-primary" href="/login">
+                  Create New Account
+                </Link>
+              )}
+            </motion.div>
           )}
 
           <NewAccount title="Login with Email" />
           <button
             disabled={loading}
-            style={{ width: "100%", textTransform: "uppercase" }}
             type="submit"
-            className={s.nextForm}
+            className={`w-full uppercase ${s.nextForm}`}
             aria-label="login"
           >
             {!loading ? "Login" : "Logging in"}

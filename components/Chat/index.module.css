@@ -1,0 +1,84 @@
+.input {
+  background-color: rgb(234, 234, 234);
+  background-color: rgb(229, 229, 229);
+  background: white;
+  border-top: 1px solid #dfdfdf;
+  position: fixed;
+  bottom: 0;
+  padding: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  width: 100vw;
+  max-width: var(--main-width);
+  gap: 10px;
+  align-items: center;
+}
+.input input,
+.input button {
+  font-size: 1rem;
+  border-radius: 1rem;
+  border: 0;
+}
+.input button {
+  background-color: transparent;
+  color: var(--blue-origin);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.1s ease-in-out;
+  padding: 10px;
+}
+.input button svg {
+  width: 25px;
+  height: 25px;
+}
+.input button:active {
+  scale: 0.9;
+  background-color: rgba(2, 105, 226, 0.2588235294);
+}
+.input input {
+  padding: 0.5rem;
+  flex: 1 1;
+  min-width: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  outline: 1px solid rgb(213, 213, 213);
+}
+.input input:focus-visible {
+  outline: 0;
+  outline: 1px solid rgb(191, 191, 191);
+}
+
+.info {
+  display: flex;
+  flex: 1 1;
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.info > a {
+  overflow: hidden;
+}
+.info > a p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile {
+  border-radius: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border: 0;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  outline: 1px solid rgba(128, 128, 128, 0.168627451);
+}
+
+.chatHeader {
+  display: flex;
+  flex: 1 1 0%;
+  gap: 0.5rem;
+  align-items: center;
+  overflow: hidden;
+}/*# sourceMappingURL=index.module.css.map */

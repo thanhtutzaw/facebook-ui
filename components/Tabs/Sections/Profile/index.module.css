@@ -1,0 +1,284 @@
+.container {
+  transition: transform 0.3s ease-in-out;
+  height: 0;
+}
+.container .info {
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  opacity: 1;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  padding-top: 1rem;
+  padding-bottom: 10px;
+  will-change: opacity;
+  position: relative;
+  z-index: 100000;
+  padding-bottom: 1rem;
+}
+.container .info .menuContainer {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  border-radius: 1rem;
+  overflow: hidden;
+  padding-block: 0.7rem;
+  background-color: rgb(241, 241, 241) !important;
+  z-index: 500;
+  box-shadow: 0 5px 12px rgba(136, 135, 135, 0.5);
+  max-height: 200px;
+  overflow-y: scroll;
+  flex-wrap: wrap;
+}
+.container .info .menuContainer:has(> button:only-child) {
+  padding-block: 0;
+}
+.container .info .menuContainer .danger {
+  color: red;
+  background-color: transparent !important;
+}
+.container .info .menuContainer > button {
+  display: flex;
+  justify-content: initial !important;
+  gap: 10px !important;
+  border: 0;
+  font-size: 18px;
+  padding: 0.5rem 0.8rem;
+  white-space: nowrap;
+  min-width: 180px;
+  transition: 0s;
+}
+.container .info .menuContainer > button:hover {
+  background-color: rgb(221, 221, 221) !important;
+}
+.container .info .menuContainer > button:active {
+  opacity: 0.5;
+}
+.container .info .menuContainer > button > svg {
+  width: 20px;
+  height: 20px;
+}
+.container .info .formContainer {
+  min-height: 41px;
+  display: grid;
+  grid-template-rows: 0fr;
+}
+.container .info .formContainer .editProfile {
+  overflow: hidden;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: 1;
+  cursor: default;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 1rem;
+}
+.container .info .formContainer .editProfile > div {
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-inline: 1rem;
+  max-width: 420px;
+}
+.container .info .formContainer .editProfile button {
+  height: 50px;
+  background-color: transparent;
+  border: 1px solid rgb(180, 180, 180);
+  font-size: 1rem;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out, opacity 0.2s ease-in-out;
+}
+.container .info .formContainer .editProfile button:nth-child(2) {
+  background-color: var(--blue-origin);
+  color: white;
+}
+.container .info .formContainer .editProfile button:active {
+  opacity: 0.5;
+  transition: initial;
+}
+.container .info .formContainer .editProfile button:first-child {
+  color: #f03547;
+  border-color: #f03547;
+}
+.container .info .formContainer .editProfile button:first-child:hover {
+  color: white;
+  background-color: red;
+  border: 0;
+  outline: 0;
+}
+.container .info .formContainer .editProfile button:first-child:active {
+  color: white;
+  background-color: red;
+  border: 0;
+  outline: 0;
+}
+.container .info .formContainer .editProfile input {
+  border: 1px solid rgb(180, 180, 180);
+  outline: 0;
+  padding: 20px 10px;
+  border-radius: 10px;
+  font-size: 1rem;
+  justify-content: center;
+  display: flex;
+  transition: all 0.2s ease-in-out;
+}
+.container .info .formContainer .editProfile input:focus {
+  border: 1px solid black;
+}
+.container .info .changePic {
+  background-color: transparent;
+  border: 0;
+  position: absolute;
+  top: 3rem;
+  font-size: 15px;
+  background-color: rgba(255, 255, 255, 0.637);
+  border-radius: 10px;
+  padding: 10px;
+  transition: background 0.2s ease-in-out;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.171);
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+.container .info .changePic:hover {
+  transition: background 0.2s ease-in-out;
+  background-color: white;
+}
+.container .info .changePic:active {
+  background-color: white;
+  opacity: 0.9;
+}
+.container .info img,
+.container .info h3,
+.container .info p {
+  cursor: default;
+}
+.container .info:is(.active) * {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+.container .info:is(:not(.active)) * {
+  opacity: 1;
+  transition: opacity 0.5s ease-in;
+}
+.container .info > h3 {
+  padding: 0 1rem;
+  text-align: center;
+  cursor: default;
+  margin-bottom: 18px;
+}
+.container .info .bio {
+  margin-top: 0;
+  font-size: 18px;
+  padding: 0 1rem;
+  text-align: center;
+}
+.container .info .actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.container .info .pending {
+  color: dimgray;
+}
+.container .info .secondary {
+  background: var(--blue-origin) !important;
+  color: white;
+}
+.container .info .confirm {
+  color: var(--blue-origin);
+  border: 1px solid var(--blue-origin) !important;
+  background: transparent !important;
+}
+.container .info button:active {
+  opacity: 0.6;
+}
+.container .info .editToggle {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  border-radius: 10px;
+  border: 0;
+  padding: 10px;
+  font-size: 18px;
+  background-color: rgb(238, 238, 238);
+  gap: 0.5rem;
+}
+.container .info .editToggle:not(:active) {
+  transition: initial;
+}
+.container .info .editToggle:active {
+  background-color: rgb(229, 229, 229);
+  transition: initial;
+}
+.container .profile {
+  border-radius: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  outline: 1px solid rgba(128, 128, 128, 0.168627451);
+}
+.container .myPost {
+  padding-bottom: 1rem;
+}
+.container .myPost > div > div {
+  margin: 0.5rem 0;
+}
+.container .myPost button:focus-visible {
+  outline: 2px solid var(--blue-origin);
+  border-radius: 100px;
+}
+.container .myPost .active {
+  background-color: gainsboro;
+  opacity: 0.7;
+}
+.container .myPost .active:hover {
+  color: black;
+}
+.container .myPost header {
+  background-color: white;
+  padding: 1rem 0.8rem;
+  padding: 0.8rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: default;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.container .myPost header h2 {
+  margin: 0;
+  display: flex;
+  flex: 1;
+}
+.container .myPost header > button {
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  font-size: 1rem;
+}
+.container .myPost header > button > div {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  height: 45px;
+  width: 45px;
+  border-radius: 100px;
+  border: 0;
+  padding: 10px;
+  font-size: 1rem;
+  background-color: rgb(238, 238, 238);
+}
+.container .myPost header > button > div:hover {
+  background-color: rgb(216, 216, 216);
+}
+.container .myPost header > button > div:active {
+  opacity: 0.8;
+  scale: 0.9;
+}/*# sourceMappingURL=index.module.css.map */

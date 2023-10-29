@@ -22,8 +22,13 @@ import Navitems from "./Navitems";
 import SelectModal from "./SelectModal";
 const Logo = () => {
   return (
-    <div className={s.logoContainer}>
-      <Link tabIndex={-1} scroll={false} href="/" className={s.logo}>
+    <div className={`snap-center flex flex-1 items-center h-[60px] bg-white`}>
+      <Link
+        tabIndex={-1}
+        scroll={false}
+        href="/"
+        className="text-primary font-bold [font-size:_clamp(1.6em,2vw,3em)] ml-[.7rem]"
+      >
         facebook
       </Link>
     </div>
@@ -37,16 +42,14 @@ export const pages = [
   { name: "Notifications", icon: <FontAwesomeIcon icon={faBell} /> },
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
-export default function Header(props: {
-  tabIndex: number;
-}) {
+export default function Header(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const { active, setActive } = useActive();
   const [width, setwidth] = useState<number>();
   const { selectMode, setselectMode, headerContainerRef } = useContext(
     AppContext
   ) as AppProps;
-  const {indicatorRef, setSelectedId } = useContext(PageContext) as PageProps;
+  const { indicatorRef, setSelectedId } = useContext(PageContext) as PageProps;
 
   useEffect(() => {
     const nav = document.getElementsByTagName("nav")[0];
@@ -69,15 +72,16 @@ export default function Header(props: {
     };
   }, [selectMode, setSelectedId, setselectMode]);
   return (
-    <div ref={headerContainerRef} className={s.headerContainer}>
-      <header
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-        className={s.header}
-      >
+    <div
+      ref={headerContainerRef}
+      className={`   
+    [transition:transform_0.18s_ease,height_0.15s_ease]
+    [will-change:transform,height]
+    translate-y-0
+    sticky top-[-60px]
+    z-[200]`}
+    >
+      <header className={`flex justify-between items-center ${s.header}`}>
         <Logo />
 
         <div className={s.action}>

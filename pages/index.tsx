@@ -1,8 +1,7 @@
 import {
   AuthErrorCodes,
-  Unsubscribe,
   getAuth,
-  onAuthStateChanged,
+  onAuthStateChanged
 } from "firebase/auth";
 import {
   arrayUnion,
@@ -10,11 +9,10 @@ import {
   getDoc,
   getDocs,
   limit,
-  onSnapshot,
   orderBy,
   query,
   updateDoc,
-  where,
+  where
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -41,14 +39,14 @@ import { AppProps, RecentPosts, account, friends } from "../types/interfaces";
 
 import SecondaryPage from "@/components/QueryPage";
 import { useActive } from "@/hooks/useActiveTab";
+import useNotifications from "@/hooks/useNotifications";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import Spinner from "../components/Spinner";
 import { PageContext, PageProps } from "../context/PageContext";
 import {
   MYPOST_LIMIT,
-  NewsFeed_LIMIT,
-  UnReadNoti_LIMIT,
+  NewsFeed_LIMIT
 } from "../lib/QUERY_LIMIT";
 export const getServerSideProps: GetServerSideProps<AppProps> = async (
   context
@@ -275,9 +273,6 @@ export default function Home({
   const [profileSrc, setprofileSrc] = useState(
     checkPhotoURL(profile?.photoURL)
   );
-  // const [queryPageCache, setqueryPageCache] = useState(
-  //   queryPageData ? [{ ...queryPageData }] : []
-  // );
   const {
     notiPermission,
     newsFeedData,
@@ -286,15 +281,6 @@ export default function Home({
     setnotiPermission,
   } = useContext(PageContext) as PageProps;
   ``;
-
-  // useEffect(() => {
-  //   if (queryPageData) {
-  //     setqueryPageCache((prev) => [...prev, queryPageData]);
-  //   }
-  // }, [queryPageData]);
-  // useEffect(() => {
-  //   console.log(queryPageCache);
-  // }, [queryPageCache]);
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -346,43 +332,11 @@ export default function Home({
       // router.push("/login");
     }
   }, [expired, uid]);
-  const [UnReadNotiCount, setUnReadNotiCount] = useState(0);
-  const [lastPullTimestamp, setlastPullTimestamp] =
-    useState<AppProps["lastPullTimestamp"]>(undefined);
-  useEffect(() => {
-    if (!uid) return;
-    let unsubscribeNotifications: Unsubscribe;
-    const fetchNotiCount = async () => {
-      const userDoc = doc(db, getCollectionPath.users({ uid }));
-      try {
-        const doc = await getDoc(userDoc);
-        const lastPull = doc.data()?.lastPullTimestamp ?? Date.now();
-        setlastPullTimestamp(lastPull);
-        const notiCountQuery = query(
-          getPath("notifications", { uid }),
-          where("createdAt", ">", lastPull),
-          limit(UnReadNoti_LIMIT)
-        );
-        // if (UnReadNotiCount >= 10) return;
-        // console.log("noti listening realtime - unRead" + UnReadNotiCount);
-        unsubscribeNotifications = onSnapshot(notiCountQuery, (latestNoti) => {
-          // console.log(querySnapshot.docs.map((doc) => doc.data()));
-          setUnReadNotiCount(latestNoti.size); // getting unRead noti count
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchNotiCount();
-    return () => {
-      if (unsubscribeNotifications) unsubscribeNotifications();
-    };
-  }, [UnReadNotiCount, uid]);
+
   // const [playFriendRequest] = useSound(friendReqSound, { volume: 0.11 });
   // useEffect(() => {
   //   async function fetchFriendReqLastPull() {
   //     await updateDoc(friendReqCountRef, {
-  //       lastPullTimestamp: serverTimestamp(),
   //     });
   //     // setfriendReqLastPull(
   //     // );
@@ -500,7 +454,7 @@ export default function Home({
     };
     requestNotificationPermission();
   }, [setnotiPermission]);
-
+  const { UnReadNotiCount, setUnReadNotiCount } = useNotifications(uid!);
   useEffect(() => {
     if (
       "Notification" in window &&
@@ -563,7 +517,6 @@ export default function Home({
         hasMore={hasMore}
         acceptedFriends={acceptedFriends}
         isFriendEmpty={isFriendEmpty}
-        lastPullTimestamp={lastPullTimestamp}
         UnReadNotiCount={UnReadNotiCount}
         setUnReadNotiCount={setUnReadNotiCount}
         active={activeTab!}

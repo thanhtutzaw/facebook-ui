@@ -1,9 +1,9 @@
+import { AppContext } from "@/context/AppContext";
+import { AppProps } from "@/types/interfaces";
 import dynamic from "next/dynamic";
 import {
   ElementType,
-  HTMLAttributeAnchorTarget,
   MouseEvent,
-  RefObject,
   useContext,
   useEffect,
   useState,
@@ -13,8 +13,6 @@ import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
 import Home from "./Sections/Home/Home";
 import t from "./Tabs.module.scss";
-import { AppContext } from "@/context/AppContext";
-import { AppProps } from "@/types/interfaces";
 const Friends = dynamic(() => import("./Sections/Friends/Friends"), {
   ssr: false,
 });
@@ -33,23 +31,13 @@ export default function Tabs() {
   const { indicatorRef, setpreventClick } = useContext(
     PageContext
   ) as PageProps;
-  const { setUnReadNotiCount, UnReadNotiCount } = useContext(
-    AppContext
-  ) as AppProps;
+  const { uid } = useContext(AppContext) as AppProps;
   const { active } = useActive();
 
   useEffect(() => {
     if (!active) return;
     window.location.hash = active === "/" ? "#home" : `#${active}`;
-    // if (active === "notifications") {
-    //   setUnReadNotiCount?.(0);
-    // }
   }, [active]);
-  // useEffect(() => {
-  //   if (active === "notifications") {
-  //     setUnReadNotiCount?.(0);
-  //   }
-  // }, [active, UnReadNotiCount, setUnReadNotiCount]);
 
   useEffect(() => {
     if (!canDrag) return;
@@ -119,7 +107,6 @@ export default function Tabs() {
   return (
     <div
       id="tabs"
-      // className={active === '/' ? styles.content : styles.acitveTab}
       className={styles.content}
       onMouseDown={(e) => {
         dragStart(e);
@@ -135,13 +122,16 @@ export default function Tabs() {
     >
       <Home tabIndex={active === "/" ? 0 : -1} />
       <div id="friends" className={styles.tab}>
-        <div style={{ paddingBottom: "0" }} className={t.header}>
+        <div
+          style={{ paddingBottom: "0" }}
+          className={`bold-title ${t.header}`}
+        >
           <h2>Friends</h2>
         </div>
         <Friends tabIndex={active === "friends" ? 0 : -1} />
       </div>
       <div id="watch">
-        <div className={t.header}>
+        <div className={`bold-title ${t.header}`}>
           <h2>Watch</h2>
         </div>
         <Watch />
@@ -149,9 +139,9 @@ export default function Tabs() {
 
       <Profile />
 
-      <Notifications />
+      <Notifications uid={uid!} />
       <div id="menu">
-        <div className={t.header}>
+        <div className={`bold-title ${t.header}`}>
           <h2>Menu</h2>
         </div>
         <Menu tabIndex={active === "menu" ? 0 : -1} />

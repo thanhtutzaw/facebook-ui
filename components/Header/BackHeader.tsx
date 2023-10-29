@@ -23,7 +23,7 @@ function BackHeader(props: {
     }
   };
   return (
-    <div style={props.style} className={s.backHeader}>
+    <div style={props.style} className={`bold-title ${s.backHeader}`}>
       <button
         style={{ color: props.color }}
         title="Back"

@@ -64,7 +64,7 @@ export default function SwitchAccount(props: {
       className={s.switchAccountContainer}
     >
       <header>
-        <h2>Switch Account</h2>
+        <h2 className="font-semibold">Switch Account</h2>
 
         {toggleSwitchAcc ? (
           <button aria-label="toggle">

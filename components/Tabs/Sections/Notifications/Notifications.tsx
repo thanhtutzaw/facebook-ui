@@ -10,9 +10,15 @@ import { useState } from "react";
 import t from "../../Tabs.module.scss";
 import s from "./Notifications.module.scss";
 
-export default function Notifications() {
-  const { isLoading, hasNextPage, error, updateReadNoti, fetchNextPage, notifications } =
-    useNotifications();
+export default function Notifications({uid}:{uid:string}) {
+  const {
+    isLoading,
+    hasNextPage,
+    error,
+    updateReadNoti,
+    fetchNextPage,
+    notifications,
+  } = useNotifications(uid);
   return (
     <div
       id="notifications"
@@ -26,7 +32,7 @@ export default function Notifications() {
         }
       }}
     >
-      <div className={t.header}>
+      <div className={`bold-title ${t.header}`}>
         <h2>Notifications</h2>
       </div>
       <div className={s.container}>
@@ -40,8 +46,12 @@ export default function Notifications() {
           <p style={{ textAlign: "center" }}>Empty Notifications</p>
         ) : (
           <ul>
-            {notifications?.map((noti:Noti) => (
-              <NotiItem updateReadNoti={updateReadNoti} key={noti.id} noti={noti} />
+            {notifications?.map((noti: Noti) => (
+              <NotiItem
+                updateReadNoti={updateReadNoti}
+                key={noti.id}
+                noti={noti}
+              />
             ))}
           </ul>
         )}

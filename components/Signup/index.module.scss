@@ -64,12 +64,6 @@
     > div {
         scroll-snap-align: start;
     }
-    h2 {
-        color: black;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-size: 1.4rem;
-    }
     > *:not(h2) {
         padding: 1rem;
         background-color: white;
@@ -91,6 +85,10 @@
         background-color: var(--blue-origin);
         /* background: #eaeaea; */
         border: 0;
+        height:41px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         color: white;
         font-size: 0.9rem;
         margin-top: auto;
@@ -200,5 +198,4 @@
     border-radius: 1rem;
     max-height: 102px;
     overflow: scroll;
-    
 }
