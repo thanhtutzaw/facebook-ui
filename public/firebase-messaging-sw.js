@@ -64,7 +64,7 @@ importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js')
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-messaging-compat.js'); // Import the Firebase v9 compat library for messaging
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAEXJn6eWHzxlh4BuXNtwyA82B-P7bwU4E",
+    apiKey: "AIzaSyAQ5kO77FuROPbxNsn9o3XT4cvyYOdCDHE",
     authDomain: "facebook-37f93.firebaseapp.com",
     projectId: "facebook-37f93",
     storageBucket: "facebook-37f93.appspot.com",
