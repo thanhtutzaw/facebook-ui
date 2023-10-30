@@ -52,10 +52,14 @@ import { useRouter } from "next/router";
 import nookies from "nookies";
 import confirm from "public/assets/confirm-beep.mp3";
 import {
+  ButtonHTMLAttributes,
+  DetailedHTMLProps,
   ReactElement,
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
+  useRef,
   useState,
 } from "react";
 import useSound from "use-sound";
@@ -264,7 +268,10 @@ export default function UserProfile({
         </div> */}
           Friends
         </button>
-        <Menu friendMenuToggle={friendMenuToggle}>
+        <Menu
+          setFriendMenuToggle={setFriendMenuToggle}
+          friendMenuToggle={friendMenuToggle}
+        >
           <button
             aria-label="Unfriend"
             // className={s.danger}
@@ -301,7 +308,9 @@ export default function UserProfile({
     pending: (
       <div>
         <button
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             setFriendMenuToggle((prev) => !prev);
           }}
           className={`${s.editToggle} ${s.pending}`}
@@ -309,7 +318,10 @@ export default function UserProfile({
           <FontAwesomeIcon icon={faClock} />
           Pending
         </button>
-        <Menu friendMenuToggle={friendMenuToggle}>
+        <Menu
+          setFriendMenuToggle={setFriendMenuToggle}
+          friendMenuToggle={friendMenuToggle}
+        >
           <button
             aria-label="Cancel friend request"
             onClick={async (e) => {
@@ -528,17 +540,35 @@ export default function UserProfile({
   );
 }
 function Menu({
+  setFriendMenuToggle,
   friendMenuToggle,
   children,
 }: {
+  setFriendMenuToggle: Function;
   friendMenuToggle: boolean;
   children: ReactNode;
 }) {
+  const menuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (friendMenuToggle) {
+        if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+          setFriendMenuToggle(false);
+        }
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [friendMenuToggle, setFriendMenuToggle]);
+
   return (
     <AnimatePresence mode="wait">
       {friendMenuToggle && (
         <motion.div
-          className={s.menuContainer}
+          ref={menuRef}
+          className={`items-center ${s.menuContainer}`}
           initial={{
             opacity: 0,
             scale: 0.8,
@@ -554,7 +584,6 @@ function Menu({
           transition={{
             duration: 0.15,
           }}
-          // className={styles.actions}
         >
           {children}
         </motion.div>
@@ -562,7 +591,15 @@ function Menu({
     </AnimatePresence>
   );
 }
-
+// function Toggler(
+//   children: ReactNode,
+//   ...rest: DetailedHTMLProps<
+//     ButtonHTMLAttributes<HTMLButtonElement>,
+//     HTMLButtonElement
+//   >
+// ) {
+//   return <button {...rest}>{children}</button>;
+// }
 function Spin() {
   return (
     // <Spinner

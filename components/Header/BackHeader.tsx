@@ -25,6 +25,7 @@ function BackHeader(props: {
   return (
     <div style={props.style} className={`bold-title ${s.backHeader}`}>
       <button
+      className="flex justify-center items-center"
         style={{ color: props.color }}
         title="Back"
         aria-label="Back Button"

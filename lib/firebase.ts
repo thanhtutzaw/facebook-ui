@@ -235,7 +235,6 @@ export function userToJSON<T>(obj: T): any {
     for (const key in modifiedObj) {
       if (Object.prototype.hasOwnProperty.call(modifiedObj, key)) {
         modifiedObj[key] = userToJSON(modifiedObj[key]);
-        // encodedProfileURL
       }
     }
     return modifiedObj;

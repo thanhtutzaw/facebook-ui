@@ -93,7 +93,8 @@ export function SocialCount(props: {
           animate={{
             opacity: togglereactionList ? 1 : 0,
           }}
-          className={s.SocialUserDialog}
+          className={`text-[16px] w-[clamp(500px,20vw,100vw)] p-[0_0_1em] border-0 rounded-2xl shadow-md overflow-hidden z-[1000] box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
+          ${s.SocialUserDialog}`}
           ref={SocialUserDialogRef}
           onClose={(e) => {
             settogglereactionList?.(false);

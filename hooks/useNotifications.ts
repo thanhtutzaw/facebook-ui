@@ -102,7 +102,6 @@ function useNotifications(currentUid: string) {
   //   //   const withAuthor = await Promise.all(
   //   //     likes.map(async (l) => {
   //   //       if (l.uid) {
-  //   //         const author = await getProfileByUID(l.uid?.toString());
   //   //         return { ...l, author };
   //   //       } else {
   //   //         return { ...l, author: null };

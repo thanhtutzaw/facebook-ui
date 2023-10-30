@@ -50,6 +50,7 @@
                 white-space: nowrap;
                 min-width: 180px;
                 transition: 0s;
+                align-items: center;
                 &:hover {
                     background-color: rgb(221, 221, 221) !important;
                 }
@@ -211,7 +212,7 @@
             justify-content: center;
         }
         .pending {
-            color: dimgray;
+            @apply text-dimgray
         }
         .secondary {
             background: var(--blue-origin) !important;
@@ -253,8 +254,6 @@
         border-radius: 100%;
         object-fit: cover;
         outline: 1px solid rgba(128, 128, 128, 0.168627451);
-        // background-color: rgb(241, 241, 241);
-    // background-color: rgb(var(--avatarBg));
     }
     .myPost {
         > div > div {

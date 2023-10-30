@@ -14,9 +14,11 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors:{
+      colors: {
+        dimgray: 'rgb(105 105 105 / <alpha-value>)',
+        gray: 'rgb(128 128 128 / <alpha-value>)',
         primary: 'rgb(var(--blue) / <alpha-value>)',
-        avatarBg : 'rgb(var(--avatar-bg) / <alpha-value>)',
+        avatarBg: 'rgb(var(--avatar-bg) / <alpha-value>)',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
