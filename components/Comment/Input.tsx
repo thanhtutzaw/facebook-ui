@@ -85,7 +85,16 @@ export default function CommentInput(props: {
       className={s.input}
     >
       <Image
-        className={s.profile}
+        className={`
+        rounded-full
+    object-cover
+    b-0
+    w-[45px]
+    h-[45px]
+    flex
+    outline-[1px solid rgba(128,128,128,0.168627451)] bg-avatarBg
+       
+        `}
         width={200}
         height={200}
         priority

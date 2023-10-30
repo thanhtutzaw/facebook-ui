@@ -204,7 +204,16 @@ function Avatar({
       loading="lazy"
       onClick={navigateToProfile}
       priority={false}
-      className={`${styles.profile}`}
+      className={`
+      w-[45px]
+      h-[45px]
+    rounded-full
+    object-cover
+    b-0
+    m-[initial]
+    outline-[1px solid rgba(128,128,128,0.168627451)]
+    bg-avatarBg 
+      `}
       alt={`${profile?.firstName ?? "Unknown User"} ${profile?.lastName ?? ""}`}
       width={200}
       height={200}

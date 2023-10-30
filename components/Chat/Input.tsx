@@ -13,7 +13,13 @@ export default function ChatInput({
     <form className={s.input}>
       {currentUser ? (
         <Image
-          className={s.profile}
+          className={` rounded-full
+    object-cover
+    b-0
+    w-[38px]
+    h-[38px]
+    flex
+    outline-[1px solid rgba(128,128,128,0.168627451)] bg-avatarBg`}
           width={200}
           height={200}
           priority
@@ -30,13 +36,7 @@ export default function ChatInput({
           }}
         ></div>
       )}
-      <input // onChange={(e) => {
-        //   settext(e.target.value);
-        // }}
-        aria-label="Type Message"
-        placeholder="Send Message"
-        type="text"
-      />
+      <input aria-label="Type Message" placeholder="Send Message" type="text" />
       <button
         onClick={async (e) => {
           e.preventDefault();

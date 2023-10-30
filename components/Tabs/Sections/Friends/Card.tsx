@@ -29,10 +29,16 @@ export default function Card(props: { children: ReactNode; f: friends }) {
           }}
         >
           <Image
-          loading="lazy"
+            loading="lazy"
             fill
-            style={{ objectFit: "cover" }}
-            className={s.profile}
+            className={`
+            w-[80px]
+            h-[80px]
+                rounded-full
+                object-cover
+                outline-[1px solid #8080802b]
+                bg-avatarBg
+            `}
             alt={f.id.toString()}
             // width={100}
             // height={100}

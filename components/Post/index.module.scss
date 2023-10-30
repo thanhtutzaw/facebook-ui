@@ -136,7 +136,7 @@
     }
     img {
         background-color: black;
-        
+
         display: block;
         max-width: 100%;
         object-fit: contain;
@@ -270,7 +270,6 @@
     }
 }
 .SocialUserDialog {
-    
     &::backdrop {
         background-color: rgba(0, 0, 0, 0.2);
     }
@@ -597,19 +596,6 @@
             opacity: 0.5;
         }
     }
-}
-.profile {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    border: 0;
-    background-color: rgb(221, 221, 221);
-    margin: initial !important;
-    // margin-top: 2px !important;
-    outline: 1px solid rgba(128, 128, 128, 0.168627451);
-    // background-color: rgb(241, 241, 241);
-    background-color: #e1e1e1;
-    // border:34px solid red;
 }
 
 .action {
