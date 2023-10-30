@@ -14,10 +14,7 @@ export default function Friend(props: FriendProps) {
   const pending = pendingFriends.data ?? [];
   return (
     <div className={s.container}>
-      <div
-        style={{ paddingBottom: "10px", paddingInline: "1rem" }}
-        className={s.action}
-      >
+      <div className={`pb-[10px] px-4 ${s.action}`}>
         <button tabIndex={tabIndex}>Suggestions</button>
         <button
           aria-label="Go to my friends page"
@@ -36,7 +33,7 @@ export default function Friend(props: FriendProps) {
           <h2 className={`bold-title ${s.header}`}>
             <p>
               Friends Requests{" "}
-              <span style={{ color: "red" }}>{pending.length}</span>
+              <span className="text-red">{pending.length}</span>
             </p>
           </h2>
           {pending.map((f) => (

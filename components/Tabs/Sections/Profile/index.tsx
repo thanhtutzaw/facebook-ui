@@ -17,7 +17,7 @@ export default function Profile() {
   const {
     activeTab,
     headerRef,
-    setIsSticky,
+    updateSticky,
     hasNextPage,
     fetchNextPage,
     infoRef,
@@ -42,7 +42,7 @@ export default function Profile() {
       onScroll={(e) => {
         const header = headerRef?.current!;
         const headerRect = header.getBoundingClientRect();
-        setIsSticky(headerRect.top <= 60);
+        updateSticky(headerRect.top <= 60);
         if (
           window.innerHeight + e.currentTarget.scrollTop + 1 >=
           e.currentTarget.scrollHeight

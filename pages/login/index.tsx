@@ -185,11 +185,7 @@ export default function Login({ uid }: { uid: string }) {
                         className={signupStyles.error}
                       >
                         <h4
-                          style={{
-                            margin: "0",
-                            color: "red",
-                            marginTop: ".5rem",
-                          }}
+                          className={`m-[2_0_0] text-red`}
                         >{`Error (${error})`}</h4>
                         {/* {error === AuthErrorCodes.USER_DELETED && (
                           <Link

@@ -3,7 +3,7 @@ import { Post, AppProps } from "@/types/interfaces";
 import { faGear, faSort } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
-import { RefObject, useContext } from "react";
+import { MutableRefObject, RefObject, useContext } from "react";
 import { PostList } from "../Home/PostList";
 import SortDate from "./SortDate";
 import s from "./index.module.scss";
@@ -14,7 +14,7 @@ export default function Content(props: {
   error?: any;
   infoRef: RefObject<HTMLHeadElement>;
   headerRef: RefObject<HTMLHeadElement>;
-  isSticky: boolean;
+  isSticky: MutableRefObject<boolean>;
   tab: string;
   loading: boolean;
   sort: boolean;
@@ -51,10 +51,8 @@ export default function Content(props: {
       <header
         style={{
           borderBottom: isSticky ? "1px solid #f1f1f1" : "initial",
-          // top: selectMode ? infoRef?.current?.clientHeight! : 0,
         }}
         ref={headerRef}
-        className={`${s.header}`}
       >
         <h2 className="bold-title">My Posts</h2>
 

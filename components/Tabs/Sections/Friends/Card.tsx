@@ -31,17 +31,9 @@ export default function Card(props: { children: ReactNode; f: friends }) {
           <Image
             loading="lazy"
             fill
-            className={`
-            w-[80px]
-            h-[80px]
-                rounded-full
-                object-cover
-                outline-[1px solid #8080802b]
-                bg-avatarBg
+            className={`w-[80px] h-[80px] rounded-full object-cover outline-[1px solid #8080802b] bg-avatarBg
             `}
             alt={f.id.toString()}
-            // width={100}
-            // height={100}
             src={checkPhotoURL(f.author?.photoURL as string)}
           />
         </div>

@@ -457,7 +457,7 @@ export default function UserProfile({
             </p>
             {isBlocked ? (
               <>
-                <p style={{ color: "red" }}>This Account is Blocked </p>
+                <p className={`text-red`}>This Account is Blocked </p>
                 {canUnBlock && (
                   <>
                     <div className={s.actions}>

@@ -122,10 +122,7 @@ export default function Tabs() {
     >
       <Home tabIndex={active === "/" ? 0 : -1} />
       <div id="friends" className={styles.tab}>
-        <div
-          style={{ paddingBottom: "0" }}
-          className={`bold-title ${t.header}`}
-        >
+        <div className={`bold-title ${t.header}`}>
           <h2>Friends</h2>
         </div>
         <Friends tabIndex={active === "friends" ? 0 : -1} />

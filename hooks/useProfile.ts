@@ -39,7 +39,10 @@ function useProfile() {
   const [sortToggle, setSortToggle] = useState(false);
   const [sortby, setsortby] = useState<"new" | "old">("new");
   const auth = getAuth(app);
-  const [isSticky, setIsSticky] = useState(false);
+  const isSticky = useRef(false);
+  const updateSticky = (sticky: boolean) => {
+    isSticky.current = sticky;
+  };
   const [editToggle, setEditToggle] = useState(false);
 
   useEffect(() => {
@@ -121,7 +124,6 @@ function useProfile() {
   };
   // const [src, setSrc] = useState(String(profile?.photoURL));
 
-
   const [updating, setupdating] = useState(false);
   async function submitProfile(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -143,7 +145,7 @@ function useProfile() {
   }
   return {
     headerRef,
-    setIsSticky,
+    updateSticky,
     hasNextPage,
     fetchNextPage,
     infoRef,

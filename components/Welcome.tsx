@@ -67,12 +67,10 @@ export function Welcome({
         </>
       ) : (
         <>
-          <h2 className="select-none">Welcome Back 🎉</h2>
+          <h2 className="bold-title select-none">Welcome Back 🎉</h2>
           <p
-            className="select-none"
-            style={{
-              color: "gray",
-            }}
+            className="select-none text-gray"
+            
           >
             Loading ...
           </p>

@@ -74,12 +74,7 @@ export default function Header(props: { tabIndex: number }) {
   return (
     <div
       ref={headerContainerRef}
-      className={`   
-    [transition:transform_0.18s_ease,height_0.15s_ease]
-    [will-change:transform,height]
-    translate-y-0
-    sticky top-[-60px]
-    z-[200]`}
+      className={`[transition:transform_0.18s_ease,height_0.15s_ease] [will-change:transform,height] translate-y-0 sticky top-[-60px] z-[200]`}
     >
       <header className={`flex justify-between items-center ${s.header}`}>
         <Logo />

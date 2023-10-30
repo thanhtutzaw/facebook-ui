@@ -39,7 +39,7 @@ export default function Notifications({uid}:{uid:string}) {
         {isLoading ? (
           <Spinner style={{ marginTop: "0" }} />
         ) : error ? (
-          <p style={{ textAlign: "center", color: "red" }}>
+          <p className="text-center text-red">
             Unexpected Error !
           </p>
         ) : notifications?.length === 0 ? (

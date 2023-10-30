@@ -15,6 +15,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        red: 'rgb(255 0 0 / <alpha-value>)',
         dimgray: 'rgb(105 105 105 / <alpha-value>)',
         gray: 'rgb(128 128 128 / <alpha-value>)',
         primary: 'rgb(var(--blue) / <alpha-value>)',
