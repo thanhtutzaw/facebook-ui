@@ -36,7 +36,6 @@ export default function Comment(props: {
           <Card client={client} uid={uid} key={c.id} c={c} />
         ))}
         {/* {!commentLoading && !commentEnd ? null : commentLoading ? (
-          <Spinner style={{ marginTop: "0" }} />
         ) : (
           <></>
         )} */}
@@ -52,7 +51,7 @@ export default function Comment(props: {
         </p>
       )} */}
       {!hasMore && !commentEnd ? null : hasMore && !commentEnd ? (
-        <Spinner style={{ marginTop: "0" }} />
+        <Spinner />
       ) : (
         <></>
       )}

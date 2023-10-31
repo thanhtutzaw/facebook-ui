@@ -154,7 +154,7 @@ function AccountItem(props: {
       {checked === a.email && (
         <>
           {loading && checked !== currentEmail ? (
-            <Spinner style={{ margin: "0" }} />
+            <Spinner />
           ) : (
             <button title="Current Account">
               <div>

@@ -14,6 +14,12 @@ module.exports = {
   ],
   theme: {
     extend: {
+      width: {
+        main: '700px'
+      },
+      maxWidth: {
+        main: '700px'
+      },
       colors: {
         red: 'rgb(255 0 0 / <alpha-value>)',
         dimgray: 'rgb(105 105 105 / <alpha-value>)',
@@ -24,7 +30,7 @@ module.exports = {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+          'conic-grad ient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
     },
   },

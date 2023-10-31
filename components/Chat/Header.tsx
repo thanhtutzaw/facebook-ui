@@ -2,11 +2,10 @@ import { checkPhotoURL } from "@/lib/firestore/profile";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import Image from "next/image";
 import Link from "next/link";
-import s from "./index.module.scss";
 
 export function ChatHeader({ account }: { account: UserRecord }) {
   return (
-    <div className={s.chatHeader}>
+    <div className={`flex flex-1 gap-2 items-center overflow-hidden`}>
       <Link
         style={{
           display: "flex",
@@ -31,9 +30,14 @@ export function ChatHeader({ account }: { account: UserRecord }) {
           src={checkPhotoURL(account?.photoURL)}
         />
       </Link>
-      <div className={s.info}>
-        <Link href={`/${account?.uid}`}>
-          <p className={s.title}>{account?.displayName}</p>
+      <div
+        className={`flex flex-1 gap-2 items-center overflow-hidden overflow-ellipsis
+      `}
+      >
+        <Link className="overflow-hidden" href={`/${account?.uid}`}>
+          <p className="overflow-hidden overflow-ellipsis">
+            {account?.displayName}
+          </p>
         </Link>
       </div>
     </div>

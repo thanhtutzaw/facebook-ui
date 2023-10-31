@@ -78,7 +78,7 @@ export default function Info(props: {
           }}
         >
           {signupLoading ? (
-            <Spinner size={18} style={{ margin: "0" }} />
+            <Spinner size={18}/>
           ) : (
             "Done"
           )}

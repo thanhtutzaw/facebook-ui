@@ -1,8 +1,4 @@
-import {
-  AuthErrorCodes,
-  getAuth,
-  onAuthStateChanged
-} from "firebase/auth";
+import { AuthErrorCodes, getAuth, onAuthStateChanged } from "firebase/auth";
 import {
   arrayUnion,
   doc,
@@ -12,7 +8,7 @@ import {
   orderBy,
   query,
   updateDoc,
-  where
+  where,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -44,10 +40,7 @@ import { checkPhotoURL } from "@/lib/firestore/profile";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import Spinner from "../components/Spinner";
 import { PageContext, PageProps } from "../context/PageContext";
-import {
-  MYPOST_LIMIT,
-  NewsFeed_LIMIT
-} from "../lib/QUERY_LIMIT";
+import { MYPOST_LIMIT, NewsFeed_LIMIT } from "../lib/QUERY_LIMIT";
 export const getServerSideProps: GetServerSideProps<AppProps> = async (
   context
 ) => {
@@ -271,7 +264,7 @@ export default function Home({
   const router = useRouter();
   const auth = getAuth(app);
   const [profileSrc, setprofileSrc] = useState(
-    checkPhotoURL(profile?.photoURL)
+    String(profile?.photoURL) ?? "public/assets/avatar_placeholder.png"
   );
   const {
     notiPermission,
@@ -280,7 +273,6 @@ export default function Home({
     setfriends,
     setnotiPermission,
   } = useContext(PageContext) as PageProps;
-  ``;
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -365,39 +357,12 @@ export default function Home({
         // alert(
         //   `Foreground push notification received:  ${JSON.stringify(payload)}`
         // );
-        const {
-          title,
-          body,
-          icon,
-          // webpush,
-          // click_action,
-          // link,
-          // action,
-          // actionPayload,
-        } = payload.notification!;
+        const { title, body, icon } = payload.notification!;
         const notificationTitle = title ?? "Facebook";
-        // const notificationOptions = {
-        //   icon: icon ?? "/logo.svg",
-        //   // badge,
-        //   // tag: tag ?? "",
-        //   // data: {
-        //   //   click_action,
-        //   //   actionPayload: JSON.parse(actionPayload),
-        //   // },
-        //   // // actions: JSON.parse(actions),
-        //   // renotify: tag !== "",
-        // };
+
         const notificationOptions = {
           body: body ?? "Notifications from facebook .",
           icon: icon ?? "/logo.svg",
-          // badge,
-          // tag: tag ?? "",
-          // renotify: tag !== "",
-          // data: {
-          //     click_action,
-          //     actionPayload: JSON.parse(actionPayload)
-          // },
-          // actions: JSON.parse(actions)
         };
         console.log(
           `serviceWorker in navigator ${"serviceWorker" in navigator}`

@@ -79,7 +79,7 @@ export default function Menu(props: MenuProps) {
         {loading ? "Signing out..." : "Sign out"}
         {loading && (
           <Spinner
-            style={{ margin: "0", opacity: ".5", marginLeft: "auto" }}
+            style={{  opacity: ".5", marginLeft: "auto" }}
             size={23}
           />
         )}

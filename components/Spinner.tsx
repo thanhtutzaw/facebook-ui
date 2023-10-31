@@ -5,7 +5,8 @@ function Spinner({
   fullScreen = false,
   size = 30,
   color,
-  style = { marginTop: !fullScreen ? "2rem" : "initial" },
+  // style = { marginTop: !fullScreen ? "2rem" : "initial" },
+  style ,
 }: {
   color?: string;
   navBar?: boolean;
@@ -15,7 +16,7 @@ function Spinner({
 }) {
   if (!fullScreen) {
     return (
-      <div className="loading" style={style}>
+      <div className="loading" style={{marginTop:'2rem'}}>
         <div
           className="spinner"
           style={{ display: "flex", justifyContent: "center" }}

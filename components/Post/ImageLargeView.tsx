@@ -294,13 +294,21 @@ export function ImageLargeView() {
                 }}
                 ref={imgRef}
               >
-                {loading && (
-                  <Spinner
-                    navBar={false}
-                    fullScreen
-                    style={{ zIndex: "1000000", margin: "0" }}
-                  />
-                )}
+                <AnimatePresence>
+                  {loading && (
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: loading ? 1 : 0 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <Spinner
+                        navBar={false}
+                        fullScreen
+                        style={{ zIndex: "1000000" }}
+                      />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
                 <Image
                   onLoadingComplete={() => {
                     setLoading(false);

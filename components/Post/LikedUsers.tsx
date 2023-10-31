@@ -116,7 +116,7 @@ export function LikedUsers({
             alignItems: "center",
           }}
         >
-          <Spinner style={{ margin: "0" }} />
+          <Spinner />
         </div>
       )}
     </>

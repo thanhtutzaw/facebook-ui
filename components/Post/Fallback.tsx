@@ -43,7 +43,7 @@ export default function PostFallback({
                   border: "0",
                 }}
               >
-                <Spinner size={14} style={{ margin: "0" }} />
+                <Spinner size={14} />
               </button>
             ) : (
               <button
