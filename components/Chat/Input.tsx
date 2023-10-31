@@ -11,7 +11,7 @@ export default function ChatInput({
   return (
     <form
       className={`bg-white
-    border-t[1px solid #dfdfdf]
+    border-t-[1px solid #dfdfdf]
     fixed
     bottom-0
     p-[.8rem]
