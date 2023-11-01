@@ -16,6 +16,7 @@ import styles from "./index.module.scss";
 type layoutTypes = "row" | "column";
 
 export default function AuthorInfo(props: {
+  handleEditComment?:Function;
   navigateToProfile?: MouseEventHandler;
   profile?: account["profile"];
   isAdmin?: boolean;
@@ -28,6 +29,7 @@ export default function AuthorInfo(props: {
   post?: Post;
 }) {
   const {
+    handleEditComment,
     post,
     layout,
     profile,
@@ -97,7 +99,11 @@ export default function AuthorInfo(props: {
           {children}
         </Author>
         {isAdmin && (
-          <CommentAction postRef={postRef!} commentRef={commentRef!} />
+          <CommentAction
+            handleEditComment={handleEditComment!}
+            postRef={postRef!}
+            commentRef={commentRef!}
+          />
         )}
       </div>
     );
@@ -112,7 +118,13 @@ export default function AuthorInfo(props: {
       >
         {children}
       </Author>
-      {isAdmin && <CommentAction postRef={postRef!} commentRef={commentRef!} />}
+      {isAdmin && (
+        <CommentAction
+          handleEditComment={handleEditComment!}
+          postRef={postRef!}
+          commentRef={commentRef!}
+        />
+      )}
     </div>
   );
 }

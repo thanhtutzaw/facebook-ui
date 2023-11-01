@@ -1,10 +1,13 @@
 import {
   DocumentData,
   DocumentReference,
+  FieldValue,
   Query,
+  doc,
   getDocs,
   increment,
   serverTimestamp,
+  updateDoc,
   writeBatch,
 } from "firebase/firestore";
 import { Comment } from "../../types/interfaces";
@@ -49,6 +52,11 @@ export async function addComment(
   // return commentDateToJSON(data) as Comment;
   console.log(data.createdAt);
   return data;
+}
+export async function updateComment(target: string, { ...comment }: Comment) {
+  const commentRef = doc(db, target);
+  const data = { ...comment };
+  await updateDoc(commentRef, data);
 }
 export async function deleteComment(
   commentRef: DocumentReference<DocumentData>,

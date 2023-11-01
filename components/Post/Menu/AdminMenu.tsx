@@ -85,7 +85,6 @@ export default function AdminMenu(props: {
               }
               setLoading(true);
               try {
-                console.log({ post });
                 // const deleteURL = post.deletedByAuthor
                 //   ? `${getCollectionPath.recentPosts({
                 //       uid: String(post.authorId),

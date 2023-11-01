@@ -64,7 +64,7 @@ export default function SwitchAccount(props: {
       className={s.switchAccountContainer}
     >
       <header>
-        <h2 className="font-semibold">Switch Account</h2>
+        <h2 >Switch Account</h2>
 
         {toggleSwitchAcc ? (
           <button aria-label="toggle">
@@ -154,7 +154,7 @@ function AccountItem(props: {
       {checked === a.email && (
         <>
           {loading && checked !== currentEmail ? (
-            <Spinner />
+            <Spinner style={{ margin: "0" }} />
           ) : (
             <button title="Current Account">
               <div>

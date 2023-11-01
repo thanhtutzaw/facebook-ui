@@ -1,4 +1,4 @@
-import { Timestamp } from "firebase/firestore";
+import { FieldValue, Timestamp } from "firebase/firestore";
 import { ReactNode, RefObject } from "react";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { User } from "firebase/auth";
@@ -117,14 +117,14 @@ export interface Post {
   updatedAt: timeStamp;
 }
 export interface Comment {
-  isLiked?: boolean;
+  isLiked: boolean;
   like?: any;
   author?: author;
   authorId: string | number;
   id?: string | number;
   text: string;
   createdAt: timeStamp;
-  updatedAt?: timeStamp;
+  updatedAt?: timeStamp | FieldValue;
 }
 export interface RecentPosts {
   id: string;
@@ -165,7 +165,6 @@ export interface AppProps {
   getMorePosts?: () => Promise<void>;
   postLoading?: boolean;
   postEnd?: boolean;
-  lastPullTimestamp?: timeStamp;
   updatedAt?: timeStamp;
 }
 export type Tabs =

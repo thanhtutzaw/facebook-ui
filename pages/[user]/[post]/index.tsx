@@ -261,7 +261,7 @@ export default function Page(props: {
         console.log("Error uploading and Deleting files:", error);
         return null;
       }
-      console.log(post.sharePost?.author);
+      // console.log(post.sharePost?.author);
       await updatePost(
         uid,
         InputRef.current.innerHTML
@@ -310,8 +310,8 @@ export default function Page(props: {
       );
       const comments = await fetchComments(commentQuery);
       setlimitedComments(limitedComments.concat(comments ?? []));
-      console.log(comments?.length);
-      console.log({ limitedComments });
+      // console.log(comments?.length);
+      // console.log({ limitedComments });
       setcommentLoading(false);
       setcommentEnd(comments?.length! < Comment_LIMIT);
     },

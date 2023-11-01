@@ -376,9 +376,7 @@ export default function UserProfile({
       );
       const finalPost = await getPostWithMoreInfo(token.uid!, mypostQuery)!;
       finalPost?.shift();
-      console.log({ limitedPosts });
       setlimitedPosts(limitedPosts?.concat(finalPost!));
-      console.log({ finalPost });
       setpostLoading(false);
       setPostEnd(finalPost?.length! < MYPOST_LIMIT);
 

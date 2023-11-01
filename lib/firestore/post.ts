@@ -7,17 +7,13 @@ import {
   getDoc,
   getDocs,
   increment,
-  limit,
-  orderBy,
-  query,
   serverTimestamp,
   setDoc,
   updateDoc,
-  writeBatch,
+  writeBatch
 } from "firebase/firestore";
 import { selectedId } from "../../context/PageContext";
 import { Post, friends, likes } from "../../types/interfaces";
-import { LikedUsers_LIMIT } from "../QUERY_LIMIT";
 import {
   DescQuery,
   db,

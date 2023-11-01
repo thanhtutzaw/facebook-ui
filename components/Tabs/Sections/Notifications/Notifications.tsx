@@ -1,16 +1,22 @@
 import Spinner from "@/components/Spinner";
+import { AppContext } from "@/context/AppContext";
 import useNotifications from "@/hooks/useNotifications";
 import { checkPhotoURL } from "@/lib/firestore/profile";
-import { Noti } from "@/types/interfaces";
+import { AppProps, Noti } from "@/types/interfaces";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import t from "../../Tabs.module.scss";
 import s from "./Notifications.module.scss";
+export default function Notifications() {
+  const {
+    uid: currentUid,
+    UnReadNotiCount,
+    setUnReadNotiCount,
+  } = useContext(AppContext) as AppProps;
 
-export default function Notifications({uid}:{uid:string}) {
   const {
     isLoading,
     hasNextPage,
@@ -18,7 +24,12 @@ export default function Notifications({uid}:{uid:string}) {
     updateReadNoti,
     fetchNextPage,
     notifications,
-  } = useNotifications(uid);
+  } = useNotifications({
+    uid: currentUid!,
+    UnReadNotiCount: UnReadNotiCount!,
+    setUnReadNotiCount: setUnReadNotiCount!,
+  });
+
   return (
     <div
       id="notifications"
@@ -39,9 +50,7 @@ export default function Notifications({uid}:{uid:string}) {
         {isLoading ? (
           <Spinner />
         ) : error ? (
-          <p className="text-center text-red">
-            Unexpected Error !
-          </p>
+          <p className="text-center text-red">Unexpected Error !</p>
         ) : notifications?.length === 0 ? (
           <p style={{ textAlign: "center" }}>Empty Notifications</p>
         ) : (
@@ -65,7 +74,7 @@ function NotiItem({
   updateReadNoti,
 }: {
   noti: Noti;
-  updateReadNoti: ReturnType<typeof useNotifications>["updateReadNoti"];
+  updateReadNoti: Function;
 }) {
   const router = useRouter();
   const {

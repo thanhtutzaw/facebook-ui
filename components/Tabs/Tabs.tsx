@@ -31,7 +31,7 @@ export default function Tabs() {
   const { indicatorRef, setpreventClick } = useContext(
     PageContext
   ) as PageProps;
-  const { uid } = useContext(AppContext) as AppProps;
+  // const { uid } = useContext(AppContext) as AppProps;
   const { active } = useActive();
 
   useEffect(() => {
@@ -136,7 +136,7 @@ export default function Tabs() {
 
       <Profile />
 
-      <Notifications uid={uid!} />
+      <Notifications />
       <div id="menu">
         <div className={`bold-title ${t.header}`}>
           <h2>Menu</h2>

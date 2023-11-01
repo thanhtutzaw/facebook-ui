@@ -1,10 +1,7 @@
 import {
   Timestamp,
   getDocs,
-  limit,
-  orderBy,
-  query,
-  startAfter,
+  startAfter
 } from "firebase/firestore";
 import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { NewsFeed_LIMIT } from "../lib/QUERY_LIMIT";
@@ -40,7 +37,6 @@ export function AppProvider(props: AppProps) {
     //   });
     // }
     setlimitedPosts?.((prev: Post[]) => prev.filter((post) => post.id !== id));
-    console.log(limitedPosts);
   };
   useEffect(() => {
     if (posts && !limitedPosts) {
@@ -49,6 +45,7 @@ export function AppProvider(props: AppProps) {
   }, [limitedPosts, posts, setlimitedPosts]);
   const getMorePosts = useCallback(
     async function () {
+      if (!props.hasMore) return;
       console.log("getting more news feed posts .......");
       setpostLoading(true);
       const post = limitedPosts?.[limitedPosts?.length! - 1]!;
@@ -75,27 +72,13 @@ export function AppProvider(props: AppProps) {
       const finalPost = await getNewsFeed(String(uid), recentPosts);
       setlimitedPosts?.(limitedPosts?.concat(finalPost!));
       setpostLoading(false);
+      // setPostEnd(true)
       console.log({ end: finalPost?.length! < NewsFeed_LIMIT });
       setPostEnd(finalPost?.length! < NewsFeed_LIMIT);
       console.log({ postEnd });
-      // setPostEnd(finalPost?.length! < NewsFeed_LIMIT);
-
-      // setPostEnd(finalPost?.length! <= NewsFeed_LIMIT);
-      // if (limitedPosts?.length! > NewsFeed_LIMIT) {
-      // }
-      // if (
-      //   finalPost?.length! < NewsFeed_LIMIT ||
-      //   limitedPosts?.length! < NewsFeed_LIMIT
-      // ) {
-      //   // setPostEnd(true);
-      //   // finalPost?.pop();
-      // }
     },
-    [limitedPosts, postEnd, setlimitedPosts, uid]
+    [limitedPosts, postEnd, props.hasMore, setlimitedPosts, uid]
   );
-  useEffect(() => {
-    console.log({ postEnd });
-  }, [postEnd]);
 
   // const  = async () => {
   //   setpostLoading(true);
@@ -104,7 +87,6 @@ export function AppProvider(props: AppProps) {
   //     post.createdAt.seconds,
   //     post.createdAt.nanoseconds
   //   );
-  //   console.log(post.createdAt);
   //   // const postQuery = query(
   //   //   collectionGroup(db, `posts`),
   //   //   where("visibility", "in", ["Friend", "Public"]),
@@ -167,7 +149,7 @@ export function AppProvider(props: AppProps) {
         updatePost,
         posts: limitedPosts,
         postLoading,
-        // postEnd,
+        postEnd,
 
         ...props,
       }}

@@ -109,7 +109,6 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
         userQuery
       );
     }
-    // console.log({ cookies });
     const convertSecondsToTime = (seconds: number) => {
       const days = Math.floor(seconds / (3600 * 24));
       const hours = Math.floor((seconds % (3600 * 24)) / 3600);
@@ -137,9 +136,14 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     // const userPostsSubCollectionRef =  getPath("friends",{uid});
 
     // Reference to the "recentPostSubCollection" subcollection within the user's "postsSubCollection"
-    const newsFeedQuery = DescQuery(
+    // const newsFeedQuery = DescQuery(
+    //   getPath("recentPosts", { uid }),
+    //   NewsFeed_LIMIT + 1
+    // );
+    const newsFeedQuery = query(
       getPath("recentPosts", { uid }),
-      NewsFeed_LIMIT + 1
+      limit(NewsFeed_LIMIT + 1),
+      orderBy("createdAt", "desc")
     );
     let recentPosts: RecentPosts[] = [],
       hasMore = false;
@@ -151,9 +155,20 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
           createdAt: doc.data().createdAt?.toJSON() || 0,
         };
       });
+      console.log(recentPosts);
+      // console.log(recentPosts[recentPosts.length - 1]);
       hasMore = recentPosts.length > NewsFeed_LIMIT;
+      console.log({
+        rlenght: recentPosts.length,
+        newfeedLimit: NewsFeed_LIMIT,
+      });
       if (hasMore) {
+        console.log("there is hasMore newsfeed");
         recentPosts.pop();
+        console.log({
+          rlenght: recentPosts.length,
+          newfeedLimit: NewsFeed_LIMIT,
+        });
       }
     } catch (error) {
       console.log("Recent Post Error - ", error);
@@ -186,7 +201,6 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
       getProfileByUID(uid),
       getUserData(uid),
     ]);
-    console.log(newsFeedPosts);
     const fcmToken = (await fethUserDoc(uid)).data()?.fcmToken ?? null;
     const profile = {
       ...profileData,
@@ -266,6 +280,12 @@ export default function Home({
   const [profileSrc, setprofileSrc] = useState(
     String(profile?.photoURL) ?? "public/assets/avatar_placeholder.png"
   );
+  useEffect(() => {
+    if (profile) {
+      setprofileSrc(String(profile.photoURL));
+    }
+  }, [profile]);
+
   const {
     notiPermission,
     newsFeedData,
@@ -419,7 +439,8 @@ export default function Home({
     };
     requestNotificationPermission();
   }, [setnotiPermission]);
-  const { UnReadNotiCount, setUnReadNotiCount } = useNotifications(uid!);
+  const [UnReadNotiCount, setUnReadNotiCount] = useState(0);
+
   useEffect(() => {
     if (
       "Notification" in window &&

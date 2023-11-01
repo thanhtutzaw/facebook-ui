@@ -1,7 +1,7 @@
 import { NOTI_LIMIT, UnReadNoti_LIMIT } from "@/lib/QUERY_LIMIT";
 import { DescQuery, db, getCollectionPath, getPath } from "@/lib/firebase";
 import { getMessage } from "@/lib/firestore/notifications";
-import { AppProps, Noti, QueryKey } from "@/types/interfaces";
+import { Noti, QueryKey } from "@/types/interfaces";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   Timestamp,
@@ -17,11 +17,20 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useActive } from "./useActiveTab";
 import useQueryFn from "./useQueryFn";
-function useNotifications(currentUid: string) {
-  const { active: tab } = useActive();
+function useNotifications({
+  uid: currentUid,
+  UnReadNotiCount,
+  setUnReadNotiCount,
+}: {
+  uid: string;
+  UnReadNotiCount: number;
+  setUnReadNotiCount: Function;
+}) {
+  const { queryFn } = useQueryFn();
+
   const fetchNoti = async function (pageParam: Noti | null = null) {
     if (!currentUid) return;
     let notiQuery = DescQuery(
@@ -47,7 +56,6 @@ function useNotifications(currentUid: string) {
         const data = doc.data() as Noti;
         // const date = data.createdAt as Timestamp;
         // const createdDate = date.toDate().getTime();
-        // const lastPullData = lastPullTimestamp as Timestamp;
         // const lastPull = lastPullData ? lastPullData?.toDate().getTime() : null;
         return {
           id: doc.id,
@@ -66,13 +74,9 @@ function useNotifications(currentUid: string) {
       console.error(error);
     }
   };
-  const { queryFn } = useQueryFn();
-  const [UnReadNotiCount, setUnReadNotiCount] = useState(0);
-  const [lastPullTimestamp, setlastPullTimestamp] =
-    useState<AppProps["lastPullTimestamp"]>(undefined);
+  const { active: tab } = useActive();
   useEffect(() => {
     if (UnReadNotiCount ?? 0 > 0) {
-      queryFn.refetchQueries("noti");
       queryFn.invalidate("noti");
       console.log("updaing in useNoti hooks");
     }
@@ -95,21 +99,6 @@ function useNotifications(currentUid: string) {
   const notifications = data?.pages.flatMap(
     (page) => page?.notifications ?? []
   );
-  // useEffect(() => {
-  //   // let unsubscribe: Unsubscribe;
-  //   // unsubscribe = onSnapshot(notiQuery, async (snapshot) => {
-  //   //   const notis = snapshot.docs.map((doc) => doc.data()) as Noti;
-  //   //   const withAuthor = await Promise.all(
-  //   //     likes.map(async (l) => {
-  //   //       if (l.uid) {
-  //   //         return { ...l, author };
-  //   //       } else {
-  //   //         return { ...l, author: null };
-  //   //       }
-  //   //     })
-  //   //   );
-  // }, [currentUid]);
-
   useEffect(() => {
     if (!currentUid) return;
     let unsubscribeNotifications: Unsubscribe;
@@ -118,7 +107,6 @@ function useNotifications(currentUid: string) {
       try {
         const doc = await getDoc(userDoc);
         const lastPull = doc.data()?.lastPullTimestamp ?? Date.now();
-        setlastPullTimestamp(lastPull);
         const notiCountQuery = query(
           getPath("notifications", { uid: currentUid }),
           where("createdAt", ">", lastPull),
@@ -128,7 +116,7 @@ function useNotifications(currentUid: string) {
         // console.log("noti listening realtime - unRead" + UnReadNotiCount);
         unsubscribeNotifications = onSnapshot(notiCountQuery, (latestNoti) => {
           // console.log(querySnapshot.docs.map((doc) => doc.data()));
-          setUnReadNotiCount(latestNoti.size); // getting unRead noti count
+          setUnReadNotiCount?.(latestNoti.size); // getting unRead noti count
         });
       } catch (error) {
         console.log(error);
@@ -138,7 +126,7 @@ function useNotifications(currentUid: string) {
     return () => {
       if (unsubscribeNotifications) unsubscribeNotifications();
     };
-  }, [UnReadNotiCount, currentUid]);
+  }, [UnReadNotiCount, currentUid, setUnReadNotiCount]);
   function updateReadNoti(noti: Noti) {
     const ref = doc(
       db,
@@ -154,8 +142,6 @@ function useNotifications(currentUid: string) {
     updateDoc(ref, readedData);
   }
   return {
-    UnReadNotiCount,
-    setUnReadNotiCount,
     isLoading,
     hasNextPage,
     error,

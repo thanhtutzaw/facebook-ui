@@ -11,6 +11,7 @@ import { addComment } from "../../lib/firestore/comment";
 import { sendAppNoti } from "../../lib/firestore/notifications";
 import { Post, account } from "../../types/interfaces";
 import s from "./index.module.scss";
+import useQueryFn from "@/hooks/useQueryFn";
 export default function CommentInput(props: {
   setlimitedComments: any;
   uid?: string;
@@ -20,6 +21,7 @@ export default function CommentInput(props: {
 
   profile?: account["profile"];
 }) {
+  const { queryFn } = useQueryFn();
   const { setlimitedComments, post, uid, authorId, postId, profile } = props;
   const { currentUser } = useContext(PageContext) as PageProps;
   const [text, settext] = useState("");
@@ -73,6 +75,7 @@ export default function CommentInput(props: {
           // setlimitedComments(post?.comments);
           // console.log(addedComment.createdAt);
           // console.log(new Date(Date.now()).getUTCDate());
+          queryFn.invalidate("myPost");
           router.replace(router.asPath, undefined, { scroll: false });
           settext("");
           setaddLoading(false);

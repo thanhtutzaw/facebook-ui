@@ -16,7 +16,7 @@ import {
   getFirestore,
   limit,
   orderBy,
-  query
+  query,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { Comment, Post, RecentPosts, account } from "../types/interfaces";
@@ -370,7 +370,6 @@ export async function getNewsFeed(
     const data = await Promise.all(
       recentPosts.map(async (recentPost) => {
         const { id, recentId, authorId, createdAt } = recentPost;
-        console.log(recentPost);
         // if (!post.authorId) return null;
         const postRef = doc(
           db,

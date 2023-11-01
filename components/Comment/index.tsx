@@ -1,6 +1,6 @@
 import { doc } from "firebase/firestore";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { LegacyRef, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   JSONTimestampToDate,
   db,
@@ -11,6 +11,7 @@ import { Comment, Post } from "../../types/interfaces";
 import AuthorInfo from "../Post/AuthorInfo";
 import Spinner from "../Spinner";
 import s from "./index.module.scss";
+import useEscape from "@/hooks/useEscape";
 
 export default function Comment(props: {
   hasMore: boolean;
@@ -32,8 +33,13 @@ export default function Comment(props: {
   return (
     <>
       <ul className={s.container}>
-        {comments?.map((c) => (
-          <Card client={client} uid={uid} key={c.id} c={c} />
+        {comments?.map((comment) => (
+          <Comment
+            client={client}
+            uid={uid}
+            key={comment.id}
+            comment={comment}
+          />
         ))}
         {/* {!commentLoading && !commentEnd ? null : commentLoading ? (
         ) : (
@@ -57,32 +63,83 @@ export default function Comment(props: {
       )}
     </>
   );
-  function Card(props: { client: boolean; uid: string; c: Comment }) {
-    const { client, uid, c } = props;
-    const { text, createdAt } = c;
+  function Comment(props: { client: boolean; uid: string; comment: Comment }) {
+    const { client, uid, comment } = props;
+    const { text, createdAt, id, authorId } = comment;
     const commentRef = doc(
       db,
       `${getCollectionPath.comments({
         authorId: String(post.authorId),
         postId: String(post.id),
-      })}/${c.id}`
+      })}/${comment.id}`
     );
-
+    const inputRef = useRef<HTMLParagraphElement>(null);
+    const [input, setInput] = useState(text);
+    const [editToggle, seteditToggle] = useState("");
+    useLayoutEffect(() => {
+      if (editToggle === id) {
+        if (inputRef.current) {
+          const contentEle = inputRef.current;
+          const range = document.createRange();
+          const selection = window.getSelection();
+          console.log(contentEle.childNodes.length);
+          range.setStart(contentEle, contentEle.childNodes.length);
+          range.collapse(true);
+          // if(!selection )return;
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+        }
+      }
+    }, [editToggle, id]);
+    useEscape(() => {
+      if (editToggle !== "") {
+        seteditToggle("");
+      }
+    });
+    function handleEditComment() {
+      if (editToggle !== "") {
+        seteditToggle("");
+      } else {
+        seteditToggle(String(id));
+      }
+    }
     return (
-      <li className={s.item} id={`comment-${c.id}`}>
+      <li className={s.item} id={`comment-${id}`}>
         <AuthorInfo
+          handleEditComment={handleEditComment}
           postRef={postRef}
           commentRef={commentRef}
-          isAdmin={uid === c.authorId}
-          comment={c}
+          isAdmin={uid === authorId}
+          comment={comment}
           style={{
             backgroundColor:
-              client && router.asPath.match(c.id?.toString()!)
+              client && router.asPath.match(id?.toString()!)
                 ? "#e9f3ff"
                 : "initial",
           }}
         >
-          <p className={s.text}>{text}</p>
+          <div
+            className={`${
+              editToggle === id ? "outline outline-1 outline-gray " : ""
+            } max-h-20 overflow-scroll 
+            `}
+          >
+            <p
+              // key={editToggle === id ? 'true':'false'}
+              suppressContentEditableWarning={true}
+              ref={inputRef}
+              contentEditable={editToggle === id}
+              className={`${
+                editToggle !== id ? "cursor-default" : "cursor-text"
+              } p-3 focus-visible:outline-0 ${s.text}`}
+            >
+              {text}
+              <br />
+              {editToggle}
+              <br />
+              {id}
+            </p>
+          </div>
           <div className={s.actions}>
             <p suppressHydrationWarning>
               {JSONTimestampToDate(createdAt).toLocaleDateString("en-US", {

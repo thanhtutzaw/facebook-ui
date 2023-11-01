@@ -19,7 +19,7 @@ const ImageWithFallback = (
     "https://www.cvent-assets.com/brand-page-guestside-site/assets/images/venue-card-placeholder.png";
   return (
     <Image
-    className={loading ? "bg-primary" : ''}
+    className={loading ? "bg-avatarBg" : 'bg-black'}
     // style={{style2, border : loading ? '1px solid red' : '5px solid green'}}
     onLoadingComplete={()=>setLoading(false)}
       //   style={{
