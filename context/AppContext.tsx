@@ -1,8 +1,4 @@
-import {
-  Timestamp,
-  getDocs,
-  startAfter
-} from "firebase/firestore";
+import { Timestamp, getDocs, startAfter } from "firebase/firestore";
 import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { NewsFeed_LIMIT } from "../lib/QUERY_LIMIT";
 import { DescQuery, getNewsFeed, getPath } from "../lib/firebase";
@@ -11,6 +7,7 @@ import { AppProps, Post, RecentPosts } from "../types/interfaces";
 export const AppContext = createContext<AppProps | null>(null);
 export function AppProvider(props: AppProps) {
   const {
+    token,
     setprofileSrc,
     profileSrc,
     expired,
@@ -150,7 +147,7 @@ export function AppProvider(props: AppProps) {
         posts: limitedPosts,
         postLoading,
         postEnd,
-
+        token,
         ...props,
       }}
     >

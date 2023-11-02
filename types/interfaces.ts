@@ -142,7 +142,6 @@ export interface AppProps {
   fcmToken?: string | string[];
   UnReadNotiCount?: number;
   acceptedFriends?: string[];
-  isFriendEmpty?: boolean;
   postError?: string;
   setlimitedPosts?: Function;
   limitedPosts?: Post[];

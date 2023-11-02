@@ -1,18 +1,18 @@
+import Spinner from "@/components/Spinner";
+import { useActive } from "@/hooks/useActiveTab";
+import { app } from "@/lib/firebase";
+import { signout } from "@/lib/signout";
 import {
   faBookmark,
   faSignOut,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getMessaging } from "firebase/messaging";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useActive } from "@/hooks/useActiveTab";
-import { signout } from "@/lib/signout";
 import s from "../../Sections/Menu/menu.module.scss";
 import SwitchAccount from "./SwitchAccount";
-import Spinner from "@/components/Spinner";
-import { app } from "@/lib/firebase";
-import { getMessaging, deleteToken } from "firebase/messaging";
 interface MenuProps {
   tabIndex: number;
 }
@@ -21,7 +21,6 @@ export default function Menu(props: MenuProps) {
   const { navigateTab } = useActive();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
   return (
     <div className={s.container}>
       <button
@@ -78,16 +77,10 @@ export default function Menu(props: MenuProps) {
         />
         {loading ? "Signing out..." : "Sign out"}
         {loading && (
-          <Spinner
-            style={{  opacity: ".5", marginLeft: "auto" }}
-            size={23}
-          />
+          <Spinner style={{ opacity: ".5", marginLeft: "auto" }} size={23} />
         )}
       </button>
-      <SwitchAccount
-        loading={loading}
-        setLoading={setLoading}
-      />
+      <SwitchAccount loading={loading} setLoading={setLoading} />
     </div>
   );
 }

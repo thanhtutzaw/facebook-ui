@@ -6,5 +6,7 @@
     display: flex;
     align-items: center;
     margin: 0;
-      
+    h2 {
+        @apply m-0;
+    }
 }

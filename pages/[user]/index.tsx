@@ -52,8 +52,6 @@ import { useRouter } from "next/router";
 import nookies from "nookies";
 import confirm from "public/assets/confirm-beep.mp3";
 import {
-  ButtonHTMLAttributes,
-  DetailedHTMLProps,
   ReactElement,
   ReactNode,
   useCallback,
@@ -64,9 +62,17 @@ import {
 } from "react";
 import useSound from "use-sound";
 import { AcceptFriend } from "../../components/Button/AcceptFriend";
+import { fetchMyPosts } from "@/lib/firestore/post";
+import useMenu from "@/hooks/useMenu";
+import Metatag from "@/components/Metatag";
 
 export type statusDataType = "canAccept" | "pending" | "friend" | "notFriend";
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  let isFriend = false,
+    isBlocked = false,
+    isPending = false,
+    canAccept = false,
+    canUnBlock = false;
   try {
     const uid = context.query.user!;
     const cookies = nookies.get(context);
@@ -78,11 +84,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       `${getCollectionPath.friends({ uid: token.uid })}/${uid}`
     );
     const friendDoc = await getDoc(isFriendsQuery);
-    let isFriend = false,
-      isBlocked = false,
-      isPending = false,
-      canAccept = false,
-      canUnBlock = false;
+
     if (friendDoc.exists()) {
       const relation = friendDoc.data() as friends;
       isFriend = relation.status === "friend";
@@ -91,35 +93,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       canAccept = relation.senderId !== token.uid && !isFriend;
       canUnBlock = relation.senderId === token.uid;
     }
-    let mypostQuery = DescQuery(
-      getPath("posts", { uid: String(uid) }),
-      MYPOST_LIMIT + 1,
-      where("visibility", "in", ["Public"])
-    );
-    if (isFriend) {
-      mypostQuery = DescQuery(
-        getPath("posts", { uid: String(uid) }),
-        MYPOST_LIMIT + 1,
-        where("visibility", "in", ["Friend", "Public"])
-      );
-    }
-    let hasMore = false;
-    const myPost = isBlocked
-      ? null
-      : await getPostWithMoreInfo(token.uid, mypostQuery);
-    // myPost?.shift();
-    hasMore = (myPost?.length ?? 0) > MYPOST_LIMIT;
-    if (hasMore) {
-      myPost?.pop();
-    }
-    // console.log(
-    //   myPost?.map((p) => {
-    //     return {
-    //       liked: p.isLiked,
-    //       count: p.likeCount,
-    //     };
-    //   })
-    // );
+    const myPost = await fetchMyPosts(uid, isFriend, isBlocked, token);
     if (userExist) {
       const profile = user?.data().profile as account["profile"];
       return {
@@ -127,11 +101,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           token,
           profile: profile ?? null,
           myPost,
-          isFriend,
-          isBlocked,
-          isPending,
-          canAccept,
-          canUnBlock,
+          friendStatus: {
+            isFriend,
+            isBlocked,
+            isPending,
+            canAccept,
+            canUnBlock,
+          },
         },
       };
     } else {
@@ -148,6 +124,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         token: null,
         profile: [],
         myPost: [],
+        friendStatus: {
+          isFriend,
+          isBlocked,
+          isPending,
+          canAccept,
+          canUnBlock,
+        },
       },
     };
   }
@@ -157,25 +140,24 @@ export default function UserProfile({
   token,
   profile,
   myPost,
-  isFriend,
-  isBlocked,
-  isPending,
-  canAccept,
-  canUnBlock,
+  friendStatus,
 }: {
   token: DecodedIdToken;
   profile: account["profile"];
   myPost: PostType[];
-  isFriend: Boolean;
-  isBlocked: Boolean;
-  isPending: Boolean;
-  canAccept: Boolean;
-  canUnBlock: Boolean;
+  friendStatus: {
+    isFriend: Boolean;
+    isBlocked: Boolean;
+    isPending: Boolean;
+    canAccept: Boolean;
+    canUnBlock: Boolean;
+  };
 }) {
   const { queryFn } = useQueryFn();
   const router = useRouter();
   const [playAcceptSound] = useSound(confirm);
-
+  const { isFriend, isBlocked, isPending, canAccept, canUnBlock } =
+    friendStatus;
   const userName = getFullName(profile);
   const friendId = router.query.user;
   const [friendMenuToggle, setFriendMenuToggle] = useState(false);
@@ -184,23 +166,9 @@ export default function UserProfile({
     PageContext
   ) as PageProps;
 
-  // const updateCurrentUser = useCallback(() => {
-  //   const UserWithCropped = {
-  //     ...currentUser,
-  //     photoURL_cropped: profile?.photoURL_cropped,
-  //   };
-  //   setcurrentUser?.(UserWithCropped);
-  //   // console.log(currentUser);
-  // }, [currentUser, profile?.photoURL_cropped, setcurrentUser]);
-
-  // useEffect(() => {
-  //   updateCurrentUser();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
   const statusComponents = {
     canAccept: (
       <AcceptFriend
-        // style={{ color: "red !important" }}
         onClick={async () => {
           if (!friendId || !currentUser) return;
           try {
@@ -234,11 +202,6 @@ export default function UserProfile({
           onClick={() => {
             setFriendMenuToggle((prev) => !prev);
           }}
-          style={
-            {
-              // position: "relative",
-            }
-          }
           className={s.editToggle}
         >
           <svg
@@ -255,17 +218,6 @@ export default function UserProfile({
               d="M13.0001 13C13.0001 9.68629 15.6864 7 19.0001 7C22.3139 7 25.0001 9.68629 25.0001 13C25.0001 16.3137 22.3139 19 19.0001 19C15.6864 19 13.0001 16.3137 13.0001 13ZM19.0001 3C13.4773 3 9.00015 7.47715 9.00015 13C9.00015 18.5228 13.4773 23 19.0001 23C24.523 23 29.0001 18.5228 29.0001 13C29.0001 7.47715 24.523 3 19.0001 3ZM5.19435 40.9681C6.70152 35.5144 10.0886 32.2352 13.9162 30.738C17.7125 29.2531 22.0358 29.4832 25.6064 31.2486C26.1015 31.4934 26.7131 31.338 26.9931 30.8619L28.0072 29.1381C28.2872 28.662 28.1294 28.0465 27.6384 27.7937C23.0156 25.4139 17.4034 25.0789 12.4591 27.0129C7.37426 29.0018 3.09339 33.3505 1.2883 40.0887C1.14539 40.6222 1.48573 41.1592 2.02454 41.2805L3.97575 41.7195C4.51457 41.8408 5.04724 41.5004 5.19435 40.9681ZM44.7074 30.1212C45.0979 29.7307 45.0979 29.0975 44.7074 28.707L43.2932 27.2928C42.9026 26.9023 42.2695 26.9023 41.8789 27.2928L30.0003 39.1715L25.1216 34.2928C24.7311 33.9023 24.0979 33.9023 23.7074 34.2928L22.2932 35.707C21.9026 36.0975 21.9026 36.7307 22.2932 37.1212L28.586 43.4141C29.3671 44.1952 30.6334 44.1952 31.4145 43.4141L44.7074 30.1212Z"
             ></path>
           </svg>
-          {/* <div>
-          <FontAwesomeIcon icon={faUser} />
-          <FontAwesomeIcon
-            style={{
-              width: "10px",
-              position: "relative",
-              top: "-5px",
-            }}
-            icon={faCheck}
-          />
-        </div> */}
           Friends
         </button>
         <Menu
@@ -302,9 +254,6 @@ export default function UserProfile({
         </Menu>
       </div>
     ),
-    // notFriend: (
-
-    // ),
     pending: (
       <div>
         <button
@@ -404,19 +353,10 @@ export default function UserProfile({
   const [status, setstatus] = useState(statusData);
   return (
     <>
-      <Head>
-        <title>{`${userName} | Facebook Next`}</title>
-        <meta
-          name="description"
-          content={`${userName} Facebook-Mobile-UI with Next.js`}
-        />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, user-scalable=no"
-        />
-        <link rel="icon" href="/logo.svg" />
-        <link rel="manifest" href="/manifest.json" />
-      </Head>
+      <Metatag
+        title={`${userName} | Facebook Next`}
+        description={`${userName}'s Profile | Facebook-Mobile-UI with Next.js`}
+      />
       <div ref={scrollRef} className="user">
         <BackHeader style={{ zIndex: "200000" }}></BackHeader>
         <div
@@ -446,7 +386,6 @@ export default function UserProfile({
             <p
               style={{
                 color: profile?.bio === "" ? "gray" : "initial",
-                // minHeight: "24px",
                 wordBreak: "break-word",
               }}
               className={s.bio}
@@ -537,7 +476,7 @@ export default function UserProfile({
     </>
   );
 }
-function Menu({
+export function Menu({
   setFriendMenuToggle,
   friendMenuToggle,
   children,
@@ -546,20 +485,8 @@ function Menu({
   friendMenuToggle: boolean;
   children: ReactNode;
 }) {
-  const menuRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (friendMenuToggle) {
-        if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-          setFriendMenuToggle(false);
-        }
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [friendMenuToggle, setFriendMenuToggle]);
+  
+  const {menuRef} = useMenu(friendMenuToggle,setFriendMenuToggle);
 
   return (
     <AnimatePresence mode="wait">
@@ -589,6 +516,7 @@ function Menu({
     </AnimatePresence>
   );
 }
+
 // function Toggler(
 //   children: ReactNode,
 //   ...rest: DetailedHTMLProps<

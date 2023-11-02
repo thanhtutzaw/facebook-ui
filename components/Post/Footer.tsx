@@ -309,7 +309,7 @@ const {queryFn} = useQueryFn()
               ref={dropdownRef}
               key={id}
               initial={{
-                opacity: "0",
+                opacity: 0,
                 scale: 0.8,
               }}
               animate={{
@@ -317,7 +317,7 @@ const {queryFn} = useQueryFn()
                 scale: 1,
               }}
               exit={{
-                opacity: "0",
+                opacity: 0,
                 scale: 0.8,
               }}
               transition={{

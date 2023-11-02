@@ -25,24 +25,23 @@
     & > .action button {
         margin: 0 8px;
         padding: 10px;
-        height: initial;
+        max-height: 41px;
+        @apply flex items-center justify-center;
+        flex: unset;
     }
     button {
         flex: 1;
         height: 50px;
         border: 0;
         border-radius: 10px;
-        // font-size: 18px;
         // font-size: clamp(14px, 2.5vw, 25px);
         font-size: clamp(16px, 2.1vw, 20px);
-       
     }
     .request,
     .suggest {
         .header {
             padding-inline: 1rem;
             background-color: rgb(255, 255, 255);
-            overflow: auto;
             gap: 20px;
             height: 65px;
             display: flex;
@@ -64,7 +63,7 @@
             overflow: hidden;
             padding-inline: 2px;
             margin-inline: 1rem;
-            
+
             .date {
                 color: gray;
                 font-size: 16px;

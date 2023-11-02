@@ -16,7 +16,9 @@ import styles from "./index.module.scss";
 type layoutTypes = "row" | "column";
 
 export default function AuthorInfo(props: {
-  handleEditComment?:Function;
+  toggleCommentMenu?: string;
+  settoggleCommentMenu?: Function;
+  handleEditComment?: Function;
   navigateToProfile?: MouseEventHandler;
   profile?: account["profile"];
   isAdmin?: boolean;
@@ -29,6 +31,8 @@ export default function AuthorInfo(props: {
   post?: Post;
 }) {
   const {
+    toggleCommentMenu,
+    settoggleCommentMenu,
     handleEditComment,
     post,
     layout,
@@ -88,7 +92,7 @@ export default function AuthorInfo(props: {
     const { author, authorId } = comment;
     const profile = author as account["profile"];
     return (
-      <div style={style} className={styles.header}>
+      <div key={comment.id} style={style} className={`relative ${styles.header}`}>
         <Author
           comment={comment!}
           navigateToProfile={() => {
@@ -100,6 +104,9 @@ export default function AuthorInfo(props: {
         </Author>
         {isAdmin && (
           <CommentAction
+            toggleCommentMenu={toggleCommentMenu!}
+            settoggleCommentMenu={settoggleCommentMenu!}
+            comment={comment}
             handleEditComment={handleEditComment!}
             postRef={postRef!}
             commentRef={commentRef!}
@@ -118,13 +125,14 @@ export default function AuthorInfo(props: {
       >
         {children}
       </Author>
-      {isAdmin && (
+      {/* {isAdmin && (
         <CommentAction
+          comment={comment!}
           handleEditComment={handleEditComment!}
           postRef={postRef!}
           commentRef={commentRef!}
         />
-      )}
+      )} */}
     </div>
   );
 }
@@ -162,45 +170,51 @@ function Author(props: {
           gap: "2px",
         }}
       >
-        <p
-          style={{
-            flex: "1",
-            flexWrap: "wrap",
-            userSelect: "none",
-            marginBottom: children ? "2px" : "initial",
-          }}
-          className={styles.name}
-        >
-          <span
-            style={{
-              color: comment ? "rgb(46 46 46)" : "initial",
-              fontSize: !children ? "18px" : "inherit",
-              fontWeight: children ? "500" : "initial",
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (router.pathname === "/") {
-                router.push(
-                  { query: { user: String(post?.authorId) } },
-                  String(post?.authorId)
-                );
-              } else {
-                router.push(`/${String(post?.authorId)}`);
-              }
-            }}
-          >
-            {/* {post?.authorId ?? "Unknown"} */}
-            {getFullName(profile)}
-            {/* {profile?.firstName ?? post?.authorId ?? comment?.authorId}{" "}
-            {profile?.lastName ?? ""} */}
-          </span>
-
-          {post?.sharePost?.id && <>&nbsp; shared a Post</>}
-        </p>
+        <AuthorName />
         {children}
       </div>
     </div>
   );
+
+  function AuthorName() {
+    return (
+      <p
+        style={{
+          flex: "1",
+          flexWrap: "wrap",
+          userSelect: "none",
+          marginBottom: children ? "2px" : "initial",
+        }}
+        className={styles.name}
+      >
+        <span
+          style={{
+            color: comment ? "rgb(46 46 46)" : "initial",
+            fontSize: !children ? "18px" : "inherit",
+            fontWeight: children ? "500" : "initial",
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (router.pathname === "/") {
+              router.push(
+                { query: { user: String(post?.authorId) } },
+                String(post?.authorId)
+              );
+            } else {
+              router.push(`/${String(post?.authorId)}`);
+            }
+          }}
+        >
+          {/* {post?.authorId ?? "Unknown"} */}
+          {getFullName(profile)}
+          {/* {profile?.firstName ?? post?.authorId ?? comment?.authorId}{" "}
+        {profile?.lastName ?? ""} */}
+        </span>
+
+        {post?.sharePost?.id && <>&nbsp; shared a Post</>}
+      </p>
+    );
+  }
 }
 
 function Avatar({

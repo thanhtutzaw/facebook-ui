@@ -10,17 +10,21 @@ import {
   serverTimestamp,
   setDoc,
   updateDoc,
-  writeBatch
+  where,
+  writeBatch,
 } from "firebase/firestore";
 import { selectedId } from "../../context/PageContext";
-import { Post, friends, likes } from "../../types/interfaces";
+import { Post, RecentPosts, friends, likes } from "../../types/interfaces";
 import {
   DescQuery,
   db,
   getCollectionPath,
   getPath,
+  getPostWithMoreInfo,
   getProfileByUID,
 } from "../firebase";
+import { MYPOST_LIMIT, NewsFeed_LIMIT } from "../QUERY_LIMIT";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 type TAddPost = {
   uid: string;
   post: {
@@ -106,7 +110,65 @@ export async function addPost({ uid, post, sharePost, friends }: TAddPost) {
     alert("Post upload failed !" + error.message);
   }
 }
-
+export async function fetchRecentPosts(uid: string) {
+  const newsFeedQuery = DescQuery(
+    getPath("recentPosts", { uid }),
+    NewsFeed_LIMIT + 1
+  );
+  let recentPosts: RecentPosts[] = [],
+    hasMore = false;
+  try {
+    recentPosts = (await getDocs(newsFeedQuery)).docs.map((doc) => {
+      return {
+        ...(doc.data() as any),
+        recentId: doc.id,
+        createdAt: doc.data().createdAt?.toJSON() || 0,
+      };
+    });
+    // console.log(recentPosts[recentPosts.length - 1]);
+    hasMore = recentPosts.length > NewsFeed_LIMIT;
+    console.log({
+      rlenght: recentPosts.length,
+      newfeedLimit: NewsFeed_LIMIT,
+    });
+    if (hasMore) {
+      console.log("there is hasMore newsfeed");
+      recentPosts.pop();
+    }
+  } catch (error) {
+    console.log("Recent Post Error - ", error);
+  }
+  return { recentPosts, hasMore };
+}
+export async function fetchMyPosts(
+  uid: string | string[],
+  isFriend: boolean,
+  isBlocked: boolean,
+  token: DecodedIdToken
+) {
+  let mypostQuery = DescQuery(
+    getPath("posts", { uid: String(uid) }),
+    MYPOST_LIMIT + 1,
+    where("visibility", "in", ["Public"])
+  );
+  if (isFriend) {
+    mypostQuery = DescQuery(
+      getPath("posts", { uid: String(uid) }),
+      MYPOST_LIMIT + 1,
+      where("visibility", "in", ["Friend", "Public"])
+    );
+  }
+  let hasMore = false;
+  const myPost = isBlocked
+    ? null
+    : await getPostWithMoreInfo(token.uid, mypostQuery);
+  // myPost?.shift();
+  hasMore = (myPost?.length ?? 0) > MYPOST_LIMIT;
+  if (hasMore) {
+    myPost?.pop();
+  }
+  return myPost;
+}
 export async function updatePost(
   uid: string,
   text: string,

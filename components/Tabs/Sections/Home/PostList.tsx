@@ -51,7 +51,6 @@ export const PostList = memo(
               updatePost={updatePost}
               selectMode={selectMode}
               preventNavigate={preventNavigate}
-              profile={profile}
               auth={auth!}
               tabIndex={tabIndex}
               key={post?.id ?? ""}

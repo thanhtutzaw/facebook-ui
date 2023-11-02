@@ -41,6 +41,7 @@ import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import Spinner from "../components/Spinner";
 import { PageContext, PageProps } from "../context/PageContext";
 import { MYPOST_LIMIT, NewsFeed_LIMIT } from "../lib/QUERY_LIMIT";
+import { fetchRecentPosts } from "@/lib/firestore/post";
 export const getServerSideProps: GetServerSideProps<AppProps> = async (
   context
 ) => {
@@ -95,11 +96,13 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
         queryPageData = {
           profile,
           myPost,
-          isFriend,
-          isBlocked,
-          isPending,
-          canAccept,
-          canUnBlock,
+          friendStatus: {
+            isFriend,
+            isBlocked,
+            isPending,
+            canAccept,
+            canUnBlock,
+          },
         };
       } else {
         queryPageData = null;
@@ -118,9 +121,8 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
       return { days, hours, minutes, seconds: remainingSeconds };
     };
     // console.log(convertSecondsToTime(token.exp));
-    const { name, email, uid } = token;
+    const { uid } = token;
     tokenUID = uid;
-    // console.log("isVerify " + token.email_verified);
     const myFriendsQuery = query(
       getPath("friends", { uid }),
       where("status", "==", "friend"),
@@ -128,11 +130,9 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     );
     const myFriendsSnap = await getDocs(myFriendsQuery);
     const acceptedFriends = myFriendsSnap.docs.map((doc) => doc.id);
-    const feedUser = myFriendsSnap.docs.map((doc) => {
-      return { id: doc.data().id } as { id: string };
-    });
-    const feedUserWithAdmin = [{ id: uid }, ...feedUser];
-    // console.log(feedUserWithAdmin);
+    // const feedUser = myFriendsSnap.docs.map((doc) => {
+    //   return { id: doc.data().id } as { id: string };
+    // });
     // const userPostsSubCollectionRef =  getPath("friends",{uid});
 
     // Reference to the "recentPostSubCollection" subcollection within the user's "postsSubCollection"
@@ -140,62 +140,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     //   getPath("recentPosts", { uid }),
     //   NewsFeed_LIMIT + 1
     // );
-    const newsFeedQuery = query(
-      getPath("recentPosts", { uid }),
-      limit(NewsFeed_LIMIT + 1),
-      orderBy("createdAt", "desc")
-    );
-    let recentPosts: RecentPosts[] = [],
-      hasMore = false;
-    try {
-      recentPosts = (await getDocs(newsFeedQuery)).docs.map((doc) => {
-        return {
-          ...(doc.data() as any),
-          recentId: doc.id,
-          createdAt: doc.data().createdAt?.toJSON() || 0,
-        };
-      });
-      console.log(recentPosts);
-      // console.log(recentPosts[recentPosts.length - 1]);
-      hasMore = recentPosts.length > NewsFeed_LIMIT;
-      console.log({
-        rlenght: recentPosts.length,
-        newfeedLimit: NewsFeed_LIMIT,
-      });
-      if (hasMore) {
-        console.log("there is hasMore newsfeed");
-        recentPosts.pop();
-        console.log({
-          rlenght: recentPosts.length,
-          newfeedLimit: NewsFeed_LIMIT,
-        });
-      }
-    } catch (error) {
-      console.log("Recent Post Error - ", error);
-    }
-
-    // const recentPosts = await Promise.all(
-    // feedUserWithAdmin.map(async (friend) => {
-
-    // return (await getDocs(newsFeedQuery).docs.map((doc) => {
-    //   return {
-    //   };
-    // });
-    // })
-    // feedUserWithAdmin.map(async (friend) => {
-    //   const newsFeedQuery = query(
-    //     limit(NewsFeed_LIMIT)
-    //   );
-    //   return (await getDocs(newsFeedQuery)).docs.map((doc) => {
-    //     const authorId = doc.ref.parent.parent?.id;
-    //     return {
-    //     };
-    //   });
-    // })
-    // );
-    // const posts = recentPosts.reduce((acc, cur) => acc.concat(cur), []);
-
-    const isFriendEmpty = myFriendsSnap.empty;
+    let { recentPosts, hasMore } = await fetchRecentPosts(uid);
     const [newsFeedPosts, profileData, currentAccount] = await Promise.all([
       getNewsFeed(uid, recentPosts),
       getProfileByUID(uid),
@@ -224,7 +169,6 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
         account: currentUserData ?? null,
         postError: "",
         acceptedFriends,
-        isFriendEmpty,
         fcmToken,
       },
     };
@@ -254,18 +198,17 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
         uid: tokenUID ?? "",
         acceptedFriends: [],
         posts: [],
-        isFriendEmpty: false,
         profile: null,
         account: null,
       },
     };
   }
 };
+
 export default function Home({
   queryPageData,
   token,
   acceptedFriends,
-  isFriendEmpty,
   postError,
   expired,
   uid,
@@ -316,44 +259,13 @@ export default function Home({
 
   useEffect(() => {
     if (!expired) setlimitedPosts(posts!);
-    // setlimitedPosts([{ ...limitedPosts },  posts!]);
   }, [expired, posts]);
-
-  // useEffect(() => {
-  //   // const postQuery = query(
-  //   //   where("visibility", "in", ["Friend", "Public"]),
-  //   //   limit(limitedPosts.length > 0 ? limitedPosts.length : NewsFeed_LIMIT)
-  //   // );
-  //   const postQuery = query(
-  //     // where("visibility", "in", ["Friend", "Public"]),
-  //     where("authorId", "in", !isFriendEmpty ? acceptedFriends : [uid]),
-  //     limit(limitedPosts.length > 0 ? limitedPosts.length : NewsFeed_LIMIT)
-  //   );
-  //   unsubscribe = onSnapshot(postQuery, async (snapshot) => {
-  //     const posts =
-  //       (await getPostWithMoreInfo(uid!, undefined, snapshot)) ?? [];
-  //     setlimitedPosts(posts);
-  //     console.log("updated posts");
-  //   });
-  //   return () => {
-  //   };
-  // }, [acceptedFriends, isFriendEmpty, limitedPosts.length, uid]);
   useEffect(() => {
     if (expired) return;
     if (!uid) {
       // router.push("/login");
     }
   }, [expired, uid]);
-
-  // const [playFriendRequest] = useSound(friendReqSound, { volume: 0.11 });
-  // useEffect(() => {
-  //   async function fetchFriendReqLastPull() {
-  //     await updateDoc(friendReqCountRef, {
-  //     });
-  //     // setfriendReqLastPull(
-  //     // );
-  //   }
-  // }, [uid]);
   useEffect(() => {
     const isReady = async () => {
       await navigator.serviceWorker.ready;
@@ -367,16 +279,9 @@ export default function Home({
       //     alert("Sw ready");
       //     reg.showNotification(notificationTitle, notificationOptions);
       //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //     alert("sw not ready !");
-      //   });
       const messaging = getMessaging(app);
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
-        // alert(
-        //   `Foreground push notification received:  ${JSON.stringify(payload)}`
-        // );
         const { title, body, icon } = payload.notification!;
         const notificationTitle = title ?? "Facebook";
 
@@ -500,9 +405,9 @@ export default function Home({
       <AppProvider
         setprofileSrc={setprofileSrc}
         profileSrc={profileSrc}
+        token={token}
         hasMore={hasMore}
         acceptedFriends={acceptedFriends}
-        isFriendEmpty={isFriendEmpty}
         UnReadNotiCount={UnReadNotiCount}
         setUnReadNotiCount={setUnReadNotiCount}
         active={activeTab!}

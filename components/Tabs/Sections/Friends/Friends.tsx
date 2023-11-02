@@ -14,8 +14,18 @@ export default function Friend(props: FriendProps) {
   const pending = pendingFriends.data ?? [];
   return (
     <div className={s.container}>
-      <div className={`pb-[10px] px-4 ${s.action}`}>
-        <button tabIndex={tabIndex}>Suggestions</button>
+      <div className={`flex flex-wrap pb-[10px] px-4 ${s.action}`}>
+        <button
+          aria-label="Go to my friends page"
+          title="Go to my friends page"
+          tabIndex={tabIndex}
+          className={s.item}
+          onClick={() => {
+            router.push("/suggestions");
+          }}
+        >
+          Suggestions
+        </button>
         <button
           aria-label="Go to my friends page"
           title="Go to my friends page"

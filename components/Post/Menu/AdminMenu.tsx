@@ -10,15 +10,16 @@ import { app, getCollectionPath } from "../../../lib/firebase";
 import { deletePost } from "../../../lib/firestore/post";
 import styles from "../index.module.scss";
 import { CopyLink } from "./Menu";
+import { Post } from "@/types/interfaces";
 export default function AdminMenu(props: {
   updatePost: Function;
-  authorId: string | number;
-  id: string;
+  post?: Post;
 }) {
-  const { updatePost, authorId, id } = props;
+  const { updatePost } = props;
   const { post, toggleMenu, settoggleMenu } = useContext(
     PostContext
   ) as PostProps;
+  const { authorId, id } = post;
   const auth = getAuth(app);
   const [loading, setLoading] = useState(false);
   const { queryFn } = useQueryFn();
@@ -26,8 +27,6 @@ export default function AdminMenu(props: {
   //   mutationFn: async (data: any) => await deletePost(data),
   //   onSuccess: (data) => {
   //     console.log("Delete Mutate Success " + data);
-  //     setLoading(false);
-  //     settoggleMenu?.("");
   //   },
   // });
   return (
@@ -36,15 +35,15 @@ export default function AdminMenu(props: {
         <motion.div
           key={id}
           initial={{
-            opacity: "0",
+            opacity: 0,
             scale: 0.8,
           }}
           animate={{
             opacity: toggleMenu === id ? 1 : 0,
-            scale: 1,
+            scale: toggleMenu === id ? 1 : 0.8,
           }}
           exit={{
-            opacity: "0",
+            opacity: 0,
             scale: 0.8,
           }}
           transition={{
@@ -85,13 +84,6 @@ export default function AdminMenu(props: {
               }
               setLoading(true);
               try {
-                // const deleteURL = post.deletedByAuthor
-                //   ? `${getCollectionPath.recentPosts({
-                //       uid: String(post.authorId),
-                //     })}/${post.recentId}`
-                //   : `${getCollectionPath.posts({
-                //       uid,
-                //     })}/${String(id)}`;
                 if (!post.deletedByAuthor) {
                   await deletePost({
                     uid,
@@ -110,22 +102,6 @@ export default function AdminMenu(props: {
                     post,
                   });
                 }
-                // await deletePost({
-                //   uid,
-                //   post,
-                //   deleteURL,
-                // });
-                // if (!post.deletedByAuthor) {
-                //   const deleteURL = `${getCollectionPath.recentPosts({
-                //     uid,
-                //   })}/${post.recentId}`;
-                //   await deletePost({
-                //     uid,
-                //     post,
-                //     deleteURL,
-                //   });
-                //   updatePost(id);
-                // }
                 setLoading(false);
                 settoggleMenu?.("");
                 queryFn.refetchQueries("myPost");
@@ -141,11 +117,6 @@ export default function AdminMenu(props: {
                   updatePost(id, true);
                 }
                 if (loading) return;
-                // if (post.deletedByAuthor) {
-                //   updatePost(post.recentId, post.deletedByAuthor);
-                // } else {
-
-                // }
               } catch (error: any) {
                 settoggleMenu?.("");
                 console.error(error);

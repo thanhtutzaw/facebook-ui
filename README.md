@@ -5,7 +5,7 @@
 
 Project is created with:
 
-* Next.js v13.0.6 , Typescript and SASS
+* Next.js v13.0.6 , Typescript , Tailwind CSS and SASS
 * Firebase , [Cloud Storage](https://firebase.google.com/docs/storage/web/start) and [Cloud Firestore](https://firebase.google.com/docs/firestore)
 * [Firebase-Admin-SDK](https://www.npmjs.com/package/firebase-admin) and [Nookies](https://www.npmjs.com/package/nookies)
 * [use-gesture](https://www.npmjs.com/package/@use-gesture/react) and [react-spring](https://www.npmjs.com/package/react-spring)
@@ -33,8 +33,9 @@ Project is created with:
 :ballot_box_with_check: Friends Request Sound play in App Mode (Add to HomeScreen due to Browser Autoplay ploicy) \
 :ballot_box_with_check: Users will receive Inbox notifications when their posts are liked,commented and shared by other users \
 :ballot_box_with_check: Crop the profile picture to 256x256 pixels to ensure it displays with the correct aspect ratio in the notification icon \
-:ballot_box_with_check: Notification actions are also enabled to enhance the user experience without the need to open a web page. An available action is "accept-friend-request" \
-:ballot_box_with_check: Push notificatons to multiple devices with Service Worker and Firebase Cloud messaging for foreground and background notificatons
+:ballot_box_with_check: Notification actions are also enabled to enhance the user experience without the need to open a web page. \
+   An available action is "acceptFriendRequest" \
+:ballot_box_with_check: Push notificatons to multiple devices with Firebase Cloud messaging for foreground and background notificatons.
 
 ## User-Interface
 

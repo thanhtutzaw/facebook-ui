@@ -23,6 +23,8 @@ interface singleImageModalType {
   name: string;
 }
 export interface PageProps {
+  // toggleCommentMenu: string;
+  // settoggleCommentMenu: Function;
   notiPermission: boolean;
   friendReqCount: number;
   newsFeedData?: Post[];
@@ -85,6 +87,12 @@ export function PageProvider(props: PageProps) {
       document.removeEventListener("click", handleClickOutside);
     };
   }, [shareAction]);
+  // const [toggleCommentMenu, settoggleCommentMenu] = useState("");
+  // const toggleCommentMenu = useRef('')
+  // const settoggleCommentMenu = (value:string)=>{
+  //   toggleCommentMenu.current = value
+  // }
+
   return (
     <PageContext.Provider
       value={{

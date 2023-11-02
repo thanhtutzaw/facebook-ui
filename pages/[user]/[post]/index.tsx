@@ -358,7 +358,24 @@ export default function Page(props: {
         }}
         className={s.container}
       >
-        <AuthorInfo navigateToProfile={navigateToProfile} post={post} />
+        <AuthorInfo navigateToProfile={navigateToProfile} post={post}>
+        {/* <>
+          {isAdmin ? (
+            <AdminMenu
+              updatePost={updatePost!}
+              authorId={authorId!}
+              id={id?.toString()!}
+            />
+          ) : (
+            <Menu
+              authorId={authorId?.toString()!}
+              id={id?.toString()!}
+              isSaved={post.isSaved}
+              uid={authUser?.uid!}
+            />
+          )}
+        </> */}
+        </AuthorInfo>
         <TextInput
           style={{
             cursor: canEdit ? "initial" : "default",

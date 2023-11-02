@@ -15,7 +15,6 @@ interface PostProps {
   selectMode?: boolean;
   post: PostType;
   tabIndex?: number;
-  profile?: account["profile"];
 }
 export default function Post({
   updatePost,

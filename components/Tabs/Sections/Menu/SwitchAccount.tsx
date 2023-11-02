@@ -55,7 +55,6 @@ export default function SwitchAccount(props: {
     <div
       style={{
         height: !toggleSwitchAcc ? "65px" : "300px",
-        // transition: "",
       }}
       onClick={() => {
         setToggleSwitchAcc((prev) => !prev);
@@ -64,7 +63,7 @@ export default function SwitchAccount(props: {
       className={s.switchAccountContainer}
     >
       <header>
-        <h2 >Switch Account</h2>
+        <h2>Switch Account</h2>
 
         {toggleSwitchAcc ? (
           <button aria-label="toggle">
@@ -95,14 +94,7 @@ export default function SwitchAccount(props: {
         ))}
       </ul>
       <footer>
-        <p
-          style={{
-            color: "darkgray",
-            fontSize: "15px",
-            padding: "0 1rem",
-            margin: ".5rem 0",
-          }}
-        >
+        <p className={`text-dimgray text-[15px] p-[0_1rem] m-[.5rem_0]`}>
           <FontAwesomeIcon icon={faInfoCircle} /> Switch account for testing
         </p>
       </footer>

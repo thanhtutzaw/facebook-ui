@@ -1,6 +1,7 @@
+import useEscape from "@/hooks/useEscape";
 import { doc } from "firebase/firestore";
 import { useRouter } from "next/router";
-import { LegacyRef, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   JSONTimestampToDate,
   db,
@@ -11,7 +12,7 @@ import { Comment, Post } from "../../types/interfaces";
 import AuthorInfo from "../Post/AuthorInfo";
 import Spinner from "../Spinner";
 import s from "./index.module.scss";
-import useEscape from "@/hooks/useEscape";
+import { PageContext, PageProps } from "@/context/PageContext";
 
 export default function Comment(props: {
   hasMore: boolean;
@@ -26,6 +27,8 @@ export default function Comment(props: {
   const postRef = doc(db, `${getPath("posts", { uid })}/${postId}`);
   const router = useRouter();
   const [client, setclient] = useState(false);
+  const [toggleCommentMenu, settoggleCommentMenu] = useState("");
+  const [editToggle, seteditToggle] = useState("");
   useEffect(() => {
     setclient(true);
   }, []);
@@ -75,8 +78,8 @@ export default function Comment(props: {
     );
     const inputRef = useRef<HTMLParagraphElement>(null);
     const [input, setInput] = useState(text);
-    const [editToggle, seteditToggle] = useState("");
-    useLayoutEffect(() => {
+
+    useEffect(() => {
       if (editToggle === id) {
         if (inputRef.current) {
           const contentEle = inputRef.current;
@@ -90,10 +93,12 @@ export default function Comment(props: {
           selection?.addRange(range);
         }
       }
-    }, [editToggle, id]);
+    }, [id]);
+    // const { settoggleCommentMenu } = useContext(PageContext) as PageProps;
     useEscape(() => {
       if (editToggle !== "") {
         seteditToggle("");
+        settoggleCommentMenu("");
       }
     });
     function handleEditComment() {
@@ -102,10 +107,15 @@ export default function Comment(props: {
       } else {
         seteditToggle(String(id));
       }
+      setTimeout(() => {
+        settoggleCommentMenu("");
+      }, 300);
     }
     return (
       <li className={s.item} id={`comment-${id}`}>
         <AuthorInfo
+          toggleCommentMenu={toggleCommentMenu}
+          settoggleCommentMenu={settoggleCommentMenu}
           handleEditComment={handleEditComment}
           postRef={postRef}
           commentRef={commentRef}
@@ -120,24 +130,19 @@ export default function Comment(props: {
         >
           <div
             className={`${
-              editToggle === id ? "outline outline-1 outline-gray " : ""
-            } max-h-20 overflow-scroll 
+              editToggle === id
+                ? "border-b-black border-b border-solid"
+                : "border-b-transparent border-b border-solid"
+            } p-[0_0_5px] max-h-20 overflow-scroll transition-all duration-500 ease-in-out
             `}
           >
             <p
-              // key={editToggle === id ? 'true':'false'}
               suppressContentEditableWarning={true}
               ref={inputRef}
               contentEditable={editToggle === id}
-              className={`${
-                editToggle !== id ? "cursor-default" : "cursor-text"
-              } p-3 focus-visible:outline-0 ${s.text}`}
+              className={`p-3 focus-visible:outline-0 ${s.text}`}
             >
               {text}
-              <br />
-              {editToggle}
-              <br />
-              {id}
             </p>
           </div>
           <div className={s.actions}>

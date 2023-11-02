@@ -17,52 +17,7 @@
         z-index: 100000;
         padding-bottom: 1rem;
         
-        .menuContainer {
-            display: flex;
-            flex-direction: column;
-            position: absolute;
-            // width: clamp(180px, 50%, 180px);
-            border-radius: 1rem;
-            overflow: hidden;
-            padding-block: 0.7rem;
-            background-color: rgb(241, 241, 241) !important;
-            z-index: 500;
-            box-shadow: 0 5px 12px rgba(136, 135, 135, 0.5);
-            max-height: 200px;
-            overflow-y: scroll;
-            flex-wrap: wrap;
-            // align-content: center;
-            // justify-content: center;
-            &:has(> button:only-child) {
-                padding-block: 0;
-            }
-            .danger {
-                color: red;
-                background-color: transparent !important;
-            }
-            > button {
-                display: flex;
-                justify-content: initial !important;
-                gap: 10px !important;
-                border: 0;
-                font-size: 18px;
-                padding: 0.5rem 0.8rem;
-                white-space: nowrap;
-                min-width: 180px;
-                transition: 0s;
-                align-items: center;
-                &:hover {
-                    background-color: rgb(221, 221, 221) !important;
-                }
-                &:active {
-                    opacity: 0.5;
-                }
-                > svg {
-                    width: 20px;
-                    height: 20px;
-                }
-            }
-        }
+        
         // transition: height 0.2s cubic-bezier(0.39, 0.575, 0.565, 1);
         .formContainer {
             min-height: 41px;
@@ -322,3 +277,49 @@
         }
     }
 }
+.menuContainer {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            // width: clamp(180px, 50%, 180px);
+            border-radius: 1rem;
+            overflow: hidden;
+            padding-block: 0.7rem;
+            background-color: rgb(241, 241, 241) !important;
+            z-index: 500;
+            box-shadow: 0 5px 12px rgba(136, 135, 135, 0.5);
+            max-height: 200px;
+            overflow-y: scroll;
+            flex-wrap: wrap;
+            // align-content: center;
+            // justify-content: center;
+            &:has(> button:only-child) {
+                padding-block: 0;
+            }
+            .danger {
+                color: red;
+                background-color: transparent !important;
+            }
+            > button {
+                display: flex;
+                justify-content: initial !important;
+                gap: 10px !important;
+                border: 0;
+                font-size: 18px;
+                padding: 0.5rem 0.8rem;
+                white-space: nowrap;
+                min-width: 180px;
+                transition: 0s;
+                align-items: center;
+                &:hover {
+                    background-color: rgb(221, 221, 221) !important;
+                }
+                &:active {
+                    opacity: 0.5;
+                }
+                > svg {
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+        }

@@ -20,6 +20,7 @@ import { SocialCount } from "./SocialCount";
 import s from "./index.module.scss";
 import PostFallback from "./Fallback";
 import { Post } from "@/types/interfaces";
+import useEscape from "@/hooks/useEscape";
 export default function Content({ post }: { post: Post }) {
   const {
     updatePost,
@@ -43,6 +44,9 @@ export default function Content({ post }: { post: Post }) {
     PageContext
   ) as PageProps;
   const { toggleMenu, settoggleMenu } = useContext(PostContext) as PostProps;
+  useEscape(() => {
+    if (toggleMenu) settoggleMenu("");
+  });
   const router = useRouter();
   const seemore =
     text?.match(/<br\s*[/]?>/gi)?.length! > 4 ||
@@ -173,8 +177,8 @@ export default function Content({ post }: { post: Post }) {
           {isAdmin ? (
             <AdminMenu
               updatePost={updatePost!}
-              authorId={authorId!}
-              id={id?.toString()!}
+              // authorId={authorId!}
+              // id={id?.toString()!}
             />
           ) : (
             <Menu

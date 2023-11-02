@@ -12,25 +12,13 @@ export default function UserProfilePage({
   const router = useRouter();
 
   if (!router.query.user) return null;
-  const {
-    profile,
-    myPost,
-    isFriend,
-    isBlocked,
-    isPending,
-    canAccept,
-    canUnBlock,
-  } = queryPageData;
+  const { profile, myPost, friendStatus } = queryPageData;
   return (
     <UserProfile
       token={token}
       profile={profile}
       myPost={myPost}
-      isFriend={isFriend}
-      isBlocked={isBlocked}
-      isPending={isPending}
-      canAccept={canAccept}
-      canUnBlock={canUnBlock}
+      friendStatus={friendStatus}
     />
   );
 }

@@ -5,7 +5,6 @@ import {
   RefObject,
   SetStateAction,
   createContext,
-  useState,
 } from "react";
 import { Post as PostType, likes } from "../types/interfaces";
 export type PostProps = {
