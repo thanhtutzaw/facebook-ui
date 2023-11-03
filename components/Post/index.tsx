@@ -6,7 +6,7 @@ import { Post as PostType, account, likes } from "../../types/interfaces";
 import Content from "./Content";
 import { Footer } from "./Footer";
 import s from "./index.module.scss";
-
+import { AnimatePresence, motion } from "framer-motion";
 interface PostProps {
   updatePost?: Function;
   shareMode?: boolean;
@@ -77,6 +77,7 @@ export default function Post({
     >
       <div className={postClass}>
         <Content post={post} />
+        
         {!shareMode && (
           <Footer
             setLikes={setLikes}

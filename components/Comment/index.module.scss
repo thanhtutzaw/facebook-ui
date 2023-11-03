@@ -42,8 +42,9 @@
             display: flex;
             align-items: center;
             gap: 10px;
-
-            .replayBtn {
+color: #4e4e4e;
+            font-size: 15px !important;
+            .replyBtn {
                 background-color: transparent;
             }
             > button {
@@ -62,7 +63,6 @@
 }
 
 .input {
-    
     height: 80px;
     background-color: rgb(234, 234, 234);
     background-color: rgb(229, 229, 229);

@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentData, DocumentReference } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { CSSProperties, MouseEventHandler, ReactNode } from "react";
+import { CSSProperties, MouseEventHandler, ReactNode, RefObject, useRef } from "react";
 import { JSONTimestampToDate } from "../../lib/firebase";
 import { Comment, Post, account } from "../../types/interfaces";
 import CommentAction from "../Comment/Action";
@@ -16,6 +16,7 @@ import styles from "./index.module.scss";
 type layoutTypes = "row" | "column";
 
 export default function AuthorInfo(props: {
+  menuRef?:RefObject<HTMLDivElement>;
   toggleCommentMenu?: string;
   settoggleCommentMenu?: Function;
   handleEditComment?: Function;
@@ -31,6 +32,7 @@ export default function AuthorInfo(props: {
   post?: Post;
 }) {
   const {
+    menuRef,
     toggleCommentMenu,
     settoggleCommentMenu,
     handleEditComment,
@@ -92,7 +94,7 @@ export default function AuthorInfo(props: {
     const { author, authorId } = comment;
     const profile = author as account["profile"];
     return (
-      <div key={comment.id} style={style} className={`relative ${styles.header}`}>
+      <div style={style} className={`relative ${styles.header}`}>
         <Author
           comment={comment!}
           navigateToProfile={() => {
@@ -104,6 +106,7 @@ export default function AuthorInfo(props: {
         </Author>
         {isAdmin && (
           <CommentAction
+            menuRef={menuRef!}
             toggleCommentMenu={toggleCommentMenu!}
             settoggleCommentMenu={settoggleCommentMenu!}
             comment={comment}

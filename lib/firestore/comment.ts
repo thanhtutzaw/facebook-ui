@@ -3,6 +3,7 @@ import {
   DocumentReference,
   FieldValue,
   Query,
+  Timestamp,
   doc,
   getDocs,
   increment,
@@ -56,7 +57,16 @@ export async function addComment(
 export async function updateComment(target: string, { ...comment }: Comment) {
   const commentRef = doc(db, target);
   const data = { ...comment };
-  await updateDoc(commentRef, data);
+  const { author, ...rest } = data;
+  const newComment = {
+    ...rest,
+    createdAt: new Timestamp(
+      comment.createdAt.seconds,
+      comment.createdAt.nanoseconds
+    ),
+    updatedAt: serverTimestamp(),
+  };
+  await updateDoc(commentRef, newComment);
 }
 export async function deleteComment(
   commentRef: DocumentReference<DocumentData>,

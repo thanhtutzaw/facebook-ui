@@ -8,10 +8,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentData, DocumentReference } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import router from "next/router";
-import { useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { deleteComment } from "../../lib/firestore/comment";
 import s from "@/components/Tabs/Sections/Profile/index.module.scss";
+import useEscape from "@/hooks/useEscape";
+import post from '@/components/Post/index.module.scss'
 export default function CommentAction(props: {
+  menuRef: RefObject<HTMLDivElement>;
   toggleCommentMenu: string;
   settoggleCommentMenu: Function;
   handleEditComment: Function;
@@ -20,6 +23,7 @@ export default function CommentAction(props: {
   comment: Comment;
 }) {
   const {
+    menuRef,
     toggleCommentMenu,
     settoggleCommentMenu,
     comment,
@@ -27,14 +31,16 @@ export default function CommentAction(props: {
     commentRef,
     postRef,
   } = props;
-  // const { toggleCommentMenu, settoggleCommentMenu } = useContext(
-  //   PageContext
-  // ) as PageProps;
   const [deleteLoading, setDeleteLoading] = useState(false);
   const { id } = comment;
+  useEscape(() => {
+    toggleCommentMenu && settoggleCommentMenu("");
+  });
+
   return (
     <>
       <button
+      className={post.dot}
         onClick={() => {
           toggleCommentMenu
             ? settoggleCommentMenu("")
@@ -46,6 +52,7 @@ export default function CommentAction(props: {
       <AnimatePresence>
         {toggleCommentMenu === id && (
           <motion.div
+            ref={menuRef}
             key={id}
             initial={{
               opacity: 0,
@@ -60,13 +67,15 @@ export default function CommentAction(props: {
               scale: 0.8,
             }}
             transition={{
-              duration: 2,
+              type: "spring",
             }}
-            className={`items-center right-0
-    top-[2.5rem]
-} ${s.menuContainer}`}
+            className={`
+            
+                flex flex-col max-w-none
+            will-change-[scale] items-center right-4 top-[2.5rem] ${s.menuContainer}`}
           >
             <button
+              style={{ minWidth: "148px" }}
               onClick={async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -81,6 +90,7 @@ export default function CommentAction(props: {
               Edit
             </button>
             <button
+              style={{ minWidth: "148px" }}
               onClick={async () => {
                 setDeleteLoading(true);
 

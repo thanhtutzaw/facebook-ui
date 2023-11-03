@@ -1,6 +1,6 @@
 
 import { User } from "firebase/auth";
-import { memo, useEffect } from "react";
+import { memo, useEffect, useState } from "react";
 import { Post as PostType } from "@/types/interfaces";
 import s from "@/components/Post/index.module.scss";
 import Post from "@/components/Post";
@@ -32,7 +32,6 @@ export const PostList = memo(
       posts,
       tabIndex,
     } = props;
-
     return (
       <>
         <div

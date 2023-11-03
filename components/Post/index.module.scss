@@ -1,4 +1,21 @@
 @import "../../styles/mixins";
+.dot {
+        transition: all 0.3s ease-in-out;
+        @include mouse() {
+            &:hover {
+                background-color: rgb(231, 231, 231);
+            }
+        }
+        &:active {
+            opacity: 0.5;
+            scale: 1.1;
+            background-color: rgb(231, 231, 231);
+        }
+        &:focus-visible {
+            color: var(--blue-origin);
+            transition: all 0.3s ease-in-out;
+        }
+    }
 .loadMore {
     background: black;
     border-radius: 0.5rem;
@@ -355,23 +372,7 @@
             border-bottom: 0;
         }
     }
-    .dot {
-        transition: all 0.3s ease-in-out;
-        @include mouse() {
-            &:hover {
-                background-color: rgb(231, 231, 231);
-            }
-        }
-        &:active {
-            opacity: 0.5;
-            scale: 1.1;
-            background-color: rgb(231, 231, 231);
-        }
-        &:focus-visible {
-            color: var(--blue-origin);
-            transition: all 0.3s ease-in-out;
-        }
-    }
+    
     // transition: border 0.2s ease-in-out, borderRadius 0.2s ease-in-out;
     .seeMore {
         margin: 0 10px;
@@ -488,6 +489,8 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            color: #4e4e4e;
+            font-size: 15px !important;
             .date {
                 color: dimgray;
             }
@@ -517,9 +520,8 @@
         display: flex;
         flex: 1;
         gap: 8px;
+
         > div > :last-child {
-            color: #4e4e4e;
-            font-size: 15px !important;
         }
         p,
         span {
