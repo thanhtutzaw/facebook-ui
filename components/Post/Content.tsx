@@ -111,11 +111,9 @@ export default function Content({ post }: { post: Post }) {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    if (toggleMenu === "") {
-                      settoggleMenu?.(String(id));
-                    } else {
-                      settoggleMenu?.("");
-                    }
+                    toggleMenu
+                      ? settoggleMenu?.("")
+                      : settoggleMenu?.(String(id));
                   }}
                 >
                   <FontAwesomeIcon icon={faEllipsisH} />
@@ -205,13 +203,6 @@ export default function Content({ post }: { post: Post }) {
       )}
       {text !== "" && text && (
         <TextInput
-          style={
-            {
-              // marginBottom: text === "" ? "0" : "5px",
-              // paddingTop: text === "" ? "0" : ".5rem",
-              // marginBottom: text === "" ? ".5rem" : "1rem",
-            }
-          }
           dangerouslySetInnerHTML={{
             __html: !production
               ? client

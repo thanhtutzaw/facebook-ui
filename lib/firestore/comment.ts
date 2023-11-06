@@ -20,12 +20,12 @@ export async function fetchComments(query: Query) {
     commentDoc.docs.map(async (doc) => await commentToJSON(doc))
   );
   const comments = await Promise.all(
-    commentJSON.map(async (c) => {
-      if (c && c.authorId) {
-        const author = await getProfileByUID(c.authorId?.toString());
-        return { ...c, author };
+    commentJSON.map(async (comment) => {
+      if (comment && comment.authorId) {
+        const author = await getProfileByUID(comment.authorId.toString());
+        return { ...comment, author };
       } else {
-        return { ...c, author: null };
+        return { ...comment, author: null };
       }
     })
   );
@@ -53,6 +53,7 @@ export async function addComment(
   // return commentDateToJSON(data) as Comment;
   console.log(data.createdAt);
   return data;
+
 }
 export async function updateComment(target: string, { ...comment }: Comment) {
   const commentRef = doc(db, target);
@@ -66,7 +67,11 @@ export async function updateComment(target: string, { ...comment }: Comment) {
     ),
     updatedAt: serverTimestamp(),
   };
-  await updateDoc(commentRef, newComment);
+  try {
+    await updateDoc(commentRef, newComment);
+  } catch (error) {
+    throw error;
+  }
 }
 export async function deleteComment(
   commentRef: DocumentReference<DocumentData>,

@@ -15,6 +15,7 @@ export default function Metatag({
         name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no"
       />
+      <meta name="theme-color" content="#0070f3" />
       <link rel="icon" href="/logo.svg" />
       <link rel="manifest" href="/manifest.json" />
     </Head>

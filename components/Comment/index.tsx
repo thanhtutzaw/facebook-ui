@@ -1,22 +1,11 @@
-import useEscape from "@/hooks/useEscape";
-import { doc } from "firebase/firestore";
-import { useRouter } from "next/router";
-import { useContext, useEffect, useRef, useState } from "react";
-import {
-  JSONTimestampToDate,
-  db,
-  getCollectionPath,
-  getPath,
-} from "../../lib/firebase";
-import { Comment, Post } from "../../types/interfaces";
-import AuthorInfo from "../Post/AuthorInfo";
+import { useEffect, useRef, useState } from "react";
+import { Post } from "../../types/interfaces";
 import Spinner from "../Spinner";
-import s from "./index.module.scss";
-import { PageContext, PageProps } from "@/context/PageContext";
-import { AnimatePresence, motion } from "framer-motion";
 import CommentItem from "./CommentItem";
+import s from "./index.module.scss";
 
 export default function Comment(props: {
+  setComments: Function;
   hasMore: boolean;
   commentEnd?: boolean;
   commentLoading?: boolean;
@@ -24,7 +13,7 @@ export default function Comment(props: {
   comments: Post["comments"] | [];
   post: Post;
 }) {
-  const { hasMore, commentEnd,  post, comments, uid } = props;
+  const { setComments, hasMore, commentEnd, post, comments, uid } = props;
 
   const [client, setclient] = useState(false);
 
@@ -33,8 +22,7 @@ export default function Comment(props: {
     setclient(true);
   }, []);
   const [toggleCommentMenu, settoggleCommentMenu] = useState("");
-const menuRef = useRef<HTMLDivElement>(null);
-
+  const menuRef = useRef<HTMLDivElement>(null);
   if (comments?.length === 0) return <></>;
   return (
     <>
@@ -51,11 +39,12 @@ const menuRef = useRef<HTMLDivElement>(null);
             uid={uid}
             key={comment.id}
             comment={comment}
+            comments={comments}
+            setComments={setComments}
           />
         ))}
       </ul>
       {!hasMore && !commentEnd ? null : hasMore && !commentEnd && <Spinner />}
     </>
   );
-  
 }

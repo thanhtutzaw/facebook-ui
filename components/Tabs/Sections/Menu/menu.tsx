@@ -24,20 +24,15 @@ export default function Menu(props: MenuProps) {
   return (
     <div className={s.container}>
       <button
-        aria-label="Go to Profile"
         title="Go to Profile"
         tabIndex={tabIndex}
         className={s.item}
         onClick={() => navigateTab("profile")}
       >
-        <FontAwesomeIcon
-          style={{ color: "#0070f3", fontWeight: "bold" }}
-          icon={faUser}
-        />
+        <FontAwesomeIcon icon={faUser} />
         View Profile
       </button>
       <button
-        aria-label="Go to SavedPost"
         title="Go to SavedPost"
         tabIndex={tabIndex}
         className={s.item}
@@ -45,14 +40,10 @@ export default function Menu(props: MenuProps) {
           router.push("/saved");
         }}
       >
-        <FontAwesomeIcon
-          style={{ color: "#0070f3", fontWeight: "bold" }}
-          icon={faBookmark}
-        />
+        <FontAwesomeIcon icon={faBookmark} />
         Saved Post
       </button>
       <button
-        aria-label="Sign out Button"
         title="Sign out"
         tabIndex={tabIndex}
         disabled={loading}
@@ -61,9 +52,8 @@ export default function Menu(props: MenuProps) {
           setLoading(true);
           try {
             const messaging = getMessaging(app);
-            setTimeout(() => {
-              signout(messaging);
-              // setActive?.("/");
+            setTimeout(async () => {
+              await signout(messaging);
             }, 700);
           } catch (error) {
             setLoading(false);
@@ -71,10 +61,7 @@ export default function Menu(props: MenuProps) {
           }
         }}
       >
-        <FontAwesomeIcon
-          style={{ color: "#0070f3", fontWeight: "bold" }}
-          icon={faSignOut}
-        />
+        <FontAwesomeIcon icon={faSignOut} />
         {loading ? "Signing out..." : "Sign out"}
         {loading && (
           <Spinner style={{ opacity: ".5", marginLeft: "auto" }} size={23} />

@@ -1,5 +1,12 @@
 import { User } from "firebase/auth";
-import { useContext, useEffect, useRef, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import PostProvider from "../../context/PostContext";
 import { Post as PostType, account, likes } from "../../types/interfaces";
@@ -15,6 +22,8 @@ interface PostProps {
   selectMode?: boolean;
   post: PostType;
   tabIndex?: number;
+  toggleMenu?: string;
+  settoggleMenu?: Dispatch<SetStateAction<string>>;
 }
 export default function Post({
   updatePost,
@@ -24,6 +33,8 @@ export default function Post({
   selectMode,
   post,
   tabIndex,
+  toggleMenu,
+  settoggleMenu,
 }: PostProps) {
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
@@ -31,7 +42,6 @@ export default function Post({
   const { currentUser } = useContext(PageContext) as PageProps;
   const [client, setclient] = useState(false);
 
-  const [toggleMenu, settoggleMenu] = useState("");
   useEffect(() => {
     if (selectMode) {
       toggleMenu && settoggleMenu?.("");
@@ -39,7 +49,6 @@ export default function Post({
       checked && setChecked(false);
     }
   }, [selectMode, checked, settoggleMenu, toggleMenu]);
-
   useEffect(() => {
     setclient(true);
   }, []);
@@ -55,8 +64,8 @@ export default function Post({
   const postClass = `${s.item}${checkStyle}${selectStyle}${shareStyle}`;
   return (
     <PostProvider
-      toggleMenu={toggleMenu}
-      settoggleMenu={settoggleMenu}
+      toggleMenu={toggleMenu!}
+      settoggleMenu={settoggleMenu!}
       Likes={Likes}
       setLikes={setLikes}
       updatePost={updatePost!}
@@ -77,7 +86,7 @@ export default function Post({
     >
       <div className={postClass}>
         <Content post={post} />
-        
+
         {!shareMode && (
           <Footer
             setLikes={setLikes}

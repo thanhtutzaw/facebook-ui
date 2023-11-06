@@ -1,10 +1,10 @@
 
-import { User } from "firebase/auth";
-import { memo, useEffect, useState } from "react";
-import { Post as PostType } from "@/types/interfaces";
-import s from "@/components/Post/index.module.scss";
 import Post from "@/components/Post";
+import s from "@/components/Post/index.module.scss";
 import Spinner from "@/components/Spinner";
+import { Post as PostType } from "@/types/interfaces";
+import { User } from "firebase/auth";
+import { memo, useState } from "react";
 export const PostList = memo(
   (props: {
     updatePost?: Function;
@@ -17,15 +17,11 @@ export const PostList = memo(
     postLoading?: boolean;
     postEnd?: boolean;
   }) => {
-    useEffect(() => {
-      console.log("postList is rendering");
-    }, []);
-
+const [toggleMenu, settoggleMenu] = useState("");
     const {
       updatePost,
       postLoading,
       postEnd,
-      profile,
       preventNavigate,
       auth,
       selectMode,
@@ -47,6 +43,8 @@ export const PostList = memo(
         >
           {posts?.map((post: PostType) => (
             <Post
+              toggleMenu={toggleMenu}
+              settoggleMenu={settoggleMenu}
               updatePost={updatePost}
               selectMode={selectMode}
               preventNavigate={preventNavigate}
@@ -67,8 +65,6 @@ export const PostList = memo(
             {posts?.length === 0 ? "Empty Post" : "No more posts"}
           </p>
         )}
-        {/* {postLoading ? 'true' : 'f'} */}
-        {/* {!postEnd && <Spinner />} */}
         {!postLoading && !postEnd ? null : postLoading && !postEnd ? (
           <Spinner />
         ) : (

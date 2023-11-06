@@ -8,7 +8,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentData, DocumentReference } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { CSSProperties, MouseEventHandler, ReactNode, RefObject, useRef } from "react";
+import {
+  CSSProperties,
+  MouseEventHandler,
+  ReactNode,
+  RefObject,
+  useRef,
+} from "react";
 import { JSONTimestampToDate } from "../../lib/firebase";
 import { Comment, Post, account } from "../../types/interfaces";
 import CommentAction from "../Comment/Action";
@@ -16,7 +22,9 @@ import styles from "./index.module.scss";
 type layoutTypes = "row" | "column";
 
 export default function AuthorInfo(props: {
-  menuRef?:RefObject<HTMLDivElement>;
+  comments?: Comment[];
+  setComments?: Function;
+  menuRef?: RefObject<HTMLDivElement>;
   toggleCommentMenu?: string;
   settoggleCommentMenu?: Function;
   handleEditComment?: Function;
@@ -32,6 +40,8 @@ export default function AuthorInfo(props: {
   post?: Post;
 }) {
   const {
+    comments,
+    setComments,
     menuRef,
     toggleCommentMenu,
     settoggleCommentMenu,
@@ -106,6 +116,8 @@ export default function AuthorInfo(props: {
         </Author>
         {isAdmin && (
           <CommentAction
+            comments={comments!}
+            setComments={setComments!}
             menuRef={menuRef!}
             toggleCommentMenu={toggleCommentMenu!}
             settoggleCommentMenu={settoggleCommentMenu!}

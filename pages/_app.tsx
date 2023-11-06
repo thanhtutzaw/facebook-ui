@@ -29,6 +29,7 @@ import { app, getProfileByUID } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import "../styles/globals.css";
 import { AppProps as Props } from "../types/interfaces";
+import Metatag from "@/components/Metatag";
 config.autoAddCss = false;
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
@@ -167,7 +168,9 @@ export default function App({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser?.uid]);
 
-  const { friendReqCount,soundRef } = useFriendRequest(String(currentUser?.uid));
+  const { friendReqCount, soundRef } = useFriendRequest(
+    String(currentUser?.uid)
+  );
   const { active, setActive } = useActive();
   const [queryClient] = useState(
     () =>
@@ -183,16 +186,7 @@ export default function App({
   if (expired) return <Welcome expired={expired} />;
   return (
     <>
-      <Head>
-        <title>Facebook Next</title>
-        <meta name="description" content="Facebook-Mobile-UI with Next.js" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, user-scalable=no"
-        />
-        <link rel="icon" href="/logo.svg" />
-        <link rel="manifest" href="/manifest.json" />
-      </Head>
+      <Metatag />
       <QueryClientProvider client={queryClient}>
         <PageProvider
           friendReqCount={friendReqCount}

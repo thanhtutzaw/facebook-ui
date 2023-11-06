@@ -12,12 +12,14 @@ import { RefObject, useEffect, useRef, useState } from "react";
 import AuthorInfo from "../Post/AuthorInfo";
 import s from "./index.module.scss";
 import { updateComment } from "@/lib/firestore/comment";
-import Spinner from "../Spinner";
+import { AnimatePresence, motion } from "framer-motion";
+import { setCommentRange } from "typescript";
 function CommentItem(props: {
+  comments: Post["comments"];
   menuRef: RefObject<HTMLDivElement>;
   toggleCommentMenu: string;
   settoggleCommentMenu: Function;
-
+  setComments: Function;
   post: Post;
   editToggle: string;
   seteditToggle: Function;
@@ -26,6 +28,8 @@ function CommentItem(props: {
   comment: Comment;
 }) {
   const {
+    comments,
+    setComments,
     menuRef,
     toggleCommentMenu,
     settoggleCommentMenu,
@@ -39,13 +43,18 @@ function CommentItem(props: {
   const { text, createdAt, id } = comment;
   const { authorId, id: postId } = post;
   const router = useRouter();
-  const postRef = doc(db, `${getPath("posts", { uid })}/${postId}`);
+  const postRef = doc(db, `${getCollectionPath.posts({ uid })}/${postId}`);
+
+  // const commentRef = doc(
+  //   db,
+  //   `${getCollectionPath.comments({
+  //     authorId: String(post.authorId),
+  //     postId: String(post.id),
+  //   })}/${comment.id}`
+  // );
   const commentRef = doc(
     db,
-    `${getCollectionPath.comments({
-      authorId: String(post.authorId),
-      postId: String(post.id),
-    })}/${comment.id}`
+    `users/${post.authorId}/posts/${post.id}/comments/${comment.id}`
   );
   const inputRef = useRef<HTMLParagraphElement>(null);
   const [input, setInput] = useState(text);
@@ -80,10 +89,21 @@ function CommentItem(props: {
       settoggleCommentMenu("");
     }, 300);
   }
+
   const [updateLoading, setUpdateLoading] = useState(false);
+  const [exitWithoutSaving, setexitWithoutSaving] = useState(false);
+  useEffect(() => {
+    if (input !== text) {
+      console.log("object");
+      setexitWithoutSaving(true);
+    }
+  }, [input, text]);
+
   return (
     <li key={comment.id} className={s.item} id={`comment-${id}`}>
       <AuthorInfo
+        comments={comments}
+        setComments={setComments}
         menuRef={menuRef}
         toggleCommentMenu={toggleCommentMenu}
         settoggleCommentMenu={settoggleCommentMenu}
@@ -113,9 +133,6 @@ function CommentItem(props: {
             suppressContentEditableWarning={true}
             contentEditable={editToggle === id}
             className={`p-3 focus-visible:outline-0 ${s.text}`}
-            onChange={(e) => {
-              setInput(e.currentTarget.innerText);
-            }}
           >
             {input}
           </p>
@@ -130,67 +147,73 @@ function CommentItem(props: {
           </p>
           <button className={s.replyBtn}>Reply</button>
         </div>
-        {editToggle === id && (
-          <div className="flex gap-2">
-            <button
-              className="rounded-md p-[5px_10px] text-[16px]"
-              onClick={() => {
-                console.log(text);
-                setInput(text);
-                seteditToggle("");
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              disabled={updateLoading}
-              onClick={async () => {
-                const editedComment = inputRef.current?.innerText;
-                const target = `${getCollectionPath.comments({
-                  authorId: String(post.authorId),
-                  postId: String(post.id),
-                })}/${comment.id}`;
-                const data = { ...comment, text: editedComment! };
-                try {
-                  setUpdateLoading(true);
-                  await updateComment(target, data);
-                  setInput(editedComment ?? input);
-                  setUpdateLoading(false);
-                  seteditToggle("");
-                } catch (error) {
-                  setInput(text);
-                  setUpdateLoading(false);
-                  console.log(error);
-                }
-              }}
-              className="flex justify-center items-center rounded-md bg-primary text-white p-[5px_10px]    text-[16px]"
-            >
-              <span
-                className={`absolute ${
-                  updateLoading ? "opacity-1" : "opacity-0"
-                }`}
+        <div
+          style={{ gridTemplateRows: editToggle === id ? "1fr" : "0fr" }}
+          className={`grid transition-all duration-300 ease-in-out  `}
+        >
+          <AnimatePresence>
+            {editToggle === id && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex gap-2 overflow-hidden"
               >
-                <Spin />
-              </span>
-              <span className={`${updateLoading ? "opacity-0" : "opacity-1"}`}>
-                Submit
-              </span>
-            </button>
-          </div>
-        )}
+                <button
+                  className="h-[34px] rounded-md p-[5px_10px] text-[16px]"
+                  onClick={() => {
+                    setInput(text);
+                    seteditToggle("");
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  disabled={updateLoading}
+                  onClick={async () => {
+                    const editedComment = inputRef.current?.innerText;
+                    const target = `${getCollectionPath.comments({
+                      authorId: String(post.authorId),
+                      postId: String(post.id),
+                    })}/${comment.id}`;
+                    const data = { ...comment, text: editedComment! };
+                    try {
+                      setUpdateLoading(true);
+                      await updateComment(target, data);
+                      setInput(editedComment ?? input);
+                      setUpdateLoading(false);
+                      seteditToggle("");
+                    } catch (error) {
+                      alert("Failed updating comment ! " + error);
+                      setInput(text);
+                      setUpdateLoading(false);
+                      console.log(error);
+                    }
+                  }}
+                  className="h-[34px] flex justify-center items-center rounded-md bg-primary text-white p-[5px_10px]    text-[16px]"
+                >
+                  <span
+                    className={`absolute ${
+                      updateLoading ? "opacity-1" : "opacity-0"
+                    }`}
+                  >
+                    <Spin />
+                  </span>
+                  <span
+                    className={`${updateLoading ? "opacity-0" : "opacity-1"}`}
+                  >
+                    Submit
+                  </span>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </AuthorInfo>
     </li>
   );
   function Spin() {
     return (
-      //   key={loading ? "true" : "false"}
-      //   size={18}
-      //   style={{
-      //     margin: "0",
-      //     display: loading ? "block" : "none",
-      //   }}
-      //   color={"white"}
-      // />
       <div className="loading" style={{ margin: "0" }}>
         <div
           className="spinner"

@@ -1,7 +1,8 @@
+import useQueryFn from "@/hooks/useQueryFn";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { faArrowAltCircleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { doc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
@@ -11,9 +12,10 @@ import { addComment } from "../../lib/firestore/comment";
 import { sendAppNoti } from "../../lib/firestore/notifications";
 import { Post, account } from "../../types/interfaces";
 import s from "./index.module.scss";
-import useQueryFn from "@/hooks/useQueryFn";
+import Spinner from "../Spinner";
 export default function CommentInput(props: {
-  setlimitedComments: any;
+  comments: Post["comments"];
+  setlimitedComments: Function;
   uid?: string;
   postId: string;
   authorId: string;
@@ -22,7 +24,8 @@ export default function CommentInput(props: {
   profile?: account["profile"];
 }) {
   const { queryFn } = useQueryFn();
-  const { setlimitedComments, post, uid, authorId, postId, profile } = props;
+  const { comments, setlimitedComments, post, uid, authorId, postId, profile } =
+    props;
   const { currentUser } = useContext(PageContext) as PageProps;
   const [text, settext] = useState("");
   const commentRef = doc(getPath("comments", { authorId, postId }));
@@ -44,13 +47,23 @@ export default function CommentInput(props: {
         if (text === "") return;
         try {
           setaddLoading(true);
-          const addedComment = await addComment(
+
+          await addComment(
             commentRef,
             uid,
             text,
             postRef,
             previousCommentCount
           );
+          const doc = await getDoc(commentRef);
+          const data = { ...doc.data() };
+          const withAuthor = {
+            ...data,
+            author: {
+              ...profile,
+            },
+          };
+          setlimitedComments([withAuthor, ...comments]);
           await sendAppNoti({
             uid,
             receiptId: post?.authorId.toString()!,
@@ -59,22 +72,6 @@ export default function CommentInput(props: {
             url: `${authorId}/${post?.id}/#comment-${commentRef.id}`,
             content: text,
           });
-          // const date = addedComment.createdAt;
-          // const comment = {
-          //   ...addedComment,
-          //   // createdAt: {new Timestamp()}
-          // };
-          // const date = new Timestamp(
-          //   addedComment.createdAt.nanoseconds,
-          //   addedComment.createdAt.seconds
-          // );
-          // setlimitedComments([
-          //   ...post?.comments!,
-          //   commentDateToJSON(addedComment),
-          // ]);
-          // setlimitedComments(post?.comments);
-          // console.log(addedComment.createdAt);
-          // console.log(new Date(Date.now()).getUTCDate());
           queryFn.invalidate("myPost");
           router.replace(router.asPath, undefined, { scroll: false });
           settext("");
@@ -88,16 +85,7 @@ export default function CommentInput(props: {
       className={s.input}
     >
       <Image
-        className={`
-        rounded-full
-    object-cover
-    b-0
-    w-[45px]
-    h-[45px]
-    flex
-    outline-[1px solid rgba(128,128,128,0.168627451)] bg-avatarBg
-       
-        `}
+        className={`rounded-full object-cover b-0 w-[45px] h-[45px] flex outline-[1px solid rgba(128,128,128,0.168627451)] bg-avatarBg`}
         width={200}
         height={200}
         priority
@@ -114,14 +102,19 @@ export default function CommentInput(props: {
         aria-label="Add Comment"
         placeholder="Add comment"
         type="text"
+        disabled={addLoading}
       />
       <button
-        aria-label="Submit Comment"
+        aria-label={`${addLoading ? 'Submiting Comment' : 'Submit Comment'}`}
         tabIndex={1}
         type="submit"
         disabled={addLoading}
       >
-        <FontAwesomeIcon icon={faArrowAltCircleUp} />
+        {addLoading ? (
+          <Spinner style={{ margin: 0 }} />
+        ) : (
+          <FontAwesomeIcon icon={faArrowAltCircleUp} />
+        )}
       </button>
     </form>
   );

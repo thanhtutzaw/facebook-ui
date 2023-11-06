@@ -10,6 +10,7 @@ import { SharePreview } from "@/components/Post/SharePost/Preview";
 import { SocialCount } from "@/components/Post/SocialCount";
 import { Welcome } from "@/components/Welcome";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
+import { Comment_LIMIT } from "@/lib/QUERY_LIMIT";
 import {
   DescQuery,
   app,
@@ -32,12 +33,8 @@ import {
   DocumentData,
   DocumentSnapshot,
   Timestamp,
-  collection,
   doc,
   getDoc,
-  limit,
-  orderBy,
-  query,
   startAfter,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
@@ -52,7 +49,6 @@ import {
   account,
   likes,
 } from "../../../types/interfaces";
-import { Comment_LIMIT } from "@/lib/QUERY_LIMIT";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // context.res.setHeader(
@@ -177,6 +173,7 @@ export default function Page(props: {
     visibility,
   ]);
   useEffect(() => {
+    // console.log(InputRef.current?.innerText);
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
       if (
@@ -358,24 +355,7 @@ export default function Page(props: {
         }}
         className={s.container}
       >
-        <AuthorInfo navigateToProfile={navigateToProfile} post={post}>
-        {/* <>
-          {isAdmin ? (
-            <AdminMenu
-              updatePost={updatePost!}
-              authorId={authorId!}
-              id={id?.toString()!}
-            />
-          ) : (
-            <Menu
-              authorId={authorId?.toString()!}
-              id={id?.toString()!}
-              isSaved={post.isSaved}
-              uid={authUser?.uid!}
-            />
-          )}
-        </> */}
-        </AuthorInfo>
+        <AuthorInfo navigateToProfile={navigateToProfile} post={post} />
         <TextInput
           style={{
             cursor: canEdit ? "initial" : "default",
@@ -425,8 +405,10 @@ export default function Page(props: {
               post={post}
               uid={uid}
               comments={limitedComments}
+              setComments={setlimitedComments}
             />
             <CommentInput
+              comments={limitedComments}
               profile={profile}
               setlimitedComments={setlimitedComments}
               post={post}

@@ -1,4 +1,4 @@
-import { Comment } from "@/types/interfaces";
+import { Comment, Post } from "@/types/interfaces";
 import {
   faEdit,
   faEllipsisV,
@@ -12,8 +12,10 @@ import { RefObject, useEffect, useRef, useState } from "react";
 import { deleteComment } from "../../lib/firestore/comment";
 import s from "@/components/Tabs/Sections/Profile/index.module.scss";
 import useEscape from "@/hooks/useEscape";
-import post from '@/components/Post/index.module.scss'
+import post from "@/components/Post/index.module.scss";
 export default function CommentAction(props: {
+  comments: Post["comments"];
+  setComments:Function;
   menuRef: RefObject<HTMLDivElement>;
   toggleCommentMenu: string;
   settoggleCommentMenu: Function;
@@ -23,6 +25,8 @@ export default function CommentAction(props: {
   comment: Comment;
 }) {
   const {
+    comments,
+    setComments,
     menuRef,
     toggleCommentMenu,
     settoggleCommentMenu,
@@ -40,7 +44,7 @@ export default function CommentAction(props: {
   return (
     <>
       <button
-      className={post.dot}
+        className={post.dot}
         onClick={() => {
           toggleCommentMenu
             ? settoggleCommentMenu("")
@@ -93,11 +97,13 @@ export default function CommentAction(props: {
               style={{ minWidth: "148px" }}
               onClick={async () => {
                 setDeleteLoading(true);
-
                 try {
-                  if (!commentRef || !postRef)
+                  console.log(commentRef);
+                  if (!commentRef || !postRef) {
                     throw new Error("CommentRef and PostRef are required !");
+                  }
                   await deleteComment(commentRef, postRef);
+                  setComments(comments.filter((c)=> c.id !== comment.id))
                   setDeleteLoading(false);
                   settoggleCommentMenu("");
                   router.push(router.asPath);

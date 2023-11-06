@@ -23,7 +23,6 @@ export default function TextInput({
       spellCheck="true"
       style={style}
       ref={element}
-      // dangerouslySetInnerHTML={{ __html: text! }}
       suppressContentEditableWarning={true}
       className={s.input}
     >
