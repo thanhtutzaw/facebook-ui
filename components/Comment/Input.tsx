@@ -31,11 +31,11 @@ export default function CommentInput(props: {
   const commentRef = doc(getPath("comments", { authorId, postId }));
   const router = useRouter();
   const [addLoading, setaddLoading] = useState(false);
-  const postRef = doc(
-    db,
-    `${getCollectionPath.posts({ uid: authorId })}/${postId}`
-  );
-  const previousCommentCount = post?.comments?.length ?? 0;
+  // const postRef = doc(
+  //   db,
+  //   `${getCollectionPath.posts({ uid: authorId })}/${postId}`
+  // );
+  // const previousCommentCount = post?.comments?.length ?? 0;
   return (
     <form
       onSubmit={async (e) => {
@@ -48,13 +48,7 @@ export default function CommentInput(props: {
         try {
           setaddLoading(true);
 
-          await addComment(
-            commentRef,
-            uid,
-            text,
-            postRef,
-            previousCommentCount
-          );
+          await addComment({ commentRef, uid, text });
           const doc = await getDoc(commentRef);
           const data = { ...doc.data() };
           const withAuthor = {
@@ -105,7 +99,7 @@ export default function CommentInput(props: {
         disabled={addLoading}
       />
       <button
-        aria-label={`${addLoading ? 'Submiting Comment' : 'Submit Comment'}`}
+        aria-label={`${addLoading ? "Submiting Comment" : "Submit Comment"}`}
         tabIndex={1}
         type="submit"
         disabled={addLoading}

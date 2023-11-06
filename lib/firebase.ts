@@ -275,6 +275,14 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
       })}`
     );
     const likeCount = (await getCountFromServer(likesRef)).data().count;
+    const commentsRef = collection(
+      db,
+      `${getCollectionPath.comments({
+        authorId: String(authorId),
+        postId: String(p.id),
+      })}`
+    );
+    const commentCount = (await getCountFromServer(commentsRef)).data().count;
     // getting total like count from collection Vs likeCount: 2
     const savedByUserRef = doc(
       db,
@@ -292,6 +300,7 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
     const originalPost = {
       ...p,
       // likeCount: p.likeCount ?? 0,
+      commentCount,
       likeCount: likeCount,
       author: { ...postProfile },
       shareCount,

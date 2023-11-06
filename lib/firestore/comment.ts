@@ -1,7 +1,6 @@
 import {
   DocumentData,
   DocumentReference,
-  FieldValue,
   Query,
   Timestamp,
   doc,
@@ -9,13 +8,12 @@ import {
   increment,
   serverTimestamp,
   updateDoc,
-  writeBatch,
+  writeBatch
 } from "firebase/firestore";
 import { Comment } from "../../types/interfaces";
 import { commentToJSON, db, getProfileByUID } from "../firebase";
 export async function fetchComments(query: Query) {
   const commentDoc = await getDocs(query);
-  // if(commentDoc.empty)return null;
   const commentJSON = await Promise.all(
     commentDoc.docs.map(async (doc) => await commentToJSON(doc))
   );
@@ -31,13 +29,15 @@ export async function fetchComments(query: Query) {
   );
   return comments as Comment[];
 }
-export async function addComment(
-  commentRef: DocumentReference<DocumentData>,
-  uid: string,
-  text: string,
-  postRef: DocumentReference<DocumentData>,
-  previousCommentCount: number
-) {
+export async function addComment({
+  commentRef,
+  uid,
+  text,
+}: {
+  commentRef: DocumentReference<DocumentData>;
+  uid: string;
+  text: string;
+}) {
   const batch = writeBatch(db);
   const data = {
     id: commentRef.id,
@@ -46,14 +46,9 @@ export async function addComment(
     createdAt: serverTimestamp(),
   };
   batch.set(commentRef, data);
-  batch.update(postRef, {
-    commentCount: previousCommentCount + 1,
-  });
-  await batch.commit();
-  // return commentDateToJSON(data) as Comment;
-  console.log(data.createdAt);
-  return data;
 
+  await batch.commit();
+  return data;
 }
 export async function updateComment(target: string, { ...comment }: Comment) {
   const commentRef = doc(db, target);
