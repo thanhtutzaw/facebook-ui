@@ -20,6 +20,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import {
   StyleHTMLAttributes,
+  memo,
   useContext,
   useEffect,
   useRef,
@@ -39,7 +40,7 @@ import popfx from "public/assets/bubble.mp3";
 import useSound from "use-sound";
 import useQueryFn from "@/hooks/useQueryFn";
 
-export const Footer = (
+export const Footer = memo((
   props: {
     setLikes?: Function;
     likeCount: number;
@@ -426,4 +427,5 @@ export const Footer = (
       </div>
     );
   }
-};
+})
+Footer.displayName = "Footer"

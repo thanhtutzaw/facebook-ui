@@ -2,6 +2,7 @@ import { User } from "firebase/auth";
 import {
   Dispatch,
   SetStateAction,
+  memo,
   useContext,
   useEffect,
   useRef,
@@ -10,7 +11,7 @@ import {
 import { PageContext, PageProps } from "../../context/PageContext";
 import PostProvider from "../../context/PostContext";
 import { Post as PostType, account, likes } from "../../types/interfaces";
-import Content from "./Content";
+import {Content} from "./Content";
 import { Footer } from "./Footer";
 import s from "./index.module.scss";
 import { AnimatePresence, motion } from "framer-motion";
@@ -25,7 +26,7 @@ interface PostProps {
   toggleMenu?: string;
   settoggleMenu?: Dispatch<SetStateAction<string>>;
 }
-export default function Post({
+export const Post = memo(({
   updatePost,
   shareMode,
   preventNavigate,
@@ -35,7 +36,7 @@ export default function Post({
   tabIndex,
   toggleMenu,
   settoggleMenu,
-}: PostProps) {
+}: PostProps) =>{
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
@@ -99,4 +100,5 @@ export default function Post({
       </div>
     </PostProvider>
   );
-}
+})
+Post.displayName = "Post"

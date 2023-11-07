@@ -14,8 +14,8 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useContext, useEffect, useState } from "react";
-import Header from "../components/Header/Header";
-import Tabs from "../components/Tabs/Tabs";
+import {Header} from "../components/Header/Header";
+import {Tabs} from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
 import { AppProvider } from "../context/AppContext";
 import {

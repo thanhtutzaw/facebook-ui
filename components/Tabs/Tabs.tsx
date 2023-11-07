@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import {
   ElementType,
   MouseEvent,
+  memo,
   useContext,
   useEffect,
   useState,
@@ -25,7 +26,7 @@ const Notifications = dynamic(
 );
 const Menu = dynamic(() => import("./Sections/Menu/menu"), { ssr: false });
 
-export default function Tabs() {
+export const Tabs = memo(() => {
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { indicatorRef, setpreventClick } = useContext(
@@ -145,4 +146,5 @@ export default function Tabs() {
       </div>
     </div>
   );
-}
+})
+Tabs.displayName = "Tabs"

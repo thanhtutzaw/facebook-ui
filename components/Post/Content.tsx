@@ -6,7 +6,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { app, getCollectionPath } from "../../lib/firebase";
 import TextInput from "../Form/Input/TextInput";
@@ -21,7 +21,7 @@ import s from "./index.module.scss";
 import PostFallback from "./Fallback";
 import { Post } from "@/types/interfaces";
 import useEscape from "@/hooks/useEscape";
-export default function Content({ post }: { post: Post }) {
+export const Content = memo(({ post }: { post: Post }) =>{
   const {
     updatePost,
     Likes,
@@ -238,4 +238,5 @@ export default function Content({ post }: { post: Post }) {
       />
     </span>
   );
-}
+})
+Content.displayName = "Content"

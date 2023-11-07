@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import router from "next/router";
-import { RefObject, useContext, useEffect, useState } from "react";
+import { RefObject, memo, useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { useActive } from "../../hooks/useActiveTab";
@@ -42,7 +42,7 @@ export const pages = [
   { name: "Notifications", icon: <FontAwesomeIcon icon={faBell} /> },
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
-export default function Header(props: { tabIndex: number }) {
+export const Header = memo((props: { tabIndex: number }) =>{
   const { tabIndex } = props;
   const { active, setActive } = useActive();
   const [width, setwidth] = useState<number>();
@@ -167,4 +167,6 @@ export default function Header(props: { tabIndex: number }) {
       </nav>
     </div>
   );
-}
+})
+Header.displayName = "Header"
+

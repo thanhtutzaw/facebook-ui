@@ -33,21 +33,6 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
     useContext(PageContext) as PageProps;
   const submitRef = useRef<HTMLButtonElement>(null);
   useEnterSave(textRef, submitRef);
-  // useEffect(() => {
-  //   const input = textRef.current;
-  //   function handleKeyPress(e: KeyboardEvent) {
-  //     if (e.key === "Enter" && !e.shiftKey) {
-  //       e.preventDefault();
-  //       submitRef.current?.click();
-  //     }
-  //   }
-  //   input?.addEventListener("keydown", (e) => {
-  //     handleKeyPress(e);
-  //   });
-  //   return () => {
-  //     input?.removeEventListener("keydown", handleKeyPress);
-  //   };
-  // }, []);
   useEffect(() => {
     setvalue(localStorage.getItem("visibility")!);
     const value = getLocal();

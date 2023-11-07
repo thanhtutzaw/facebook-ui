@@ -1,5 +1,5 @@
 
-import Post from "@/components/Post";
+import {Post} from "@/components/Post";
 import s from "@/components/Post/index.module.scss";
 import Spinner from "@/components/Spinner";
 import { Post as PostType } from "@/types/interfaces";
