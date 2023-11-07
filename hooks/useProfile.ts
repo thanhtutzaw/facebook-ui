@@ -36,7 +36,6 @@ function useProfile() {
   const router = useRouter();
   const infoRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLHeadElement>(null);
-  const [sortToggle, setSortToggle] = useState(false);
   const [sortby, setsortby] = useState<"new" | "old">("new");
   const auth = getAuth(app);
   const isSticky = useRef(false);
@@ -99,11 +98,7 @@ function useProfile() {
           ? lastPage.posts![lastPage?.posts?.length! - 1]
           : undefined,
     });
-  useEffect(() => {
-    if (!selectMode) {
-      setSortToggle(false);
-    }
-  }, [selectMode]);
+
   const toggleEdit = () => {
     setEditToggle((prev) => !prev);
     setnewProfile(profile!);
@@ -155,8 +150,6 @@ function useProfile() {
     error,
     isSticky,
     isLoading,
-    sortToggle,
-    setSortToggle,
     sortby,
     setsortby,
     data,

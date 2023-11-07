@@ -3,14 +3,14 @@ import styles from "@/components/Post/index.module.scss";
 import s from "./index.module.scss";
 import useEscape from "@/hooks/useEscape";
 export default function SortDate(props: {
-  sort: boolean;
+  toggleSort: boolean;
   sortby: string;
-  setSort: Function;
+  setToggleSort: Function;
   setsortby: Function;
 }) {
-  const { sort, sortby, setSort, setsortby } = props;
+  const { toggleSort, sortby, setToggleSort, setsortby } = props;
   useEscape(() => {
-    if (sort) setSort(false);
+    if (toggleSort) setToggleSort(false);
   });
   return (
     <motion.div
@@ -35,7 +35,7 @@ export default function SortDate(props: {
         onClick={async (e) => {
           e.preventDefault();
           e.stopPropagation();
-          setSort(false);
+          setToggleSort(false);
           setsortby(e.currentTarget.id);
         }}
       >
@@ -45,7 +45,7 @@ export default function SortDate(props: {
         className={sortby === "old" ? s.active : ""}
         id="old"
         onClick={async (e) => {
-          setSort(false);
+          setToggleSort(false);
           setsortby(e.currentTarget.id);
         }}
       >

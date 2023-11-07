@@ -14,19 +14,21 @@ import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
 import Home from "./Sections/Home/Home";
 import t from "./Tabs.module.scss";
+import { Profile } from "./Sections/Profile";
+import { Notifications } from "./Sections/Notifications/Notifications";
 const Friends = dynamic(() => import("./Sections/Friends/Friends"), {
   ssr: false,
 });
 const Watch = dynamic(() => import("./Sections/Watch"), { ssr: false });
-const Profile = dynamic(() => import("./Sections/Profile"), {
-  ssr: false,
-});
-const Notifications = dynamic(
-  () => import("./Sections/Notifications/Notifications")
-);
+// const Profile = dynamic(() => import("./Sections/Profile/index"), {
+//   ssr: false,
+// });
+// const Notifications = dynamic(
+//   () => import("./Sections/Notifications/Notifications")
+// );
 const Menu = dynamic(() => import("./Sections/Menu/menu"), { ssr: false });
 
-export const Tabs = memo(() => {
+export const Tabs = memo(function Tabs() {
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { indicatorRef, setpreventClick } = useContext(
@@ -146,5 +148,5 @@ export const Tabs = memo(() => {
       </div>
     </div>
   );
-})
-Tabs.displayName = "Tabs"
+});
+

@@ -1,14 +1,14 @@
-import EditProfileForm from "@/components/Form/EditProfile";
+import {EditProfileForm} from "@/components/Form/EditProfile";
 import { AppContext } from "@/context/AppContext";
 import useProfile from "@/hooks/useProfile";
+import { checkPhotoURL } from "@/lib/firestore/profile";
 import { AppProps } from "@/types/interfaces";
 import { AnimatePresence, motion } from "framer-motion";
-import { useContext } from "react";
-import Content from "./Content";
+import { memo, useContext } from "react";
+import {Content} from "./Content";
 import ProfileInfo from "./ProfileInfo";
 import s from "./index.module.scss";
-import { checkPhotoURL } from "@/lib/firestore/profile";
-export default function Profile() {
+export const Profile = memo(() => {
   const {
     profileSrc,
     selectMode,
@@ -27,8 +27,6 @@ export default function Profile() {
     error,
     isSticky,
     isLoading,
-    sortToggle,
-    setSortToggle,
     sortby,
     setsortby,
     data,
@@ -86,7 +84,6 @@ export default function Profile() {
             </motion.div>
           </AnimatePresence>
         </ProfileInfo>
-
         <Content
           error={error}
           infoRef={infoRef}
@@ -94,8 +91,6 @@ export default function Profile() {
           headerRef={headerRef}
           loading={isLoading}
           tab={activeTab}
-          sort={sortToggle}
-          setSort={setSortToggle}
           selectMode={selectMode!}
           setselectMode={setactive!}
           sortby={sortby}
@@ -106,4 +101,5 @@ export default function Profile() {
       </motion.div>
     </div>
   );
-}
+});
+Profile.displayName = "Profile";

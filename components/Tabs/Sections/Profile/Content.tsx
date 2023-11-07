@@ -3,13 +3,19 @@ import { Post, AppProps } from "@/types/interfaces";
 import { faGear, faSort } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
-import { MutableRefObject, RefObject, useContext } from "react";
+import {
+  MutableRefObject,
+  RefObject,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { PostList } from "../Home/PostList";
 import SortDate from "./SortDate";
 import s from "./index.module.scss";
 import Spinner from "@/components/Spinner";
 
-export default function Content(props: {
+export function Content(props: {
   hasNextPage?: boolean;
   error?: any;
   infoRef: RefObject<HTMLHeadElement>;
@@ -17,8 +23,6 @@ export default function Content(props: {
   isSticky: MutableRefObject<boolean>;
   tab: string;
   loading: boolean;
-  sort: boolean;
-  setSort: Function;
   selectMode: boolean;
   setselectMode: Function;
   sortby: "new" | "old";
@@ -32,8 +36,6 @@ export default function Content(props: {
     isSticky,
     headerRef,
     loading,
-    sort,
-    setSort,
     selectMode,
     setselectMode,
     sortby,
@@ -41,6 +43,12 @@ export default function Content(props: {
     sortedPost,
   } = props;
   const { updatePost, profile } = useContext(AppContext) as AppProps;
+  const [toggleSort, setToggleSort] = useState(false);
+  // useEffect(() => {
+  //   if (!selectMode) {
+  //     setToggleSort(false);
+  //   }
+  // }, [selectMode]);
   return (
     <div
       style={{
@@ -57,9 +65,9 @@ export default function Content(props: {
         <h2 className="bold-title">My Posts</h2>
 
         <button
-          aria-expanded={sort}
+          aria-expanded={toggleSort}
           onClick={() => {
-            setSort((prev: any) => !prev);
+            setToggleSort((prev) => !prev);
           }}
           aria-label="sort dropdown toggle"
         >
@@ -72,13 +80,12 @@ export default function Content(props: {
           aria-expanded={selectMode}
           onClick={(e) => {
             setselectMode?.((prev: any) => !prev);
-            setSort(false);
+            setToggleSort(false);
 
             if (!selectMode) {
               const parent =
                 e.currentTarget.parentElement?.parentElement?.parentElement;
               // parent?.scrollIntoView({
-              //   behavior: "smooth",
               // });
             }
           }}
@@ -105,12 +112,12 @@ export default function Content(props: {
           </div>
         </button>
         <AnimatePresence>
-          {sort && (
+          {toggleSort && (
             <SortDate
-              sort={sort}
+              toggleSort={toggleSort}
               sortby={sortby}
               setsortby={setsortby}
-              setSort={setSort}
+              setToggleSort={setToggleSort}
             />
           )}
         </AnimatePresence>

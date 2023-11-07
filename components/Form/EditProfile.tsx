@@ -3,13 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import { ChangeEventHandler, FormEventHandler, MouseEventHandler } from "react";
 import { account } from "../../types/interfaces";
-
-//module scss file path Error didn't get warning (only detect with next-build)
-import s from "@/components/Tabs/Sections/Profile/index.module.scss"; // correct (absolute) path
-// import NoErrorBecauseOfModuleSCSS from "../notExist/file/index.module.scss"; // this only visible after next-build
-// import NormalPathError from "@/components/Tabs/Sections/Profile/notExist.js"; // get normal error for js file
-
-function EditProfileForm(props: {
+import s from "@/components/Tabs/Sections/Profile/index.module.scss";
+export function EditProfileForm(props: {
   updating: boolean;
   editToggle: boolean;
   handleSubmit: FormEventHandler<HTMLFormElement>;
@@ -56,7 +51,6 @@ function EditProfileForm(props: {
       onSubmit={handleSubmit}
       className={s.editProfile}
     >
-      {/* {JSON.stringify(newProfile, null, 4)} */}
       <div>
         <input
           onChange={handleChange}
@@ -115,5 +109,3 @@ function EditProfileForm(props: {
     </motion.form>
   );
 }
-
-export default EditProfileForm;
