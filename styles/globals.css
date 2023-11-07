@@ -8,7 +8,7 @@
 
 @layer base {
   :root {
-    --blue: 0 112 243;
+    --blue     : 0 112 243;
     --avatar-bg: 225 225 225;
   }
 }
@@ -100,6 +100,18 @@ main {
   border-left-color: #0070f3 !important;
 }
 
+.loading .spinner-icon {
+  width            : 18px;
+  height           : 18px;
+  box-sizing       : border-box;
+  border           : solid 2px transparent;
+  border-top-color : #0070f3;
+  border-left-color: #0070f3;
+  border-radius    : 50%;
+  -webkit-animation: nprogress-spinner 400ms linear infinite;
+  animation        : nprogress-spinner 400ms linear infinite;
+}
+
 .loading {
   pointer-events: none;
 }
@@ -126,17 +138,7 @@ main {
   font-size: 25px;
 }
 
-.loading .spinner-icon {
-  width            : 18px;
-  height           : 18px;
-  box-sizing       : border-box;
-  border           : solid 2px transparent;
-  border-top-color : #0070f3;
-  border-left-color: #0070f3;
-  border-radius    : 50%;
-  -webkit-animation: nprogress-spinner 400ms linear infinite;
-  animation        : nprogress-spinner 400ms linear infinite;
-}
+
 
 @-webkit-keyframes nprogress-spinner {
   0% {

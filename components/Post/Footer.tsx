@@ -61,15 +61,15 @@ export const Footer = (
   const commentRef = useRef<HTMLDivElement>(null);
   const [visibility, setvisibility] = useState<string | null>("Public");
   const { getLocal } = useLocalStorage("visibility", visibility);
-const {queryFn} = useQueryFn()
+  const { queryFn } = useQueryFn();
   useEffect(() => {
-    // setvisibility(localStorage.getItem("visibility")!);
     setvisibility(getLocal());
   }, [getLocal]);
   const [isLiked, setisLiked] = useState(post.isLiked);
 
-  const { currentUser, queryClient, dropdownRef, shareAction, setshareAction } =
-    useContext(PageContext) as PageProps;
+  const {friends, currentUser, dropdownRef, shareAction, setshareAction } = useContext(
+    PageContext
+  ) as PageProps;
   const { id, author: authorAccount, authorId } = post;
   const authorProfile = authorAccount as account["profile"];
   const authorName = `${authorProfile?.firstName ?? "Unknow User"} ${
@@ -121,9 +121,15 @@ const {queryFn} = useQueryFn()
       {...rest}
       className={styles.action}
     >
+      <LikeButton />
+      <CommentButton />
+      <ShareButton />
+    </div>
+  );
+  function LikeButton() {
+    return (
       <div
-        className={styles.socialButton}
-        // onMouseEnter={() => {
+        className={styles.socialButton} // onMouseEnter={() => {
         //   setreactionAction(id?.toString()!);
         // }}
         // onMouseLeave={() => {
@@ -139,13 +145,16 @@ const {queryFn} = useQueryFn()
           }}
           onClick={async () => {
             const uid = auth.currentUser?.uid;
+
             if (!uid) {
               alert("Error : User Not Found . Sign up and Try Again ! ");
               return;
             }
+
             setisLiked((prev) => !prev);
             queryFn.invalidate("myPost");
             setLikeLoading(true);
+
             if (isLiked) {
               setLikes?.([]);
               await unlikePost(likeCount ?? 0, postRef, likeRef);
@@ -163,6 +172,7 @@ const {queryFn} = useQueryFn()
                 type: "post_reaction",
                 url: `${authorId}/${id}`,
               });
+
               try {
                 await sendFCM({
                   recieptId: authorId.toString(),
@@ -179,6 +189,7 @@ const {queryFn} = useQueryFn()
                 console.log(error);
               }
             }
+
             async function updateLikeState() {
               setLikeLoading(false);
               const likes = (await getCountFromServer(likedUserRef)).data()
@@ -195,8 +206,8 @@ const {queryFn} = useQueryFn()
           <FontAwesomeIcon icon={faThumbsUp} />
           <p>Like</p>
           {/* {`isLike-${post.isLiked ? "true" : "false"}`}
-          <br />
-          {`likedstate-${isLiked ? "true" : "false"}`} */}
+      <br />
+      {`likedstate-${isLiked ? "true" : "false"}`} */}
         </button>
         <AnimatePresence>
           {reactionAction === id && (
@@ -241,6 +252,10 @@ const {queryFn} = useQueryFn()
           )}
         </AnimatePresence>
       </div>
+    );
+  }
+  function CommentButton() {
+    return (
       <div className={styles.socialButton}>
         <button
           title="Comment"
@@ -249,7 +264,6 @@ const {queryFn} = useQueryFn()
             if (router.asPath === `/${authorId}/${id?.toString()}`) return;
             router.push({
               pathname: `${authorId}/${id?.toString()}`,
-              // hash: "comment",
             });
           }}
         >
@@ -257,6 +271,10 @@ const {queryFn} = useQueryFn()
           <p>Comment</p>
         </button>
       </div>
+    );
+  }
+  function ShareButton() {
+    return (
       <div className={styles.socialButton}>
         <button
           tabIndex={-1}
@@ -266,16 +284,13 @@ const {queryFn} = useQueryFn()
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            setshareAction?.(id?.toString()!);
-            if (shareAction === id) {
-              setshareAction?.("");
-            }
+            shareAction ? setshareAction?.("") : setshareAction?.(String(id));
           }}
         >
           <FontAwesomeIcon icon={faShare} />
           <p>Share </p>
         </button>
-        {shareAction && (
+        {/* {shareAction && (
           <div
             // onPointerMove={(e) => {
             //   if (shareAction === id) {
@@ -296,13 +311,14 @@ const {queryFn} = useQueryFn()
             //   return;
             // }}
             style={{
-              backgroundColor: "transparent",
+              backgroundColor: "black",
               position: "fixed",
               inset: 0,
               opacity: 0.3,
+              zIndex:"100"
             }}
           />
-        )}
+        )} */}
         <AnimatePresence>
           {shareAction === id && (
             <motion.div
@@ -330,6 +346,7 @@ const {queryFn} = useQueryFn()
                 onClick={async (e) => {
                   e.preventDefault();
                   e.stopPropagation();
+
                   const uid = auth.currentUser?.uid;
                   if (!uid) {
                     alert("Error : User Not Found . Sign up and Try Again ! ");
@@ -342,7 +359,6 @@ const {queryFn} = useQueryFn()
                     id: id!,
                   };
                   try {
-                    window.document.body.style.cursor = "wait";
                     const url = `${uid}/${sharePost.refId}`;
                     await addPost({
                       uid,
@@ -350,8 +366,8 @@ const {queryFn} = useQueryFn()
                         visibility: visibility ?? "Public",
                       },
                       sharePost,
+                      friends:friends!
                     });
-
                     await sendAppNoti({
                       uid,
                       receiptId: post?.authorId.toString()!,
@@ -360,7 +376,7 @@ const {queryFn} = useQueryFn()
                       url,
                       content: `${authorName} : ${post.text}`,
                     });
-
+                    setshareAction?.("");
                     if (uid === authorId) return;
 
                     try {
@@ -381,8 +397,7 @@ const {queryFn} = useQueryFn()
                     }
 
                     router.replace("/", undefined, { scroll: false });
-                    setshareAction?.("");
-                    window.document.body.style.cursor = "initial";
+
                   } catch (error: any) {
                     alert(error.message);
                   }
@@ -409,16 +424,6 @@ const {queryFn} = useQueryFn()
           )}
         </AnimatePresence>
       </div>
-    </div>
-  );
+    );
+  }
 };
-
-// async function handleShareNow(
-//   currentUser: any,
-//   uid: string,
-//   visibility: string,
-//   sharePost: { refId: string; author: string; id: string },
-//   post: Post,
-//   profile: User | null,
-//   authorName: string
-// ) {}

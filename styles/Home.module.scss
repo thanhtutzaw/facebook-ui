@@ -619,10 +619,11 @@
   .submit {
     background-color: rgb(0, 112, 243);
     color: white;
-    padding: 0.5rem 1rem;
+    padding: 5px 1rem;
     font-size: 1rem;
     border: 0;
     border-radius: 1rem;
+    font-weight: 400;
     &:hover {
       background-color: rgb(0, 112, 243, 0.8);
     }

@@ -8,7 +8,7 @@ export default function PostFallback({
   canRemove,
   updatePost,
 }: {
-  post: Post,
+  post: Post;
   canRemove?: {
     id: string;
     uid: string;
@@ -29,9 +29,7 @@ export default function PostFallback({
       <h3 style={{ fontWeight: "500", fontSize: "20px", margin: "10px 0" }}>
         Post Unavailable
       </h3>
-      <p
-        className="text-[16px] flex gap-2 flex-wrap mt-1 text-gray"
-      >
+      <p className="text-[16px] flex gap-2 flex-wrap mt-1 text-gray">
         This post is unavailable because it was deleted.
         {canRemove ? (
           <>
@@ -43,12 +41,12 @@ export default function PostFallback({
                   border: "0",
                 }}
               >
-                <Spinner size={14} />
+                <Spinner size={14} style={{ margin: 0 }} />
               </button>
             ) : (
               <button
-             title="Remove old post from news feed"
-              aria-label="Remove old post from news feed"
+                title="Remove old post from news feed"
+                aria-label="Remove old post from news feed"
                 className="bg-transparent
                 border-[1px]  border-gray hover:border-black hover:text-black transition-all duration-500 ease-in-out border-solid px-1"
                 onClick={async (e) => {

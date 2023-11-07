@@ -49,6 +49,8 @@ import {
   account,
   likes,
 } from "../../../types/interfaces";
+import { LoadingButton } from "@/components/Button/LoadingButton";
+import useQueryFn from "@/hooks/useQueryFn";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // context.res.setHeader(
@@ -173,7 +175,6 @@ export default function Page(props: {
     visibility,
   ]);
   useEffect(() => {
-    // console.log(InputRef.current?.innerText);
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
       if (
@@ -209,8 +210,6 @@ export default function Page(props: {
   useEffect(() => {
     setClient(true);
   }, []);
-  const [updateLoading, setUpdateLoading] = useState(false);
-
   let newMedia: PostType["media"] = [];
   const isPostOwner = post?.authorId === uid;
   const canEdit = router.query.edit && isPostOwner;
@@ -229,6 +228,7 @@ export default function Page(props: {
     e.preventDefault();
     router.push(`/${post?.authorId?.toString()}`);
   };
+  const { queryFn } = useQueryFn();
   const updateHandler = async () => {
     const uid = auth.currentUser?.uid;
     if (!uid || !post || !InputRef.current) return;
@@ -245,7 +245,7 @@ export default function Page(props: {
       deleteFile?.length === 0
     )
       return;
-    setUpdateLoading(true);
+    // setUpdateLoading(true);
     try {
       try {
         const uploadedFiles = await uploadMedia(files as File[]);
@@ -258,7 +258,6 @@ export default function Page(props: {
         console.log("Error uploading and Deleting files:", error);
         return null;
       }
-      // console.log(post.sharePost?.author);
       await updatePost(
         uid,
         InputRef.current.innerHTML
@@ -277,6 +276,7 @@ export default function Page(props: {
         post,
         visibility
       );
+      queryFn.invalidate("myPost");
       router.replace("/", undefined, { scroll: false });
     } catch (error: any) {
       alert(error.message);
@@ -333,16 +333,15 @@ export default function Page(props: {
       >
         <h2 className={s.title}>{canEdit ? "Edit" : "Post"}</h2>
         {canEdit && (
-          <button
+          <LoadingButton
+            className={s.submit}
             tabIndex={1}
             aria-label="update post"
             type="submit"
-            disabled={updateLoading}
-            className={s.submit}
             onClick={updateHandler}
           >
-            {updateLoading ? "Saving..." : "Save"}
-          </button>
+            Submit
+          </LoadingButton>
         )}
       </BackHeader>
       <div

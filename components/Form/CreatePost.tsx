@@ -14,6 +14,7 @@ import PhotoLayout from "../Post/PhotoLayout";
 import { SharePreview } from "../Post/SharePost/Preview";
 import TextInput from "./Input/TextInput";
 import PostSettingFooterForm from "./PostSettingFooter";
+import { LoadingButton } from "../Button/LoadingButton";
 
 export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const { sharePost } = props;
@@ -136,7 +137,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
             Create Post
           </h2>
         </div>
-        <button
+        <LoadingButton
           ref={submitRef}
           disabled={loading}
           type="submit"
@@ -202,7 +203,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
                   media,
                 },
                 sharePost: sharePost ? sharePostData : null,
-                friends,
+                friends: friends!,
               });
               router.replace("/", undefined, { scroll: false });
               window.document.body.style.cursor = "initial";
@@ -213,9 +214,10 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
               window.document.body.style.cursor = "initial";
             }
           }}
+          aria-label="Create Post"
         >
-          {loading ? "Saving..." : "Post"}
-        </button>
+          Post
+        </LoadingButton>
       </BackHeader>
       <TextInput
         style={{ direction: "ltr" }}

@@ -33,10 +33,9 @@ type TAddPost = {
     media?: Post["media"];
   };
   sharePost?: { refId: string; author: string; id: string } | null;
-  friends?: friends[];
+  friends: friends[];
 };
 export async function addPost({ uid, post, sharePost, friends }: TAddPost) {
-  // const h = getCollectionPath<{db:Firestore,path:string}>(uid, "posts");
   const Ref = !sharePost
     ? doc(getPath("posts", { uid }))
     : doc(db, `${getCollectionPath.posts({ uid })}/${sharePost.refId}`);
@@ -65,7 +64,6 @@ export async function addPost({ uid, post, sharePost, friends }: TAddPost) {
       }
     }
   }
-  console.log(uid);
   const adminNewsFeedRef = doc(getPath("recentPosts", { uid }));
   try {
     await setDoc(adminNewsFeedRef, newsFeedPost);
@@ -93,13 +91,10 @@ export async function addPost({ uid, post, sharePost, friends }: TAddPost) {
     data = {
       ...post,
       sharePost,
+      createdAt: serverTimestamp(),
+      updatedAt: "Invalid Date",
     };
-    try {
-      await setDoc(sharersRef, { uid });
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
+    await updatePostSharer(sharersRef);
   } else {
     data = { ...postData };
   }
@@ -108,6 +103,15 @@ export async function addPost({ uid, post, sharePost, friends }: TAddPost) {
     return await setDoc(Ref, data);
   } catch (error: any) {
     alert("Post upload failed !" + error.message);
+  }
+
+  async function updatePostSharer(sharersRef: DocumentReference<DocumentData>) {
+    try {
+      await setDoc(sharersRef, { uid });
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 }
 export async function fetchRecentPosts(uid: string) {
@@ -125,7 +129,6 @@ export async function fetchRecentPosts(uid: string) {
         createdAt: doc.data().createdAt?.toJSON() || 0,
       };
     });
-    // console.log(recentPosts[recentPosts.length - 1]);
     hasMore = recentPosts.length > NewsFeed_LIMIT;
     console.log({
       rlenght: recentPosts.length,
@@ -317,9 +320,12 @@ export async function unlikePost(
   await batch.commit();
   console.log("unliked post");
 }
-export async function fetchLikedUsers(p: Post) {
+export async function fetchLikedUsers(post: Post) {
   const likeRef = DescQuery(
-    getPath("likes", { authorId: String(p.authorId), postId: String(p.id) })
+    getPath("likes", {
+      authorId: String(post.authorId),
+      postId: String(post.id),
+    })
   );
   try {
     const likeDoc = await getDocs(likeRef);

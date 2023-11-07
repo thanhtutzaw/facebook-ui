@@ -23,8 +23,6 @@ interface singleImageModalType {
   name: string;
 }
 export interface PageProps {
-  // toggleCommentMenu: string;
-  // settoggleCommentMenu: Function;
   notiPermission: boolean;
   friendReqCount: number;
   newsFeedData?: Post[];
@@ -51,14 +49,13 @@ export interface PageProps {
   // preventClick?: MutableRefObject<boolean>;
   preventClick?: boolean;
   setnotiPermission?: Function;
-  friends?: friends[] | [];
+  friends?: friends[];
   setpreventClick?: Function;
   setfriends?: Function;
 }
 export const PageContext = createContext<PageProps | null>(null);
 
 export function PageProvider(props: PageProps) {
-  const { ...rest } = props;
   const [friends, setfriends] = useState<friends[]>([]);
   const queryClient = useQueryClient();
   const [shareAction, setshareAction] = useState("");
@@ -77,30 +74,28 @@ export function PageProvider(props: PageProps) {
 
   const [newsFeedData, setnewsFeedData] = useState<Post[]>([]);
   useEffect(() => {
-    function handleClickOutside(e: { target: any }) {
+    function handleClickOutside(e: MouseEvent) {
       if (!shareAction) return;
-      if (dropdownRef?.current?.contains(e.target)) return;
-      setshareAction?.("");
+      const target = e.target as HTMLDivElement;
+      console.log(target);
+      console.log(dropdownRef.current);
+      if (dropdownRef && !dropdownRef.current?.contains(target)) {
+        setshareAction("");
+      }
     }
     document.addEventListener("click", handleClickOutside);
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, [shareAction]);
-  // const [toggleCommentMenu, settoggleCommentMenu] = useState("");
-  // const toggleCommentMenu = useRef('')
-  // const settoggleCommentMenu = (value:string)=>{
-  //   toggleCommentMenu.current = value
-  // }
-
   return (
     <PageContext.Provider
       value={{
         indicatorRef,
         newsFeedData,
         setnewsFeedData,
-        friends,
         setfriends,
+        friends,
         queryClient,
         dropdownRef,
         preventClick,
