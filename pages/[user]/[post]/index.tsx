@@ -51,6 +51,7 @@ import {
 } from "../../../types/interfaces";
 import { LoadingButton } from "@/components/Button/LoadingButton";
 import useQueryFn from "@/hooks/useQueryFn";
+import useEnterSave from "@/hooks/useEnterSave";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // context.res.setHeader(
@@ -321,7 +322,8 @@ export default function Page(props: {
     fetchMoreData: fetchMoreComment,
     postEnd: commentEnd,
   });
-
+  const updateBtnRef = useRef<HTMLButtonElement>(null)
+useEnterSave(InputRef,updateBtnRef)
   if (expired) return <Welcome expired={expired} />;
   return (
     <div className="user" ref={scrollRef}>
@@ -334,6 +336,7 @@ export default function Page(props: {
         <h2 className={s.title}>{canEdit ? "Edit" : "Post"}</h2>
         {canEdit && (
           <LoadingButton
+            ref={updateBtnRef}
             className={s.submit}
             tabIndex={1}
             aria-label="update post"

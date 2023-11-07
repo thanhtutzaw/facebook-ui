@@ -15,6 +15,7 @@ import { SharePreview } from "../Post/SharePost/Preview";
 import TextInput from "./Input/TextInput";
 import PostSettingFooterForm from "./PostSettingFooter";
 import { LoadingButton } from "../Button/LoadingButton";
+import useEnterSave from "@/hooks/useEnterSave";
 
 export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const { sharePost } = props;
@@ -31,29 +32,22 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const { friends, fileRef, uploadButtonClicked, setuploadButtonClicked } =
     useContext(PageContext) as PageProps;
   const submitRef = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    const input = textRef.current;
-    function handleKeyPress(e: KeyboardEvent) {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        submitRef.current?.click();
-      }
-    }
-    input?.addEventListener("keydown", (e) => {
-      handleKeyPress(e);
-    });
-    return () => {
-      input?.removeEventListener("keydown", handleKeyPress);
-    };
-  }, []);
-
+  useEnterSave(textRef, submitRef);
   // useEffect(() => {
-  //   // setvalue(localStorage.getItem("visibility")!);
-  //   // const value = localStorage.getItem("visibility");
-  //   const value = getLocal();
-
-  //   setVisibility(value ?? "Public");
-  // }, [getLocal]);
+  //   const input = textRef.current;
+  //   function handleKeyPress(e: KeyboardEvent) {
+  //     if (e.key === "Enter" && !e.shiftKey) {
+  //       e.preventDefault();
+  //       submitRef.current?.click();
+  //     }
+  //   }
+  //   input?.addEventListener("keydown", (e) => {
+  //     handleKeyPress(e);
+  //   });
+  //   return () => {
+  //     input?.removeEventListener("keydown", handleKeyPress);
+  //   };
+  // }, []);
   useEffect(() => {
     setvalue(localStorage.getItem("visibility")!);
     const value = getLocal();
@@ -214,7 +208,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
               window.document.body.style.cursor = "initial";
             }
           }}
-          aria-label="Create Post"
+          aria-label="Create New Post"
         >
           Post
         </LoadingButton>
