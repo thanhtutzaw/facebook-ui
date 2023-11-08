@@ -34,7 +34,7 @@ export async function sendFCM<T extends NotiApiRequest["body"]>(data: T) {
   const hostName = isProduction ? productionURL : localURL;
   const apiEndpoint = "/api/sendFCM";
   const url = `${hostName ?? productionURL}${apiEndpoint}`;
-  console.log("Sending Notification");
+  console.log("Sending Notification (" + data.message + ")");
 
   const response = await fetch(url, {
     method: "POST",
