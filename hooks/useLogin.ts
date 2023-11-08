@@ -22,14 +22,15 @@ function useLogin() {
   const auth = getAuth(app);
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
-      console.log(user, adding);
-      if (user) {
-        // router.push("/");
-      }
+      // console.log(user, adding);
+      // if (user) {
+      //   // router.push("/");
+      // }
       if (user && adding === false) {
         router.push("/");
-      } else if (!user && router.pathname !== "/") {
       }
+      // else if (!user && router.pathname !== "/") {
+      // }
     });
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -118,8 +119,6 @@ function useLogin() {
         seterror("");
         name.setAttribute("required", "true");
         if (firstName) {
-          // alert(JSON.stringify(Account, null, 4));
-
           setsignupLoading(true);
           setadding(true);
           const UserCredential = await createUserWithEmailAndPassword(
@@ -142,14 +141,6 @@ function useLogin() {
       if (firstName) return;
       console.log(error.code);
     }
-    // try {
-    // } catch (error: any) {
-    //   // if (error.code === "auth/email-already-in-use") {
-    //   //   const email = document.getElementsByName("email")[0];
-    //   //   email.focus();
-    //   // }
-    //   // settoggleSignUp(true);
-    // }
   };
   return {
     testUserSigninLoading,
