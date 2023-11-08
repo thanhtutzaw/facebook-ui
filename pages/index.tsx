@@ -14,12 +14,11 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import { useContext, useEffect, useState } from "react";
-import {Header} from "../components/Header/Header";
-import {Tabs} from "../components/Tabs/Tabs";
+import Header from "../components/Header/Header";
+import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
 import { AppProvider } from "../context/AppContext";
 import {
-  DescQuery,
   app,
   db,
   fethUserDoc,
@@ -31,17 +30,16 @@ import {
   userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import { AppProps, RecentPosts, account, friends } from "../types/interfaces";
+import { AppProps, account, friends } from "../types/interfaces";
 
 import SecondaryPage from "@/components/QueryPage";
 import { useActive } from "@/hooks/useActiveTab";
-import useNotifications from "@/hooks/useNotifications";
+import { fetchRecentPosts } from "@/lib/firestore/post";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import Spinner from "../components/Spinner";
 import { PageContext, PageProps } from "../context/PageContext";
-import { MYPOST_LIMIT, NewsFeed_LIMIT } from "../lib/QUERY_LIMIT";
-import { fetchRecentPosts } from "@/lib/firestore/post";
+import { MYPOST_LIMIT } from "../lib/QUERY_LIMIT";
 export const getServerSideProps: GetServerSideProps<AppProps> = async (
   context
 ) => {

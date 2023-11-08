@@ -40,7 +40,7 @@ import popfx from "public/assets/bubble.mp3";
 import useSound from "use-sound";
 import useQueryFn from "@/hooks/useQueryFn";
 
-export const Footer = memo((
+function Footer (
   props: {
     setLikes?: Function;
     likeCount: number;
@@ -48,7 +48,7 @@ export const Footer = memo((
     setlikeCount?: Function;
     currentUser: User | null;
   } & StyleHTMLAttributes<HTMLDivElement>
-) => {
+)  {
   const {
     post,
     currentUser: profile,
@@ -427,5 +427,5 @@ export const Footer = memo((
       </div>
     );
   }
-})
-Footer.displayName = "Footer"
+}
+export default memo(Footer); 

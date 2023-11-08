@@ -6,7 +6,7 @@ import { memo, useContext } from "react";
 import t from "../../Tabs.module.scss";
 import s from "./Notifications.module.scss";
 import { NotiItem } from "./NotiItem";
-export const Notifications = memo(function Notifications() {
+function Notifications() {
   const {
     uid: currentUid,
     UnReadNotiCount,
@@ -64,4 +64,5 @@ export const Notifications = memo(function Notifications() {
       </div>
     </div>
   );
-})
+}
+export default memo(Notifications);

@@ -42,7 +42,7 @@ export const pages = [
   { name: "Notifications", icon: <FontAwesomeIcon icon={faBell} /> },
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
-export const Header = memo((props: { tabIndex: number }) =>{
+function Header (props: { tabIndex: number }) {
   const { tabIndex } = props;
   const { active, setActive } = useActive();
   const [width, setwidth] = useState<number>();
@@ -167,6 +167,6 @@ export const Header = memo((props: { tabIndex: number }) =>{
       </nav>
     </div>
   );
-})
-Header.displayName = "Header"
+}
+export default memo(Header);
 

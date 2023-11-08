@@ -1,14 +1,14 @@
-import {EditProfileForm} from "@/components/Form/EditProfile";
+import { EditProfileForm } from "@/components/Form/EditProfile";
 import { AppContext } from "@/context/AppContext";
 import useProfile from "@/hooks/useProfile";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { AppProps } from "@/types/interfaces";
 import { AnimatePresence, motion } from "framer-motion";
 import { memo, useContext } from "react";
-import {Content} from "./Content";
+import { Content } from "./Content";
 import ProfileInfo from "./ProfileInfo";
 import s from "./index.module.scss";
-export const Profile = memo(() => {
+function Profile() {
   const {
     profileSrc,
     selectMode,
@@ -101,5 +101,5 @@ export const Profile = memo(() => {
       </motion.div>
     </div>
   );
-});
-Profile.displayName = "Profile";
+}
+export default memo(Profile);

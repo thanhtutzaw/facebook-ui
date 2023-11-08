@@ -4,7 +4,7 @@ import styles from "@/styles/Home.module.scss";
 import { AppProps } from "@/types/interfaces";
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import { useContext, useEffect, useState } from "react";
-import { PostList } from "./PostList";
+import PostList from "./PostList";
 // type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 // };
 export default function Newfeed(props: { tabIndex: number }) {

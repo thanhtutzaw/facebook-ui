@@ -4,7 +4,7 @@ import TextInput from "@/components/Form/Input/TextInput";
 import PostSettingFooterForm from "@/components/Form/PostSettingFooter";
 import BackHeader from "@/components/Header/BackHeader";
 import AuthorInfo from "@/components/Post/AuthorInfo";
-import { Footer } from "@/components/Post/Footer";
+import  Footer  from "@/components/Post/Footer";
 import PhotoLayout from "@/components/Post/PhotoLayout";
 import { SharePreview } from "@/components/Post/SharePost/Preview";
 import { SocialCount } from "@/components/Post/SocialCount";

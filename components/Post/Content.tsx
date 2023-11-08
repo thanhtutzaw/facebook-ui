@@ -21,7 +21,7 @@ import s from "./index.module.scss";
 import PostFallback from "./Fallback";
 import { Post } from "@/types/interfaces";
 import useEscape from "@/hooks/useEscape";
-export const Content = memo(({ post }: { post: Post }) =>{
+function Content ({ post }: { post: Post }) {
   const {
     updatePost,
     Likes,
@@ -238,5 +238,5 @@ export const Content = memo(({ post }: { post: Post }) =>{
       />
     </span>
   );
-})
-Content.displayName = "Content"
+}
+export default memo(Content); 

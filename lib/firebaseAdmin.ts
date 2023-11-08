@@ -47,7 +47,6 @@ export async function getUserData(uid: string) {
   }
 }
 export async function getFCMToken(uid: string) {
-  // const user = await admin.auth().getUser(uid);
   const user = await firestore()
     .doc(`${getCollectionPath.users({ uid })}`)
     .get();

@@ -1,5 +1,5 @@
 import BackHeader from "@/components/Header/BackHeader";
-import { PostList } from "@/components/Tabs/Sections/Home/PostList";
+import PostList from "@/components/Tabs/Sections/Home/PostList";
 import s from "@/components/Tabs/Sections/Profile/index.module.scss";
 import { SavedPost_LIMIT } from "@/lib/QUERY_LIMIT";
 import {

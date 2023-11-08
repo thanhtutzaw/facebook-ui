@@ -3,7 +3,7 @@ import { Router } from "next/router";
 import { Post as PostType } from "../../../types/interfaces";
 import PostFallback from "../Fallback";
 import s from "@/components/Post/index.module.scss";
-import { Post } from "..";
+import Post from "..";
 
 export function SharePreview(props: {
   selectMode?: boolean;

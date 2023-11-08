@@ -11,8 +11,8 @@ import {
 import { PageContext, PageProps } from "../../context/PageContext";
 import PostProvider from "../../context/PostContext";
 import { Post as PostType, account, likes } from "../../types/interfaces";
-import {Content} from "./Content";
-import { Footer } from "./Footer";
+import Content from "./Content";
+import Footer from "./Footer";
 import s from "./index.module.scss";
 import { AnimatePresence, motion } from "framer-motion";
 interface PostProps {
@@ -26,7 +26,7 @@ interface PostProps {
   toggleMenu?: string;
   settoggleMenu?: Dispatch<SetStateAction<string>>;
 }
-export const Post = memo(({
+function Post({
   updatePost,
   shareMode,
   preventNavigate,
@@ -36,7 +36,7 @@ export const Post = memo(({
   tabIndex,
   toggleMenu,
   settoggleMenu,
-}: PostProps) =>{
+}: PostProps) {
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
@@ -100,5 +100,5 @@ export const Post = memo(({
       </div>
     </PostProvider>
   );
-})
-Post.displayName = "Post"
+}
+export default memo(Post);

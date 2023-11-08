@@ -3,7 +3,7 @@ import { PageContext, PageProps } from "@/context/PageContext";
 import useQueryFn from "@/hooks/useQueryFn";
 import { addFriends } from "@/lib/firestore/friends";
 import { AppProps, friends } from "@/types/interfaces";
-import { memo, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import Card from "./Card";
 import s from "./Friends.module.scss";
 interface RequestProps {

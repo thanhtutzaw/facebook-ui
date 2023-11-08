@@ -2,6 +2,7 @@ import admin from "firebase-admin";
 import { MulticastMessage } from "firebase-admin/lib/messaging/messaging-api";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getFCMToken } from "../../lib/firebaseAdmin";
+import { deleteToken } from "firebase/messaging";
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -42,78 +43,91 @@ export default async function handler(
     requireInteraction,
   } = req.body;
 
-  const registrationTokens = await getFCMToken(String(recieptId));
-  if (!registrationTokens) return;
   try {
-    const messageNoti = {
-      tokens: registrationTokens,
-      notification: {
-        title: title ?? "Facebook",
-        body: message,
+    const registrationTokens = await getFCMToken(String(recieptId));
+    if (registrationTokens) {
+      try {
+        const messageNoti = {
+          tokens: registrationTokens,
+          notification: {
+            title: title ?? "Facebook",
+            body: message,
 
-        // badge,
-        // icon,
-        // tag,
-        // actionPayload: actionPayload ?? JSON.stringify([]),
-        // icon,
-        // badge,
-        // tag: tag ?? "",
-        // click_action: link ?? "/",
-        // actionPayload: actionPayload ?? JSON.stringify([]),
-        // actions: actions ?? JSON.stringify([]),
-        // action: actions ?? JSON.stringify([]),
-      },
-      // data: {
-      //   title: title ?? "Facebook",
-      //   body: message,
-      //   icon,
-      //   badge,
-      //   tag: tag ?? "",
-      //   click_action: link ?? "/",
-      //   actionPayload: actionPayload ?? JSON.stringify([]),
-      //   actions: actions ?? JSON.stringify([]),
-      // },
-      webpush: {
-        headers: {
-          Urgency: "high",
-          image: icon,
-        },
-        notification: {
-          // title: title ?? "Facebook",
-          // body: message,
-          requireInteraction: requireInteraction ? requireInteraction : false,
-          badge,
-          icon,
-          actions: typeof actions === "string" ? JSON.parse(actions) : [],
-          data: {
-            actionPayload:
-              typeof actions === "string" && actionPayload
-                ? JSON.parse(actionPayload)
-                : {},
+            // badge,
+            // icon,
+            // tag,
+            // actionPayload: actionPayload ?? JSON.stringify([]),
+            // icon,
+            // badge,
+            // tag: tag ?? "",
+            // click_action: link ?? "/",
+            // actionPayload: actionPayload ?? JSON.stringify([]),
+            // actions: actions ?? JSON.stringify([]),
+            // action: actions ?? JSON.stringify([]),
           },
-          tag: tag ?? "",
-          renotify: false,
-          // actions: actions ?? JSON.stringify([]),
-        },
-        fcm_options: {
-          link,
-        },
-      },
-      android: {
-        ttl: 3600000,
-        notification: {
-          bodyLocKey: "STOCK_NOTIFICATION_BODY",
-          bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
-        },
-      },
-    } as MulticastMessage;
-    console.log({ messageNoti });
+          // data: {
+          //   title: title ?? "Facebook",
+          //   body: message,
+          //   icon,
+          //   badge,
+          //   tag: tag ?? "",
+          //   click_action: link ?? "/",
+          //   actionPayload: actionPayload ?? JSON.stringify([]),
+          //   actions: actions ?? JSON.stringify([]),
+          // },
+          webpush: {
+            headers: {
+              Urgency: "high",
+              image: icon,
+            },
+            notification: {
+              // title: title ?? "Facebook",
+              // body: message,
+              requireInteraction: requireInteraction
+                ? requireInteraction
+                : false,
+              badge,
+              icon,
+              actions: typeof actions === "string" ? JSON.parse(actions) : [],
+              data: {
+                actionPayload:
+                  typeof actions === "string" && actionPayload
+                    ? JSON.parse(actionPayload)
+                    : {},
+              },
+              tag: tag ?? "",
+              renotify: false,
+              // actions: actions ?? JSON.stringify([]),
+            },
+            fcm_options: {
+              link,
+            },
+          },
+          android: {
+            ttl: 3600000,
+            notification: {
+              bodyLocKey: "STOCK_NOTIFICATION_BODY",
+              bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+            },
+          },
+        } as MulticastMessage;
 
-    const response = await admin.messaging().sendEachForMulticast(messageNoti);
-    console.log("Successfully sent message:", response);
+        const response = await admin
+          .messaging()
+          .sendEachForMulticast(messageNoti);
+        console.log("Successfully sent message:", response);
+        // console.log(response.responses.filter((token) => token.error));
+      } catch (error) {
+        console.log(error);
+      }
+      // console.log({ registrationTokens });
+      res.status(200).json(req.body);
+    } else {
+      res.status(500).end();
+      // res.status(500).json({ error: "failed to load data" });
+      return;
+    }
   } catch (error) {
-    console.log(error);
+    // res.json(error);
   }
-  console.log({ registrationTokens });
-  res.status(200).json(req.body);
 }

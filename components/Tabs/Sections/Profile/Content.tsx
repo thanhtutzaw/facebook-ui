@@ -10,7 +10,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { PostList } from "../Home/PostList";
+import  PostList  from "../Home/PostList";
 import SortDate from "./SortDate";
 import s from "./index.module.scss";
 import Spinner from "@/components/Spinner";
