@@ -23,7 +23,6 @@ interface singleImageModalType {
   name: string;
 }
 export interface PageProps {
-  notiPermission: boolean;
   friendReqCount: number;
   newsFeedData?: Post[];
   setnewsFeedData?: Function;
@@ -48,7 +47,6 @@ export interface PageProps {
   setsingleImageModal?: Function;
   // preventClick?: MutableRefObject<boolean>;
   preventClick?: boolean;
-  setnotiPermission?: Function;
   friends?: friends[];
   setpreventClick?: Function;
   setfriends?: Function;

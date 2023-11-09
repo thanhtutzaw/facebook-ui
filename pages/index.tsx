@@ -228,12 +228,11 @@ export default function Home({
   }, [profile]);
 
   const {
-    notiPermission,
     newsFeedData,
     setnewsFeedData,
     setfriends,
-    setnotiPermission,
   } = useContext(PageContext) as PageProps;
+  const [notiPermission, setnotiPermission] = useState(false);
 
   useEffect(() => {
     const auth = getAuth(app);

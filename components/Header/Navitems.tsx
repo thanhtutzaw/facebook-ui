@@ -28,15 +28,8 @@ export default function Navitems(props: {
   let iconTitle = name === "/" ? "Home" : name;
   const TabName = name.toLowerCase() as Tabs;
   const changeTab = () => {
-    setActive?.(TabName);
-    window.location.hash = TabName === "/" ? "#home" : `#${TabName}`;
-    const tabs = document.getElementById("tabs")!;
-    const tab = document.getElementById(TabName)!;
-    // const main = document.getElementsByTagName("main")[0]!;
-    tabs.scrollTo({
-      left: index * tabs.clientWidth,
-      behavior: "smooth",
-    });
+     const tabs = document.getElementById("tabs")!;
+     const tab = document.getElementById(TabName)!;
     if (TabName === active) {
       tab.scrollTo({
         top: 0,
@@ -54,7 +47,16 @@ export default function Navitems(props: {
         queryFn.invalidate("noti");
         queryFn.refetchQueries("noti");
       }
+      return;
     }
+    setActive?.(TabName);
+    window.location.hash = TabName === "/" ? "#home" : `#${TabName}`;
+    // const main = document.getElementsByTagName("main")[0]!;
+    tabs.scrollTo({
+      left: index * tabs.clientWidth,
+      behavior: "smooth",
+    });
+    
   };
 
   const activeClass = active === TabName ? styles.active : "";

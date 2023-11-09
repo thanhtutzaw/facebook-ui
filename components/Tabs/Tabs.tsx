@@ -1,5 +1,3 @@
-import { AppContext } from "@/context/AppContext";
-import { AppProps } from "@/types/interfaces";
 import dynamic from "next/dynamic";
 import {
   ElementType,
@@ -7,15 +5,15 @@ import {
   memo,
   useContext,
   useEffect,
-  useState,
+  useState
 } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
 import Home from "./Sections/Home/Home";
-import t from "./Tabs.module.scss";
-import Profile from "./Sections/Profile";
 import Notifications from "./Sections/Notifications/Notifications";
+import Profile from "./Sections/Profile";
+import { TabHeader } from './TabHeader';
 const Friends = dynamic(() => import("./Sections/Friends/Friends"), {
   ssr: false,
 });
@@ -28,7 +26,7 @@ const Watch = dynamic(() => import("./Sections/Watch"), { ssr: false });
 // );
 const Menu = dynamic(() => import("./Sections/Menu/menu"), { ssr: false });
 
-function Tabs () {
+function Tabs() {
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { indicatorRef, setpreventClick } = useContext(
@@ -124,29 +122,27 @@ function Tabs () {
       }}
     >
       <Home tabIndex={active === "/" ? 0 : -1} />
-      <div id="friends" className={styles.tab}>
-        <div className={`bold-title ${t.header}`}>
-          <h2>Friends</h2>
-        </div>
+      <div
+        aria-hidden={active !== "friends"}
+        id="friends"
+        className={styles.tab}
+      >
+        <TabHeader>Friends</TabHeader>
         <Friends tabIndex={active === "friends" ? 0 : -1} />
       </div>
-      <div id="watch">
-        <div className={`bold-title ${t.header}`}>
-          <h2>Watch</h2>
-        </div>
+      <div aria-hidden={active !== "watch"} id="watch">
+        <TabHeader>Watch</TabHeader>
         <Watch />
       </div>
-
-      <Profile />
-
-      <Notifications />
-      <div id="menu">
-        <div className={`bold-title ${t.header}`}>
-          <h2>Menu</h2>
-        </div>
+      <Profile tabIndex={active === "profile" ? 0 : -1} />
+      <Notifications tabIndex={active === "notifications" ? 0 : -1} />
+      <div aria-hidden={active !== "menu"} id="menu">
+        <TabHeader>Menu</TabHeader>
         <Menu tabIndex={active === "menu" ? 0 : -1} />
       </div>
     </div>
   );
 }
 export default memo(Tabs);
+
+

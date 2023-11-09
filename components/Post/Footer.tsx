@@ -40,7 +40,7 @@ import popfx from "public/assets/bubble.mp3";
 import useSound from "use-sound";
 import useQueryFn from "@/hooks/useQueryFn";
 
-function Footer (
+function Footer(
   props: {
     setLikes?: Function;
     likeCount: number;
@@ -48,7 +48,7 @@ function Footer (
     setlikeCount?: Function;
     currentUser: User | null;
   } & StyleHTMLAttributes<HTMLDivElement>
-)  {
+) {
   const {
     post,
     currentUser: profile,
@@ -68,9 +68,8 @@ function Footer (
   }, [getLocal]);
   const [isLiked, setisLiked] = useState(post.isLiked);
 
-  const {friends, currentUser, dropdownRef, shareAction, setshareAction } = useContext(
-    PageContext
-  ) as PageProps;
+  const { friends, currentUser, dropdownRef, shareAction, setshareAction } =
+    useContext(PageContext) as PageProps;
   const { id, author: authorAccount, authorId } = post;
   const authorProfile = authorAccount as account["profile"];
   const authorName = `${authorProfile?.firstName ?? "Unknow User"} ${
@@ -153,8 +152,17 @@ function Footer (
             }
 
             setisLiked((prev) => !prev);
-            queryFn.invalidate("myPost");
             setLikeLoading(true);
+
+            if (post.deletedByAuthor) {
+              setLikeLoading(false);
+              setTimeout(() => {
+                setisLiked(false);
+              }, 300);
+              console.log("Post no longer exist !");
+              return;
+            }
+            queryFn.invalidate("myPost");
 
             if (isLiked) {
               setLikes?.([]);
@@ -206,9 +214,6 @@ function Footer (
         >
           <FontAwesomeIcon icon={faThumbsUp} />
           <p>Like</p>
-          {/* {`isLike-${post.isLiked ? "true" : "false"}`}
-      <br />
-      {`likedstate-${isLiked ? "true" : "false"}`} */}
         </button>
         <AnimatePresence>
           {reactionAction === id && (
@@ -367,7 +372,7 @@ function Footer (
                         visibility: visibility ?? "Public",
                       },
                       sharePost,
-                      friends:friends!
+                      friends: friends!,
                     });
                     await sendAppNoti({
                       uid,
@@ -398,7 +403,6 @@ function Footer (
                     }
 
                     router.replace("/", undefined, { scroll: false });
-
                   } catch (error: any) {
                     alert(error.message);
                   }
@@ -428,4 +432,4 @@ function Footer (
     );
   }
 }
-export default memo(Footer); 
+export default memo(Footer);

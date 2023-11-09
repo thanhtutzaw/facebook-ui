@@ -3,11 +3,11 @@ import { app } from "@/lib/firebase";
 import styles from "@/styles/Home.module.scss";
 import { AppProps } from "@/types/interfaces";
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
-import { useContext, useEffect, useState } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 import PostList from "./PostList";
 // type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 // };
-export default function Newfeed(props: { tabIndex: number }) {
+function Newfeed(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const { profile, updatePost, posts, limitedPosts, postEnd, hasMore } =
     useContext(AppContext) as AppProps;
@@ -32,3 +32,4 @@ export default function Newfeed(props: { tabIndex: number }) {
     </div>
   );
 }
+export default memo(Newfeed);

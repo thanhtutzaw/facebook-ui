@@ -2,11 +2,11 @@ import Spinner from "@/components/Spinner";
 import { AppContext } from "@/context/AppContext";
 import useNotifications from "@/hooks/useNotifications";
 import { AppProps, Noti } from "@/types/interfaces";
-import { memo, useContext } from "react";
+import { Suspense, memo, useContext } from "react";
 import t from "../../Tabs.module.scss";
 import s from "./Notifications.module.scss";
 import { NotiItem } from "./NotiItem";
-function Notifications() {
+function Notifications({ tabIndex }: { tabIndex: number }) {
   const {
     uid: currentUid,
     UnReadNotiCount,
@@ -28,6 +28,7 @@ function Notifications() {
 
   return (
     <div
+      aria-hidden={tabIndex === -1}
       id="notifications"
       onScroll={async (e) => {
         const target = e.currentTarget as HTMLElement;
@@ -44,7 +45,7 @@ function Notifications() {
       </div>
       <div className={s.container}>
         {isLoading ? (
-          <Spinner />
+          <Spinner style={{ margin: "0" }} />
         ) : error ? (
           <p className="text-center text-red">Unexpected Error !</p>
         ) : notifications?.length === 0 ? (

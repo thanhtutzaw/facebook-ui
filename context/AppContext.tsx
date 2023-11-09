@@ -23,18 +23,23 @@ export function AppProvider(props: AppProps) {
   const [selectMode, setselectMode] = useState(false);
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const [sortedPost, setsortedPost] = useState<Post[]>([]);
-  const updatePost = (id: string, deletedByAuthor?: boolean) => {
-    // if (deletedByAuthor) {
-    //   setlimitedPosts?.((prev: Post[]) => {
-    //     prev.map((p) => {
-    //       if (p.id === id) {
-    //         return [...prev, { deletedByAuthor: true }];
-    //       }
-    //     });
-    //   });
-    // }
-    setlimitedPosts?.((prev: Post[]) => prev.filter((post) => post.id !== id));
-  };
+  const updatePost = useCallback(
+    (id: string, deletedByAuthor?: boolean) => {
+      // if (deletedByAuthor) {
+      //   setlimitedPosts?.((prev: Post[]) => {
+      //     prev.map((p) => {
+      //       if (p.id === id) {
+      //         return [...prev, { deletedByAuthor: true }];
+      //       }
+      //     });
+      //   });
+      // }
+      setlimitedPosts?.((prev: Post[]) =>
+        prev.filter((post) => post.id !== id)
+      );
+    },
+    [setlimitedPosts]
+  );
   useEffect(() => {
     if (posts && !limitedPosts) {
       setlimitedPosts?.(posts);

@@ -8,7 +8,7 @@ import { memo, useContext } from "react";
 import { Content } from "./Content";
 import ProfileInfo from "./ProfileInfo";
 import s from "./index.module.scss";
-function Profile() {
+function Profile({ tabIndex }: { tabIndex: number }) {
   const {
     profileSrc,
     selectMode,
@@ -36,6 +36,7 @@ function Profile() {
   } = useProfile();
   return (
     <div
+      aria-hidden={tabIndex === -1}
       id="profile"
       onScroll={(e) => {
         const header = headerRef?.current!;

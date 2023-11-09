@@ -36,6 +36,7 @@ export default function Home(props: { tabIndex: number }) {
   });
   return (
     <div
+    aria-hidden={tabIndex === -1}
       ref={scrollRef}
       id="/"
       className={styles.home}

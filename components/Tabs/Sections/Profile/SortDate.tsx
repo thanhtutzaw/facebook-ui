@@ -30,7 +30,7 @@ export default function SortDate(props: {
       }}
     >
       <button
-        className={sortby === "new" ? s.active : ""}
+        disabled={sortby === "new"}
         id="new"
         onClick={async (e) => {
           e.preventDefault();
@@ -42,7 +42,7 @@ export default function SortDate(props: {
         Date added (Newest)
       </button>
       <button
-        className={sortby === "old" ? s.active : ""}
+        disabled={sortby === "old"}
         id="old"
         onClick={async (e) => {
           setToggleSort(false);

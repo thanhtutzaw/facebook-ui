@@ -84,7 +84,6 @@ export default function App({
   //       alert("sw not ready !");
   //     });
   // }
-  const [notiPermission, setnotiPermission] = useState(false);
 
   const auth = getAuth(app);
 
@@ -194,8 +193,6 @@ export default function App({
           setActive={setActive}
           currentUser={currentUser}
           setcurrentUser={setcurrentUser}
-          notiPermission={notiPermission}
-          setnotiPermission={setnotiPermission}
         >
           <main>
             <Component {...pageProps} />
