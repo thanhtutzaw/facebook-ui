@@ -22,15 +22,14 @@ export function Welcome({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expired]);
   useEffect(() => {
-    let t: NodeJS.Timeout;
+    let timeoutId: NodeJS.Timeout;
     if (postError) {
-      t = setTimeout(() => {
+      timeoutId = setTimeout(() => {
         setresourceError?.("");
       }, 5000);
     }
-    return () => clearTimeout(t);
+    return () => clearTimeout(timeoutId);
   }, [postError, setresourceError]);
-  // if (postError !== "") return null;
   return (
     <div
       style={{
@@ -48,32 +47,14 @@ export function Welcome({
         <>
           <p className="error">
             <FontAwesomeIcon icon={faCircleExclamation} />
-            {/* {postError} */}
             Apologies, our Firebase resources have reached their limit. Please
             try again in 24 hours. Thank you for your understanding.
           </p>
-          {/* <p
-            style={{
-              marginTop: "auto",
-              color: "gray",
-              width: "90%",
-              // textAlign: "left",
-            }}
-          >
-            </p> */}
-          {/* {postError} */}
-          {/* Apologies, our Firebase resources have reached their limit. Please
-            try again in 24 hours. Thank you for your understanding. */}
         </>
       ) : (
         <>
           <h2 className="bold-title select-none">Welcome Back 🎉</h2>
-          <p
-            className="select-none text-gray"
-            
-          >
-            Loading ...
-          </p>
+          <p className="select-none text-gray">Loading ...</p>
         </>
       )}
       <DevelopedByThanHtutZaw />

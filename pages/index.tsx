@@ -128,16 +128,6 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     );
     const myFriendsSnap = await getDocs(myFriendsQuery);
     const acceptedFriends = myFriendsSnap.docs.map((doc) => doc.id);
-    // const feedUser = myFriendsSnap.docs.map((doc) => {
-    //   return { id: doc.data().id } as { id: string };
-    // });
-    // const userPostsSubCollectionRef =  getPath("friends",{uid});
-
-    // Reference to the "recentPostSubCollection" subcollection within the user's "postsSubCollection"
-    // const newsFeedQuery = DescQuery(
-    //   getPath("recentPosts", { uid }),
-    //   NewsFeed_LIMIT + 1
-    // );
     let { recentPosts, hasMore } = await fetchRecentPosts(uid);
     const [newsFeedPosts, profileData, currentAccount] = await Promise.all([
       getNewsFeed(uid, recentPosts),
@@ -227,11 +217,9 @@ export default function Home({
     }
   }, [profile]);
 
-  const {
-    newsFeedData,
-    setnewsFeedData,
-    setfriends,
-  } = useContext(PageContext) as PageProps;
+  const { newsFeedData, setnewsFeedData, setfriends } = useContext(
+    PageContext
+  ) as PageProps;
   const [notiPermission, setnotiPermission] = useState(false);
 
   useEffect(() => {
@@ -270,12 +258,6 @@ export default function Home({
     isReady();
     if (!notiPermission) return;
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
-      // navigator.serviceWorker.ready
-      //   .then((reg) => {
-      //     console.log("sw ready", reg);
-      //     alert("Sw ready");
-      //     reg.showNotification(notificationTitle, notificationOptions);
-      //   })
       const messaging = getMessaging(app);
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
@@ -301,22 +283,6 @@ export default function Home({
         new Notification(notificationTitle, notificationOptions);
         // this line only work in Desktop but actions are not allowed
 
-        // if (
-        //   "serviceWorker" in navigator &&
-        //   navigator.serviceWorker.controller
-        // ) {
-        //   navigator.serviceWorker.controller.postMessage({
-        //     type: "showNotification",
-        //     title: notificationTitle,
-        //     options: notificationOptions,
-        //   });
-        // } else {
-        //   alert("noti can't show");
-        // }
-        // new ServiceWorkerRegistration().showNotification(
-        //   notificationTitle,
-        //   notificationOptions
-        // );
         return () => {
           if (unsubscribe) unsubscribe();
         };
@@ -324,6 +290,7 @@ export default function Home({
     }
   }, [notiPermission]);
   useEffect(() => {
+    if (!token) return;
     const requestNotificationPermission = async () => {
       try {
         const permission = await Notification.requestPermission();
@@ -340,7 +307,7 @@ export default function Home({
       }
     };
     requestNotificationPermission();
-  }, [setnotiPermission]);
+  }, [setnotiPermission, token]);
   const [UnReadNotiCount, setUnReadNotiCount] = useState(0);
 
   useEffect(() => {
@@ -372,8 +339,6 @@ export default function Home({
 
               console.log("stored token to db");
             }
-          } else {
-            console.log("No FCM token received.");
           }
         } catch (error) {
           console.error("Error getting FCM token:", error);

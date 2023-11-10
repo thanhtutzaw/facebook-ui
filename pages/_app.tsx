@@ -3,9 +3,10 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-import friendReqSound from "../public/assets/chord.mp3";
 
+import Metatag from "@/components/Metatag";
 import useFriendRequest from "@/hooks/useFriendRequest";
+import useNprogress from "@/hooks/useNprogress";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import {
   User,
@@ -15,10 +16,8 @@ import {
 } from "firebase/auth";
 import { GetServerSideProps } from "next";
 import type { AppProps } from "next/app";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import nProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { useEffect, useState } from "react";
 import { ImageLargeView } from "../components/Post/ImageLargeView";
@@ -29,7 +28,6 @@ import { app, getProfileByUID } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import "../styles/globals.css";
 import { AppProps as Props } from "../types/interfaces";
-import Metatag from "@/components/Metatag";
 config.autoAddCss = false;
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
@@ -62,36 +60,16 @@ export default function App({
   expired,
 }: AppProps & { uid: DecodedIdToken["uid"]; expired: boolean }) {
   const router = useRouter();
-  useEffect(() => {
-    const handleRouteStart = () => nProgress?.start();
-    const handleRouteDone = () => nProgress?.done();
-    router.events.on("routeChangeStart", handleRouteStart);
-    router.events.on("routeChangeComplete", handleRouteDone);
-    router.events.on("routeChangeError", handleRouteDone);
-    return () => {
-      router.events.off("routeChangeStart", handleRouteStart);
-      router.events.off("routeChangeComplete", handleRouteDone);
-      router.events.off("routeChangeError", handleRouteDone);
-    };
-  }, [router.events]);
-  // if (typeof window !== "undefined") {
-  //   navigator.serviceWorker.ready
-  //     .then((reg) => {
-  //       alert("Sw ready");
-  //       reg.showNotification("foreground title");
-  //     })
-  //     .catch((error) => {
-  //       alert("sw not ready !");
-  //     });
-  // }
-
+  useNprogress();
   const auth = getAuth(app);
-
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        if (router.pathname === "/login/email") return;
-        router.push("/login");
+        // if (router.pathname === "/login/email") return;
+        console.log(router.pathname);
+        if (router.pathname === "/" || "friends" || "saved" || "chat") {
+          router.push("/login");
+        }
       } else {
         if (!expired) return;
         router.push("/");
@@ -100,17 +78,6 @@ export default function App({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
-  // useEffect(() => {
-  //   const unsub = onAuthStateChanged(auth, async (user) => {
-  //     if (!user) {
-  //       router.push("/login");
-  //     } else {
-  //       router.push("/");
-  //     }
-  //   });
-  //   return () => unsub();
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [auth]);
   const [currentUser, setcurrentUser] = useState<
     (User & { photoURL_cropped?: string }) | null
   >(null);
