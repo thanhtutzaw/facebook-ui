@@ -1,4 +1,4 @@
 {
   "npm-scripts.showStartNotification": false,
-  "editor.codeActionsOnSave": ["source.addMissingImports"]
+  "editor.codeActionsOnSave": ["source.addMissingImports","source.organizeImports"]
 }

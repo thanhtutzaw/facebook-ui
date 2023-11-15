@@ -1,3 +1,5 @@
+import { AppContext } from "@/context/AppContext";
+import { AppProps } from "@/types/interfaces";
 import dynamic from "next/dynamic";
 import {
   ElementType,
@@ -5,7 +7,8 @@ import {
   memo,
   useContext,
   useEffect,
-  useState
+  useLayoutEffect,
+  useState,
 } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { useActive } from "../../hooks/useActiveTab";
@@ -13,7 +16,7 @@ import styles from "../../styles/Home.module.scss";
 import Home from "./Sections/Home/Home";
 import Notifications from "./Sections/Notifications/Notifications";
 import Profile from "./Sections/Profile";
-import { TabHeader } from './TabHeader';
+import { TabHeader } from "./TabHeader";
 const Friends = dynamic(() => import("./Sections/Friends/Friends"), {
   ssr: false,
 });
@@ -32,9 +35,41 @@ function Tabs() {
   const { indicatorRef, setpreventClick } = useContext(
     PageContext
   ) as PageProps;
-  // const { uid } = useContext(AppContext) as AppProps;
+  const { headerContainerRef } = useContext(AppContext) as AppProps;
   const { active } = useActive();
+  const headerContainer = headerContainerRef?.current;
+  useLayoutEffect(() => {
+    const tabs = document.getElementById("tabs");
+    const main = document.getElementsByTagName("main")[0];
 
+    console.log("in appContext" + headerContainer);
+    if (window.location.hash === "" || window.location.hash === "#home") {
+      if (!headerContainer) return;
+      headerContainer.style.transform = "translateY(0px)";
+      headerContainer.style.height = "120px";
+      // main.scrollTo({
+      //   top: 0,
+      //   behavior: "smooth",
+      // });
+      tabs?.scrollTo({
+        left: 0,
+        behavior: "smooth",
+      });
+    }
+    window.onhashchange = (e) => {
+      if (window.location.hash === "" || window.location.hash === "#home") {
+        tabs?.scrollTo({
+          left: 0,
+          behavior: "smooth",
+        });
+      } else {
+        main.style.scrollSnapType = "none";
+        if (!headerContainer) return;
+        headerContainer.style.transform = "translateY(-60px)";
+        headerContainer.style.height = "60px";
+      }
+    };
+  }, [headerContainer, active]);
   useEffect(() => {
     if (!active) return;
     window.location.hash = active === "/" ? "#home" : `#${active}`;
@@ -144,5 +179,3 @@ function Tabs() {
   );
 }
 export default memo(Tabs);
-
-

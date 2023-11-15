@@ -1,10 +1,10 @@
 import { PageContext, PageProps } from "@/context/PageContext";
 import useEscape from "@/hooks/useEscape";
 import {
+  JSONTimestampToDate,
   app,
   db,
   getCollectionPath,
-  JSONTimestampToDate,
 } from "@/lib/firebase";
 import {
   loveComment,
@@ -16,10 +16,10 @@ import {
   sendAppNoti,
   sendFCM,
 } from "@/lib/firestore/notifications";
+import { checkPhotoURL } from "@/lib/firestore/profile";
 import { Comment, Post } from "@/types/interfaces";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { profile } from "console";
 import { getAuth } from "firebase/auth";
 import { collection, doc, getCountFromServer } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
@@ -27,7 +27,6 @@ import { useRouter } from "next/router";
 import { RefObject, useContext, useEffect, useRef, useState } from "react";
 import AuthorInfo from "../Post/AuthorInfo";
 import s from "./index.module.scss";
-import { checkPhotoURL } from "@/lib/firestore/profile";
 export default function CommentItem(props: {
   comments: Post["comments"];
   menuRef: RefObject<HTMLDivElement>;

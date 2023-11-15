@@ -1,3 +1,6 @@
+import post from "@/components/Post/index.module.scss";
+import s from "@/components/Tabs/Sections/Profile/index.module.scss";
+import useEscape from "@/hooks/useEscape";
 import { Comment, Post } from "@/types/interfaces";
 import {
   faEdit,
@@ -8,14 +11,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentData, DocumentReference } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import router from "next/router";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { RefObject, useState } from "react";
 import { deleteComment } from "../../lib/firestore/comment";
-import s from "@/components/Tabs/Sections/Profile/index.module.scss";
-import useEscape from "@/hooks/useEscape";
-import post from "@/components/Post/index.module.scss";
 export default function CommentAction(props: {
   comments: Post["comments"];
-  setComments:Function;
+  setComments: Function;
   menuRef: RefObject<HTMLDivElement>;
   toggleCommentMenu: string;
   settoggleCommentMenu: Function;
@@ -103,7 +103,7 @@ export default function CommentAction(props: {
                     throw new Error("CommentRef and PostRef are required !");
                   }
                   await deleteComment(commentRef, postRef);
-                  setComments(comments.filter((c)=> c.id !== comment.id))
+                  setComments(comments.filter((c) => c.id !== comment.id));
                   setDeleteLoading(false);
                   settoggleCommentMenu("");
                   router.push(router.asPath);

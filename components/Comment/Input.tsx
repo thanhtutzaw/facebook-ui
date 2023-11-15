@@ -7,12 +7,12 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { db, getCollectionPath, getPath } from "../../lib/firebase";
+import { getPath } from "../../lib/firebase";
 import { addComment } from "../../lib/firestore/comment";
 import { sendAppNoti } from "../../lib/firestore/notifications";
 import { Post, account } from "../../types/interfaces";
-import s from "./index.module.scss";
 import Spinner from "../Spinner";
+import s from "./index.module.scss";
 export default function CommentInput(props: {
   comments: Post["comments"];
   setlimitedComments: Function;

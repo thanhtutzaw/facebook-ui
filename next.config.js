@@ -12,7 +12,44 @@ module.exports = {
     defaultLocale: 'en',
   },
   images: {
-    domains: ['www.cvent-assets.com', 'upload.wikimedia.org', 'firebasestorage.googleapis.com', 'images.unsplash.com', 'cvent-assets.com', 'encrypted-tbn0.gstatic.com', 'www.femalefirst.co.uk'],
+    
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.cvent-assets.com',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'upload.wikimedia.org',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'firebasestorage.googleapis.com',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cvent-assets.com',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'encrypted-tbn0.gstatic.com',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.femalefirst.co.uk',
+        port: '',
+      },
+    ],
   },
   // @ts-ignore
   webpack(config, options) {

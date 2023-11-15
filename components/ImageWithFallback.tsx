@@ -21,7 +21,8 @@ const ImageWithFallback = (
     <Image
     className={loading ? "bg-avatarBg" : 'bg-black'}
     // style={{style2, border : loading ? '1px solid red' : '5px solid green'}}
-    onLoadingComplete={()=>setLoading(false)}
+    // onLoadingComplete={()=>setLoading(false)}
+    onLoad={()=>setLoading(false)}
       //   style={{
       //     filter: imgSrc === fallbackSrc ? "invert(1)" : "initial",
       //   }}
