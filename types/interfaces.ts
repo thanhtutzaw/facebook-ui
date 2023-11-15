@@ -48,6 +48,7 @@ export type account = {
 };
 export type notiContentTypes =
   | "post_reaction"
+  | "comment_reaction"
   | "comment"
   | "share"
   | "acceptedFriend";
@@ -118,6 +119,7 @@ export interface Post {
 }
 export interface Comment {
   isLiked: boolean;
+  heartCount?: number;
   like?: any;
   author?: author;
   authorId: string | number;
@@ -145,7 +147,7 @@ export interface AppProps {
   postError?: string;
   setlimitedPosts?: Function;
   limitedPosts?: Post[];
-  updatePost?: Function;
+  deletePost?: Function;
   children?: ReactNode;
   setselectMode?: Function;
   selectMode?: boolean;

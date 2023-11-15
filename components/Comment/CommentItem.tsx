@@ -1,20 +1,34 @@
+import { PageContext, PageProps } from "@/context/PageContext";
 import useEscape from "@/hooks/useEscape";
 import {
+  app,
   db,
   getCollectionPath,
-  getPath,
   JSONTimestampToDate,
 } from "@/lib/firebase";
+import {
+  loveComment,
+  unLoveComment,
+  updateComment,
+} from "@/lib/firestore/comment";
+import {
+  getMessage,
+  sendAppNoti,
+  sendFCM,
+} from "@/lib/firestore/notifications";
 import { Comment, Post } from "@/types/interfaces";
-import { doc } from "firebase/firestore";
+import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { profile } from "console";
+import { getAuth } from "firebase/auth";
+import { collection, doc, getCountFromServer } from "firebase/firestore";
+import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { RefObject, useContext, useEffect, useRef, useState } from "react";
 import AuthorInfo from "../Post/AuthorInfo";
 import s from "./index.module.scss";
-import { updateComment } from "@/lib/firestore/comment";
-import { AnimatePresence, motion } from "framer-motion";
-import { setCommentRange } from "typescript";
-function CommentItem(props: {
+import { checkPhotoURL } from "@/lib/firestore/profile";
+export default function CommentItem(props: {
   comments: Post["comments"];
   menuRef: RefObject<HTMLDivElement>;
   toggleCommentMenu: string;
@@ -40,6 +54,7 @@ function CommentItem(props: {
     uid,
     comment,
   } = props;
+  const { currentUser: profile } = useContext(PageContext) as PageProps;
   const { text, createdAt, id } = comment;
   const { authorId, id: postId } = post;
   const router = useRouter();
@@ -98,7 +113,65 @@ function CommentItem(props: {
       setexitWithoutSaving(true);
     }
   }, [input, text]);
+  const [isLiked, setIsLiked] = useState(comment.isLiked);
+  const [heartCount, setHeartCount] = useState(comment.heartCount ?? 0);
+  const [heartLoading, setheartLoading] = useState(false);
+  const auth = getAuth(app);
+  const heartRef = doc(
+    db,
+    `${getCollectionPath.comments({
+      authorId: String(post.authorId),
+      postId: String(post.id),
+    })}/${comment.id}/hearts/${auth.currentUser?.uid}`
+  );
+  const likedUserRef = collection(
+    db,
+    `${getCollectionPath.comments({
+      authorId: String(post.authorId),
+      postId: String(post.id),
+    })}/${comment.id}/hearts`
+  );
 
+  const handleLike = async () => {
+    setheartLoading(true);
+    setIsLiked((prev) => !prev);
+    if (!auth.currentUser?.uid) {
+      alert("Error : User Not Found . Sign up and Try Again ! ");
+      return;
+    }
+    if (isLiked) {
+      await unLoveComment({ heartRef });
+      await updateHeartState();
+    } else {
+      await loveComment({ heartRef, uid: String(auth.currentUser?.uid) });
+      await updateHeartState();
+      if (auth.currentUser?.uid === authorId) return;
+      await sendAppNoti({
+        uid,
+        receiptId: comment.authorId,
+        profile,
+        type: "comment_reaction",
+        url: `${authorId}/${postId}#comment-${comment.id}`,
+      });
+
+      await sendFCM({
+        recieptId: comment.authorId.toString(),
+        message: `${profile?.displayName ?? "Unknown User"} ${
+          getMessage("comment_reaction").message
+        }`,
+        icon: checkPhotoURL(profile?.photoURL_cropped ?? profile?.photoURL),
+        tag: `Heart-${id}`,
+        link: `/${authorId}/${postId}#comment-${comment.id}`,
+      });
+    }
+
+    async function updateHeartState() {
+      setheartLoading(false);
+      const updatedLikeCount = (await getCountFromServer(likedUserRef)).data()
+        .count;
+      setHeartCount?.(updatedLikeCount);
+    }
+  };
   return (
     <li key={comment.id} className={s.item} id={`comment-${id}`}>
       <AuthorInfo
@@ -145,6 +218,25 @@ function CommentItem(props: {
               day: "numeric",
             })}
           </p>
+          <button
+            disabled={heartLoading}
+            style={{
+              pointerEvents: heartLoading ? "none" : "initial",
+            }}
+            onClick={async () => {
+              await handleLike();
+            }}
+            aria-label="Love this Comment"
+            title="Love"
+            tabIndex={-1}
+            className={s.replyBtn}
+          >
+            <FontAwesomeIcon
+              style={{ color: isLiked ? "red" : "rgb(78, 78, 78)" }}
+              icon={faHeart}
+            />
+            {heartCount > 0 && heartCount}
+          </button>
           <button className={s.replyBtn}>Reply</button>
         </div>
         <div
@@ -233,5 +325,3 @@ function CommentItem(props: {
     );
   }
 }
-
-export default CommentItem;

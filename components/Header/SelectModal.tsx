@@ -9,7 +9,7 @@ import s from "../../styles/Home.module.scss";
 import { AppProps } from "../../types/interfaces";
 import BackHeader from "./BackHeader";
 function SelectModal() {
-  const { updatePost, uid, selectMode, setselectMode } = useContext(
+  const { deletePost, uid, selectMode, setselectMode } = useContext(
     AppContext
   ) as AppProps;
   const { selectedId, setSelectedId } = useContext(PageContext) as PageProps;
@@ -67,7 +67,7 @@ function SelectModal() {
             setSelectedId?.([]);
             setselectMode?.(false);
             selectedId.map((s) => {
-              updatePost?.(s.post);
+              deletePost?.(s.post);
             });
           } catch (error: any) {
             setLoading(false);

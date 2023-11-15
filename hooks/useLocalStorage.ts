@@ -24,8 +24,9 @@ export default function useLocalStorage<T>(key: string, value: T) {
     // console.log(value ? JSON.parse(value) : null);
     return value ? JSON.parse(value) : null;
   }, [key]);
-  function deleteLocal() {
+  const deleteLocal = useCallback(() => {
     localStorage.removeItem(key);
-  }
+  }, [key]);
+
   return { getLocal, deleteLocal, setLocal };
 }

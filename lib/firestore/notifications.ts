@@ -56,6 +56,7 @@ export async function sendFCM<T extends NotiApiRequest["body"]>(data: T) {
 }
 export const getMessage = (type: notiContentTypes) => {
   const messages: Record<notiContentTypes, string> = {
+    comment_reaction: `loved to your comment.`,
     post_reaction: `reacted to your post.`,
     comment: `commented on your post.`,
     share: `shared your post.`,

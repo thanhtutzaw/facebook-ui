@@ -10,7 +10,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import  PostList  from "../Home/PostList";
+import PostList from "../Home/PostList";
 import SortDate from "./SortDate";
 import s from "./index.module.scss";
 import Spinner from "@/components/Spinner";
@@ -42,7 +42,7 @@ export function Content(props: {
     setsortby,
     sortedPost,
   } = props;
-  const { updatePost, profile } = useContext(AppContext) as AppProps;
+  const { deletePost, profile } = useContext(AppContext) as AppProps;
   const [toggleSort, setToggleSort] = useState(false);
   // useEffect(() => {
   //   if (!selectMode) {
@@ -130,7 +130,7 @@ export function Content(props: {
         <>
           <PostList
             profile={profile!}
-            updatePost={updatePost}
+            deletePost={deletePost}
             preventNavigate={true}
             selectMode={selectMode!}
             posts={sortedPost!}

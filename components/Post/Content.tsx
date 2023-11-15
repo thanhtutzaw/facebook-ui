@@ -21,9 +21,9 @@ import s from "./index.module.scss";
 import PostFallback from "./Fallback";
 import { Post } from "@/types/interfaces";
 import useEscape from "@/hooks/useEscape";
-function Content ({ post }: { post: Post }) {
+function Content({ post }: { post: Post }) {
   const {
-    updatePost,
+    deletePost,
     Likes,
     setLikes,
     tabIndex,
@@ -173,11 +173,7 @@ function Content ({ post }: { post: Post }) {
       {!shareMode && (
         <>
           {isAdmin ? (
-            <AdminMenu
-              updatePost={updatePost!}
-              // authorId={authorId!}
-              // id={id?.toString()!}
-            />
+            <AdminMenu />
           ) : (
             <Menu
               authorId={authorId?.toString()!}
@@ -191,7 +187,7 @@ function Content ({ post }: { post: Post }) {
       {post.deletedByAuthor && (
         <PostFallback
           post={post}
-          updatePost={updatePost!}
+          deletePost={deletePost!}
           canRemove={{
             uid: String(authUser?.uid),
             deleteURL: `${getCollectionPath.recentPosts({
@@ -239,4 +235,4 @@ function Content ({ post }: { post: Post }) {
     </span>
   );
 }
-export default memo(Content); 
+export default memo(Content);

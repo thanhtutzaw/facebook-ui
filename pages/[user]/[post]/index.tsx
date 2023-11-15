@@ -4,7 +4,7 @@ import TextInput from "@/components/Form/Input/TextInput";
 import PostSettingFooterForm from "@/components/Form/PostSettingFooter";
 import BackHeader from "@/components/Header/BackHeader";
 import AuthorInfo from "@/components/Post/AuthorInfo";
-import  Footer  from "@/components/Post/Footer";
+import Footer from "@/components/Post/Footer";
 import PhotoLayout from "@/components/Post/PhotoLayout";
 import { SharePreview } from "@/components/Post/SharePost/Preview";
 import { SocialCount } from "@/components/Post/SocialCount";
@@ -33,6 +33,7 @@ import {
   DocumentData,
   DocumentSnapshot,
   Timestamp,
+  collection,
   doc,
   getDoc,
   startAfter,
@@ -83,8 +84,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       }),
       Comment_LIMIT + 1
     );
+
     let hasMore = false;
-    let comments = await fetchComments(commentQuery);
+    let comments = await fetchComments(commentQuery, newPost, uid);
     hasMore = (comments?.length ?? 0) > Comment_LIMIT;
     if (hasMore) {
       comments?.pop();
@@ -306,14 +308,15 @@ export default function Page(props: {
         Comment_LIMIT + 1,
         startAfter(date)
       );
-      const comments = await fetchComments(commentQuery);
+
+      const comments = await fetchComments(commentQuery, post, uid);
       setlimitedComments(limitedComments.concat(comments ?? []));
       // console.log(comments?.length);
       // console.log({ limitedComments });
       setcommentLoading(false);
       setcommentEnd(comments?.length! < Comment_LIMIT);
     },
-    [limitedComments, post?.authorId, post?.id]
+    [limitedComments, post, uid]
   );
   const [Likes, setLikes] = useState<likes | []>([]);
   const { scrollRef } = useInfiniteScroll({
@@ -322,8 +325,8 @@ export default function Page(props: {
     fetchMoreData: fetchMoreComment,
     postEnd: commentEnd,
   });
-  const updateBtnRef = useRef<HTMLButtonElement>(null)
-useEnterSave(InputRef,updateBtnRef)
+  const updateBtnRef = useRef<HTMLButtonElement>(null);
+  useEnterSave(InputRef, updateBtnRef);
   if (expired) return <Welcome expired={expired} />;
   return (
     <div className="user" ref={scrollRef}>

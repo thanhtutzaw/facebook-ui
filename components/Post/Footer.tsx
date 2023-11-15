@@ -182,28 +182,25 @@ function Footer(
                 url: `${authorId}/${id}`,
               });
 
-              try {
-                await sendFCM({
-                  recieptId: authorId.toString(),
-                  message: `${profile?.displayName ?? "Unknown User"} ${
-                    getMessage("post_reaction").message
-                  }`,
-                  icon: checkPhotoURL(
-                    currentUser?.photoURL_cropped ?? currentUser?.photoURL
-                  ),
-                  tag: `Likes-${id}`,
-                  link: `/${authorId}/${id}`,
-                });
-              } catch (error) {
-                console.log(error);
-              }
+              await sendFCM({
+                recieptId: authorId.toString(),
+                message: `${profile?.displayName ?? "Unknown User"} ${
+                  getMessage("post_reaction").message
+                }`,
+                icon: checkPhotoURL(
+                  currentUser?.photoURL_cropped ?? currentUser?.photoURL
+                ),
+                tag: `Likes-${id}`,
+                link: `/${authorId}/${id}`,
+              });
             }
 
             async function updateLikeState() {
               setLikeLoading(false);
-              const likes = (await getCountFromServer(likedUserRef)).data()
-                .count;
-              setlikeCount?.(likes);
+              const updatedLikeCount = (
+                await getCountFromServer(likedUserRef)
+              ).data().count;
+              setlikeCount?.(updatedLikeCount);
             }
           }}
           aria-expanded={reactionAction !== ""}

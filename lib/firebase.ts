@@ -63,6 +63,10 @@ export const getCollectionPath = {
     `${getCollectionPath.posts({ uid: String(authorId) })}/${String(
       postId
     )}/likes`,
+  // comment_reactions: ({ authorId, postId }: { authorId?: string; postId?: string }) =>
+  //   `${getCollectionPath.posts({ uid: String(authorId) })}/${String(
+  //     postId
+  //   )}/likes`,
   shares: ({ authorId, postId }: { authorId?: string; postId?: string }) =>
     `${getCollectionPath.posts({
       uid: String(authorId),

@@ -3,7 +3,6 @@ import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { NewsFeed_LIMIT } from "../lib/QUERY_LIMIT";
 import { DescQuery, getNewsFeed, getPath } from "../lib/firebase";
 import { AppProps, Post, RecentPosts } from "../types/interfaces";
-// const AppContext = createContext<{ user: User | null }>({ user: null });
 export const AppContext = createContext<AppProps | null>(null);
 export function AppProvider(props: AppProps) {
   const {
@@ -23,17 +22,8 @@ export function AppProvider(props: AppProps) {
   const [selectMode, setselectMode] = useState(false);
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const [sortedPost, setsortedPost] = useState<Post[]>([]);
-  const updatePost = useCallback(
-    (id: string, deletedByAuthor?: boolean) => {
-      // if (deletedByAuthor) {
-      //   setlimitedPosts?.((prev: Post[]) => {
-      //     prev.map((p) => {
-      //       if (p.id === id) {
-      //         return [...prev, { deletedByAuthor: true }];
-      //       }
-      //     });
-      //   });
-      // }
+  const deletePost = useCallback(
+    (id: string) => {
       setlimitedPosts?.((prev: Post[]) =>
         prev.filter((post) => post.id !== id)
       );
@@ -81,30 +71,6 @@ export function AppProvider(props: AppProps) {
     },
     [limitedPosts, postEnd, props.hasMore, setlimitedPosts, uid]
   );
-
-  // const  = async () => {
-  //   setpostLoading(true);
-  //   const post = limitedPosts?.[limitedPosts?.length - 1]!;
-  //   const date = new Timestamp(
-  //     post.createdAt.seconds,
-  //     post.createdAt.nanoseconds
-  //   );
-  //   // const postQuery = query(
-  //   //   collectionGroup(db, `posts`),
-  //   //   where("visibility", "in", ["Friend", "Public"]),
-  //   //   startAfter(date),
-  //   // );
-  //   // const postQuery = query(
-  //   //   collectionGroup(db, `posts`),
-  //   //   // where("visibility", "in", ["Friend", "Public"]),
-  //   //   where("authorId", "in", acceptedFriends ? acceptedFriends : ["0"]),
-  //   //   startAfter(date),
-  //   //   limit(NewsFeed_LIMIT)
-  //   // );
-
-  //   // const finalPost = (await getPostWithMoreInfo(uid!, newsFeedQuery)) ?? [];
-
-  // };
   useEffect(() => {
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
@@ -148,7 +114,7 @@ export function AppProvider(props: AppProps) {
         selectMode,
         setselectMode,
         getMorePosts,
-        updatePost,
+        deletePost,
         posts: limitedPosts,
         postLoading,
         postEnd,

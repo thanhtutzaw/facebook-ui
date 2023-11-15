@@ -1,18 +1,27 @@
 import {
+  CollectionReference,
   DocumentData,
   DocumentReference,
   Query,
   Timestamp,
+  collection,
   doc,
+  getCountFromServer,
+  getDoc,
   getDocs,
   increment,
   serverTimestamp,
   updateDoc,
-  writeBatch
+  writeBatch,
 } from "firebase/firestore";
-import { Comment } from "../../types/interfaces";
-import { commentToJSON, db, getProfileByUID } from "../firebase";
-export async function fetchComments(query: Query) {
+import { Comment, Post } from "../../types/interfaces";
+import {
+  commentToJSON,
+  db,
+  getCollectionPath,
+  getProfileByUID,
+} from "../firebase";
+export async function fetchComments(query: Query, post: Post, uid: string) {
   const commentDoc = await getDocs(query);
   const commentJSON = await Promise.all(
     commentDoc.docs.map(async (doc) => await commentToJSON(doc))
@@ -21,13 +30,49 @@ export async function fetchComments(query: Query) {
     commentJSON.map(async (comment) => {
       if (comment && comment.authorId) {
         const author = await getProfileByUID(comment.authorId.toString());
-        return { ...comment, author };
+        const heartsRef = collection(
+          db,
+          `${getCollectionPath.comments({
+            authorId: String(post.authorId),
+            postId: String(post.id),
+          })}/${comment.id}/hearts`
+        );
+        const heartCount = (await getCountFromServer(heartsRef)).data().count;
+        const likedByUserRef = doc(
+          db,
+          `${getCollectionPath.comments({
+            authorId: String(post.authorId),
+            postId: String(post.id),
+          })}/${comment.id}/hearts/${uid}`
+        );
+        const isUserLikeThisPost = (await getDoc(likedByUserRef)).exists();
+        return { ...comment, author, heartCount, isLiked: isUserLikeThisPost };
       } else {
         return { ...comment, author: null };
       }
     })
   );
   return comments as Comment[];
+}
+export async function loveComment({
+  heartRef,
+  uid,
+}: {
+  heartRef: DocumentReference<DocumentData>;
+  uid: string;
+}) {
+  const batch = writeBatch(db);
+  batch.set(heartRef, { uid, createdAt: serverTimestamp() });
+  await batch.commit();
+}
+export async function unLoveComment({
+  heartRef,
+}: {
+  heartRef: DocumentReference<DocumentData>;
+}) {
+  const batch = writeBatch(db);
+  batch.delete(heartRef);
+  await batch.commit();
 }
 export async function addComment({
   commentRef,

@@ -5,7 +5,7 @@ import { Post as PostType } from "@/types/interfaces";
 import { User } from "firebase/auth";
 import { memo, useState } from "react";
 function PostList(props: {
-  updatePost?: Function;
+  deletePost?: Function;
   preventNavigate?: boolean;
   selectMode?: boolean;
   posts: PostType[];
@@ -17,7 +17,7 @@ function PostList(props: {
 }) {
   const [toggleMenu, settoggleMenu] = useState("");
   const {
-    updatePost,
+    deletePost,
     postLoading,
     postEnd,
     preventNavigate,
@@ -43,7 +43,7 @@ function PostList(props: {
           <Post
             toggleMenu={toggleMenu}
             settoggleMenu={settoggleMenu}
-            updatePost={updatePost}
+            deletePost={deletePost}
             selectMode={selectMode}
             preventNavigate={preventNavigate}
             auth={auth!}
@@ -54,24 +54,16 @@ function PostList(props: {
         ))}
       </div>
       {!postLoading && !postEnd && (
-        <p
-          style={{
-            textAlign: "center",
-            userSelect: "none",
-          }}
-        >
+        <p className="text-center select-none">
           {posts?.length === 0 ? "Empty Post" : "No more posts"}
         </p>
       )}
-      {!postLoading && !postEnd ? null : postLoading && !postEnd ? (
+      {!postLoading && !postEnd ? (
+        <></>
+      ) : postLoading && !postEnd ? (
         <Spinner />
       ) : (
-        <p
-          style={{
-            textAlign: "center",
-            userSelect: "none",
-          }}
-        >
+        <p className="text-center select-none">
           {posts?.length === 0 ? "Empty Post" : "No more posts"}
         </p>
       )}

@@ -9,7 +9,7 @@ import {
 import { Post as PostType, likes } from "../types/interfaces";
 export type PostProps = {
   Likes: likes;
-  updatePost: Function;
+  deletePost: Function;
   setLikes: Function;
   tabIndex?: number;
   likeCount: number;

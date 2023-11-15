@@ -7,16 +7,12 @@ import router from "next/router";
 import { useContext, useState } from "react";
 import { PostContext, PostProps } from "../../../context/PostContext";
 import { app, getCollectionPath } from "../../../lib/firebase";
-import { deletePost } from "../../../lib/firestore/post";
+import { deletePost as deletePostDB } from "../../../lib/firestore/post";
 import styles from "../index.module.scss";
 import { CopyLink } from "./Menu";
 import { Post } from "@/types/interfaces";
-export default function AdminMenu(props: {
-  updatePost: Function;
-  post?: Post;
-}) {
-  const { updatePost } = props;
-  const { post, toggleMenu, settoggleMenu } = useContext(
+export default function AdminMenu(props: { post?: Post }) {
+  const { post, toggleMenu, settoggleMenu, deletePost } = useContext(
     PostContext
   ) as PostProps;
   const { authorId, id } = post;
@@ -85,7 +81,7 @@ export default function AdminMenu(props: {
               setLoading(true);
               try {
                 if (!post.deletedByAuthor) {
-                  await deletePost({
+                  await deletePostDB({
                     uid,
                     post,
                     deleteURL: `${getCollectionPath.posts({
@@ -94,7 +90,7 @@ export default function AdminMenu(props: {
                   });
                 }
                 if (post.recentId) {
-                  await deletePost({
+                  await deletePostDB({
                     uid,
                     deleteURL: `${getCollectionPath.recentPosts({
                       uid: String(post.authorId),
@@ -111,11 +107,7 @@ export default function AdminMenu(props: {
                 //   postid: id!,
                 //   post,
                 // });
-                if (post.recentId) {
-                  updatePost(id);
-                } else {
-                  updatePost(id, true);
-                }
+                  deletePost(id);
                 if (loading) return;
               } catch (error: any) {
                 settoggleMenu?.("");

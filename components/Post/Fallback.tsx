@@ -1,4 +1,4 @@
-import { deletePost } from "@/lib/firestore/post";
+import {deletePost as deletePostDB } from "@/lib/firestore/post";
 import Spinner from "../Spinner";
 import { useState } from "react";
 import { Post } from "@/types/interfaces";
@@ -6,7 +6,7 @@ import { Post } from "@/types/interfaces";
 export default function PostFallback({
   post,
   canRemove,
-  updatePost,
+  deletePost,
 }: {
   post: Post;
   canRemove?: {
@@ -14,7 +14,7 @@ export default function PostFallback({
     uid: string;
     deleteURL: string;
   };
-  updatePost?: Function;
+  deletePost?: Function;
 }) {
   const { uid, deleteURL } = { ...canRemove };
   const [loading, setLoading] = useState(false);
@@ -53,13 +53,13 @@ export default function PostFallback({
                   e.stopPropagation();
                   e.preventDefault();
                   setLoading(true);
-                  await deletePost({
+                  await deletePostDB({
                     uid: String(uid),
                     deleteURL: String(deleteURL),
                     post,
                   });
                   setLoading(false);
-                  updatePost?.(canRemove.id);
+                  deletePost?.(canRemove.id);
                 }}
               >
                 Remove

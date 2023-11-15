@@ -16,7 +16,7 @@ import Footer from "./Footer";
 import s from "./index.module.scss";
 import { AnimatePresence, motion } from "framer-motion";
 interface PostProps {
-  updatePost?: Function;
+  deletePost?: Function;
   shareMode?: boolean;
   auth?: User;
   preventNavigate?: boolean;
@@ -27,7 +27,7 @@ interface PostProps {
   settoggleMenu?: Dispatch<SetStateAction<string>>;
 }
 function Post({
-  updatePost,
+  deletePost,
   shareMode,
   preventNavigate,
   auth,
@@ -69,7 +69,7 @@ function Post({
       settoggleMenu={settoggleMenu!}
       Likes={Likes}
       setLikes={setLikes}
-      updatePost={updatePost!}
+      deletePost={deletePost!}
       likeCount={likeCount ?? 0}
       preventNavigate={preventNavigate}
       auth={auth!}
