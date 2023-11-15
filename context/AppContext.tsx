@@ -1,5 +1,12 @@
 import { Timestamp, getDocs, startAfter } from "firebase/firestore";
-import { createContext, useCallback, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { NewsFeed_LIMIT } from "../lib/QUERY_LIMIT";
 import { DescQuery, getNewsFeed, getPath } from "../lib/firebase";
 import { AppProps, Post, RecentPosts } from "../types/interfaces";
@@ -71,11 +78,12 @@ export function AppProvider(props: AppProps) {
     },
     [limitedPosts, postEnd, props.hasMore, setlimitedPosts, uid]
   );
-  useEffect(() => {
+  const headerContainer = headerContainerRef?.current;
+  useLayoutEffect(() => {
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
 
-    const headerContainer = headerContainerRef?.current;
+    console.log("in appContext" + headerContainer);
     if (window.location.hash === "" || window.location.hash === "#home") {
       if (!headerContainer) return;
       headerContainer.style.transform = "translateY(0px)";
@@ -102,7 +110,7 @@ export function AppProvider(props: AppProps) {
         headerContainer.style.height = "60px";
       }
     };
-  }, [active, expired]);
+  }, [active, expired, headerContainer]);
   return (
     <AppContext.Provider
       value={{

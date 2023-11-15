@@ -311,8 +311,6 @@ export default function Page(props: {
 
       const comments = await fetchComments(commentQuery, post, uid);
       setlimitedComments(limitedComments.concat(comments ?? []));
-      // console.log(comments?.length);
-      // console.log({ limitedComments });
       setcommentLoading(false);
       setcommentEnd(comments?.length! < Comment_LIMIT);
     },

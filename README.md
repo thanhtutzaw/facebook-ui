@@ -23,7 +23,7 @@ Project is created with:
 :ballot_box_with_check: Allow users to view comments and liked users \
 :ballot_box_with_check: Allow users to update their profile by modifying their userName, bio, and profile pictures\
 :ballot_box_with_check: Creating new posts and Updating with customizable privacy \
-:ballot_box_with_check: Liking/commenting on existing posts, and sharing posts with others \
+:ballot_box_with_check: Liking/commenting on existing posts,comments and sharing posts with others \
 :ballot_box_with_check: Select and Delete Multiple Posts \
 :ballot_box_with_check: Users have the ability to save their favorite posts \
 :ballot_box_with_check: Implement media (photos and videos) upload functionality by leveraging the power of Firebase Cloud Storage \
@@ -31,7 +31,7 @@ Project is created with:
 :ballot_box_with_check: Store the id_token in cookies with [nookies](https://www.npmjs.com/package/nookies) to fetch SSR data with the stored uid \
 :ballot_box_with_check: Friends Request , acceptable and blockable \
 :ballot_box_with_check: Friends Request Sound play in App Mode (Add to HomeScreen due to Browser Autoplay ploicy) \
-:ballot_box_with_check: Users will receive Inbox notifications when their posts are liked,commented and shared by other users \
+:ballot_box_with_check: Users will receive Inbox notifications when their posts and comments are liked,commented and shared by other users \
 :ballot_box_with_check: Crop the profile picture to 256x256 pixels to ensure it displays with the correct aspect ratio in the notification icon \
 :ballot_box_with_check: Notification actions are also enabled to enhance the user experience without the need to open a web page. \
    An available action is "acceptFriendRequest" \
