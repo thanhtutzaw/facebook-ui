@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import router from "next/router";
-import { RefObject, memo, useContext, useEffect, useState } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { useActive } from "../../hooks/useActiveTab";
@@ -42,7 +42,7 @@ export const pages = [
   { name: "Notifications", icon: <FontAwesomeIcon icon={faBell} /> },
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
-function Header (props: { tabIndex: number }) {
+function Header(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const { active, setActive } = useActive();
   const [width, setwidth] = useState<number>();
@@ -71,14 +71,54 @@ function Header (props: { tabIndex: number }) {
       }
     };
   }, [selectMode, setSelectedId, setselectMode]);
+  const headerContainer = headerContainerRef?.current;
+
+  useEffect(() => {
+    const tabs = document.getElementById("tabs");
+    const main = document.getElementsByTagName("main")[0];
+
+    if (window.location.hash === "" || window.location.hash === "#home") {
+      if (!headerContainer) return;
+      headerContainer.style.transform = "translateY(0px)";
+      headerContainer.style.height = "120px";
+      // main.scrollTo({
+      //   top: 0,
+      //   behavior: "smooth",
+      // });
+      tabs?.scrollTo({
+        left: 0,
+        behavior: "smooth",
+      });
+    }
+    window.onhashchange = (e) => {
+      if (window.location.hash === "" || window.location.hash === "#home") {
+        tabs?.scrollTo({
+          left: 0,
+          behavior: "smooth",
+        });
+      } else {
+        main.style.scrollSnapType = "none";
+        if (!headerContainer) return;
+        headerContainer.style.transform = "translateY(-60px)";
+        headerContainer.style.height = "60px";
+      }
+    };
+  }, [headerContainer, active]);
   return (
     <div
       ref={headerContainerRef}
       className={`[transition:transform_0.18s_ease,height_0.15s_ease] [will-change:transform,height] translate-y-0 sticky top-[-60px] z-[200]`}
     >
+      {/* <button
+        onClick={() => {
+          setheaderHide?.(true);
+        }}
+      >
+        hide
+      </button>
+      {headerHide ? "true" : "false"} */}
       <header className={`flex justify-between items-center ${s.header}`}>
         <Logo />
-
         <div className={s.action}>
           <button
             tabIndex={tabIndex}
@@ -96,11 +136,11 @@ function Header (props: { tabIndex: number }) {
             title="Go to logout button"
             aria-label="go to logout button"
             onClick={() => {
-              setActive("menu");
-              const tabs = document.getElementById("tabs");
-              tabs?.scrollTo({
-                left: 5 * tabs.clientWidth,
-              });
+              window.location.href = "#menu";
+              // const tabs = document.getElementById("menu");
+              // tabs?.scrollTo({
+              //   left: 5 * tabs.clientWidth,
+              // });
             }}
           >
             <FontAwesomeIcon
@@ -169,4 +209,3 @@ function Header (props: { tabIndex: number }) {
   );
 }
 export default memo(Header);
-

@@ -7,8 +7,8 @@ import Image from "next/image";
 import { useContext, useEffect, useRef, useState } from "react";
 import { setTimeout } from "timers";
 import { PageContext, PageProps } from "../../context/PageContext";
-import s from "./index.module.scss";
 import Spinner from "../Spinner";
+import s from "./index.module.scss";
 export function ImageLargeView() {
   const {
     singleImageModalRef: modalRef,
@@ -310,6 +310,7 @@ export function ImageLargeView() {
                   )}
                 </AnimatePresence>
                 <Image
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
                   onLoadingComplete={() => {
                     setLoading(false);
                   }}

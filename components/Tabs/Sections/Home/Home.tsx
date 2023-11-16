@@ -36,7 +36,7 @@ export default function Home(props: { tabIndex: number }) {
   });
   return (
     <div
-    aria-hidden={tabIndex === -1}
+      aria-hidden={tabIndex === -1}
       ref={scrollRef}
       id="/"
       className={styles.home}
@@ -72,7 +72,7 @@ export default function Home(props: { tabIndex: number }) {
           }}
         >
           <Image
-            // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
             className={styles.profile}
             alt={`${profile?.firstName ?? "Unknown User"} ${
               profile?.lastName ?? ""

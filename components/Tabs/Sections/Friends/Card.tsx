@@ -29,6 +29,7 @@ export default function Card(props: { children: ReactNode; f: friends }) {
           }}
         >
           <Image
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
             loading="lazy"
             fill
             className={`w-[80px] h-[80px] rounded-full object-cover outline-[1px solid #8080802b] bg-avatarBg

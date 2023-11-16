@@ -1,21 +1,21 @@
 @import "../../styles/mixins";
 .dot {
-        transition: all 0.3s ease-in-out;
-        @include mouse() {
-            &:hover {
-                background-color: rgb(231, 231, 231);
-            }
-        }
-        &:active {
-            opacity: 0.5;
-            scale: 1.1;
+    transition: all 0.3s ease-in-out;
+    @include mouse() {
+        &:hover {
             background-color: rgb(231, 231, 231);
         }
-        &:focus-visible {
-            color: var(--blue-origin);
-            transition: all 0.3s ease-in-out;
-        }
     }
+    &:active {
+        opacity: 0.5;
+        scale: 1.1;
+        background-color: rgb(231, 231, 231);
+    }
+    &:focus-visible {
+        color: var(--blue-origin);
+        transition: all 0.3s ease-in-out;
+    }
+}
 .loadMore {
     background: black;
     border-radius: 0.5rem;
@@ -372,7 +372,7 @@
             border-bottom: 0;
         }
     }
-    
+
     // transition: border 0.2s ease-in-out, borderRadius 0.2s ease-in-out;
     .seeMore {
         margin: 0 10px;
@@ -520,9 +520,6 @@
         display: flex;
         flex: 1;
         gap: 8px;
-
-        > div > :last-child {
-        }
         p,
         span {
             margin: 0;
@@ -580,11 +577,7 @@
         transition: all 0.02s ease-in-out;
         text-align: left;
         align-items: center;
-        // svg {
-        //     -webkit-text-fill-color: transparent !important;
-        //     -webkit-text-stroke: black !important; // can be any color
-        // }
-        > svg {
+        x > svg {
             width: 20px;
         }
         &:hover {

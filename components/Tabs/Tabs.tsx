@@ -37,39 +37,7 @@ function Tabs() {
   ) as PageProps;
   const { headerContainerRef } = useContext(AppContext) as AppProps;
   const { active } = useActive();
-  const headerContainer = headerContainerRef?.current;
-  useLayoutEffect(() => {
-    const tabs = document.getElementById("tabs");
-    const main = document.getElementsByTagName("main")[0];
-
-    console.log("in appContext" + headerContainer);
-    if (window.location.hash === "" || window.location.hash === "#home") {
-      if (!headerContainer) return;
-      headerContainer.style.transform = "translateY(0px)";
-      headerContainer.style.height = "120px";
-      // main.scrollTo({
-      //   top: 0,
-      //   behavior: "smooth",
-      // });
-      tabs?.scrollTo({
-        left: 0,
-        behavior: "smooth",
-      });
-    }
-    window.onhashchange = (e) => {
-      if (window.location.hash === "" || window.location.hash === "#home") {
-        tabs?.scrollTo({
-          left: 0,
-          behavior: "smooth",
-        });
-      } else {
-        main.style.scrollSnapType = "none";
-        if (!headerContainer) return;
-        headerContainer.style.transform = "translateY(-60px)";
-        headerContainer.style.height = "60px";
-      }
-    };
-  }, [headerContainer, active]);
+  
   useEffect(() => {
     if (!active) return;
     window.location.hash = active === "/" ? "#home" : `#${active}`;
