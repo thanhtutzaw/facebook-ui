@@ -349,6 +349,7 @@ export default function UserProfile({
   return (
     <>
       <Metatag
+        url={router.pathname}
         title={`${userName} | Facebook Next`}
         description={`${userName}'s Profile | Facebook-Mobile-UI with Next.js`}
       />

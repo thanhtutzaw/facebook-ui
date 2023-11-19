@@ -1,16 +1,17 @@
+import Metatag from "@/components/Metatag";
 import useLogin from "@/hooks/useLogin";
 import { app } from "@/lib/firebase";
 import { getAuth } from "firebase/auth";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { DevelopedByThanHtutZaw } from "../../components/DevelopedByThanHtutZaw";
 import Signup from "../../components/Signup";
 import signupStyles from "../../components/Signup/index.module.scss";
 import Spinner from "../../components/Spinner";
 import EmailIcon from "../../public/email.svg";
 import styles from "../../styles/Home.module.scss";
-import Metatag from "@/components/Metatag";
 // export const getServerSideProps: GetServerSideProps<AppProps> = async (
 //   context
 // ) => {
@@ -52,11 +53,13 @@ export default function Login() {
   } = useLogin();
   const auth = getAuth(app);
   const uid = auth.currentUser?.uid;
+  const router = useRouter();
   return (
     <>
       <Metatag
-        title={`Login | Facebook Next`}
-        description={`Login | Facebook-Mobile-UI with Next.js`}
+        url={router.pathname}
+        title="Login | Facebook Next"
+        description="Login | Facebook-Mobile-UI with Next.js"
       />
       <section
         className={` h-[100dvh] flex flex-col justify-center items-center gap-4 ${styles.login}`}
