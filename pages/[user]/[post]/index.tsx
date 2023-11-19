@@ -324,7 +324,7 @@ export default function Page(props: {
         <h2 className={s.title}>{canEdit ? "Edit" : "Post"}</h2>
         {canEdit && (
           <LoadingButton
-            title="Update post"
+            initialTitle="Update post"
             loadingTitle="Updating post"
             dirty={!dirtyForm}
             ref={updateBtnRef}

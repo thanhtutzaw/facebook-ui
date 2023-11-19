@@ -9,6 +9,7 @@ import useMenu from "@/hooks/useMenu";
 import useQueryFn from "@/hooks/useQueryFn";
 import { MYPOST_LIMIT } from "@/lib/QUERY_LIMIT";
 import {
+  DescQuery,
   db,
   fethUserDoc,
   getCollectionPath,
@@ -36,16 +37,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-import {
-  Timestamp,
-  doc,
-  getDoc,
-  limit,
-  orderBy,
-  query,
-  startAfter,
-  where,
-} from "firebase/firestore";
+import { Timestamp, doc, getDoc, where } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
@@ -195,7 +187,9 @@ export default function UserProfile({
       <div style={{ position: "relative" }}>
         <button
           aria-label={`Friend with ${userName}`}
-          onClick={() => {
+          onClick={(e) => {
+             e.preventDefault();
+             e.stopPropagation();
             setFriendMenuToggle((prev) => !prev);
           }}
           className={s.editToggle}
@@ -311,13 +305,32 @@ export default function UserProfile({
         post.createdAt.seconds,
         post.createdAt.nanoseconds
       );
-      const mypostQuery = query(
-        getPath("posts", { uid: String(router.query.user) }),
-        where("visibility", "in", ["Friend", "Public"]),
-        orderBy("createdAt", "desc"),
-        startAfter(date),
-        limit(MYPOST_LIMIT + 1)
-      );
+      // const mypostQuery = query(
+      //   getPath("posts", { uid: String(router.query.user) }),
+      //   where("visibility", "in", ["Friend", "Public"]),
+      //   orderBy("createdAt", "desc"),
+      //   startAfter(date),
+      //   limit(MYPOST_LIMIT + 1)
+      // );
+      let mypostQuery;
+      if (isFriend) {
+        mypostQuery = DescQuery(
+          getPath("posts", { uid: String(router.query.user) }),
+          MYPOST_LIMIT + 1,
+          where("visibility", "in", ["Friend", "Public"])
+        );
+      } else if (router.query.user === token.uid) {
+        mypostQuery = DescQuery(
+          getPath("posts", { uid: String(router.query.user) }),
+          MYPOST_LIMIT + 1
+        );
+      } else {
+        mypostQuery = DescQuery(
+          getPath("posts", { uid: String(router.query.user) }),
+          MYPOST_LIMIT + 1,
+          where("visibility", "==", "Public")
+        );
+      }
       const finalPost = await getPostWithMoreInfo(token.uid!, mypostQuery)!;
       finalPost?.shift();
       setlimitedPosts(limitedPosts?.concat(finalPost!));
@@ -328,7 +341,7 @@ export default function UserProfile({
       //   setPostEnd(true);
       // }
     },
-    [limitedPosts, router.query.user, token.uid]
+    [isFriend, limitedPosts, router.query.user, token.uid]
   );
   const { scrollRef } = useInfiniteScroll({
     hasMore: postEnd,

@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import useEscape from "./useEscape";
 
 export default function useMenu(

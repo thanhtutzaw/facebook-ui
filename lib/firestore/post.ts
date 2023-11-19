@@ -1,3 +1,4 @@
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import {
   DocumentData,
   DocumentReference,
@@ -15,6 +16,7 @@ import {
 } from "firebase/firestore";
 import { selectedId } from "../../context/PageContext";
 import { Post, RecentPosts, friends, likes } from "../../types/interfaces";
+import { MYPOST_LIMIT, NewsFeed_LIMIT } from "../QUERY_LIMIT";
 import {
   DescQuery,
   db,
@@ -23,8 +25,6 @@ import {
   getPostWithMoreInfo,
   getProfileByUID,
 } from "../firebase";
-import { MYPOST_LIMIT, NewsFeed_LIMIT } from "../QUERY_LIMIT";
-import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 type TAddPost = {
   uid: string;
   post: {
@@ -149,16 +149,23 @@ export async function fetchMyPosts(
   isBlocked: boolean,
   token: DecodedIdToken
 ) {
-  let mypostQuery = DescQuery(
-    getPath("posts", { uid: String(uid) }),
-    MYPOST_LIMIT + 1,
-    where("visibility", "in", ["Public"])
-  );
+  let mypostQuery;
   if (isFriend) {
     mypostQuery = DescQuery(
       getPath("posts", { uid: String(uid) }),
       MYPOST_LIMIT + 1,
       where("visibility", "in", ["Friend", "Public"])
+    );
+  } else if (uid === token.uid) {
+    mypostQuery = DescQuery(
+      getPath("posts", { uid: String(uid) }),
+      MYPOST_LIMIT + 1
+    );
+  } else {
+    mypostQuery = DescQuery(
+      getPath("posts", { uid: String(uid) }),
+      MYPOST_LIMIT + 1,
+      where("visibility", "==", "Public")
     );
   }
   let hasMore = false;
@@ -204,7 +211,7 @@ export async function updatePost(
     };
   }
   try {
-    console.table({ updatedData:data });
+    console.table({ updatedData: data });
     await updateDoc(Ref, data);
   } catch (error: any) {
     alert("Updating Post Failed !" + error.message);

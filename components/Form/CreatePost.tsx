@@ -209,7 +209,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
             }
           }}
           aria-label="Create New Post"
-          title="Create new post"
+          initialTitle="Create new post"
           loadingTitle="Creating new post"
         >
           Post

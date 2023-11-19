@@ -12,8 +12,7 @@ import {
   CSSProperties,
   MouseEventHandler,
   ReactNode,
-  RefObject,
-  useRef,
+  RefObject
 } from "react";
 import { JSONTimestampToDate } from "../../lib/firebase";
 import { Comment, Post, account } from "../../types/interfaces";
