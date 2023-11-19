@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 type ButtonProps = {
+  dirty?: boolean;
   loading?: boolean;
   children: ReactNode;
 } & DetailedHTMLProps<
@@ -15,7 +16,7 @@ type ButtonProps = {
 >;
 export const LoadingButton = forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
-    const { loading, children, ...rest } = props;
+    const { loading, children, dirty, ...rest } = props;
     const [success, setsuccess] = useState(false);
     const [buttonLoading, setloading] = useState(loading ?? false);
     if (success) return <></>;
@@ -28,12 +29,18 @@ export const LoadingButton = forwardRef<HTMLButtonElement, ButtonProps>(
         }}
         {...rest}
         ref={ref}
-        disabled={buttonLoading}
+        disabled={buttonLoading || dirty}
         onClick={async (e) => {
           setloading(true);
-          await rest.onClick?.(e);
-          setloading(false);
-          setsuccess(true);
+          try {
+            await rest.onClick?.(e);
+            setsuccess(true);
+          } catch (error) {
+            setsuccess(false);
+            setloading(false);
+          } finally {
+            setloading(false);
+          }
         }}
       >
         <span

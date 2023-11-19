@@ -2,19 +2,18 @@ import { RefObject } from "react";
 import { setTimeout } from "timers";
 
 export default function MediaInput(props: {
-  setFiles: Function;
+  updateForm: Function;
   files: File[];
   fileRef: RefObject<HTMLInputElement>;
 }) {
-  const { setFiles, files, fileRef } = props;
+  const { updateForm, files, fileRef } = props;
   return (
     <input
       multiple
       accept="image/*,video/mp4"
-      onChange={(e) => {
+      onChange={(e) => {        
         const fileArray = Array.from(e.target.files ?? []);
         let valid = true;
-
         fileArray.map((file) => {
           const fileType = file.type;
 
@@ -44,7 +43,7 @@ export default function MediaInput(props: {
         });
 
         if (valid) {
-          setFiles([...files, ...fileArray]);
+          updateForm({ files: [...files, ...fileArray] });
         }
         if (files.length === fileArray.length) return;
         const lastFile = document.getElementsByTagName("main")[0]

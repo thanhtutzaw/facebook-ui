@@ -1,13 +1,14 @@
 import BackHeader from "@/components/Header/BackHeader";
+import Metatag from "@/components/Metatag";
 import PostList from "@/components/Tabs/Sections/Home/PostList";
 import { bioFallback } from "@/components/Tabs/Sections/Profile/ProfileInfo";
 import s from "@/components/Tabs/Sections/Profile/index.module.scss";
 import { PageContext, PageProps } from "@/context/PageContext";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
+import useMenu from "@/hooks/useMenu";
 import useQueryFn from "@/hooks/useQueryFn";
 import { MYPOST_LIMIT } from "@/lib/QUERY_LIMIT";
 import {
-  DescQuery,
   db,
   fethUserDoc,
   getCollectionPath,
@@ -23,6 +24,7 @@ import {
   unBlockFriend,
   unFriend,
 } from "@/lib/firestore/friends";
+import { fetchMyPosts } from "@/lib/firestore/post";
 import { checkPhotoURL, getFullName } from "@/lib/firestore/profile";
 import { Post as PostType, account, friends } from "@/types/interfaces";
 import {
@@ -46,7 +48,6 @@ import {
 } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
-import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import nookies from "nookies";
@@ -56,15 +57,10 @@ import {
   ReactNode,
   useCallback,
   useContext,
-  useEffect,
-  useRef,
   useState,
 } from "react";
 import useSound from "use-sound";
 import { AcceptFriend } from "../../components/Button/AcceptFriend";
-import { fetchMyPosts } from "@/lib/firestore/post";
-import useMenu from "@/hooks/useMenu";
-import Metatag from "@/components/Metatag";
 
 export type statusDataType = "canAccept" | "pending" | "friend" | "notFriend";
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -226,7 +222,6 @@ export default function UserProfile({
         >
           <button
             aria-label="Unfriend"
-            // className={s.danger}
             onClick={async (e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -485,8 +480,7 @@ export function Menu({
   friendMenuToggle: boolean;
   children: ReactNode;
 }) {
-  
-  const {menuRef} = useMenu(friendMenuToggle,setFriendMenuToggle);
+  const { menuRef } = useMenu(friendMenuToggle, setFriendMenuToggle);
 
   return (
     <AnimatePresence mode="wait">

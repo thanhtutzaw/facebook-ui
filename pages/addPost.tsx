@@ -9,9 +9,7 @@ export default function AddPost() {
 
   // const replace = str.replaceAll(/<div>/g, "<br>");
 
-  const handleInput = (e: {
-    currentTarget: { innerHTML: any; textContent: string };
-  }) => {
+  const handleInput = (e:any) => {
     // if (!textRef.current) return;
     const inputValue = e.currentTarget?.innerHTML;
     // setText(inputValue.replace(/<div>/g, "<br>"));

@@ -224,7 +224,7 @@ function Content({ post }: { post: Post }) {
           contentEditable={false}
         />
       )}
-      <PhotoLayout post={post} files={post.media} preview />
+      <PhotoLayout post={post} preview />
       <SharePreview selectMode={selectMode} post={post} />
       <SocialCount
         Likes={Likes}

@@ -4,8 +4,7 @@ import { useCallback, useEffect } from "react";
  * @param key
  * @param value
  */
-export default function useLocalStorage<T>(key: string, value: T) {
-  const stringifiedValue = JSON.stringify(value);
+export default function useLocalStorage<T>(key: string) {
   // useEffect(() => {
   //   function setLocal() {
   //     // if (!value) return;

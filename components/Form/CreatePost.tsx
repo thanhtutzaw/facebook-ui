@@ -1,4 +1,5 @@
 import { PageContext, PageProps } from "@/context/PageContext";
+import useEnterSave from "@/hooks/useEnterSave";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { app, getPath } from "@/lib/firebase";
 import { addPost } from "@/lib/firestore/post";
@@ -8,14 +9,13 @@ import { Post as PostTypes } from "@/types/interfaces";
 import { getAuth } from "firebase/auth";
 import { doc } from "firebase/firestore";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { LoadingButton } from "../Button/LoadingButton";
 import BackHeader from "../Header/BackHeader";
 import PhotoLayout from "../Post/PhotoLayout";
 import { SharePreview } from "../Post/SharePost/Preview";
 import TextInput from "./Input/TextInput";
 import PostSettingFooterForm from "./PostSettingFooter";
-import { LoadingButton } from "../Button/LoadingButton";
-import useEnterSave from "@/hooks/useEnterSave";
 
 export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const { sharePost } = props;
@@ -25,20 +25,30 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
-  const [files, setFiles] = useState<File[] | PostTypes["media"]>([]);
-  const [value, setvalue] = useState("");
-  const [visibility, setVisibility] = useState(value);
-  const { getLocal, setLocal } = useLocalStorage("visibility", value);
+  const { getLocal, setLocal } = useLocalStorage("visibility");
+  const [form, setForm] = useState<{
+    files: File[] | PostTypes["media"];
+    visibility: string;
+  }>({
+    files: [],
+    visibility: "Public",
+  });
+  const updateForm = useCallback((newForm: Partial<typeof form>) => {
+    setForm((prev) => ({ ...prev, ...newForm }));
+  }, []);
   const { friends, fileRef, uploadButtonClicked, setuploadButtonClicked } =
     useContext(PageContext) as PageProps;
   const submitRef = useRef<HTMLButtonElement>(null);
   useEnterSave(textRef, submitRef);
+  const [input, setinput] = useState("");
+  const { files, visibility } = form;
   useEffect(() => {
-    setvalue(localStorage.getItem("visibility")!);
-    const value = getLocal();
-    setVisibility(value ?? "Public");
-  }, [getLocal, visibility]);
-
+    // setvalue(localStorage.getItem("visibility")!);
+    const value = getLocal() as string;
+    // setVisibility(value ?? "Public");
+    // setForm?.((prev) => ({ ...prev, visibility: value ?? "Public" }));
+    updateForm({ visibility: value ?? "Public" });
+  }, [getLocal, updateForm]);
   useEffect(() => {
     const input = textRef.current;
     input?.focus();
@@ -54,7 +64,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [files]);
+  }, [files?.length]);
   useEffect(() => {
     router.beforePopState(({ as }) => {
       const currentPath = router.asPath;
@@ -74,7 +84,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
     return () => {
       router.beforePopState(() => true);
     };
-  }, [files, router]);
+  }, [files?.length, router]);
   useEffect(() => {
     if (uploadButtonClicked) {
       fileRef?.current?.click();
@@ -85,6 +95,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   useEffect(() => {
     setshareAction?.("");
   }, [setshareAction]);
+  const dirty = input.length === 0 && form.files?.length === 0;
   return (
     <div
       style={{
@@ -118,7 +129,9 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
         </div>
         <LoadingButton
           ref={submitRef}
-          disabled={loading}
+          key={input.length}
+          loading={loading}
+          dirty={dirty}
           type="submit"
           className={s.submit}
           tabIndex={1}
@@ -162,7 +175,6 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
             //   .replace(/\n/g, "<br>")
             //   .replaceAll("&nbsp;", " ");
 
-            setLoading(true);
             try {
               setLoading(true);
               window.document.body.style.cursor = "wait";
@@ -187,9 +199,9 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
               router.replace("/", undefined, { scroll: false });
               window.document.body.style.cursor = "initial";
             } catch (error: any) {
-              setLoading(false);
               alert(error.message);
             } finally {
+              setLoading(false);
               window.document.body.style.cursor = "initial";
             }
           }}
@@ -202,7 +214,6 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
         style={{ direction: "ltr" }}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
-            // const element = textRef.current;
             // const selection = window.getSelection();
             // const range = selection?.getRangeAt(0)!;
             // const startOffset = range.startOffset;
@@ -217,7 +228,6 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
             // if (!textNode) return;
             // newRange.setStart(textNode, startOffset);
             // newRange.collapse(true);
-            // if (!selection) return;
             // selection.removeAllRanges();
             // selection.addRange(newRange);
             // setText((prevText) => prevText + "\n");
@@ -267,6 +277,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
           // selection.addRange(newRange);
         }}
         onInput={(e) => {
+          setinput(e.currentTarget.innerText);
           replace.current = e.currentTarget.innerHTML
             .replaceAll("</div>", "")
             .replace("<div>", "<br>")
@@ -283,9 +294,10 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
         contentEditable
       />
       <PhotoLayout
+        fileRef={fileRef!}
         dummyRef={dummyRef}
-        setFiles={setFiles}
-        files={files!}
+        updateForm={updateForm}
+        form={form}
         edit={true}
       />
       {router.query.author && (
@@ -293,10 +305,8 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
       )}
       <PostSettingFooterForm
         fileRef={fileRef!}
-        files={files}
-        setFiles={setFiles}
-        visibility={visibility}
-        setVisibility={setVisibility}
+        form={form}
+        updateForm={updateForm}
         setLocal={setLocal}
       />
     </div>

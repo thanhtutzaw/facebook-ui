@@ -1,20 +1,21 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { RefObject } from "react";
-import { SelectVisiblity } from "../Post/SelectVisiblity";
-import s from "../../styles/Home.module.scss";
 import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { RefObject } from "react";
+import s from "../../styles/Home.module.scss";
 import { Post } from "../../types/interfaces";
+import { SelectVisiblity } from "../Post/SelectVisiblity";
 import MediaInput from "./Input/MediaInput";
 function PostSettingFooterForm(props: {
   fileRef: RefObject<HTMLInputElement>;
   setLocal?: Function;
-  setFiles: Function;
-  files: Post["media"] | File[];
-  setVisibility: Function;
-  visibility: string;
+  form?: {
+    files: File[] | Post["media"];
+    visibility: string;
+  };
+  updateForm: Function;
 }) {
-  const { setLocal, fileRef, setFiles, files, setVisibility, visibility } =
-    props;
+  const { setLocal, fileRef, form, updateForm } = props;
+  const { files, visibility } = form!;
   return (
     <div className={s.footer}>
       <button
@@ -28,7 +29,7 @@ function PostSettingFooterForm(props: {
         <FontAwesomeIcon icon={faPhotoFilm} />
       </button>
       <MediaInput
-        setFiles={setFiles}
+        updateForm={updateForm}
         files={files as File[]}
         fileRef={fileRef}
       />
@@ -37,14 +38,14 @@ function PostSettingFooterForm(props: {
         <SelectVisiblity
           defaultValue={visibility}
           onChange={(e) => {
-            setVisibility(e.target.value);
+            updateForm({visibility:e.target.value});
           }}
         />
       ) : (
         <SelectVisiblity
           value={visibility}
           onChange={(e) => {
-            setVisibility(e.target.value);
+            updateForm({visibility:e.target.value});
             setLocal?.(e.target.value);
           }}
         />

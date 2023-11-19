@@ -1,3 +1,4 @@
+import { LoadingButton } from "@/components/Button/LoadingButton";
 import Comment from "@/components/Comment";
 import CommentInput from "@/components/Comment/Input";
 import TextInput from "@/components/Form/Input/TextInput";
@@ -9,7 +10,9 @@ import PhotoLayout from "@/components/Post/PhotoLayout";
 import { SharePreview } from "@/components/Post/SharePost/Preview";
 import { SocialCount } from "@/components/Post/SocialCount";
 import { Welcome } from "@/components/Welcome";
+import useEnterSave from "@/hooks/useEnterSave";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
+import useQueryFn from "@/hooks/useQueryFn";
 import { Comment_LIMIT } from "@/lib/QUERY_LIMIT";
 import {
   DescQuery,
@@ -33,7 +36,6 @@ import {
   DocumentData,
   DocumentSnapshot,
   Timestamp,
-  collection,
   doc,
   getDoc,
   startAfter,
@@ -50,9 +52,6 @@ import {
   account,
   likes,
 } from "../../../types/interfaces";
-import { LoadingButton } from "@/components/Button/LoadingButton";
-import useQueryFn from "@/hooks/useQueryFn";
-import useEnterSave from "@/hooks/useEnterSave";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // context.res.setHeader(
@@ -133,14 +132,21 @@ export default function Page(props: {
   const { hasMore, expired, uid, post, profile } = props;
   const { currentUser } = useContext(PageContext) as PageProps;
   const router = useRouter();
-  const [visibility, setVisibility] = useState(post?.visibility!);
   const InputRef = useRef<HTMLDivElement>(null);
-  const [files, setFiles] = useState<PostType["media"] | File[]>([
-    ...(post?.media ?? []),
-  ]);
+
+  const [form, setForm] = useState<{
+    files: File[] | PostType["media"];
+    visibility: string;
+  }>({
+    files: [...(post?.media ?? [])],
+    visibility: post?.visibility,
+  });
+  const { files, visibility } = form;
+  const updateForm = useCallback((newForm: Partial<typeof form>) => {
+    setForm((prev) => ({ ...prev, ...newForm }));
+  }, []);
   const [deleteFile, setdeleteFile] = useState<PostType["media"]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
-
   const text = post.text
     ? post.text
         .replaceAll("</div>", "")
@@ -150,16 +156,17 @@ export default function Page(props: {
     : "";
   useEffect(() => {
     InputRef.current?.focus();
-    setFiles(post.media);
-  }, [post.media]);
+    updateForm({ files: post.media });
+  }, [post.media, updateForm]);
+  const [input, setInput] = useState(post.text);
+  const dirtyForm =
+    input !== post.text ||
+    visibility?.toLowerCase() !== post.visibility?.toLowerCase() ||
+    files?.length !== post.media?.length ||
+    deleteFile?.length !== 0;
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (
-        InputRef.current?.innerHTML !== post.text ||
-        visibility?.toLowerCase() !== post.visibility?.toLowerCase() ||
-        files?.length !== post.media?.length ||
-        deleteFile?.length !== 0
-      ) {
+      if (dirtyForm) {
         e.preventDefault();
         e.returnValue = "";
       }
@@ -169,28 +176,13 @@ export default function Page(props: {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [
-    deleteFile?.length,
-    files?.length,
-    post.media?.length,
-    post.text,
-    post.visibility,
-    visibility,
-  ]);
+  }, [dirtyForm]);
   useEffect(() => {
     router.beforePopState(({ as }) => {
-      const currentPath = router.asPath;
-      if (
-        (as !== currentPath && InputRef.current?.innerHTML !== post.text) ||
-        visibility?.toLowerCase() !== post.visibility?.toLowerCase() ||
-        files?.length !== post.media?.length ||
-        deleteFile?.length !== 0
-      ) {
-        if (confirm("Changes you made may not be saved.")) {
-          return true;
-        } else {
-          window.history.pushState(null, document.title, currentPath);
-          return false;
+      const currentAsPath = router.asPath;
+      if (as !== currentAsPath && dirtyForm) {
+        if (!confirm("Changes you made may not be saved.")) {
+          window.history.pushState(null, document.title, currentAsPath);
         }
       }
       return true;
@@ -199,15 +191,7 @@ export default function Page(props: {
     return () => {
       router.beforePopState(() => true);
     };
-  }, [
-    deleteFile?.length,
-    files?.length,
-    post.media?.length,
-    post.text,
-    post.visibility,
-    router,
-    visibility,
-  ]);
+  }, [dirtyForm, router]);
 
   const [client, setClient] = useState(false);
   useEffect(() => {
@@ -234,7 +218,10 @@ export default function Page(props: {
   const { queryFn } = useQueryFn();
   const updateHandler = async () => {
     const uid = auth.currentUser?.uid;
-    if (!uid || !post || !InputRef.current) return;
+    if (!post || !InputRef.current) return;
+    if (!uid) {
+      throw new Error("Unauthorized !");
+    }
     if (uid !== post.authorId) {
       throw new Error("Unauthorized !");
     }
@@ -244,11 +231,11 @@ export default function Page(props: {
         .replace(/\n/g, "<br>")
         .replaceAll("&nbsp;", " ") === post.text &&
       files?.length === post.media?.length &&
-      // value === "" &&
       deleteFile?.length === 0
-    )
-      return;
-    // setUpdateLoading(true);
+    ) {
+      console.log("Dirty form");
+      throw new Error("Dirty form");
+    }
     try {
       try {
         const uploadedFiles = await uploadMedia(files as File[]);
@@ -259,7 +246,7 @@ export default function Page(props: {
         await deleteMedia(deleteFile!);
       } catch (error) {
         console.log("Error uploading and Deleting files:", error);
-        return null;
+        return;
       }
       await updatePost(
         uid,
@@ -281,8 +268,8 @@ export default function Page(props: {
       );
       queryFn.invalidate("myPost");
       router.replace("/", undefined, { scroll: false });
-    } catch (error: any) {
-      alert(error.message);
+    } catch (error: unknown) {
+      alert(error);
     }
   };
   const [likeCount, setlikeCount] = useState(
@@ -337,6 +324,7 @@ export default function Page(props: {
         <h2 className={s.title}>{canEdit ? "Edit" : "Post"}</h2>
         {canEdit && (
           <LoadingButton
+            dirty={!dirtyForm}
             ref={updateBtnRef}
             className={s.submit}
             tabIndex={1}
@@ -360,6 +348,13 @@ export default function Page(props: {
       >
         <AuthorInfo navigateToProfile={navigateToProfile} post={post} />
         <TextInput
+          onInput={(e) => {
+            setInput(
+              e.currentTarget.innerHTML
+                .replace(/\n/g, "<br>")
+                .replaceAll("&nbsp;", " ")
+            );
+          }}
           style={{
             cursor: canEdit ? "initial" : "default",
           }}
@@ -369,22 +364,21 @@ export default function Page(props: {
           dangerouslySetInnerHTML={{ __html: client ? text : "" }}
         />
         <PhotoLayout
+          fileRef={fileRef}
           margin={canEdit ? true : false}
           deleteFile={deleteFile}
           setdeleteFile={setdeleteFile}
           post={post}
           edit={canEdit ? true : false}
-          files={files}
-          setFiles={setFiles}
+          form={form}
+          updateForm={updateForm}
         />
         <SharePreview post={post} />
         {canEdit ? (
           <PostSettingFooterForm
+            updateForm={updateForm}
             fileRef={fileRef}
-            files={files}
-            setFiles={setFiles}
-            visibility={post.visibility}
-            setVisibility={setVisibility}
+            form={form}
           />
         ) : (
           <>

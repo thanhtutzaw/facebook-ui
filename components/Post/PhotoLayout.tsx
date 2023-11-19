@@ -2,21 +2,23 @@ import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
 import Image from "next/image";
-import { RefObject, useContext } from "react";
+import { useRouter } from "next/router";
+import { RefObject, memo, useContext } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { app } from "../../lib/firebase";
 import { Post } from "../../types/interfaces";
 import ImageWithFallback from "../ImageWithFallback";
 import s from "./index.module.scss";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { PostContext, PostProps } from "../../context/PostContext";
 
-export default function PhotoLayout(props: {
+function PhotoLayout(props: {
+  fileRef?: RefObject<HTMLInputElement>;
   margin?: boolean;
   deleteFile?: Post["media"] | File[];
-  files: Post["media"] | File[];
-  setFiles?: Function;
+  form?: {
+    files: File[] | Post["media"];
+    visibility: string;
+  };
+  updateForm?: Function;
   setdeleteFile?: Function;
   preview?: boolean;
   edit?: boolean;
@@ -27,19 +29,18 @@ export default function PhotoLayout(props: {
     post,
     deleteFile,
     setdeleteFile,
-    files,
-    setFiles,
+    form,
+    updateForm,
     preview = false,
     edit,
+    fileRef,
   } = props;
+  const files = form ? form.files : post ? post.media : null;
   const { setsingleImageModal } = useContext(PageContext) as PageProps;
   const auth = getAuth(app);
   // useEffect(() => {
   //   window.onpopstate = () => {
-  //     // if (viewRef?.current?.open) {
   //     // history.pushState(null, document.title, location.href);
-
-  //     // }
   //   };
   // }, [viewRef]);
 
@@ -65,7 +66,7 @@ export default function PhotoLayout(props: {
           style={{ marginBottom: "initial" }}
         >
           {files &&
-            files.map((file: any, i: number) => (
+            files.map((file: any, fileIndex: number) => (
               <div
                 onClick={() => {
                   if (file.type === "video/mp4") return;
@@ -74,8 +75,8 @@ export default function PhotoLayout(props: {
                     name: file.name,
                   });
                 }}
-                key={i}
-                id={i.toString()}
+                key={fileIndex}
+                id={fileIndex.toString()}
               >
                 {file.type === "video/mp4" ? (
                   <video controls src={URL.createObjectURL(file)} />
@@ -107,7 +108,9 @@ export default function PhotoLayout(props: {
                       e.stopPropagation();
                       if (file.url) {
                         const media = files as Post["media"];
-                        const data = media?.filter((_, index) => index === i);
+                        const data = media?.filter(
+                          (_, index) => index === fileIndex
+                        );
                         // setdeleteFile([
                         //   ...deleteFile! ?? [],
                         //   media?.filter((_, index) => index === i)
@@ -118,9 +121,59 @@ export default function PhotoLayout(props: {
                           ...(data ?? []),
                         ]);
                       }
-                      setFiles?.([...files.slice(0, i), ...files.slice(i + 1)]);
+                      updateForm?.({
+                        files: [
+                          ...files.slice(0, fileIndex),
+                          ...files.slice(fileIndex + 1),
+                        ],
+                      });
                       // setFiles(files.filter((_, index) => index !== i));
                       // setFiles(files.splice(i, 1));
+                      if (fileRef && fileRef.current) {
+                        fileRef.current.value = "";
+                      }
+                      setsingleImageModal?.({ src: "", name: "" });
+                    }}
+                    title="Remove media"
+                    aria-label="Remove media"
+                    tabIndex={-1}
+                    className={s.deletePhoto}
+                  >
+                    <FontAwesomeIcon icon={faClose} />
+                  </button>
+                )}
+                {router.pathname === "/addPost" && (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (file.url) {
+                        const media = files as Post["media"];
+                        const data = media?.filter(
+                          (_, index) => index === fileIndex
+                        );
+                        // setdeleteFile([
+                        //   ...deleteFile! ?? [],
+                        //   media?.filter((_, index) => index === i)
+                        // ]);
+                        // setdeleteFile([...deleteFile??[], data]);
+                        setdeleteFile?.([
+                          ...(deleteFile ?? []),
+                          ...(data ?? []),
+                        ]);
+                      }
+                      delete files[fileIndex];
+                      updateForm?.({
+                        files: [
+                          ...files.slice(0, fileIndex),
+                          ...files.slice(fileIndex + 1),
+                        ],
+                      });
+                      // setFiles(files.filter((_, index) => index !== i));
+                      // setFiles(files.splice(i, 1));
+                      if (fileRef && fileRef.current) {
+                        fileRef.current.value = "";
+                      }
                       setsingleImageModal?.({ src: "", name: "" });
                     }}
                     title="Remove media"
@@ -159,7 +212,6 @@ export default function PhotoLayout(props: {
                 }`
               );
             }}
-            // id={`${post?.authorId?.toString()}/${post?.id?.toString()}#media-${media[0].url}`}
             media={media}
             width={700}
             height={394}
@@ -186,7 +238,6 @@ export default function PhotoLayout(props: {
                   }`
                 );
               }}
-              // id={`${post?.authorId}/${post?.id?.toString()}#media-${media[1].url}`}
               media={media}
               width={700}
               height={394}
@@ -217,7 +268,6 @@ export default function PhotoLayout(props: {
                     }`
                   );
                 }}
-                // id={`${post?.authorId}/${post?.id?.toString()}#media-${media[2].url}`}
                 media={media}
                 width={700}
                 height={394}
@@ -236,3 +286,4 @@ export default function PhotoLayout(props: {
     </div>
   );
 }
+export default memo(PhotoLayout);

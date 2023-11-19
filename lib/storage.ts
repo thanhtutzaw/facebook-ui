@@ -60,29 +60,30 @@ export async function uploadMedia(files: File[]) {
   return media;
 }
 export async function deleteMedia(deleteFiles: Media[]) {
-  const Deletepromises: Promise<void>[] = [];
-  for (let i = 0; i < deleteFiles?.length!; i++) {
-    if (!deleteFiles) return;
-    const file = deleteFiles[i];
-    const { url, type, name } = file;
-    if (url && name) {
-      const fileRef = ref(
-        storageRef,
-        `${type === "video/mp4" ? "videos" : "images"}/${name}`
-      );
-      const deletePromise = deleteObject(fileRef)
-        .then(() => {
-          console.info(
-            `%c ${deleteFiles?.length} Media deleted successfully ✔️ `,
-            "color: green"
-          );
-        })
-        .catch((error) => {
-          console.log(error);
-          alert("Uh-oh, Deleting Media Failed !");
-        });
-      Deletepromises.push(deletePromise);
+  // const Deletepromises: Promise<void>[] = [];
+  try {
+    for (let i = 0; i < deleteFiles?.length!; i++) {
+      if (!deleteFiles) return;
+      const file = deleteFiles[i];
+      const { url, type, name } = file;
+      if (url && name) {
+        const fileRef = ref(
+          storageRef,
+          `${type === "video/mp4" ? "videos" : "images"}/${name}`
+        );
+        await deleteObject(fileRef);
+        console.info(
+          `%c ${deleteFiles?.length} Media deleted successfully ✔️ `,
+          "color: green"
+        );
+
+        // Deletepromises.push(deletePromise);
+      }
     }
+  } catch (error) {
+    console.log(error);
+    alert("Uh-oh, Deleting Media Failed !");
   }
-  await Promise.all(Deletepromises);
+
+  // await Promise.all(Deletepromises);
 }

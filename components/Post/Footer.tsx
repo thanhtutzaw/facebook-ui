@@ -1,4 +1,5 @@
 import useLocalStorage from "@/hooks/useLocalStorage";
+import useQueryFn from "@/hooks/useQueryFn";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { NotiApiRequest } from "@/pages/api/sendFCM";
 import {
@@ -18,6 +19,7 @@ import {
 } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
+import popfx from "public/assets/bubble.mp3";
 import {
   StyleHTMLAttributes,
   memo,
@@ -26,6 +28,7 @@ import {
   useRef,
   useState,
 } from "react";
+import useSound from "use-sound";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { app, db, getCollectionPath, getPath } from "../../lib/firebase";
 import {
@@ -36,9 +39,6 @@ import {
 import { addPost, likePost, unlikePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
-import popfx from "public/assets/bubble.mp3";
-import useSound from "use-sound";
-import useQueryFn from "@/hooks/useQueryFn";
 
 function Footer(
   props: {
@@ -61,10 +61,10 @@ function Footer(
   const [reactionAction, setreactionAction] = useState("");
   const commentRef = useRef<HTMLDivElement>(null);
   const [visibility, setvisibility] = useState<string | null>("Public");
-  const { getLocal } = useLocalStorage("visibility", visibility);
+  const { getLocal } = useLocalStorage("visibility");
   const { queryFn } = useQueryFn();
   useEffect(() => {
-    setvisibility(getLocal());
+    setvisibility(getLocal() as string);
   }, [getLocal]);
   const [isLiked, setisLiked] = useState(post.isLiked);
 

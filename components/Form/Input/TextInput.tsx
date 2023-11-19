@@ -1,4 +1,4 @@
-import { HTMLAttributes, CSSProperties, ReactNode, RefObject } from "react";
+import { HTMLAttributes, CSSProperties, ReactNode, RefObject, memo } from "react";
 import s from "@/styles/Home.module.scss";
 
 interface AppProps {

@@ -99,7 +99,7 @@ export async function addPost({ uid, post, sharePost, friends }: TAddPost) {
     data = { ...postData };
   }
   try {
-    console.log({ addedPost: data });
+    console.table({ addedPost: data });
     return await setDoc(Ref, data);
   } catch (error: any) {
     alert("Post upload failed !" + error.message);
@@ -204,7 +204,7 @@ export async function updatePost(
     };
   }
   try {
-    console.log({ data });
+    console.table({ updatedData:data });
     await updateDoc(Ref, data);
   } catch (error: any) {
     alert("Updating Post Failed !" + error.message);

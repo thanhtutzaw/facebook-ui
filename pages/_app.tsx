@@ -148,7 +148,6 @@ export default function App({
         },
       })
   );
-
   if (expired) return <Welcome expired={expired} />;
   return (
     <>
