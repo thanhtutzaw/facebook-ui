@@ -220,7 +220,7 @@ export default function Page(props: {
     const uid = auth.currentUser?.uid;
     if (!post || !InputRef.current) return;
     if (!uid) {
-      throw new Error("Unauthorized !");
+      throw new Error("You need to login!");
     }
     if (uid !== post.authorId) {
       throw new Error("Unauthorized !");
@@ -324,6 +324,8 @@ export default function Page(props: {
         <h2 className={s.title}>{canEdit ? "Edit" : "Post"}</h2>
         {canEdit && (
           <LoadingButton
+            title="Update post"
+            loadingTitle="Updating post"
             dirty={!dirtyForm}
             ref={updateBtnRef}
             className={s.submit}

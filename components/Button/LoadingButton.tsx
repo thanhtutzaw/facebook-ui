@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 type ButtonProps = {
+  loadingTitle?:string;
   dirty?: boolean;
   loading?: boolean;
   children: ReactNode;
@@ -29,6 +30,7 @@ export const LoadingButton = forwardRef<HTMLButtonElement, ButtonProps>(
         }}
         {...rest}
         ref={ref}
+        title={buttonLoading ? props.loadingTitle : rest.title}
         disabled={buttonLoading || dirty}
         onClick={async (e) => {
           setloading(true);

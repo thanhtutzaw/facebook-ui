@@ -95,7 +95,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   useEffect(() => {
     setshareAction?.("");
   }, [setshareAction]);
-  const dirty = input.length === 0 && form.files?.length === 0;
+  const dirtyForm = input.length === 0 && form.files?.length === 0;
   return (
     <div
       style={{
@@ -131,14 +131,17 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
           ref={submitRef}
           key={input.length}
           loading={loading}
-          dirty={dirty}
+          dirty={dirtyForm}
           type="submit"
           className={s.submit}
           tabIndex={1}
           onClick={async () => {
             textRef.current?.focus();
             const uid = auth.currentUser?.uid;
-            if (!textRef.current || !uid) return;
+            if (!uid) {
+              throw new Error("You need to login!");
+            }
+            if (!textRef.current) return;
             if (
               textRef.current.innerHTML === "" &&
               !sharePost &&
@@ -198,14 +201,16 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
               });
               router.replace("/", undefined, { scroll: false });
               window.document.body.style.cursor = "initial";
-            } catch (error: any) {
-              alert(error.message);
+            } catch (error: unknown) {
+              alert(error);
             } finally {
               setLoading(false);
               window.document.body.style.cursor = "initial";
             }
           }}
           aria-label="Create New Post"
+          title="Create new post"
+          loadingTitle="Creating new post"
         >
           Post
         </LoadingButton>
