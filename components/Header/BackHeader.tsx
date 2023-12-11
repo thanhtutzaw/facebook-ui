@@ -11,7 +11,7 @@ function BackHeader(props: {
   onClick?: MouseEventHandler<HTMLButtonElement>;
 }) {
   const router = useRouter();
-  const handleClick = (e: any) => {
+  const handleClick = (e: any  ) => {
     if (window.history.length > 1) {
       if (props.onClick) {
         props.onClick(e);
@@ -25,7 +25,7 @@ function BackHeader(props: {
   return (
     <div style={props.style} className={`bold-title ${s.backHeader}`}>
       <button
-      className="flex justify-center items-center"
+        className="flex justify-center items-center"
         style={{ color: props.color }}
         title="Back"
         aria-label="Back Button"

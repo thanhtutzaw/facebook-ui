@@ -84,7 +84,6 @@ export default function ChatInput({
           // }
           // if (text === "") return;
           // try {
-          //   setaddLoading(true);
           //   batch.set(commentRef, {
           //     id: commentRef.id,
           //     authorId: uid,
@@ -98,9 +97,7 @@ export default function ChatInput({
           //   router.replace(router.asPath, undefined, { scroll: false });
           //   settext("");
           //   setaddLoading(false);
-          // } catch (error: any) {
-          //   setaddLoading(false);
-          // }
+
         }}
         aria-label="Send Message"
         tabIndex={1}

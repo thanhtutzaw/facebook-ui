@@ -37,7 +37,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-import { Timestamp, doc, getDoc, where } from "firebase/firestore";
+import { Timestamp, doc, getDoc, startAfter, where } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
@@ -81,12 +81,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       canAccept = relation.senderId !== token.uid && !isFriend;
       canUnBlock = relation.senderId === token.uid;
     }
-    const myPost = await fetchMyPosts(uid, isFriend, isBlocked, token);
+    const { myPost, hasMore } = await fetchMyPosts(
+      uid,
+      isFriend,
+      isBlocked,
+      token
+    );
     if (userExist) {
       const profile = user?.data().profile as account["profile"];
       return {
         props: {
           token,
+          hasMore,
           profile: profile ?? null,
           myPost,
           friendStatus: {
@@ -109,6 +115,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     context.res.end();
     return {
       props: {
+        hasMore: false,
         token: null,
         profile: [],
         myPost: [],
@@ -125,11 +132,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function UserProfile({
+  hasMore,
   token,
   profile,
   myPost,
   friendStatus,
 }: {
+  hasMore: boolean;
   token: DecodedIdToken;
   profile: account["profile"];
   myPost: PostType[];
@@ -188,8 +197,8 @@ export default function UserProfile({
         <button
           aria-label={`Friend with ${userName}`}
           onClick={(e) => {
-             e.preventDefault();
-             e.stopPropagation();
+            e.preventDefault();
+            e.stopPropagation();
             setFriendMenuToggle((prev) => !prev);
           }}
           className={s.editToggle}
@@ -305,30 +314,27 @@ export default function UserProfile({
         post.createdAt.seconds,
         post.createdAt.nanoseconds
       );
-      // const mypostQuery = query(
-      //   getPath("posts", { uid: String(router.query.user) }),
-      //   where("visibility", "in", ["Friend", "Public"]),
-      //   orderBy("createdAt", "desc"),
-      //   startAfter(date),
-      //   limit(MYPOST_LIMIT + 1)
-      // );
+      console.log(post);
       let mypostQuery;
       if (isFriend) {
         mypostQuery = DescQuery(
           getPath("posts", { uid: String(router.query.user) }),
           MYPOST_LIMIT + 1,
-          where("visibility", "in", ["Friend", "Public"])
+          where("visibility", "in", ["Friend", "Public"]),
+          startAfter(date)
         );
       } else if (router.query.user === token.uid) {
         mypostQuery = DescQuery(
           getPath("posts", { uid: String(router.query.user) }),
-          MYPOST_LIMIT + 1
+          MYPOST_LIMIT + 1,
+          startAfter(date)
         );
       } else {
         mypostQuery = DescQuery(
           getPath("posts", { uid: String(router.query.user) }),
           MYPOST_LIMIT + 1,
-          where("visibility", "==", "Public")
+          where("visibility", "==", "Public"),
+          startAfter(date)
         );
       }
       const finalPost = await getPostWithMoreInfo(token.uid!, mypostQuery)!;
@@ -338,13 +344,12 @@ export default function UserProfile({
       setPostEnd(finalPost?.length! < MYPOST_LIMIT);
 
       // if (finalPost?.length! < MYPOST_LIMIT) {
-      //   setPostEnd(true);
       // }
     },
     [isFriend, limitedPosts, router.query.user, token.uid]
   );
   const { scrollRef } = useInfiniteScroll({
-    hasMore: postEnd,
+    hasMore,
     scrollParent: true,
     fetchMoreData: fetchMorePosts,
   });
@@ -474,11 +479,10 @@ export default function UserProfile({
             )}
           </div>
           <PostList
-            postLoading={postLoading}
+            postLoading={hasMore}
             postEnd={postEnd}
             tabIndex={1}
             posts={limitedPosts}
-            profile={profile}
           />
         </div>
       </div>
@@ -536,7 +540,6 @@ export function Menu({
 // }
 function Spin() {
   return (
-    //   key={loading ? "true" : "false"}
     //   size={18}
     //   style={{
     //     margin: "0",

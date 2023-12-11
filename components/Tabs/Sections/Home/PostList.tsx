@@ -10,7 +10,6 @@ function PostList(props: {
   selectMode?: boolean;
   posts: PostType[];
   tabIndex?: number;
-  profile: any;
   auth?: User;
   postLoading?: boolean;
   postEnd?: boolean;

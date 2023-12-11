@@ -1,33 +1,21 @@
-import { AcceptFriend } from "@/components/Button/AcceptFriend";
 import BackHeader from "@/components/Header/BackHeader";
 import Spinner from "@/components/Spinner";
 import { PageContext, PageProps } from "@/context/PageContext";
 import useQueryFn from "@/hooks/useQueryFn";
-import { collectionBasePath, getPath, getProfileByUID } from "@/lib/firebase";
+import { collectionBasePath, getPath } from "@/lib/firebase";
 import { verifyIdToken } from "@/lib/firebaseAdmin";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { friends } from "@/types/interfaces";
-import { faBan, faEllipsisV, faInfoCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faBan, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-import { Timestamp, getDocs, limit, orderBy, query, where } from "firebase/firestore";
+import { Timestamp, getDocs, limit, query, where } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import nookies from "nookies";
-import confirm from "public/assets/confirm-beep.mp3";
-import { useContext, useEffect, useState } from "react";
-import useSound from "use-sound";
-import {
-  acceptFriends,
-  blockFriend,
-  cancelFriendRequest,
-  rejectFriendRequest,
-  unBlockFriend,
-  unFriend,
-} from "@/lib/firestore/friends";
+import { useContext, useState } from "react";
 import s from "./index.module.scss";
 type TqueryFn = ReturnType<typeof useQueryFn>["queryFn"];
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -58,7 +46,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       }
     });
     // catch (error) {
-    //   console.log(error);
     //   throw new Error("Failed to fetch Suggested Friends");
     // }
     return {
@@ -95,7 +82,6 @@ export default function Page(props: {
   //       orderBy(status === "pending" ? "createdAt" : "updatedAt", "desc")
   //     );
 
-  //     setFirendLoading(true);
   //     const myFriendsSnap = await getDocs(myFriendsQuery);
   //     const acceptedFriends = await Promise.all(
   //       myFriendsSnap.docs.map(async (doc) => {
@@ -161,7 +147,7 @@ function FriendList({ friends }: { friends: friends[] }) {
             friend.author?.lastName ?? ""
           }'s Profile page`}
         >
-          <Link draggable={false} href={friend.id.toString()} key={friend.id}>
+          <Link draggable={false} href={friend.id.toString()}>
             <div className={s.cardContainer}>
               <div className="w-[50px] h-[50px] relative">
                 <Image

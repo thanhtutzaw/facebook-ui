@@ -226,7 +226,7 @@ function FriendList({
             friend.author?.lastName ?? ""
           }'s Profile page`}
         >
-          <Link draggable={false} href={friend.id.toString()} key={friend.id}>
+          <Link draggable={false} href={friend.id.toString()}>
             <div className={s.cardContainer}>
               <div className="w-[50px] h-[50px] relative">
                 <Image

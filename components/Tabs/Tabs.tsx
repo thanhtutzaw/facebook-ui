@@ -1,5 +1,4 @@
-import { AppContext } from "@/context/AppContext";
-import { AppProps } from "@/types/interfaces";
+import { useActiveTab } from "@/hooks/useActiveTab";
 import dynamic from "next/dynamic";
 import {
   ElementType,
@@ -7,11 +6,9 @@ import {
   memo,
   useContext,
   useEffect,
-  useLayoutEffect,
   useState,
 } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { useActive } from "../../hooks/useActiveTab";
 import styles from "../../styles/Home.module.scss";
 import Home from "./Sections/Home/Home";
 import Notifications from "./Sections/Notifications/Notifications";
@@ -35,14 +32,18 @@ function Tabs() {
   const { indicatorRef, setpreventClick } = useContext(
     PageContext
   ) as PageProps;
-  const { headerContainerRef } = useContext(AppContext) as AppProps;
-  const { active } = useActive();
-  
+  // const { active } = useContext(AppContext) as AppProps;
+  const { active } = useActiveTab();
   useEffect(() => {
-    if (!active) return;
-    window.location.hash = active === "/" ? "#home" : `#${active}`;
+    if (active) {
+      window.location.hash = active === "/" ? "home" : `${active}`;
+      // router.push({ hash: active === "/" ? "#home" : `#${active}` });
+    }
+    window.addEventListener("mouseup", () => {
+      setcanDrag(false);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
-
   useEffect(() => {
     if (!canDrag) return;
     function dragStop() {
@@ -112,11 +113,9 @@ function Tabs() {
     <div
       id="tabs"
       className={styles.content}
-      onMouseDown={(e) => {
-        dragStart(e);
-      }}
-      onMouseUp={(e) => dragStop(e)}
-      onMouseMove={(e) => dragging(e)}
+      onMouseDown={dragStart}
+      onMouseUp={dragStop}
+      onMouseMove={dragging}
       onScroll={(e) => {
         const target = e.target as HTMLDivElement;
         const scroll = target.scrollLeft;
@@ -127,19 +126,29 @@ function Tabs() {
       <Home tabIndex={active === "/" ? 0 : -1} />
       <div
         aria-hidden={active !== "friends"}
+        tabIndex={active === "friends" ? 0 : -1}
         id="friends"
         className={styles.tab}
       >
         <TabHeader>Friends</TabHeader>
         <Friends tabIndex={active === "friends" ? 0 : -1} />
       </div>
-      <div aria-hidden={active !== "watch"} id="watch">
+
+      <div
+        aria-hidden={active !== "watch"}
+        tabIndex={active === "watch" ? 0 : -1}
+        id="watch"
+      >
         <TabHeader>Watch</TabHeader>
         <Watch />
       </div>
       <Profile tabIndex={active === "profile" ? 0 : -1} />
       <Notifications tabIndex={active === "notifications" ? 0 : -1} />
-      <div aria-hidden={active !== "menu"} id="menu">
+      <div
+        aria-hidden={active !== "menu"}
+        tabIndex={active === "menu" ? 0 : -1}
+        id="menu"
+      >
         <TabHeader>Menu</TabHeader>
         <Menu tabIndex={active === "menu" ? 0 : -1} />
       </div>

@@ -61,9 +61,9 @@ export default function Page(props: { acceptedFriends: TAcceptedFriends[] }) {
         <ul>
           {acceptedFriends.map((friend) => (
             <li key={friend.id} aria-label="Go to Friends Profile">
-              <Link href={`chat/${friend.id}`} key={friend.id}>
+              <Link href={`chat/${friend.id}`}>
                 <Image
-                  className={`rounded-full h-[50px]`}
+                  className={`rounded-full h-[50px] bg-avatarBg`}
                   alt={"name"}
                   width={50}
                   height={50}

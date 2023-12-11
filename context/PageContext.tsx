@@ -51,7 +51,23 @@ export interface PageProps {
   setpreventClick?: Function;
   setfriends?: Function;
 }
+export interface PostPageProps {
+  children?: ReactNode;
+
+  // replyInputRef: RefObject<HTMLInputElement>;
+  // setComments: Function;
+  // parentId?: string;
+  // nested?: boolean;
+  // hasMore?: boolean;
+  // commentEnd?: boolean;
+  // uid: string;
+  // comments: Post["comments"] | [];
+  // post: Post;
+  // setisDropDownOpenInNestedComment?: Function;
+  // profile?: account["profile"];
+}
 export const PageContext = createContext<PageProps | null>(null);
+// const PostContext = createContext<PostPageProps | null>(null);
 
 export function PageProvider(props: PageProps) {
   const [friends, setfriends] = useState<friends[]>([]);
@@ -71,6 +87,7 @@ export function PageProvider(props: PageProps) {
   const indicatorRef = useRef<HTMLDivElement>(null);
 
   const [newsFeedData, setnewsFeedData] = useState<Post[]>([]);
+  console.log("running in pageContext");
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (!shareAction) return;

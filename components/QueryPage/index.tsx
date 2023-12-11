@@ -12,7 +12,7 @@ function SecondaryPage({
   queryPageData,
 }: {
   token?: DecodedIdToken | null;
-  queryPageData: any;
+  queryPageData: unknown;
 }) {
   const router = useRouter();
   const isVisible =

@@ -1,21 +1,21 @@
 import Spinner from "@/components/Spinner";
 import useFriends from "@/hooks/useFriends";
 import router from "next/router";
+import { memo } from "react";
 import s from "./Friends.module.scss";
 import { Request } from "./Request";
 import { SuggestFriend } from "./SuggestFriend";
-import { memo } from "react";
 interface FriendProps {
   tabIndex: number;
 }
 function Friend(props: FriendProps) {
   const { tabIndex } = props;
-  
+
   const { suggestedFriends, pendingFriends } = useFriends();
   const suggested = suggestedFriends.data ?? [];
   const pending = pendingFriends.data ?? [];
   return (
-    <div tabIndex={tabIndex}  className={s.container}>
+    <div tabIndex={tabIndex} className={s.container}>
       <div className={`flex flex-wrap pb-[10px] px-4 ${s.action}`}>
         <button
           aria-label="Go to my friends page"
@@ -65,7 +65,7 @@ function Friend(props: FriendProps) {
           <p className="error">Unexpected Error Occured !</p>
         ) : (
           <>
-            {suggested?.map((f: any) => (
+            {suggested.map((f) => (
               <SuggestFriend key={f.id} f={f} tabIndex={tabIndex} />
             ))}
           </>

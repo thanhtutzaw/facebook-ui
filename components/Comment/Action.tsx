@@ -1,7 +1,8 @@
 import post from "@/components/Post/index.module.scss";
 import s from "@/components/Tabs/Sections/Profile/index.module.scss";
 import useEscape from "@/hooks/useEscape";
-import { Comment, Post } from "@/types/interfaces";
+import { deleteComment } from "@/lib/firestore/comment";
+import { Comment } from "@/types/interfaces";
 import {
   faEdit,
   faEllipsisV,
@@ -10,11 +11,12 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentData, DocumentReference } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
-import router from "next/router";
+import { useRouter } from "next/router";
 import { RefObject, useState } from "react";
-import { deleteComment } from "../../lib/firestore/comment";
-export default function CommentAction(props: {
-  comments: Post["comments"];
+interface CommentActionProps {
+  parentId: string;
+  nested: boolean;
+  isAdmin: boolean;
   setComments: Function;
   menuRef: RefObject<HTMLDivElement>;
   toggleCommentMenu: string;
@@ -23,105 +25,170 @@ export default function CommentAction(props: {
   commentRef: DocumentReference<DocumentData>;
   postRef: DocumentReference<DocumentData>;
   comment: Comment;
-}) {
-  const {
-    comments,
-    setComments,
-    menuRef,
-    toggleCommentMenu,
-    settoggleCommentMenu,
-    comment,
-    handleEditComment,
-    commentRef,
-    postRef,
-  } = props;
+  setisDropDownOpenInNestedComment?: Function;
+}
+export default function CommentAction({
+  parentId,
+  nested,
+  isAdmin,
+  setComments,
+  menuRef,
+  toggleCommentMenu,
+  settoggleCommentMenu,
+  handleEditComment,
+  commentRef,
+  postRef,
+  comment,
+  setisDropDownOpenInNestedComment,
+}: CommentActionProps) {
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const { id } = comment;
   useEscape(() => {
     toggleCommentMenu && settoggleCommentMenu("");
   });
-
+  const router = useRouter();
+  function updateNestedComment({
+    reply,
+    recentReply,
+  }: {
+    reply: (c: Comment) => Partial<Comment>;
+    recentReply: (c: Comment) => Partial<Comment>;
+  }) {
+    setComments((prev: Comment[]) =>
+      prev.map((c) => {
+        if (c.id === parentId) {
+          if (c.recentReplies) {
+            return {
+              ...c,
+              ...recentReply(c),
+            };
+          } else {
+            return {
+              ...c,
+              ...reply(c),
+            };
+          }
+        }
+        return c;
+      })
+    );
+  }
   return (
     <>
-      <button
-        className={post.dot}
-        onClick={() => {
-          toggleCommentMenu
-            ? settoggleCommentMenu("")
-            : settoggleCommentMenu(id);
-        }}
-      >
-        <FontAwesomeIcon icon={faEllipsisV} />
-      </button>
-      <AnimatePresence>
-        {toggleCommentMenu === id && (
-          <motion.div
-            ref={menuRef}
-            key={id}
-            initial={{
-              opacity: 0,
-              scale: 0.8,
+      {isAdmin && (
+        <>
+          <button
+            className={post.dot}
+            onClick={() => {
+              toggleCommentMenu
+                ? settoggleCommentMenu("")
+                : settoggleCommentMenu(comment.id);
+              if (!setisDropDownOpenInNestedComment) return;
+              toggleCommentMenu
+                ? setTimeout(() => {
+                    setisDropDownOpenInNestedComment(false);
+                  }, 200)
+                : setisDropDownOpenInNestedComment(true);
             }}
-            animate={{
-              opacity: toggleCommentMenu === id ? 1 : 0,
-              scale: 1,
-            }}
-            exit={{
-              opacity: 0,
-              scale: 0.8,
-            }}
-            transition={{
-              type: "spring",
-            }}
-            className={`
+          >
+            <FontAwesomeIcon icon={faEllipsisV} />
+          </button>
+          <AnimatePresence>
+            {toggleCommentMenu === comment.id && (
+              <motion.div
+                ref={menuRef}
+                key={comment.id}
+                initial={{
+                  opacity: 0,
+                  scale: 0.8,
+                }}
+                animate={{
+                  opacity: toggleCommentMenu === comment.id ? 1 : 0,
+                  scale: 1,
+                }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.8,
+                }}
+                transition={{
+                  type: "spring",
+                }}
+                className={`
             
                 flex flex-col max-w-none
             will-change-[scale] items-center right-4 top-[2.5rem] ${s.menuContainer}`}
-          >
-            <button
-              style={{ minWidth: "148px" }}
-              onClick={async (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleEditComment();
-                // router.push({
-                //   pathname: `${authorId}/${id?.toString()}`,
-                //   query: { edit: true },
-                // });
-              }}
-            >
-              <FontAwesomeIcon icon={faEdit} />
-              Edit
-            </button>
-            <button
-              style={{ minWidth: "148px" }}
-              onClick={async () => {
-                setDeleteLoading(true);
-                try {
-                  console.log(commentRef);
-                  if (!commentRef || !postRef) {
-                    throw new Error("CommentRef and PostRef are required !");
-                  }
-                  await deleteComment(commentRef, postRef);
-                  setComments(comments.filter((c) => c.id !== comment.id));
-                  setDeleteLoading(false);
-                  settoggleCommentMenu("");
-                  router.push(router.asPath);
-                } catch (error: any) {
-                  console.error(error);
-                  alert(error.message);
-                  setDeleteLoading(false);
-                }
-              }}
-              aria-label="Delete Comment"
-              disabled={deleteLoading}
-            >
-              <FontAwesomeIcon icon={faTrash} />
-              Delete
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              >
+                <button
+                  style={{
+                    minWidth: "148px",
+                  }}
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleEditComment();
+                  }}
+                >
+                  <FontAwesomeIcon icon={faEdit} />
+                  Edit
+                </button>
+                <button
+                  style={{
+                    minWidth: "148px",
+                  }}
+                  onClick={async () => {
+                    setDeleteLoading(true);
+
+                    console.log("delete comment path- " + commentRef.path);
+                    try {
+                      if (!commentRef || !postRef) {
+                        throw new Error(
+                          "CommentRef and PostRef are required !"
+                        );
+                      }
+                      await deleteComment(commentRef, postRef);
+                      if (nested) {
+                        updateNestedComment({
+                          recentReply: (c) => {
+                            return {
+                              replyCount: c.replyCount ? c.replyCount - 1 : 0,
+                              recentReplies: c.recentReplies?.filter(
+                                (recentreply) => recentreply.id !== comment.id
+                              ),
+                            };
+                          },
+                          reply: (c) => {
+                            return {
+                              replyCount: c.replyCount ? c.replyCount - 1 : 0,
+                              replies: c.replies.filter(
+                                (reply) => reply.id !== comment.id
+                              ),
+                            };
+                          },
+                        });
+                      } else {
+                        setComments((prev: Comment[]) =>
+                          prev.filter((c) => c.id !== comment.id)
+                        );
+                      }
+                      setDeleteLoading(false);
+                      settoggleCommentMenu("");
+                      router.push(router.asPath);
+                    } catch (error: unknown) {
+                      console.error(error);
+                      alert(error);
+                      setDeleteLoading(false);
+                    }
+                  }}
+                  aria-label="Delete Comment"
+                  disabled={deleteLoading}
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                  Delete
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </>
+      )}
     </>
   );
 }

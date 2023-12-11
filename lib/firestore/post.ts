@@ -8,6 +8,9 @@ import {
   getDoc,
   getDocs,
   increment,
+  limit,
+  orderBy,
+  query,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -101,8 +104,8 @@ export async function addPost({ uid, post, sharePost, friends }: TAddPost) {
   try {
     console.table({ addedPost: data });
     return await setDoc(Ref, data);
-  } catch (error: any) {
-    alert("Post upload failed !" + error.message);
+  } catch (error: unknown) {
+    alert("Post upload failed !" + error);
   }
 
   async function updatePostSharer(sharersRef: DocumentReference<DocumentData>) {
@@ -124,7 +127,7 @@ export async function fetchRecentPosts(uid: string) {
   try {
     recentPosts = (await getDocs(newsFeedQuery)).docs.map((doc) => {
       return {
-        ...(doc.data() as any),
+        ...(doc.data() as RecentPosts),
         recentId: doc.id,
         createdAt: doc.data().createdAt?.toJSON() || 0,
       };
@@ -157,9 +160,10 @@ export async function fetchMyPosts(
       where("visibility", "in", ["Friend", "Public"])
     );
   } else if (uid === token.uid) {
-    mypostQuery = DescQuery(
+    mypostQuery = query(
       getPath("posts", { uid: String(uid) }),
-      MYPOST_LIMIT + 1
+      orderBy("createdAt", "desc"),
+      limit(MYPOST_LIMIT + 1)
     );
   } else {
     mypostQuery = DescQuery(
@@ -177,7 +181,7 @@ export async function fetchMyPosts(
   if (hasMore) {
     myPost?.pop();
   }
-  return myPost;
+  return { myPost, hasMore };
 }
 export async function updatePost(
   uid: string,
@@ -213,8 +217,8 @@ export async function updatePost(
   try {
     console.table({ updatedData: data });
     await updateDoc(Ref, data);
-  } catch (error: any) {
-    alert("Updating Post Failed !" + error.message);
+  } catch (error: unknown) {
+    alert("Updating Post Failed !" + error);
   }
 }
 export async function deletePost(data: {
@@ -247,9 +251,9 @@ export async function deletePost(data: {
   }
   try {
     await deleteDoc(Ref);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error);
-    alert("Delete Failed !" + error.message);
+    alert("Delete Failed !" + error);
   }
 }
 export async function deleteMultiplePost(uid: string, selctedId: selectedId[]) {
@@ -293,8 +297,8 @@ export async function deleteMultiplePost(uid: string, selctedId: selectedId[]) {
   }
   try {
     await batch.commit();
-  } catch (error: any) {
-    alert("Delete Failed !" + error.message);
+  } catch (error: unknown) {
+    alert("Delete Failed !" + error);
   }
 }
 export async function likePost(

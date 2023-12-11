@@ -1,12 +1,5 @@
 import { Timestamp, getDocs, startAfter } from "firebase/firestore";
-import {
-  createContext,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { NewsFeed_LIMIT } from "../lib/QUERY_LIMIT";
 import { DescQuery, getNewsFeed, getPath } from "../lib/firebase";
 import { AppProps, Post, RecentPosts } from "../types/interfaces";
@@ -25,7 +18,7 @@ export function AppProvider(props: AppProps) {
   } = props;
   const [postLoading, setpostLoading] = useState(false);
   const [postEnd, setPostEnd] = useState(false);
-
+  // const { active } = useActiveTab();
   const [selectMode, setselectMode] = useState(false);
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const [sortedPost, setsortedPost] = useState<Post[]>([]);
@@ -71,18 +64,16 @@ export function AppProvider(props: AppProps) {
       const finalPost = await getNewsFeed(String(uid), recentPosts);
       setlimitedPosts?.(limitedPosts?.concat(finalPost!));
       setpostLoading(false);
-      // setPostEnd(true)
       console.log({ end: finalPost?.length! < NewsFeed_LIMIT });
       setPostEnd(finalPost?.length! < NewsFeed_LIMIT);
       console.log({ postEnd });
     },
     [limitedPosts, postEnd, props.hasMore, setlimitedPosts, uid]
   );
-
-  
   return (
     <AppContext.Provider
       value={{
+        active,
         setprofileSrc,
         profileSrc,
         sortedPost,

@@ -1,41 +1,71 @@
-import useQueryFn from "@/hooks/useQueryFn";
 import { checkPhotoURL } from "@/lib/firestore/profile";
+import { CommentProps } from "@/pages/[user]/[post]";
 import { faArrowAltCircleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc } from "firebase/firestore";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
-import { getPath } from "../../lib/firebase";
+import { db, getCollectionPath, getPath } from "../../lib/firebase";
 import { addComment } from "../../lib/firestore/comment";
-import { sendAppNoti } from "../../lib/firestore/notifications";
-import { Post, account } from "../../types/interfaces";
+import {
+  getMessage,
+  sendAppNoti,
+  sendFCM,
+} from "../../lib/firestore/notifications";
+import { Comment } from "../../types/interfaces";
 import Spinner from "../Spinner";
 import s from "./index.module.scss";
-export default function CommentInput(props: {
-  comments: Post["comments"];
-  setlimitedComments: Function;
-  uid?: string;
-  postId: string;
-  authorId: string;
-  post?: Post;
-
-  profile?: account["profile"];
-}) {
-  const { queryFn } = useQueryFn();
-  const { comments, setlimitedComments, post, uid, authorId, postId, profile } =
-    props;
+type UnwrapArray<T> = T extends (infer U)[] ? U : T;
+export default function CommentInput(props: Partial<CommentProps>) {
+  const {
+    comments,
+    setComments,
+    post,
+    uid,
+    profile,
+    replyInput,
+    replyInputRef,
+  } = props;
   const { currentUser } = useContext(PageContext) as PageProps;
+
   const [text, settext] = useState("");
-  const commentRef = doc(getPath("comments", { authorId, postId }));
-  const router = useRouter();
   const [addLoading, setaddLoading] = useState(false);
-  // const postRef = doc(
-  //   db,
-  //   `${getCollectionPath.posts({ uid: authorId })}/${postId}`
-  // );
-  // const previousCommentCount = post?.comments?.length ?? 0;
+  if (!post) return null;
+  const postId = String(post.id);
+  const authorId = String(post.authorId);
+  const commentRef = doc(getPath("comments", { authorId, postId }));
+  const updateRecentReplies = (
+    newData: UnwrapArray<Comment["recentReplies"]>
+  ) => {
+    console.log("update recent replies");
+    setComments?.(
+      comments?.map((c) => {
+        if (c.id === replyInput?.id) {
+          return {
+            ...c,
+            recentReplies: [...(c.recentReplies ?? []), { ...newData }],
+          };
+        }
+        return { ...c };
+      })
+    );
+  };
+  const updateReplies = (newData: UnwrapArray<Comment["replies"]>) => {
+    console.log("update replies");
+    setComments?.(
+      comments?.map((c) => {
+        if (c.id === replyInput?.parentId) {
+          return {
+            ...c,
+            replyCount: c.replyCount ? c.replyCount + 1 : 0,
+            replies: [...(c.replies ?? []), { ...newData }],
+          };
+        }
+        return { ...c };
+      })
+    );
+  };
   return (
     <form
       onSubmit={async (e) => {
@@ -45,34 +75,119 @@ export default function CommentInput(props: {
           throw Error;
         }
         if (text === "") return;
+
         try {
           setaddLoading(true);
+          const isReplyingComment = replyInput?.authorName;
+          if (isReplyingComment) {
+            const replyRef = doc(
+              collection(
+                db,
+                `${getCollectionPath.comments({ authorId, postId })}/${
+                  replyInput.nested ? replyInput?.parentId : replyInput?.id
+                }/replies`
+              )
+            );
+            if (replyInput && replyInput.nested) {
+              const recipient = {
+                id: replyInput.authorId,
+              };
+              await addComment({
+                commentRef: replyRef,
+                recipient,
+                authorId: uid,
+                text,
+              });
+            } else {
+              await addComment({
+                commentRef: replyRef,
+                authorId: uid,
+                text,
+              });
+            }
 
-          await addComment({ commentRef, uid, text });
-          const doc = await getDoc(commentRef);
-          const data = { ...doc.data() };
-          const withAuthor = {
-            ...data,
-            author: {
-              ...profile,
-            },
-          };
-          setlimitedComments([withAuthor, ...comments]);
-          await sendAppNoti({
-            uid,
-            receiptId: post?.authorId.toString()!,
-            profile: currentUser!,
-            type: "comment",
-            url: `${authorId}/${post?.id}/#comment-${commentRef.id}`,
-            content: text,
-          });
-          queryFn.invalidate("myPost");
-          router.replace(router.asPath, undefined, { scroll: false });
+            const repliedDoc = await getDoc(replyRef);
+            const data = { ...{ ...repliedDoc.data() } } as Comment;
+            data["author"] = { ...profile } as Comment["author"];
+            if (replyInput) {
+              replyInput.ViewmoreToggle
+                ? !replyInput.nested && updateRecentReplies(data)
+                : replyInput.nested
+                ? updateReplies({
+                    ...data,
+                    recipient: {
+                      id: replyInput.authorId,
+                      author: {
+                        fullName: String(replyInput.authorName) ?? "",
+                      },
+                    },
+                  })
+                : updateRecentReplies(data);
+            }
+            await sendAppNoti({
+              messageBody: text,
+              uid,
+              receiptId: replyInput.authorId,
+              profile: currentUser!,
+              type: "replied_to_comment",
+              url: `${authorId}/${post.id}?comment=${replyInput.id}#reply-${replyRef.id}`,
+              content: replyInput.text,
+            });
+            await sendFCM({
+              recieptId: replyInput.authorId,
+              message: `${
+                currentUser?.displayName ?? "Unknown User"
+              } ${getMessage("replied_to_comment")}: "${text}" `,
+              icon: checkPhotoURL(
+                currentUser?.photoURL_cropped ?? currentUser?.photoURL
+              ),
+              tag: `ReplyAuthor-${uid}-post-${post.id}-comment-${replyInput.id}-CommentReply`,
+              link: `/${authorId}/${post.id}?comment=${replyInput.id}#reply-${replyRef.id}`,
+            });
+          } else {
+            await addComment({
+              commentRef,
+              authorId: uid,
+              text,
+            });
+            const doc = await getDoc(commentRef);
+            const data = { ...doc.data() } as Comment;
+            data["author"] = { ...profile } as Comment["author"] ;
+            setComments?.([data, ...(comments ?? [])]);
+            await sendAppNoti({
+              messageBody: text,
+              uid,
+              receiptId: post?.authorId.toString()!,
+              profile: currentUser!,
+              type: "commented_on_post",
+              url: `${authorId}/${post?.id}/#comment-${commentRef.id}`,
+              content: post.text,
+            });
+            await sendFCM({
+              recieptId: post?.authorId.toString()!,
+              message: `${
+                currentUser?.displayName ?? "Unknown User"
+              } ${getMessage("commented_on_post")}: "${text}" `,
+              icon: checkPhotoURL(
+                currentUser?.photoURL_cropped ?? currentUser?.photoURL
+              ),
+              // collapse_key: `post-${post.id}`,
+              tag: `CommentAuthor-${uid}-post-${post.id}-comment`,
+              link: `/${authorId}/${post?.id}/#comment-${commentRef.id}`,
+            });
+          }
           settext("");
           setaddLoading(false);
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.log(error);
-          alert(error.message);
+          alert(error);
+        } finally {
+          props.setreplyInput?.({
+            id: "",
+            text: "",
+            authorId: "",
+            authorName: "",
+          });
           setaddLoading(false);
         }
       }}
@@ -82,19 +197,25 @@ export default function CommentInput(props: {
         className={`rounded-full object-cover b-0 w-[45px] h-[45px] flex outline-[1px solid rgba(128,128,128,0.168627451)] bg-avatarBg`}
         width={200}
         height={200}
-        priority
+        loading="eager"
+        priority={false}
         alt={currentUser?.displayName ?? "Unknow User"}
         src={checkPhotoURL(
           profile ? (profile?.photoURL as string) : currentUser?.photoURL
         )}
       />
       <input
+        ref={replyInputRef}
         onChange={(e) => {
           settext(e.target.value);
         }}
         value={text}
         aria-label="Add Comment"
-        placeholder="Add comment"
+        placeholder={
+          replyInput && replyInput.authorName
+            ? `Replying to ${replyInput.authorName}`
+            : "Add Comment"
+        }
         type="text"
         disabled={addLoading}
       />

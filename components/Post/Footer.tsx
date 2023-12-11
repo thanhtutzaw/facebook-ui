@@ -39,6 +39,7 @@ import {
 import { addPost, likePost, unlikePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
+import { FirebaseError } from "firebase/app";
 
 function Footer(
   props: {
@@ -99,10 +100,12 @@ function Footer(
     }
     try {
       getLikeCount();
-    } catch (error: any) {
-      if (error.code === "quota-exceeded") {
-        alert("Firebase Quota Exceeded. Please try again later.");
-        throw error;
+    } catch (error: unknown) {
+      if(error instanceof FirebaseError){
+        if (error.code === "quota-exceeded") {
+          alert("Firebase Quota Exceeded. Please try again later.");
+          throw error;
+        }
       }
       console.error(error);
     }
@@ -185,7 +188,7 @@ function Footer(
               await sendFCM({
                 recieptId: authorId.toString(),
                 message: `${profile?.displayName ?? "Unknown User"} ${
-                  getMessage("post_reaction").message
+                  getMessage("post_reaction")
                 }`,
                 icon: checkPhotoURL(
                   currentUser?.photoURL_cropped ?? currentUser?.photoURL
@@ -383,25 +386,24 @@ function Footer(
                     if (uid === authorId) return;
 
                     try {
-                      const body: NotiApiRequest["body"] = {
+                      await sendFCM({
                         recieptId: authorId.toString(),
                         message: `${profile?.displayName ?? "Unknown User"} ${
-                          getMessage("share").message
+                          getMessage("share")
                         }`,
                         icon:
                           currentUser?.photoURL_cropped ??
                           currentUser?.photoURL!,
                         tag: `shares-${sharePost.refId}`,
                         link: url,
-                      };
-                      await sendFCM(body);
+                      });
                     } catch (error) {
                       console.log(error);
                     }
 
                     router.replace("/", undefined, { scroll: false });
-                  } catch (error: any) {
-                    alert(error.message);
+                  } catch (error: unknown) {
+                    alert(error);
                   }
                 }}
               >

@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
-import { ChangeEventHandler, FormEventHandler } from "react";
-import styles from "./index.module.scss";
+import { ChangeEventHandler, FormEventHandler, RefObject } from "react";
 import Info from "./Info";
 import NewAccount from "./NewAccount";
+import styles from "./index.module.scss";
 export default function Signup(props: {
   signupLoading: boolean;
   handleSubmit: FormEventHandler<HTMLFormElement>;
@@ -11,7 +11,6 @@ export default function Signup(props: {
   Account: any;
   setAccount: Function;
   emailLoading: boolean;
-  emailRef: any;
 }) {
   const {
     signupLoading,
@@ -21,7 +20,6 @@ export default function Signup(props: {
     toggleSignUp,
     Account,
     setAccount,
-    emailRef,
   } = props;
   return (
     <motion.form
@@ -44,7 +42,6 @@ export default function Signup(props: {
           handleChange={handleChange}
           Account={Account}
           setAccount={setAccount}
-          emailRef={emailRef}
         />
         <button
           onClick={(e) => {
@@ -65,7 +62,6 @@ export default function Signup(props: {
           handleChange={handleChange}
           Account={Account}
           setAccount={setAccount}
-          emailRef={emailRef}
         />
       </div>
     </motion.form>

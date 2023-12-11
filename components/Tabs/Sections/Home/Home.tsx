@@ -14,7 +14,7 @@ import Story from "./Story/Story";
 // type AppProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 // };
 export default function Home(props: { tabIndex: number }) {
-  const { tabIndex } = props;
+  const { ...rest} = props;
   const router = useRouter();
   const {
     profileSrc,
@@ -36,28 +36,37 @@ export default function Home(props: { tabIndex: number }) {
   });
   return (
     <div
-      aria-hidden={tabIndex === -1}
+      aria-hidden={rest.tabIndex === -1}
       ref={scrollRef}
       id="/"
+      {...rest}
       className={styles.home}
       onScroll={async (e) => {
+        console.log("scrolled");
         const currentScroll = e.currentTarget.scrollTop;
-        const header = headerContainerRef?.current;
-        if (!header) return;
+        const headerContainer = headerContainerRef?.current;
+        if (!headerContainer) return;
         if (active !== "/") return;
         const previousScroll = previousScrollRef.current;
         const scrollingDown = previousScroll < currentScroll;
         if (currentScroll >= 60) {
+          const hideHeader = () => {
+            headerContainer.setAttribute("data-hide", "true");
+            // headerContainer.style.transform = "translateY(-60px)";
+            // headerContainer.style.height = "60px";
+          };
+          const showHeader = () => {
+            headerContainer.setAttribute("data-hide", "false");
+            // headerContainer.style.transform = "translateY(0px)";
+            // headerContainer.style.height = "120px";
+          };
           previousScrollRef.current = currentScroll;
           if (scrollingDown) {
-            header.style.transform = "translateY(-60px)";
-            header.style.height = "60px";
+            hideHeader();
           } else if (previousScroll > currentScroll + 25) {
-            header.style.transform = "translateY(0px)";
-            header.style.height = "120px";
+            showHeader();
           } else {
-            header.style.transform = "translateY(0px)";
-            header.style.height = "120px";
+            showHeader();
           }
         }
       }}
@@ -121,7 +130,7 @@ export default function Home(props: { tabIndex: number }) {
           <FontAwesomeIcon color="#0070f3" icon={faPhotoFilm} />
         </button>
       </div>
-      <Newfeed tabIndex={tabIndex} />
+      <Newfeed tabIndex={rest.tabIndex} />
     </div>
   );
 }

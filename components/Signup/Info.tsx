@@ -1,19 +1,18 @@
-import { ChangeEventHandler, RefObject } from "react";
-import styles from "./index.module.scss";
+import { ChangeEventHandler } from "react";
 import { account } from "../../types/interfaces";
 import Spinner from "../Spinner";
+import styles from "./index.module.scss";
 export default function Info(props: {
   signupLoading: boolean;
   handleChange: ChangeEventHandler<HTMLInputElement>;
   Account: account;
   setAccount: Function;
-  emailRef: RefObject<HTMLInputElement>;
 }) {
-  const { signupLoading, handleChange, Account, setAccount, emailRef } = props;
+  const { signupLoading, handleChange, Account, setAccount } = props;
   return (
     <>
       <h2
-      className={`text-black
+        className={`text-black
         overflow-hidden
         overflow-ellipsis
         text-[1.4rem]
@@ -21,7 +20,9 @@ export default function Info(props: {
         text-center
         font-medium
         mb-2`}
-      >Account Information</h2>
+      >
+        Account Information
+      </h2>
       <input
         onChange={handleChange}
         onKeyDown={(e) => {
@@ -77,11 +78,7 @@ export default function Info(props: {
               : "var(--blue-origin)",
           }}
         >
-          {signupLoading ? (
-            <Spinner size={18}/>
-          ) : (
-            "Done"
-          )}
+          {signupLoading ? <Spinner size={18} /> : "Done"}
         </button>
       </div>
     </>

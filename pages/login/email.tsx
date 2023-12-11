@@ -40,7 +40,7 @@ export default function Email() {
         setloading(false);
       } else {
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       alert("Unexpected error occurred. Please try again later.");
       console.error(error);
     }

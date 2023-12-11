@@ -65,8 +65,8 @@ export default function Menu(props: {
                 try {
                   setLoading(true);
                   await addSavedPost(authorId, id);
-                } catch (error: any) {
-                  alert(error.message);
+                } catch (error: unknown) {
+                  alert(error);
                   setLoading(false);
                 } finally {
                   setLoading(false);

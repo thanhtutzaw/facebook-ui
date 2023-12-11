@@ -1,5 +1,5 @@
 import Spinner from "@/components/Spinner";
-import { useActive } from "@/hooks/useActiveTab";
+import { useActiveTab } from "@/hooks/useActiveTab";
 import { app } from "@/lib/firebase";
 import { signout } from "@/lib/signout";
 import {
@@ -18,7 +18,7 @@ interface MenuProps {
 }
 export default function Menu(props: MenuProps) {
   const { tabIndex } = props;
-  const { navigateTab } = useActive();
+  const { navigateTab } = useActiveTab();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   return (

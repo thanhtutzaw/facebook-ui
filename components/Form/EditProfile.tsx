@@ -23,7 +23,7 @@ export function EditProfileForm(props: {
   if (!editToggle)
     return (
       <motion.button
-        key={"false"}
+        key="false"
         onClick={toggleEdit}
         initial={{ opacity: 0 }}
         animate={{ opacity: !editToggle ? 1 : 0 }}
@@ -37,7 +37,7 @@ export function EditProfileForm(props: {
     );
   return (
     <motion.form
-      key={"true"}
+      key="true"
       initial={{
         opacity: 0,
       }}

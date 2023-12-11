@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 
 import Metatag from "@/components/Metatag";
+import { useActiveTab } from "@/hooks/useActiveTab";
 import useFriendRequest from "@/hooks/useFriendRequest";
 import useNprogress from "@/hooks/useNprogress";
 import { checkPhotoURL } from "@/lib/firestore/profile";
@@ -23,7 +24,6 @@ import { useEffect, useState } from "react";
 import { ImageLargeView } from "../components/Post/ImageLargeView";
 import { Welcome } from "../components/Welcome";
 import { PageProvider } from "../context/PageContext";
-import { useActive } from "../hooks/useActiveTab";
 import { app, getProfileByUID } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import "../styles/globals.css";
@@ -87,9 +87,6 @@ export default function App({
       setcurrentUser(user);
     });
   }, [auth]);
-  // const [currentProfile, setcurrentProfile] = useState<
-  //   account["profile"] | null
-  // >(null);
   useEffect(() => {
     const auth = getAuth(app);
     const unsubscribe = onIdTokenChanged(auth, async (user) => {
@@ -137,7 +134,7 @@ export default function App({
   const { friendReqCount, soundRef } = useFriendRequest(
     String(currentUser?.uid)
   );
-  const { active, setActive } = useActive();
+  const { active, setActive } = useActiveTab();
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -148,6 +145,7 @@ export default function App({
         },
       })
   );
+
   if (expired) return <Welcome expired={expired} />;
   return (
     <>

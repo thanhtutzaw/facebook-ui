@@ -88,20 +88,16 @@ const messaging = firebase.messaging();
 
 //     // self.registration.showNotification(title, notificationOptions);
 //     const promiseChain = self.registration.showNotification(title, notificationOptions).then(({ data }) => {
-//         console.log(data)
 //         console.log('push success onmessage');
 //     }).catch(() => {
-//         console.log('push fail');
 //     });
 //     event.waitUntil(promiseChain);
 // });
 // self.addEventListener('push', function (event) {
 //     // const data = event.data.json();
-//     // console.log(data)
 //     console.log({ self })
 //     const promiseChain = self.registration.showNotification(data.title, data.option).then((data) => {
 //         console.log('push success');
-//         console.log(data)
 //     }).catch(() => {
 //         console.log('push fail');
 //     });
@@ -115,7 +111,7 @@ messaging.onBackgroundMessage((payload) => {
      * @property {NotificationAction[]} [actions] An array of notification actions.
      * @property {string} [badge] A string that represents the badge to be displayed on the notification.
      * @property {string} [body] The body of the notification.
-     * @property {any} [data] Any data that you want to associate with the notification.
+     * @property {unknown} [data] Any data that you want to associate with the notification.
      * @property {NotificationDirection} [dir] The direction of the notification text.
      * @property {string} [icon] The icon to be displayed for the notification.
      * @property {string} [image] The image to be displayed for the notification.
@@ -129,7 +125,7 @@ messaging.onBackgroundMessage((payload) => {
      */
     const notificationOptions = {
         body: body ?? "Notifications from facebook .",
-        badge,
+        // badge,
         // tag: tag ?? "",
         // renotify: false,
 

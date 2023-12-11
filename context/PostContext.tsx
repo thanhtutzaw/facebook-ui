@@ -29,7 +29,7 @@ export type PostProps = {
   toggleMenu: string;
   settoggleMenu: Dispatch<SetStateAction<string>>;
 };
-export const PostContext = createContext<any | null>(null);
+export const PostContext = createContext<PostProps | null>(null);
 export default function PostProvider(props: PostProps) {
   return (
     <PostContext.Provider value={{ ...props }}>

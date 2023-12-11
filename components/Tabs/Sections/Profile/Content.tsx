@@ -14,6 +14,7 @@ import PostList from "../Home/PostList";
 import SortDate from "./SortDate";
 import s from "./index.module.scss";
 import Spinner from "@/components/Spinner";
+import { FirebaseError } from "firebase-admin";
 
 export function Content(props: {
   hasNextPage?: boolean;
@@ -79,7 +80,7 @@ export function Content(props: {
           aria-label="toggle select mode"
           aria-expanded={selectMode}
           onClick={(e) => {
-            setselectMode?.((prev: any) => !prev);
+            setselectMode?.((prev:boolean) => !prev);
             setToggleSort(false);
 
             if (!selectMode) {
@@ -129,7 +130,6 @@ export function Content(props: {
       ) : (
         <>
           <PostList
-            profile={profile!}
             deletePost={deletePost}
             preventNavigate={true}
             selectMode={selectMode!}

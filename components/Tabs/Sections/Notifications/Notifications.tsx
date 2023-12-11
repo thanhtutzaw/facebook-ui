@@ -30,6 +30,7 @@ function Notifications({ tabIndex }: { tabIndex: number }) {
     <div
       aria-hidden={tabIndex === -1}
       id="notifications"
+      tabIndex={tabIndex}
       onScroll={async (e) => {
         const target = e.currentTarget as HTMLElement;
         if (window.innerHeight + target.scrollTop + 1 >= target.scrollHeight) {

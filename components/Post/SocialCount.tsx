@@ -4,10 +4,10 @@ import { fetchLikedUsers } from "../../lib/firestore/post";
 import { LikedUsers } from "./LikedUsers";
 import { PostContext, PostProps } from "../../context/PostContext";
 import s from "./index.module.scss";
-import { Post } from "@/types/interfaces";
+import { Post, likes } from "@/types/interfaces";
 export function SocialCount(props: {
   post: Post;
-  Likes: any;
+  Likes: likes;
   setLikes: Function;
   likeCount: number;
 }) {
@@ -22,10 +22,8 @@ export function SocialCount(props: {
   const [togglereactionList, settogglereactionList] = useState(false);
   // useEffect(() => {
   //   console.log(togglereactionList);
-  //   const handle = (e: any) => {
-  //     console.log(e);
+  //   const handle = () => {
   //     if (togglereactionList && SocialUserDialogRef) {
-  //       console.log(e);
 
   //       if (e.target === SocialUserDialogRef.current) {
   //         settogglereactionList(false);

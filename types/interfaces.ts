@@ -1,8 +1,9 @@
-import { FieldValue, Timestamp } from "firebase/firestore";
-import { ReactNode, RefObject } from "react";
+import { NotiMessageTypes } from "@/lib/firestore/notifications";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { User } from "firebase/auth";
-import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
+import { FieldValue, Timestamp } from "firebase/firestore";
+import { ReactNode, RefObject } from "react";
 export const QueryKey = {
   noti: "notifications",
   myPost: "myPost",
@@ -39,6 +40,7 @@ export type account = {
   email: string;
   password: string;
   profile: {
+    
     firstName: string | "";
     lastName: string | "";
     bio: string | "";
@@ -46,23 +48,24 @@ export type account = {
     photoURL_cropped?: string | "";
   };
 };
-export type notiContentTypes =
-  | "post_reaction"
-  | "comment_reaction"
-  | "comment"
-  | "share"
-  | "acceptedFriend";
+// export type notiContentTypes =
+//   | "post_reaction"
+//   | "comment_reaction"
+//   | "commented_on_post"
+//   | "share"
+//   | "acceptedFriend";
 export type author = UserRecord | User | account["profile"] | null;
 
 export type Noti = {
-  hasRead?: boolean;
+  hasRead: boolean;
+  messageBody?: string;
   uid: string;
   message: string;
   userName: string;
   url: string;
   content?: string;
   id?: string | number;
-  type: notiContentTypes;
+  type: NotiMessageTypes;
   createdAt: timeStamp;
   photoURL: string;
 };
@@ -118,12 +121,20 @@ export interface Post {
   updatedAt: timeStamp;
 }
 export interface Comment {
+  recentRepliesLoading?:boolean;
+  recentReplies?: Comment[];
+  recipient?: {
+    id: string;
+    author?: { fullName?: string };
+  };
+  replies: Comment[];
   isLiked: boolean;
+  replyCount?: number;
   heartCount?: number;
-  like?: any;
   author?: author;
   authorId: string | number;
   id?: string | number;
+
   text: string;
   createdAt: timeStamp;
   updatedAt?: timeStamp | FieldValue;
@@ -155,7 +166,6 @@ export interface AppProps {
   uid?: string;
   active?: Tabs;
   setActive?: Function;
-  allUsers?: any;
   sortedPost?: Post[];
   setUnReadNotiCount?: Function;
   setsortedPost?: Function;

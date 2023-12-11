@@ -4,7 +4,6 @@ import {
   doc,
   getDoc,
   getDocs,
-  limit,
   orderBy,
   query,
   updateDoc,
@@ -25,7 +24,6 @@ import {
   getCollectionPath,
   getNewsFeed,
   getPath,
-  getPostWithMoreInfo,
   getProfileByUID,
   userToJSON,
 } from "../lib/firebase";
@@ -33,13 +31,12 @@ import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
 import { AppProps, account, friends } from "../types/interfaces";
 
 import SecondaryPage from "@/components/QueryPage";
-import { useActive } from "@/hooks/useActiveTab";
-import { fetchRecentPosts } from "@/lib/firestore/post";
+import { useActiveTab } from "@/hooks/useActiveTab";
+import { fetchMyPosts, fetchRecentPosts } from "@/lib/firestore/post";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import Spinner from "../components/Spinner";
 import { PageContext, PageProps } from "../context/PageContext";
-import { MYPOST_LIMIT } from "../lib/QUERY_LIMIT";
 export const getServerSideProps: GetServerSideProps<AppProps> = async (
   context
 ) => {
@@ -71,27 +68,18 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
         canAccept = relation.senderId !== token.uid && !isFriend;
         canUnBlock = relation.senderId === token.uid;
       }
-      let mypostQuery = query(
-        getPath("posts", { uid: String(userQuery) }),
-        where("visibility", "in", ["Public"]),
-        orderBy("createdAt", "desc"),
-        limit(MYPOST_LIMIT + 1)
-      );
-      if (isFriend) {
-        mypostQuery = query(
-          getPath("posts", { uid: String(userQuery) }),
-          where("visibility", "in", ["Friend", "Public"]),
-          orderBy("createdAt", "desc"),
-          limit(MYPOST_LIMIT + 1)
-        );
-      }
 
       if (user.exists() && !expired) {
         const profile = user?.data().profile as account["profile"];
-        const myPost = isBlocked
-          ? null
-          : await getPostWithMoreInfo(userQuery as string, mypostQuery);
+
+        const { myPost, hasMore } = await fetchMyPosts(
+          String(userQuery),
+          isFriend,
+          isBlocked,
+          token
+        );
         queryPageData = {
+          hasMore,
           profile,
           myPost,
           friendStatus: {
@@ -161,7 +149,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
       },
     };
   } catch (error: any) {
-    // expired = !error.code
+    // if (error instanceof FirebaseError) {
     expired =
       error.code === "auth/argument-error" ||
       error.code === "auth/id-token-expired";
@@ -174,6 +162,8 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
       console.log(AuthErrorCodes.QUOTA_EXCEEDED);
       console.log("Resource Error : " + error);
     }
+    // }
+
     // const isTokenError = error.code === "resource-exhausted";
     // context.res.writeHead(302, { Location: "/login" });
     // context.res.end();
@@ -221,21 +211,33 @@ export default function Home({
     PageContext
   ) as PageProps;
   const [notiPermission, setnotiPermission] = useState(false);
-
+  // onAuthStateChanged(auth, (user) => {
+  //   if (!user) {
+  //     router.push("/login");
+  //     console.log("redirected to login outside useEffect");
+  //   } else {
+  //     if (!expired) return;
+  //     router.push("/");
+  //     console.log("redirected to / outside useEffect");
+  //   }
+  // });
   useEffect(() => {
     const auth = getAuth(app);
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) {
         router.push("/login");
+        console.log("redirected to login ");
       } else {
         if (!expired) return;
         router.push("/");
+        console.log("redirected to / ");
       }
     });
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
   const [limitedPosts, setlimitedPosts] = useState(posts ?? []);
+  console.log("running in index.tsx");
   useEffect(() => {
     if (posts && !newsFeedData) {
       setnewsFeedData?.(posts);
@@ -354,7 +356,7 @@ export default function Home({
     setfriends?.(acceptedFriends);
   }, [acceptedFriends, setfriends]);
 
-  const { active: activeTab } = useActive();
+  const { active: activeTab } = useActiveTab();
   const [resourceError, setresourceError] = useState(postError);
   if (resourceError !== "") {
     return (

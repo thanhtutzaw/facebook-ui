@@ -27,7 +27,7 @@ export default function Metatag({
       <meta property="og:url" content={fullurl} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      <meta property="og:image" content="/logo.svg" />
+      <meta property="og:image" content="/logoLarge.svg" />
 
       {/* <!-- Twitter --> */}
       <meta property="twitter:card" content="summary_large_image" />
@@ -35,7 +35,7 @@ export default function Metatag({
   <meta property="twitter:url" content={fullurl} />
       <meta property="twitter:title" content={title} />
       <meta property="twitter:description" content={description} />
-      <meta property="twitter:image" content="/logo.svg" />
+      <meta property="twitter:image" content="/logoLarge.svg" />
     </Head>
   );
 }

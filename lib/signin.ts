@@ -12,9 +12,9 @@ export async function signin(email: string, password: string) {
     // const user = userCredential.user;
     // return null;
     return { userCredential, signinError: null };
-  } catch (signinError: any) {
+  } catch (error: unknown) {
     // const errorMessage = error.message;
-    console.error({ signinError });
-    return { userCredential: null, signinError: signinError as FirebaseError };
+    console.error({ error });
+    return { userCredential: null, signinError: error as FirebaseError };
   }
 }

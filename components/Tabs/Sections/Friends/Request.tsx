@@ -2,19 +2,18 @@ import { AppContext } from "@/context/AppContext";
 import { PageContext, PageProps } from "@/context/PageContext";
 import useQueryFn from "@/hooks/useQueryFn";
 import { acceptFriends, rejectFriendRequest } from "@/lib/firestore/friends";
-import { AppProps } from "@/types/interfaces";
+import { AppProps, friends } from "@/types/interfaces";
 import confirm from "public/assets/confirm-beep.mp3";
 import { useContext, useState } from "react";
 import useSound from "use-sound";
 import Card from "./Card";
 import s from "./Friends.module.scss";
 interface RequestProps {
-  f: any;
-  setrequestCount?: Function;
+  f: friends;
   tabIndex: number;
 }
 export function Request(props: RequestProps) {
-  const { f, tabIndex, setrequestCount } = props;
+  const { f, tabIndex } = props;
   const { currentUser } = useContext(PageContext) as PageProps;
   const { queryFn } = useQueryFn();
   const [accept, setaccept] = useState(false);

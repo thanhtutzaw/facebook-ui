@@ -66,12 +66,12 @@ function PhotoLayout(props: {
           style={{ marginBottom: "initial" }}
         >
           {files &&
-            files.map((file: any, fileIndex: number) => (
+            files.map((file:any, fileIndex: number) => (
               <div
                 onClick={() => {
                   if (file.type === "video/mp4") return;
                   setsingleImageModal?.({
-                    src: !file.url ? URL.createObjectURL(file) : file.url,
+                    src: file.url ? file.url : URL.createObjectURL(file),
                     name: file.name,
                   });
                 }}
@@ -89,7 +89,7 @@ function PhotoLayout(props: {
                     height={394}
                     alt={file.name}
                     src={
-                      !file.url ? URL.createObjectURL(file) : file.url
+                      file.url ? file.url : URL.createObjectURL(file)
                       // Array.isArray(files) &&
                       // files.every((file) => file instanceof File)
                       //   ? URL.createObjectURL(file)

@@ -83,17 +83,17 @@ export function LikedUsers({
       {!loading ? (
         Likes?.length > 0 && (
           <ul>
-            {Likes.map((l) => (
-              <Link href={l.uid.toString()} key={l.uid.toString()}>
+            {Likes.map((like) => (
+              <Link href={like.uid.toString()} key={like.uid.toString()}>
                 <AuthorInfo
                   layout="row"
                   navigateToProfile={() => {
-                    router.push(l.uid.toString());
+                    router.push(like.uid.toString());
                   }}
-                  profile={l.author as account["profile"]}
+                  profile={like.author as account["profile"]}
                 >
                   <p>
-                    {JSONTimestampToDate(l.createdAt).toLocaleDateString(
+                    {JSONTimestampToDate(like.createdAt).toLocaleDateString(
                       "en-US",
                       {
                         year: "2-digit",

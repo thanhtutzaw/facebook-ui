@@ -22,7 +22,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useActive } from "./useActiveTab";
+import { useActiveTab } from "./useActiveTab";
 function useProfile() {
   const {
     profileSrc,
@@ -32,7 +32,7 @@ function useProfile() {
     selectMode,
     setselectMode: setactive,
   } = useContext(AppContext) as AppProps;
-  const { active: activeTab } = useActive();
+  const { active: activeTab } = useActiveTab();
   const router = useRouter();
   const infoRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLHeadElement>(null);

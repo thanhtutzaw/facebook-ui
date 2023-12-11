@@ -1,7 +1,7 @@
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { DevelopedByThanHtutZaw } from "./DevelopedByThanHtutZaw";
 
 export function Welcome({
@@ -16,11 +16,10 @@ export function Welcome({
   const router = useRouter();
   useEffect(() => {
     if (expired) {
-      router.push("/");
+      router.push(router.asPath);
       console.log("expired and pushed(in Welcome.tsx)");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expired]);
+  }, [expired, router.asPath]);
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
     if (postError) {

@@ -6,7 +6,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
-import { memo, useContext, useEffect, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { app, getCollectionPath } from "../../lib/firebase";
 import TextInput from "../Form/Input/TextInput";
@@ -62,18 +62,26 @@ function Content({ post }: { post: Post }) {
       : text;
 
   const production = process.env.NODE_ENV == "production";
-  const navigateToProfile = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    const { user, post } = router.query;
-    const isViewingAuthorProfile = authorId === user || (user && post);
-    if (isViewingAuthorProfile || preventNavigate) return;
-    if (router.pathname === "/") {
-      router.push({ query: { user: String(authorId) } }, String(authorId));
-    } else {
-      router.push(`/${String(authorId)}`);
-    }
-  };
+  const navigateToProfile = useCallback((e: React.MouseEvent) => {
+  e.stopPropagation();
+  e.preventDefault();
+  const {
+    user,
+    post
+  } = router.query;
+  const isViewingAuthorProfile = authorId === user || user && post;
+  if (isViewingAuthorProfile || preventNavigate) return;
+
+  if (router.pathname === "/") {
+    router.push({
+      query: {
+        user: String(authorId)
+      }
+    }, String(authorId));
+  } else {
+    router.push(`/${String(authorId)}`);
+  }
+},[authorId, preventNavigate, router]);
   const [authUser, setauthUser] = useState<User | null>(null);
   useEffect(() => {
     const auth = getAuth(app);

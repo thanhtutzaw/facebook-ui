@@ -20,7 +20,7 @@ import {
   doc,
   getDoc,
   getDocs,
-  onSnapshot
+  onSnapshot,
 } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import nookies from "nookies";
@@ -37,14 +37,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
     const { uid } = token;
     const currentUserProfile = await getProfileByUID(uid);
-    const savedPostsQuery = DescQuery(
-      getPath("savedPost", { uid })
-    );
+    const savedPostsQuery = DescQuery(getPath("savedPost", { uid }));
     const saved = await getDocs(savedPostsQuery);
     const data = saved.docs.map((doc) => doc.data()) as savedPostTypes[];
     const posts = await Promise.all(
-      data.map(async (s: any) => {
-        const { authorId, postId } = s;
+      data.map(async (savedPost) => {
+        const { authorId, postId } = savedPost;
         const postDoc = doc(
           db,
           `${getCollectionPath.posts({ uid: authorId })}/${postId}`
@@ -127,7 +125,7 @@ export default function Page(props: {
         }}
         className={s.container}
       >
-        <PostList profile={profile} posts={limitedPosts} />
+        <PostList posts={limitedPosts} />
       </div>
     </>
   );

@@ -60,7 +60,6 @@ export function NotiItem({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              // router.push(uid ?? "");
               router.push({ query: { user: uid } }, String(uid));
             }}
             className={s.userName}

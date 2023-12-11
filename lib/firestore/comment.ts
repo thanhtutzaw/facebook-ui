@@ -1,15 +1,15 @@
 import {
-  CollectionReference,
   DocumentData,
   DocumentReference,
+  DocumentSnapshot,
   Query,
+  QueryDocumentSnapshot,
   Timestamp,
   collection,
   doc,
   getCountFromServer,
   getDoc,
   getDocs,
-  increment,
   serverTimestamp,
   updateDoc,
   writeBatch,
@@ -21,38 +21,82 @@ import {
   getCollectionPath,
   getProfileByUID,
 } from "../firebase";
-export async function fetchComments(query: Query, post: Post, uid: string) {
-  const commentDoc = await getDocs(query);
-  const commentJSON = await Promise.all(
-    commentDoc.docs.map(async (doc) => await commentToJSON(doc))
-  );
-  const comments = await Promise.all(
-    commentJSON.map(async (comment) => {
-      if (comment && comment.authorId) {
-        const author = await getProfileByUID(comment.authorId.toString());
-        const heartsRef = collection(
-          db,
-          `${getCollectionPath.comments({
-            authorId: String(post.authorId),
-            postId: String(post.id),
-          })}/${comment.id}/hearts`
-        );
-        const heartCount = (await getCountFromServer(heartsRef)).data().count;
-        const likedByUserRef = doc(
-          db,
-          `${getCollectionPath.comments({
-            authorId: String(post.authorId),
-            postId: String(post.id),
-          })}/${comment.id}/hearts/${uid}`
-        );
-        const isUserLikeThisPost = (await getDoc(likedByUserRef)).exists();
-        return { ...comment, author, heartCount, isLiked: isUserLikeThisPost };
-      } else {
-        return { ...comment, author: null };
+export async function fetchSingleComment(
+  commentDoc:
+    | DocumentSnapshot<DocumentData>
+    | QueryDocumentSnapshot<DocumentData>,
+  post: Partial<Post>,
+  uid: string
+) {
+  const comment = await commentToJSON(commentDoc);
+  if (commentDoc.exists()) {
+    if (comment && comment.authorId) {
+      const author = await getProfileByUID(String(comment.authorId));
+      const recipient = {
+        ...comment.recipient,
+        author: comment.recipient?.id
+          ? await getProfileByUID(String(comment.recipient?.id))
+          : null,
+      } as Comment["recipient"];
+      const heartsRef = collection(
+        db,
+        `${getCollectionPath.comments({
+          authorId: String(post.authorId),
+          postId: String(post.id),
+        })}/${comment.id}/hearts`
+      );
+
+      const heartCount = (await getCountFromServer(heartsRef)).data().count;
+      const replyRef = collection(
+        db,
+        getCollectionPath.commentReplies({
+          authorId: String(post.authorId),
+          postId: String(post.id),
+          commentId: String(comment.id),
+        })
+      );
+      const replyCount = (await getCountFromServer(replyRef)).data().count;
+      const likedByUserRef = doc(
+        db,
+        `${getCollectionPath.comments({
+          authorId: String(post.authorId),
+          postId: String(post.id),
+        })}/${comment.id}/hearts/${uid}`
+      );
+      const isUserLikeThisPost = (await getDoc(likedByUserRef)).exists();
+      // console.log(comment.recipient && comment.recipient.id === "");
+      if (comment.recipient) {
+        return {
+          ...comment,
+          author,
+          recipient,
+          heartCount,
+          replyCount,
+          isLiked: isUserLikeThisPost,
+        };
       }
-    })
-  );
-  return comments as Comment[];
+      return {
+        ...comment,
+        author,
+        heartCount,
+        replyCount,
+        isLiked: isUserLikeThisPost,
+      };
+    } else {
+      return { ...comment, author: null };
+    }
+  }
+}
+
+export async function fetchComments(
+  post: Partial<Post>,
+  uid: string,
+  query: Query
+) {
+  const commentDoc = await getDocs(query);
+  return (await Promise.all(
+    commentDoc.docs.map(async (doc) => await fetchSingleComment(doc, post, uid))
+  )) as Comment[];
 }
 export async function loveComment({
   heartRef,
@@ -76,27 +120,40 @@ export async function unLoveComment({
 }
 export async function addComment({
   commentRef,
-  uid,
+  authorId,
   text,
+  recipient = {
+    id: "",
+  },
 }: {
   commentRef: DocumentReference<DocumentData>;
-  uid: string;
+  authorId: string;
   text: string;
+  recipient?: {
+    id: string;
+  };
 }) {
   const batch = writeBatch(db);
-  const data = {
+  const commentData = {
     id: commentRef.id,
-    authorId: uid,
+    authorId,
     text,
     createdAt: serverTimestamp(),
   };
-  batch.set(commentRef, data);
-
+  const withRecipient = {
+    ...commentData,
+    recipient,
+  };
+  batch.set(
+    commentRef,
+    recipient && recipient.id !== "" ? withRecipient : commentData
+  );
   await batch.commit();
-  return data;
 }
-export async function updateComment(target: string, { ...comment }: Comment) {
-  const commentRef = doc(db, target);
+export async function updateComment(
+  commentRef: DocumentReference<DocumentData>,
+  { ...comment }: Comment
+) {
   const data = { ...comment };
   const { author, ...rest } = data;
   const newComment = {
@@ -120,8 +177,5 @@ export async function deleteComment(
   const batch = writeBatch(db);
 
   batch.delete(commentRef);
-  batch.update(postRef, {
-    commentCount: increment(-1),
-  });
   await batch.commit();
 }

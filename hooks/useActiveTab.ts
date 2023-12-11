@@ -1,16 +1,20 @@
 import { Tabs } from "@/types/interfaces";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 /**
  *
  * A hook that switch Tabs and update Active state by document's visibility
  */
-export function useActive() {
-  const [active, setActive] = useState<Tabs>("/");
-  function navigateTab(targetTab: Tabs) {
-    setActive(targetTab);
-    const target = document.getElementById(targetTab);
-    target?.scrollIntoView();
-  }
+export function useActiveTab() {
+  const [active, setActive] = useState("");
+  const navigateTab = useCallback(
+    (targetTab: Tabs) => {
+      setActive(targetTab);
+      const target = document.getElementById(targetTab);
+      target?.scrollIntoView();
+    },
+    []
+  );
+  
   useEffect(() => {
     const tabs = document.querySelectorAll("#tabs > div");
     let options = {
@@ -19,9 +23,9 @@ export function useActive() {
       threshold: 1,
     };
     function handleObserver(entries: IntersectionObserverEntry[]) {
-      entries.map((entry: any) => {
+      entries.map((entry) => {
         if (entry.isIntersecting) {
-          const targetID = entry.target.id;
+          const targetID = entry.target.id as Tabs;
           setActive(targetID);
         }
       });
@@ -38,5 +42,5 @@ export function useActive() {
     };
   }, [active]);
 
-  return { active, setActive, navigateTab };
+  return { active  : active as Tabs , setActive, navigateTab };
 }

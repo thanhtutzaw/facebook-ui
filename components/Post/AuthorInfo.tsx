@@ -12,16 +12,19 @@ import {
   CSSProperties,
   MouseEventHandler,
   ReactNode,
-  RefObject
+  RefObject,
+  memo,
 } from "react";
 import { JSONTimestampToDate } from "../../lib/firebase";
-import { Comment, Post, account } from "../../types/interfaces";
-import CommentAction from "../Comment/Action";
+import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
 type layoutTypes = "row" | "column";
 
-export default function AuthorInfo(props: {
-  comments?: Comment[];
+function AuthorInfo(props: {
+  nested?: boolean;
+  setisDropDownOpenInNestedComment?: Function;
+  size?: number;
+  parentId?: string;
   setComments?: Function;
   menuRef?: RefObject<HTMLDivElement>;
   toggleCommentMenu?: string;
@@ -32,42 +35,62 @@ export default function AuthorInfo(props: {
   isAdmin?: boolean;
   commentRef?: DocumentReference<DocumentData>;
   postRef?: DocumentReference<DocumentData>;
-  comment?: Comment;
+  comment?: boolean;
   style?: CSSProperties;
   children?: ReactNode;
   layout?: layoutTypes;
   post?: Post;
 }) {
   const {
-    comments,
-    setComments,
-    menuRef,
-    toggleCommentMenu,
-    settoggleCommentMenu,
-    handleEditComment,
+    // parentId,
+    // setisDropDownOpenInNestedComment,
+    size,
+    // setComments,
+    // menuRef,
+    // toggleCommentMenu,
+    // settoggleCommentMenu,
+    // handleEditComment,
     post,
     layout,
     profile,
     style,
-    postRef,
-    commentRef,
-    isAdmin,
+    // postRef,
+    // commentRef,
+    // isAdmin,
     comment,
     children,
+    // nested,
     navigateToProfile,
   } = props;
   const router = useRouter();
+
   if (post) {
     const { author, createdAt, visibility } = post;
     const profile = author as account["profile"];
+    // function navigateToProfile() {
+    //   if (router.pathname === "/") {
+    //     router.push(
+    //       { query: { user: String(post?.authorId) } },
+    //       String(post?.authorId)
+    //     );
+    //   } else {
+    //     router.push(`/${String(post?.authorId)}`);
+    //   }
+    // }
+    const textEnd = post?.sharePost?.id && <>&nbsp; shared a Post</>;
     return (
       <div className={styles.header}>
-        <Author
+        <User
+          size={size!}
           navigateToProfile={navigateToProfile}
           profile={profile}
-          post={post}
-          comment={comment!}
         >
+          <UserName
+            hasChildren={true}
+            profile={profile}
+            textEnd={textEnd}
+            navigateToProfile={navigateToProfile}
+          />
           <div className={styles.moreInfo}>
             {typeof createdAt !== "number" && (
               <p className={styles.date} suppressHydrationWarning>
@@ -94,87 +117,66 @@ export default function AuthorInfo(props: {
               </span>
             )}
           </div>
-        </Author>
+        </User>
         {children}
       </div>
     );
   }
   if (comment) {
-    const { author, authorId } = comment;
-    const profile = author as account["profile"];
+    // const isRepliedBySameAuthor =
+    //   comment && comment.authorId !== comment.recipient?.id;
     return (
-      <div style={style} className={`relative ${styles.header}`}>
-        <Author
-          comment={comment!}
-          navigateToProfile={() => {
-            router.push(`/${String(authorId)}`);
-          }}
-          profile={profile}
-        >
-          {children}
-        </Author>
-        {isAdmin && (
-          <CommentAction
-            comments={comments!}
-            setComments={setComments!}
-            menuRef={menuRef!}
-            toggleCommentMenu={toggleCommentMenu!}
-            settoggleCommentMenu={settoggleCommentMenu!}
-            comment={comment}
-            handleEditComment={handleEditComment!}
-            postRef={postRef!}
-            commentRef={commentRef!}
-          />
-        )}
+      <div style={style} className={`relative ${styles.header} `}>
+        {children}
       </div>
     );
   }
   return (
-    <div style={style} className={styles.header}>
-      <Author
+    <div style={style} className={` ${styles.header} `}>
+      <User
+        size={size!}
         layout={layout}
         profile={profile}
-        comment={comment!}
         navigateToProfile={navigateToProfile}
       >
-        {children}
-      </Author>
-      {/* {isAdmin && (
-        <CommentAction
-          comment={comment!}
-          handleEditComment={handleEditComment!}
-          postRef={postRef!}
-          commentRef={commentRef!}
+        <UserName
+          hasChildren={!!children}
+          profile={profile!}
+          navigateToProfile={navigateToProfile}
         />
-      )} */}
+        {children}
+      </User>
     </div>
   );
 }
-function Author(props: {
-  navigateToProfile?: MouseEventHandler<HTMLImageElement>;
+
+function User(props: {
+  navigateToProfile?: MouseEventHandler<HTMLSpanElement>;
   profile?: account["profile"];
-  post?: Post;
   layout?: layoutTypes;
-  comment: Comment;
   children?: ReactNode;
+  size: number;
 }) {
   const {
+    size,
     layout = "column",
     navigateToProfile,
     profile,
-    post,
-    comment,
     children,
   } = props;
-  const router = useRouter();
+
   return (
     <div
-      style={{ userSelect: comment ? "initial" : "none" }}
-      className={styles.authorInfo}
+      // style={{ userSelect: comment ? "initial" : "none" }}
+      className={`${styles.authorInfo}`}
+      // className={`${comment ? "!bg-transparent" : ""} ${styles.authorInfo}`}
     >
-      <Avatar navigateToProfile={navigateToProfile} profile={profile} />
+      <UserAvatarPicture
+        size={size}
+        navigateToProfile={navigateToProfile}
+        profile={profile}
+      />
       <div
-        // className={styles.subInfo}
         style={{
           display: "flex",
           margin: " auto 0",
@@ -184,76 +186,68 @@ function Author(props: {
           gap: "2px",
         }}
       >
-        <AuthorName />
         {children}
       </div>
     </div>
   );
-
-  function AuthorName() {
-    return (
-      <p
-        style={{
-          flex: "1",
-          flexWrap: "wrap",
-          userSelect: "none",
-          marginBottom: children ? "2px" : "initial",
-        }}
-        className={styles.name}
-      >
-        <span
-          style={{
-            color: comment ? "rgb(46 46 46)" : "initial",
-            fontSize: !children ? "18px" : "inherit",
-            fontWeight: children ? "500" : "initial",
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (router.pathname === "/") {
-              router.push(
-                { query: { user: String(post?.authorId) } },
-                String(post?.authorId)
-              );
-            } else {
-              router.push(`/${String(post?.authorId)}`);
-            }
-          }}
-        >
-          {/* {post?.authorId ?? "Unknown"} */}
-          {getFullName(profile)}
-          {/* {profile?.firstName ?? post?.authorId ?? comment?.authorId}{" "}
-        {profile?.lastName ?? ""} */}
-        </span>
-
-        {post?.sharePost?.id && <>&nbsp; shared a Post</>}
-      </p>
-    );
-  }
 }
-
-function Avatar({
+function UserName(props: {
+  profile: account["profile"];
+  navigateToProfile?: MouseEventHandler<HTMLSpanElement>;
+  textEnd?: ReactNode;
+  hasChildren: boolean;
+  comment?: boolean;
+}) {
+  const {
+    hasChildren: children,
+    profile,
+    textEnd,
+    navigateToProfile,
+    comment,
+  } = props;
+  return (
+    <p
+      style={{
+        flex: "1",
+        flexWrap: "wrap",
+        userSelect: "none",
+        marginBottom: children ? "2px" : "initial",
+      }}
+      className={styles.name}
+    >
+      <span
+        style={{
+          color: comment ? "rgb(46 46 46)" : "initial",
+          fontSize: !children ? "18px" : "inherit",
+          fontWeight: children ? "500" : "initial",
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          navigateToProfile?.(e);
+        }}
+      >
+        {getFullName(profile)}
+      </span>
+      {textEnd}
+    </p>
+  );
+}
+function UserAvatarPicture({
   navigateToProfile,
   profile,
+  size = 45,
 }: {
   navigateToProfile?: MouseEventHandler<HTMLImageElement>;
   profile?: account["profile"];
+  size: number;
 }) {
   const profilePicture = checkPhotoURL(profile?.photoURL);
   return (
     <Image
+      priority={false}
       loading="lazy"
       onClick={navigateToProfile}
-      priority={false}
-      className={`
-      w-[45px]
-      h-[45px]
-    rounded-full
-    object-cover
-    b-0
-    m-[initial]
-    outline-[1px solid rgba(128,128,128,0.168627451)]
-    bg-avatarBg 
-      `}
+      className={`w-[${size}px] h-[${size}px] rounded-full object-cover b-0 m-[initial] outline-[1px solid rgba(128,128,128,0.168627451)] bg-avatarBg`}
       alt={`${profile?.firstName ?? "Unknown User"} ${profile?.lastName ?? ""}`}
       width={200}
       height={200}
@@ -264,3 +258,6 @@ function Avatar({
     />
   );
 }
+
+export default memo(AuthorInfo);
+export { User, UserName };

@@ -1,50 +1,51 @@
-import { useEffect, useRef, useState } from "react";
-import { Post } from "../../types/interfaces";
+import { CommentProps } from "@/pages/[user]/[post]";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import Spinner from "../Spinner";
-import CommentItem from "./CommentItem";
+import { CommentItemProps } from "./CommentItem";
 import s from "./index.module.scss";
 
-export default function Comment(props: {
-  setComments: Function;
-  hasMore: boolean;
-  commentEnd?: boolean;
-  commentLoading?: boolean;
-  uid: string;
-  comments: Post["comments"] | [];
-  post: Post;
-}) {
-  const { setComments, hasMore, commentEnd, post, comments, uid } = props;
-
-  const [client, setclient] = useState(false);
+export default function Comment(
+  props: Partial<CommentProps> & {
+    children?: JSX.Element[];
+    item?: ReactElement;
+  }
+) {
+  const { parentId, nested = false, hasMore, commentEnd, comments } = props;
+  const clientRef = useRef(false);
+  const client = clientRef.current;
 
   const [editToggle, seteditToggle] = useState("");
   useEffect(() => {
-    setclient(true);
+    const updateClient = () => {
+      clientRef && (clientRef.current = true);
+    };
+    updateClient();
   }, []);
   const [toggleCommentMenu, settoggleCommentMenu] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
   if (comments?.length === 0) return <></>;
+  const childProps: Partial<CommentItemProps> = {
+    client,
+    editToggle,
+    seteditToggle,
+    toggleCommentMenu,
+    settoggleCommentMenu,
+    menuRef,
+    parentId,
+    nested,
+  };
   return (
     <>
-      <ul className={s.container}>
-        {comments?.map((comment) => (
-          <CommentItem
-            menuRef={menuRef}
-            toggleCommentMenu={toggleCommentMenu}
-            settoggleCommentMenu={settoggleCommentMenu}
-            post={post}
-            editToggle={editToggle}
-            seteditToggle={seteditToggle}
-            client={client}
-            uid={uid}
-            key={comment.id}
-            comment={comment}
-            comments={comments}
-            setComments={setComments}
-          />
-        ))}
+      <ul className={`${s.container}`}>
+        {React.Children.map(props.children, (child) => {
+          if (React.isValidElement(child)) {
+            return React.cloneElement(child, childProps);
+          }
+        })}
       </ul>
-      {!hasMore && !commentEnd ? null : hasMore && !commentEnd && <Spinner />}
+      {!hasMore && !commentEnd
+        ? null
+        : hasMore && !commentEnd && comments && <Spinner />}
     </>
   );
 }

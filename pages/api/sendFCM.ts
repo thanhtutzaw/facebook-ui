@@ -2,7 +2,6 @@ import admin from "firebase-admin";
 import { MulticastMessage } from "firebase-admin/lib/messaging/messaging-api";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getFCMToken } from "../../lib/firebaseAdmin";
-import { deleteToken } from "firebase/messaging";
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -17,11 +16,13 @@ export interface NotiApiRequest extends NextApiRequest {
     title?: string;
     recieptId: string | number;
     message?: string;
+    messageBody?: string;
     icon?: string;
     tag?: string;
     badge?: string;
     link?: string;
     actionPayload?: string;
+    collapse_key?: string;
     actions?: string;
     requireInteraction?: boolean;
   };
@@ -33,6 +34,7 @@ export default async function handler(
   const {
     title,
     recieptId,
+    messageBody,
     message,
     icon,
     tag,
@@ -41,52 +43,35 @@ export default async function handler(
     actionPayload,
     actions,
     requireInteraction,
+    collapse_key,
   } = req.body;
-
   try {
     const registrationTokens = await getFCMToken(String(recieptId));
+    console.log({ registrationTokens });
     if (registrationTokens) {
       try {
-        const messageNoti = {
+        // const messageNoti: MulticastMessage = {
+        const messageNoti: MulticastMessage = {
+          //           collapseKey on Android
+          // apns-collapse-id on Apple
+          topic: collapse_key ?? "",
+          // collapse_key in legacy protocols (all platforms)
+          collapse_key: collapse_key ?? "",
           tokens: registrationTokens,
           notification: {
             title: title ?? "Facebook",
-            body: message,
-
-            // badge,
-            // icon,
-            // tag,
-            // actionPayload: actionPayload ?? JSON.stringify([]),
-            // icon,
-            // badge,
-            // tag: tag ?? "",
-            // click_action: link ?? "/",
-            // actionPayload: actionPayload ?? JSON.stringify([]),
-            // actions: actions ?? JSON.stringify([]),
-            // action: actions ?? JSON.stringify([]),
+            body: messageBody
+              ? `${message} : ${messageBody}`
+              : message ?? "New Notification Recieved!",
           },
-          // data: {
-          //   title: title ?? "Facebook",
-          //   body: message,
-          //   icon,
-          //   badge,
-          //   tag: tag ?? "",
-          //   click_action: link ?? "/",
-          //   actionPayload: actionPayload ?? JSON.stringify([]),
-          //   actions: actions ?? JSON.stringify([]),
-          // },
           webpush: {
             headers: {
               Urgency: "high",
-              image: icon,
+              image: icon ?? "",
             },
             notification: {
-              // title: title ?? "Facebook",
-              // body: message,
-              requireInteraction: requireInteraction
-                ? requireInteraction
-                : false,
-              badge,
+              requireInteraction: requireInteraction ?? false,
+              badge: badge ?? "./badge.svg",
               icon,
               actions: typeof actions === "string" ? JSON.parse(actions) : [],
               data: {
@@ -99,15 +84,27 @@ export default async function handler(
               renotify: false,
               // actions: actions ?? JSON.stringify([]),
             },
-            fcm_options: {
+            fcmOptions: {
               link,
             },
+            // fcm_options: {
+            //   link,
+            // },
           },
           android: {
+            collapseKey: collapse_key ?? "",
             ttl: 3600000,
             notification: {
               bodyLocKey: "STOCK_NOTIFICATION_BODY",
               bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+            },
+          },
+          apns: {
+            
+            payload: {
+              aps: {
+                threadId: collapse_key ?? "",
+              },
             },
           },
         } as MulticastMessage;
@@ -116,11 +113,15 @@ export default async function handler(
           .messaging()
           .sendEachForMulticast(messageNoti);
         console.log("Successfully sent message:", response);
-        // console.log(response.responses.filter((token) => token.error));
+        console.log(
+          "Error",
+          response.responses.forEach((r) => r.error)
+        );
       } catch (error) {
         console.log(error);
+        res.status(500).end();
+        return;
       }
-      // console.log({ registrationTokens });
       res.status(200).json(req.body);
     } else {
       res.status(500).end();

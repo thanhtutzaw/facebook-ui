@@ -38,8 +38,8 @@ export async function addSavedPost(authorId: string, postId: string) {
     } else {
       await setDoc(Ref, data);
     }
-  } catch (error: any) {
-    alert("Adding Saved Post Failed !" + error.message);
+  } catch (error: unknown) {
+    alert("Adding Saved Post Failed !" + error);
     throw Error;
   }
 }
@@ -54,8 +54,8 @@ export async function unSavePost(ref: DocumentReference<DocumentData>) {
     // await updateDoc(doc(db, `/users/${uid}`), {
     //   savedPosts: newData,
     // });
-  } catch (error: any) {
-    alert("Unsave Post Failed !" + error.message);
+  } catch (error: unknown) {
+    alert("Unsave Post Failed !" + error);
     throw Error;
   }
 }

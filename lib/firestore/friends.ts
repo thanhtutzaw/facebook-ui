@@ -117,7 +117,7 @@ export async function acceptFriends(
     alert("Already Accepted! in funciton");
     throw new Error("Already Accepted!");
   }
-  
+
   const friendData = {
     id: f.id,
     status: "friend",
@@ -136,9 +136,9 @@ export async function acceptFriends(
     if (!f.senderId) return;
     await sendFCM({
       recieptId: f.senderId,
-      message: `${currentUser?.displayName ?? "Unknown User"} ${
-        getMessage("acceptedFriend").message
-      }`,
+      message: `${currentUser?.displayName ?? "Unknown User"} ${getMessage(
+        "acceptedFriend"
+      )}`,
       icon: checkPhotoURL(
         currentUser?.photoURL_cropped ?? currentUser?.photoURL
       ),

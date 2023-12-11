@@ -38,6 +38,7 @@ function Profile({ tabIndex }: { tabIndex: number }) {
     <div
       aria-hidden={tabIndex === -1}
       id="profile"
+      tabIndex={tabIndex}
       onScroll={(e) => {
         const header = headerRef?.current!;
         const headerRect = header.getBoundingClientRect();

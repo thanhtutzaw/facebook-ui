@@ -25,12 +25,15 @@ import {
   postToJSON,
 } from "@/lib/firebase";
 import { verifyIdToken } from "@/lib/firebaseAdmin";
-import { fetchComments } from "@/lib/firestore/comment";
+import { fetchComments, fetchSingleComment } from "@/lib/firestore/comment";
 import { updatePost } from "@/lib/firestore/post";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { deleteMedia, uploadMedia } from "@/lib/storage";
 import s from "@/styles/Home.module.scss";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
+// import {PageContext : Page} from '@/context/PageContext'
+import CommentItem from "@/components/Comment/CommentItem";
+import { PageContext, PageProps } from "@/context/PageContext";
 import { getAuth } from "firebase/auth";
 import {
   DocumentData,
@@ -43,16 +46,46 @@ import {
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { PageContext, PageProps } from "../../../context/PageContext";
 import {
+  RefObject,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  Comment as CommentType,
   Media,
   Post,
   Post as PostType,
   account,
   likes,
 } from "../../../types/interfaces";
-
+export interface CommentProps {
+  replyInput: {
+    text: string;
+    id: string;
+    authorId: string;
+    authorName: string;
+    parentId: string;
+    nested: boolean;
+    ViewmoreToggle: boolean;
+  };
+  setreplyInput: Function;
+  isDropDownOpenInNestedComment: boolean;
+  setComments: Function;
+  parentId?: string;
+  nested?: boolean;
+  hasMore?: boolean;
+  commentEnd?: boolean;
+  uid: string;
+  comments?: Post["comments"] | [];
+  post: Post;
+  setisDropDownOpenInNestedComment?: Function;
+  profile?: account["profile"];
+  replyInputRef: RefObject<HTMLInputElement>;
+}
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // context.res.setHeader(
   //   "Cache-Control",
@@ -81,15 +114,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         authorId: String(newPost?.authorId),
         postId: String(newPost?.id),
       }),
-      Comment_LIMIT + 1
+      Comment_LIMIT
     );
 
     let hasMore = false;
-    let comments = await fetchComments(commentQuery, newPost, uid);
-    hasMore = (comments?.length ?? 0) > Comment_LIMIT;
-    if (hasMore) {
-      comments?.pop();
-    }
+    const comments = await fetchComments(newPost, uid, commentQuery);
+    // hasMore = (comments?.length ?? 0) > Comment_LIMIT;
+    hasMore = comments.length < Number(newPost.commentCount ?? 0);
+    // if (hasMore) {
+    //   comments?.pop();
+    // }
     const withComment = { ...newPost, comments };
     if (
       !postDoc.exists() ||
@@ -130,9 +164,25 @@ export default function Page(props: {
   profile: account["profile"];
 }) {
   const { hasMore, expired, uid, post, profile } = props;
+  const [replyInput, setreplyInput] = useState({
+    text: "",
+    id: "",
+    authorId: "",
+    authorName: "",
+    ViewmoreToggle: false,
+    nested: false,
+    parentId: "",
+    parent: {
+      id: "",
+      authorId: "",
+      authorName: "",
+      nested: false,
+    },
+  });
   const { currentUser } = useContext(PageContext) as PageProps;
   const router = useRouter();
   const InputRef = useRef<HTMLDivElement>(null);
+  const replyInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<{
     files: File[] | PostType["media"];
@@ -164,6 +214,7 @@ export default function Page(props: {
     visibility?.toLowerCase() !== post.visibility?.toLowerCase() ||
     files?.length !== post.media?.length ||
     deleteFile?.length !== 0;
+
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (dirtyForm) {
@@ -210,11 +261,15 @@ export default function Page(props: {
     }
   }, [canEdit, router]);
   const auth = getAuth(app);
-  const navigateToProfile = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    router.push(`/${post?.authorId?.toString()}`);
-  };
+  const navigateToProfile = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      router.push(`/${post?.authorId?.toString()}`);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [post?.authorId]
+  );
   const { queryFn } = useQueryFn();
   const updateHandler = async () => {
     const uid = auth.currentUser?.uid;
@@ -277,10 +332,9 @@ export default function Page(props: {
   );
   const [limitedComments, setlimitedComments] = useState(post.comments);
   const [commentEnd, setcommentEnd] = useState(false);
-  const [commentLoading, setcommentLoading] = useState(false);
   const fetchMoreComment = useCallback(
     async function () {
-      setcommentLoading(true);
+      if (!limitedComments) return;
       const comment = limitedComments?.[limitedComments?.length - 1];
 
       const date = new Timestamp(
@@ -292,14 +346,18 @@ export default function Page(props: {
           authorId: String(post?.authorId),
           postId: String(post?.id),
         }),
-        Comment_LIMIT + 1,
+        Comment_LIMIT,
         startAfter(date)
       );
-
-      const comments = await fetchComments(commentQuery, post, uid);
-      setlimitedComments(limitedComments.concat(comments ?? []));
-      setcommentLoading(false);
-      setcommentEnd(comments?.length! < Comment_LIMIT);
+      const comments = await fetchComments(post, uid, commentQuery);
+      // setlimitedComments(limitedComments.concat(comments ?? []));
+      setlimitedComments((prev: CommentType[]) => [...prev, ...comments]);
+      if (limitedComments.length + comments.length === post.commentCount) {
+        setcommentEnd(true);
+        return;
+      }
+      // setcommentEnd(comments?.length! === post.commentCount);
+      // setcommentEnd(comments?.length! < Comment_LIMIT);
     },
     [limitedComments, post, uid]
   );
@@ -312,6 +370,71 @@ export default function Page(props: {
   });
   const updateBtnRef = useRef<HTMLButtonElement>(null);
   useEnterSave(InputRef, updateBtnRef);
+  const [isDropDownOpenInNestedComment, setisDropDownOpenInNestedComment] =
+    useState(false);
+  useEffect(() => {
+    const commentId = router.query.comment;
+    const replyId = router.asPath.split("#")[1]?.split("-")[1];
+    const replyCommentPath = router.asPath.split("#")[1]?.split("-")[0];
+    if (replyCommentPath === "reply") {
+      if (commentId && replyId) {
+        setlimitedComments(
+          limitedComments?.map((c) => {
+            if (c.id === commentId) {
+              return {
+                ...c,
+                recentRepliesLoading: true,
+              };
+            }
+            return c;
+          })
+        );
+
+        const { user, post } = router.query;
+        const replyURL = `${getCollectionPath.commentReplies({
+          authorId: String(user),
+          postId: String(post),
+          commentId: String(commentId),
+        })}/${replyId}`;
+        const fetchReplyById = async () => {
+          const replyDoc = await getDoc(doc(db, replyURL));
+
+          setlimitedComments(
+            await Promise.all(
+              limitedComments?.map(async (c) => {
+                if (c.id === commentId) {
+                  let recentReply = null;
+                  recentReply = await fetchSingleComment(
+                    replyDoc,
+                    { id: String(post), authorId: String(user) },
+                    String(uid)
+                  );
+                  if (
+                    recentReply &&
+                    !c.recentReplies?.includes(recentReply) &&
+                    !c.recentReplies
+                  ) {
+                    console.log("finished");
+                    return {
+                      ...c,
+                      recentReplies: [...(c.recentReplies ?? []), recentReply!],
+                      replyCount: (c.replyCount ?? 0) - 1,
+                      recentRepliesLoading: false,
+                    };
+                  }
+                }
+                return c;
+              })
+            )
+          );
+        };
+
+        fetchReplyById();
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.asPath, router.query, uid]);
+
   if (expired) return <Welcome expired={expired} />;
   return (
     <div className="user" ref={scrollRef}>
@@ -340,11 +463,7 @@ export default function Page(props: {
       </BackHeader>
       <div
         style={{
-          marginBottom: canEdit
-            ? "65px"
-            : limitedComments?.length <= Comment_LIMIT || commentEnd
-            ? "80px"
-            : "130px",
+          marginBottom: canEdit ? "65px" : commentEnd ? "80px" : "130px",
         }}
         className={s.container}
       >
@@ -399,21 +518,37 @@ export default function Page(props: {
             />
             <Comment
               hasMore={hasMore}
-              commentLoading={commentLoading}
               commentEnd={commentEnd}
-              post={post}
-              uid={uid}
               comments={limitedComments}
-              setComments={setlimitedComments}
-            />
+            >
+              {limitedComments.map((comment) => (
+                <CommentItem
+                  key={String(comment.id)}
+                  replyInputRef={replyInputRef}
+                  replyInput={replyInput}
+                  setreplyInput={setreplyInput}
+                  setisDropDownOpenInNestedComment={
+                    setisDropDownOpenInNestedComment!
+                  }
+                  isDropDownOpenInNestedComment={isDropDownOpenInNestedComment}
+                  post={post}
+                  client={client}
+                  uid={uid}
+                  comment={comment}
+                  comments={limitedComments}
+                  setComments={setlimitedComments}
+                />
+              ))}
+            </Comment>
             <CommentInput
+              setreplyInput={setreplyInput}
+              replyInputRef={replyInputRef}
+              replyInput={replyInput}
               comments={limitedComments}
               profile={profile}
-              setlimitedComments={setlimitedComments}
+              setComments={setlimitedComments}
               post={post}
               uid={uid!}
-              authorId={post.authorId?.toString() ?? null}
-              postId={post.id?.toString()!}
             />
           </>
         )}

@@ -1,25 +1,24 @@
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChangeEventHandler, RefObject, useState } from "react";
+import { ChangeEventHandler, useState } from "react";
 import styles from "./index.module.scss";
 function NewAccount(props: {
   handleChange?: ChangeEventHandler<HTMLInputElement>;
   Account?: { email: string; password: string };
   title?: string;
   setAccount?: Function;
-  emailRef?: RefObject<HTMLInputElement>;
 }) {
   const [showPassword, setshowPassword] = useState(false);
   // const accountRef = useRef({ email: "", password: "" });
-  const { handleChange, title, emailRef, Account, setAccount } = props;
+  const { handleChange, title, Account, setAccount } = props;
   function togglePassword() {
     setshowPassword(!showPassword);
   }
   return (
     <>
       <h2
-      className={`text-black
+        className={`text-black
         overflow-hidden
         overflow-ellipsis
         text-[1.4rem]

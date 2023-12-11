@@ -17,10 +17,10 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { Dispatch, SetStateAction, useEffect } from "react";
-import { useActive } from "./useActiveTab";
+import { useEffect } from "react";
+import { useActiveTab } from "./useActiveTab";
 import useQueryFn from "./useQueryFn";
-function useNotifications({
+export default function useNotifications({
   uid: currentUid,
   UnReadNotiCount,
   setUnReadNotiCount,
@@ -54,14 +54,19 @@ function useNotifications({
       if (snapShot.empty) return;
       const notifications = snapShot.docs.map((doc) => {
         const data = doc.data() as Noti;
-        // const date = data.createdAt as Timestamp;
         // const createdDate = date.toDate().getTime();
         // const lastPull = lastPullData ? lastPullData?.toDate().getTime() : null;
         return {
           id: doc.id,
           ...doc.data(),
-          ...getMessage(data.type),
-          hasRead: doc.data().hasRead ? doc.data().hasRead : false,
+          message: data.messageBody
+            ? `${getMessage(data.type)}: "${
+                data.messageBody.length >= 40
+                  ? `${data.messageBody.slice(0, 40)}..`
+                  : data.messageBody
+              }"`
+            : getMessage(data.type),
+          hasRead: doc.data().hasRead ?? false,
         };
       }) as Noti[];
       const hasMore = notifications.length > NOTI_LIMIT;
@@ -74,7 +79,7 @@ function useNotifications({
       console.error(error);
     }
   };
-  const { active: tab } = useActive();
+  const { active: tab } = useActiveTab();
   useEffect(() => {
     if (UnReadNotiCount ?? 0 > 0) {
       queryFn.invalidate("noti");
@@ -138,7 +143,6 @@ function useNotifications({
       hasRead: true,
     };
     queryFn.invalidate("noti");
-    // queryClient.refetchQueries(["notifications"]);
     updateDoc(ref, readedData);
   }
   return {
@@ -150,5 +154,3 @@ function useNotifications({
     notifications,
   };
 }
-
-export default useNotifications;

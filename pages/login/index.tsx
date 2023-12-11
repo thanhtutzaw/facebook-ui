@@ -112,7 +112,7 @@ export default function Login() {
                 </motion.button>
               ) : (
                 <motion.span
-                  key={"or"}
+                  key="or"
                   className={`relative select-none`}
                   style={{ position: "relative", top: "-80px" }}
                   initial={{ opacity: 1, top: "-80px" }}
@@ -214,7 +214,6 @@ export default function Login() {
                       toggleSignUp={toggleSignUp}
                       Account={Account}
                       setAccount={setAccount}
-                      emailRef={emailRef}
                     />
                   </div>
                 )}

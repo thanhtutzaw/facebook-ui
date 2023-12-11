@@ -6,9 +6,9 @@ import { AppProps, QueryKey, friends } from "@/types/interfaces";
 import { useQueries } from "@tanstack/react-query";
 import { getDocs, orderBy, query, where } from "firebase/firestore";
 import { useContext } from "react";
-import { useActive } from "./useActiveTab";
+import { useActiveTab } from "./useActiveTab";
 function useFriends() {
-  const { active: tab } = useActive();
+  const { active: tab } = useActiveTab();
   const { uid } = useContext(AppContext) as AppProps;
   const { friendReqCount } = useContext(PageContext) as PageProps;
 
@@ -31,11 +31,11 @@ function useFriends() {
             author: {
               ...doc.data().profile,
             },
-          };
+          } as friends;
         } else {
           return [];
         }
-      });
+      }) as friends[];
     } catch (error) {
       console.log(error);
       throw new Error("Failed to fetch Suggested Friends");
@@ -89,7 +89,7 @@ function useFriends() {
       },
     ],
   });
-  
+
   return { suggestedFriends, pendingFriends };
 }
 

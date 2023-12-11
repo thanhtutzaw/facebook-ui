@@ -1,7 +1,8 @@
-import { initializeApp } from "firebase/app";
+import { FirebaseError, initializeApp } from "firebase/app";
 import { AuthErrorCodes } from "firebase/auth";
 import {
   DocumentData,
+  DocumentReference,
   DocumentSnapshot,
   Query,
   QueryConstraint,
@@ -63,6 +64,17 @@ export const getCollectionPath = {
     `${getCollectionPath.posts({ uid: String(authorId) })}/${String(
       postId
     )}/likes`,
+  commentReplies: ({
+    authorId,
+    postId,
+    commentId,
+  }: {
+    authorId?: string;
+    postId?: string;
+    commentId?: string;
+  }) =>
+    `${getCollectionPath.comments({ authorId, postId })}/${commentId}/replies`,
+
   // comment_reactions: ({ authorId, postId }: { authorId?: string; postId?: string }) =>
   //   `${getCollectionPath.posts({ uid: String(authorId) })}/${String(
   //     postId
@@ -86,6 +98,7 @@ export function getPath<T extends keyof typeof getCollectionPath>(
   // Now use the 'collection' function with the generated path
   return collection(db, pathGenerator(params));
 }
+// getPath("commentReplies",{""})
 export function DescQuery<T>(
   customQuery: Query<T>,
   queryLimit?: number,
@@ -186,11 +199,13 @@ export async function postToJSON(
     };
   }
 }
-export async function commentToJSON(doc: QueryDocumentSnapshot<DocumentData>) {
+export async function commentToJSON(
+  doc: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>
+) {
   const data = doc.data() as Comment;
   const createdAt = data?.createdAt as Timestamp;
   const updatedAt = data?.updatedAt as Timestamp;
-  const author = doc.ref.parent.parent?.parent.parent!;
+  // const author = doc.ref.parent.parent?.parent.parent!;
   if (typeof data?.updatedAt === "string") {
     return {
       ...data,
@@ -418,8 +433,6 @@ export async function getNewsFeed(
         }
       })
     );
-    // console.log(data.filter((p) => p));
-    // return data.filter((p) => p) as Post[];
     return data as Post[];
   }
 }
@@ -428,7 +441,7 @@ export async function getPostWithMoreInfo(
   postQuery?: Query<DocumentData>,
   snapShot?: QuerySnapshot<DocumentData>
 ) {
-  const postSnap = postQuery ? await getDocs(postQuery as Query) : snapShot;
+  const postSnap = postQuery ? await getDocs(postQuery) : snapShot;
   console.log("posts are fetched");
   if (postSnap) {
     const postJSON = await Promise.all(
@@ -436,23 +449,22 @@ export async function getPostWithMoreInfo(
     );
 
     try {
-      return (await Promise.all(
-        postJSON.map(async (p) => {
-          return await postInfo(p, uid);
-        })
+      const posts = (await Promise.all(
+        postJSON.map(async (p) => await postInfo(p, uid))
       )) as Post[];
-    } catch (error: any) {
+      return posts;
+    } catch (error: unknown) {
       if (error === AuthErrorCodes.QUOTA_EXCEEDED) {
         console.log(AuthErrorCodes.QUOTA_EXCEEDED);
         alert("Firebase Quota Exceeded. Please try again later.");
         throw error;
       }
-      if (error.code === "quota-exceeded") {
-        alert("Firebase Quota Exceeded. Please try again later.");
-        throw error;
+      if (error instanceof FirebaseError) {
+        if (error.code === "quota-exceeded") {
+          alert("Firebase Quota Exceeded. Please try again later.");
+          throw error;
+        }
       }
-      // return null;
     }
   }
-  // return null;
 }

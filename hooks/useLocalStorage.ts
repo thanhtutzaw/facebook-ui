@@ -1,26 +1,15 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 /**
- * A hook that store , get and delete LocalStorage
+ * A hook that store , get and delete in LocalStorage
  * @param key
  * @param value
  */
 export default function useLocalStorage<T>(key: string) {
-  // useEffect(() => {
-  //   function setLocal() {
-  //     // if (!value) return;
-  //     localStorage.setItem(key, stringifiedValue);
-  //   }
-  //   setLocal();
-  //   return () => {
-  //     setLocal();
-  //   };
-  // }, [stringifiedValue, key]);
-  function setLocal(value: any) {
+  function setLocal<T>(value: T) {
     localStorage.setItem(key, JSON.stringify(value));
   }
   const getLocal = useCallback((): T | null => {
     const value = localStorage.getItem(key);
-    // console.log(value ? JSON.parse(value) : null);
     return value ? JSON.parse(value) : null;
   }, [key]);
   const deleteLocal = useCallback(() => {

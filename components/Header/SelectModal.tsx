@@ -69,9 +69,9 @@ function SelectModal() {
             selectedId.map((s) => {
               deletePost?.(s.post);
             });
-          } catch (error: any) {
+          } catch (error: unknown) {
             setLoading(false);
-            alert(error.message);
+            alert(error);
           } finally {
             setSelectedId?.([]);
             // if (router.asPath === "/#home") {

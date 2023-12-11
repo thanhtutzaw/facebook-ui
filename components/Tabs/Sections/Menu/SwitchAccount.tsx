@@ -103,10 +103,10 @@ export default function SwitchAccount(props: {
 }
 
 function AccountItem(props: {
-  setLoading: any;
+  setLoading: Function;
   currentEmail: any;
   a: any;
-  loading: any;
+  loading: boolean;
   auth: any;
   checked: any;
   setchecked: Function;
@@ -129,10 +129,10 @@ function AccountItem(props: {
           // router.replace("/");
           router.reload();
           setLoading(false);
-        } catch (error: any) {
+        } catch (error: unknown) {
           setLoading(false);
           console.error(error);
-          alert(error.message);
+          alert(error);
         }
       }}
     >

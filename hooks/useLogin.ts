@@ -1,6 +1,8 @@
+import { app } from "@/lib/firebase";
 import { addProfile } from "@/lib/firestore/profile";
 import { signin } from "@/lib/signin";
 import { account } from "@/types/interfaces";
+import { FirebaseError } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
   fetchSignInMethodsForEmail,
@@ -10,7 +12,6 @@ import {
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import useEscape from "./useEscape";
-import { app } from "@/lib/firebase";
 function useLogin() {
   const router = useRouter();
   const [testUserSigninLoading, settestUserSigninLoading] = useState(false);
@@ -110,10 +111,12 @@ function useLogin() {
             seterror(signinError.code);
             setemailLoading(false);
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
           setemailLoading(false);
-          seterror(error.code);
-          console.error(error.code);
+          if (error instanceof FirebaseError) {
+            seterror(error.code);
+            console.error(error.code);
+          }
         }
       } else {
         seterror("");
@@ -137,9 +140,11 @@ function useLogin() {
           name.focus();
         }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (firstName) return;
-      console.log(error.code);
+      if (error instanceof FirebaseError) {
+        console.log(error.code);
+      }
     }
   };
   return {

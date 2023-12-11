@@ -1,4 +1,5 @@
 import useQueryFn from "@/hooks/useQueryFn";
+import { Post } from "@/types/interfaces";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAuth } from "firebase/auth";
@@ -10,7 +11,6 @@ import { app, getCollectionPath } from "../../../lib/firebase";
 import { deletePost as deletePostDB } from "../../../lib/firestore/post";
 import styles from "../index.module.scss";
 import { CopyLink } from "./Menu";
-import { Post } from "@/types/interfaces";
 export default function AdminMenu(props: { post?: Post }) {
   const { post, toggleMenu, settoggleMenu, deletePost } = useContext(
     PostContext
@@ -20,7 +20,7 @@ export default function AdminMenu(props: { post?: Post }) {
   const [loading, setLoading] = useState(false);
   const { queryFn } = useQueryFn();
   // const deletePostMutation = useMutation({
-  //   mutationFn: async (data: any) => await deletePost(data),
+  //   mutationFn: async (data: unknown) => await deletePost(data),
   //   onSuccess: (data) => {
   //     console.log("Delete Mutate Success " + data);
   //   },
@@ -107,9 +107,9 @@ export default function AdminMenu(props: { post?: Post }) {
                 //   postid: id!,
                 //   post,
                 // });
-                  deletePost(id);
+                deletePost(id);
                 if (loading) return;
-              } catch (error: any) {
+              } catch (error: unknown) {
                 settoggleMenu?.("");
                 console.error(error);
                 setLoading(false);
