@@ -102,6 +102,18 @@ export default function Page(props: {
       const acceptedFriends = await Promise.all(
         myFriendsSnap.docs.map(async (doc) => {
           const account = await getProfileByUID(doc.id);
+          if(!account){
+            return {
+              date:
+                status === "pending"
+                  ? doc.data().createdAt
+                  : doc.data().updatedAt,
+              status: doc.data().status,
+              senderId: doc.data().senderId,
+              id: doc.id,
+              author: null,
+            };
+          }
           return {
             date:
               status === "pending"

@@ -108,10 +108,11 @@ function Header(props: { tabIndex: number }) {
   }, [selectMode, setSelectedId, setselectMode]);
   const [currentNav, setCurrentNav] = useState<Tabs>("/");
 
+  const headerContainerRef1 = headerContainerRef;
   useEffect(() => {
-    const headerContainer = headerContainerRef && headerContainerRef.current;
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
+    const headerContainer = headerContainerRef1?.current;
     if (!headerContainer) return;
     const showHeader = () => {
       headerContainer.setAttribute("data-hide", "false");
@@ -142,7 +143,7 @@ function Header(props: { tabIndex: number }) {
         hideHeader();
       }
     };
-  }, [active, headerContainerRef]);
+  }, [active, headerContainerRef1]);
   const handleResize = useCallback(() => {
     if (!navRef.current) return;
     setwidth(navRef.current.clientWidth);

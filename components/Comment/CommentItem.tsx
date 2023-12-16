@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { doc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
-import { RefObject, memo, useCallback, useMemo } from "react";
+import { RefObject, memo, useCallback, useMemo, useState } from "react";
 import Comment from ".";
 import AuthorInfo, { User, UserName } from "../Post/AuthorInfo";
 import Spinner from "../Spinner";
@@ -23,6 +23,9 @@ export interface CommentItemProps extends CommentProps {
   nested?: boolean;
   client?: boolean;
   comment: CommentType;
+  preview?: boolean;
+  isDropDownOpenInNestedComment?: boolean;
+  setisDropDownOpenInNestedComment?: Function;
 }
 function CommentItem(props: CommentItemProps) {
   const {
@@ -33,34 +36,16 @@ function CommentItem(props: CommentItemProps) {
     isDropDownOpenInNestedComment,
     parentId,
     nested,
-    comments,
     setComments,
     menuRef,
     toggleCommentMenu,
     settoggleCommentMenu,
     post,
     editToggle,
-    seteditToggle,
     client,
     uid,
     comment,
   } = props;
-
-  //     uid,
-  //     comment,
-  //     post,
-  //     settoggleCommentMenu!,
-  //     seteditToggle!,
-  //     editToggle!,
-  //     replyInputRef,
-  // setreplyInput,
-  // replyInput,
-  // nested!,
-  // parentId!,
-  // replyCount,
-  // hasMore,
-  // replyInputRef,
-
   const {
     ViewmoreToggle,
     inputRef,
@@ -76,7 +61,7 @@ function CommentItem(props: CommentItemProps) {
     cancelUpdate,
     handleHide,
     handleViewMore,
-    handleReply,
+    handleReplyInput,
     replyCount,
     replies,
   } = useComment(props);
@@ -115,7 +100,6 @@ function CommentItem(props: CommentItemProps) {
       : replyCount > 1
       ? "replies"
       : "reply";
-  console.log("rendering comment item");
   const navigateCommentAuthor = useCallback(() => {
     router.push(`/${String(comment?.authorId)}`);
   }, [comment?.authorId, router]);
@@ -157,35 +141,57 @@ function CommentItem(props: CommentItemProps) {
   const isAdmin = uid === comment.authorId;
   const { author } = comment;
   const profile = author as account["profile"];
+  const hightlightStyleByURL = nested
+    ? router.query && router.asPath.match(String(id))
+      ? "#e9f3ff"
+      : "initial"
+    : client && !router.query.comment && router.asPath.match(String(id))
+    ? "#e9f3ff"
+    : "initial";
+  function toggleScrollPadding(isTrue?: boolean) {
+    // const element = document.getElementsByTagName("main")[0];
+    // if (isTrue) {
+    //   element && (element.style.scrollPadding = "65px");
+    // } else {
+    //   element && (element.style.scrollPadding = "initial");
+    // }
+  }
+
+  const [storedScroll, setStoredScroll] = useState(0);
+  // const storedScrollRef = useRef(0);
+  // const storedScroll = storedScrollRef.current;
+  // const setStoredScroll = (number: number) => {
+  //   storedScrollRef.current = number;
+  // };
   return (
     <li
       className={`${nested ? "!pl-[calc(45px+8px)]" : ""} ${s.item}`}
       id={nested ? `reply-${id}` : `comment-${id}`}
+      onClick={() => {
+        if (!props.preview) return;
+        //  router.push({ hash: String(comment?.id) });
+        // router.push({
+        //   href: `/${post.authorId}/${post.id}#comment-${comment.id}`,
+        //   query:{post:}
+
+        // });
+        router.push({
+          pathname: `/${post.authorId}/${post.id}`,
+          hash: `comment-${comment.id}`,
+        });
+      }}
     >
+      {/* {JSON.stringify(comment.authorFirstReplyId)} */}
       <AuthorInfo
-        style={
-          nested
-            ? {
-                transition: "background .3s ease-in-out",
-                background:
-                  router.query && router.asPath.match(String(id))
-                    ? "#e9f3ff"
-                    : "initial",
-              }
-            : {
-                transition: "background .3s ease-in-out",
-                background:
-                  client &&
-                  !comment.recentReplies &&
-                  !router.query.comment &&
-                  router.asPath.match(String(id))
-                    ? "#e9f3ff"
-                    : "initial",
-              }
-        }
+        style={{
+          transition: "background .3s ease-in-out",
+          background: hightlightStyleByURL,
+          borderRadius: "0.5rem 0 0 0.5rem",
+        }}
         comment={true}
       >
         <User
+          style={{ userSelect: "initial" }}
           size={nested ? 25 : 45}
           navigateToProfile={navigateCommentAuthor}
           profile={profile}
@@ -197,52 +203,60 @@ function CommentItem(props: CommentItemProps) {
             textEnd={textEnd}
             navigateToProfile={navigateCommentAuthor}
           />
-          <div
-            className={`${
-              editToggle === id
-                ? "border-b-black border-b border-solid"
-                : "border-b-transparent border-b border-solid"
-            } p-[0_0_5px] max-h-20 overflow-scroll transition-all duration-500 ease-in-out
+          {input !== "" && input && (
+            <div
+              className={`${
+                editToggle === id
+                  ? "border-b-black border-b border-solid"
+                  : "border-b-transparent border-b border-solid"
+              } p-[0_0_5px] max-h-20 overflow-scroll transition-all duration-500 ease-in-out
             `}
-          >
-            <p
-              ref={inputRef}
-              key={editToggle}
-              suppressContentEditableWarning={true}
-              contentEditable={editToggle === id}
-              className={`p-3 focus-visible:outline-0 ${s.text}`}
             >
-              {input}
-            </p>
-          </div>
+              <p
+                ref={inputRef}
+                key={editToggle}
+                suppressContentEditableWarning={true}
+                contentEditable={editToggle === id}
+                className={`p-3 focus-visible:outline-0 ${s.text}`}
+              >
+                {input}
+              </p>
+            </div>
+          )}
           <div className={s.actions}>
-            <p suppressHydrationWarning>
-              {JSONTimestampToDate(createdAt).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
-            </p>
-            <button
-              disabled={heartLoading}
-              style={{
-                pointerEvents: heartLoading ? "none" : "initial",
-              }}
-              onClick={async () => await handleLike()}
-              aria-label="Love this Comment"
-              title="Love"
-              tabIndex={-1}
-              className={s.replyBtn}
-            >
-              <FontAwesomeIcon
-                style={{ color: isLiked ? "red" : "rgb(78, 78, 78)" }}
-                icon={faHeart}
-              />
-              {heartCount > 0 && heartCount}
-            </button>
-            <button className={s.replyBtn} onClick={handleReply}>
-              Reply
-            </button>
+            {createdAt && (
+              <p suppressHydrationWarning>
+                {JSONTimestampToDate(createdAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+              </p>
+            )}
+            {!props.preview && (
+              <>
+                <button
+                  disabled={heartLoading}
+                  style={{
+                    pointerEvents: heartLoading ? "none" : "initial",
+                  }}
+                  onClick={async () => await handleLike()}
+                  aria-label="Love this Comment"
+                  title="Love"
+                  tabIndex={-1}
+                  className={s.replyBtn}
+                >
+                  <FontAwesomeIcon
+                    style={{ color: isLiked ? "red" : "rgb(78, 78, 78)" }}
+                    icon={faHeart}
+                  />
+                  {heartCount > 0 && heartCount}
+                </button>
+                <button className={s.replyBtn} onClick={handleReplyInput}>
+                  Reply
+                </button>
+              </>
+            )}
           </div>
           <div
             style={{ gridTemplateRows: editToggle === id ? "1fr" : "0fr" }}
@@ -285,34 +299,45 @@ function CommentItem(props: CommentItemProps) {
             </AnimatePresence>
           </div>
         </User>
-        <CommentAction
-          parentId={parentId ?? ""}
-          nested={nested ?? false}
-          setisDropDownOpenInNestedComment={setisDropDownOpenInNestedComment}
-          isAdmin={isAdmin ?? false}
-          setComments={setComments!}
-          menuRef={menuRef!}
-          toggleCommentMenu={toggleCommentMenu!}
-          settoggleCommentMenu={settoggleCommentMenu!}
-          comment={comment}
-          handleEditComment={handleEditComment!}
-          postRef={postRef!}
-          commentRef={commentRef!}
-        />
-      </AuthorInfo>
-
-      {comment.recentRepliesLoading &&
-        !nested &&
-        !comment.recentReplies?.some((recent) => {
-          return recent.id != comment.id;
-        }) && (
-          <span
-            id="recentRepliesLoading"
-            className="!p-0 h-[24px] flex justify-center items-center text-[16px] gap-2"
-          >
-            <Spinner style={{ margin: "0" }} size={16} />
-          </span>
+        {!props.preview && (
+          <CommentAction
+            parentId={parentId ?? ""}
+            nested={nested ?? false}
+            setisDropDownOpenInNestedComment={setisDropDownOpenInNestedComment!}
+            isAdmin={isAdmin ?? false}
+            setComments={setComments!}
+            menuRef={menuRef!}
+            toggleCommentMenu={toggleCommentMenu!}
+            settoggleCommentMenu={settoggleCommentMenu!}
+            comment={comment}
+            handleEditComment={handleEditComment!}
+            postRef={postRef!}
+            commentRef={commentRef!}
+          />
         )}
+      </AuthorInfo>
+      {/* &&
+        !comment.recentReplies?.some((recent) => recent.id != comment.id) */}
+      {/* {true &&
+         <>
+          {comment.id} contains in 
+        {JSON.stringify(
+          // !comment.recentReplies?.some((recent) => recent.id !== comment.id)
+          comment.recentReplies?.map((r) => r.id)
+          )}
+         </>
+          
+          } */}
+      {/* commentNotFoundLoading */}
+
+      {comment.recentRepliesLoading && !nested && (
+        <span
+          id="recentRepliesLoading"
+          className="!p-0 h-[24px] flex justify-center items-center text-[16px] gap-2"
+        >
+          <Spinner style={{ margin: "0" }} size={16} />
+        </span>
+      )}
       {comment.recentReplies && (
         <Comment
           parentId={String(comment.id)}
@@ -418,7 +443,14 @@ function CommentItem(props: CommentItemProps) {
                 } ml-[calc(45px+8px)] flex  items-center gap-1 bg-transparent text-[16px] text-gray ${
                   !ViewmoreToggle ? "hover:opacity-80 active:opacity-50" : ""
                 } ${s.replyBtn}`}
-                onClick={async () => await handleViewMore()}
+                onClick={async () => {
+                  const main =
+                    document.getElementsByTagName("main")[0].scrollTop;
+                  toggleScrollPadding(true);
+                  setStoredScroll(main);
+                  console.log(main);
+                  await handleViewMore();
+                }}
               >
                 {`View ${replyCountText} ${more}`}
                 {/* {replyCount} , {replies?.length} , {comment.replyCount} */}
@@ -426,7 +458,12 @@ function CommentItem(props: CommentItemProps) {
               </button>
               {ViewmoreToggle && (
                 <button
-                  onClick={handleHide}
+                  onClick={() => {
+                    const element = document.getElementsByTagName("main")[0];
+                    element?.scrollTo({ top: storedScroll });
+                    toggleScrollPadding();
+                    handleHide();
+                  }}
                   className={`ml-auto flex items-center gap-1 bg-transparent text-[16px] text-gray ${
                     replies.length ? "opacity-100" : "opacity-0"
                   } ${
@@ -442,7 +479,6 @@ function CommentItem(props: CommentItemProps) {
       )}
     </li>
   );
-
   function Spin() {
     return (
       <div className="loading" style={{ margin: "0" }}>

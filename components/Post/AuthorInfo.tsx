@@ -8,13 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentData, DocumentReference } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import {
-  CSSProperties,
-  MouseEventHandler,
-  ReactNode,
-  RefObject,
-  memo,
-} from "react";
+import { CSSProperties, MouseEventHandler, ReactNode, memo } from "react";
 import { JSONTimestampToDate } from "../../lib/firebase";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
@@ -26,9 +20,6 @@ function AuthorInfo(props: {
   size?: number;
   parentId?: string;
   setComments?: Function;
-  menuRef?: RefObject<HTMLDivElement>;
-  toggleCommentMenu?: string;
-  settoggleCommentMenu?: Function;
   handleEditComment?: Function;
   navigateToProfile?: MouseEventHandler;
   profile?: account["profile"];
@@ -46,9 +37,6 @@ function AuthorInfo(props: {
     // setisDropDownOpenInNestedComment,
     size,
     // setComments,
-    // menuRef,
-    // toggleCommentMenu,
-    // settoggleCommentMenu,
     // handleEditComment,
     post,
     layout,
@@ -134,6 +122,7 @@ function AuthorInfo(props: {
   return (
     <div style={style} className={` ${styles.header} `}>
       <User
+        style={{ userSelect: "initial" }}
         size={size!}
         layout={layout}
         profile={profile}
@@ -156,8 +145,10 @@ function User(props: {
   layout?: layoutTypes;
   children?: ReactNode;
   size: number;
+  style?: CSSProperties;
 }) {
   const {
+    style,
     size,
     layout = "column",
     navigateToProfile,
@@ -166,11 +157,7 @@ function User(props: {
   } = props;
 
   return (
-    <div
-      // style={{ userSelect: comment ? "initial" : "none" }}
-      className={`${styles.authorInfo}`}
-      // className={`${comment ? "!bg-transparent" : ""} ${styles.authorInfo}`}
-    >
+    <div style={style} className={`${styles.authorInfo}`}>
       <UserAvatarPicture
         size={size}
         navigateToProfile={navigateToProfile}
@@ -249,8 +236,8 @@ function UserAvatarPicture({
       onClick={navigateToProfile}
       className={`w-[${size}px] h-[${size}px] rounded-full object-cover b-0 m-[initial] outline-[1px solid rgba(128,128,128,0.168627451)] bg-avatarBg`}
       alt={`${profile?.firstName ?? "Unknown User"} ${profile?.lastName ?? ""}`}
-      width={200}
-      height={200}
+      width={100}
+      height={100}
       style={{
         objectFit: "cover",
       }}

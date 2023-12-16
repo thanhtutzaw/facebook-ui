@@ -11,8 +11,8 @@ export function AppProvider(props: AppProps) {
     profileSrc,
     expired,
     active,
-    setlimitedPosts,
-    limitedPosts,
+    setnewsFeedPost,
+    newsFeedPost,
     uid,
     posts,
   } = props;
@@ -24,23 +24,23 @@ export function AppProvider(props: AppProps) {
   const [sortedPost, setsortedPost] = useState<Post[]>([]);
   const deletePost = useCallback(
     (id: string) => {
-      setlimitedPosts?.((prev: Post[]) =>
+      setnewsFeedPost?.((prev: Post[]) =>
         prev.filter((post) => post.id !== id)
       );
     },
-    [setlimitedPosts]
+    [setnewsFeedPost]
   );
   useEffect(() => {
-    if (posts && !limitedPosts) {
-      setlimitedPosts?.(posts);
+    if (posts && !newsFeedPost) {
+      setnewsFeedPost?.(posts);
     }
-  }, [limitedPosts, posts, setlimitedPosts]);
+  }, [newsFeedPost, posts, setnewsFeedPost]);
   const getMorePosts = useCallback(
     async function () {
       if (!props.hasMore) return;
       console.log("getting more news feed posts .......");
       setpostLoading(true);
-      const post = limitedPosts?.[limitedPosts?.length! - 1]!;
+      const post = newsFeedPost?.[newsFeedPost?.length! - 1]!;
       const date = new Timestamp(
         post?.createdAt.seconds,
         post?.createdAt.nanoseconds
@@ -62,13 +62,13 @@ export function AppProvider(props: AppProps) {
         console.log("Recent Post Error - ", error);
       }
       const finalPost = await getNewsFeed(String(uid), recentPosts);
-      setlimitedPosts?.(limitedPosts?.concat(finalPost!));
+      setnewsFeedPost?.(newsFeedPost?.concat(finalPost!));
       setpostLoading(false);
       console.log({ end: finalPost?.length! < NewsFeed_LIMIT });
       setPostEnd(finalPost?.length! < NewsFeed_LIMIT);
       console.log({ postEnd });
     },
-    [limitedPosts, postEnd, props.hasMore, setlimitedPosts, uid]
+    [newsFeedPost, postEnd, props.hasMore, setnewsFeedPost, uid]
   );
   return (
     <AppContext.Provider
@@ -83,7 +83,7 @@ export function AppProvider(props: AppProps) {
         setselectMode,
         getMorePosts,
         deletePost,
-        posts: limitedPosts,
+        posts: newsFeedPost,
         postLoading,
         postEnd,
         token,

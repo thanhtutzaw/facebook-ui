@@ -2,12 +2,18 @@ import { checkPhotoURL } from "@/lib/firestore/profile";
 import { CommentProps } from "@/pages/[user]/[post]";
 import { faArrowAltCircleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { collection, doc, getDoc } from "firebase/firestore";
+import {
+  DocumentData,
+  DocumentReference,
+  collection,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import Image from "next/image";
 import { useContext, useState } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import { db, getCollectionPath, getPath } from "../../lib/firebase";
-import { addComment } from "../../lib/firestore/comment";
+import { addComment, updateComment } from "../../lib/firestore/comment";
 import {
   getMessage,
   sendAppNoti,
@@ -40,32 +46,191 @@ export default function CommentInput(props: Partial<CommentProps>) {
   ) => {
     console.log("update recent replies");
     setComments?.(
-      comments?.map((c) => {
-        if (c.id === replyInput?.id) {
-          return {
-            ...c,
-            recentReplies: [...(c.recentReplies ?? []), { ...newData }],
-          };
-        }
-        return { ...c };
-      })
+      (prev: Comment[]) =>
+        prev?.map((c) => {
+          if (c.id === replyInput?.id) {
+            return {
+              ...c,
+              recentReplies: [...(c.recentReplies ?? []), { ...newData }],
+            };
+          }
+          return { ...c };
+        })
     );
   };
   const updateReplies = (newData: UnwrapArray<Comment["replies"]>) => {
     console.log("update replies");
     setComments?.(
-      comments?.map((c) => {
-        if (c.id === replyInput?.parentId) {
-          return {
-            ...c,
-            replyCount: c.replyCount ? c.replyCount + 1 : 0,
-            replies: [...(c.replies ?? []), { ...newData }],
-          };
-        }
-        return { ...c };
-      })
+      (prev: Comment[]) =>
+        prev?.map((c) => {
+          if (c.id === replyInput?.parentId) {
+            return {
+              ...c,
+              replyCount: c.replyCount ? c.replyCount + 1 : 0,
+              replies: [...(c.replies ?? []), { ...newData }],
+            };
+          }
+          return { ...c };
+        })
     );
   };
+  async function handleComment() {
+    if (!post) return;
+    if (!uid) {
+      alert("User not Found ! Sign in and Try again !");
+      throw Error;
+    }
+    await addComment({
+      commentRef,
+      authorId: uid,
+      text,
+    });
+    const doc = await getDoc(commentRef);
+    const data = { ...doc.data() } as Comment;
+    data["author"] = { ...profile } as Comment["author"];
+    setComments?.([data, ...(comments ?? [])]);
+    await sendAppNoti({
+      messageBody: text,
+      uid,
+      receiptId: post?.authorId.toString()!,
+      profile: currentUser!,
+      type: "commented_on_post",
+      url: `${authorId}/${post?.id}/#comment-${commentRef.id}`,
+      content: post.text,
+    });
+    await sendFCM({
+      recieptId: post?.authorId.toString()!,
+      message: `${currentUser?.displayName ?? "Unknown User"} ${getMessage(
+        "commented_on_post"
+      )}: "${text}" `,
+      icon: checkPhotoURL(
+        currentUser?.photoURL_cropped ?? currentUser?.photoURL
+      ),
+      // collapse_key: `post-${post.id}`,
+      tag: `CommentAuthor-${uid}-post-${post.id}-comment`,
+      link: `/${authorId}/${post?.id}/#comment-${commentRef.id}`,
+    });
+  }
+  async function handleReply() {
+    if (!post) return;
+    if (!uid) {
+      alert("User not Found ! Sign in and Try again !");
+      throw Error;
+    }
+    console.log("replying comment ...");
+    const replyRef = doc(
+      collection(
+        db,
+        `${getCollectionPath.comments({ authorId, postId })}/${
+          replyInput?.nested ? replyInput?.parentId : replyInput?.id
+        }/replies`
+      )
+    );
+
+    if (replyInput && replyInput.nested) {
+      await replyToReply(replyRef);
+    } else {
+      await replyToComment(replyRef);
+    }
+    const repliedDoc = await getDoc(replyRef);
+    const data = { ...{ ...repliedDoc.data() } } as Comment;
+    data["author"] = { ...profile } as Comment["author"];
+    if (replyInput) {
+      replyInput.ViewmoreToggle
+        ? !replyInput.nested && updateRecentReplies(data)
+        : replyInput.nested
+        ? updateReplies({
+            ...data,
+            recipient: {
+              id: replyInput.authorId,
+              author: {
+                fullName: String(replyInput.authorName) ?? "",
+              },
+            },
+          })
+        : updateRecentReplies(data);
+    }
+    if (!replyInput) return;
+    await sendAppNoti({
+      messageBody: text,
+      uid,
+      receiptId: replyInput.authorId,
+      profile: currentUser!,
+      type: "replied_to_comment",
+      url: `${authorId}/${post.id}?comment=${replyInput.id}#reply-${replyRef.id}`,
+      content: replyInput.text,
+    });
+    await sendFCM({
+      recieptId: replyInput.authorId,
+      message: `${currentUser?.displayName ?? "Unknown User"} ${getMessage(
+        "replied_to_comment"
+      )}: "${text}" `,
+      icon: checkPhotoURL(
+        currentUser?.photoURL_cropped ?? currentUser?.photoURL
+      ),
+      tag: `ReplyAuthor-${uid}-post-${post.id}-comment-${replyInput.id}-CommentReply`,
+      link: `/${authorId}/${post.id}?comment=${replyInput.id}#reply-${replyRef.id}`,
+    });
+  }
+  async function replyToReply(replyRef: DocumentReference<DocumentData>) {
+    if (!uid) {
+      alert("User not Found ! Sign in and Try again !");
+      throw Error;
+    }
+    if (!replyInput) return;
+    const recipient = {
+      id: replyInput.authorId,
+    };
+    await addComment({
+      commentRef: replyRef,
+      recipient,
+      authorId: uid,
+      text,
+    });
+  }
+  async function replyToComment(replyRef: DocumentReference<DocumentData>) {
+    if (!uid) {
+      alert("User not Found ! Sign in and Try again !");
+      throw Error;
+    }
+    await addComment({
+      commentRef: replyRef,
+      authorId: uid,
+      text,
+    });
+    const isAuthorFirstReplyIdExists =
+      replyInput?.comment && replyInput?.comment.authorFirstReplyId;
+    const isAuthorReplyingFirstTime =
+      !isAuthorFirstReplyIdExists && replyInput?.authorId === uid;
+    if (isAuthorReplyingFirstTime) {
+      const commentRef = doc(
+        db,
+        `${getCollectionPath.comments({
+          authorId: authorId,
+          postId: postId,
+        })}/${replyInput.id}`
+      );
+      const oldComment = replyInput.comment as Comment;
+      if (!oldComment) return;
+      await updateComment(commentRef, {
+        ...oldComment,
+        authorFirstReplyId: replyRef.id,
+      });
+      setComments?.(
+        (prev: Comment[]) =>
+          prev?.map((c) => {
+            console.log({ comment: c.id, replyInput: replyInput.id });
+            if (c.id === replyInput?.id) {
+              return {
+                ...c,
+                authorFirstReplyId: replyRef.id,
+              };
+            }
+            return { ...c };
+          })
+      );
+    }
+  }
   return (
     <form
       onSubmit={async (e) => {
@@ -80,101 +245,9 @@ export default function CommentInput(props: Partial<CommentProps>) {
           setaddLoading(true);
           const isReplyingComment = replyInput?.authorName;
           if (isReplyingComment) {
-            const replyRef = doc(
-              collection(
-                db,
-                `${getCollectionPath.comments({ authorId, postId })}/${
-                  replyInput.nested ? replyInput?.parentId : replyInput?.id
-                }/replies`
-              )
-            );
-            if (replyInput && replyInput.nested) {
-              const recipient = {
-                id: replyInput.authorId,
-              };
-              await addComment({
-                commentRef: replyRef,
-                recipient,
-                authorId: uid,
-                text,
-              });
-            } else {
-              await addComment({
-                commentRef: replyRef,
-                authorId: uid,
-                text,
-              });
-            }
-
-            const repliedDoc = await getDoc(replyRef);
-            const data = { ...{ ...repliedDoc.data() } } as Comment;
-            data["author"] = { ...profile } as Comment["author"];
-            if (replyInput) {
-              replyInput.ViewmoreToggle
-                ? !replyInput.nested && updateRecentReplies(data)
-                : replyInput.nested
-                ? updateReplies({
-                    ...data,
-                    recipient: {
-                      id: replyInput.authorId,
-                      author: {
-                        fullName: String(replyInput.authorName) ?? "",
-                      },
-                    },
-                  })
-                : updateRecentReplies(data);
-            }
-            await sendAppNoti({
-              messageBody: text,
-              uid,
-              receiptId: replyInput.authorId,
-              profile: currentUser!,
-              type: "replied_to_comment",
-              url: `${authorId}/${post.id}?comment=${replyInput.id}#reply-${replyRef.id}`,
-              content: replyInput.text,
-            });
-            await sendFCM({
-              recieptId: replyInput.authorId,
-              message: `${
-                currentUser?.displayName ?? "Unknown User"
-              } ${getMessage("replied_to_comment")}: "${text}" `,
-              icon: checkPhotoURL(
-                currentUser?.photoURL_cropped ?? currentUser?.photoURL
-              ),
-              tag: `ReplyAuthor-${uid}-post-${post.id}-comment-${replyInput.id}-CommentReply`,
-              link: `/${authorId}/${post.id}?comment=${replyInput.id}#reply-${replyRef.id}`,
-            });
+            await handleReply();
           } else {
-            await addComment({
-              commentRef,
-              authorId: uid,
-              text,
-            });
-            const doc = await getDoc(commentRef);
-            const data = { ...doc.data() } as Comment;
-            data["author"] = { ...profile } as Comment["author"] ;
-            setComments?.([data, ...(comments ?? [])]);
-            await sendAppNoti({
-              messageBody: text,
-              uid,
-              receiptId: post?.authorId.toString()!,
-              profile: currentUser!,
-              type: "commented_on_post",
-              url: `${authorId}/${post?.id}/#comment-${commentRef.id}`,
-              content: post.text,
-            });
-            await sendFCM({
-              recieptId: post?.authorId.toString()!,
-              message: `${
-                currentUser?.displayName ?? "Unknown User"
-              } ${getMessage("commented_on_post")}: "${text}" `,
-              icon: checkPhotoURL(
-                currentUser?.photoURL_cropped ?? currentUser?.photoURL
-              ),
-              // collapse_key: `post-${post.id}`,
-              tag: `CommentAuthor-${uid}-post-${post.id}-comment`,
-              link: `/${authorId}/${post?.id}/#comment-${commentRef.id}`,
-            });
+            await handleComment();
           }
           settext("");
           setaddLoading(false);
@@ -187,6 +260,8 @@ export default function CommentInput(props: Partial<CommentProps>) {
             text: "",
             authorId: "",
             authorName: "",
+            authorFirstReplyId: "",
+            comment: null,
           });
           setaddLoading(false);
         }
@@ -217,7 +292,7 @@ export default function CommentInput(props: Partial<CommentProps>) {
             : "Add Comment"
         }
         type="text"
-        disabled={addLoading}
+        disabled={addLoading || !uid}
       />
       <button
         aria-label={`${addLoading ? "Submiting Comment" : "Submit Comment"}`}

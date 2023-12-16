@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentData, DocumentReference } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
-import { RefObject, useState } from "react";
+import { RefObject, useEffect, useState } from "react";
 interface CommentActionProps {
   parentId: string;
   nested: boolean;
@@ -25,7 +25,7 @@ interface CommentActionProps {
   commentRef: DocumentReference<DocumentData>;
   postRef: DocumentReference<DocumentData>;
   comment: Comment;
-  setisDropDownOpenInNestedComment?: Function;
+  setisDropDownOpenInNestedComment: Function;
 }
 export default function CommentAction({
   parentId,
@@ -72,6 +72,11 @@ export default function CommentAction({
       })
     );
   }
+  // useEffect(() => {
+  //   console.log("hi");
+  //   menuRef && menuRef.current && console.log(menuRef.current);
+  // }, [menuRef]);
+
   return (
     <>
       {isAdmin && (
@@ -82,7 +87,7 @@ export default function CommentAction({
               toggleCommentMenu
                 ? settoggleCommentMenu("")
                 : settoggleCommentMenu(comment.id);
-              if (!setisDropDownOpenInNestedComment) return;
+              // if (!setisDropDownOpenInNestedComment) return;
               toggleCommentMenu
                 ? setTimeout(() => {
                     setisDropDownOpenInNestedComment(false);

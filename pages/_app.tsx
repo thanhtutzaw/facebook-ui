@@ -8,7 +8,6 @@ import Metatag from "@/components/Metatag";
 import { useActiveTab } from "@/hooks/useActiveTab";
 import useFriendRequest from "@/hooks/useFriendRequest";
 import useNprogress from "@/hooks/useNprogress";
-import { checkPhotoURL } from "@/lib/firestore/profile";
 import {
   User,
   getAuth,
@@ -119,11 +118,11 @@ export default function App({
     if (currentUser?.uid) {
       const getProfile = async () => {
         const profileData = await getProfileByUID(String(currentUser?.uid));
-        const profile = {
-          ...profileData,
-          photoURL: checkPhotoURL(profileData.photoURL),
-        };
-        const croppedURL = profile.photoURL_cropped;
+        // const profile = {
+        //   ...profileData,
+        //   photoURL: checkPhotoURL(profileData.photoURL),
+        // };
+        const croppedURL = profileData?.photoURL_cropped;
         setcurrentUser({ ...currentUser, photoURL_cropped: croppedURL });
       };
       getProfile();
@@ -158,7 +157,7 @@ export default function App({
           currentUser={currentUser}
           setcurrentUser={setcurrentUser}
         >
-          <main>
+          <main style={{scrollPadding:'65px'}}>
             <Component {...pageProps} />
             {currentUser?.uid && <ImageLargeView />}
             <audio

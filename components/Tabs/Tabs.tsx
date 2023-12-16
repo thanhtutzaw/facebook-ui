@@ -1,4 +1,6 @@
+import { AppContext } from "@/context/AppContext";
 import { useActiveTab } from "@/hooks/useActiveTab";
+import { AppProps } from "@/types/interfaces";
 import dynamic from "next/dynamic";
 import {
   ElementType,
@@ -32,6 +34,7 @@ function Tabs() {
   const { indicatorRef, setpreventClick } = useContext(
     PageContext
   ) as PageProps;
+  const { headerContainerRef } = useContext(AppContext) as AppProps;
   // const { active } = useContext(AppContext) as AppProps;
   const { active } = useActiveTab();
   useEffect(() => {
@@ -100,13 +103,9 @@ function Tabs() {
       // const dy = e.clientY - pos.y;
       currentTarget.scrollLeft = pos.left - dx;
       setpreventClick?.(true);
-      // if (!preventClick) return;
-      // preventClick.current = true;
     } else {
       setcanDrag(false);
       setpreventClick?.(false);
-      // if (!preventClick) return;
-      // preventClick.current = false;
     }
   }
   return (

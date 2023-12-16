@@ -14,7 +14,7 @@ import {
   sendFCM,
 } from "@/lib/firestore/notifications";
 import { checkPhotoURL, getFullName } from "@/lib/firestore/profile";
-import { account } from "@/types/interfaces";
+import { Comment, account } from "@/types/interfaces";
 import { getAuth } from "firebase/auth";
 import {
   Timestamp,
@@ -155,13 +155,13 @@ function useComment(props: CommentItemProps) {
   });
   const [ViewmoreToggle, setViewmoreToggle] = useState(false);
   const [replyLoading, setreplyLoading] = useState(false);
-  useEffect(() => {
-    console.log(
-      !comment.recentReplies?.some((recent) => {
-        return recent.id != comment.id;
-      })
-    );
-  }, [comment.id, comment.recentReplies]);
+  // useEffect(() => {
+  //   console.log(
+  //     !comment.recentReplies?.some((recent) => {
+  //       return recent.id != comment.id;
+  //     })
+  //   );
+  // }, [comment.id, comment.recentReplies]);
   useEffect(() => {
     if (comment.recentRepliesLoading) {
       const element = document.getElementById("recentRepliesLoading")
@@ -213,7 +213,7 @@ function useComment(props: CommentItemProps) {
 
   const handleHide = useCallback(() => {
     setViewmoreToggle(false);
-    setreplyInput((prev: typeof replyInput) => ({
+    setreplyInput?.((prev: typeof replyInput) => ({
       ...prev,
       ViewmoreToggle: false,
     }));
@@ -222,7 +222,7 @@ function useComment(props: CommentItemProps) {
   const handleViewMore = useCallback(async () => {
     if (!ViewmoreToggle) {
       setViewmoreToggle(true);
-      setreplyInput((prev: typeof replyInput) => ({
+      setreplyInput?.((prev: typeof replyInput) => ({
         ...prev,
         ViewmoreToggle: true,
       }));
@@ -236,35 +236,36 @@ function useComment(props: CommentItemProps) {
       orderBy("createdAt", "asc"),
       limit(Comment_Reply_LIMIT)
     );
-    const fetchReplies = async () => {
-      console.log("updating comments in fetchReplies");
+    const fetchMoreReplies = async () => {
+      console.log("updating comments in fetchMoreReplies");
       const newReplies = await fetchComments(post, uid, replyCommentQuery);
-      setComments(
-        comments?.map((c) => {
-          if (c.id === comment.id) {
-            return {
-              ...c,
-              replies: [
-                ...(c.replies ?? []),
-                ...newReplies.filter(
-                  (newReply) =>
-                    !comment.recentReplies?.some(
-                      (recent) => recent.id === newReply.id
-                    )
-                ),
-              ],
-            };
-          }
+      setComments?.(
+        (prev: Comment[]) =>
+          prev?.map((c) => {
+            if (c.id === comment.id) {
+              return {
+                ...c,
+                replies: [
+                  ...(c.replies ?? []),
+                  ...newReplies.filter(
+                    (newReply) =>
+                      !comment.recentReplies?.some(
+                        (recent) => recent.id === newReply.id
+                      )
+                  ),
+                ],
+              };
+            }
 
-          return { ...c };
-        })
+            return { ...c };
+          })
       );
     };
     if (replies.length === replyCount) return;
     if (!ViewmoreToggle && !replies.length) {
       setreplyLoading(true);
       try {
-        await fetchReplies();
+        await fetchMoreReplies();
       } catch (error) {
         console.log(error);
       } finally {
@@ -295,7 +296,7 @@ function useComment(props: CommentItemProps) {
 
     try {
       if (ViewmoreToggle) {
-        await fetchReplies();
+        await fetchMoreReplies();
       }
     } catch (error) {
       console.log(error);
@@ -305,7 +306,6 @@ function useComment(props: CommentItemProps) {
   }, [
     ViewmoreToggle,
     comment,
-    comments,
     hasMore,
     post,
     replies,
@@ -315,12 +315,14 @@ function useComment(props: CommentItemProps) {
     uid,
   ]);
 
-  function handleReply() {
-    replyInputRef.current?.focus();
+  function handleReplyInput() {
+    replyInputRef && replyInputRef.current?.focus();
     const commentProfile = comment.author as account["profile"];
     const commentAuthorName = getFullName(commentProfile);
-    setreplyInput((prev: typeof replyInput) => ({
+    // if(!comment)
+    setreplyInput?.((prev: typeof replyInput) => ({
       ...prev,
+      comment: comment,
       authorName: commentAuthorName,
       authorId: comment.authorId,
       text: comment.text,
@@ -347,7 +349,7 @@ function useComment(props: CommentItemProps) {
     cancelUpdate,
     handleHide,
     handleViewMore,
-    handleReply,
+    handleReplyInput,
 
     replyCount,
     replies,

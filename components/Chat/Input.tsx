@@ -10,17 +10,7 @@ export default function ChatInput({
 }) {
   return (
     <form
-      className={`bg-white
-    border-t-[1px solid #dfdfdf]
-    fixed
-    bottom-0
-    p-[.8rem]
-    flex
-    justify-between
-    w-screen
-    max-w-[theme.width.main]
-    gap-[10px]
-    items-center`}
+      className={`bg-white border-t border-[#dfdfdf] fixed bottom-0 p-[.8rem] flex justify-between w-screen max-w-main gap-[10px] items-center`}
     >
       {currentUser ? (
         <Image
@@ -97,7 +87,6 @@ export default function ChatInput({
           //   router.replace(router.asPath, undefined, { scroll: false });
           //   settext("");
           //   setaddLoading(false);
-
         }}
         aria-label="Send Message"
         tabIndex={1}

@@ -42,10 +42,10 @@ export default function Home(props: { tabIndex: number }) {
       {...rest}
       className={styles.home}
       onScroll={async (e) => {
-        console.log("scrolled");
         const currentScroll = e.currentTarget.scrollTop;
         const headerContainer = headerContainerRef?.current;
         if (!headerContainer) return;
+        console.log("scrolled");
         if (active !== "/") return;
         const previousScroll = previousScrollRef.current;
         const scrollingDown = previousScroll < currentScroll;

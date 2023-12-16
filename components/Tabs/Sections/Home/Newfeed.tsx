@@ -9,8 +9,9 @@ import PostList from "./PostList";
 // };
 function Newfeed(props: { tabIndex: number }) {
   const { tabIndex } = props;
-  const { deletePost, posts, limitedPosts, postEnd, hasMore } =
-    useContext(AppContext) as AppProps;
+  const { deletePost, posts, newsFeedPost, postEnd, hasMore } = useContext(
+    AppContext
+  ) as AppProps;
   const [user, setuser] = useState<User | null>(null);
   useEffect(() => {
     const auth = getAuth(app);
@@ -25,7 +26,7 @@ function Newfeed(props: { tabIndex: number }) {
         postLoading={hasMore}
         postEnd={postEnd}
         auth={user!}
-        posts={limitedPosts?.length === 0 ? posts! : limitedPosts!}
+        posts={newsFeedPost?.length === 0 ? posts! : newsFeedPost!}
         tabIndex={tabIndex!}
       />
     </div>

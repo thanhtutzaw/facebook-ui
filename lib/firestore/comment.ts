@@ -21,6 +21,33 @@ import {
   getCollectionPath,
   getProfileByUID,
 } from "../firebase";
+async function fetchUserFirstReply(
+  comment: Comment,
+  recentReplies: Comment["recentReplies"],
+  post: Partial<Post>,
+  uid: string
+) {
+  const userFirstReplyRef = doc(
+    db,
+    `${getCollectionPath.commentReplies({
+      authorId: String(post.authorId),
+      postId: String(post.id),
+      commentId: String(comment.id),
+    })}/${comment.authorFirstReplyId}`
+  );
+  const userFirstReplyDoc = await getDoc(userFirstReplyRef);
+  if (userFirstReplyDoc.exists()) {
+    const userFirstReply = await fetchSingleComment(
+      userFirstReplyDoc,
+      post,
+      uid
+    );
+    if (userFirstReply) {
+      recentReplies = [...recentReplies, { ...userFirstReply }];
+    }
+  }
+  return recentReplies;
+}
 export async function fetchSingleComment(
   commentDoc:
     | DocumentSnapshot<DocumentData>
@@ -32,6 +59,17 @@ export async function fetchSingleComment(
   if (commentDoc.exists()) {
     if (comment && comment.authorId) {
       const author = await getProfileByUID(String(comment.authorId));
+      let recentReplies: Comment["recentReplies"] = [
+        ...(comment.recentReplies ?? []),
+      ];
+      if (comment.authorFirstReplyId) {
+        recentReplies = await fetchUserFirstReply(
+          comment,
+          recentReplies,
+          post,
+          uid
+        );
+      }
       const recipient = {
         ...comment.recipient,
         author: comment.recipient?.id
@@ -45,7 +83,6 @@ export async function fetchSingleComment(
           postId: String(post.id),
         })}/${comment.id}/hearts`
       );
-
       const heartCount = (await getCountFromServer(heartsRef)).data().count;
       const replyRef = collection(
         db,
@@ -65,23 +102,25 @@ export async function fetchSingleComment(
       );
       const isUserLikeThisPost = (await getDoc(likedByUserRef)).exists();
       // console.log(comment.recipient && comment.recipient.id === "");
-      if (comment.recipient) {
-        return {
-          ...comment,
-          author,
-          recipient,
-          heartCount,
-          replyCount,
-          isLiked: isUserLikeThisPost,
-        };
-      }
-      return {
+
+      const updatedComment = {
         ...comment,
         author,
         heartCount,
         replyCount,
         isLiked: isUserLikeThisPost,
+        // ...(comment.recipient ? { recipient } : {}),
+        // ...(recentReplies ? { recentReplies } : {}),
       };
+      if (comment.recipient) {
+        updatedComment.recipient = recipient;
+      }
+      if (recentReplies && comment.authorFirstReplyId) {
+        updatedComment.recentReplies = recentReplies;
+        updatedComment.replyCount--;
+      }
+      console.log({ updatedComment });
+      return updatedComment;
     } else {
       return { ...comment, author: null };
     }
@@ -134,7 +173,7 @@ export async function addComment({
   };
 }) {
   const batch = writeBatch(db);
-  const commentData = {
+  let commentData = {
     id: commentRef.id,
     authorId,
     text,
@@ -144,6 +183,7 @@ export async function addComment({
     ...commentData,
     recipient,
   };
+  console.log({ addingReply: commentData });
   batch.set(
     commentRef,
     recipient && recipient.id !== "" ? withRecipient : commentData

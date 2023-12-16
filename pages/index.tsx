@@ -123,10 +123,12 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
       getUserData(uid),
     ]);
     const fcmToken = (await fethUserDoc(uid)).data()?.fcmToken ?? null;
-    const profile = {
-      ...profileData,
-      photoURL: checkPhotoURL(profileData.photoURL),
-    };
+    const profile = profileData
+      ? {
+          ...profileData,
+          photoURL: checkPhotoURL(profileData.photoURL),
+        }
+      : null;
     const currentUserData = userToJSON(currentAccount);
 
     context.res.setHeader(
@@ -236,7 +238,7 @@ export default function Home({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
-  const [limitedPosts, setlimitedPosts] = useState(posts ?? []);
+  const [newsFeedPost, setnewsFeedPost] = useState(posts ?? []);
   console.log("running in index.tsx");
   useEffect(() => {
     if (posts && !newsFeedData) {
@@ -245,7 +247,7 @@ export default function Home({
   }, [newsFeedData, posts, setnewsFeedData]);
 
   useEffect(() => {
-    if (!expired) setlimitedPosts(posts!);
+    if (!expired) setnewsFeedPost(posts!);
   }, [expired, posts]);
   useEffect(() => {
     if (expired) return;
@@ -376,8 +378,8 @@ export default function Home({
         setUnReadNotiCount={setUnReadNotiCount}
         active={activeTab!}
         postError={postError!}
-        limitedPosts={limitedPosts!}
-        setlimitedPosts={setlimitedPosts!}
+        newsFeedPost={newsFeedPost!}
+        setnewsFeedPost={setnewsFeedPost!}
         profile={profile!}
         expired={expired}
         uid={uid}

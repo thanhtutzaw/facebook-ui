@@ -84,11 +84,22 @@ export function LikedUsers({
         Likes?.length > 0 && (
           <ul>
             {Likes.map((like) => (
-              <Link href={like.uid.toString()} key={like.uid.toString()}>
+              <Link href={"/" + String(like.uid)} key={String(like.uid)}>
                 <AuthorInfo
                   layout="row"
                   navigateToProfile={() => {
-                    router.push(like.uid.toString());
+                    if (router.pathname === "/") {
+                      router.push(
+                        {
+                          query: {
+                            user: String(like.uid),
+                          },
+                        },
+                        String(like.uid)
+                      );
+                    } else {
+                      router.push(`/${String(like.uid)}`);
+                    }
                   }}
                   profile={like.author as account["profile"]}
                 >

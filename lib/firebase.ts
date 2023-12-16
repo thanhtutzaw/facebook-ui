@@ -2,7 +2,6 @@ import { FirebaseError, initializeApp } from "firebase/app";
 import { AuthErrorCodes } from "firebase/auth";
 import {
   DocumentData,
-  DocumentReference,
   DocumentSnapshot,
   Query,
   QueryConstraint,
@@ -22,6 +21,7 @@ import {
 import { getStorage } from "firebase/storage";
 import { Comment, Post, RecentPosts, account } from "../types/interfaces";
 import { Default_Query_LIMIT } from "./QUERY_LIMIT";
+import { fetchSingleComment } from "./firestore/comment";
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -262,10 +262,14 @@ export function userToJSON<T>(obj: T): any {
   }
   return obj;
 }
-export async function getProfileByUID(id: string) {
-  const userDoc = await fethUserDoc(id);
-  const profileData = userDoc.data()!;
-  return (profileData?.profile as account["profile"]) ?? null;
+export async function getProfileByUID(uid: string | undefined) {
+  if (!uid) {
+    return null;
+  } else {
+    const userDoc = await fethUserDoc(uid);
+    const profileData = userDoc.data();
+    return profileData ? (profileData.profile as account["profile"]) : null;
+  }
 }
 export async function postInfo(p: Post, uid: string): Promise<Post> {
   if (p.authorId) {
@@ -417,6 +421,42 @@ export async function getNewsFeed(
           //   // createdAt:JSONTimestampToDate(createdAt).toJSON()
           //   // createdAt:new Timestamp(createdAt.seconds,createdAt.nanoseconds),
           // };
+          const lastCommentQuery = query(
+            collection(db, `users/${authorId}/posts/${id}/comments`),
+            orderBy("createdAt", "desc"),
+            limit(1)
+          );
+          const lastCommentDocs = await getDocs(lastCommentQuery);
+          const lastComment = await Promise.all(
+            lastCommentDocs.docs.map(
+              async (doc) => await fetchSingleComment(doc, recentPost, uid)
+            )
+          );
+          postwithInfo.latestCommet = lastComment.map((c) => c as Comment);
+          // if (docs.empty) {
+          //   return { ...postwithInfo };
+          // }
+          // else{
+          // const l = docs.docs.map((doc) => {
+          //   if (doc.exists()) {
+          //     const c = doc.data();
+          //     // console.log({ ...postwithInfo, ...c });
+          //     // return { ...postwithInfo, ...c };
+          //     return { ...doc.data() };
+          //   }
+          //   // console.log({ ...postwithInfo });
+          //   // return { ...postwithInfo };
+          // });
+          // console.log(l);
+
+          // const data = await commentToJSON(doc);
+          // return { ...c };
+
+          const withLatestComment = {
+            ...postwithInfo,
+            // createdAt:JSONTimestampToDate(createdAt).toJSON()
+            // createdAt:new Timestamp(createdAt.seconds,createdAt.nanoseconds),
+          };
           return postwithInfo;
         } else {
           // const postwithInfo = await postInfo(recentPost, uid);

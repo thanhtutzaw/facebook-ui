@@ -15,10 +15,12 @@ export function Welcome({
 }) {
   const router = useRouter();
   useEffect(() => {
+    console.log(router);
     if (expired) {
-      router.push(router.asPath);
+      router.push(router);
       console.log("expired and pushed(in Welcome.tsx)");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expired, router.asPath]);
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;

@@ -61,7 +61,7 @@ function useFriends() {
               ...doc.data(),
               author: {
                 ...profile,
-                photoURL: checkPhotoURL(profile.photoURL),
+                photoURL: profile ? checkPhotoURL(profile.photoURL) : null,
               },
             } as friends;
           } else {

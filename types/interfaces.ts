@@ -33,27 +33,20 @@ export type friends = {
   updatedAt?: timeStamp;
   date?: timeStamp;
   senderId?: string;
-  author?: account["profile"];
+  author?: account["profile"] | null;
 };
 
 export type account = {
   email: string;
   password: string;
   profile: {
-    
     firstName: string | "";
     lastName: string | "";
     bio: string | "";
-    photoURL: string | "" | File;
+    photoURL: string | null | File;
     photoURL_cropped?: string | "";
   };
 };
-// export type notiContentTypes =
-//   | "post_reaction"
-//   | "comment_reaction"
-//   | "commented_on_post"
-//   | "share"
-//   | "acceptedFriend";
 export type author = UserRecord | User | account["profile"] | null;
 
 export type Noti = {
@@ -85,8 +78,8 @@ export interface sharePost {
   postId: string;
 }
 export interface sharedPost {
-  // author: UserRecord | User;
-  author: author;
+  latestCommet: Comment[];
+  author: Post["author"];
   authorId: string | number;
   id?: string | number;
   text: string;
@@ -107,22 +100,22 @@ export interface Post {
   commentCount?: string | number;
   isSaved: boolean;
   isLiked: boolean;
-  // shares?: { uid: string }[];
   shareCount?: string | number;
-  author: author;
+  author: author | undefined | {};
   authorId: string | number;
   id?: string | number;
   text: string;
   visibility: string;
   sharePost?: { author: string; id: string; post?: sharedPost | null };
   media: Media[] | null;
+  latestCommet: Comment[];
   comments: Comment[];
   createdAt: timeStamp;
   updatedAt: timeStamp;
 }
 export interface Comment {
-  recentRepliesLoading?:boolean;
-  recentReplies?: Comment[];
+  recentRepliesLoading?: boolean;
+  recentReplies: Comment[];
   recipient?: {
     id: string;
     author?: { fullName?: string };
@@ -134,6 +127,7 @@ export interface Comment {
   author?: author;
   authorId: string | number;
   id?: string | number;
+  authorFirstReplyId?: string | number;
 
   text: string;
   createdAt: timeStamp;
@@ -156,8 +150,8 @@ export interface AppProps {
   UnReadNotiCount?: number;
   acceptedFriends?: string[];
   postError?: string;
-  setlimitedPosts?: Function;
-  limitedPosts?: Post[];
+  setnewsFeedPost?: Function;
+  newsFeedPost?: Post[];
   deletePost?: Function;
   children?: ReactNode;
   setselectMode?: Function;

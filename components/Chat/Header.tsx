@@ -35,9 +35,9 @@ export function ChatHeader({ account }: { account: UserRecord }) {
       `}
       >
         <Link className="overflow-hidden" href={`/${account?.uid}`}>
-          <p className="overflow-hidden overflow-ellipsis">
+          <h3 className="font-semibold text-base m-0 overflow-hidden overflow-ellipsis">
             {account?.displayName}
-          </p>
+          </h3>
         </Link>
       </div>
     </div>

@@ -264,15 +264,13 @@
     background-color: rgb(230, 230, 230) !important;
   }
 }
-
 .content {
   background-color: #dadada;
   display: flex;
   scroll-snap-type: x mandatory;
+  height: calc(100dvh - 60px);
   overflow-x: scroll;
   scroll-behavior: smooth;
-  // height: initial;
-  height: calc(100dvh - 60px);
   transition: height 0s;
   & > div {
     overflow-y: auto;
@@ -280,8 +278,8 @@
     scroll-snap-stop: always;
     max-width: var(--main-width);
     min-width: 100%;
-    &:focus{
-      outline:0;
+    &:focus {
+      outline: 0;
     }
     // &[aria-hidden="false"] {
     //   pointer-events: initial !important;

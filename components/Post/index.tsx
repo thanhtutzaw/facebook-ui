@@ -10,11 +10,12 @@ import {
 } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import PostProvider from "../../context/PostContext";
-import { Post as PostType, account, likes } from "../../types/interfaces";
+import { Post as PostType, likes } from "../../types/interfaces";
+import Comment from "../Comment";
 import Content from "./Content";
 import Footer from "./Footer";
 import s from "./index.module.scss";
-import { AnimatePresence, motion } from "framer-motion";
+import CommentItem from "../Comment/CommentItem";
 interface PostProps {
   deletePost?: Function;
   shareMode?: boolean;
@@ -97,6 +98,29 @@ function Post({
             post={post}
           />
         )}
+        <div className="border-[#e4e4e4] border-t">
+          <Comment preview={true} comments={post.latestCommet}>
+            {post.latestCommet?.map((comment) => (
+              // <>{JSON.stringify(comment.authorId)}</>
+              <CommentItem
+                key={String(comment.id)}
+                // replyInputRef={replyInputRef}
+                // replyInput={replyInput}
+                // setreplyInput={setreplyInput}
+                // setisDropDownOpenInNestedComment={
+                //   setisDropDownOpenInNestedComment
+                // }
+                // isDropDownOpenInNestedComment={isDropDownOpenInNestedComment}
+                post={post}
+                client={client}
+                uid={auth?.uid!}
+                comment={comment}
+                comments={post.latestCommet}
+                // setComments={setlimitedComments}
+              />
+            ))}
+          </Comment>
+        </div>
       </div>
     </PostProvider>
   );
