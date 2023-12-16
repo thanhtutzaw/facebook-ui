@@ -83,7 +83,7 @@ function PhotoLayout(props: {
                 ) : (
                   <Image
                     id={`${file.url ? `media-${file.name}` : ""}`}
-                    priority
+                    priority={false}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     width={700}
                     height={394}

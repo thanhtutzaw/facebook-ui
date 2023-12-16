@@ -23,7 +23,6 @@ export default function ChatInput({
     outline-[1px solid rgba(128,128,128,0.168627451)] bg-avatarBg`}
           width={200}
           height={200}
-          priority
           alt={currentUser?.displayName ?? "Unknow User"}
           src={currentUser?.photoURL ?? ""}
         />
@@ -47,8 +46,11 @@ export default function ChatInput({
         min-w-[10px]
         overflow-hidden
         overflow-ellipsis
-        outline-[1px solid rgb(213 213 213)]
-        focus-visible:outline-[1px solid rgb(191 191 191)]
+        outline-[1px]
+        outline
+        outline-[rgb(213_213_213)]
+        focus-visible:outline
+        focus-visible:outline-[rgb(191_191_191)]
       "
         aria-label="Type Message"
         placeholder="Send Message"

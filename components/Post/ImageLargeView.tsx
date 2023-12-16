@@ -152,6 +152,7 @@ export function ImageLargeView() {
         // if(scale > 1)
         // if(scale.get() < 1) return;
         // if (m2 > 0) return;
+        console.log({ dy, m2 });
         if (scale.get() < 2) {
           api.start({ x: 0, y: 0, scale: 1 });
         }
@@ -159,7 +160,10 @@ export function ImageLargeView() {
         //   api.set({ x: 0, y: 0, scale: 1 });
         // }
         // console.log(m2);
-        const ref = imgRef?.current!.getBoundingClientRect()!;
+        // const ref = imgRef?.current!.getBoundingClientRect()!;
+        const target = imgRef?.current;
+        const ref = target?.getBoundingClientRect()!;
+        console.log({ ref });
         // memo ??= { x: x.get(), y: y.get(), tx, ty, scale: scale.get() };
         // const displacementX = tx / memo.scale;
         // const displacementY = ty / memo.scale;
@@ -311,7 +315,7 @@ export function ImageLargeView() {
                 </AnimatePresence>
                 <Image
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-                  onLoadingComplete={() => {
+                  onLoad={() => {
                     setLoading(false);
                   }}
                   loading="eager"

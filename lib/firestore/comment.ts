@@ -59,16 +59,15 @@ export async function fetchSingleComment(
   if (commentDoc.exists()) {
     if (comment && comment.authorId) {
       const author = await getProfileByUID(String(comment.authorId));
-      let recentReplies: Comment["recentReplies"] = [
-        ...(comment.recentReplies ?? []),
-      ];
+      // let recentReplies: Comment["recentReplies"] = [
+      //   ...(comment.recentReplies ?? []),
+      // ];
+      let recentReplies: Comment["recentReplies"] = [];
       if (comment.authorFirstReplyId) {
-        recentReplies = await fetchUserFirstReply(
-          comment,
-          recentReplies,
-          post,
-          uid
-        );
+        recentReplies = [
+          ...(await fetchUserFirstReply(comment, recentReplies, post, uid)),
+          ...(comment.recentReplies ?? []),
+        ];
       }
       const recipient = {
         ...comment.recipient,
@@ -109,8 +108,6 @@ export async function fetchSingleComment(
         heartCount,
         replyCount,
         isLiked: isUserLikeThisPost,
-        // ...(comment.recipient ? { recipient } : {}),
-        // ...(recentReplies ? { recentReplies } : {}),
       };
       if (comment.recipient) {
         updatedComment.recipient = recipient;
