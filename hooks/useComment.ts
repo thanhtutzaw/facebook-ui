@@ -8,12 +8,7 @@ import {
   unLoveComment,
   updateComment,
 } from "@/lib/firestore/comment";
-import {
-  getMessage,
-  sendAppNoti,
-  sendFCM,
-} from "@/lib/firestore/notifications";
-import { checkPhotoURL, getFullName } from "@/lib/firestore/profile";
+import { getFullName } from "@/lib/firestore/profile";
 import { Comment, account } from "@/types/interfaces";
 import { getAuth } from "firebase/auth";
 import {
@@ -116,26 +111,18 @@ function useComment(props: CommentItemProps) {
       await unLoveComment({ heartRef });
       await updateHeartState();
     } else {
-      await loveComment({ heartRef, uid: String(auth.currentUser?.uid) });
-      await updateHeartState();
-      if (auth.currentUser?.uid === authorId) return;
-      await sendAppNoti({
-        uid,
-        receiptId: comment.authorId,
+      
+      await loveComment({
+        parentId: nested ? parentId : undefined,
+        content: comment.text,
         profile,
-        type: "comment_reaction",
-        url: `${authorId}/${postId}#comment-${comment.id}`,
+        postId: post.id!,
+        commentId: comment.id!,
+        authorId: post.authorId,
+        uid: String(auth.currentUser?.uid),
+        commentAuthorId: String(comment.authorId),
       });
-
-      await sendFCM({
-        recieptId: comment.authorId.toString(),
-        message: `${profile?.displayName ?? "Unknown User"} ${getMessage(
-          "comment_reaction"
-        )}`,
-        icon: checkPhotoURL(profile?.photoURL_cropped ?? profile?.photoURL),
-        tag: `Heart-${id}`,
-        link: `/${authorId}/${postId}#comment-${comment.id}`,
-      });
+      await updateHeartState();
     }
 
     async function updateHeartState() {

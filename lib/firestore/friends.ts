@@ -96,7 +96,7 @@ export async function addFriends(
             photoURL_cropped: author?.photoURL_cropped,
           },
         }),
-        actions: JSON.stringify([...NotiAction.friend_request]),
+        actions: [NotiAction.accept_friend, NotiAction.view_profile],
         requireInteraction: true,
       });
     } catch (error) {

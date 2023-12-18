@@ -83,7 +83,9 @@ export default function CommentAction({
         <>
           <button
             className={post.dot}
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
               toggleCommentMenu
                 ? settoggleCommentMenu("")
                 : settoggleCommentMenu(comment.id);

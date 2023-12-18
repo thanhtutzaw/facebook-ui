@@ -1,3 +1,4 @@
+import { NotiAction } from "@/lib/NotiAction";
 import admin from "firebase-admin";
 import { MulticastMessage } from "firebase-admin/lib/messaging/messaging-api";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -23,7 +24,12 @@ export interface NotiApiRequest extends NextApiRequest {
     link?: string;
     actionPayload?: string;
     collapse_key?: string;
-    actions?: string;
+    // actions?: Array<keyof typeof NotiAction>;
+    // actions?:  { [key in keyof typeof NotiAction]: typeof NotiAction[key] }
+    // actions?: {[key in keyof typeof NotiAction]: typeof NotiAction[key]}[];
+    // actions?: (d:typeof NotiAction)=>string;
+    // actions?: any;
+    actions?: Array<(typeof NotiAction)[keyof typeof NotiAction]>;
     requireInteraction?: boolean;
   };
 }
@@ -47,7 +53,10 @@ export default async function handler(
   } = req.body;
   try {
     const registrationTokens = await getFCMToken(String(recieptId));
-    console.log({ registrationTokens });
+    // console.log({ registrationTokens });
+    console.log({ actionPayload });
+    console.log(typeof actionPayload);
+    // const notiAction = actions ? JSON.stringify(actions) : "";
     if (registrationTokens) {
       try {
         // const messageNoti: MulticastMessage = {
@@ -73,23 +82,17 @@ export default async function handler(
               requireInteraction: requireInteraction ?? false,
               badge: badge ?? "./badge.svg",
               icon,
-              actions: typeof actions === "string" ? JSON.parse(actions) : [],
+              actions: actions ? actions : [],
               data: {
                 actionPayload:
-                  typeof actions === "string" && actionPayload
-                    ? JSON.parse(actionPayload)
-                    : {},
+                  actions && actionPayload ? JSON.parse(actionPayload) : {},
               },
               tag: tag ?? "",
               renotify: false,
-              // actions: actions ?? JSON.stringify([]),
             },
             fcmOptions: {
               link,
             },
-            // fcm_options: {
-            //   link,
-            // },
           },
           android: {
             collapseKey: collapse_key ?? "",
@@ -100,7 +103,6 @@ export default async function handler(
             },
           },
           apns: {
-            
             payload: {
               aps: {
                 threadId: collapse_key ?? "",
@@ -113,9 +115,14 @@ export default async function handler(
           .messaging()
           .sendEachForMulticast(messageNoti);
         console.log("Successfully sent message:", response);
+        // console.log(
+        //   "Error",
+        //   response.responses.forEach((r) => r.error)
+        // );
         console.log(
-          "Error",
-          response.responses.forEach((r) => r.error)
+          response.responses.forEach((r) => {
+            return JSON.stringify(r.error);
+          })
         );
       } catch (error) {
         console.log(error);

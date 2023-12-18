@@ -167,21 +167,17 @@ function CommentItem(props: CommentItemProps) {
     <li
       className={`${nested ? "!pl-[calc(45px+8px)]" : ""} ${s.item}`}
       id={nested ? `reply-${id}` : `comment-${id}`}
-      onClick={() => {
+      onClick={(e) => {
         if (!props.preview) return;
-        //  router.push({ hash: String(comment?.id) });
-        // router.push({
-        //   href: `/${post.authorId}/${post.id}#comment-${comment.id}`,
-        //   query:{post:}
 
-        // });
-        router.push({
-          pathname: `/${post.authorId}/${post.id}`,
-          hash: `comment-${comment.id}`,
-        });
+        if (toggleCommentMenu === "") {
+          router.push({
+            pathname: `/${post.authorId}/${post.id}`,
+            hash: `comment-${comment.id}`,
+          });
+        }
       }}
     >
-      {/* {JSON.stringify(comment.authorFirstReplyId)} */}
       <AuthorInfo
         style={{
           transition: "background .3s ease-in-out",
@@ -338,7 +334,7 @@ function CommentItem(props: CommentItemProps) {
           <Spinner style={{ margin: "0" }} size={16} />
         </span>
       )}
-      {comment.recentReplies && (
+      {comment.recentReplies && !props.preview && (
         <Comment
           parentId={String(comment.id)}
           nested={true}
@@ -347,6 +343,7 @@ function CommentItem(props: CommentItemProps) {
         >
           {comment.recentReplies?.map((recent) => (
             <CommentItem
+              preview={props.preview}
               replyInputRef={replyInputRef}
               replyInput={replyInput}
               setreplyInput={setreplyInput}

@@ -14,7 +14,7 @@ import Story from "./Story/Story";
 // type AppProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 // };
 export default function Home(props: { tabIndex: number }) {
-  const { ...rest} = props;
+  const { ...rest } = props;
   const router = useRouter();
   const {
     profileSrc,
@@ -28,12 +28,32 @@ export default function Home(props: { tabIndex: number }) {
     PageContext
   ) as PageProps;
   const previousScrollRef = useRef(0);
+  // const setScroll = useCallback((n: number) => {
+  //   previousScrollRef.current = n;
+  // }, []);
+
   const { scrollRef } = useInfiniteScroll({
     hasMore: hasMore!,
     scrollParent: false,
     fetchMoreData: getMorePosts,
     postEnd: postEnd!,
   });
+  const headerContainer = headerContainerRef && headerContainerRef?.current;
+  console.log({ headerContainerRef });
+  const hideHeader = () => {
+    if (!headerContainer) return;
+    console.log("headerContinaer exisst in function");
+    headerContainer.setAttribute("data-hide", "true");
+    // headerContainer.style.transform = "translateY(-60px)";
+    // headerContainer.style.height = "60px";
+  };
+  const showHeader = () => {
+    if (!headerContainer) return;
+    console.log("headerContinaer exisst in function");
+    headerContainer.setAttribute("data-hide", "false");
+    // headerContainer.style.transform = "translateY(0px)";
+    // headerContainer.style.height = "120px";
+  };
   return (
     <div
       aria-hidden={rest.tabIndex === -1}
@@ -42,26 +62,26 @@ export default function Home(props: { tabIndex: number }) {
       {...rest}
       className={styles.home}
       onScroll={async (e) => {
+        console.log(headerContainerRef);
         const currentScroll = e.currentTarget.scrollTop;
-        const headerContainer = headerContainerRef?.current;
-        if (!headerContainer) return;
-        console.log("scrolled");
-        if (active !== "/") return;
+        console.log(previousScrollRef.current + " previousScrollRef exists ");
         const previousScroll = previousScrollRef.current;
+
+        if (!headerContainer) {
+          console.error("scrolled (headerRef Not Exist !)");
+        }
+        if (!headerContainer) return;
+        console.log(headerContainerRef.current);
+        if (active !== "/") return;
+
         const scrollingDown = previousScroll < currentScroll;
+
+        // previousScroll;
         if (currentScroll >= 60) {
-          const hideHeader = () => {
-            headerContainer.setAttribute("data-hide", "true");
-            // headerContainer.style.transform = "translateY(-60px)";
-            // headerContainer.style.height = "60px";
-          };
-          const showHeader = () => {
-            headerContainer.setAttribute("data-hide", "false");
-            // headerContainer.style.transform = "translateY(0px)";
-            // headerContainer.style.height = "120px";
-          };
           previousScrollRef.current = currentScroll;
+          // setScroll(currentScroll);
           if (scrollingDown) {
+            console.log("It is scrolling down");
             hideHeader();
           } else if (previousScroll > currentScroll + 25) {
             showHeader();

@@ -7,7 +7,11 @@ export interface AppNoti {
   messageBody?: string;
   uid: string;
   receiptId: string | number;
-  profile: User | null;
+  profile:
+    | (Partial<User> & {
+        photoURL_cropped?: string | undefined;
+      })
+    | null;
   type: NotiMessageTypes;
   url: string;
   content?: string;
@@ -35,12 +39,13 @@ export async function sendFCM<T extends NotiApiRequest["body"]>(data: T) {
   const hostName = isProduction ? productionURL : localURL;
   const apiEndpoint = "/api/sendFCM";
   const url = `${hostName ?? productionURL}${apiEndpoint}`;
+  console.log({ url });
   console.log("Sending Notification (" + data.message + ")");
-  // data["badge"] = "/logo.svg";
   console.log({ data });
   const response = await fetch(url, {
     method: "POST",
     headers: {
+      "Access-Control-Allow-Origin": "*",
       "Content-type": "application/json",
     },
     body: JSON.stringify(data),

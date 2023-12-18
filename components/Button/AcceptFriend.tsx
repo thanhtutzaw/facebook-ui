@@ -23,7 +23,11 @@ export function AcceptFriend(props: {} & HTMLAttributes<HTMLButtonElement>) {
         setloading(false);
       }}
     >
-      {loading ? <Spinner size={18} /> : <FontAwesomeIcon icon={faCheck} />}
+      {loading ? (
+        <Spinner size={18} style={{ margin: "0" }} />
+      ) : (
+        <FontAwesomeIcon icon={faCheck} />
+      )}
       Accept
     </button>
   );

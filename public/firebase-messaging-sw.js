@@ -1,11 +1,10 @@
 self.addEventListener("notificationclick", function (event) {
     console.log('notification click event', event);
     const { reply: inputText } = event;
-    // const { click_action, actionPayload } = event.notification.data.FCM_MSG
     const { click_action, data } = event.notification.data.FCM_MSG.notification;
-    // const client = self.clients
-    console.log({ data })
-    event.notification.close();
+    console.log({ actionPayload_clickEvent: data.actionPayload })
+    // event.notification.close();
+    console.log(event.action)
     switch (event.action) {
         case `see_post`:
             event.notification.close();
@@ -25,14 +24,45 @@ self.addEventListener("notificationclick", function (event) {
             //         if (clients.openWindow) return event.waitUntil(clients.openWindow(click_action));
             //     })
             break;
-        case `reply`:
-            event.waitUntil((openTab(`/${inputText}`))())
+        case `comment_like`:
+            console.log("hello I am comment like click event")
+            event.waitUntil(
+                fetch('api/trigger_noti_action?action=comment_like', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data.actionPayload)
+                }).then(response => {
+                    console.log(response);
+                    event.notification.close();
+                }).catch(error => {
+                    console.error('Error:', error);
+                })
+            )
+            break;
+        case `comment_reply`:
+            // event.waitUntil((openTab(`/${inputText}`))())
+            event.waitUntil(
+                fetch('api/trigger_noti_action?action=comment_reply', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ...data.actionPayload, text: inputText })
+                }).then(response => {
+                    console.log(response);
+                    event.notification.close();
+                }).catch(error => {
+                    console.error('Error:', error);
+                })
+            )
             console.log("Submited content :", inputText);
             break;
-        case `accept`:
-            // event.waitUntil(clients.openWindow(`https://facebook-ui-zee.vercel.app/api/hello`))
+        case `accept_friend`:
+            // event.waitUntil(clients.openWindow(`https://facebook-ui-zee.vercel.app/`))
             event.waitUntil(
-                fetch('api/trigger_noti_action?action=accept', {
+                fetch('api/trigger_noti_action?action=accept_friend', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -43,12 +73,14 @@ self.addEventListener("notificationclick", function (event) {
                         if (response.ok) {
                             console.log('Accepted user');
                             console.log({ body: JSON.stringify(data.actionPayload) })
+                            event.notification.close();
                         } else {
                             console.error('Accept Action failed');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
+
                     })
             )
             break;
@@ -58,7 +90,6 @@ self.addEventListener("notificationclick", function (event) {
             );
             break;
     }
-
 });
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js'); // Import the Firebase v9 compat library
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-messaging-compat.js'); // Import the Firebase v9 compat library for messaging
@@ -105,7 +136,6 @@ const messaging = firebase.messaging();
 // });
 messaging.onBackgroundMessage((payload) => {
     console.log("FCM Background Noti ", payload)
-    // const { title, body, icon, webpush, badge, click_action, link, tag, actions, actionPayload } = payload.data;
     const { title, body, icon, webpush, badge, click_action, link, tag, actions, actionPayload } = payload.notification;
     /**
      * @property {NotificationAction[]} [actions] An array of notification actions.
@@ -125,16 +155,6 @@ messaging.onBackgroundMessage((payload) => {
      */
     const notificationOptions = {
         body: body ?? "Notifications from facebook .",
-        // badge,
-        // tag: tag ?? "",
-        // renotify: false,
-
-        // data: {
-        //     click_action,
-        //     actionPayload: JSON.parse(actionPayload)
-        // },
-        // actions: JSON.parse(actions)
-
     };
     // self.registration.showNotification(title, notificationOptions)
 })

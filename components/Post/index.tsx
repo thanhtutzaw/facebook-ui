@@ -59,6 +59,7 @@ function Post({
     parseInt(post?.likeCount?.toString()! ?? "")
   );
   const [Likes, setLikes] = useState<likes | []>([]);
+  const [isDropDownOpenInNestedComment, setisDropDownOpenInNestedComment] = useState(false)
   if (!post) return <></>;
   const selectStyle = selectMode ? ` ${s.selected}` : "";
   const shareStyle = shareMode ? ` ${s.share}` : "";
@@ -103,14 +104,15 @@ function Post({
             {post.latestCommet?.map((comment) => (
               // <>{JSON.stringify(comment.authorId)}</>
               <CommentItem
+              preview={true}
                 key={String(comment.id)}
                 // replyInputRef={replyInputRef}
                 // replyInput={replyInput}
                 // setreplyInput={setreplyInput}
-                // setisDropDownOpenInNestedComment={
-                //   setisDropDownOpenInNestedComment
-                // }
-                // isDropDownOpenInNestedComment={isDropDownOpenInNestedComment}
+                setisDropDownOpenInNestedComment={
+                  setisDropDownOpenInNestedComment
+                }
+                isDropDownOpenInNestedComment={isDropDownOpenInNestedComment}
                 post={post}
                 client={client}
                 uid={auth?.uid!}

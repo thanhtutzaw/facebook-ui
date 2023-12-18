@@ -1,3 +1,4 @@
+import { User } from "firebase/auth";
 import {
   DocumentData,
   DocumentReference,
@@ -21,6 +22,8 @@ import {
   getCollectionPath,
   getProfileByUID,
 } from "../firebase";
+import { getMessage, sendAppNoti, sendFCM } from "./notifications";
+import { checkPhotoURL } from "./profile";
 async function fetchUserFirstReply(
   comment: Comment,
   recentReplies: Comment["recentReplies"],
@@ -123,7 +126,6 @@ export async function fetchSingleComment(
     }
   }
 }
-
 export async function fetchComments(
   post: Partial<Post>,
   uid: string,
@@ -135,15 +137,57 @@ export async function fetchComments(
   )) as Comment[];
 }
 export async function loveComment({
-  heartRef,
+  postId,
+  commentId,
+  authorId,
   uid,
+  profile,
+  commentAuthorId,
+  content,
+  parentId,
 }: {
-  heartRef: DocumentReference<DocumentData>;
+  content: string;
+  commentAuthorId: string | number;
+  postId: string | number;
+  commentId: string | number;
+  authorId: string | number;
+  parentId?: string;
   uid: string;
+  profile:
+    | (Partial<User> & {
+        photoURL_cropped?: string | undefined;
+      })
+    | null;
 }) {
+  const heartRef = doc(
+    db,
+    `${getCollectionPath.comments({
+      authorId: String(authorId),
+      postId: String(postId),
+    })}/${commentId}/hearts/${uid}`
+  );
   const batch = writeBatch(db);
   batch.set(heartRef, { uid, createdAt: serverTimestamp() });
   await batch.commit();
+  const replyURL = `${authorId}/${postId}?comment=${parentId}#reply-${commentId}`;
+  // if (uid === authorId) return;
+  await sendAppNoti({
+    content,
+    uid,
+    receiptId: String(commentAuthorId),
+    profile,
+    type: "comment_reaction",
+    url: parentId ? replyURL : `${authorId}/${postId}#comment-${commentId}`,
+  });
+  await sendFCM({
+    recieptId: String(commentAuthorId),
+    message: `${profile?.displayName ?? "Unknown User"} ${getMessage(
+      "comment_reaction"
+    )}`,
+    icon: checkPhotoURL(profile?.photoURL_cropped ?? profile?.photoURL),
+    tag: `Heart-${commentId}`,
+    link: parentId ? replyURL : `/${authorId}/${postId}#comment-${commentId}`,
+  });
 }
 export async function unLoveComment({
   heartRef,
