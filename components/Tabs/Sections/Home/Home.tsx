@@ -8,7 +8,7 @@ import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useContext, useRef } from "react";
+import { useCallback, useContext, useEffect, useRef } from "react";
 import Newfeed from "./Newfeed";
 import Story from "./Story/Story";
 // type AppProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
@@ -23,15 +23,20 @@ export default function Home(props: { tabIndex: number }) {
     getMorePosts,
     headerContainerRef,
     hasMore,
+    expired,
   } = useContext(AppContext) as AppProps;
   const { setuploadButtonClicked, active } = useContext(
     PageContext
   ) as PageProps;
   const previousScrollRef = useRef(0);
-  // const setScroll = useCallback((n: number) => {
-  //   previousScrollRef.current = n;
-  // }, []);
+  const setPreviousScroll = useCallback((n: number) => {
+    previousScrollRef.current = n;
+  }, []);
 
+  useEffect(() => {}, [expired]);
+
+  const previousScroll = previousScrollRef.current;
+  // const [previousScroll, setPreviousScroll] = useState(0)
   const { scrollRef } = useInfiniteScroll({
     hasMore: hasMore!,
     scrollParent: false,
@@ -64,9 +69,14 @@ export default function Home(props: { tabIndex: number }) {
       onScroll={async (e) => {
         console.log(headerContainerRef);
         const currentScroll = e.currentTarget.scrollTop;
-        console.log(previousScrollRef.current + " previousScrollRef exists ");
         const previousScroll = previousScrollRef.current;
-
+        console.log(
+          previousScrollRef.current + " previousScrollRef is updating ?  "
+        );
+        console.log(
+          previousScrollRef.current + " previousScrollRef is updating ?  "
+        );
+        console.log({ currentScroll });
         if (!headerContainer) {
           console.error("scrolled (headerRef Not Exist !)");
         }
@@ -78,8 +88,9 @@ export default function Home(props: { tabIndex: number }) {
 
         // previousScroll;
         if (currentScroll >= 60) {
-          previousScrollRef.current = currentScroll;
-          // setScroll(currentScroll);
+          // previousScroll = currentScroll;
+          setPreviousScroll(currentScroll);
+          //
           if (scrollingDown) {
             console.log("It is scrolling down");
             hideHeader();

@@ -1,7 +1,6 @@
 import { AppContext } from "@/context/AppContext";
 import { useActiveTab } from "@/hooks/useActiveTab";
 import { AppProps } from "@/types/interfaces";
-import dynamic from "next/dynamic";
 import {
   ElementType,
   MouseEvent,
@@ -12,21 +11,23 @@ import {
 } from "react";
 import { PageContext, PageProps } from "../../context/PageContext";
 import styles from "../../styles/Home.module.scss";
+import Friends from "./Sections/Friends/Friends";
 import Home from "./Sections/Home/Home";
+import Menu from "./Sections/Menu/menu";
 import Notifications from "./Sections/Notifications/Notifications";
 import Profile from "./Sections/Profile";
+import Watch from "./Sections/Watch";
+import dynamic from "next/dynamic";
 import { TabHeader } from "./TabHeader";
-const Friends = dynamic(() => import("./Sections/Friends/Friends"), {
-  ssr: false,
-});
-const Watch = dynamic(() => import("./Sections/Watch"), { ssr: false });
+// const Friends = dynamic(() => import("./Sections/Friends/Friends"));
 // const Profile = dynamic(() => import("./Sections/Profile/index"), {
 //   ssr: false,
 // });
 // const Notifications = dynamic(
 //   () => import("./Sections/Notifications/Notifications")
 // );
-const Menu = dynamic(() => import("./Sections/Menu/menu"), { ssr: false });
+// const Watch = dynamic(() => import("./Sections/Watch"), { ssr: false });
+// const Menu = dynamic(() => import("./Sections/Menu/menu"), { ssr: false });
 
 function Tabs() {
   const [canDrag, setcanDrag] = useState(false);

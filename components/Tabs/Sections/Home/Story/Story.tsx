@@ -9,7 +9,7 @@ import { MouseEvent, useContext, useEffect, useRef, useState } from "react";
 import Card from "./Card";
 // type StoryProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 export default function Story() {
-  const { profile, token , profileSrc } = useContext(AppContext) as AppProps;
+  const { profile, token, profileSrc } = useContext(AppContext) as AppProps;
   const { email } = { ...token };
   const fileInput = useRef<HTMLInputElement>(null);
   const [draggable, setdraggable] = useState(false);
@@ -97,9 +97,9 @@ export default function Story() {
         <div className={`${styles.storyCard} ${styles.addStory}`}>
           <div className={styles.storyProfile}>
             <Image
-              priority={true}
-              width={150}
-              height={170}
+              loading="lazy"
+              width={100}
+              height={100}
               style={{ objectFit: "cover", width: "100%", height: "105px" }}
               alt={email || ""}
               // src={
