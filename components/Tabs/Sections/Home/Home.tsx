@@ -31,6 +31,7 @@ export default function Home(props: { tabIndex: number }) {
   const previousScrollRef = useRef(0);
   const setPreviousScroll = useCallback((n: number) => {
     previousScrollRef.current = n;
+    console.log("setting previous scroll");
   }, []);
 
   useEffect(() => {}, [expired]);
@@ -64,6 +65,7 @@ export default function Home(props: { tabIndex: number }) {
       aria-hidden={rest.tabIndex === -1}
       ref={scrollRef}
       id="/"
+      key={expired ? "true" : "false"}
       {...rest}
       className={styles.home}
       onScroll={async (e) => {
@@ -76,21 +78,19 @@ export default function Home(props: { tabIndex: number }) {
         console.log(
           previousScrollRef.current + " previousScrollRef is updating ?  "
         );
-        console.log({ currentScroll });
+        console.log({ Iam_currentScroll: currentScroll });
         if (!headerContainer) {
           console.error("scrolled (headerRef Not Exist !)");
         }
         if (!headerContainer) return;
         console.log(headerContainerRef.current);
         if (active !== "/") return;
-
+        console.error("this should run without refresh");
         const scrollingDown = previousScroll < currentScroll;
-
-        // previousScroll;
         if (currentScroll >= 60) {
           // previousScroll = currentScroll;
+          console.error("scrolled and set previous scroll");
           setPreviousScroll(currentScroll);
-          //
           if (scrollingDown) {
             console.log("It is scrolling down");
             hideHeader();
@@ -103,6 +103,7 @@ export default function Home(props: { tabIndex: number }) {
       }}
     >
       <Story />
+      {active}
       <div className={styles.addPost}>
         <div
           style={{

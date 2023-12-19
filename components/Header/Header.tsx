@@ -168,6 +168,7 @@ function Header(props: { tabIndex: number }) {
     >
       <header className={`flex justify-between items-center ${s.header}`}>
         <Logo />
+        {JSON.stringify(active)}
         <div className={s.action}>
           <button
             tabIndex={tabIndex}
