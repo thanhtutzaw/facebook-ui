@@ -1,6 +1,5 @@
 import { AppContext } from "@/context/AppContext";
 import { PageContext, PageProps } from "@/context/PageContext";
-import { useActiveTab } from "@/hooks/useActiveTab";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import styles from "@/styles/Home.module.scss";
@@ -9,7 +8,7 @@ import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useCallback, useContext, useEffect, useRef } from "react";
+import { useContext, useRef } from "react";
 import Newfeed from "./Newfeed";
 import Story from "./Story/Story";
 // type AppProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
@@ -27,17 +26,8 @@ export default function Home(props: { tabIndex: number }) {
     expired,
   } = useContext(AppContext) as AppProps;
   const { setuploadButtonClicked } = useContext(PageContext) as PageProps;
-  const { active } = useActiveTab();
+  // const { active } = useActiveTab();
   const previousScrollRef = useRef(0);
-  const setPreviousScroll = useCallback((n: number) => {
-    previousScrollRef.current = n;
-    console.log("setting previous scroll");
-  }, []);
-
-  useEffect(() => {}, [expired]);
-
-  const previousScroll = previousScrollRef.current;
-  // const [previousScroll, setPreviousScroll] = useState(0)
   const { scrollRef } = useInfiniteScroll({
     hasMore: hasMore!,
     scrollParent: false,
@@ -69,33 +59,18 @@ export default function Home(props: { tabIndex: number }) {
       {...rest}
       className={styles.home}
       onScroll={async (e) => {
-        console.log(headerContainerRef);
         const currentScroll = e.currentTarget.scrollTop;
-        console.error("your current scroll " + currentScroll);
-        const previousScroll = previousScrollRef.current;
-        console.log(
-          previousScrollRef.current + " previousScrollRef is updating ?  "
-        );
-        console.log(
-          previousScrollRef.current + " previousScrollRef is updating ?  "
-        );
-        console.log({ Iam_currentScroll: currentScroll });
-        if (!headerContainer) {
-          console.error("scrolled (headerRef Not Exist !)");
-        }
         if (!headerContainer) return;
         console.log(headerContainerRef.current);
-        if (active !== "/") return;
         console.error("this should run without refresh");
-        const scrollingDown = previousScroll < currentScroll;
+        const scrollingDown = previousScrollRef.current < currentScroll;
         if (currentScroll >= 60) {
-          // previousScroll = currentScroll;
+          previousScrollRef.current = currentScroll;
           console.error("scrolled and set previous scroll");
-          setPreviousScroll(currentScroll);
           if (scrollingDown) {
             console.log("It is scrolling down");
             hideHeader();
-          } else if (previousScroll > currentScroll + 25) {
+          } else if (previousScrollRef.current > currentScroll + 25) {
             showHeader();
           } else {
             showHeader();
@@ -104,8 +79,6 @@ export default function Home(props: { tabIndex: number }) {
       }}
     >
       <Story />
-      {active}
-      {/* // this doesn't update after app expired */}
       <div className={styles.addPost}>
         <div
           style={{
