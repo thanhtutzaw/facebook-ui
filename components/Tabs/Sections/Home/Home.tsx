@@ -1,5 +1,6 @@
 import { AppContext } from "@/context/AppContext";
 import { PageContext, PageProps } from "@/context/PageContext";
+import { useActiveTab } from "@/hooks/useActiveTab";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import styles from "@/styles/Home.module.scss";
@@ -25,9 +26,8 @@ export default function Home(props: { tabIndex: number }) {
     hasMore,
     expired,
   } = useContext(AppContext) as AppProps;
-  const { setuploadButtonClicked, active } = useContext(
-    PageContext
-  ) as PageProps;
+  const { setuploadButtonClicked } = useContext(PageContext) as PageProps;
+  const { active } = useActiveTab();
   const previousScrollRef = useRef(0);
   const setPreviousScroll = useCallback((n: number) => {
     previousScrollRef.current = n;
@@ -71,6 +71,7 @@ export default function Home(props: { tabIndex: number }) {
       onScroll={async (e) => {
         console.log(headerContainerRef);
         const currentScroll = e.currentTarget.scrollTop;
+        console.error("your current scroll " + currentScroll);
         const previousScroll = previousScrollRef.current;
         console.log(
           previousScrollRef.current + " previousScrollRef is updating ?  "
@@ -104,6 +105,7 @@ export default function Home(props: { tabIndex: number }) {
     >
       <Story />
       {active}
+      {/* // this doesn't update after app expired */}
       <div className={styles.addPost}>
         <div
           style={{
