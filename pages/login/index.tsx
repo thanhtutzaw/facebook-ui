@@ -12,30 +12,7 @@ import signupStyles from "../../components/Signup/index.module.scss";
 import Spinner from "../../components/Spinner";
 import EmailIcon from "../../public/email.svg";
 import styles from "../../styles/Home.module.scss";
-// export const getServerSideProps: GetServerSideProps<AppProps> = async (
-//   context
-// ) => {
-//   try {
-//     const cookies = nookies.get(context);
-//     const token = await verifyIdToken(cookies.token);
-//     console.log(token.uid + " in app.tsx");
-//     return {
-//       props: {
-//         uid: token.uid,
-//       },
-//     };
-//   } catch (error) {
-//     console.log("SSR Error (expired in app.tsx) " + error);
-//     // context.res.writeHead(302, { Location: "/" });
-//     // context.res.writeHead(302, { Location: "/login" });
-//     // context.res.end();
-//     return {
-//       props: {
-//         uid: "",
-//       },
-//     };
-//   }
-// };
+
 export default function Login() {
   const {
     testUserSigninLoading,
@@ -194,14 +171,6 @@ export default function Login() {
                             className={`m-[2_0_0] text-red`}
                           >{`Error (${error})`}</h4>
                           {/* {error === AuthErrorCodes.USER_DELETED && (
-                          <Link
-                            style={{
-                              color: "var(--blue-origin)",
-                            }}
-                            href="/login"
-                          >
-                            Create New Account
-                          </Link>
                         )} */}
                         </motion.div>
                       </>

@@ -18,7 +18,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -54,48 +53,11 @@ function Header(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const { active, setActive } = useActiveTab();
   const navRef = useRef<HTMLElement>(null);
-
   const [width, setwidth] = useState<number>();
-
-  // navRef.current ? Math.floor(navRef.current?.clientWidth / 6) : 0;
-
   const { selectMode, setselectMode, headerContainerRef } = useContext(
     AppContext
   ) as AppProps;
   const { indicatorRef, setSelectedId } = useContext(PageContext) as PageProps;
-  // useEffect(() => {
-  //   if (typeof window === "undefined") return;
-  //   // const nav = document.getElementsByTagName("nav")[0];
-  //   // if (!clientWidth) return;
-  //   // setwidth(Math.floor(clientWidth / 6));
-  //   // console.log(clientWidth);
-  //   if (navRef.current) {
-  //     const navWidth = navRef.current.clientWidth;
-  //     setwidth(navWidth);
-  //     console.log("Nav width:", navWidth);
-  //   }
-  //   // window.onresize = () => {
-  //   //   setwidth(Math.floor(clientWidth / 6));
-  //   // };
-  //   // window.onbeforeunload = () => {
-  //   //   setwidth(Math.floor(clientWidth / 6));
-  //   // };
-  // }, []);
-  // useEffect(() => {
-  //   // const handleWindowLoad = () => {
-  //   if (navRef.current) {
-  //     const navWidth = navRef.current.clientWidth;
-  //     setwidth(navWidth);
-  //     console.log("Nav width:", navWidth);
-  //   }
-  //   // };
-
-  //   // window.addEventListener("load", handleWindowLoad);
-
-  //   // return () => {
-  //   //   window.removeEventListener("load", handleWindowLoad);
-  //   // };
-  // }, []); // Empty dependency array ensures this runs after the initial render
   useEffect(() => {
     window.onpopstate = () => {
       if (window.location.hash === "#profile") {
@@ -106,49 +68,46 @@ function Header(props: { tabIndex: number }) {
       }
     };
   }, [selectMode, setSelectedId, setselectMode]);
+  const [hide, setHide] = useState(false);
   const [currentNav, setCurrentNav] = useState<Tabs>("/");
+  const [activeNav, setActiveNav] = useState<Tabs>("/");
 
-  const headerContainerRef1 = headerContainerRef;
+  useEffect(() => {
+    const headerContainer = headerContainerRef?.current;
+    if (!headerContainer) return;
+    setCurrentNav(active);
+  }, [active, headerContainerRef, hide]);
+  useEffect(() => {
+    window.onhashchange = () => {
+      setActiveNav(active);
+    };
+  }, [active]);
   useEffect(() => {
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
-    const headerContainer = headerContainerRef1?.current;
-    if (!headerContainer) return;
     const showHeader = () => {
-      headerContainer.setAttribute("data-hide", "false");
-      // headerContainer.style.transform = "translateY(0px)";
-      // headerContainer.style.height = "120px";
+      setHide(false);
     };
     const hideHeader = () => {
-      headerContainer.setAttribute("data-hide", "true");
-      // headerContainer.style.transform = "translateY(-60px)";
-      // headerContainer.style.height = "60px";
+      setHide(true);
     };
-    // if (window.location.hash === "" || window.location.hash === "#home") {
-    //   // tabs?.scrollTo({
-    //   //   left: 0,
-    //   //   behavior: "smooth",
-    //   // });`
-    // }
-    window.onhashchange = (e) => {
-      setCurrentNav(active);
-      if (window.location.hash === "" || window.location.hash === "#home") {
-        showHeader();
-        tabs?.scrollTo({
-          left: 0,
-          behavior: "smooth",
-        });
-      } else {
-        main.style.scrollSnapType = "none";
-        hideHeader();
-      }
-    };
-  }, [active, headerContainerRef1]);
+    if (window.location.hash === "" || window.location.hash === "#home") {
+      tabs?.scrollTo({
+        left: 0,
+        behavior: "smooth",
+      });
+      showHeader();
+    } else {
+      main.style.scrollSnapType = "none";
+      hideHeader();
+    }
+  }, [currentNav]);
+
   const handleResize = useCallback(() => {
     if (!navRef.current) return;
     setwidth(navRef.current.clientWidth);
   }, [navRef]);
-  useLayoutEffect(() => {
+  useEffect(() => {
     handleResize();
   }, [handleResize]);
   useEffect(() => {
@@ -162,13 +121,13 @@ function Header(props: { tabIndex: number }) {
   }, [navRef, handleResize]);
   return (
     <div
-      data-hide="false"
+      data-hide={hide}
       ref={headerContainerRef}
       className={`${s.headerContainer} [transition:transform_0.18s_ease,height_0.15s_ease] [will-change:transform,height] translate-y-0 sticky top-[-60px] z-[200]`}
     >
       <header className={`flex justify-between items-center ${s.header}`}>
         <Logo />
-        {JSON.stringify(active)}
+
         <div className={s.action}>
           <button
             tabIndex={tabIndex}
@@ -212,9 +171,8 @@ function Header(props: { tabIndex: number }) {
           >
             {navLists.map((navList, index) => (
               <Navitems
-                // headerContainerRef={headerContainerRef}
                 width={width}
-                currentNav={currentNav}
+                currentNav={activeNav}
                 setCurrentNav={setCurrentNav}
                 key={navList.name}
                 setActive={setActive}

@@ -26,7 +26,6 @@ export default function Home(props: { tabIndex: number }) {
     expired,
   } = useContext(AppContext) as AppProps;
   const { setuploadButtonClicked } = useContext(PageContext) as PageProps;
-  // const { active } = useActiveTab();
   const previousScrollRef = useRef(0);
   const { scrollRef } = useInfiniteScroll({
     hasMore: hasMore!,
@@ -61,14 +60,10 @@ export default function Home(props: { tabIndex: number }) {
       onScroll={async (e) => {
         const currentScroll = e.currentTarget.scrollTop;
         if (!headerContainer) return;
-        console.log(headerContainerRef.current);
-        console.error("this should run without refresh");
         const scrollingDown = previousScrollRef.current < currentScroll;
         if (currentScroll >= 60) {
           previousScrollRef.current = currentScroll;
-          console.error("scrolled and set previous scroll");
           if (scrollingDown) {
-            console.log("It is scrolling down");
             hideHeader();
           } else if (previousScrollRef.current > currentScroll + 25) {
             showHeader();
