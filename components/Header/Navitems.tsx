@@ -1,13 +1,18 @@
 import { PageContext, PageProps } from "@/context/PageContext";
 import useQueryFn from "@/hooks/useQueryFn";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import React, {
+  HTMLProps,
+  ReactElement,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { AppContext } from "../../context/AppContext";
 import styles from "../../styles/Home.module.scss";
 import { AppProps, Tabs } from "../../types/interfaces";
 
 export default function Navitems(props: {
-  // headerContainerRef: RefObject<HTMLDivElement> | undefined;
   width: number | undefined;
   currentNav: Tabs;
   setCurrentNav: Function;
@@ -26,6 +31,7 @@ export default function Navitems(props: {
     setNotiCount(UnReadNotiCount);
   }, [UnReadNotiCount]);
   const {
+    width,
     currentNav,
     setCurrentNav,
     active,
@@ -37,20 +43,6 @@ export default function Navitems(props: {
   const router = useRouter();
   let iconTitle = name === "/" ? "Home" : name;
   const TabName = name.toLowerCase() as Tabs;
-
-  // useEffect(() => {
-  //   setcurrentTab(TabName);
-  //   if (currentTab === TabName) {
-  //     // e.currentTarget.setAttribute("data-active", "true");
-  //     console.log({currentTab, active:true});
-  //     // e.currentTarget.classList.add("active")
-  //   } else {
-  //     // e.currentTarget.setAttribute("data-active", "false");
-  //     console.log({currentTab, active:false});
-  //   }
-  // }, [TabName, currentTab]);
-
-  console.log(active);
   const changeTab = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (TabName === "home" || TabName === "/") {
       headerContainerRef &&
@@ -61,9 +53,6 @@ export default function Navitems(props: {
     setCurrentNav?.(TabName);
     setActive?.(TabName);
     window.location.hash = TabName === "/" ? "#home" : `#${TabName}`;
-    // setcurrentTab(TabName);
-
-    // console.log(currentTab);
     if (TabName === active) {
       tab.scrollTo({
         top: 0,
@@ -83,20 +72,12 @@ export default function Navitems(props: {
       }
       return;
     }
-
-    // const main = document.getElementsByTagName("main")[0]!;
     tabs.scrollTo({
       left: index * tabs.clientWidth,
       behavior: "smooth",
     });
   };
-
-  // const activeClass = active === TabName ? styles.active : "";
   const activeClass = currentNav === TabName ? styles.active : "";
-  // const activeClass = currentTab === TabName ? styles.active : "";
-  const friendRequestCount = parseInt(
-    friendReqCount ? friendReqCount?.toString() : "0"
-  );
   const title: { [key in Tabs]: string } = {
     home: iconTitle,
     "/": iconTitle,
@@ -111,22 +92,12 @@ export default function Navitems(props: {
   const badge = {
     home: null,
     "/": null,
-    friends: friendRequestCount > 0 && (
-      <span className={styles.badge}>
-        {Math.min(friendRequestCount, 9)}
-        {friendRequestCount > 9 && "+"}
-      </span>
-    ),
+    friends: <BadgeItem count={friendReqCount} />,
     watch: null,
     profile: null,
     menu: null,
-    notifications: active !== "notifications" && (notiCount ?? 0) >= 1 && (
-      <>
-        <span className={styles.badge}>
-          {Math.min(notiCount ?? 0, 9)}
-          {(notiCount ?? 0) > 9 && "+"}
-        </span>
-      </>
+    notifications: active !== "notifications" && (
+      <BadgeItem count={notiCount} />
     ),
   };
   return (
@@ -134,26 +105,71 @@ export default function Navitems(props: {
       onClick={changeTab}
       className={`${styles.navItem} relative ${activeClass}  `}
     >
-      <div role="button" aria-label={iconTitle} title={title[TabName]}>
-        <div style={{ position: "relative" }}>
-          {TabIcon}
-          {badge[TabName]}
-        </div>
-      </div>
-      {currentNav === TabName && !props.width && (
-        <div
-          style={{
-            bottom: "-1px",
-            position: "absolute",
-            height: "3px",
-            width: "100%",
-            zIndex: "100",
-            backgroundColor: "var(--blue-origin)",
-            borderRadius: "10px",
-          }}
-          className={styles.indicator}
-        ></div>
-      )}
+      <NavItem aria-label={iconTitle} title={title[TabName]}>
+        <NavIcon>{TabIcon}</NavIcon>
+        <NavBadge>{badge[TabName]}</NavBadge>
+      </NavItem>
+      {currentNav === TabName && !width && <Indicator />}
     </div>
+  );
+}
+
+function Indicator({}) {
+  return (
+    <div
+      style={{
+        bottom: "-1px",
+        position: "absolute",
+        height: "3px",
+        width: "100%",
+        zIndex: "100",
+        backgroundColor: "var(--blue-origin)",
+        borderRadius: "10px",
+      }}
+      className={styles.indicator}
+    ></div>
+  );
+}
+
+function NavItem({
+  children,
+  ...rest
+}: { children: ReactElement[] } & HTMLProps<HTMLDivElement>) {
+  return (
+    <div role="button" {...rest}>
+      <div
+        style={{
+          position: "relative",
+        }}
+      >
+        {React.Children.map(children, (child) => {
+          if (React.isValidElement(child)) {
+            const ChildClone = React.cloneElement(child, {
+              // ...childProps,
+            });
+            return ChildClone;
+          }
+        })}
+      </div>
+    </div>
+  );
+}
+
+function NavIcon({ children }: { children: ReactElement }) {
+  return <>{children}</>;
+}
+function NavBadge({ children }: { children: false | ReactElement | null }) {
+  return <>{children}</>;
+}
+function BadgeItem({ count }: { count: number | string | undefined }) {
+  const badgeCount =
+    typeof count === "string" ? parseInt(count ?? "0") : count ?? 0;
+
+  if (badgeCount <= 0) return null;
+  return (
+    <span className={styles.badge}>
+      {Math.min(badgeCount, 9)}
+      {badgeCount > 9 && "+"}
+    </span>
   );
 }

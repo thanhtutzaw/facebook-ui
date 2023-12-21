@@ -1,7 +1,6 @@
-import { firestore, auth } from "firebase-admin";
+import { auth, firestore } from "firebase-admin";
 import { getCollectionPath } from "./firebase";
 var admin = require("firebase-admin");
-// var serviceAccount = require("../secret.json");
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -12,9 +11,8 @@ if (!admin.apps.length) {
   });
 }
 export async function verifyIdToken(token: string) {
-  let error;
   try {
-    let decodedToken = await auth().verifyIdToken(token);
+    const decodedToken = await auth().verifyIdToken(token);
     // console.log("🎉running try in firebase admin");
     const convertSecondsToTime = (seconds: number) => {
       const days = Math.floor(seconds / (3600 * 24));
@@ -33,7 +31,6 @@ export async function verifyIdToken(token: string) {
     return decodedToken;
   } catch (error) {
     console.log("🎉 Firebase admin error", error);
-    // return error;
     throw error;
   }
 }
@@ -50,9 +47,6 @@ export async function getFCMToken(uid: string) {
   const user = await firestore()
     .doc(`${getCollectionPath.users({ uid })}`)
     .get();
-  // const fcmToken = user.tokens?.fcmToken;
   const fcmToken = (user.data()?.fcmToken as string[]) ?? null;
-  // const quotedArray = fcmToken.map((element) => `"${element}"`);
-  // const array = quotedArray.join(",");
   return fcmToken;
 }

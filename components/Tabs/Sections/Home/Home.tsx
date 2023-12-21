@@ -34,27 +34,20 @@ export default function Home(props: { tabIndex: number }) {
     postEnd: postEnd!,
   });
   const headerContainer = headerContainerRef && headerContainerRef?.current;
-  console.log({ headerContainerRef });
   const hideHeader = () => {
     if (!headerContainer) return;
-    console.log("headerContinaer exisst in function");
     headerContainer.setAttribute("data-hide", "true");
-    // headerContainer.style.transform = "translateY(-60px)";
-    // headerContainer.style.height = "60px";
   };
   const showHeader = () => {
     if (!headerContainer) return;
-    console.log("headerContinaer exisst in function");
     headerContainer.setAttribute("data-hide", "false");
-    // headerContainer.style.transform = "translateY(0px)";
-    // headerContainer.style.height = "120px";
   };
   return (
     <div
       aria-hidden={rest.tabIndex === -1}
       ref={scrollRef}
       id="/"
-      key={expired ? "true" : "false"}
+      // key={expired ? "true" : "false"}
       {...rest}
       className={styles.home}
       onScroll={async (e) => {

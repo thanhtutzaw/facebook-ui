@@ -204,25 +204,9 @@ function Header(props: { tabIndex: number }) {
         >
           <div
             ref={indicatorRef}
-            // style={{
-            //   width: `${
-            //     width ?? typeof window !== "undefined"
-            //       ? Math.floor(
-            //           window.document?.getElementsByTagName("nav")[0]
-            //             .clientWidth / 6
-            //         )
-            //       : width
-            //   }px`,
-            // }}
             style={{
               width: `${(width ?? 0) / 6}px`,
             }}
-            // style={{
-            //   width: `${
-            //     width ??
-            //     (navRef.current && Math.floor(navRef.current.clientWidth / 6))
-            //   }px`,
-            // }}
             className={s.indicator}
           ></div>
         </div>

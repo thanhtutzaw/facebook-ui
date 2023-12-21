@@ -155,8 +155,8 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     expired =
       error.code === "auth/argument-error" ||
       error.code === "auth/id-token-expired";
-    console.log("SSR Error in index.tsx " + error);
-    console.log("SSR ErrorCode in index.tsx " + error.code);
+    console.log({ "SSR Error in index.tsx": error });
+    // console.log("SSR ErrorCode in index.tsx " + error.code);
     let postError = error.code === "resource-exhausted" ? error.message : "";
     let resourceError =
       error.code === "resource-exhausted" ? error.message : "";
