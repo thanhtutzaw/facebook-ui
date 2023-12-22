@@ -5,6 +5,7 @@ import { getPath } from "../firebase";
 export type NotiMessageTypes = keyof typeof messages;
 export interface AppNoti {
   messageBody?: string;
+ 
   uid: string;
   receiptId: string | number;
   profile:
@@ -45,7 +46,7 @@ export async function sendFCM<T extends NotiApiRequest["body"]>(data: T) {
   const response = await fetch(url, {
     method: "POST",
     headers: {
-      "Access-Control-Allow-Origin": "*",
+      // "Access-Control-Allow-Origin": "*",
       "Content-type": "application/json",
     },
     body: JSON.stringify(data),

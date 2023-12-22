@@ -14,6 +14,7 @@ if (!admin.apps.length) {
 }
 export interface NotiApiRequest extends NextApiRequest {
   body: {
+    image?: string;
     title?: string;
     recieptId: string | number;
     message?: string;
@@ -50,6 +51,7 @@ export default async function handler(
     actions,
     requireInteraction,
     collapse_key,
+    image,
   } = req.body;
   try {
     const registrationTokens = await getFCMToken(String(recieptId));
@@ -72,6 +74,7 @@ export default async function handler(
             body: messageBody
               ? `${message} : ${messageBody}`
               : message ?? "New Notification Recieved!",
+            imageUrl: image ?? "",
           },
           webpush: {
             headers: {

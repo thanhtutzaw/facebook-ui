@@ -1,7 +1,6 @@
 import useLocalStorage from "@/hooks/useLocalStorage";
 import useQueryFn from "@/hooks/useQueryFn";
 import { checkPhotoURL } from "@/lib/firestore/profile";
-import { NotiApiRequest } from "@/pages/api/sendFCM";
 import {
   faComment,
   faPen,
@@ -10,6 +9,7 @@ import {
   faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FirebaseError } from "firebase/app";
 import { User, getAuth } from "firebase/auth";
 import {
   collection,
@@ -39,7 +39,6 @@ import {
 import { addPost, likePost, unlikePost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
-import { FirebaseError } from "firebase/app";
 
 function Footer(
   props: {
@@ -101,7 +100,7 @@ function Footer(
     try {
       getLikeCount();
     } catch (error: unknown) {
-      if(error instanceof FirebaseError){
+      if (error instanceof FirebaseError) {
         if (error.code === "quota-exceeded") {
           alert("Firebase Quota Exceeded. Please try again later.");
           throw error;
@@ -186,10 +185,11 @@ function Footer(
               });
 
               await sendFCM({
+                image: post.media?.[0] ? post.media?.[0].url : undefined,
                 recieptId: authorId.toString(),
-                message: `${profile?.displayName ?? "Unknown User"} ${
-                  getMessage("post_reaction")
-                }`,
+                message: `${
+                  profile?.displayName ?? "Unknown User"
+                } ${getMessage("post_reaction")}`,
                 icon: checkPhotoURL(
                   currentUser?.photoURL_cropped ?? currentUser?.photoURL
                 ),
@@ -388,9 +388,9 @@ function Footer(
                     try {
                       await sendFCM({
                         recieptId: authorId.toString(),
-                        message: `${profile?.displayName ?? "Unknown User"} ${
-                          getMessage("share")
-                        }`,
+                        message: `${
+                          profile?.displayName ?? "Unknown User"
+                        } ${getMessage("share")}`,
                         icon:
                           currentUser?.photoURL_cropped ??
                           currentUser?.photoURL!,
