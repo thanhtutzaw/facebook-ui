@@ -49,15 +49,17 @@ const navLists = [
   { name: "Notifications", icon: <FontAwesomeIcon icon={faBell} /> },
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
+
 function Header(props: { tabIndex: number }) {
   const { tabIndex } = props;
   const { active, setActive } = useActiveTab();
   const navRef = useRef<HTMLElement>(null);
   const [width, setwidth] = useState<number>();
-  const { selectMode, setselectMode, headerContainerRef } = useContext(
-    AppContext
-  ) as AppProps;
-  const { indicatorRef, setSelectedId } = useContext(PageContext) as PageProps;
+  const { UnReadNotiCount, selectMode, setselectMode, headerContainerRef } =
+    useContext(AppContext) as AppProps;
+  const { indicatorRef, setSelectedId, friendReqCount } = useContext(
+    PageContext
+  ) as PageProps;
   useEffect(() => {
     window.onpopstate = () => {
       if (window.location.hash === "#profile") {
@@ -119,6 +121,22 @@ function Header(props: { tabIndex: number }) {
       window.removeEventListener("resize", handleResize);
     };
   }, [navRef, handleResize]);
+  // const [notiCount, setNotiCount] = useState(UnReadNotiCount);
+  const notiCount = UnReadNotiCount;
+  const badge: Record<Tabs, null | JSX.Element | false> = {
+    home: null,
+    "/": null,
+    friends: <Navitems.BadgeItem count={friendReqCount} />,
+    watch: null,
+    profile: null,
+    menu: null,
+    notifications: active !== "notifications" && (
+      <Navitems.BadgeItem count={notiCount} />
+    ),
+  };
+  // useEffect(() => {
+  //   setNotiCount(UnReadNotiCount);
+  // }, [UnReadNotiCount]);
   return (
     <div
       data-hide={hide}
@@ -169,19 +187,47 @@ function Header(props: { tabIndex: number }) {
             exit={{ opacity: 0, width: "60%" }}
             className={s.navItemsContainer}
           >
-            {navLists.map((navList, index) => (
-              <Navitems
-                width={width}
-                currentNav={activeNav}
-                setCurrentNav={setCurrentNav}
-                key={navList.name}
-                setActive={setActive}
-                active={active}
-                index={index}
-                name={navList.name}
-                icon={navList.icon}
-              />
-            ))}
+            {navLists.map(({ name, icon }, index) => {
+              const iconTitle = name === "/" ? "Home" : name;
+              const TabName = name.toLowerCase() as Tabs;
+              const title: { [key in Tabs]: string } = {
+                home: iconTitle,
+                "/": iconTitle,
+                friends: iconTitle,
+                watch: iconTitle,
+                profile: iconTitle,
+                menu: iconTitle,
+                notifications: `${
+                  (notiCount ?? 0) > 0
+                    ? `${iconTitle} (${notiCount})`
+                    : iconTitle
+                }`,
+              };
+              return (
+                <Navitems
+                  key={`${name} ${UnReadNotiCount}`}
+                  currentNav={activeNav}
+                  setCurrentNav={setCurrentNav}
+                  setActive={setActive}
+                  active={active}
+                  index={index}
+                  name={name}
+                >
+                  <Navitems.Container
+                    aria-label={iconTitle}
+                    title={title[TabName]}
+                  >
+                    <Navitems.Icon>{icon}</Navitems.Icon>
+                    <Navitems.Badge>{badge[TabName]}</Navitems.Badge>
+                  </Navitems.Container>
+                  {currentNav === TabName && !width ? (
+                    <Navitems.Indicator />
+                  ) : (
+                    <></>
+                  )}
+                </Navitems>
+              );
+            })}
           </motion.div>
         )}
         {selectMode && (

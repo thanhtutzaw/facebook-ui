@@ -1,48 +1,34 @@
-import { PageContext, PageProps } from "@/context/PageContext";
 import useQueryFn from "@/hooks/useQueryFn";
 import { useRouter } from "next/router";
-import React, {
-  HTMLProps,
-  ReactElement,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { HTMLProps, ReactElement, useContext } from "react";
 import { AppContext } from "../../context/AppContext";
 import styles from "../../styles/Home.module.scss";
 import { AppProps, Tabs } from "../../types/interfaces";
 
 export default function Navitems(props: {
-  width: number | undefined;
   currentNav: Tabs;
   setCurrentNav: Function;
   active: Tabs;
   setActive: Function;
-  icon: JSX.Element;
   name: string;
   index: number;
+  children: ReactElement[] | ReactElement;
 }) {
-  const { queryFn } = useQueryFn();
-  const { headerContainerRef, UnReadNotiCount, setUnReadNotiCount } =
-    useContext(AppContext) as AppProps;
-  const { friendReqCount } = useContext(PageContext) as PageProps;
-  const [notiCount, setNotiCount] = useState(UnReadNotiCount);
-  useEffect(() => {
-    setNotiCount(UnReadNotiCount);
-  }, [UnReadNotiCount]);
   const {
-    width,
+    children,
     currentNav,
     setCurrentNav,
     active,
     setActive,
-    icon: TabIcon,
     name,
     index,
   } = props;
+  const { queryFn } = useQueryFn();
+  const { headerContainerRef, setUnReadNotiCount } = useContext(
+    AppContext
+  ) as AppProps;
+
   const router = useRouter();
-  let iconTitle = name === "/" ? "Home" : name;
-  const TabName = name.toLowerCase() as Tabs;
   const changeTab = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (TabName === "home" || TabName === "/") {
       headerContainerRef &&
@@ -77,39 +63,34 @@ export default function Navitems(props: {
       behavior: "smooth",
     });
   };
+  const TabName = name.toLowerCase() as Tabs;
   const activeClass = currentNav === TabName ? styles.active : "";
-  const title: { [key in Tabs]: string } = {
-    home: iconTitle,
-    "/": iconTitle,
-    friends: iconTitle,
-    watch: iconTitle,
-    profile: iconTitle,
-    menu: iconTitle,
-    notifications: `${
-      (notiCount ?? 0) > 0 ? `${iconTitle} (${notiCount})` : iconTitle
-    }`,
-  };
-  const badge = {
-    home: null,
-    "/": null,
-    friends: <BadgeItem count={friendReqCount} />,
-    watch: null,
-    profile: null,
-    menu: null,
-    notifications: active !== "notifications" && (
-      <BadgeItem count={notiCount} />
-    ),
-  };
+  // const title: { [key in Tabs]: string } = {
+  //   home: iconTitle,
+  //   "/": iconTitle,
+  //   friends: iconTitle,
+  //   watch: iconTitle,
+  //   profile: iconTitle,
+  //   menu: iconTitle,
+  //   notifications: `${
+  //     (notiCount ?? 0) > 0 ? `${iconTitle} (${notiCount})` : iconTitle
+  //   }`,
+  // };
+
   return (
     <div
       onClick={changeTab}
       className={`${styles.navItem} relative ${activeClass}  `}
     >
-      <NavItem aria-label={iconTitle} title={title[TabName]}>
-        <NavIcon>{TabIcon}</NavIcon>
-        <NavBadge>{badge[TabName]}</NavBadge>
-      </NavItem>
-      {currentNav === TabName && !width && <Indicator />}
+      {/* <Y   iconTitle={iconTitle} TabIcon={TabIcon}  /> */}
+      {React.Children.map(children, (child) => {
+        if (React.isValidElement(child)) {
+          const ChildClone = React.cloneElement(child, {
+            // ...childProps,
+          });
+          return ChildClone;
+        }
+      })}
     </div>
   );
 }
@@ -131,10 +112,10 @@ function Indicator({}) {
   );
 }
 
-function NavItem({
+export function NavItem({
   children,
   ...rest
-}: { children: ReactElement[] } & HTMLProps<HTMLDivElement>) {
+}: { children?: ReactElement[] } & HTMLProps<HTMLDivElement>) {
   return (
     <div role="button" {...rest}>
       <div
@@ -154,7 +135,6 @@ function NavItem({
     </div>
   );
 }
-
 function NavIcon({ children }: { children: ReactElement }) {
   return <>{children}</>;
 }
@@ -173,3 +153,8 @@ function BadgeItem({ count }: { count: number | string | undefined }) {
     </span>
   );
 }
+Navitems.Container = NavItem;
+Navitems.Icon = NavIcon;
+Navitems.Badge = NavBadge;
+Navitems.BadgeItem = BadgeItem;
+Navitems.Indicator = Indicator;

@@ -73,7 +73,7 @@ export default function useNotifications({
       if (hasMore) {
         notifications.pop();
       }
-      setUnReadNotiCount?.(0);
+      setUnReadNotiCount(0);
       return { notifications, hasMore };
     } catch (error) {
       console.error(error);
@@ -118,10 +118,9 @@ export default function useNotifications({
           limit(UnReadNoti_LIMIT)
         );
         // if (UnReadNotiCount >= 10) return;
-        // console.log("noti listening realtime - unRead" + UnReadNotiCount);
         unsubscribeNotifications = onSnapshot(notiCountQuery, (latestNoti) => {
           // console.log(querySnapshot.docs.map((doc) => doc.data()));
-          setUnReadNotiCount?.(latestNoti.size); // getting unRead noti count
+          setUnReadNotiCount(latestNoti.size); // getting unRead noti count
         });
       } catch (error) {
         console.log(error);
