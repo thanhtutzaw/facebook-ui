@@ -265,12 +265,12 @@ export default function Home({
       const messaging = getMessaging(app);
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
-        const { title, body, icon } = payload.notification!;
+        const { title, body, icon, image } = payload.notification!;
         const notificationTitle = title ?? "Facebook";
-
         const notificationOptions = {
           body: body ?? "Notifications from facebook .",
           icon: icon ?? "/logo.svg",
+          image: image ?? "",
         };
         console.log(
           `serviceWorker in navigator ${"serviceWorker" in navigator}`

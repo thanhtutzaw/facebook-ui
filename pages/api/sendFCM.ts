@@ -68,7 +68,7 @@ export default async function handler(
             body: messageBody
               ? `${message} : ${messageBody}`
               : message ?? "New Notification Recieved!",
-            imageUrl: image ?? "",
+            ...(image ? { imageUrl: image } : {}),
           },
           webpush: {
             headers: {
@@ -79,7 +79,7 @@ export default async function handler(
               requireInteraction: requireInteraction ?? false,
               badge: badge ?? "./badge.svg",
               icon,
-              image: image ?? "",
+              ...(image ? { image: image } : {}),
               actions: actions ? actions : [],
               data: {
                 actionPayload:
