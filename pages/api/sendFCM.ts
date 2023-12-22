@@ -55,13 +55,10 @@ export default async function handler(
   } = req.body;
   try {
     const registrationTokens = await getFCMToken(String(recieptId));
-    // console.log({ registrationTokens });
     console.log({ actionPayload });
     console.log(typeof actionPayload);
-    // const notiAction = actions ? JSON.stringify(actions) : "";
     if (registrationTokens) {
       try {
-        // const messageNoti: MulticastMessage = {
         const messageNoti: MulticastMessage = {
           //           collapseKey on Android
           // apns-collapse-id on Apple
@@ -85,6 +82,7 @@ export default async function handler(
               requireInteraction: requireInteraction ?? false,
               badge: badge ?? "./badge.svg",
               icon,
+              image: image ?? "",
               actions: actions ? actions : [],
               data: {
                 actionPayload:
