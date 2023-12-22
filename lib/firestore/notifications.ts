@@ -5,7 +5,7 @@ import { getPath } from "../firebase";
 export type NotiMessageTypes = keyof typeof messages;
 export interface AppNoti {
   messageBody?: string;
- 
+
   uid: string;
   receiptId: string | number;
   profile:
@@ -43,24 +43,28 @@ export async function sendFCM<T extends NotiApiRequest["body"]>(data: T) {
   console.log({ url });
   console.log("Sending Notification (" + data.message + ")");
   console.log({ data });
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      // "Access-Control-Allow-Origin": "*",
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-  if (response.ok) {
-    console.log("Notification Sended successfully.");
+  try {
+    const response = await fetch( , {
+      method: "POST",
+      headers: {
+        // "Access-Control-Allow-Origin": "*",
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (response.ok) {
+      console.log("Notification Sended successfully.");
+    }
+    if (!response.ok) {
+      throw new Error("Notification response failed!");
+    }
+    const responseData: T = await response.json();
+    return responseData;
+  } catch (error) {
+    console.error("Notification response failed!" + error);
   }
 
-  if (!response.ok) {
-    throw new Error("Notification response failed!");
-  }
   // return response.json() as unknown as T;
-  const responseData: T = await response.json();
-  return responseData;
 }
 export const messages = {
   comment_reaction: `loved to your comment.`,

@@ -74,7 +74,7 @@ export default function CommentInput(props: Partial<CommentProps>) {
       content: post.text,
     });
     await sendFCM({
-      image: post.media?.[0] ? post.media?.[0].url : '',
+      ...(post.media?.[0] ? { image: post.media?.[0].url } : {}),
       recieptId: post?.authorId.toString()!,
       message: `${
         currentUserProfile?.displayName ?? "Unknown User"
