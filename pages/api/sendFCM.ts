@@ -14,7 +14,7 @@ if (!admin.apps.length) {
 }
 export interface NotiApiRequest extends NextApiRequest {
   body: {
-    image ?: "" | string;
+    image?: string;
     title?: string;
     recieptId: string | number;
     message?: string;
@@ -60,10 +60,7 @@ export default async function handler(
     if (registrationTokens) {
       try {
         const messageNoti: MulticastMessage = {
-          //           collapseKey on Android
-          // apns-collapse-id on Apple
           topic: collapse_key ?? "",
-          // collapse_key in legacy protocols (all platforms)
           collapse_key: collapse_key ?? "",
           tokens: registrationTokens,
           notification: {

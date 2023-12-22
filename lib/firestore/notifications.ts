@@ -44,7 +44,7 @@ export async function sendFCM<T extends NotiApiRequest["body"]>(data: T) {
   console.log("Sending Notification (" + data.message + ")");
   console.log({ data });
   try {
-    const response = await fetch( , {
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         // "Access-Control-Allow-Origin": "*",
