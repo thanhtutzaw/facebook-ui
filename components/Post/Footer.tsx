@@ -185,7 +185,7 @@ function Footer(
               });
 
               await sendFCM({
-                image: post.media?.[0] ? post.media?.[0].url : undefined,
+                image: post.media?.[0] ? post.media?.[0].url : "",
                 recieptId: authorId.toString(),
                 message: `${
                   profile?.displayName ?? "Unknown User"

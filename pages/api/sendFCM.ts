@@ -14,7 +14,7 @@ if (!admin.apps.length) {
 }
 export interface NotiApiRequest extends NextApiRequest {
   body: {
-    image?: string;
+    image ?: "" | string;
     title?: string;
     recieptId: string | number;
     message?: string;
