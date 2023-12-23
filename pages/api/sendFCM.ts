@@ -15,7 +15,7 @@ if (!admin.apps.length) {
 export interface NotiApiRequest extends NextApiRequest {
   body: {
     image?: string;
-    title?: string;
+    title?: string  ;
     recieptId: string | number;
     message?: string;
     messageBody?: string;
@@ -29,7 +29,6 @@ export interface NotiApiRequest extends NextApiRequest {
     // actions?:  { [key in keyof typeof NotiAction]: typeof NotiAction[key] }
     // actions?: {[key in keyof typeof NotiAction]: typeof NotiAction[key]}[];
     // actions?: (d:typeof NotiAction)=>string;
-    // actions?: any;
     actions?: Array<(typeof NotiAction)[keyof typeof NotiAction]>;
     requireInteraction?: boolean;
   };
@@ -39,7 +38,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const {
-    title,
+    title  =  'Facebook',
     recieptId,
     messageBody,
     message,
@@ -56,7 +55,11 @@ export default async function handler(
   try {
     const registrationTokens = await getFCMToken(String(recieptId));
     console.log({ actionPayload });
-    console.log(typeof actionPayload);
+    console.log({ NotiRequest: req.body });
+    const body = messageBody
+      ? `${message} : ${messageBody}`
+      : message ?? "New Notification Recieved!";
+    const notiBadge = badge ?? "./badge.svg";
     if (registrationTokens) {
       try {
         const messageNoti: MulticastMessage = {
@@ -64,10 +67,8 @@ export default async function handler(
           collapse_key: collapse_key ?? "",
           tokens: registrationTokens,
           notification: {
-            title: title ?? "Facebook",
-            body: messageBody
-              ? `${message} : ${messageBody}`
-              : message ?? "New Notification Recieved!",
+            title,
+            body,
             ...(image !== "" ? { imageUrl: image } : {}),
           },
           webpush: {
@@ -77,7 +78,7 @@ export default async function handler(
             },
             notification: {
               requireInteraction: requireInteraction ?? false,
-              badge: badge ?? "./badge.svg",
+              badge: notiBadge,
               icon,
               ...(image !== "" ? { image: image } : {}),
               actions: actions ? actions : [],
