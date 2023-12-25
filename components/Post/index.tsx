@@ -12,10 +12,10 @@ import { PageContext, PageProps } from "../../context/PageContext";
 import PostProvider from "../../context/PostContext";
 import { Post as PostType, likes } from "../../types/interfaces";
 import Comment from "../Comment";
+import CommentItem from "../Comment/CommentItem";
 import Content from "./Content";
 import Footer from "./Footer";
 import s from "./index.module.scss";
-import CommentItem from "../Comment/CommentItem";
 interface PostProps {
   deletePost?: Function;
   shareMode?: boolean;
@@ -59,7 +59,8 @@ function Post({
     parseInt(post?.likeCount?.toString()! ?? "")
   );
   const [Likes, setLikes] = useState<likes | []>([]);
-  const [isDropDownOpenInNestedComment, setisDropDownOpenInNestedComment] = useState(false)
+  const [isDropDownOpenInNestedComment, setisDropDownOpenInNestedComment] =
+    useState(false);
   if (!post) return <></>;
   const selectStyle = selectMode ? ` ${s.selected}` : "";
   const shareStyle = shareMode ? ` ${s.share}` : "";
@@ -102,13 +103,9 @@ function Post({
         <div className="border-[#e4e4e4] border-t">
           <Comment preview={true} comments={post.latestCommet}>
             {post.latestCommet?.map((comment) => (
-              // <>{JSON.stringify(comment.authorId)}</>
               <CommentItem
-              preview={true}
+                preview={true}
                 key={String(comment.id)}
-                // replyInputRef={replyInputRef}
-                // replyInput={replyInput}
-                // setreplyInput={setreplyInput}
                 setisDropDownOpenInNestedComment={
                   setisDropDownOpenInNestedComment
                 }

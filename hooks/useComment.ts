@@ -142,13 +142,6 @@ function useComment(props: CommentItemProps) {
   });
   const [ViewmoreToggle, setViewmoreToggle] = useState(false);
   const [replyLoading, setreplyLoading] = useState(false);
-  // useEffect(() => {
-  //   console.log(
-  //     !comment.recentReplies?.some((recent) => {
-  //       return recent.id != comment.id;
-  //     })
-  //   );
-  // }, [comment.id, comment.recentReplies]);
   useEffect(() => {
     if (comment.recentRepliesLoading) {
       const element = document.getElementById("recentRepliesLoading")
@@ -176,11 +169,9 @@ function useComment(props: CommentItemProps) {
           })}/${comment.id}`
         );
     const data = { ...comment, text: editedComment! };
-    console.log({ data });
     try {
       setUpdateLoading(true);
       await updateComment(commentRef, data);
-      console.log({ commentRef, nested });
       setInput(editedComment ?? input);
       setUpdateLoading(false);
       seteditToggle?.("");
@@ -224,7 +215,6 @@ function useComment(props: CommentItemProps) {
       limit(Comment_Reply_LIMIT)
     );
     const fetchMoreReplies = async () => {
-      console.log("updating comments in fetchMoreReplies");
       const newReplies = await fetchComments(post, uid, replyCommentQuery);
       setComments?.(
         (prev: Comment[]) =>

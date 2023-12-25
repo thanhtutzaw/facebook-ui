@@ -239,7 +239,7 @@ export default function Home({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
   const [newsFeedPost, setnewsFeedPost] = useState(posts ?? []);
-  console.log("running in index.tsx");
+  // console.log("running in index.tsx");
   useEffect(() => {
     if (posts && !newsFeedData) {
       setnewsFeedData?.(posts);
@@ -261,30 +261,51 @@ export default function Home({
     };
     isReady();
     if (!notiPermission) return;
+    // const notiFallback =<T> (data:T)=>{
+    //   return data
+    // }
+    // function notiFallback(data: NotiApiRequest["body"] | NotificationPayload) {
+    //   const { title, message, messageBody, image, icon } =
+    //     data as NotiApiRequest["body"];
+    //   const newData = {
+    //     // body: body ?? "Notifications from facebook .",
+    //     body: messageBody
+    //       ? `${message} : ${messageBody}`
+    //       : message ?? "New Notification Recieved!",
+    //     icon: icon ?? "/logo.svg",
+    //     image: image ?? "",
+    //     title: title ?? "Facebook",
+    //   };
+    //   return newData;
+    // }
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       const messaging = getMessaging(app);
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
-        const { title, body, icon, image } = payload.notification!;
-        const notificationTitle = title ?? "Facebook";
-        const notificationOptions = {
-          body: body ?? "Notifications from facebook .",
-          icon: icon ?? "/logo.svg",
-          image: image ?? "",
-        };
-        console.log(
-          `serviceWorker in navigator ${"serviceWorker" in navigator}`
-        ); // true
-        console.log(navigator.serviceWorker);
+        // const { title, body, image, icon } = notiFallback(
+        //   payload.notification!
+        // );
 
-        console.log("Before showNotification code");
+        const { title, body, image, icon } = payload.notification!;
+        const options = {
+          body,
+          icon,
+          image,
+          // collapseKey: payload.collapseKey,
+        };
+        // console.log(
+        //   `serviceWorker in navigator ${"serviceWorker" in navigator}`
+        // ); // true
+        // console.log(navigator.serviceWorker);
+
+        // console.log("Before showNotification code");
         navigator.serviceWorker.ready.then((registration) => {
-          console.log("Inside showNotification code");
+          // console.log("Inside showNotification code");
           //this code didn't run
-          registration.showNotification(notificationTitle, notificationOptions);
+          registration.showNotification(title!, options);
         });
-        console.log("After showNotification code");
-        new Notification(notificationTitle, notificationOptions);
+        // console.log("After showNotification code");
+        new Notification(title!, options);
         // this line only work in Desktop but actions are not allowed
 
         return () => {

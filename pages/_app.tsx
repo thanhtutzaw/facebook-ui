@@ -72,6 +72,7 @@ export default function App({
       } else {
         if (!expired) return;
         router.push("/");
+        console.log("expired in app.tsx and pushed route to /");
       }
     });
     return () => unsub();
@@ -91,14 +92,16 @@ export default function App({
     const unsubscribe = onIdTokenChanged(auth, async (user) => {
       if (!user) {
         nookies.destroy(undefined, "token");
+
         setcurrentUser(null);
         return;
       }
       try {
-        const token = await user.getIdToken();
+        const token = await user.getIdToken(true);
         nookies.set(undefined, "token", token, {
           // maxAge: 30 * 24 * 60 * 60,
-          maxAge: 55 * 60,
+          maxAge: 3 * 24 * 60 * 60, //3 days
+          // maxAge: 55 * 60,//1 hour
           path: "/",
           // httpOnly: true,
           secure: true,
@@ -157,7 +160,7 @@ export default function App({
           currentUser={currentUser}
           setcurrentUser={setcurrentUser}
         >
-          <main style={{scrollPadding:'65px'}}>
+          <main style={{ scrollPadding: "65px" }}>
             <Component {...pageProps} />
             {currentUser?.uid && <ImageLargeView />}
             <audio

@@ -268,7 +268,8 @@ function Footer(
           title="Comment"
           tabIndex={-1}
           onClick={(e) => {
-            if (router.asPath === `/${authorId}/${id?.toString()}`) return;
+            if (router.pathname !== "/") return;
+
             router.push({
               pathname: `${authorId}/${id?.toString()}`,
             });
@@ -312,9 +313,7 @@ function Footer(
             //   }
             // }}
             // onWheel={(e) => {
-            //   console.log(document.body.scrollTop);
             //   e.preventDefault();
-            //   console.log("wheeling in backdrop");
             //   return;
             // }}
             style={{

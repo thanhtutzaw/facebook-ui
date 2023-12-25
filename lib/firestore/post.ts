@@ -133,12 +133,9 @@ export async function fetchRecentPosts(uid: string) {
       };
     });
     hasMore = recentPosts.length > NewsFeed_LIMIT;
-    console.log({
-      rlenght: recentPosts.length,
-      newfeedLimit: NewsFeed_LIMIT,
-    });
+
     if (hasMore) {
-      console.log("there is hasMore newsfeed");
+      // console.log("there is hasMore newsfeed");
       recentPosts.pop();
     }
   } catch (error) {

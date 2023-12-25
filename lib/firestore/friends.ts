@@ -50,7 +50,6 @@ export async function addFriends(
     ...senderData,
     id: uid,
   } as friends & { senderId: string };
-  console.log({ senderData, receiptData });
   const senderRef = doc(db, `users/${receiptData.id}/friends/${senderData.id}`);
   const receiptRef = doc(
     db,
@@ -73,7 +72,6 @@ export async function addFriends(
     } else {
       await setDoc(reqCountRef, { count: 1, updatedAt: serverTimestamp() });
     }
-    console.log({ author });
     try {
       await sendFCM({
         recieptId: senderData.id,

@@ -397,7 +397,6 @@ export async function getNewsFeed(
   uid: string,
   recentPosts?: RecentPosts[]
 ): Promise<Post[] | undefined> {
-  console.log("posts are fetched");
   if (recentPosts) {
     const data = await Promise.all(
       recentPosts.map(async (recentPost) => {
@@ -440,14 +439,11 @@ export async function getNewsFeed(
           // const l = docs.docs.map((doc) => {
           //   if (doc.exists()) {
           //     const c = doc.data();
-          //     // console.log({ ...postwithInfo, ...c });
           //     // return { ...postwithInfo, ...c };
           //     return { ...doc.data() };
           //   }
-          //   // console.log({ ...postwithInfo });
           //   // return { ...postwithInfo };
           // });
-          // console.log(l);
 
           // const data = await commentToJSON(doc);
           // return { ...c };
@@ -482,7 +478,6 @@ export async function getPostWithMoreInfo(
   snapShot?: QuerySnapshot<DocumentData>
 ) {
   const postSnap = postQuery ? await getDocs(postQuery) : snapShot;
-  console.log("posts are fetched");
   if (postSnap) {
     const postJSON = await Promise.all(
       postSnap.docs.map(async (doc) => await postToJSON(doc))

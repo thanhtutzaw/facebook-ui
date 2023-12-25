@@ -38,7 +38,6 @@ export function AppProvider(props: AppProps) {
   const getMorePosts = useCallback(
     async function () {
       if (!props.hasMore) return;
-      console.log("getting more news feed posts .......");
       setpostLoading(true);
       const post = newsFeedPost?.[newsFeedPost?.length! - 1]!;
       const date = new Timestamp(
@@ -64,11 +63,11 @@ export function AppProvider(props: AppProps) {
       const finalPost = await getNewsFeed(String(uid), recentPosts);
       setnewsFeedPost?.(newsFeedPost?.concat(finalPost!));
       setpostLoading(false);
-      console.log({ end: finalPost?.length! < NewsFeed_LIMIT });
+      // console.log({ end: finalPost?.length! < NewsFeed_LIMIT });
       setPostEnd(finalPost?.length! < NewsFeed_LIMIT);
-      console.log({ postEnd });
+      // console.log({ postEnd });
     },
-    [newsFeedPost, postEnd, props.hasMore, setnewsFeedPost, uid]
+    [newsFeedPost, props.hasMore, setnewsFeedPost, uid]
   );
   return (
     <AppContext.Provider

@@ -122,7 +122,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     let hasMore = false;
     const comments = await fetchComments(newPost, uid, commentQuery);
-    console.log({ jjj: { l: comments.length, count: newPost.commentCount } });
     hasMore = comments.length < Number(newPost.commentCount ?? 0);
     const withComment = { ...newPost, comments };
     const isPostExists = postDoc.exists();
@@ -443,20 +442,20 @@ export default function Page(props: {
             setCommentNotFoundLoading(false);
           })();
         } else {
-          console.log({
-            isReplyFound: limitedComments
-              .find((c) => c.id === commentId)
-              ?.recentReplies.some((recent) => recent.id === replyId),
-          });
-          console.log(
-            limitedComments
-              .find((c) => c.id === commentId)
-              ?.recentReplies.some((recent) => console.log(typeof recent.id))
-          );
+          // console.log({
+          //   isReplyFound: limitedComments
+          //     .find((c) => c.id === commentId)
+          //     ?.recentReplies.some((recent) => recent.id === replyId),
+          // });
+          // console.log(
+          //   limitedComments
+          //     .find((c) => c.id === commentId)
+          //     ?.recentReplies.some((recent) => console.log(typeof recent.id))
+          // );
+          const comment = limitedComments.find((c) => c.id === commentId);
           if (
-            limitedComments
-              .find((c) => c.id === commentId)
-              ?.recentReplies.some((recent) => recent.id === replyId)
+            comment?.recentReplies &&
+            comment?.recentReplies.some((recent) => recent.id === replyId)
           )
             return;
           console.log("we fetch reply by id now");
@@ -475,45 +474,63 @@ export default function Page(props: {
           );
           const { user, post: postId } = router.query;
           (async function fetchNotFoundReply() {
-            const replyDoc = await getDoc(
-              doc(
-                db,
-                `${getCollectionPath.commentReplies({
-                  authorId: String(user),
-                  postId: String(postId),
-                  commentId: String(commentId),
-                })}/${replyId}`
-              )
-            );
-            const data = await fetchSingleComment(
-              replyDoc,
-              { id: String(postId), authorId: String(user) },
-              String(uid)
-            );
-            setlimitedComments(
-              (prev: CommentType[]) =>
-                prev?.map((c) => {
-                  if (c.id === commentId) {
-                    let recentReply = data!;
-                    if (
-                      recentReply &&
-                      !c.recentReplies.some((r) => r.id === recentReply.id)
-                    ) {
-                      console.error("set reply (found comment)");
+            try {
+              const replyDoc = await getDoc(
+                doc(
+                  db,
+                  `${getCollectionPath.commentReplies({
+                    authorId: String(user),
+                    postId: String(postId),
+                    commentId: String(commentId),
+                  })}/${replyId}`
+                )
+              );
+              if (!replyDoc.exists()) {
+                setlimitedComments((prev: CommentType[]) =>
+                  prev.map((c) => {
+                    if (c.id === commentId) {
                       return {
                         ...c,
-                        recentReplies: [
-                          recentReply!,
-                          ...(c.recentReplies ?? []),
-                        ],
-                        replyCount: (c.replyCount ?? 0) - 1,
                         recentRepliesLoading: false,
                       };
                     }
-                  }
-                  return c;
-                })
-            );
+                    return { ...c };
+                  })
+                );
+                throw Error("Reply Not Found!");
+              }
+              const data = await fetchSingleComment(
+                replyDoc,
+                { id: String(postId), authorId: String(user) },
+                String(uid)
+              );
+              setlimitedComments(
+                (prev: CommentType[]) =>
+                  prev?.map((c) => {
+                    if (c.id === commentId) {
+                      let recentReply = data!;
+                      if (
+                        recentReply &&
+                        !c.recentReplies.some((r) => r.id === recentReply.id)
+                      ) {
+                        console.info("set reply (found comment by url)");
+                        return {
+                          ...c,
+                          recentReplies: [
+                            recentReply!,
+                            ...(c.recentReplies ?? []),
+                          ],
+                          replyCount: (c.replyCount ?? 0) - 1,
+                          recentRepliesLoading: false,
+                        };
+                      }
+                    }
+                    return c;
+                  })
+              );
+            } catch (error) {
+              alert(error);
+            }
           })();
         }
       }

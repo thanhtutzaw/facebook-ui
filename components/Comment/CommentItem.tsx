@@ -445,7 +445,6 @@ function CommentItem(props: CommentItemProps) {
                     document.getElementsByTagName("main")[0].scrollTop;
                   toggleScrollPadding(true);
                   setStoredScroll(main);
-                  console.log(main);
                   await handleViewMore();
                 }}
               >

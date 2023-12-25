@@ -103,7 +103,6 @@ export async function fetchSingleComment(
         })}/${comment.id}/hearts/${uid}`
       );
       const isUserLikeThisPost = (await getDoc(likedByUserRef)).exists();
-      // console.log(comment.recipient && comment.recipient.id === "");
 
       const updatedComment = {
         ...comment,
@@ -119,7 +118,6 @@ export async function fetchSingleComment(
         updatedComment.recentReplies = recentReplies;
         updatedComment.replyCount--;
       }
-      console.log({ updatedComment });
       return updatedComment;
     } else {
       return { ...comment, author: null };
@@ -169,6 +167,7 @@ export async function loveComment({
   const batch = writeBatch(db);
   batch.set(heartRef, { uid, createdAt: serverTimestamp() });
   await batch.commit();
+
   const replyURL = `${authorId}/${postId}?comment=${parentId}#reply-${commentId}`;
   // if (uid === authorId) return;
   await sendAppNoti({
@@ -224,7 +223,7 @@ export async function addComment({
     ...commentData,
     recipient,
   };
-  console.log({ addingReply: commentData });
+  // console.log({ addingReply: commentData });
   batch.set(
     commentRef,
     recipient && recipient.id !== "" ? withRecipient : commentData
@@ -252,11 +251,10 @@ export async function updateComment(
   }
 }
 export async function deleteComment(
-  commentRef: DocumentReference<DocumentData>,
-  postRef: DocumentReference<DocumentData>
+  commentRef: DocumentReference<DocumentData>
 ) {
   const batch = writeBatch(db);
-
+  console.log("delete comment path- " + commentRef.path);
   batch.delete(commentRef);
   await batch.commit();
 }

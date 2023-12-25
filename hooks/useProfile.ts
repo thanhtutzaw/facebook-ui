@@ -82,7 +82,6 @@ function useProfile() {
       if (hasMore) {
         posts.pop();
       }
-      console.log({ hasMore });
       return { posts, hasMore };
     },
     [sortby, uid]

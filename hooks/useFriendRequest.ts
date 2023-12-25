@@ -22,7 +22,6 @@ export default function useFriendRequest(uid: string) {
     async function getLastpull() {
       lastPull = (await getDoc(friendReqCountRef)).data()
         ?.lastPullTimestamp as Timestamp;
-      // console.log(lastPull);
     }
     getLastpull();
     let unsubscribeFriendReqCount: Unsubscribe;
@@ -37,7 +36,7 @@ export default function useFriendRequest(uid: string) {
             const count = doc.data().count;
             const newCount = count;
             if (count > 0) {
-              console.log(lastPull?.toDate().getTime! < updatedAt);
+              // console.log(lastPull?.toDate().getTime! < updatedAt);
               const audioElement = soundRef.current;
 
               if (updatedAt > Date.now()) {
@@ -48,7 +47,7 @@ export default function useFriendRequest(uid: string) {
                     .play()
                     .then(() => {
                       soundRef.current?.play();
-                      console.log("allow");
+                      console.log("Audio autoplay available");
                     })
                     .catch(() => {
                       soundRef.current?.pause();
@@ -61,13 +60,9 @@ export default function useFriendRequest(uid: string) {
                 //   ?.
                 // try {
                 //   soundRef.current?.play();
-                //   console.log("Audio autoplay Allowed in HomeScreen App");
                 //   playFriendRequest();
                 // } catch (error) {
                 //   soundRef.current?.pause();
-                //   console.log(
-                //     "Audio autoplay not allowed (Try agin by adding App to HomeScreen)"
-                //   );
                 // }
               }
             }

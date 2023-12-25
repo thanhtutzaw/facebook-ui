@@ -53,7 +53,6 @@ export function LikedUsers({
           }
         })
       );
-      console.log("updatedLIkes");
       setLikes(withAuthor);
     });
     return () => unsubscribe();

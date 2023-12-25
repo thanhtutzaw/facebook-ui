@@ -15,7 +15,6 @@ export function Welcome({
 }) {
   const router = useRouter();
   useEffect(() => {
-    console.log(router);
     if (expired) {
       router.push(router);
       console.log("expired and pushed(in Welcome.tsx)");

@@ -21,7 +21,6 @@ export function SocialCount(props: {
   const SocialUserDialogRef = useRef<HTMLDialogElement>(null);
   const [togglereactionList, settogglereactionList] = useState(false);
   // useEffect(() => {
-  //   console.log(togglereactionList);
   //   const handle = () => {
   //     if (togglereactionList && SocialUserDialogRef) {
 

@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentData, DocumentReference } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
-import { RefObject, useEffect, useState } from "react";
+import { RefObject, useState } from "react";
 interface CommentActionProps {
   parentId: string;
   nested: boolean;
@@ -56,24 +56,17 @@ export default function CommentAction({
     setComments((prev: Comment[]) =>
       prev.map((c) => {
         if (c.id === parentId) {
-          if (c.recentReplies) {
-            return {
-              ...c,
-              ...recentReply(c),
-            };
-          } else {
-            return {
-              ...c,
-              ...reply(c),
-            };
-          }
+          return {
+            ...c,
+            ...recentReply(c),
+            ...reply(c),
+          };
         }
         return c;
       })
     );
   }
   // useEffect(() => {
-  //   console.log("hi");
   //   menuRef && menuRef.current && console.log(menuRef.current);
   // }, [menuRef]);
 
@@ -143,15 +136,13 @@ export default function CommentAction({
                   }}
                   onClick={async () => {
                     setDeleteLoading(true);
-
-                    console.log("delete comment path- " + commentRef.path);
+                    if (!commentRef || !postRef) {
+                      throw new Error(
+                        "CommentRef and PostRef are required !"
+                      );
+                    }
                     try {
-                      if (!commentRef || !postRef) {
-                        throw new Error(
-                          "CommentRef and PostRef are required !"
-                        );
-                      }
-                      await deleteComment(commentRef, postRef);
+                      await deleteComment(commentRef);
                       if (nested) {
                         updateNestedComment({
                           recentReply: (c) => {

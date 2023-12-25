@@ -74,7 +74,8 @@ export default function CommentInput(props: Partial<CommentProps>) {
       content: post.text,
     });
     await sendFCM({
-      image: post.media?.[0] ? post.media?.[0].url : '',
+      timestamp: Math.floor(Date.now()),
+      image: post.media?.[0] ? post.media?.[0].url : "",
       recieptId: post?.authorId.toString()!,
       message: `${
         currentUserProfile?.displayName ?? "Unknown User"
@@ -82,7 +83,7 @@ export default function CommentInput(props: Partial<CommentProps>) {
       icon: checkPhotoURL(
         currentUserProfile?.photoURL_cropped ?? currentUserProfile?.photoURL
       ),
-      actionPayload: JSON.stringify({
+      actionPayload: {
         text,
         content: text,
         postId,
@@ -93,7 +94,7 @@ export default function CommentInput(props: Partial<CommentProps>) {
         profile: currentUserProfile,
         currentUserProfile,
         replyInput: { ...replyInput, comment: data },
-      }),
+      },
 
       actions: [NotiAction.comment_like, NotiAction.comment_reply],
       // collapse_key: `post-${post.id}`,
@@ -131,10 +132,6 @@ export default function CommentInput(props: Partial<CommentProps>) {
           }
           settext("");
           setaddLoading(false);
-        } catch (error: unknown) {
-          console.log(error);
-          alert(error);
-        } finally {
           props.setreplyInput?.({
             id: "",
             text: "",
@@ -143,6 +140,10 @@ export default function CommentInput(props: Partial<CommentProps>) {
             authorFirstReplyId: "",
             comment: null,
           });
+        } catch (error: unknown) {
+          console.log(error);
+          alert(error);
+        } finally {
           setaddLoading(false);
         }
       }}
@@ -165,6 +166,7 @@ export default function CommentInput(props: Partial<CommentProps>) {
           settext(e.target.value);
         }}
         value={text}
+        name="Add Comment"
         aria-label="Add Comment"
         placeholder={
           replyInput && replyInput.authorName
@@ -226,10 +228,11 @@ export async function handleReply({
     alert("User not Found ! Sign in and Try again !");
     throw Error;
   }
+  // console.log({ JJJJJJJJJJJJJ: replyInput });
   const updateRecentReplies = (
     newData: UnwrapArray<Comment["recentReplies"]>
   ) => {
-    console.log("update recent replies");
+    // console.log("update recent replies");
     setComments?.(
       (prev: Comment[]) =>
         prev?.map((c) => {
@@ -244,7 +247,7 @@ export async function handleReply({
     );
   };
   const updateReplies = (newData: UnwrapArray<Comment["replies"]>) => {
-    console.log("update replies");
+    // console.log("update replies");
     setComments?.(
       (prev: Comment[]) =>
         prev?.map((c) => {
@@ -260,7 +263,7 @@ export async function handleReply({
     );
   };
   const replyRef =
-    replyInput.id && !commentId
+    replyInput.comment?.id && !commentId
       ? doc(
           collection(
             db,
@@ -299,26 +302,36 @@ export async function handleReply({
       alert("User not Found ! Sign in and Try again !");
       throw Error;
     }
-    console.log("replying comment ...");
+    // console.log("replying comment ...");
 
     await addComment({
       commentRef: replyRef,
       authorId: uid,
       text,
     });
-    const isAuthorFirstReplyIdExists =
-      replyInput?.comment && replyInput?.comment.authorFirstReplyId;
+    // const isAuthorFirstReplyIdExists =
+    //   replyInput.comment && replyInput.comment.authorFirstReplyId;
+
     const isAuthorReplyingFirstTime =
-      !isAuthorFirstReplyIdExists && replyInput?.authorId === uid;
+      !replyInput.comment?.authorFirstReplyId ||
+      (replyInput.comment?.authorFirstReplyId === "" &&
+        replyInput?.authorId === uid);
+    console.group(
+      replyInput,
+      // isAuthorFirstReplyIdExists,
+      isAuthorReplyingFirstTime
+    );
+    console.groupEnd();
     if (isAuthorReplyingFirstTime) {
+      console.log("replywith first id");
       const commentRef = doc(
         db,
         `${getCollectionPath.comments({
           authorId: authorId,
           postId: postId,
-        })}/${replyInput.id}`
+        })}/${replyInput.comment?.id}`
       );
-      const oldComment = replyInput.comment as Comment;
+      const oldComment = replyInput.comment;
       if (!oldComment) return;
       await updateComment(commentRef, {
         ...oldComment,
@@ -381,7 +394,7 @@ export async function handleReply({
     icon: checkPhotoURL(
       currentUserProfile?.photoURL_cropped ?? currentUserProfile?.photoURL
     ),
-    actionPayload: JSON.stringify({
+    actionPayload: {
       text,
       parentId: replyInput.comment?.id ?? replyInput.id,
       postId,
@@ -393,7 +406,7 @@ export async function handleReply({
       // replyInput.comment?.id ?? replyInput.id
       // replyId: replyRef.id,
       currentUserProfile,
-    }),
+    },
     actions: [NotiAction.comment_like, NotiAction.comment_reply],
     tag: `ReplyAuthor-${uid}-post-${postId}-comment-${
       replyInput.comment?.id ?? replyInput.id

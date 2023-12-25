@@ -35,7 +35,6 @@ function Notifications({ tabIndex }: { tabIndex: number }) {
         const target = e.currentTarget as HTMLElement;
         if (window.innerHeight + target.scrollTop + 1 >= target.scrollHeight) {
           if (hasNextPage) {
-            console.log("fetch more data");
             await fetchNextPage();
           }
         }

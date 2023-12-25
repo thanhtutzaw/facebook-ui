@@ -46,7 +46,7 @@ export default function Navitems(props: {
       });
       if (tab.scrollTop >= 60) return;
       if (active === "/") {
-        console.log("refreshing new data in Newsfeed");
+        // console.log("refreshing new data in Newsfeed");
         router.replace("/", undefined, { scroll: false });
       } else if (active === "friends") {
         router.replace("/#friends", undefined, { scroll: false });

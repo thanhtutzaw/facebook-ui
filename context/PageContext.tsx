@@ -87,13 +87,12 @@ export function PageProvider(props: PageProps) {
   const indicatorRef = useRef<HTMLDivElement>(null);
 
   const [newsFeedData, setnewsFeedData] = useState<Post[]>([]);
-  console.log("running in pageContext");
+  // console.log("running in pageContext");
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (!shareAction) return;
       const target = e.target as HTMLDivElement;
-      console.log(target);
-      console.log(dropdownRef.current);
+      // console.log(dropdownRef.current);
       if (dropdownRef && !dropdownRef.current?.contains(target)) {
         setshareAction("");
       }

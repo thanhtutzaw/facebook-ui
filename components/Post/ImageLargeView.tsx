@@ -159,7 +159,6 @@ export function ImageLargeView() {
         // if (scale.get() < 1) {
         //   api.set({ x: 0, y: 0, scale: 1 });
         // }
-        // console.log(m2);
         // const ref = imgRef?.current!.getBoundingClientRect()!;
         const target = imgRef?.current;
         const ref = target?.getBoundingClientRect()!;

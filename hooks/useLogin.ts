@@ -23,7 +23,6 @@ function useLogin() {
   const auth = getAuth(app);
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
-      // console.log(user, adding);
       // if (user) {
       //   // router.push("/");
       // }

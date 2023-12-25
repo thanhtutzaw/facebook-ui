@@ -14,8 +14,9 @@ if (!admin.apps.length) {
 }
 export interface NotiApiRequest extends NextApiRequest {
   body: {
+    timestamp?: number;
     image?: string;
-    title?: string  ;
+    title?: string;
     recieptId: string | number;
     message?: string;
     messageBody?: string;
@@ -23,7 +24,7 @@ export interface NotiApiRequest extends NextApiRequest {
     tag?: string;
     badge?: string;
     link?: string;
-    actionPayload?: string;
+    actionPayload?: any;
     collapse_key?: string;
     // actions?: Array<keyof typeof NotiAction>;
     // actions?:  { [key in keyof typeof NotiAction]: typeof NotiAction[key] }
@@ -32,88 +33,92 @@ export interface NotiApiRequest extends NextApiRequest {
     actions?: Array<(typeof NotiAction)[keyof typeof NotiAction]>;
     requireInteraction?: boolean;
   };
+  // extends NotificationPayload
 }
 export default async function handler(
   req: NotiApiRequest,
   res: NextApiResponse
 ) {
   const {
-    title  =  'Facebook',
+    timestamp,
+    title = "Facebook",
     recieptId,
     messageBody,
     message,
-    icon,
+    icon = "/logo.svg",
     tag,
     badge,
     link,
     actionPayload,
     actions,
-    requireInteraction,
+    requireInteraction = false,
     collapse_key,
     image,
   } = req.body;
   try {
     const registrationTokens = await getFCMToken(String(recieptId));
-    console.log({ actionPayload });
-    console.log({ NotiRequest: req.body });
+    // console.log({ actionPayload });
+    // console.log({ NotiRequest: req.body });
     const body = messageBody
       ? `${message} : ${messageBody}`
       : message ?? "New Notification Recieved!";
     const notiBadge = badge ?? "./badge.svg";
     if (registrationTokens) {
-      try {
-        const messageNoti: MulticastMessage = {
-          topic: collapse_key ?? "",
-          collapse_key: collapse_key ?? "",
-          tokens: registrationTokens,
+      const messageNoti: MulticastMessage = {
+        // topic: collapse_key ?? "",
+        // collapse_key: collapse_key ?? "",
+
+        tokens: registrationTokens,
+        notification: {
+          title,
+          body,
+          ...(image !== "" ? { imageUrl: image } : {}),
+        },
+        webpush: {
+          headers: {
+            Urgency: "high",
+            image: icon ?? "",
+          },
           notification: {
             title,
+            timestamp,
             body,
-            ...(image !== "" ? { imageUrl: image } : {}),
-          },
-          webpush: {
-            headers: {
-              Urgency: "high",
-              image: icon ?? "",
-            },
-            notification: {
-              requireInteraction: requireInteraction ?? false,
-              badge: notiBadge,
-              icon,
-              ...(image !== "" ? { image: image } : {}),
-              actions: actions ? actions : [],
-              data: {
-                actionPayload:
-                  actions && actionPayload ? JSON.parse(actionPayload) : {},
-              },
-              tag: tag ?? "",
-              renotify: false,
-            },
-            fcmOptions: {
-              link,
+            ...(image !== "" ? { image: image } : {}),
+            icon,
+            requireInteraction,
+            badge: notiBadge,
+            tag: tag ?? "",
+            renotify: false,
+            actions: actions ? actions : [],
+            data: {
+              actionPayload: actions && actionPayload ? actionPayload : {},
             },
           },
-          android: {
-            collapseKey: collapse_key ?? "",
-            ttl: 3600000,
-            notification: {
-              bodyLocKey: "STOCK_NOTIFICATION_BODY",
-              bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+          fcmOptions: {
+            link,
+          },
+        },
+        android: {
+          collapseKey: collapse_key ?? "",
+          ttl: 3600000,
+          notification: {
+            bodyLocKey: "STOCK_NOTIFICATION_BODY",
+            bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+          },
+        },
+        apns: {
+          payload: {
+            aps: {
+              threadId: collapse_key ?? "",
             },
           },
-          apns: {
-            payload: {
-              aps: {
-                threadId: collapse_key ?? "",
-              },
-            },
-          },
-        } as MulticastMessage;
-
+        },
+      };
+      try {
         const response = await admin
           .messaging()
           .sendEachForMulticast(messageNoti);
-        console.log("Successfully sent message:", response);
+        // console.log("Successfully sent message:", response);
         // console.log(
         //   "Error",
         //   response.responses.forEach((r) => r.error)
@@ -124,7 +129,7 @@ export default async function handler(
           })
         );
       } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).end();
         return;
       }

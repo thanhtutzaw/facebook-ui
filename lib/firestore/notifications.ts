@@ -23,7 +23,6 @@ export async function sendAppNoti(data: AppNoti) {
   const { displayName: userName, photoURL } = profile!;
   const isAdmin = receiptId.toString() === uid;
   const notifRef = doc(getPath("notifications", { uid: String(receiptId) }));
-  console.log({ InboxNotiData: data });
   const notiData = {
     userName,
     createdAt: serverTimestamp(),
@@ -33,16 +32,15 @@ export async function sendAppNoti(data: AppNoti) {
   };
   await setDoc(notifRef, notiData);
 }
-export async function sendFCM<T extends NotiApiRequest["body"]>(data: T) {
+export async function sendFCM(data:NotiApiRequest["body"]) {
   const productionURL = "https://facebook-ui-zee.vercel.app";
   const localURL = "http://localhost:3000";
   const isProduction = process.env.NODE_ENV === "production";
   const hostName = isProduction ? productionURL : localURL;
   const apiEndpoint = "/api/sendFCM";
   const url = `${hostName ?? productionURL}${apiEndpoint}`;
-  console.log({ url });
   console.log("Sending Notification (" + data.message + ")");
-  console.log({ data });
+  console.log({Sending_Notification: data });
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -58,7 +56,7 @@ export async function sendFCM<T extends NotiApiRequest["body"]>(data: T) {
     // if (!response.ok) {
     //   throw new Error("Notification response failed!");
     // }
-    const responseData: T = await response.json();
+    const responseData = await response.json();
     return responseData;
   } catch (error) {
     console.error("Notification response failed!" + error);
