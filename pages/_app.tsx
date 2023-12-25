@@ -97,13 +97,17 @@ export default function App({
         return;
       }
       try {
-        const token = await user.getIdToken(true);
+        const token = await user.getIdToken();
+        // console.log();
+        // if (nookies.get(undefined, "token")) return;
         nookies.set(undefined, "token", token, {
           // maxAge: 30 * 24 * 60 * 60,
+          // maxAge: 60,
           maxAge: 3 * 24 * 60 * 60, //3 days
+          // maxAge: 3 * 24 * 60 * 60, //3 days
           // maxAge: 55 * 60,//1 hour
           path: "/",
-          // httpOnly: true,
+          // httpOnly: process.env.NODE_ENV === "production",
           secure: true,
           sameSite: "none",
         });

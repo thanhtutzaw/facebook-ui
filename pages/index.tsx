@@ -16,6 +16,7 @@ import { useContext, useEffect, useState } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
+
 import { AppProvider } from "../context/AppContext";
 import {
   app,
@@ -28,25 +29,64 @@ import {
   userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import { AppProps, account, friends } from "../types/interfaces";
+import { AppProps, Post, account, friends } from "../types/interfaces";
 
 import SecondaryPage from "@/components/QueryPage";
 import { useActiveTab } from "@/hooks/useActiveTab";
 import { fetchMyPosts, fetchRecentPosts } from "@/lib/firestore/post";
 import { checkPhotoURL } from "@/lib/firestore/profile";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
+import { FirebaseError } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import Spinner from "../components/Spinner";
 import { PageContext, PageProps } from "../context/PageContext";
+type TInitialProps = {
+  expired: boolean;
+  tokenUID: string;
+  queryPageData: unknown;
+  token: DecodedIdToken | null;
+  postError: string;
+  uid: string;
+  acceptedFriends: string[];
+  posts: Post[];
+  fcmToken: string[];
+  profile: account["profile"] | null;
+  account: null;
+};
 export const getServerSideProps: GetServerSideProps<AppProps> = async (
   context
 ) => {
-  let expired = true;
-  let tokenUID;
-  let queryPageData = null;
+  const initialProps: TInitialProps = {
+    expired: true,
+    uid: "",
+    tokenUID: "",
+    postError: "",
+    queryPageData: null,
+    token: null,
+    acceptedFriends: [],
+    posts: [],
+    fcmToken: [],
+    profile: null,
+    account: null,
+  };
+  function updateInitialProps(
+    data: Partial<typeof initialProps>
+  ): typeof initialProps {
+    return {
+      ...initialProps,
+      ...(data ? data : {}),
+    };
+  }
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
-    expired = !token;
+    console.log("Expire in : " + new Date(token.exp * 1000).toLocaleString());
+    const nowInSeconds = Math.floor(Date.now() / 1000);
+    if (token.exp <= nowInSeconds) {
+      console.log("Token has expired");
+    }
+    // updateInitialProps({ expired: !token });
+    initialProps.expired = !token;
     const userQuery = context.query.user!;
     if (userQuery) {
       const user = await fethUserDoc(userQuery);
@@ -69,7 +109,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
         canUnBlock = relation.senderId === token.uid;
       }
 
-      if (user.exists() && !expired) {
+      if (user.exists() && !initialProps.expired) {
         const profile = user?.data().profile as account["profile"];
 
         const { myPost, hasMore } = await fetchMyPosts(
@@ -78,37 +118,31 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
           isBlocked,
           token
         );
-        queryPageData = {
-          hasMore,
-          profile,
-          myPost,
-          friendStatus: {
-            isFriend,
-            isBlocked,
-            isPending,
-            canAccept,
-            canUnBlock,
+        updateInitialProps({
+          queryPageData: {
+            hasMore,
+            profile,
+            myPost,
+            friendStatus: {
+              isFriend,
+              isBlocked,
+              isPending,
+              canAccept,
+              canUnBlock,
+            },
           },
-        };
+        });
       } else {
-        queryPageData = null;
+        updateInitialProps({ queryPageData: null });
       }
       console.log(
         `user query page(I can fetch user data for userQuery Page)`,
         userQuery
       );
     }
-    const convertSecondsToTime = (seconds: number) => {
-      const days = Math.floor(seconds / (3600 * 24));
-      const hours = Math.floor((seconds % (3600 * 24)) / 3600);
-      const minutes = Math.floor((seconds % 3600) / 60);
-      const remainingSeconds = seconds % 60;
-
-      return { days, hours, minutes, seconds: remainingSeconds };
-    };
-    // console.log(convertSecondsToTime(token.exp));
     const { uid } = token;
-    tokenUID = uid;
+    // updateInitialProps({ tokenUID: uid });
+    initialProps.tokenUID = uid;
     const myFriendsQuery = query(
       getPath("friends", { uid }),
       where("status", "==", "friend"),
@@ -116,70 +150,71 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     );
     const myFriendsSnap = await getDocs(myFriendsQuery);
     const acceptedFriends = myFriendsSnap.docs.map((doc) => doc.id);
-    let { recentPosts, hasMore } = await fetchRecentPosts(uid);
+    const { recentPosts, hasMore } = await fetchRecentPosts(uid);
     const [newsFeedPosts, profileData, currentAccount] = await Promise.all([
       getNewsFeed(uid, recentPosts),
       getProfileByUID(uid),
       getUserData(uid),
     ]);
-    const fcmToken = (await fethUserDoc(uid)).data()?.fcmToken ?? null;
+    initialProps.posts = newsFeedPosts ?? [];
+    const fcmToken = (await fethUserDoc(uid)).data()?.fcmToken;
     const profile = profileData
       ? {
           ...profileData,
           photoURL: checkPhotoURL(profileData.photoURL),
         }
       : null;
-    const currentUserData = userToJSON(currentAccount);
 
+    const currentUserData = userToJSON(currentAccount);
     context.res.setHeader(
       "Cache-Control",
       "public, s-maxage=10, stale-while-revalidate=59"
     );
     return {
       props: {
-        hasMore,
-        queryPageData,
-        token,
-        expired: expired,
+        ...initialProps,
         uid,
-        posts: newsFeedPosts,
-        profile,
-        account: currentUserData ?? null,
-        postError: "",
+        // expired: !token,
         acceptedFriends,
         fcmToken,
+        profile,
+
+        account: currentUserData,
+        // hasMore,
+        // queryPageData,
+        // expired: expired,
+        // uid,
+
+        // profile,
+        // postError: "",
+        // acceptedFriends,
+        // fcmToken,
       },
     };
-  } catch (error: any) {
-    // if (error instanceof FirebaseError) {
-    expired =
-      error.code === "auth/argument-error" ||
-      error.code === "auth/id-token-expired";
-    console.log({ "SSR Error in index.tsx": error });
-    // console.log("SSR ErrorCode in index.tsx " + error.code);
-    let postError = error.code === "resource-exhausted" ? error.message : "";
-    let resourceError =
-      error.code === "resource-exhausted" ? error.message : "";
-    if (error.code === "resource-exhausted") {
-      console.log(AuthErrorCodes.QUOTA_EXCEEDED);
-      console.log("Resource Error : " + error);
-    }
-    // }
+  } catch (error: unknown) {
+    // let postError = "";
+    let postError;
+    if (error instanceof FirebaseError) {
+      initialProps.expired =
+        error.code === "auth/argument-error" ||
+        error.code === "auth/id-token-expired";
 
-    // const isTokenError = error.code === "resource-exhausted";
+      console.error({ "SSR Error in index.tsx": error });
+      // console.log("SSR ErrorCode in index.tsx " + error.code);
+      initialProps.postError =
+        error.code === "resource-exhausted" ? error.message : "";
+
+      if (error.code === "resource-exhausted") {
+        console.error(AuthErrorCodes.QUOTA_EXCEEDED);
+        console.error("Resource Error : " + error);
+      }
+    }
     // context.res.writeHead(302, { Location: "/login" });
     // context.res.end();
     return {
       props: {
-        queryPageData: null,
-        token: null,
-        postError,
-        expired: expired,
-        uid: tokenUID ?? "",
-        acceptedFriends: [],
-        posts: [],
-        profile: null,
-        account: null,
+        ...initialProps,
+        uid: initialProps.tokenUID ?? "",
       },
     };
   }
@@ -213,16 +248,6 @@ export default function Home({
     PageContext
   ) as PageProps;
   const [notiPermission, setnotiPermission] = useState(false);
-  // onAuthStateChanged(auth, (user) => {
-  //   if (!user) {
-  //     router.push("/login");
-  //     console.log("redirected to login outside useEffect");
-  //   } else {
-  //     if (!expired) return;
-  //     router.push("/");
-  //     console.log("redirected to / outside useEffect");
-  //   }
-  // });
   useEffect(() => {
     const auth = getAuth(app);
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -249,35 +274,20 @@ export default function Home({
   useEffect(() => {
     if (!expired) setnewsFeedPost(posts!);
   }, [expired, posts]);
-  useEffect(() => {
-    if (expired) return;
-    if (!uid) {
-      // router.push("/login");
-    }
-  }, [expired, uid]);
+  // useEffect(() => {
+  //   console.error("should not run");
+  //   if (expired) return;
+  //   console.error("should not run");
+  //   if (!uid) {
+  //     console.error("should not run");
+  //   }
+  // }, [expired, uid]);
   useEffect(() => {
     const isReady = async () => {
       await navigator.serviceWorker.ready;
     };
     isReady();
     if (!notiPermission) return;
-    // const notiFallback =<T> (data:T)=>{
-    //   return data
-    // }
-    // function notiFallback(data: NotiApiRequest["body"] | NotificationPayload) {
-    //   const { title, message, messageBody, image, icon } =
-    //     data as NotiApiRequest["body"];
-    //   const newData = {
-    //     // body: body ?? "Notifications from facebook .",
-    //     body: messageBody
-    //       ? `${message} : ${messageBody}`
-    //       : message ?? "New Notification Recieved!",
-    //     icon: icon ?? "/logo.svg",
-    //     image: image ?? "",
-    //     title: title ?? "Facebook",
-    //   };
-    //   return newData;
-    // }
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       const messaging = getMessaging(app);
       const unsubscribe = onMessage(messaging, (payload) => {
@@ -291,7 +301,6 @@ export default function Home({
           body,
           icon,
           image,
-          // collapseKey: payload.collapseKey,
         };
         // console.log(
         //   `serviceWorker in navigator ${"serviceWorker" in navigator}`
@@ -321,7 +330,6 @@ export default function Home({
         const permission = await Notification.requestPermission();
         if (permission === "granted") {
           setnotiPermission?.(true);
-          // console.log(await navigator.serviceWorker.controller);
           console.log("Notification permission granted.");
         } else {
           setnotiPermission?.(false);

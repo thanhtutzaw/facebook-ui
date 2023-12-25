@@ -1,83 +1,110 @@
+// importScripts('../lib/NotiAction')
 self.addEventListener("notificationclick", (event) => {
     console.log('notification click event', event);
     const { reply: inputText } = event;
     const { click_action, data } = event.notification.data.FCM_MSG.notification;
-    console.log({ actionPayload_clickEvent: data.actionPayload })
-    switch (event.action) {
-        case `${NotiAction["comment_like"]}`:
-            event.waitUntil(
-                (async () => {
-                    try {
-                        event.notification.close();
-                        await fetch('api/trigger_noti_action?action=comment_like', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(data.actionPayload)
-                        })
-                    } catch (error) {
-                        console.error('Error:', error);
-                    } finally {
-                        event.notification.close();
-                    }
-                })()
-            )
-            break;
-        case `${NotiAction["comment_reply"]}`:
-            event.waitUntil(
-                (async () => {
-                    try {
-                        event.notification.close();
-                        fetch('api/trigger_noti_action?action=comment_reply', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ ...data.actionPayload, text: inputText })
-                        })
-                    } catch (error) {
-                        console.error('Error:', error);
-                    } finally {
-                        event.notification.close();
-                    }
-                })()
-            )
-            console.log("Submited content :", inputText);
-            break;
-        case `${NotiAction["accept_friend"].action}`:
-            event.waitUntil(
-                (async () => {
-                    try {
-                        event.notification.close();
-                        await fetch('api/trigger_noti_action?action=accept_friend', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(data.actionPayload)
-                        })
-                        console.log('Accepted user');
-                        console.log({ body: JSON.stringify(data.actionPayload) })
-                    } catch (error) {
-                        console.error('Accept Action failed : ', error);
-                    } finally {
-                        event.notification.close();
-                    }
-                })()
-            )
-            break;
-        default:
-            event.notification.close();
-            event.waitUntil(
-                (openTab(click_action))(),
-            );
-            break;
+    console.log({ actionPayload: data.actionPayload })
+    console.log({ eventAction: event.action })
+    // const { NotiAction } = self;
+    // switch (event.action) {
+    //     case `comment_like`:
+    //         event.waitUntil(
+    //             (async () => {
+    //                 try {
+    //                     event.notification.close();
+    //                     await fetch('api/trigger_noti_action?action=comment_like', {
+    //                         method: 'POST',
+    //                         headers: {
+    //                             'Content-Type': 'application/json'
+    //                         },
+    //                         body: JSON.stringify(data.actionPayload)
+    //                     })
+    //                 } catch (error) {
+    //                     console.error('Error:', error);
+    //                 } finally {
+    //                     event.notification.close();
+    //                 }
+    //             })()
+    //         )
+    //         break;
+    //     case `comment_reply`:
+    //         event.waitUntil(
+    //             (async () => {
+    //                 try {
+    //                     event.notification.close();
+    //                     fetch('api/trigger_noti_action?action=comment_reply', {
+    //                         method: 'POST',
+    //                         headers: {
+    //                             'Content-Type': 'application/json'
+    //                         },
+    //                         body: JSON.stringify({ ...data.actionPayload, text: inputText })
+    //                     })
+    //                 } catch (error) {
+    //                     console.error('Error:', error);
+    //                 } finally {
+    //                     event.notification.close();
+    //                 }
+    //             })()
+    //         )
+    //         console.log("Submited content :", inputText);
+    //         break;
+    //     case `accept_friend`:
+    //         event.waitUntil(
+    //             (async () => {
+    //                 try {
+    //                     event.notification.close();
+    //                     await fetch('api/trigger_noti_action?action=accept_friend', {
+    //                         method: 'POST',
+    //                         headers: {
+    //                             'Content-Type': 'application/json'
+    //                         },
+    //                         body: JSON.stringify(data.actionPayload)
+    //                     })
+    //                     console.log('Accepted user');
+    //                     console.log({ body: JSON.stringify(data.actionPayload) })
+    //                 } catch (error) {
+    //                     console.error('Accept Action failed : ', error);
+    //                 } finally {
+    //                     event.notification.close();
+    //                 }
+    //             })()
+    //         )
+    //         break;
+    //     default:
+    //         event.notification.close();
+    //         event.waitUntil(
+    //             (openTab(click_action))(),
+    //         );
+    //         break;
+    // }
+    if (event.action) {
+        event.waitUntil(
+            (async () => {
+                try {
+                    event.notification.close();
+                    await fetch(`api/trigger_noti_action?action=${event.action}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ ...data.actionPayload, text: inputText })
+                    })
+                } catch (error) {
+                    console.error('Error:', error);
+                } finally {
+                    event.notification.close();
+                }
+            })()
+        )
+    } else {
+        event.notification.close();
+        event.waitUntil(
+            (openTab(click_action))(),
+        );
     }
 });
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js'); // Import the Firebase v9 compat library
 importScripts('https://www.gstatic.com/firebasejs/9.1.1/firebase-messaging-compat.js'); // Import the Firebase v9 compat library for messaging
-import { NotiAction } from '../lib/NotiAction';
 const firebaseConfig = {
     apiKey: "AIzaSyAQ5kO77FuROPbxNsn9o3XT4cvyYOdCDHE",
     authDomain: "facebook-37f93.firebaseapp.com",
