@@ -1,20 +1,13 @@
+import Spinner from "@/components/Spinner";
 import { AppContext } from "@/context/AppContext";
-import { Post, AppProps } from "@/types/interfaces";
+import { AppProps, Post } from "@/types/interfaces";
 import { faGear, faSort } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  MutableRefObject,
-  RefObject,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { MutableRefObject, RefObject, useContext, useState } from "react";
 import PostList from "../Home/PostList";
 import SortDate from "./SortDate";
 import s from "./index.module.scss";
-import Spinner from "@/components/Spinner";
-import { FirebaseError } from "firebase-admin";
 
 export function Content(props: {
   hasNextPage?: boolean;
@@ -60,6 +53,7 @@ export function Content(props: {
       <header
         style={{
           borderBottom: isSticky ? "1px solid #f1f1f1" : "initial",
+          zIndex: "50",
         }}
         ref={headerRef}
       >
@@ -80,7 +74,7 @@ export function Content(props: {
           aria-label="toggle select mode"
           aria-expanded={selectMode}
           onClick={(e) => {
-            setselectMode?.((prev:boolean) => !prev);
+            setselectMode?.((prev: boolean) => !prev);
             setToggleSort(false);
 
             if (!selectMode) {
