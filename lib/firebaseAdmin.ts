@@ -13,23 +13,33 @@ if (!admin.apps.length) {
 export async function verifyIdToken(token: string) {
   try {
     const decodedToken = await auth().verifyIdToken(token);
+    // await auth().revokeRefreshTokens(decodedToken.uid);
     // console.log("🎉running try in firebase admin");
-    const convertSecondsToTime = (seconds: number) => {
-      const days = Math.floor(seconds / (3600 * 24));
-      const hours = Math.floor((seconds % (3600 * 24)) / 3600);
-      const minutes = Math.floor((seconds % 3600) / 60);
-      const remainingSeconds = seconds % 60;
+    // const convertSecondsToTime = (seconds: number) => {
+    //   const days = Math.floor(seconds / (3600 * 24));
+    //   const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+    //   const minutes = Math.floor((seconds % 3600) / 60);
+    //   const remainingSeconds = seconds % 60;
+    console.log({
+      expireInSSR: new Date(decodedToken.exp * 1000).toLocaleString(),
+    });
+    //   return { days, hours, minutes, seconds: remainingSeconds };
+    // };
 
-      return { days, hours, minutes, seconds: remainingSeconds };
-    };
+    // new Date(decodedToken.exp * 1000);
     // console.log(convertSecondsToTime(decodedToken.exp));
     const nowInSeconds = Math.floor(Date.now() / 1000);
     if (decodedToken.exp <= nowInSeconds) {
+      console.log("token expired");
       throw new Error("Token has expired");
     }
-    // console.log("🎉 Token is valid");
     return decodedToken;
   } catch (error) {
+    //  await auth.verify
+    // const decodedToken = console.log({ token, decodedToken });
+    //  if (decodedToken.exp <= nowInSeconds) {
+    //    console.log(yes);
+    //  }
     console.log("🎉 Firebase admin error", error);
     throw error;
   }

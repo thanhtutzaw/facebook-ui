@@ -16,28 +16,48 @@ function useFriends() {
     if (!uid) return;
     const myFriendsQuery = query(getPath("friends", { uid }));
     const myFriends = (await getDocs(myFriendsQuery)).docs.map((doc) => doc.id);
+    // .slice(0, 9);
     // including friends , pending , blocked (users) string[]
-    const suggestedFriendsQuery = query(
+    // const batchLists = [];
+    // let queryPromises: Promise<string[]>[] = [];
+    // for (let i = 0; i < myFriends.length; i += 9) {
+    //   const friends = myFriends.slice(i, i + 9);
+    //   batchLists.push(friends);
+    //   queryPromises = batchLists.map(async (batch) => {
+    //     console.log([uid, ...batch]);
+    //     let suggestedFriendsQuery2 = query(
+    //       collectionBasePath,
+    //       where("__name__", "not-in", [uid, ...batch])
+    //       // if not friends , pending , blocked or thisAccount , display all users as suggestedAccount
+    //     );
+    //     return (await getDocs(suggestedFriendsQuery2)).docs.map(
+    //       (doc) => doc.id
+    //     );
+    //   });
+    // }
+    // console.log({ batchLists });
+
+    let suggestedFriendsQuery = query(
       collectionBasePath,
-      where("__name__", "not-in", [uid, ...myFriends])
+      where("__name__", "not-in", [uid, ...myFriends.slice(0, 9)])
       // if not friends , pending , blocked or thisAccount , display all users as suggestedAccount
     );
     try {
       const suggestedFriendsSnap = await getDocs(suggestedFriendsQuery);
-      return suggestedFriendsSnap.docs.map((doc) => {
-        if (doc.data()) {
+      const data = suggestedFriendsSnap.docs
+        .map((doc) => {
           return {
             id: doc.id,
             author: {
               ...doc.data().profile,
             },
           } as friends;
-        } else {
-          return [];
-        }
-      }) as friends[];
+        })
+        .filter((doc) => !myFriends.includes(String(doc.id)));
+      console.log({ data });
+      return data;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw new Error("Failed to fetch Suggested Friends");
     }
   };

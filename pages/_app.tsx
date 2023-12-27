@@ -92,18 +92,17 @@ export default function App({
     const unsubscribe = onIdTokenChanged(auth, async (user) => {
       if (!user) {
         nookies.destroy(undefined, "token");
-
         setcurrentUser(null);
         return;
       }
       try {
         const token = await user.getIdToken();
-        // console.log();
-        // if (nookies.get(undefined, "token")) return;
+        console.group("idTokenChanged ");
+        console.log(token);
         nookies.set(undefined, "token", token, {
           // maxAge: 30 * 24 * 60 * 60,
           // maxAge: 60,
-          maxAge: 3 * 24 * 60 * 60, //3 days
+          // maxAge: 3 * 24 * 60 * 60, //3 days
           // maxAge: 3 * 24 * 60 * 60, //3 days
           // maxAge: 55 * 60,//1 hour
           path: "/",
@@ -111,7 +110,9 @@ export default function App({
           secure: true,
           sameSite: "none",
         });
-        setcurrentUser(user);
+        console.log("cookies updated");
+        console.groupEnd();
+        // setcurrentUser(user);
       } catch (error) {
         console.log("Error refreshing ID token:", error);
       }
@@ -121,6 +122,22 @@ export default function App({
       unsubscribe();
     };
   }, []);
+  // useEffect(() => {
+  //   const Interval = setInterval(
+  //     async () => {
+  //       const user = auth.currentUser;
+  //       if (user) {
+  //         console.log("force refreshed with interval");
+  //         await user.getIdToken(true);
+  //       }
+  //     },
+  //     10 * 60 * 1000 //10min force refresh
+  //   );
+  //   const auth = getAuth(app);
+  //   return () => {
+  //     clearInterval(Interval);
+  //   };
+  // }, []);
   useEffect(() => {
     if (currentUser?.uid) {
       const getProfile = async () => {

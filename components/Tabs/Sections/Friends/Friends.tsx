@@ -13,7 +13,12 @@ function Friend(props: FriendProps) {
 
   const { suggestedFriends, pendingFriends } = useFriends();
   const suggested = suggestedFriends.data ?? [];
+
   const pending = pendingFriends.data ?? [];
+  const suggestedFriendsError = suggestedFriends.error as {
+    code: string;
+    name: string;
+  };
   return (
     <div tabIndex={tabIndex} className={s.container}>
       <div className={`flex flex-wrap pb-[10px] px-4 ${s.action}`}>
@@ -62,7 +67,14 @@ function Friend(props: FriendProps) {
         {suggestedFriends.isLoading ? (
           <Spinner />
         ) : suggestedFriends.error ? (
-          <p className="error">Unexpected Error Occured !</p>
+          <div className="error flex-col justify-center items-center ">
+            <h1 className="m-0">Unexpected Error Occured !</h1>
+            {suggestedFriendsError.code && (
+              <p className="m-0 ">
+                {suggestedFriendsError.name} : {suggestedFriendsError.code}
+              </p>
+            )}
+          </div>
         ) : (
           <>
             {suggested.map((f) => (

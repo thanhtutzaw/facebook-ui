@@ -30,10 +30,10 @@ export default function Navitems(props: {
 
   const router = useRouter();
   const changeTab = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (TabName === "home" || TabName === "/") {
-      headerContainerRef &&
-        headerContainerRef.current?.setAttribute("data-hide", "false");
-    }
+    // if (TabName === "home" || TabName === "/") {
+    //   headerContainerRef &&
+    //     headerContainerRef.current?.setAttribute("data-hide", "false");
+    // }
     const tabs = document.getElementById("tabs")!;
     const tab = document.getElementById(TabName)!;
     setCurrentNav?.(TabName);

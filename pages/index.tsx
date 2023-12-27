@@ -77,15 +77,21 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
       ...(data ? data : {}),
     };
   }
+  let queryPageData = null;
+
   try {
     const cookies = nookies.get(context);
+    console.log({ "cookiesCheck(old)": cookies });
     const token = await verifyIdToken(cookies.token);
-    console.log("Expire in : " + new Date(token.exp * 1000).toLocaleString());
+    initialProps.token = token;
+    console.log({
+      ExpireAfterVerifyTokenSSR: new Date(token.exp * 1000).toLocaleString(),
+    });
     const nowInSeconds = Math.floor(Date.now() / 1000);
+    console.log({ tokenExp: token.exp, nowInSeconds });
     if (token.exp <= nowInSeconds) {
       console.log("Token has expired");
     }
-    // updateInitialProps({ expired: !token });
     initialProps.expired = !token;
     const userQuery = context.query.user!;
     if (userQuery) {
@@ -118,22 +124,20 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
           isBlocked,
           token
         );
-        updateInitialProps({
-          queryPageData: {
-            hasMore,
-            profile,
-            myPost,
-            friendStatus: {
-              isFriend,
-              isBlocked,
-              isPending,
-              canAccept,
-              canUnBlock,
-            },
+        queryPageData = {
+          hasMore,
+          profile,
+          myPost,
+          friendStatus: {
+            isFriend,
+            isBlocked,
+            isPending,
+            canAccept,
+            canUnBlock,
           },
-        });
+        };
       } else {
-        updateInitialProps({ queryPageData: null });
+        queryPageData = null;
       }
       console.log(
         `user query page(I can fetch user data for userQuery Page)`,
@@ -141,7 +145,6 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
       );
     }
     const { uid } = token;
-    // updateInitialProps({ tokenUID: uid });
     initialProps.tokenUID = uid;
     const myFriendsQuery = query(
       getPath("friends", { uid }),
@@ -173,27 +176,15 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     return {
       props: {
         ...initialProps,
+        queryPageData,
         uid,
-        // expired: !token,
         acceptedFriends,
         fcmToken,
         profile,
-
         account: currentUserData,
-        // hasMore,
-        // queryPageData,
-        // expired: expired,
-        // uid,
-
-        // profile,
-        // postError: "",
-        // acceptedFriends,
-        // fcmToken,
       },
     };
   } catch (error: unknown) {
-    // let postError = "";
-    let postError;
     if (error instanceof FirebaseError) {
       initialProps.expired =
         error.code === "auth/argument-error" ||
@@ -275,11 +266,9 @@ export default function Home({
     if (!expired) setnewsFeedPost(posts!);
   }, [expired, posts]);
   // useEffect(() => {
-  //   console.error("should not run");
   //   if (expired) return;
   //   console.error("should not run");
   //   if (!uid) {
-  //     console.error("should not run");
   //   }
   // }, [expired, uid]);
   useEffect(() => {
@@ -292,28 +281,15 @@ export default function Home({
       const messaging = getMessaging(app);
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
-        // const { title, body, image, icon } = notiFallback(
-        //   payload.notification!
-        // );
-
         const { title, body, image, icon } = payload.notification!;
         const options = {
           body,
           icon,
           image,
         };
-        // console.log(
-        //   `serviceWorker in navigator ${"serviceWorker" in navigator}`
-        // ); // true
-        // console.log(navigator.serviceWorker);
-
-        // console.log("Before showNotification code");
         navigator.serviceWorker.ready.then((registration) => {
-          // console.log("Inside showNotification code");
-          //this code didn't run
           registration.showNotification(title!, options);
         });
-        // console.log("After showNotification code");
         new Notification(title!, options);
         // this line only work in Desktop but actions are not allowed
 
