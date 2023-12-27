@@ -141,8 +141,9 @@ function Header(props: { tabIndex: number }) {
     <div
       data-hide={hide}
       ref={headerContainerRef}
-      className={`${s.headerContainer} [transition:transform_0.18s_ease,height_0.15s_ease] [will-change:transform,height] translate-y-0 sticky top-[-60px] z-[200]`}
+      className={`${s.headerContainer} translate-y-0 sticky bottom-0 z-[200]`}
     >
+      {/* [transition:transform_0.18s_ease,height_0.15s_ease] [will-change:transform,height] */}
       <header className={`flex justify-between items-center ${s.header}`}>
         <Logo />
 

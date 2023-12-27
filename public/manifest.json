@@ -29,5 +29,19 @@
       "sizes": "512x512",
       "type": "image/png"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add Post",
+      "url": "/addPost",
+      "icons": [
+        {
+          "src": "./assets/addPost.png",
+          "sizes": "512x512",
+          "type": "image/png",
+          "purpose": "any monochrome"
+        }
+      ]
+    }
   ]
 }

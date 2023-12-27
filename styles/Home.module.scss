@@ -1,20 +1,27 @@
 @import "../styles/mixins";
 .headerContainer {
   transform: translateY(0px);
-  height: 120px;
+  // height: 120px;
+  height: 60px;
   transition:
     transform 0.18s ease,
-    height 0.15s ease;
-  will-change: transform, height;
+    margin 0.18s ease;
+  will-change: transform, margin;
   &[data-hide="true"] {
     transform: translateY(-60px);
-    height: 60px;
+    & + .content {
+      margin-top: 0;
+    }
+    // height: 60px;
   }
   &[data-hide="false"] {
     transform: translateY(0px);
-    height: 120px;
+    & + .content {
+      margin-top: 60px;
+    }
   }
 }
+
 .header {
   max-width: var(--main-width);
   background-color: white;
@@ -246,7 +253,6 @@
     }
   }
 }
-// @media only screen and (min-width: 500px) {
 @media only screen and (hover: hover) and (pointer: fine) {
   .nav .navItem:hover > div {
     background-color: rgb(221, 221, 221);
@@ -297,6 +303,9 @@
     // }
   }
 }
+// .headerContainer[data-hide="false"] main.content {
+//   background-color: red;
+// }
 .acitveTab {
   background-color: #dadada;
   display: flex;
