@@ -1,6 +1,12 @@
 <div  align="center">
 <img src="public/logo.svg" width="100" height="100" alt="logo" title="logo" /></div>
 <h1 align="center" >Facebook - SSR Web Application with Next.js and Firebase</h1>
+
+<p align="center">
+<a href="https://facebook-ui-zee.vercel.app">Demo</a>
+.
+<a href="[/](https://www.youtube.com/playlist?list=PL7OpFd3agQxb3jOqAVm4msHNlH34uai3i)">Youtube Playlist</a>
+</p>
 <br />
 
 Project is created with:
@@ -34,10 +40,59 @@ Project is created with:
 :ballot_box_with_check: Users will receive Inbox notifications when their posts and comments are liked,commented and shared by other users \
 :ballot_box_with_check: Crop the profile picture to 256x256 pixels to ensure it displays with the correct aspect ratio in the notification icon \
 :ballot_box_with_check: Notification actions are also enabled to enhance the user experience without the need to open a web page. \
-   An available action is "acceptFriendRequest" \
+   Available actions are "accept-FriendRequest" , "like-comment" , "reply-comment" \
 :ballot_box_with_check: Push notificatons to multiple devices with Firebase Cloud messaging for foreground and background notificatons.
 
 ## User-Interface
+
+<table>
+  <tr>
+    <td width="35%">
+
+  [<img src="https://github.com/thanhtutzaw/facebook-ui/assets/71011043/ef47a00d-9896-4129-a171-3e063f8d9a22" alt="Demo Video" width="100%">](https://www.youtube.com/watch?v=CRV3aZOFefQ&list=PL7OpFd3agQxb3jOqAVm4msHNlH34uai3i&index=1 "Demo Video")
+
+
+
+#### Demo Facebook Clone
+
+
+
+[PlayList on Youtube](https://www.youtube.com/watch?v=CRV3aZOFefQ&list=PL7OpFd3agQxb3jOqAVm4msHNlH34uai3i&index=1)
+
+</td>
+<td width="45%">
+
+[<img src="https://github.com/thanhtutzaw/facebook-ui/assets/71011043/cb888eed-28ba-4eb0-834c-d239560f6bc2" alt="Comment Reaction" width="100%">](https://www.youtube.com/watch?v=qHDI74wPjZc&list=PL7OpFd3agQxb3jOqAVm4msHNlH34uai3i&index=2 "Comment Reaction")
+
+
+
+#### Comment Reaction
+
+
+
+[PlayList on Youtube](https://www.youtube.com/playlist?list=PL7OpFd3agQxb3jOqAVm4msHNlH34uai3i)
+
+</td>
+<td width="50%">
+
+  [<img src="https://github.com/thanhtutzaw/facebook-ui/assets/71011043/77492cd8-7fc8-4911-98b7-f11c741851e7" alt="Comment Reaction" width="100%">](https://www.youtube.com/watch?v=9THDU0eoA48&list=PL7OpFd3agQxb3jOqAVm4msHNlH34uai3i&index=4 "Comment Reply")
+
+
+
+#### Comment Reply
+
+
+
+[PlayList on Youtube](https://www.youtube.com/playlist?list=PL7OpFd3agQxb3jOqAVm4msHNlH34uai3i)
+
+</td>
+  </tr>
+
+
+
+
+</table>
+
 
 ![facebook-ui](https://github.com/thanhtutzaw/facebook-ui/assets/71011043/22e082c7-81d0-47ff-a7b1-a1067167d6f5)
 
