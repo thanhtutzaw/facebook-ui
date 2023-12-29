@@ -56,7 +56,7 @@ Project is created with:
 </td>
 <td width="45%">
 
-[<img src="https://i9.ytimg.com/vi/qHDI74wPjZc/mqdefault.jpg?v=657818a9&sqp=CMCRtqwG&rs=AOn4CLBYJvXnkgfm-FpYtIBLz4_h50meCQ" alt="Comment Reaction" width="100%">](https://www.youtube.com/watch?v=qHDI74wPjZc&list=PL7OpFd3agQxb3jOqAVm4msHNlH34uai3i&index=2 "Comment Reaction")
+[<img src="https://i9.ytimg.com/vi/qHDI74wPjZc/mqdefault.jpg?v=657818a9&sqp=CKDQuKwG&rs=AOn4CLAIZYDUt7UXM1dopJRThxlKedJ9Cg" alt="Comment Reaction" width="100%">](https://www.youtube.com/watch?v=qHDI74wPjZc&list=PL7OpFd3agQxb3jOqAVm4msHNlH34uai3i&index=2 "Comment Reaction")
 
 
 
@@ -69,7 +69,7 @@ Project is created with:
 </td>
 <td width="50%">
 
-  [<img src="https://i9.ytimg.com/vi/9THDU0eoA48/mqdefault.jpg?v=657d2945&sqp=COyTtqwG&rs=AOn4CLCAN26-1CEy9EyZeGRd82njY3yVWw" alt="Comment Reaction" width="100%">](https://www.youtube.com/watch?v=9THDU0eoA48&list=PL7OpFd3agQxb3jOqAVm4msHNlH34uai3i&index=4 "Comment Reply")
+  [<img src="https://i9.ytimg.com/vi/9THDU0eoA48/mqdefault.jpg?v=657d2945&sqp=CPTNuKwG&rs=AOn4CLCOjhFm-ULoGJ7kcgAq0zXDpuCjNA" alt="Comment Reaction" width="100%">](https://www.youtube.com/watch?v=9THDU0eoA48&list=PL7OpFd3agQxb3jOqAVm4msHNlH34uai3i&index=4 "Comment Reply")
 
 
 
