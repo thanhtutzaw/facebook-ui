@@ -1,6 +1,12 @@
 <div  align="center">
 <img src="public/logo.svg" width="100" height="100" alt="logo" title="logo" /></div>
 <h1 align="center" >Facebook - SSR Web Application with Next.js and Firebase</h1>
+
+<p align="center">
+<a href="https://facebook-ui-zee.vercel.app">Demo</a>
+.
+<a href="[/](https://www.youtube.com/playlist?list=PL7OpFd3agQxb3jOqAVm4msHNlH34uai3i)">Youtube Playlist</a>
+</p>
 <br />
 
 Project is created with:
