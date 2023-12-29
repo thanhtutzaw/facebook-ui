@@ -40,7 +40,7 @@ Project is created with:
 :ballot_box_with_check: Users will receive Inbox notifications when their posts and comments are liked,commented and shared by other users \
 :ballot_box_with_check: Crop the profile picture to 256x256 pixels to ensure it displays with the correct aspect ratio in the notification icon \
 :ballot_box_with_check: Notification actions are also enabled to enhance the user experience without the need to open a web page. \
-   An available action is "acceptFriendRequest" \
+   Available actions are "accept-FriendRequest" , "like-comment" , "reply-comment" \
 :ballot_box_with_check: Push notificatons to multiple devices with Firebase Cloud messaging for foreground and background notificatons.
 
 ## User-Interface
