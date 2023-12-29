@@ -69,9 +69,33 @@ export function AppProvider(props: AppProps) {
     },
     [newsFeedPost, props.hasMore, setnewsFeedPost, uid]
   );
+
+  // useEffect(() => {
+  // window.onhashchange = () => {
+  // setActiveNav(active!);
+  // setActiveNav(window.location.hash.replace('#','') as Tabs)
+  // }
+  // if (active !== window.location.hash.replace("#", "")) {
+  // if (window.location.pathname !== "/") return;
+  // setActiveNav(window.location.hash.replace("#", "") as Tabs);
+  // setCurrentNav(window.location.hash.replace("#", "") as Tabs);
+  // }
+  // };
+  //   // setCurrentNav?.(window.location.hash.replace("#", "") as Tabs);
+  //   // if (active) {
+  //   //   window.location.hash = active === "/" ? "home" : `${active}`;
+  //   // }
+  //   // window.addEventListener("mouseup", () => {
+  //   //   setcanDrag(false);
+  //   // });
+  // }, [active]);
   return (
     <AppContext.Provider
       value={{
+        // activeNav,
+        // setActiveNav,
+        // currentNav,
+        // setCurrentNav,
         active,
         setprofileSrc,
         profileSrc,

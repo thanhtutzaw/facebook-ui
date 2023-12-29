@@ -16,7 +16,6 @@ function ProfileInfo(props: {
   src:string;
   handleChange: ChangeEventHandler<HTMLInputElement>;
   infoRef?: RefObject<HTMLDivElement>;
-  selectMode: boolean;
   children?: ReactNode;
   editToggle?: boolean;
   newProfile?: account["profile"] | null;
@@ -25,7 +24,7 @@ function ProfileInfo(props: {
     src,
     handleChange,
     infoRef,
-    selectMode,
+    
     children,
     editToggle,
     newProfile,
@@ -33,7 +32,7 @@ function ProfileInfo(props: {
   const { setsingleImageModal, currentUser } = useContext(
     PageContext
   ) as PageProps;
-  const { profile } = useContext(AppContext) as AppProps;
+  const { profile, selectMode } = useContext(AppContext) as AppProps;
   const imgFileRef = useRef<HTMLInputElement>(null);
 
   //   ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"

@@ -3,51 +3,60 @@
   transform: translateY(0px);
   // height: 120px;
   height: 60px;
-  transition:
-    transform 0.18s ease,
-    margin 0.18s ease;
-  will-change: transform, margin;
+  // transform-origin: top;
+
+  transition: transform 0.18s ease;
+  will-change: transform;
   &[data-hide="true"] {
     transform: translateY(-60px);
-    & + .content {
-      margin-top: 0;
-    }
+    // transform: scaleY(0);
+    // header {
+    //   transform: scaleY(0);
+    // }
     // height: 60px;
+    & + .content > div:first-child {
+      padding-top: 0;
+      // margin-top: -60px;
+      // transform: translateY(-60px);
+      // transition: margin 0.18s ease;
+    }
   }
   &[data-hide="false"] {
     transform: translateY(0px);
-    & + .content {
-      margin-top: 60px;
+    & + .content > div:first-child {
+      // margin-top: 60px;
+      // margin-top: 0px;
+      // transform: translateY(0);
+      // transition: margin 0.18s ease;
     }
   }
-}
-
-.header {
-  max-width: var(--main-width);
-  background-color: white;
-  scroll-snap-align: start;
-  transition: background-color 0.2s ease-in-out;
-  .action {
-    display: flex;
-    gap: 0.7rem;
-    margin-right: 0.7rem;
-    > button {
-      cursor: pointer;
-      border-radius: 50px;
-      overflow: auto;
-      border: none;
-      text-align: left;
-      padding: 0.5rem;
+  header {
+    max-width: var(--main-width);
+    background-color: white;
+    scroll-snap-align: start;
+    transition: background-color 0.2s ease-in-out;
+    .action {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      color: rgb(245, 223, 223);
-      background-color: transparent;
-      border: 0;
-      font-size: 18px;
-      width: 40px;
-      height: 40px;
-      background-color: rgb(243, 243, 243);
+      gap: 0.7rem;
+      margin-right: 0.7rem;
+      > button {
+        cursor: pointer;
+        border-radius: 50px;
+        overflow: auto;
+        border: none;
+        text-align: left;
+        padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgb(245, 223, 223);
+        background-color: transparent;
+        border: 0;
+        font-size: 18px;
+        width: 40px;
+        height: 40px;
+        background-color: rgb(243, 243, 243);
+      }
     }
   }
 }
@@ -278,6 +287,11 @@
   overflow-x: scroll;
   scroll-behavior: smooth;
   transition: height 0s;
+  & > div:first-child {
+    transition: padding 0.18s ease;
+    padding-top: 60px;
+    will-change: padding;
+  }
   & > div {
     overflow-y: auto;
     scroll-snap-align: center;

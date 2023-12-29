@@ -55,11 +55,28 @@ function Header(props: { tabIndex: number }) {
   const { active, setActive } = useActiveTab();
   const navRef = useRef<HTMLElement>(null);
   const [width, setwidth] = useState<number>();
-  const { UnReadNotiCount, selectMode, setselectMode, headerContainerRef } =
-    useContext(AppContext) as AppProps;
+  const {
+    UnReadNotiCount,
+    selectMode,
+    setselectMode,
+    headerContainerRef,
+    // setActiveNav,
+    // activeNav,
+    // currentNav,
+    // setCurrentNav,
+  } = useContext(AppContext) as AppProps;
   const { indicatorRef, setSelectedId, friendReqCount } = useContext(
     PageContext
   ) as PageProps;
+  const [currentNav, setCurrentNav] = useState<Tabs>("/");
+  const [activeNav, setActiveNav] = useState<Tabs>("/");
+  // useEffect(() => {
+  //   if (window.location.pathname !== "/") return;
+  //   // window.location.hash = currentNav === "/" ? "home" : currentNav;
+  //   setCurrentNav(window.location.hash.replace("#", "") as Tabs);
+  //   setActiveNav(window.location.hash.replace("#", "") as Tabs);
+  // }, []);
+
   useEffect(() => {
     window.onpopstate = () => {
       if (window.location.hash === "#profile") {
@@ -71,8 +88,6 @@ function Header(props: { tabIndex: number }) {
     };
   }, [selectMode, setSelectedId, setselectMode]);
   const [hide, setHide] = useState(false);
-  const [currentNav, setCurrentNav] = useState<Tabs>("/");
-  const [activeNav, setActiveNav] = useState<Tabs>("/");
 
   useEffect(() => {
     const headerContainer = headerContainerRef?.current;
@@ -93,6 +108,9 @@ function Header(props: { tabIndex: number }) {
     const hideHeader = () => {
       setHide(true);
     };
+    // if (currentNav) {
+    //   window.location.hash = currentNav === "/" ? "home" : currentNav;
+    // }
     if (window.location.hash === "" || window.location.hash === "#home") {
       tabs?.scrollTo({
         left: 0,
@@ -144,7 +162,10 @@ function Header(props: { tabIndex: number }) {
       className={`${s.headerContainer} translate-y-0 sticky bottom-0 z-[200]`}
     >
       {/* [transition:transform_0.18s_ease,height_0.15s_ease] [will-change:transform,height] */}
-      <header className={`flex justify-between items-center ${s.header}`}>
+      {/* <header className={`flex justify-between items-center ${s.header}`}> */}
+      <header
+        className={`flex justify-between items-center [transition:transform_0.18s_ease] [will-change:transform]`}
+      >
         <Logo />
 
         <div className={s.action}>
@@ -209,6 +230,7 @@ function Header(props: { tabIndex: number }) {
                   key={`${name} ${UnReadNotiCount}`}
                   currentNav={activeNav}
                   setCurrentNav={setCurrentNav}
+                  setActiveNav={setActiveNav}
                   setActive={setActive}
                   active={active}
                   index={index}

@@ -9,6 +9,7 @@ export default function Navitems(props: {
   currentNav: Tabs;
   setCurrentNav: Function;
   active: Tabs;
+  setActiveNav: Function;
   setActive: Function;
   name: string;
   index: number;
@@ -20,6 +21,7 @@ export default function Navitems(props: {
     setCurrentNav,
     active,
     setActive,
+    setActiveNav,
     name,
     index,
   } = props;

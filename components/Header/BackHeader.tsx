@@ -6,12 +6,11 @@ import s from "../../styles/Home.module.scss";
 function BackHeader(props: {
   style?: CSSProperties;
   color?: CSSProperties["color"];
-  selectMode?: boolean;
   children?: ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
 }) {
   const router = useRouter();
-  const handleClick = (e: any  ) => {
+  const handleClick = (e: any) => {
     if (window.history.length > 1) {
       if (props.onClick) {
         props.onClick(e);

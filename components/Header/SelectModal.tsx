@@ -39,7 +39,6 @@ function SelectModal() {
   const { queryFn } = useQueryFn();
   return (
     <BackHeader
-      selectMode={selectMode!}
       onClick={() => {
         setselectMode?.(false);
         setSelectedId?.([]);

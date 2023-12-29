@@ -17,7 +17,6 @@ import Menu from "./Sections/Menu/menu";
 import Notifications from "./Sections/Notifications/Notifications";
 import Profile from "./Sections/Profile";
 import Watch from "./Sections/Watch";
-import dynamic from "next/dynamic";
 import { TabHeader } from "./TabHeader";
 // const Friends = dynamic(() => import("./Sections/Friends/Friends"));
 // const Profile = dynamic(() => import("./Sections/Profile/index"), {
@@ -69,6 +68,7 @@ function Tabs() {
 
     const target = e.target as HTMLElement;
     const tagName = target.tagName.toLowerCase() as ElementType;
+    currentTarget.style.cursor = "grabbing";
     if (
       tagName === "a" ||
       tagName === "dialog" ||
@@ -83,8 +83,8 @@ function Tabs() {
       x: e.clientX,
       y: e.clientY,
     });
+
     setcanDrag(true);
-    currentTarget.style.cursor = "grabbing";
   }
   function dragStop(e: MouseEvent<HTMLDivElement>) {
     e.preventDefault();
@@ -93,6 +93,7 @@ function Tabs() {
     if (canDrag) {
       currentTarget.style.cursor = "grab";
     }
+    // currentTarget.style.scrollBehavior = "smooth";
     setcanDrag(false);
   }
   function dragging(e: MouseEvent<HTMLDivElement>) {
@@ -100,9 +101,10 @@ function Tabs() {
       e.stopPropagation();
       e.preventDefault();
       const currentTarget = e.currentTarget;
+      currentTarget.style.cursor = "grabbing";
       const dx = e.clientX - pos.x;
       // const dy = e.clientY - pos.y;
-      currentTarget.scrollLeft = pos.left - dx;
+      currentTarget.scrollLeft = pos.left - dx * 2;
       setpreventClick?.(true);
     } else {
       setcanDrag(false);

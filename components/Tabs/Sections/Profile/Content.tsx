@@ -17,7 +17,6 @@ export function Content(props: {
   isSticky: MutableRefObject<boolean>;
   tab: string;
   loading: boolean;
-  selectMode: boolean;
   setselectMode: Function;
   sortby: "new" | "old";
   setsortby: Function;
@@ -30,13 +29,12 @@ export function Content(props: {
     isSticky,
     headerRef,
     loading,
-    selectMode,
     setselectMode,
     sortby,
     setsortby,
     sortedPost,
   } = props;
-  const { deletePost, profile } = useContext(AppContext) as AppProps;
+  const { deletePost, selectMode } = useContext(AppContext) as AppProps;
   const [toggleSort, setToggleSort] = useState(false);
   // useEffect(() => {
   //   if (!selectMode) {
@@ -77,12 +75,12 @@ export function Content(props: {
             setselectMode?.((prev: boolean) => !prev);
             setToggleSort(false);
 
-            if (!selectMode) {
-              const parent =
-                e.currentTarget.parentElement?.parentElement?.parentElement;
-              // parent?.scrollIntoView({
-              // });
-            }
+            // if (!selectMode) {
+            //   const parent =
+            //     e.currentTarget.parentElement?.parentElement?.parentElement;
+            //   // parent?.scrollIntoView({
+            //   // });
+            // }
           }}
         >
           <div>

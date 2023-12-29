@@ -61,7 +61,6 @@ function Profile({ tabIndex }: { tabIndex: number }) {
         <ProfileInfo
           src={checkPhotoURL(profileSrc)}
           handleChange={handleEditProfileForm}
-          selectMode={selectMode!}
           editToggle={editToggle}
           newProfile={newProfile}
           infoRef={infoRef}
@@ -93,7 +92,6 @@ function Profile({ tabIndex }: { tabIndex: number }) {
           headerRef={headerRef}
           loading={isLoading}
           tab={activeTab}
-          selectMode={selectMode!}
           setselectMode={setactive!}
           sortby={sortby}
           setsortby={setsortby}

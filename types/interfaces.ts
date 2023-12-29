@@ -141,6 +141,10 @@ export interface RecentPosts {
 }
 
 export interface AppProps {
+  // setActiveNav?: Function;
+  // setCurrentNav?: Function;
+  // activeNav?: Tabs;
+  // currentNav?: Tabs;
   setprofileSrc?: Function;
   profileSrc?: string;
   queryPageData?: unknown;
