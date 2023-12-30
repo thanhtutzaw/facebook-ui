@@ -32,11 +32,11 @@
   ],
   "shortcuts": [
     {
-      "name": "Add Post",
+      "name": "Add New Post",
       "url": "/addPost",
       "icons": [
         {
-          "src": "./assets/addPost.png",
+          "src": "./assets/addPostShortCut.svg",
           "sizes": "512x512",
           "type": "image/png",
           "purpose": "any monochrome"
