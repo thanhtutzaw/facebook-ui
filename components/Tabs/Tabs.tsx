@@ -111,6 +111,15 @@ function Tabs() {
       setpreventClick?.(false);
     }
   }
+  const headerContainer = headerContainerRef && headerContainerRef?.current;
+  const hideHeader = () => {
+    if (!headerContainer) return;
+    headerContainer.setAttribute("data-hide", "true");
+  };
+  const showHeader = () => {
+    if (!headerContainer) return;
+    headerContainer.setAttribute("data-hide", "false");
+  };
   return (
     <div
       id="tabs"
@@ -123,6 +132,24 @@ function Tabs() {
         const scroll = target.scrollLeft;
         const indicator = indicatorRef?.current!;
         indicator.style.transform = `translateX(${scroll / 6}px)`;
+        // console.log(target.scrollLeft >= target.clientWidth / 2);
+        const isHide = headerContainer?.getAttribute("data-hide");
+        const homeVisible = target.scrollLeft <= target.clientWidth / 2;
+        const otherTab = target.scrollLeft >= target.clientWidth;
+        const scrollToOtherTab = target.scrollLeft >= target.clientWidth / 2;
+        let fromOtherTab = false;
+        // console.log({ homeVisible });
+
+        // if hide or notHide hideHeader and do not run showHeader
+        if (homeVisible) {
+          // if (isHide) return;
+          showHeader(); // how to write if hide just do nothing but if not hide show it .
+        } else if (scrollToOtherTab) {
+          if (otherTab && isHide) return;
+          console.error("header hided");
+          fromOtherTab = true;
+          hideHeader();
+        }
       }}
     >
       <Home tabIndex={active === "/" ? 0 : -1} />

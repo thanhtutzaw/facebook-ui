@@ -53,10 +53,10 @@ export default function Home(props: { tabIndex: number }) {
       onScroll={async (e) => {
         const currentScroll = e.currentTarget.scrollTop;
         if (!headerContainer) return;
-        const scrollingDown = previousScrollRef.current < currentScroll;
+        const isScrolling = previousScrollRef.current < currentScroll;
         if (currentScroll >= 60) {
           previousScrollRef.current = currentScroll;
-          if (scrollingDown) {
+          if (isScrolling) {
             hideHeader();
           } else if (previousScrollRef.current > currentScroll + 25) {
             showHeader();

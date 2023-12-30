@@ -306,12 +306,6 @@ function Footer(
             //     return;
             //   }
             // }}
-            // onScroll={(e) => {
-            //   if (shareAction === id) {
-            //     e.preventDefault();
-            //     return;
-            //   }
-            // }}
             // onWheel={(e) => {
             //   e.preventDefault();
             //   return;

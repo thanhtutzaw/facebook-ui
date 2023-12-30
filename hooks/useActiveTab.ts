@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
  * A hook that switch Tabs and update Active state by document's visibility
  */
 export function useActiveTab() {
-  const [active, setActive] = useState("");
+  const [active, setActive] = useState<Tabs>("/");
   const navigateTab = useCallback((targetTab: Tabs) => {
     setActive(targetTab);
     const target = document.getElementById(targetTab);
@@ -40,5 +40,5 @@ export function useActiveTab() {
     };
   }, [active]);
 
-  return { active: active as Tabs, setActive, navigateTab };
+  return { active: active, setActive, navigateTab };
 }

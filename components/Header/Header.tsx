@@ -99,27 +99,28 @@ function Header(props: { tabIndex: number }) {
       setActiveNav(active);
     };
   }, [active]);
+  const showHeader = () => {
+    setHide(false);
+  };
+  const hideHeader = () => {
+    setHide(true);
+  };
   useEffect(() => {
     const tabs = document.getElementById("tabs");
     const main = document.getElementsByTagName("main")[0];
-    const showHeader = () => {
-      setHide(false);
-    };
-    const hideHeader = () => {
-      setHide(true);
-    };
+
     // if (currentNav) {
     //   window.location.hash = currentNav === "/" ? "home" : currentNav;
     // }
     if (window.location.hash === "" || window.location.hash === "#home") {
+      // showHeader();
       tabs?.scrollTo({
         left: 0,
         behavior: "smooth",
       });
-      showHeader();
     } else {
       main.style.scrollSnapType = "none";
-      hideHeader();
+      // hideHeader();
     }
   }, [currentNav]);
 
