@@ -55,16 +55,8 @@ function Header(props: { tabIndex: number }) {
   const { active, setActive } = useActiveTab();
   const navRef = useRef<HTMLElement>(null);
   const [width, setwidth] = useState<number>();
-  const {
-    UnReadNotiCount,
-    selectMode,
-    setselectMode,
-    headerContainerRef,
-    // setActiveNav,
-    // activeNav,
-    // currentNav,
-    // setCurrentNav,
-  } = useContext(AppContext) as AppProps;
+  const { UnReadNotiCount, selectMode, setselectMode, headerContainerRef } =
+    useContext(AppContext) as AppProps;
   const { indicatorRef, setSelectedId, friendReqCount } = useContext(
     PageContext
   ) as PageProps;
@@ -87,18 +79,19 @@ function Header(props: { tabIndex: number }) {
       }
     };
   }, [selectMode, setSelectedId, setselectMode]);
-  const [hide, setHide] = useState(false);
 
   useEffect(() => {
     const headerContainer = headerContainerRef?.current;
     if (!headerContainer) return;
     setCurrentNav(active);
-  }, [active, headerContainerRef, hide]);
+    // }, [active, headerContainerRef, hide]);
+  }, [active, headerContainerRef]);
   useEffect(() => {
     window.onhashchange = () => {
       setActiveNav(active);
     };
   }, [active]);
+  const [hide, setHide] = useState(false);
   const showHeader = () => {
     setHide(false);
   };
@@ -113,14 +106,14 @@ function Header(props: { tabIndex: number }) {
     //   window.location.hash = currentNav === "/" ? "home" : currentNav;
     // }
     if (window.location.hash === "" || window.location.hash === "#home") {
-      // showHeader();
+      showHeader();
       tabs?.scrollTo({
         left: 0,
         behavior: "smooth",
       });
     } else {
       main.style.scrollSnapType = "none";
-      // hideHeader();
+      hideHeader();
     }
   }, [currentNav]);
 
