@@ -1,15 +1,13 @@
-import { AppContext } from "@/context/AppContext";
+import { useAppContext } from "@/context/AppContext";
 import { useActiveTab } from "@/hooks/useActiveTab";
-import { AppProps } from "@/types/interfaces";
 import {
   ElementType,
   MouseEvent,
   memo,
-  useContext,
   useEffect,
-  useState,
+  useState
 } from "react";
-import { PageContext, PageProps } from "../../context/PageContext";
+import { usePageContext } from "../../context/PageContext";
 import styles from "../../styles/Home.module.scss";
 import Friends from "./Sections/Friends/Friends";
 import Home from "./Sections/Home/Home";
@@ -31,11 +29,8 @@ import { TabHeader } from "./TabHeader";
 function Tabs() {
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
-  const { indicatorRef, setpreventClick } = useContext(
-    PageContext
-  ) as PageProps;
-  const { headerContainerRef } = useContext(AppContext) as AppProps;
-  // const { active } = useContext(AppContext) as AppProps;
+  const { indicatorRef, setpreventClick } = usePageContext();
+  const { headerContainerRef } = useAppContext()
   const { active } = useActiveTab();
   useEffect(() => {
     if (active) {

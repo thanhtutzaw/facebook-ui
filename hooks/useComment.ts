@@ -1,5 +1,5 @@
 import { CommentItemProps } from "@/components/Comment/CommentItem";
-import { PageContext, PageProps } from "@/context/PageContext";
+import { usePageContext } from "@/context/PageContext";
 import { Comment_Reply_LIMIT } from "@/lib/QUERY_LIMIT";
 import { app, db, getCollectionPath, getPath } from "@/lib/firebase";
 import {
@@ -23,11 +23,10 @@ import {
 } from "firebase/firestore";
 import {
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
 import useEscape from "./useEscape";
 
@@ -50,7 +49,7 @@ function useComment(props: CommentItemProps) {
   const inputRef = useRef<HTMLParagraphElement>(null);
   const { text, createdAt, id } = comment;
   const { authorId, id: postId } = post;
-  const { currentUser: profile } = useContext(PageContext) as PageProps;
+  const { currentUser: profile } = usePageContext();
   const replyCount = comment.replyCount ?? 0;
   const replies = useMemo(() => comment?.replies ?? [], [comment?.replies]);
   const [input, setInput] = useState(text);

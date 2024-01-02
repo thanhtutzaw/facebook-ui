@@ -1,9 +1,9 @@
 import useQueryFn from "@/hooks/useQueryFn";
 import { useRouter } from "next/router";
-import React, { HTMLProps, ReactElement, useContext } from "react";
-import { AppContext } from "../../context/AppContext";
+import React, { HTMLProps, ReactElement } from "react";
+import { useAppContext } from "../../context/AppContext";
 import styles from "../../styles/Home.module.scss";
-import { AppProps, Tabs } from "../../types/interfaces";
+import { Tabs } from "../../types/interfaces";
 
 export default function Navitems(props: {
   currentNav: Tabs;
@@ -26,9 +26,7 @@ export default function Navitems(props: {
     index,
   } = props;
   const { queryFn } = useQueryFn();
-  const { headerContainerRef, setUnReadNotiCount } = useContext(
-    AppContext
-  ) as AppProps;
+  const {  setUnReadNotiCount } = useAppContext();
 
   const router = useRouter();
   const changeTab = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

@@ -1,15 +1,14 @@
-import { AppContext } from "@/context/AppContext";
+import { useAppContext } from "@/context/AppContext";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import styles from "@/styles/Home.module.scss";
-import { AppProps } from "@/types/interfaces";
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import { MouseEvent, useContext, useEffect, useRef, useState } from "react";
+import { MouseEvent, useEffect, useRef, useState } from "react";
 import Card from "./Card";
 // type StoryProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 export default function Story() {
-  const { profile, token, profileSrc } = useContext(AppContext) as AppProps;
+  const { profile, token, profileSrc } = useAppContext();
   const { email } = { ...token };
   const fileInput = useRef<HTMLInputElement>(null);
   const [draggable, setdraggable] = useState(false);

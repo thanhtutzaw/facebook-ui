@@ -1,13 +1,12 @@
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { GetServerSideProps } from "next";
+import { ChatHeader } from "../../components/Chat/Header";
+import ChatInput from "../../components/Chat/Input";
 import BackHeader from "../../components/Header/BackHeader";
+import { usePageContext } from "../../context/PageContext";
 import { fethUserDoc, userToJSON } from "../../lib/firebase";
 import { getUserData } from "../../lib/firebaseAdmin";
 import s from "../../styles/Home.module.scss";
-import ChatInput from "../../components/Chat/Input";
-import { ChatHeader } from "../../components/Chat/Header";
-import { useContext } from "react";
-import { PageContext, PageProps } from "../../context/PageContext";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const uid = context.query.user!;
@@ -38,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 export default function FriendChat(props: { account: UserRecord }) {
   const { account } = props;
-  const { currentUser } = useContext(PageContext) as PageProps;
+  const { currentUser } = usePageContext();
 
   return (
     <div className="user">

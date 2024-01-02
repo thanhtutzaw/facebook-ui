@@ -1,10 +1,10 @@
 import Spinner from "@/components/Spinner";
-import { AppContext } from "@/context/AppContext";
-import { AppProps, Post } from "@/types/interfaces";
+import { useAppContext } from "@/context/AppContext";
+import { Post } from "@/types/interfaces";
 import { faGear, faSort } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
-import { MutableRefObject, RefObject, useContext, useState } from "react";
+import { MutableRefObject, RefObject, useState } from "react";
 import PostList from "../Home/PostList";
 import SortDate from "./SortDate";
 import s from "./index.module.scss";
@@ -34,7 +34,7 @@ export function Content(props: {
     setsortby,
     sortedPost,
   } = props;
-  const { deletePost, selectMode } = useContext(AppContext) as AppProps;
+  const { deletePost, selectMode } = useAppContext();
   const [toggleSort, setToggleSort] = useState(false);
   // useEffect(() => {
   //   if (!selectMode) {

@@ -12,7 +12,7 @@ import {
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../components/Header/Header";
 import Tabs from "../components/Tabs/Tabs";
 import { Welcome } from "../components/Welcome";
@@ -39,7 +39,7 @@ import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { FirebaseError } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import Spinner from "../components/Spinner";
-import { PageContext, PageProps } from "../context/PageContext";
+import { usePageContext } from "../context/PageContext";
 type TInitialProps = {
   expired: boolean;
   tokenUID: string;
@@ -235,9 +235,7 @@ export default function Home({
     }
   }, [profile]);
 
-  const { newsFeedData, setnewsFeedData, setfriends } = useContext(
-    PageContext
-  ) as PageProps;
+  const { newsFeedData, setnewsFeedData, setfriends } = usePageContext();
   const [notiPermission, setnotiPermission] = useState(false);
   useEffect(() => {
     const auth = getAuth(app);

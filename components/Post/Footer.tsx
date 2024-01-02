@@ -23,13 +23,12 @@ import popfx from "public/assets/bubble.mp3";
 import {
   StyleHTMLAttributes,
   memo,
-  useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import useSound from "use-sound";
-import { PageContext, PageProps } from "../../context/PageContext";
+import { usePageContext } from "../../context/PageContext";
 import { app, db, getCollectionPath, getPath } from "../../lib/firebase";
 import {
   getMessage,
@@ -69,7 +68,7 @@ function Footer(
   const [isLiked, setisLiked] = useState(post.isLiked);
 
   const { friends, currentUser, dropdownRef, shareAction, setshareAction } =
-    useContext(PageContext) as PageProps;
+    usePageContext();
   const { id, author: authorAccount, authorId } = post;
   const authorProfile = authorAccount as account["profile"];
   const authorName = `${authorProfile?.firstName ?? "Unknow User"} ${

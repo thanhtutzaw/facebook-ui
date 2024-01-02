@@ -1,16 +1,15 @@
-import { AppContext } from "@/context/AppContext";
-import { PageContext, PageProps } from "@/context/PageContext";
+import { useAppContext } from "@/context/AppContext";
+import { usePageContext } from "@/context/PageContext";
 import { collectionBasePath, getPath, getProfileByUID } from "@/lib/firebase";
 import { checkPhotoURL } from "@/lib/firestore/profile";
-import { AppProps, QueryKey, friends } from "@/types/interfaces";
+import { QueryKey, friends } from "@/types/interfaces";
 import { useQueries } from "@tanstack/react-query";
 import { getDocs, orderBy, query, where } from "firebase/firestore";
-import { useContext } from "react";
 import { useActiveTab } from "./useActiveTab";
 function useFriends() {
   const { active: tab } = useActiveTab();
-  const { uid } = useContext(AppContext) as AppProps;
-  const { friendReqCount } = useContext(PageContext) as PageProps;
+  const { uid } = useAppContext();
+  const { friendReqCount } = usePageContext();
 
   const fetchSuggestedFriends = async () => {
     if (!uid) return;

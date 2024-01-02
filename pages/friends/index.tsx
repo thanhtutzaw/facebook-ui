@@ -1,10 +1,18 @@
 import { AcceptFriend } from "@/components/Button/AcceptFriend";
 import BackHeader from "@/components/Header/BackHeader";
 import Spinner from "@/components/Spinner";
-import { PageContext, PageProps } from "@/context/PageContext";
+import { usePageContext } from "@/context/PageContext";
 import useQueryFn from "@/hooks/useQueryFn";
 import { getPath, getProfileByUID } from "@/lib/firebase";
 import { verifyIdToken } from "@/lib/firebaseAdmin";
+import {
+  acceptFriends,
+  blockFriend,
+  cancelFriendRequest,
+  rejectFriendRequest,
+  unBlockFriend,
+  unFriend,
+} from "@/lib/firestore/friends";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { friends } from "@/types/interfaces";
 import { faBan, faEllipsisV, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -18,16 +26,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import confirm from "public/assets/confirm-beep.mp3";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useSound from "use-sound";
-import {
-  acceptFriends,
-  blockFriend,
-  cancelFriendRequest,
-  rejectFriendRequest,
-  unBlockFriend,
-  unFriend,
-} from "@/lib/firestore/friends";
 import s from "./index.module.scss";
 type TqueryFn = ReturnType<typeof useQueryFn>["queryFn"];
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -102,7 +102,7 @@ export default function Page(props: {
       const acceptedFriends = await Promise.all(
         myFriendsSnap.docs.map(async (doc) => {
           const account = await getProfileByUID(doc.id);
-          if(!account){
+          if (!account) {
             return {
               date:
                 status === "pending"
@@ -212,7 +212,7 @@ function FriendList({
   const [playAcceptSound] = useSound(confirm);
   const router = useRouter();
   const [toggleFriendMenu, settoggleFriendMenu] = useState("");
-  const { currentUser } = useContext(PageContext) as PageProps;
+  const { currentUser } = usePageContext();
   function updateFriendList(id: string) {
     return setFriends(friends.filter((f) => f.id !== id));
   }

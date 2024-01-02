@@ -4,6 +4,7 @@ import {
   ReactNode,
   RefObject,
   createContext,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -25,14 +26,14 @@ interface singleImageModalType {
 export interface PageProps {
   friendReqCount: number;
   newsFeedData?: Post[];
-  setnewsFeedData?: Function;
+  setnewsFeedData: Function;
   currentUser: (User & { photoURL_cropped?: string }) | null;
   queryClient?: QueryClient;
   postError?: string;
   dropdownRef?: RefObject<HTMLDivElement>;
   uploadButtonClicked?: boolean;
   setuploadButtonClicked?: Function;
-  indicatorRef?: RefObject<HTMLDivElement>;
+  indicatorRef: RefObject<HTMLDivElement>;
   fileRef?: RefObject<HTMLInputElement>;
   active: Tabs;
   children?: ReactNode;
@@ -51,25 +52,18 @@ export interface PageProps {
   setpreventClick?: Function;
   setfriends?: Function;
 }
-export interface PostPageProps {
-  children?: ReactNode;
-
-  // replyInputRef: RefObject<HTMLInputElement>;
-  // setComments: Function;
-  // parentId?: string;
-  // nested?: boolean;
-  // hasMore?: boolean;
-  // commentEnd?: boolean;
-  // uid: string;
-  // comments: Post["comments"] | [];
-  // post: Post;
-  // setisDropDownOpenInNestedComment?: Function;
-  // profile?: account["profile"];
+interface PropsType {
+  friendReqCount: number;
+  active: Tabs;
+  setActive: Function;
+  currentUser: (User & { photoURL_cropped?: string }) | null;
+  setcurrentUser: Function;
+  children: ReactNode;
 }
 export const PageContext = createContext<PageProps | null>(null);
 // const PostContext = createContext<PostPageProps | null>(null);
 
-export function PageProvider(props: PageProps) {
+export function PageProvider(props: PropsType) {
   const [friends, setfriends] = useState<friends[]>([]);
   const queryClient = useQueryClient();
   const [shareAction, setshareAction] = useState("");
@@ -107,7 +101,6 @@ export function PageProvider(props: PageProps) {
       value={{
         indicatorRef,
         newsFeedData,
-        setnewsFeedData,
         setfriends,
         friends,
         queryClient,
@@ -125,9 +118,16 @@ export function PageProvider(props: PageProps) {
         singleImageModalRef,
         fileRef,
         ...props,
+        setnewsFeedData,
       }}
     >
       {props.children}
     </PageContext.Provider>
   );
 }
+export const usePageContext = () => {
+  const context = useContext(PageContext);
+  if (!context) throw Error("PageContext should use within PageProvider");
+
+  return context;
+};

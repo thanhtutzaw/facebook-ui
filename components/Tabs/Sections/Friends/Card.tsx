@@ -1,15 +1,15 @@
-import { PageContext, PageProps } from "@/context/PageContext";
+import { usePageContext } from "@/context/PageContext";
 import { JSONTimestampToDate } from "@/lib/firebase";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { account, friends } from "@/types/interfaces";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
-import { ReactNode, useContext } from "react";
+import { ReactNode } from "react";
 import s from "./Friends.module.scss";
 export default function Card(props: { children: ReactNode; f: friends }) {
   const { f } = props;
-  const { preventClick } = useContext(PageContext) as PageProps;
+  const { preventClick } = usePageContext();
   const date = f.createdAt as Timestamp;
   const author = f.author as account["profile"];
   const userName = `${author?.firstName ?? f.id} ${author?.lastName ?? ""}`;

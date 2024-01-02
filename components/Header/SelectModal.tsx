@@ -1,18 +1,15 @@
+import { usePageContext } from "@/context/PageContext";
 import useQueryFn from "@/hooks/useQueryFn";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
-import { AppContext } from "../../context/AppContext";
-import { PageContext, PageProps } from "../../context/PageContext";
+import { useEffect, useState } from "react";
+import { useAppContext } from "../../context/AppContext";
 import useEscape from "../../hooks/useEscape";
 import { deleteMultiplePost } from "../../lib/firestore/post";
 import s from "../../styles/Home.module.scss";
-import { AppProps } from "../../types/interfaces";
 import BackHeader from "./BackHeader";
 function SelectModal() {
-  const { deletePost, uid, selectMode, setselectMode } = useContext(
-    AppContext
-  ) as AppProps;
-  const { selectedId, setSelectedId } = useContext(PageContext) as PageProps;
+  const { deletePost, uid, selectMode, setselectMode } = useAppContext();
+  const { selectedId, setSelectedId } = usePageContext();
 
   const router = useRouter();
   const [loading, setLoading] = useState(false);

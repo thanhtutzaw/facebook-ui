@@ -1,10 +1,10 @@
-import { AppContext } from "@/context/AppContext";
-import { PageContext, PageProps } from "@/context/PageContext";
+import { useAppContext } from "@/context/AppContext";
+import { usePageContext } from "@/context/PageContext";
 import useQueryFn from "@/hooks/useQueryFn";
 import { acceptFriends, rejectFriendRequest } from "@/lib/firestore/friends";
-import { AppProps, friends } from "@/types/interfaces";
+import { friends } from "@/types/interfaces";
 import confirm from "public/assets/confirm-beep.mp3";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import useSound from "use-sound";
 import Card from "./Card";
 import s from "./Friends.module.scss";
@@ -14,11 +14,11 @@ interface RequestProps {
 }
 export function Request(props: RequestProps) {
   const { f, tabIndex } = props;
-  const { currentUser } = useContext(PageContext) as PageProps;
+  const { currentUser } = usePageContext();
   const { queryFn } = useQueryFn();
   const [accept, setaccept] = useState(false);
   const [reject, setreject] = useState(false);
-  const { uid } = useContext(AppContext) as AppProps;
+  const { uid } = useAppContext();
   const [ConfirmLoaing, setConfirmLoaing] = useState(false);
   const [playAcceptSound] = useSound(confirm);
   async function handleConfirmRequest() {

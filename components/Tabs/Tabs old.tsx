@@ -1,6 +1,6 @@
 import { useActiveTab } from "@/hooks/useActiveTab";
-import { ElementType, memo, useContext, useEffect, useState } from "react";
-import { PageContext, PageProps } from "../../context/PageContext";
+import { ElementType, memo, useEffect, useState } from "react";
+import { usePageContext } from "../../context/PageContext";
 import styles from "../../styles/Home.module.scss";
 import Friends from "./Sections/Friends/Friends";
 import Home from "./Sections/Home/Home";
@@ -22,9 +22,7 @@ import { TabHeader } from "./TabHeader";
 function TabsOld() {
   const [canDrag, setcanDrag] = useState(false);
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
-  const { indicatorRef, setpreventClick } = useContext(
-    PageContext
-  ) as PageProps;
+  const { indicatorRef, setpreventClick } = usePageContext();
   const { active } = useActiveTab();
   useEffect(() => {
     if (active) {

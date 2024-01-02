@@ -1,17 +1,17 @@
 import Spinner from "@/components/Spinner";
-import { AppContext } from "@/context/AppContext";
+import { useAppContext } from "@/context/AppContext";
 import useNotifications from "@/hooks/useNotifications";
-import { AppProps, Noti } from "@/types/interfaces";
-import { Suspense, memo, useContext } from "react";
+import { Noti } from "@/types/interfaces";
+import { memo } from "react";
 import t from "../../Tabs.module.scss";
-import s from "./Notifications.module.scss";
 import { NotiItem } from "./NotiItem";
+import s from "./Notifications.module.scss";
 function Notifications({ tabIndex }: { tabIndex: number }) {
   const {
     uid: currentUid,
     UnReadNotiCount,
     setUnReadNotiCount,
-  } = useContext(AppContext) as AppProps;
+  } = useAppContext();
 
   const {
     isLoading,

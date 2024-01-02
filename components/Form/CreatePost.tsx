@@ -1,4 +1,4 @@
-import { PageContext, PageProps } from "@/context/PageContext";
+import { usePageContext } from "@/context/PageContext";
 import useEnterSave from "@/hooks/useEnterSave";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { app, getPath } from "@/lib/firebase";
@@ -9,7 +9,7 @@ import { Post as PostTypes } from "@/types/interfaces";
 import { getAuth } from "firebase/auth";
 import { doc } from "firebase/firestore";
 import { useRouter } from "next/router";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { LoadingButton } from "../Button/LoadingButton";
 import BackHeader from "../Header/BackHeader";
 import PhotoLayout from "../Post/PhotoLayout";
@@ -37,7 +37,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
     setForm((prev) => ({ ...prev, ...newForm }));
   }, []);
   const { friends, fileRef, uploadButtonClicked, setuploadButtonClicked } =
-    useContext(PageContext) as PageProps;
+    usePageContext();
   const submitRef = useRef<HTMLButtonElement>(null);
   useEnterSave(textRef, submitRef);
   const [input, setinput] = useState("");
@@ -91,7 +91,7 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
       setuploadButtonClicked?.(false);
     }
   }, [fileRef, setuploadButtonClicked, uploadButtonClicked]);
-  const { setshareAction } = useContext(PageContext) as PageProps;
+  const { setshareAction } = usePageContext();
   useEffect(() => {
     setshareAction?.("");
   }, [setshareAction]);

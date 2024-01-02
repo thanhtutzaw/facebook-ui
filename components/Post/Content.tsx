@@ -1,3 +1,5 @@
+import useEscape from "@/hooks/useEscape";
+import { Post } from "@/types/interfaces";
 import {
   faCircleCheck,
   faDotCircle,
@@ -7,20 +9,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
 import { memo, useCallback, useContext, useEffect, useState } from "react";
-import { PageContext, PageProps } from "../../context/PageContext";
+import { usePageContext } from "../../context/PageContext";
+import { PostContext, PostProps } from "../../context/PostContext";
 import { app, getCollectionPath } from "../../lib/firebase";
 import TextInput from "../Form/Input/TextInput";
 import AuthorInfo from "./AuthorInfo";
+import PostFallback from "./Fallback";
 import AdminMenu from "./Menu/AdminMenu";
 import Menu from "./Menu/Menu";
 import PhotoLayout from "./PhotoLayout";
-import { PostContext, PostProps } from "../../context/PostContext";
 import { SharePreview } from "./SharePost/Preview";
 import { SocialCount } from "./SocialCount";
 import s from "./index.module.scss";
-import PostFallback from "./Fallback";
-import { Post } from "@/types/interfaces";
-import useEscape from "@/hooks/useEscape";
 function Content({ post }: { post: Post }) {
   const {
     deletePost,
@@ -38,12 +38,11 @@ function Content({ post }: { post: Post }) {
     showmore,
     setShowmore,
     shareMode,
+    toggleMenu,
+    settoggleMenu,
   } = useContext(PostContext) as PostProps;
   const { authorId, id, text, sharePost: share } = post;
-  const { preventClick, selectedId, setSelectedId } = useContext(
-    PageContext
-  ) as PageProps;
-  const { toggleMenu, settoggleMenu } = useContext(PostContext) as PostProps;
+  const { preventClick, selectedId, setSelectedId } = usePageContext();
   useEscape(() => {
     if (toggleMenu) settoggleMenu("");
   });
@@ -62,26 +61,29 @@ function Content({ post }: { post: Post }) {
       : text;
 
   const production = process.env.NODE_ENV == "production";
-  const navigateToProfile = useCallback((e: React.MouseEvent) => {
-  e.stopPropagation();
-  e.preventDefault();
-  const {
-    user,
-    post
-  } = router.query;
-  const isViewingAuthorProfile = authorId === user || user && post;
-  if (isViewingAuthorProfile || preventNavigate) return;
+  const navigateToProfile = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const { user, post } = router.query;
+      const isViewingAuthorProfile = authorId === user || (user && post);
+      if (isViewingAuthorProfile || preventNavigate) return;
 
-  if (router.pathname === "/") {
-    router.push({
-      query: {
-        user: String(authorId)
+      if (router.pathname === "/") {
+        router.push(
+          {
+            query: {
+              user: String(authorId),
+            },
+          },
+          String(authorId)
+        );
+      } else {
+        router.push(`/${String(authorId)}`);
       }
-    }, String(authorId));
-  } else {
-    router.push(`/${String(authorId)}`);
-  }
-},[authorId, preventNavigate, router]);
+    },
+    [authorId, preventNavigate, router]
+  );
   const [authUser, setauthUser] = useState<User | null>(null);
   useEffect(() => {
     const auth = getAuth(app);

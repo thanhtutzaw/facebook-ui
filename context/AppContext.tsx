@@ -1,5 +1,5 @@
 import { Timestamp, getDocs, startAfter } from "firebase/firestore";
-import { createContext, useCallback, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { NewsFeed_LIMIT } from "../lib/QUERY_LIMIT";
 import { DescQuery, getNewsFeed, getPath } from "../lib/firebase";
 import { AppProps, Post, RecentPosts } from "../types/interfaces";
@@ -117,3 +117,9 @@ export function AppProvider(props: AppProps) {
     </AppContext.Provider>
   );
 }
+export const useAppContext = () => {
+  const context = useContext(AppContext);
+  if (!context) throw Error("AppContext should use within AppProvider");
+
+  return context;
+};

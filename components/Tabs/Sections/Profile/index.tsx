@@ -1,10 +1,9 @@
 import { EditProfileForm } from "@/components/Form/EditProfile";
-import { AppContext } from "@/context/AppContext";
+import { useAppContext } from "@/context/AppContext";
 import useProfile from "@/hooks/useProfile";
 import { checkPhotoURL } from "@/lib/firestore/profile";
-import { AppProps } from "@/types/interfaces";
 import { AnimatePresence, motion } from "framer-motion";
-import { memo, useContext } from "react";
+import { memo } from "react";
 import { Content } from "./Content";
 import ProfileInfo from "./ProfileInfo";
 import s from "./index.module.scss";
@@ -13,7 +12,7 @@ function Profile({ tabIndex }: { tabIndex: number }) {
     profileSrc,
     selectMode,
     setselectMode: setactive,
-  } = useContext(AppContext) as AppProps;
+  } = useAppContext();
   const {
     activeTab,
     headerRef,

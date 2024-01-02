@@ -1,12 +1,12 @@
+import { usePageContext } from "@/context/PageContext";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { animated, useSpring } from "@react-spring/web";
 import { UserGestureConfig, useGesture } from "@use-gesture/react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { setTimeout } from "timers";
-import { PageContext, PageProps } from "../../context/PageContext";
 import Spinner from "../Spinner";
 import s from "./index.module.scss";
 export function ImageLargeView() {
@@ -14,7 +14,7 @@ export function ImageLargeView() {
     singleImageModalRef: modalRef,
     singleImageModal,
     setsingleImageModal,
-  } = useContext(PageContext) as PageProps;
+  } = usePageContext();
   const { src: imageURL, name: imageName } = { ...singleImageModal };
   const [loading, setLoading] = useState(true);
   const imgRef = useRef<HTMLImageElement>(null);

@@ -1,6 +1,5 @@
 import BackHeader from "@/components/Header/BackHeader";
 import Spinner from "@/components/Spinner";
-import { PageContext, PageProps } from "@/context/PageContext";
 import useQueryFn from "@/hooks/useQueryFn";
 import { collectionBasePath, getPath } from "@/lib/firebase";
 import { verifyIdToken } from "@/lib/firebaseAdmin";
@@ -15,7 +14,7 @@ import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import nookies from "nookies";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import s from "./index.module.scss";
 type TqueryFn = ReturnType<typeof useQueryFn>["queryFn"];
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -24,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
 
     const { uid } = token;
-    const myFriendsQuery = query(getPath("friends", { uid }),limit(1));
+    const myFriendsQuery = query(getPath("friends", { uid }), limit(1));
     const myFriends = (await getDocs(myFriendsQuery)).docs.map((doc) => doc.id);
     const suggestedFriendsQuery = query(
       collectionBasePath,
@@ -123,7 +122,6 @@ export default function Page(props: {
           <p className="p-4 text-center">{"Empty Suggestions"}</p>
         ) : (
           <>
-            
             <FriendList friends={friends} />
           </>
         )}
@@ -133,8 +131,6 @@ export default function Page(props: {
 }
 
 function FriendList({ friends }: { friends: friends[] }) {
-  const { currentUser } = useContext(PageContext) as PageProps;
-
   return (
     <ul>
       <p className={`text-dimgray text-[15px] p-[.5rem_1rem_0] m-0 `}>

@@ -16,15 +16,14 @@ import router from "next/router";
 import {
   memo,
   useCallback,
-  useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
-import { AppContext } from "../../context/AppContext";
-import { PageContext, PageProps } from "../../context/PageContext";
+import { useAppContext } from "../../context/AppContext";
+import { usePageContext } from "../../context/PageContext";
 import s from "../../styles/Home.module.scss";
-import { AppProps, Tabs } from "../../types/interfaces";
+import { Tabs } from "../../types/interfaces";
 import Navitems from "./Navitems";
 import SelectModal from "./SelectModal";
 const Logo = () => {
@@ -55,11 +54,8 @@ function Header(props: { tabIndex: number }) {
   const { active, setActive } = useActiveTab();
   const navRef = useRef<HTMLElement>(null);
   const [width, setwidth] = useState<number>();
-  const { UnReadNotiCount, selectMode, setselectMode, headerContainerRef } =
-    useContext(AppContext) as AppProps;
-  const { indicatorRef, setSelectedId, friendReqCount } = useContext(
-    PageContext
-  ) as PageProps;
+  const { UnReadNotiCount, selectMode, setselectMode, headerContainerRef } = useAppContext()
+  const { indicatorRef, setSelectedId, friendReqCount } = usePageContext()
   const [currentNav, setCurrentNav] = useState<Tabs>("/");
   const [activeNav, setActiveNav] = useState<Tabs>("/");
   // useEffect(() => {

@@ -33,7 +33,7 @@ import s from "@/styles/Home.module.scss";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 // import {PageContext : Page} from '@/context/PageContext'
 import CommentItem from "@/components/Comment/CommentItem";
-import { PageContext, PageProps } from "@/context/PageContext";
+import { usePageContext } from "@/context/PageContext";
 import { getAuth } from "firebase/auth";
 import {
   DocumentData,
@@ -49,10 +49,9 @@ import nookies from "nookies";
 import {
   RefObject,
   useCallback,
-  useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import {
   Comment as CommentType,
@@ -173,7 +172,7 @@ export default function Page(props: {
     nested: false,
     parentId: "",
   });
-  const { currentUser } = useContext(PageContext) as PageProps;
+  const { currentUser } = usePageContext();
   const router = useRouter();
   const InputRef = useRef<HTMLDivElement>(null);
   const replyInputRef = useRef<HTMLInputElement>(null);

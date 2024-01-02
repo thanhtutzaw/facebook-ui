@@ -1,8 +1,8 @@
-import { AppContext } from "@/context/AppContext";
+import { useAppContext } from "@/context/AppContext";
 import { MYPOST_LIMIT } from "@/lib/QUERY_LIMIT";
 import { app, getPath, getPostWithMoreInfo } from "@/lib/firebase";
 import { changeProfile, checkPhotoURL } from "@/lib/firestore/profile";
-import { AppProps, Post, QueryKey, account } from "@/types/interfaces";
+import { Post, QueryKey, account } from "@/types/interfaces";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getAuth } from "firebase/auth";
 import {
@@ -17,10 +17,9 @@ import {
   ChangeEvent,
   FormEvent,
   useCallback,
-  useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useActiveTab } from "./useActiveTab";
 function useProfile() {
@@ -31,7 +30,7 @@ function useProfile() {
     uid,
     selectMode,
     setselectMode: setactive,
-  } = useContext(AppContext) as AppProps;
+  } = useAppContext();
   const { active: activeTab } = useActiveTab();
   const router = useRouter();
   const infoRef = useRef<HTMLDivElement>(null);

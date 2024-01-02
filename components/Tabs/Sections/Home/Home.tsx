@@ -1,14 +1,13 @@
-import { AppContext } from "@/context/AppContext";
-import { PageContext, PageProps } from "@/context/PageContext";
+import { useAppContext } from "@/context/AppContext";
+import { usePageContext } from "@/context/PageContext";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import styles from "@/styles/Home.module.scss";
-import { AppProps } from "@/types/interfaces";
 import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useContext, useRef } from "react";
+import { useRef } from "react";
 import Newfeed from "./Newfeed";
 import Story from "./Story/Story";
 // type AppProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
@@ -24,8 +23,8 @@ export default function Home(props: { tabIndex: number }) {
     headerContainerRef,
     hasMore,
     expired,
-  } = useContext(AppContext) as AppProps;
-  const { setuploadButtonClicked } = useContext(PageContext) as PageProps;
+  } = useAppContext()
+  const { setuploadButtonClicked } = usePageContext();
   const previousScrollRef = useRef(0);
   const { scrollRef } = useInfiniteScroll({
     hasMore: hasMore!,

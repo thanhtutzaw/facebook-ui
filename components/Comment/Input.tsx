@@ -1,4 +1,4 @@
-import { PageContext, PageProps } from "@/context/PageContext";
+import { usePageContext } from "@/context/PageContext";
 import { NotiAction } from "@/lib/NotiAction";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { CommentProps } from "@/pages/[user]/[post]";
@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { User } from "firebase/auth";
 import { collection, doc, getDoc } from "firebase/firestore";
 import Image from "next/image";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { db, getCollectionPath, getPath } from "../../lib/firebase";
 import { addComment, updateComment } from "../../lib/firestore/comment";
 import {
@@ -30,7 +30,7 @@ export default function CommentInput(props: Partial<CommentProps>) {
     replyInput,
     replyInputRef,
   } = props;
-  const { currentUser } = useContext(PageContext) as PageProps;
+  const { currentUser } = usePageContext();
 
   const [text, settext] = useState("");
   const [addLoading, setaddLoading] = useState(false);

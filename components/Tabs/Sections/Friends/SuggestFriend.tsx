@@ -1,9 +1,9 @@
-import { AppContext } from "@/context/AppContext";
-import { PageContext, PageProps } from "@/context/PageContext";
+import { useAppContext } from "@/context/AppContext";
+import { usePageContext } from "@/context/PageContext";
 import useQueryFn from "@/hooks/useQueryFn";
 import { addFriends } from "@/lib/firestore/friends";
-import { AppProps, friends } from "@/types/interfaces";
-import { useContext, useState } from "react";
+import { friends } from "@/types/interfaces";
+import { useState } from "react";
 import Card from "./Card";
 import s from "./Friends.module.scss";
 interface RequestProps {
@@ -12,8 +12,8 @@ interface RequestProps {
 }
 export function SuggestFriend(props: RequestProps) {
   const { f, tabIndex } = props;
-  const { currentUser } = useContext(PageContext) as PageProps;
-  const { uid } = useContext(AppContext) as AppProps;
+  const { currentUser } = usePageContext();
+  const { uid } = useAppContext();
   const [accept, setaccept] = useState(false);
   const [reject, setreject] = useState(false);
   const { queryFn } = useQueryFn();

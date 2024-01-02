@@ -3,7 +3,7 @@ import Metatag from "@/components/Metatag";
 import PostList from "@/components/Tabs/Sections/Home/PostList";
 import { bioFallback } from "@/components/Tabs/Sections/Profile/ProfileInfo";
 import s from "@/components/Tabs/Sections/Profile/index.module.scss";
-import { PageContext, PageProps } from "@/context/PageContext";
+import { usePageContext } from "@/context/PageContext";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import useMenu from "@/hooks/useMenu";
 import useQueryFn from "@/hooks/useQueryFn";
@@ -48,8 +48,7 @@ import {
   ReactElement,
   ReactNode,
   useCallback,
-  useContext,
-  useState,
+  useState
 } from "react";
 import useSound from "use-sound";
 import { AcceptFriend } from "../../components/Button/AcceptFriend";
@@ -159,9 +158,7 @@ export default function UserProfile({
   const friendId = router.query.user;
   const [friendMenuToggle, setFriendMenuToggle] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { setsingleImageModal, currentUser, setcurrentUser } = useContext(
-    PageContext
-  ) as PageProps;
+  const { setsingleImageModal, currentUser, setcurrentUser } = usePageContext();
 
   const statusComponents = {
     canAccept: (

@@ -1,14 +1,13 @@
-import { AppContext } from "@/context/AppContext";
-import { PageContext, PageProps } from "@/context/PageContext";
-import { checkPhotoURL, getFullName, photoURLFallback } from "@/lib/firestore/profile";
-import { AppProps, account } from "@/types/interfaces";
+import { useAppContext } from "@/context/AppContext";
+import { usePageContext } from "@/context/PageContext";
+import { checkPhotoURL, getFullName } from "@/lib/firestore/profile";
+import { account } from "@/types/interfaces";
 import Image from "next/image";
 import {
   ChangeEventHandler,
   ReactNode,
   RefObject,
-  useContext,
-  useRef,
+  useRef
 } from "react";
 import s from "./index.module.scss";
 export const bioFallback = "No Bio Yet";
@@ -29,10 +28,8 @@ function ProfileInfo(props: {
     editToggle,
     newProfile,
   } = props;
-  const { setsingleImageModal, currentUser } = useContext(
-    PageContext
-  ) as PageProps;
-  const { profile, selectMode } = useContext(AppContext) as AppProps;
+  const { setsingleImageModal, currentUser } = usePageContext();
+  const { profile, selectMode } = useAppContext();
   const imgFileRef = useRef<HTMLInputElement>(null);
 
   //   ? "https://www.femalefirst.co.uk/image-library/partners/bang/land/1000/t/tom-holland-d0f3d679ae3608f9306690ec51d3a613c90773ef.jpg"

@@ -3,12 +3,11 @@ import {
   Dispatch,
   SetStateAction,
   memo,
-  useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
-import { PageContext, PageProps } from "../../context/PageContext";
+import { usePageContext } from "../../context/PageContext";
 import PostProvider from "../../context/PostContext";
 import { Post as PostType, likes } from "../../types/interfaces";
 import Comment from "../Comment";
@@ -41,7 +40,7 @@ function Post({
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
-  const { currentUser } = useContext(PageContext) as PageProps;
+  const { currentUser } = usePageContext();
   const [client, setclient] = useState(false);
 
   useEffect(() => {

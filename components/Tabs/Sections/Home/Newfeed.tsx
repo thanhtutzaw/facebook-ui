@@ -1,17 +1,14 @@
-import { AppContext } from "@/context/AppContext";
+import { useAppContext } from "@/context/AppContext";
 import { app } from "@/lib/firebase";
 import styles from "@/styles/Home.module.scss";
-import { AppProps } from "@/types/interfaces";
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
-import { memo, useContext, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import PostList from "./PostList";
 // type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 // };
 function Newfeed(props: { tabIndex: number }) {
   const { tabIndex } = props;
-  const { deletePost, posts, newsFeedPost, postEnd, hasMore } = useContext(
-    AppContext
-  ) as AppProps;
+  const { deletePost, posts, newsFeedPost, postEnd, hasMore } = useAppContext();
   const [user, setuser] = useState<User | null>(null);
   useEffect(() => {
     const auth = getAuth(app);

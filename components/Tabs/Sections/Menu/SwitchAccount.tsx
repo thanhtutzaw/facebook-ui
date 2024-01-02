@@ -1,8 +1,7 @@
 import Spinner from "@/components/Spinner";
-import { AppContext } from "@/context/AppContext";
+import { useAppContext } from "@/context/AppContext";
 import { app } from "@/lib/firebase";
 import { signout } from "@/lib/signout";
-import { AppProps } from "@/types/interfaces";
 import {
   faAngleDown,
   faAngleUp,
@@ -14,7 +13,7 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { getMessaging } from "firebase/messaging";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import s from "../../Sections/Menu/menu.module.scss";
 const accounts = [
   {
@@ -45,7 +44,7 @@ export default function SwitchAccount(props: {
 }) {
   const { setLoading, loading } = props;
   const auth = getAuth();
-  const { token } = useContext(AppContext) as AppProps;
+  const { token } = useAppContext();
   const { email: currentEmail } = { ...token };
 
   const [toggleSwitchAcc, setToggleSwitchAcc] = useState(false);
