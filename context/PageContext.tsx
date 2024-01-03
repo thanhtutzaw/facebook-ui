@@ -1,8 +1,10 @@
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
-import { User } from "firebase/auth";
+import { Auth, User } from "firebase/auth";
 import {
+  Dispatch,
   ReactNode,
   RefObject,
+  SetStateAction,
   createContext,
   useContext,
   useEffect,
@@ -19,49 +21,45 @@ export type selectedId = {
     author: string | null;
   } | null;
 };
-interface singleImageModalType {
+interface TsingleImageModal {
   src: string;
   name: string;
 }
 export interface PageProps {
-  friendReqCount: number;
-  newsFeedData?: Post[];
+  newsFeedData: Post[];
   setnewsFeedData: Function;
-  currentUser: (User & { photoURL_cropped?: string }) | null;
-  queryClient?: QueryClient;
-  postError?: string;
-  dropdownRef?: RefObject<HTMLDivElement>;
-  uploadButtonClicked?: boolean;
-  setuploadButtonClicked?: Function;
+  queryClient: QueryClient;
+  dropdownRef: RefObject<HTMLDivElement>;
+  uploadButtonClicked: boolean;
+  setuploadButtonClicked: Dispatch<SetStateAction<boolean>>;
   indicatorRef: RefObject<HTMLDivElement>;
-  fileRef?: RefObject<HTMLInputElement>;
-  active: Tabs;
-  children?: ReactNode;
-  setActive: Function;
-  shareAction?: string;
-  selectedId?: selectedId[];
-  setSelectedId?: Function;
-  setshareAction?: Function;
-  setcurrentUser: Function;
-  singleImageModalRef?: RefObject<HTMLDialogElement>;
-  singleImageModal?: singleImageModalType;
-  setsingleImageModal?: Function;
-  // preventClick?: MutableRefObject<boolean>;
-  preventClick?: boolean;
-  friends?: friends[];
-  setpreventClick?: Function;
-  setfriends?: Function;
+  fileRef: RefObject<HTMLInputElement>;
+  children: ReactNode;
+  shareAction: string;
+  selectedId: selectedId[];
+  setSelectedId: Function;
+  setshareAction: Function;
+  singleImageModalRef: RefObject<HTMLDialogElement>;
+  singleImageModal: TsingleImageModal;
+  setsingleImageModal: Function;
+  // preventClick: MutableRefObject<boolean>;
+  preventClick: boolean;
+  friends: friends[];
+  setpreventClick: Function;
+  setfriends: Function;
 }
 interface PropsType {
   friendReqCount: number;
   active: Tabs;
   setActive: Function;
-  currentUser: (User & { photoURL_cropped?: string }) | null;
+  currentUser:
+    | (User & { photoURL_cropped?: string | undefined })
+    | null;
   setcurrentUser: Function;
   children: ReactNode;
+  auth: Auth;
 }
-export const PageContext = createContext<PageProps | null>(null);
-// const PostContext = createContext<PostPageProps | null>(null);
+export const PageContext = createContext<PageProps & PropsType | null>(null);
 
 export function PageProvider(props: PropsType) {
   const [friends, setfriends] = useState<friends[]>([]);
@@ -70,7 +68,7 @@ export function PageProvider(props: PropsType) {
   const [selectedId, setSelectedId] = useState([]);
   const [preventClick, setpreventClick] = useState(false);
   const [singleImageModal, setsingleImageModal] =
-    useState<singleImageModalType>({
+    useState<TsingleImageModal>({
       src: "",
       name: "",
     });
@@ -117,8 +115,14 @@ export function PageProvider(props: PropsType) {
         setuploadButtonClicked,
         singleImageModalRef,
         fileRef,
-        ...props,
         setnewsFeedData,
+        ...props,
+//         friendReqCount:props.friendReqCount,
+// active:props.active,
+// setActive:props.setActive,
+// currentUser:props.currentUser,
+// setcurrentUser:props.setcurrentUser,
+// auth:props.auth,
       }}
     >
       {props.children}
@@ -127,7 +131,7 @@ export function PageProvider(props: PropsType) {
 }
 export const usePageContext = () => {
   const context = useContext(PageContext);
-  if (!context) throw Error("PageContext should use within PageProvider");
+  if (!context) throw new Error("PageContext should use within PageProvider");
 
   return context;
 };

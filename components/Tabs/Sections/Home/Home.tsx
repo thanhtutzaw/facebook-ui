@@ -109,7 +109,7 @@ export default function Home(props: { tabIndex: number }) {
           title="Upload media"
           onClick={() => {
             router.push("addPost");
-            setuploadButtonClicked?.(true);
+            setuploadButtonClicked(true);
           }}
           tabIndex={-1}
           className={`rounded-full

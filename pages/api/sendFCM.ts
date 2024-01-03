@@ -24,7 +24,7 @@ export interface NotiApiRequest extends NextApiRequest {
     tag?: string;
     badge?: string;
     link?: string;
-    actionPayload?: any;
+    actionPayload?: unknown;
     collapse_key?: string;
     // actions?: Array<keyof typeof NotiAction>;
     // actions?:  { [key in keyof typeof NotiAction]: typeof NotiAction[key] }

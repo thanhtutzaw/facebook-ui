@@ -66,7 +66,7 @@ export default async function handler(
           authorId,
           uid,
         });
-        
+
         break;
       case "accept_friend":
         const { f, currentUser } = req.body;
@@ -89,12 +89,16 @@ export default async function handler(
       default:
         break;
     }
-    res.status(200).json({ success: true });
-  } catch (error) {
-    console.error("Noti Click Trigger Action failed:", error);
-    // Respond with an error status if the action fails.
     res
-      .status(500)
-      .json({ success: false, error: "Noti Click Trigger Action failed" });
+      .status(200)
+      .json({ success: true, noti_action: action, body: { ...req.body } });
+  } catch (error) {
+    console.error(`Noti Click Trigger Action- ${action} failed : `, error);
+    // Respond with an error status if the action fails.
+    res.status(500).json({
+      success: false,
+      error: `Noti Click Trigger Action- ${action} failed!`,
+      body: { ...req.body },
+    });
   }
 }

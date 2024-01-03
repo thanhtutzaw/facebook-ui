@@ -94,7 +94,6 @@ function Post({
           <Footer
             setLikes={setLikes}
             likeCount={likeCount}
-            currentUser={currentUser}
             setlikeCount={setlikeCount}
             post={post}
           />

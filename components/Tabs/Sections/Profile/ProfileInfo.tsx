@@ -47,7 +47,7 @@ function ProfileInfo(props: {
     <div ref={infoRef} className={`${s.info} ${selectMode ? s.active : ""}`}>
       <Image
         onClick={() => {
-          setsingleImageModal?.({
+          setsingleImageModal({
             src: checkPhotoURL(profile?.photoURL),
             name: `${userName}'s profile picture`,
           });

@@ -241,7 +241,7 @@ export function ImageLargeView() {
       modalRef?.current?.showModal();
     } else {
       modalRef?.current?.close();
-      setsingleImageModal?.({});
+      setsingleImageModal({});
     }
   }, [imageURL, imageName, modalRef, setsingleImageModal]);
   return (
@@ -266,7 +266,7 @@ export function ImageLargeView() {
         e.currentTarget.style.opacity = "0";
         api.set({ x: 0, y: 0, scale: 1 });
         setVisible(false);
-        setsingleImageModal?.({ src: "", name: "" });
+        setsingleImageModal({ src: "", name: "" });
         setLoading(true);
       }}
       className={s.imageDialog}

@@ -1,19 +1,13 @@
+import { usePostContext } from "@/context/PostContext";
+import { db, getCollectionPath } from "@/lib/firebase";
+import { addSavedPost, unSavePost } from "@/lib/firestore/savedPost";
 import { faBookmark, faLink } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { doc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
-import {
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { db, getCollectionPath } from "../../../lib/firebase";
-import { addSavedPost, unSavePost } from "../../../lib/firestore/savedPost";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styles from "../index.module.scss";
-import { PostContext, PostProps } from "../../../context/PostContext";
 export default function Menu(props: {
   authorId: string;
   id: string;
@@ -21,7 +15,7 @@ export default function Menu(props: {
   isSaved: boolean;
 }) {
   const { uid, isSaved, authorId, id } = props;
-  const { toggleMenu, settoggleMenu } = useContext(PostContext) as PostProps;
+  const { toggleMenu, settoggleMenu } = usePostContext();
   const [loading, setLoading] = useState(false);
   const [saveToggle, setsaveToggle] = useState(isSaved);
   const router = useRouter();

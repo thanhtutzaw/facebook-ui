@@ -51,7 +51,7 @@ export default function Navitems(props: {
       } else if (active === "friends") {
         router.replace("/#friends", undefined, { scroll: false });
       } else if (TabName === "notifications") {
-        setUnReadNotiCount?.(0);
+        setUnReadNotiCount(0);
         console.log("reseting Noti Count");
         queryFn.invalidate("noti");
         queryFn.refetchQueries("noti");

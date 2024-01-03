@@ -1,13 +1,10 @@
+import { usePageContext } from "@/context/PageContext";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { User } from "firebase/auth";
 import Image from "next/image";
 
-export default function ChatInput({
-  currentUser,
-}: {
-  currentUser: User | null;
-}) {
+export default function ChatInput() {
+  const { currentUser } = usePageContext();
   return (
     <form
       className={`bg-white border-t border-[#dfdfdf] fixed bottom-0 p-[.8rem] flex justify-between w-screen max-w-main gap-[10px] items-center`}

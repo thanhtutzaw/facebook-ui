@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FirebaseError } from "firebase/app";
-import { User, getAuth } from "firebase/auth";
+import { User } from "firebase/auth";
 import {
   collection,
   doc,
@@ -29,7 +29,7 @@ import {
 } from "react";
 import useSound from "use-sound";
 import { usePageContext } from "../../context/PageContext";
-import { app, db, getCollectionPath, getPath } from "../../lib/firebase";
+import { db, getCollectionPath, getPath } from "../../lib/firebase";
 import {
   getMessage,
   sendAppNoti,
@@ -45,18 +45,12 @@ function Footer(
     likeCount: number;
     post: Post;
     setlikeCount?: Function;
-    currentUser: User | null;
+   
   } & StyleHTMLAttributes<HTMLDivElement>
 ) {
-  const {
-    post,
-    currentUser: profile,
-    setlikeCount,
-    setLikes,
-    likeCount,
-    ...rest
-  } = props;
+  const { post, setlikeCount, setLikes, likeCount, ...rest } = props;
   const router = useRouter();
+  const {currentUser:profile} = usePageContext();
   const [reactionAction, setreactionAction] = useState("");
   const commentRef = useRef<HTMLDivElement>(null);
   const [visibility, setvisibility] = useState<string | null>("Public");
@@ -67,15 +61,20 @@ function Footer(
   }, [getLocal]);
   const [isLiked, setisLiked] = useState(post.isLiked);
 
-  const { friends, currentUser, dropdownRef, shareAction, setshareAction } =
-    usePageContext();
+  const {
+    auth,
+    friends,
+    currentUser,
+    dropdownRef,
+    shareAction,
+    setshareAction,
+  } = usePageContext();
   const { id, author: authorAccount, authorId } = post;
   const authorProfile = authorAccount as account["profile"];
   const authorName = `${authorProfile?.firstName ?? "Unknow User"} ${
     authorProfile?.lastName ?? ""
   }`;
 
-  const auth = getAuth(app);
   const uid = auth?.currentUser?.uid;
   const postRef = doc(
     db,

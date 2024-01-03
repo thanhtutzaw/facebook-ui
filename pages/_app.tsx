@@ -28,7 +28,7 @@ import { verifyIdToken } from "../lib/firebaseAdmin";
 import "../styles/globals.css";
 import { AppProps as Props } from "../types/interfaces";
 config.autoAddCss = false;
-export const getServerSideProps: GetServerSideProps<Props> = async (
+export const getServerSideProps: GetServerSideProps<{expired:boolean}> = async (
   context
 ) => {
   try {
@@ -82,13 +82,11 @@ export default function App({
     (User & { photoURL_cropped?: string }) | null
   >(null);
   useEffect(() => {
-    const auth = getAuth(app);
     onAuthStateChanged(auth, (user) => {
       setcurrentUser(user);
     });
   }, [auth]);
   useEffect(() => {
-    const auth = getAuth(app);
     const unsubscribe = onIdTokenChanged(auth, async (user) => {
       if (!user) {
         nookies.destroy(undefined, "token");
@@ -121,7 +119,7 @@ export default function App({
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [auth]);
   // useEffect(() => {
   //   const Interval = setInterval(
   //     async () => {
@@ -133,7 +131,6 @@ export default function App({
   //     },
   //     10 * 60 * 1000 //10min force refresh
   //   );
-  //   const auth = getAuth(app);
   //   return () => {
   //     clearInterval(Interval);
   //   };
@@ -175,6 +172,7 @@ export default function App({
       <Metatag />
       <QueryClientProvider client={queryClient}>
         <PageProvider
+          auth={auth}
           friendReqCount={friendReqCount}
           active={active}
           setActive={setActive}

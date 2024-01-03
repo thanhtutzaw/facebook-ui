@@ -23,8 +23,7 @@ export default function Email() {
       }
     });
     return () => unsub();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [router]);
   async function handleEmailLogin(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const email = new FormData(e.currentTarget).get("email")?.toString();

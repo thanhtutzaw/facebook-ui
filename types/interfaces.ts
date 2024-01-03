@@ -148,10 +148,10 @@ export interface AppProps {
   setprofileSrc?: Function;
   profileSrc?: string;
   queryPageData?: unknown;
-  hasMore?: boolean;
+  hasMore: boolean;
   token?: DecodedIdToken | null;
   fcmToken?: string | string[];
-  UnReadNotiCount?: number;
+  UnReadNotiCount: number;
   acceptedFriends?: string[];
   postError?: string;
   setnewsFeedPost?: Function;
@@ -165,9 +165,9 @@ export interface AppProps {
   active?: Tabs;
   setActive?: Function;
   sortedPost?: Post[];
-  setUnReadNotiCount?: Function;
+  setUnReadNotiCount: Function;
   setsortedPost?: Function;
-  posts?: Post[];
+  posts: Post[];
   headerContainerRef?: RefObject<HTMLDivElement>;
   profile?: account["profile"] | null;
   account?: UserRecord | null;

@@ -152,10 +152,9 @@ export async function loveComment({
   parentId?: string;
   uid: string;
   profile:
-    | (Partial<User> & {
-        photoURL_cropped?: string | undefined;
-      })
-    | null;
+    | (User & { photoURL_cropped?: string | undefined })
+    | null
+    | undefined;
 }) {
   const heartRef = doc(
     db,
@@ -171,7 +170,7 @@ export async function loveComment({
   const replyURL = `${authorId}/${postId}?comment=${parentId}#reply-${commentId}`;
   // if (uid === authorId) return;
   await sendAppNoti({
-    content,
+    content: content ? content : "",
     uid,
     receiptId: String(commentAuthorId),
     profile,
@@ -183,6 +182,13 @@ export async function loveComment({
     message: `${profile?.displayName ?? "Unknown User"} ${getMessage(
       "comment_reaction"
     )}`,
+    actionPayload: {
+      content,
+      uid,
+      receiptId: String(commentAuthorId),
+      profile,
+      url: parentId ? replyURL : `${authorId}/${postId}#comment-${commentId}`,
+    },
     icon: checkPhotoURL(profile?.photoURL_cropped ?? profile?.photoURL),
     tag: `Heart-${commentId}`,
     link: parentId ? replyURL : `/${authorId}/${postId}#comment-${commentId}`,

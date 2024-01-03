@@ -1,5 +1,6 @@
 import Spinner from "@/components/Spinner";
 import { useAppContext } from "@/context/AppContext";
+import { usePageContext } from "@/context/PageContext";
 import { app } from "@/lib/firebase";
 import { signout } from "@/lib/signout";
 import {
@@ -9,7 +10,7 @@ import {
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { getMessaging } from "firebase/messaging";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -43,7 +44,7 @@ export default function SwitchAccount(props: {
   loading: boolean;
 }) {
   const { setLoading, loading } = props;
-  const auth = getAuth();
+  const {auth} = usePageContext();
   const { token } = useAppContext();
   const { email: currentEmail } = { ...token };
 

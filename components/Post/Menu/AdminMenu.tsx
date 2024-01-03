@@ -1,22 +1,19 @@
+import { usePageContext } from "@/context/PageContext";
+import { usePostContext } from "@/context/PostContext";
 import useQueryFn from "@/hooks/useQueryFn";
-import { Post } from "@/types/interfaces";
+import { getCollectionPath } from "@/lib/firebase";
+import { deletePost as deletePostDB } from "@/lib/firestore/post";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getAuth } from "firebase/auth";
 import { AnimatePresence, motion } from "framer-motion";
 import router from "next/router";
-import { useContext, useState } from "react";
-import { PostContext, PostProps } from "../../../context/PostContext";
-import { app, getCollectionPath } from "../../../lib/firebase";
-import { deletePost as deletePostDB } from "../../../lib/firestore/post";
+import { useState } from "react";
 import styles from "../index.module.scss";
 import { CopyLink } from "./Menu";
-export default function AdminMenu(props: { post?: Post }) {
-  const { post, toggleMenu, settoggleMenu, deletePost } = useContext(
-    PostContext
-  ) as PostProps;
+export default function AdminMenu() {
+  const { post, toggleMenu, settoggleMenu, deletePost } = usePostContext();
   const { authorId, id } = post;
-  const auth = getAuth(app);
+  const { auth } = usePageContext();
   const [loading, setLoading] = useState(false);
   const { queryFn } = useQueryFn();
   // const deletePostMutation = useMutation({

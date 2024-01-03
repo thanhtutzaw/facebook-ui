@@ -381,7 +381,7 @@ export default function UserProfile({
           <div className={`${s.info}`}>
             <Image
               onClick={() => {
-                setsingleImageModal?.({
+                setsingleImageModal({
                   src: checkPhotoURL(profile?.photoURL),
                   name: `${userName}'s profile`,
                 });

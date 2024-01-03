@@ -1,11 +1,9 @@
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getAuth } from "firebase/auth";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { RefObject, memo } from "react";
 import { usePageContext } from "../../context/PageContext";
-import { app } from "../../lib/firebase";
 import { Post } from "../../types/interfaces";
 import ImageWithFallback from "../ImageWithFallback";
 import s from "./index.module.scss";
@@ -36,8 +34,8 @@ function PhotoLayout(props: {
     fileRef,
   } = props;
   const files = form ? form.files : post ? post.media : null;
-  const { setsingleImageModal } = usePageContext();
-  const auth = getAuth(app);
+  const { setsingleImageModal, auth } = usePageContext();
+  
   // useEffect(() => {
   //   window.onpopstate = () => {
   //     // history.pushState(null, document.title, location.href);
@@ -70,7 +68,7 @@ function PhotoLayout(props: {
               <div
                 onClick={() => {
                   if (file.type === "video/mp4") return;
-                  setsingleImageModal?.({
+                  setsingleImageModal({
                     src: file.url ? file.url : URL.createObjectURL(file),
                     name: file.name,
                   });
@@ -132,7 +130,7 @@ function PhotoLayout(props: {
                       if (fileRef && fileRef.current) {
                         fileRef.current.value = "";
                       }
-                      setsingleImageModal?.({ src: "", name: "" });
+                      setsingleImageModal({ src: "", name: "" });
                     }}
                     title="Remove media"
                     aria-label="Remove media"
@@ -174,7 +172,7 @@ function PhotoLayout(props: {
                       if (fileRef && fileRef.current) {
                         fileRef.current.value = "";
                       }
-                      setsingleImageModal?.({ src: "", name: "" });
+                      setsingleImageModal({ src: "", name: "" });
                     }}
                     title="Remove media"
                     aria-label="Remove media"

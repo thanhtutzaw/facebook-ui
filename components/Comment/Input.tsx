@@ -38,11 +38,7 @@ export default function CommentInput(props: Partial<CommentProps>) {
     displayName: currentUser?.displayName,
     photoURL: profile?.photoURL,
     photoURL_cropped: profile?.photoURL_cropped,
-  } as
-    | (Partial<User> & {
-        photoURL_cropped?: string | undefined;
-      })
-    | null;
+  } as (User & { photoURL_cropped?: string | undefined }) | null | undefined;
   if (!post) return null;
   const postId = String(post.id);
   const authorId = String(post.authorId);
@@ -192,6 +188,7 @@ export default function CommentInput(props: Partial<CommentProps>) {
   );
 }
 export async function handleReply({
+  origin,
   commentId,
   text,
   uid,
@@ -203,6 +200,7 @@ export async function handleReply({
   currentUserProfile,
   commentAuthorId,
 }: {
+  origin?: string;
   text: string;
   uid: string | undefined;
   replyInput: {
@@ -387,6 +385,7 @@ export async function handleReply({
     content: replyInput.comment?.text ?? replyInput.text,
   });
   await sendFCM({
+    
     recieptId: String(replyInput.comment?.authorId) ?? commentAuthorId,
     message: `${currentUserProfile?.displayName ?? "Unknown User"} ${getMessage(
       "replied_to_comment"

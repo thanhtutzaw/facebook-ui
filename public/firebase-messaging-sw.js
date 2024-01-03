@@ -5,7 +5,6 @@ self.addEventListener("notificationclick", (event) => {
     const { click_action, data } = event.notification.data.FCM_MSG.notification;
     console.log({ actionPayload: data.actionPayload })
     console.log({ eventAction: event.action })
-    // const { NotiAction } = self;
     // switch (event.action) {
     //     case `comment_like`:
     //         event.waitUntil(
@@ -70,12 +69,6 @@ self.addEventListener("notificationclick", (event) => {
     //             })()
     //         )
     //         break;
-    //     default:
-    //         event.notification.close();
-    //         event.waitUntil(
-    //             (openTab(click_action))(),
-    //         );
-    //         break;
     // }
     if (event.action) {
         event.waitUntil(
@@ -87,7 +80,7 @@ self.addEventListener("notificationclick", (event) => {
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ ...data.actionPayload, text: inputText })
+                        body: JSON.stringify({ ...data.actionPayload, text: inputText})
                     })
                 } catch (error) {
                     console.error('Error:', error);

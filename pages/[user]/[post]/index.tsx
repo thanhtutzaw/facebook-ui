@@ -16,13 +16,12 @@ import useQueryFn from "@/hooks/useQueryFn";
 import { Comment_LIMIT } from "@/lib/QUERY_LIMIT";
 import {
   DescQuery,
-  app,
   db,
   getCollectionPath,
   getPath,
   getProfileByUID,
   postInfo,
-  postToJSON,
+  postToJSON
 } from "@/lib/firebase";
 import { verifyIdToken } from "@/lib/firebaseAdmin";
 import { fetchComments, fetchSingleComment } from "@/lib/firestore/comment";
@@ -34,7 +33,6 @@ import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 // import {PageContext : Page} from '@/context/PageContext'
 import CommentItem from "@/components/Comment/CommentItem";
 import { usePageContext } from "@/context/PageContext";
-import { getAuth } from "firebase/auth";
 import {
   DocumentData,
   DocumentSnapshot,
@@ -46,13 +44,7 @@ import {
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import nookies from "nookies";
-import {
-  RefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState
-} from "react";
+import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import {
   Comment as CommentType,
   Media,
@@ -172,7 +164,7 @@ export default function Page(props: {
     nested: false,
     parentId: "",
   });
-  const { currentUser } = usePageContext();
+  const { currentUser, auth } = usePageContext();
   const router = useRouter();
   const InputRef = useRef<HTMLDivElement>(null);
   const replyInputRef = useRef<HTMLInputElement>(null);
@@ -254,7 +246,7 @@ export default function Page(props: {
       });
     }
   }, [canEdit, router]);
-  const auth = getAuth(app);
+
   const navigateToProfile = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
@@ -371,8 +363,8 @@ export default function Page(props: {
   const [commentNotFoundLoading, setCommentNotFoundLoading] = useState(false);
 
   useEffect(
-    function handleNotFoundReply() {
-      // if (!limitedComments) return;
+    () => {
+      // handleNotFoundReply
       const commentId = router.query.comment;
       const replyCommentPath = router.asPath.split("#")[1]?.split("-")[0];
       const replyId = router.asPath.split("#")[1]?.split("-")[1];
@@ -427,30 +419,12 @@ export default function Page(props: {
               replyData = [...replyData, { ...reply }];
               data.recentReplies = [...replyData];
               data.replyCount = (data.replyCount ?? 0) - 1;
-
-              // console.log({ nnnnnnnnnData: data });
-              // console.error(data.recentReplies?.some((c) => c.id === reply.id));
-              // console.log(
-              //   replyId + " contains in " + data.recentReplies.map((c) => c.id)
-              // );
-              // if (!data.recentReplies?.some((c) => c.id === reply.id)) return;
-              // console.log({ "22222nnnnnn": data });}
             }
             data.recentRepliesLoading = false;
             setlimitedComments((prev: CommentType[]) => [{ ...data }, ...prev]);
             setCommentNotFoundLoading(false);
           })();
         } else {
-          // console.log({
-          //   isReplyFound: limitedComments
-          //     .find((c) => c.id === commentId)
-          //     ?.recentReplies.some((recent) => recent.id === replyId),
-          // });
-          // console.log(
-          //   limitedComments
-          //     .find((c) => c.id === commentId)
-          //     ?.recentReplies.some((recent) => console.log(typeof recent.id))
-          // );
           const comment = limitedComments.find((c) => c.id === commentId);
           if (
             comment?.recentReplies &&
@@ -538,7 +512,8 @@ export default function Page(props: {
     [router.asPath, router.query, uid]
   );
   useEffect(
-    function handleNotFoundComment() {
+    () => {
+      // handleNotFoundComment
       if (router.query.comment) return;
       if ((Number(post.commentCount) ?? 0) <= 0) return;
       const commentId = router.asPath.split("#")[1]?.split("-")[1];
@@ -644,7 +619,6 @@ export default function Page(props: {
               post={post}
             />
             <Footer
-              currentUser={currentUser}
               likeCount={likeCount}
               setlikeCount={setlikeCount}
               style={{ borderBottom: "1px solid rgb(235, 235, 235)" }}

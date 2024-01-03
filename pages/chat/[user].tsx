@@ -37,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 export default function FriendChat(props: { account: UserRecord }) {
   const { account } = props;
-  const { currentUser } = usePageContext();
+  
 
   return (
     <div className="user">
@@ -58,7 +58,7 @@ export default function FriendChat(props: { account: UserRecord }) {
           Coming Soon
           
         </div>
-        <ChatInput currentUser={currentUser} />
+        <ChatInput />
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import {
   RefObject,
   SetStateAction,
   createContext,
+  useContext,
 } from "react";
 import { Post as PostType, likes } from "../types/interfaces";
 export type PostProps = {
@@ -37,3 +38,9 @@ export default function PostProvider(props: PostProps) {
     </PostContext.Provider>
   );
 }
+export const usePostContext = () => {
+  const context = useContext(PostContext);
+  if (!context) throw new Error("PostContext should use within PostProvider");
+
+  return context;
+};

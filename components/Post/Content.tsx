@@ -8,10 +8,10 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
-import { memo, useCallback, useContext, useEffect, useState } from "react";
-import { usePageContext } from "../../context/PageContext";
-import { PostContext, PostProps } from "../../context/PostContext";
-import { app, getCollectionPath } from "../../lib/firebase";
+import { memo, useCallback, useEffect, useState } from "react";
+import { usePageContext } from "@/context/PageContext";
+import { usePostContext } from "@/context/PostContext";
+import { app, getCollectionPath } from "@/lib/firebase";
 import TextInput from "../Form/Input/TextInput";
 import AuthorInfo from "./AuthorInfo";
 import PostFallback from "./Fallback";
@@ -40,7 +40,7 @@ function Content({ post }: { post: Post }) {
     shareMode,
     toggleMenu,
     settoggleMenu,
-  } = useContext(PostContext) as PostProps;
+  } = usePostContext()
   const { authorId, id, text, sharePost: share } = post;
   const { preventClick, selectedId, setSelectedId } = usePageContext();
   useEscape(() => {

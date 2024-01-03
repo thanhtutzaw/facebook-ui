@@ -9,10 +9,9 @@ export interface AppNoti {
   uid: string;
   receiptId: string | number;
   profile:
-    | (Partial<User> & {
-        photoURL_cropped?: string | undefined;
-      })
-    | null;
+    | (User & { photoURL_cropped?: string | undefined })
+    | null
+    | undefined;
   type: NotiMessageTypes;
   url: string;
   content?: string;
@@ -32,15 +31,16 @@ export async function sendAppNoti(data: AppNoti) {
   };
   await setDoc(notifRef, notiData);
 }
-export async function sendFCM(data:NotiApiRequest["body"]) {
+export async function sendFCM(data: NotiApiRequest["body"]) {
   const productionURL = "https://facebook-ui-zee.vercel.app";
   const localURL = "http://localhost:3000";
   const isProduction = process.env.NODE_ENV === "production";
   const hostName = isProduction ? productionURL : localURL;
   const apiEndpoint = "/api/sendFCM";
   const url = `${hostName ?? productionURL}${apiEndpoint}`;
+  // const url = `${origin ? origin : hostName ?? productionURL}${apiEndpoint}`;
   console.log("Sending Notification (" + data.message + ")");
-  console.log({Sending_Notification: data });
+  console.log({ Sending_Notification: data });
   try {
     const response = await fetch(url, {
       method: "POST",

@@ -1,4 +1,4 @@
-import { AuthErrorCodes, getAuth, onAuthStateChanged } from "firebase/auth";
+import { AuthErrorCodes, onAuthStateChanged } from "firebase/auth";
 import {
   arrayUnion,
   doc,
@@ -40,12 +40,13 @@ import { FirebaseError } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import Spinner from "../components/Spinner";
 import { usePageContext } from "../context/PageContext";
-type TInitialProps = {
+type IndexProps = {
   expired: boolean;
   tokenUID: string;
   queryPageData: unknown;
   token: DecodedIdToken | null;
   postError: string;
+  hasMore: boolean;
   uid: string;
   acceptedFriends: string[];
   posts: Post[];
@@ -53,10 +54,8 @@ type TInitialProps = {
   profile: account["profile"] | null;
   account: null;
 };
-export const getServerSideProps: GetServerSideProps<AppProps> = async (
-  context
-) => {
-  const initialProps: TInitialProps = {
+export const getServerSideProps: GetServerSideProps<IndexProps> = async (context) => {
+  const initialProps: IndexProps = {
     expired: true,
     uid: "",
     tokenUID: "",
@@ -68,6 +67,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
     fcmToken: [],
     profile: null,
     account: null,
+    hasMore: false,
   };
   function updateInitialProps(
     data: Partial<typeof initialProps>
@@ -160,6 +160,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
       getUserData(uid),
     ]);
     initialProps.posts = newsFeedPosts ?? [];
+    initialProps.hasMore = hasMore;
     const fcmToken = (await fethUserDoc(uid)).data()?.fcmToken;
     const profile = profileData
       ? {
@@ -211,7 +212,7 @@ export const getServerSideProps: GetServerSideProps<AppProps> = async (
   }
 };
 
-export default function Home({
+export default function Index({
   queryPageData,
   token,
   acceptedFriends,
@@ -220,12 +221,10 @@ export default function Home({
   uid,
   posts,
   profile,
-  account,
   fcmToken,
   hasMore,
-}: AppProps) {
+}: IndexProps) {
   const router = useRouter();
-  const auth = getAuth(app);
   const [profileSrc, setprofileSrc] = useState(
     String(profile?.photoURL) ?? "public/assets/avatar_placeholder.png"
   );
@@ -235,10 +234,9 @@ export default function Home({
     }
   }, [profile]);
 
-  const { newsFeedData, setnewsFeedData, setfriends } = usePageContext();
+  const { newsFeedData, setnewsFeedData, setfriends, auth } = usePageContext();
   const [notiPermission, setnotiPermission] = useState(false);
   useEffect(() => {
-    const auth = getAuth(app);
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) {
         router.push("/login");
@@ -264,10 +262,7 @@ export default function Home({
     if (!expired) setnewsFeedPost(posts!);
   }, [expired, posts]);
   // useEffect(() => {
-  //   if (expired) return;
   //   console.error("should not run");
-  //   if (!uid) {
-  //   }
   // }, [expired, uid]);
   useEffect(() => {
     const isReady = async () => {
@@ -315,8 +310,6 @@ export default function Home({
     };
     requestNotificationPermission();
   }, [setnotiPermission, token]);
-  const [UnReadNotiCount, setUnReadNotiCount] = useState(0);
-
   useEffect(() => {
     if (
       "Notification" in window &&
@@ -368,26 +361,21 @@ export default function Home({
       <Welcome setresourceError={setresourceError} postError={resourceError} />
     );
   } else if (expired) {
-    return <Welcome setresourceError={setresourceError} expired={expired!} />;
+    return <Welcome setresourceError={setresourceError} expired={expired} />;
   } else {
     return uid ? (
       <AppProvider
+        token={token}
         setprofileSrc={setprofileSrc}
         profileSrc={profileSrc}
-        token={token}
-        hasMore={hasMore}
-        acceptedFriends={acceptedFriends}
-        UnReadNotiCount={UnReadNotiCount}
-        setUnReadNotiCount={setUnReadNotiCount}
-        active={activeTab!}
-        postError={postError!}
-        newsFeedPost={newsFeedPost!}
-        setnewsFeedPost={setnewsFeedPost!}
-        profile={profile!}
-        expired={expired}
+        active={activeTab}
+        setnewsFeedPost={setnewsFeedPost}
+        newsFeedPost={newsFeedPost}
         uid={uid}
         posts={posts}
-        account={account}
+        hasMore={hasMore}
+        // UnReadNotiCount={UnReadNotiCount}
+        // setUnReadNotiCount={setUnReadNotiCount}
       >
         <Header tabIndex={activeTab === "/" ? 0 : -1} />
         <Tabs />
