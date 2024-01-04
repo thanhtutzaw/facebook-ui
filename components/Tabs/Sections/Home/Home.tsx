@@ -1,4 +1,5 @@
 import { useAppContext } from "@/context/AppContext";
+import { useNewsFeedContext } from "@/context/NewsFeedContext";
 import { usePageContext } from "@/context/PageContext";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import { checkPhotoURL } from "@/lib/firestore/profile";
@@ -14,16 +15,15 @@ import Story from "./Story/Story";
 // };
 export default function Home(props: { tabIndex: number }) {
   const { ...rest } = props;
+  const { deletePost, newsFeedPost, getMorePosts } = useNewsFeedContext();
   const router = useRouter();
   const {
     profileSrc,
     profile,
-    postEnd,
-    getMorePosts,
+
     headerContainerRef,
-    hasMore,
-    expired,
-  } = useAppContext()
+  } = useAppContext();
+  const { postEnd, hasMore } = useNewsFeedContext();
   const { setuploadButtonClicked } = usePageContext();
   const previousScrollRef = useRef(0);
   const { scrollRef } = useInfiniteScroll({

@@ -8,6 +8,7 @@ import { MutableRefObject, RefObject, useState } from "react";
 import PostList from "../Home/PostList";
 import SortDate from "./SortDate";
 import s from "./index.module.scss";
+import { useNewsFeedContext } from "@/context/NewsFeedContext";
 
 export function Content(props: {
   hasNextPage?: boolean;
@@ -34,13 +35,9 @@ export function Content(props: {
     setsortby,
     sortedPost,
   } = props;
-  const { deletePost, selectMode } = useAppContext();
+  const {  selectMode } = useAppContext();
+  const { deletePost } = useNewsFeedContext();
   const [toggleSort, setToggleSort] = useState(false);
-  // useEffect(() => {
-  //   if (!selectMode) {
-  //     setToggleSort(false);
-  //   }
-  // }, [selectMode]);
   return (
     <div
       style={{

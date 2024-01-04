@@ -29,9 +29,10 @@ import {
   userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import { AppProps, Post, account, friends } from "../types/interfaces";
+import { Post, account, friends } from "../types/interfaces";
 
 import SecondaryPage from "@/components/QueryPage";
+import { NewsFeedProvider } from "@/context/NewsFeedContext";
 import { useActiveTab } from "@/hooks/useActiveTab";
 import { fetchMyPosts, fetchRecentPosts } from "@/lib/firestore/post";
 import { checkPhotoURL } from "@/lib/firestore/profile";
@@ -54,7 +55,9 @@ type IndexProps = {
   profile: account["profile"] | null;
   account: null;
 };
-export const getServerSideProps: GetServerSideProps<IndexProps> = async (context) => {
+export const getServerSideProps: GetServerSideProps<IndexProps> = async (
+  context
+) => {
   const initialProps: IndexProps = {
     expired: true,
     uid: "",
@@ -250,7 +253,7 @@ export default function Index({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
-  const [newsFeedPost, setnewsFeedPost] = useState(posts ?? []);
+
   // console.log("running in index.tsx");
   useEffect(() => {
     if (posts && !newsFeedData) {
@@ -258,9 +261,6 @@ export default function Index({
     }
   }, [newsFeedData, posts, setnewsFeedData]);
 
-  useEffect(() => {
-    if (!expired) setnewsFeedPost(posts!);
-  }, [expired, posts]);
   // useEffect(() => {
   //   console.error("should not run");
   // }, [expired, uid]);
@@ -351,11 +351,13 @@ export default function Index({
   }, [fcmToken, uid]);
 
   useEffect(() => {
-    setfriends?.(acceptedFriends);
+    setfriends(acceptedFriends);
   }, [acceptedFriends, setfriends]);
 
   const { active: activeTab } = useActiveTab();
   const [resourceError, setresourceError] = useState(postError);
+  // const { deletePost, newsFeedPost, setnewsFeedPost, getMorePosts } = useNewsFeed(posts, uid);
+  
   if (resourceError !== "") {
     return (
       <Welcome setresourceError={setresourceError} postError={resourceError} />
@@ -369,16 +371,14 @@ export default function Index({
         setprofileSrc={setprofileSrc}
         profileSrc={profileSrc}
         active={activeTab}
-        setnewsFeedPost={setnewsFeedPost}
-        newsFeedPost={newsFeedPost}
         uid={uid}
-        posts={posts}
-        hasMore={hasMore}
-        // UnReadNotiCount={UnReadNotiCount}
-        // setUnReadNotiCount={setUnReadNotiCount}
       >
-        <Header tabIndex={activeTab === "/" ? 0 : -1} />
-        <Tabs />
+        <NewsFeedProvider hasMore={hasMore} expired={expired} uid={uid} posts={posts}>
+          <Header
+            tabIndex={activeTab === "/" ? 0 : -1}
+          />
+          <Tabs />
+        </NewsFeedProvider>
         <SecondaryPage queryPageData={queryPageData} token={token} />
       </AppProvider>
     ) : (

@@ -123,6 +123,7 @@ function TabsOld() {
       setpreventClick?.(false);
     }
   }
+  return null;
   return (
     <div
       id="tabs"

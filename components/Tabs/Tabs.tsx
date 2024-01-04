@@ -16,6 +16,8 @@ import Notifications from "./Sections/Notifications/Notifications";
 import Profile from "./Sections/Profile";
 import Watch from "./Sections/Watch";
 import { TabHeader } from "./TabHeader";
+import { Post } from "@/types/interfaces";
+import { useNewsFeedContext } from "@/context/NewsFeedContext";
 // const Friends = dynamic(() => import("./Sections/Friends/Friends"));
 // const Profile = dynamic(() => import("./Sections/Profile/index"), {
 //   ssr: false,
@@ -28,9 +30,10 @@ import { TabHeader } from "./TabHeader";
 
 function Tabs() {
   const [canDrag, setcanDrag] = useState(false);
+  // const { newsFeedPost, deletePost } = useNewsFeedContext();
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { indicatorRef, setpreventClick } = usePageContext();
-  const { headerContainerRef } = useAppContext()
+  const { headerContainerRef } = useAppContext();
   const { active } = useActiveTab();
   useEffect(() => {
     if (active) {

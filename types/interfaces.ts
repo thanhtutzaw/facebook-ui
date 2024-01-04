@@ -148,18 +148,18 @@ export interface AppProps {
   setprofileSrc?: Function;
   profileSrc?: string;
   queryPageData?: unknown;
-  hasMore: boolean;
+  // hasMore: boolean;
   token?: DecodedIdToken | null;
   fcmToken?: string | string[];
   UnReadNotiCount: number;
   acceptedFriends?: string[];
   postError?: string;
-  setnewsFeedPost?: Function;
-  newsFeedPost?: Post[];
-  deletePost?: Function;
+  // setnewsFeedPost?: Function;
+  // newsFeedPost: Post[];
+  // deletePost: Function;
   children?: ReactNode;
-  setselectMode?: Function;
-  selectMode?: boolean;
+  setselectMode: Function;
+  selectMode: boolean;
   expired?: boolean;
   uid?: string;
   active?: Tabs;
@@ -167,13 +167,13 @@ export interface AppProps {
   sortedPost?: Post[];
   setUnReadNotiCount: Function;
   setsortedPost?: Function;
-  posts: Post[];
+  // posts: Post[];
   headerContainerRef?: RefObject<HTMLDivElement>;
   profile?: account["profile"] | null;
   account?: UserRecord | null;
-  getMorePosts?: () => Promise<void>;
-  postLoading?: boolean;
-  postEnd?: boolean;
+  // getMorePosts: () => Promise<void>;
+  // postLoading?: boolean;
+  // postEnd?: boolean;
   updatedAt?: timeStamp;
 }
 export type Tabs =

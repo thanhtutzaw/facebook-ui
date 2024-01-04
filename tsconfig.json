@@ -37,6 +37,6 @@
     "pages/[user]/500.js",
     "next.config.js",
     "node_modules/index.d.ts"
-, "lib/NotiAction.js"  ],
+, "lib/NotiAction.js", "components/Tabs/.Tabs old.tsx"  ],
   "exclude": ["node_modules"]
 }

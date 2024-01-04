@@ -7,22 +7,22 @@ import useEscape from "../../hooks/useEscape";
 import { deleteMultiplePost } from "../../lib/firestore/post";
 import s from "../../styles/Home.module.scss";
 import BackHeader from "./BackHeader";
-function SelectModal() {
-  const { deletePost, uid, selectMode, setselectMode } = useAppContext();
+function SelectModal({deletePost}:{deletePost:Function}) {
+  const { uid, selectMode, setselectMode } = useAppContext();
   const { selectedId, setSelectedId } = usePageContext();
 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   useEscape(() => {
     if (!selectMode) return;
-    setselectMode?.(false);
-    setSelectedId?.([]);
+    setselectMode(false);
+    setSelectedId([]);
   });
   useEffect(() => {
     const handleRouteStart = () => {};
     const handleRouteDone = () => {
-      setSelectedId?.([]);
-      setselectMode?.(false);
+      setSelectedId([]);
+      setselectMode(false);
     };
     router.events.on("routeChangeStart", handleRouteStart);
     router.events.on("routeChangeComplete", handleRouteDone);
@@ -37,8 +37,8 @@ function SelectModal() {
   return (
     <BackHeader
       onClick={() => {
-        setselectMode?.(false);
-        setSelectedId?.([]);
+        setselectMode(false);
+        setSelectedId([]);
       }}
       style={{
         position: "initial",
@@ -60,16 +60,16 @@ function SelectModal() {
             queryFn.invalidate("myPost");
 
             setLoading(false);
-            setSelectedId?.([]);
-            setselectMode?.(false);
+            setSelectedId([]);
+            setselectMode(false);
             selectedId.map((s) => {
-              deletePost?.(s.post);
+              deletePost(s.post);
             });
           } catch (error: unknown) {
             setLoading(false);
             alert(error);
           } finally {
-            setSelectedId?.([]);
+            setSelectedId([]);
             // if (router.asPath === "/#home") {
             //   router.replace("/");
             //   router.reload();

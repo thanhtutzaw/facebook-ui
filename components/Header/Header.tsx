@@ -26,6 +26,7 @@ import s from "../../styles/Home.module.scss";
 import { Tabs } from "../../types/interfaces";
 import Navitems from "./Navitems";
 import SelectModal from "./SelectModal";
+import { useNewsFeedContext } from "@/context/NewsFeedContext";
 const Logo = () => {
   return (
     <div className={`snap-center flex flex-1 items-center h-[60px] bg-white`}>
@@ -49,13 +50,15 @@ const navLists = [
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
 
-function Header(props: { tabIndex: number }) {
+function Header(props: { tabIndex: number;}) {
   const { tabIndex } = props;
+  const {deletePost} = useNewsFeedContext();
   const { active, setActive } = useActiveTab();
   const navRef = useRef<HTMLElement>(null);
   const [width, setwidth] = useState<number>();
-  const { UnReadNotiCount, selectMode, setselectMode, headerContainerRef } = useAppContext()
-  const { indicatorRef, setSelectedId, friendReqCount } = usePageContext()
+  const { UnReadNotiCount, selectMode, setselectMode, headerContainerRef } =
+    useAppContext();
+  const { indicatorRef, setSelectedId, friendReqCount } = usePageContext();
   const [currentNav, setCurrentNav] = useState<Tabs>("/");
   const [activeNav, setActiveNav] = useState<Tabs>("/");
   // useEffect(() => {
@@ -254,7 +257,7 @@ function Header(props: { tabIndex: number }) {
             exit={{ opacity: 0, width: "70%" }}
             className="selectModal"
           >
-            <SelectModal />
+            <SelectModal deletePost={deletePost} />
           </motion.div>
         )}
         <div
