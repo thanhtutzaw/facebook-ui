@@ -237,7 +237,8 @@ export default function Index({
     }
   }, [profile]);
 
-  const { newsFeedData, setnewsFeedData, setfriends, auth } = usePageContext();
+  // const { newsFeedData, setnewsFeedData, setfriends, auth } = usePageContext();
+  const { setfriends, auth } = usePageContext();
   const [notiPermission, setnotiPermission] = useState(false);
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -253,17 +254,6 @@ export default function Index({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
-
-  // console.log("running in index.tsx");
-  useEffect(() => {
-    if (posts && !newsFeedData) {
-      setnewsFeedData?.(posts);
-    }
-  }, [newsFeedData, posts, setnewsFeedData]);
-
-  // useEffect(() => {
-  //   console.error("should not run");
-  // }, [expired, uid]);
   useEffect(() => {
     const isReady = async () => {
       await navigator.serviceWorker.ready;

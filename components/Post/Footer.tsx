@@ -10,7 +10,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FirebaseError } from "firebase/app";
-import { User } from "firebase/auth";
 import {
   collection,
   doc,
@@ -20,13 +19,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import popfx from "public/assets/bubble.mp3";
-import {
-  StyleHTMLAttributes,
-  memo,
-  useEffect,
-  useRef,
-  useState
-} from "react";
+import { StyleHTMLAttributes, memo, useEffect, useRef, useState } from "react";
 import useSound from "use-sound";
 import { usePageContext } from "../../context/PageContext";
 import { db, getCollectionPath, getPath } from "../../lib/firebase";
@@ -45,12 +38,11 @@ function Footer(
     likeCount: number;
     post: Post;
     setlikeCount?: Function;
-   
   } & StyleHTMLAttributes<HTMLDivElement>
 ) {
   const { post, setlikeCount, setLikes, likeCount, ...rest } = props;
   const router = useRouter();
-  const {currentUser:profile} = usePageContext();
+  const { currentUser: profile } = usePageContext();
   const [reactionAction, setreactionAction] = useState("");
   const commentRef = useRef<HTMLDivElement>(null);
   const [visibility, setvisibility] = useState<string | null>("Public");
@@ -61,14 +53,7 @@ function Footer(
   }, [getLocal]);
   const [isLiked, setisLiked] = useState(post.isLiked);
 
-  const {
-    auth,
-    friends,
-    currentUser,
-    dropdownRef,
-    shareAction,
-    setshareAction,
-  } = usePageContext();
+  const { auth, friends, currentUser, dropdownRef } = usePageContext();
   const { id, author: authorAccount, authorId } = post;
   const authorProfile = authorAccount as account["profile"];
   const authorName = `${authorProfile?.firstName ?? "Unknow User"} ${
@@ -108,6 +93,21 @@ function Footer(
     }
   }, [authorId, id, likedUserURL, setlikeCount, uid]);
   const [likeLoading, setLikeLoading] = useState(false);
+  const [shareAction, setshareAction] = useState("");
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (!shareAction) return;
+      const target = e.target as HTMLDivElement;
+      if (dropdownRef && !dropdownRef.current?.contains(target)) {
+        setshareAction("");
+      }
+    }
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [dropdownRef, shareAction]);
   // const debounceLikeUnlike = useRef(debounce(handleLikeUnlike(), 1000)).current;
   const [playLikeSound] = useSound(popfx);
   return (
@@ -290,7 +290,7 @@ function Footer(
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            shareAction ? setshareAction?.("") : setshareAction?.(String(id));
+            shareAction ? setshareAction("") : setshareAction(String(id));
           }}
         >
           <FontAwesomeIcon icon={faShare} />
@@ -321,7 +321,7 @@ function Footer(
           {shareAction === id && (
             <motion.div
               ref={dropdownRef}
-              key={id}
+              key={shareAction === "" ? "true" : "false"}
               initial={{
                 opacity: 0,
                 scale: 0.8,
@@ -374,7 +374,7 @@ function Footer(
                       url,
                       content: `${authorName} : ${post.text}`,
                     });
-                    setshareAction?.("");
+                    setshareAction("");
                     if (uid === authorId) return;
 
                     try {
@@ -411,7 +411,7 @@ function Footer(
                     pathname: "/share",
                     query: { author: authorId, id: id },
                   });
-                  setshareAction?.("");
+                  setshareAction("");
                 }}
               >
                 <FontAwesomeIcon icon={faPen} />

@@ -7,11 +7,10 @@ import {
   SetStateAction,
   createContext,
   useContext,
-  useEffect,
   useRef,
   useState,
 } from "react";
-import { Post, Tabs, friends } from "../types/interfaces";
+import { Tabs, friends } from "../types/interfaces";
 
 export type selectedId = {
   postId: string;
@@ -26,18 +25,16 @@ interface TsingleImageModal {
   name: string;
 }
 export interface PageProps {
-  newsFeedData: Post[];
-  setnewsFeedData: Function;
+  // newsFeedData: Post[];
+  // setnewsFeedData: Function;
   queryClient: QueryClient;
   dropdownRef: RefObject<HTMLDivElement>;
   uploadButtonClicked: boolean;
   setuploadButtonClicked: Dispatch<SetStateAction<boolean>>;
   indicatorRef: RefObject<HTMLDivElement>;
   fileRef: RefObject<HTMLInputElement>;
-  shareAction: string;
   selectedId: selectedId[];
   setSelectedId: Dispatch<SetStateAction<selectedId[]>>;
-  setshareAction: Function;
   singleImageModalRef: RefObject<HTMLDialogElement>;
   singleImageModal: TsingleImageModal;
   setsingleImageModal: Function;
@@ -61,7 +58,6 @@ export const PageContext = createContext<(PageProps & Props) | null>(null);
 export function PageProvider(props: Props) {
   const [friends, setfriends] = useState<friends[]>([]);
   const queryClient = useQueryClient();
-  const [shareAction, setshareAction] = useState("");
   const [selectedId, setSelectedId] = useState<selectedId[]>([]);
   const [preventClick, setpreventClick] = useState(false);
   const [singleImageModal, setsingleImageModal] = useState<TsingleImageModal>({
@@ -73,26 +69,10 @@ export function PageProvider(props: Props) {
   const [uploadButtonClicked, setuploadButtonClicked] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
-
-  const [newsFeedData, setnewsFeedData] = useState<Post[]>([]);
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (!shareAction) return;
-      const target = e.target as HTMLDivElement;
-      if (dropdownRef && !dropdownRef.current?.contains(target)) {
-        setshareAction("");
-      }
-    }
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [shareAction]);
   return (
     <PageContext.Provider
       value={{
         indicatorRef,
-        newsFeedData,
         setfriends,
         friends,
         queryClient,
@@ -103,13 +83,10 @@ export function PageProvider(props: Props) {
         setsingleImageModal,
         selectedId,
         setSelectedId,
-        shareAction,
-        setshareAction,
         uploadButtonClicked,
         setuploadButtonClicked,
         singleImageModalRef,
         fileRef,
-        setnewsFeedData,
         ...props,
       }}
     >

@@ -20,7 +20,6 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const { sharePost } = props;
   const dummyRef = useRef<HTMLDivElement>(null);
   const replace = useRef("");
-  
   const router = useRouter();
   const textRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
@@ -35,8 +34,13 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const updateForm = useCallback((newForm: Partial<typeof form>) => {
     setForm((prev) => ({ ...prev, ...newForm }));
   }, []);
-  const {auth, friends, fileRef, uploadButtonClicked, setuploadButtonClicked } =
-    usePageContext();
+  const {
+    auth,
+    friends,
+    fileRef,
+    uploadButtonClicked,
+    setuploadButtonClicked,
+  } = usePageContext();
   const submitRef = useRef<HTMLButtonElement>(null);
   useEnterSave(textRef, submitRef);
   const [input, setinput] = useState("");
@@ -90,10 +94,6 @@ export default function CreatePostForm(props: { sharePost?: PostTypes }) {
       setuploadButtonClicked(false);
     }
   }, [fileRef, setuploadButtonClicked, uploadButtonClicked]);
-  const { setshareAction } = usePageContext();
-  useEffect(() => {
-    setshareAction?.("");
-  }, [setshareAction]);
   const dirtyForm = input.length === 0 && form.files?.length === 0;
   return (
     <div
