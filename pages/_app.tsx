@@ -26,7 +26,6 @@ import { PageProvider } from "../context/PageContext";
 import { app, getProfileByUID } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import "../styles/globals.css";
-import { AppProps as Props } from "../types/interfaces";
 config.autoAddCss = false;
 export const getServerSideProps: GetServerSideProps<{expired:boolean}> = async (
   context

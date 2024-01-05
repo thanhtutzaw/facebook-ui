@@ -371,6 +371,7 @@ export default function Index({
         setprofileSrc={setprofileSrc}
         profileSrc={profileSrc}
         active={activeTab}
+        profile={profile}
         uid={uid}
       >
         <NewsFeedProvider hasMore={hasMore} expired={expired} uid={uid} posts={posts}>

@@ -140,42 +140,7 @@ export interface RecentPosts {
   createdAt: Post["createdAt"];
 }
 
-export interface AppProps {
-  // setActiveNav?: Function;
-  // setCurrentNav?: Function;
-  // activeNav?: Tabs;
-  // currentNav?: Tabs;
-  setprofileSrc?: Function;
-  profileSrc?: string;
-  queryPageData?: unknown;
-  // hasMore: boolean;
-  token?: DecodedIdToken | null;
-  fcmToken?: string | string[];
-  UnReadNotiCount: number;
-  acceptedFriends?: string[];
-  postError?: string;
-  // setnewsFeedPost?: Function;
-  // newsFeedPost: Post[];
-  // deletePost: Function;
-  children?: ReactNode;
-  setselectMode: Function;
-  selectMode: boolean;
-  expired?: boolean;
-  uid?: string;
-  active?: Tabs;
-  setActive?: Function;
-  sortedPost?: Post[];
-  setUnReadNotiCount: Function;
-  setsortedPost?: Function;
-  // posts: Post[];
-  headerContainerRef?: RefObject<HTMLDivElement>;
-  profile?: account["profile"] | null;
-  account?: UserRecord | null;
-  // getMorePosts: () => Promise<void>;
-  // postLoading?: boolean;
-  // postEnd?: boolean;
-  updatedAt?: timeStamp;
-}
+
 export type Tabs =
   | "home"
   | "/"

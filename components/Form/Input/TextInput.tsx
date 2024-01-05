@@ -1,7 +1,7 @@
 import { HTMLAttributes, CSSProperties, ReactNode, RefObject, memo } from "react";
 import s from "@/styles/Home.module.scss";
 
-interface AppProps {
+interface Props {
   style?: CSSProperties;
   contentEditable?: boolean;
   element?: RefObject<HTMLDivElement>;
@@ -14,7 +14,7 @@ export default function TextInput({
   children,
   text,
   ...props
-}: AppProps & HTMLAttributes<HTMLDivElement>) {
+}: Props & HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       {...props}

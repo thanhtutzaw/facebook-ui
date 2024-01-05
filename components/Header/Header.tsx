@@ -73,7 +73,7 @@ function Header(props: { tabIndex: number;}) {
       if (window.location.hash === "#profile") {
         if (selectMode) {
           setselectMode?.(false);
-          setSelectedId?.([]);
+          setSelectedId([]);
         }
       }
     };

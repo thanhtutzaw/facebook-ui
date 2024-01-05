@@ -14,11 +14,11 @@ import {
 import { Post, Tabs, friends } from "../types/interfaces";
 
 export type selectedId = {
-  post: string;
-  author: string;
+  postId: string;
+  authorId: string;
   share: {
-    post: string | null;
-    author: string | null;
+    postId: string | null;
+    authorId: string | null;
   } | null;
 };
 interface TsingleImageModal {
@@ -34,10 +34,9 @@ export interface PageProps {
   setuploadButtonClicked: Dispatch<SetStateAction<boolean>>;
   indicatorRef: RefObject<HTMLDivElement>;
   fileRef: RefObject<HTMLInputElement>;
-  children: ReactNode;
   shareAction: string;
   selectedId: selectedId[];
-  setSelectedId: Function;
+  setSelectedId: Dispatch<SetStateAction<selectedId[]>>;
   setshareAction: Function;
   singleImageModalRef: RefObject<HTMLDialogElement>;
   singleImageModal: TsingleImageModal;
@@ -48,30 +47,27 @@ export interface PageProps {
   setpreventClick: Function;
   setfriends: Function;
 }
-interface PropsType {
+interface Props {
   friendReqCount: number;
   active: Tabs;
   setActive: Function;
-  currentUser:
-    | (User & { photoURL_cropped?: string | undefined })
-    | null;
+  currentUser: (User & { photoURL_cropped?: string | undefined }) | null;
   setcurrentUser: Function;
   children: ReactNode;
   auth: Auth;
 }
-export const PageContext = createContext<PageProps & PropsType | null>(null);
+export const PageContext = createContext<(PageProps & Props) | null>(null);
 
-export function PageProvider(props: PropsType) {
+export function PageProvider(props: Props) {
   const [friends, setfriends] = useState<friends[]>([]);
   const queryClient = useQueryClient();
   const [shareAction, setshareAction] = useState("");
-  const [selectedId, setSelectedId] = useState([]);
+  const [selectedId, setSelectedId] = useState<selectedId[]>([]);
   const [preventClick, setpreventClick] = useState(false);
-  const [singleImageModal, setsingleImageModal] =
-    useState<TsingleImageModal>({
-      src: "",
-      name: "",
-    });
+  const [singleImageModal, setsingleImageModal] = useState<TsingleImageModal>({
+    src: "",
+    name: "",
+  });
   const fileRef = useRef<HTMLInputElement>(null);
   const singleImageModalRef = useRef<HTMLDialogElement>(null);
   const [uploadButtonClicked, setuploadButtonClicked] = useState(false);
@@ -79,12 +75,10 @@ export function PageProvider(props: PropsType) {
   const indicatorRef = useRef<HTMLDivElement>(null);
 
   const [newsFeedData, setnewsFeedData] = useState<Post[]>([]);
-  // console.log("running in pageContext");
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (!shareAction) return;
       const target = e.target as HTMLDivElement;
-      // console.log(dropdownRef.current);
       if (dropdownRef && !dropdownRef.current?.contains(target)) {
         setshareAction("");
       }
@@ -117,12 +111,6 @@ export function PageProvider(props: PropsType) {
         fileRef,
         setnewsFeedData,
         ...props,
-//         friendReqCount:props.friendReqCount,
-// active:props.active,
-// setActive:props.setActive,
-// currentUser:props.currentUser,
-// setcurrentUser:props.setcurrentUser,
-// auth:props.auth,
       }}
     >
       {props.children}

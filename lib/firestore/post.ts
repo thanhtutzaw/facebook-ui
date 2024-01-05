@@ -264,10 +264,10 @@ export async function deleteMultiplePost(uid: string, selctedId: selectedId[]) {
       // const authorId = chunk[j].author;
       // const sharePostId = chunk[j].share?.post ?? null;
       // const shareauthorId = chunk[j].share?.author ?? null;
-      const { post, author, share } = chunk[j];
+      const { postId, authorId, share } = chunk[j];
 
-      if (share?.author && share.post) {
-        const { author: shareAuthorId, post: sharePostId } = share;
+      if (share?.authorId && share.postId) {
+        const { authorId: shareAuthorId, postId: sharePostId } = share;
         const sharePostRef = doc(
           db,
           `${getCollectionPath.shares({
@@ -279,7 +279,7 @@ export async function deleteMultiplePost(uid: string, selctedId: selectedId[]) {
       }
       const postRef = doc(
         db,
-        `${getCollectionPath.posts({ uid: author })}/${post}`
+        `${getCollectionPath.posts({ uid: authorId })}/${postId}`
       );
       batch.delete(postRef);
       // if (post.sharePost?.id) {

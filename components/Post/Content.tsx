@@ -1,4 +1,7 @@
+import { usePageContext } from "@/context/PageContext";
+import { usePostContext } from "@/context/PostContext";
 import useEscape from "@/hooks/useEscape";
+import { app, getCollectionPath } from "@/lib/firebase";
 import { Post } from "@/types/interfaces";
 import {
   faCircleCheck,
@@ -9,9 +12,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
 import { memo, useCallback, useEffect, useState } from "react";
-import { usePageContext } from "@/context/PageContext";
-import { usePostContext } from "@/context/PostContext";
-import { app, getCollectionPath } from "@/lib/firebase";
 import TextInput from "../Form/Input/TextInput";
 import AuthorInfo from "./AuthorInfo";
 import PostFallback from "./Fallback";
@@ -40,7 +40,7 @@ function Content({ post }: { post: Post }) {
     shareMode,
     toggleMenu,
     settoggleMenu,
-  } = usePostContext()
+  } = usePostContext();
   const { authorId, id, text, sharePost: share } = post;
   const { preventClick, selectedId, setSelectedId } = usePageContext();
   useEscape(() => {
@@ -140,9 +140,9 @@ function Content({ post }: { post: Post }) {
                       e.preventDefault();
                       e.stopPropagation();
                       setChecked(false);
-                      setSelectedId?.(
+                      setSelectedId(
                         selectedId?.filter(
-                          (selectedId) => selectedId.post !== id
+                          (selectedId) => selectedId.postId !== id
                         )
                       );
                     }}
@@ -159,13 +159,13 @@ function Content({ post }: { post: Post }) {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      setSelectedId?.([
+                      setSelectedId([
                         ...selectedId!,
                         {
-                          post: id?.toString()!,
-                          author: post.authorId.toString(),
+                          postId: id?.toString()!,
+                          authorId: post.authorId.toString(),
                           share: share?.id
-                            ? { post: share?.id, author: share?.author }
+                            ? { postId: share?.id, authorId: share?.author }
                             : null,
                         },
                       ]);

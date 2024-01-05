@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { useRef } from "react";
 import Newfeed from "./Newfeed";
 import Story from "./Story/Story";
-// type AppProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
+// type  = InferGetServerSidePropsType<typeof getServerSideProps> & {
 // };
 export default function Home(props: { tabIndex: number }) {
   const { ...rest } = props;
@@ -20,7 +20,6 @@ export default function Home(props: { tabIndex: number }) {
   const {
     profileSrc,
     profile,
-
     headerContainerRef,
   } = useAppContext();
   const { postEnd, hasMore } = useNewsFeedContext();

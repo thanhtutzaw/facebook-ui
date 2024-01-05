@@ -7,7 +7,7 @@ import useEscape from "../../hooks/useEscape";
 import { deleteMultiplePost } from "../../lib/firestore/post";
 import s from "../../styles/Home.module.scss";
 import BackHeader from "./BackHeader";
-function SelectModal({deletePost}:{deletePost:Function}) {
+function SelectModal({ deletePost }: { deletePost: Function }) {
   const { uid, selectMode, setselectMode } = useAppContext();
   const { selectedId, setSelectedId } = usePageContext();
 
@@ -46,13 +46,13 @@ function SelectModal({deletePost}:{deletePost:Function}) {
       }}
     >
       <h2 className={s.title}>
-        <span>{selectedId?.length}</span> Selected
+        <span>{selectedId.length}</span> Selected
       </h2>
       <button
         draggable="false"
         disabled={loading || selectedId?.length === 0}
         onClick={async () => {
-          if (!uid || selectedId?.length === 0 || !selectedId) return;
+          if (!uid || selectedId.length === 0 || !selectedId) return;
           setLoading(true);
           try {
             await deleteMultiplePost(uid, selectedId);
@@ -62,20 +62,14 @@ function SelectModal({deletePost}:{deletePost:Function}) {
             setLoading(false);
             setSelectedId([]);
             setselectMode(false);
-            selectedId.map((s) => {
-              deletePost(s.post);
+            selectedId.map((selected) => {
+              deletePost(selected.postId);
             });
           } catch (error: unknown) {
             setLoading(false);
             alert(error);
           } finally {
             setSelectedId([]);
-            // if (router.asPath === "/#home") {
-            //   router.replace("/");
-            //   router.reload();
-            // } else {
-            //   router.replace(router.asPath);
-            // }
           }
         }}
         className="deleteBtn"

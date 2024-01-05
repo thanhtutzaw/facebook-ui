@@ -1,53 +1,41 @@
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-import { ReactNode, createContext, useContext, useRef, useState } from "react";
-import { AppProps, Post, Tabs } from "../types/interfaces";
-export interface Props {
-  setprofileSrc: Function;
+import {
+  Dispatch,
+  ReactNode,
+  RefObject,
+  SetStateAction,
+  createContext,
+  useContext,
+  useRef,
+  useState,
+} from "react";
+import { Post, Tabs, account } from "../types/interfaces";
+interface Props {
+  setprofileSrc: Dispatch<SetStateAction<string>>;
   profileSrc: string;
-  // hasMore: boolean;
-  token: DecodedIdToken | null | undefined;
-  // setnewsFeedPost: Function;
-  // newsFeedPost: Post[];
+  token: DecodedIdToken | null;
   uid: string;
   active: Tabs;
-  // posts: Post[];
+  profile: account["profile"] | null;
   children: ReactNode;
 }
-export const AppContext = createContext<AppProps | null>(null);
+interface AppContextType {
+  UnReadNotiCount: number;
+  children: ReactNode;
+  setselectMode: Dispatch<SetStateAction<boolean>>;
+  selectMode: boolean;
+  sortedPost?: Post[];
+  setUnReadNotiCount: Dispatch<SetStateAction<number>>;
+  setsortedPost: Dispatch<SetStateAction<Post[]>>;
+  headerContainerRef: RefObject<HTMLDivElement>;
+}
+export const AppContext = createContext<(AppContextType & Props) | null>(null);
 export function AppProvider(props: Props) {
-  // const { hasMore, uid, posts } = props;
-
-  // const { active } = useActiveTab();
   const [UnReadNotiCount, setUnReadNotiCount] = useState(0);
   const [selectMode, setselectMode] = useState(false);
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const [sortedPost, setsortedPost] = useState<Post[]>([]);
-  // const deletePost = useCallback(
-  //   (id: string) => {
-  //     setnewsFeedPost((prev: Post[]) => prev.filter((post) => post.id !== id));
-  //   },
-  //   [setnewsFeedPost]
-  // );
 
-  // useEffect(() => {
-  // window.onhashchange = () => {
-  // setActiveNav(active!);
-  // setActiveNav(window.location.hash.replace('#','') as Tabs)
-  // }
-  // if (active !== window.location.hash.replace("#", "")) {
-  // if (window.location.pathname !== "/") return;
-  // setActiveNav(window.location.hash.replace("#", "") as Tabs);
-  // setCurrentNav(window.location.hash.replace("#", "") as Tabs);
-  // }
-  // };
-  //   // setCurrentNav?.(window.location.hash.replace("#", "") as Tabs);
-  //   // if (active) {
-  //   //   window.location.hash = active === "/" ? "home" : `${active}`;
-  //   // }
-  //   // window.addEventListener("mouseup", () => {
-  //   //   setcanDrag(false);
-  //   // });
-  // }, [active]);
   return (
     <AppContext.Provider
       value={{
@@ -58,13 +46,7 @@ export function AppProvider(props: Props) {
         headerContainerRef,
         selectMode,
         setselectMode,
-        // getMorePosts,
-        // deletePost,
-        // postLoading,
-        // postEnd,
         ...props,
-        // hasMore,
-        // posts: newsFeedPost,
       }}
     >
       {props.children}
