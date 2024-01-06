@@ -18,9 +18,9 @@ import PostFallback from "./Fallback";
 import AdminMenu from "./Menu/AdminMenu";
 import Menu from "./Menu/Menu";
 import PhotoLayout from "./PhotoLayout";
-import { SharePreview } from "./SharePost/Preview";
 import { SocialCount } from "./SocialCount";
 import s from "./index.module.scss";
+import { SharePreview } from "./SharePreview";
 function Content({ post }: { post: Post }) {
   const {
     deletePost,

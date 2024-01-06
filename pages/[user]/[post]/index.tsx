@@ -7,7 +7,6 @@ import BackHeader from "@/components/Header/BackHeader";
 import AuthorInfo from "@/components/Post/AuthorInfo";
 import Footer from "@/components/Post/Footer";
 import PhotoLayout from "@/components/Post/PhotoLayout";
-import { SharePreview } from "@/components/Post/SharePost/Preview";
 import { SocialCount } from "@/components/Post/SocialCount";
 import { Welcome } from "@/components/Welcome";
 import useEnterSave from "@/hooks/useEnterSave";
@@ -21,7 +20,7 @@ import {
   getPath,
   getProfileByUID,
   postInfo,
-  postToJSON
+  postToJSON,
 } from "@/lib/firebase";
 import { verifyIdToken } from "@/lib/firebaseAdmin";
 import { fetchComments, fetchSingleComment } from "@/lib/firestore/comment";
@@ -53,6 +52,7 @@ import {
   account,
   likes,
 } from "../../../types/interfaces";
+import { SharePreview } from "@/components/Post/SharePreview";
 export interface CommentProps {
   replyInput?: {
     comment: CommentType | null;

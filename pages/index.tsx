@@ -260,20 +260,31 @@ export default function Index({
     };
     isReady();
     if (!notiPermission) return;
+    let badgeCount = 0;
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       const messaging = getMessaging(app);
+
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
-        const { title, body, image, icon } = payload.notification!;
+        const { title = "fdfd", body, image, icon } = payload.notification!;
         const options = {
           body,
           icon,
           image,
         };
         navigator.serviceWorker.ready.then((registration) => {
-          registration.showNotification(title!, options);
+          registration.showNotification(title, options);
         });
-        new Notification(title!, options);
+        new Notification(title, options);
+        if (navigator && "setAppBadge" in navigator) {
+          (navigator as any).setAppBadge(++badgeCount);
+          console.log("nav:Badge:updated:useEffect");
+          console.log("Foreground: The setAppBadge is supported, use it.");
+        } else {
+          console.log(
+            `Foreground: The setAppBadge is not supported, don't use it`
+          );
+        }
         // this line only work in Desktop but actions are not allowed
 
         return () => {
@@ -347,7 +358,7 @@ export default function Index({
   const { active: activeTab } = useActiveTab();
   const [resourceError, setresourceError] = useState(postError);
   // const { deletePost, newsFeedPost, setnewsFeedPost, getMorePosts } = useNewsFeed(posts, uid);
-  
+
   if (resourceError !== "") {
     return (
       <Welcome setresourceError={setresourceError} postError={resourceError} />
@@ -364,10 +375,13 @@ export default function Index({
         profile={profile}
         uid={uid}
       >
-        <NewsFeedProvider hasMore={hasMore} expired={expired} uid={uid} posts={posts}>
-          <Header
-            tabIndex={activeTab === "/" ? 0 : -1}
-          />
+        <NewsFeedProvider
+          hasMore={hasMore}
+          expired={expired}
+          uid={uid}
+          posts={posts}
+        >
+          <Header tabIndex={activeTab === "/" ? 0 : -1} />
           <Tabs />
         </NewsFeedProvider>
         <SecondaryPage queryPageData={queryPageData} token={token} />

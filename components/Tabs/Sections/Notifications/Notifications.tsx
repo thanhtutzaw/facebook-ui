@@ -22,8 +22,8 @@ function Notifications({ tabIndex }: { tabIndex: number }) {
     notifications,
   } = useNotifications({
     uid: currentUid!,
-    UnReadNotiCount: UnReadNotiCount,
-    setUnReadNotiCount: setUnReadNotiCount,
+    UnReadNotiCount,
+    setUnReadNotiCount,
   });
 
   return (

@@ -80,7 +80,7 @@ self.addEventListener("notificationclick", (event) => {
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ ...data.actionPayload, text: inputText})
+                        body: JSON.stringify({ ...data.actionPayload, text: inputText })
                     })
                 } catch (error) {
                     console.error('Error:', error);
@@ -116,6 +116,7 @@ self.addEventListener('push', (event) => {
     console.log({ EventData: data })
     // event.waitUntil(promiseChain);
 });
+let badgeCount = 0;
 messaging.onBackgroundMessage((payload) => {
     console.log("FCM Background Noti ", payload)
     /**
@@ -135,6 +136,12 @@ messaging.onBackgroundMessage((payload) => {
      * @property {VibratePattern} [vibrate] A vibration pattern for the notification.
      */
     // self.registration.showNotification(title, notificationOptions)
+    if ("setAppBadge" in navigator) {
+        navigator.setAppBadge(++badgeCount);
+        console.log('Background: The setAppBadge is supported, use it.')
+    } else {
+        console.log(`Background: The setAppBadge is not supported, don't use it`)
+    }
 })
 /**
  * @param {string} link

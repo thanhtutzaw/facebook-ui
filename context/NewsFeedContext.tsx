@@ -80,18 +80,12 @@ export function NewsFeedProvider(props: Props) {
   return (
     <NewsFeedContext.Provider
       value={{
-        // setUnReadNotiCount,
-        // UnReadNotiCount,
-        // headerContainerRef,
         newsFeedPost,
-        // setnewsFeedPost,
-        getMorePosts:getMoreNewsFeed,
+        getMorePosts: getMoreNewsFeed,
         deletePost,
         postLoading,
         postEnd,
         ...props,
-        // hasMore,
-        // posts: newsFeedPost,
       }}
     >
       {props.children}

@@ -1,4 +1,5 @@
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
+import { User } from "firebase/auth";
 import {
   DocumentData,
   DocumentReference,
@@ -28,6 +29,8 @@ import {
   getPostWithMoreInfo,
   getProfileByUID,
 } from "../firebase";
+import { getMessage, sendAppNoti, sendFCM } from "./notifications";
+import { checkPhotoURL } from "./profile";
 type TAddPost = {
   uid: string;
   post: {
@@ -298,11 +301,21 @@ export async function deleteMultiplePost(uid: string, selctedId: selectedId[]) {
     alert("Delete Failed !" + error);
   }
 }
-export async function likePost(
-  postRef: DocumentReference<DocumentData>,
-  likeRef: DocumentReference<DocumentData>,
-  uid: string
-) {
+export async function reactPost({
+  postRef,
+  likeRef,
+  uid,
+  post,
+  profile,
+  currentUser,
+}: {
+  postRef: DocumentReference<DocumentData>;
+  likeRef: DocumentReference<DocumentData>;
+  uid: string;
+  post: Post;
+  profile: (User & { photoURL_cropped?: string | undefined }) | null;
+  currentUser: (User & { photoURL_cropped?: string | undefined }) | null;
+}) {
   const batch = writeBatch(db);
   batch.set(likeRef, { uid, createdAt: serverTimestamp() });
   batch.update(postRef, {
@@ -311,19 +324,42 @@ export async function likePost(
   });
   await batch.commit();
   console.log("liked post");
+  const { authorId, id } = post;
+  if (uid === authorId) return;
+  await sendAppNoti({
+    uid,
+    receiptId: authorId,
+    profile,
+    type: "post_reaction",
+    url: `${authorId}/${id}`,
+  });
+
+  await sendFCM({
+    // image: post.media?.[0] ? post.media?.[0].url : "",
+    image: post.media?.[0] ? post.media?.[0].url : "",
+    recieptId: authorId.toString(),
+    message: `${profile?.displayName ?? "Unknown User"} ${getMessage(
+      "post_reaction"
+    )}`,
+    icon: checkPhotoURL(currentUser?.photoURL_cropped ?? currentUser?.photoURL),
+    tag: `Likes-${id}`,
+    link: `/${authorId}/${id}`,
+  });
 }
-export async function unlikePost(
-  likeCount: number,
-  postRef: DocumentReference<DocumentData>,
-  likeRef: DocumentReference<DocumentData>
-) {
+export async function unReactPost({
+  likeCount,
+  postRef,
+  likeRef,
+}: {
+  likeCount: number;
+  postRef: DocumentReference<DocumentData>;
+  likeRef: DocumentReference<DocumentData>;
+}) {
   if (likeCount <= 0) return;
   const batch = writeBatch(db);
-
   batch.delete(likeRef);
   batch.update(postRef, {
     likeCount: likeCount > 0 ? increment(-1) : likeCount,
-    // likeCount: likeCount > 0 ? likeCount : likeCount,
   });
   await batch.commit();
   console.log("unliked post");
@@ -339,13 +375,9 @@ export async function fetchLikedUsers(post: Post) {
     const likeDoc = await getDocs(likeRef);
     const likes = likeDoc.docs.map((doc) => doc.data()) as likes;
     const withAuthor = await Promise.all(
-      likes.map(async (l) => {
-        if (l.uid) {
-          const author = await getProfileByUID(l.uid?.toString());
-          return { ...l, author };
-        } else {
-          return { ...l, author: null };
-        }
+      likes.map(async (like) => {
+        const author = await getProfileByUID(like.uid?.toString());
+        return { ...like, author };
       })
     );
     return withAuthor;

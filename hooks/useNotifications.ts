@@ -17,7 +17,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useActiveTab } from "./useActiveTab";
 import useQueryFn from "./useQueryFn";
 export default function useNotifications({
@@ -27,7 +27,7 @@ export default function useNotifications({
 }: {
   uid: string;
   UnReadNotiCount: number;
-  setUnReadNotiCount: Function;
+  setUnReadNotiCount: Dispatch<SetStateAction<number>>;
 }) {
   const { queryFn } = useQueryFn();
 
@@ -39,8 +39,6 @@ export default function useNotifications({
     );
     const userDoc = doc(db, getCollectionPath.users({ uid: currentUid }));
     await updateDoc(userDoc, { lastPullTimestamp: serverTimestamp() });
-    // if (UnReadNotiCount === 1 && UnReadNotiCount > 0) {
-    // }
     if (pageParam) {
       const date = new Timestamp(
         pageParam.createdAt.seconds,
@@ -121,6 +119,15 @@ export default function useNotifications({
         unsubscribeNotifications = onSnapshot(notiCountQuery, (latestNoti) => {
           // console.log(querySnapshot.docs.map((doc) => doc.data()));
           setUnReadNotiCount(latestNoti.size); // getting unRead noti count
+          if ("setAppBadge" in navigator) {
+            (navigator as any).setAppBadge(latestNoti.size);
+            console.log("nav:Badge:updated:useEffect");
+            console.log("Foreground: The setAppBadge is supported, use it.");
+          } else {
+            console.log(
+              `Foreground: The setAppBadge is not supported, don't use it`
+            );
+          }
         });
       } catch (error) {
         console.log(error);

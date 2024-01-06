@@ -28,7 +28,6 @@ export async function addFriends(
   f: friends,
   // f: FriendsWithAuthor<friends>,
   // f: friends & {author:friends["author"]},
-  // profile:account["profile"],
   currentUser?: (User & { photoURL_cropped?: string }) | null
 ) {
   const isFriendsQuery = doc(db, `users/${uid}/friends/${f.id}`);
@@ -55,16 +54,12 @@ export async function addFriends(
     db,
     `users/${senderData.id}/friends/${receiptData.id}`
   );
-  // console.log(author);
-  // const senderName = `${author?.firstName ?? "Unknown User"} ${
-  //   author?.lastName ?? " "
-  // }`;
-
   try {
     await setDoc(senderRef, senderData);
     await setDoc(receiptRef, receiptData);
     const doc = await getDoc(reqCountRef);
-    if (doc.exists() && doc.data().count >= 0) {
+    const reqCountExist= doc.exists() && doc.data().count >= 0
+    if (reqCountExist) {
       await updateDoc(reqCountRef, {
         count: increment(+1),
         updatedAt: serverTimestamp(),

@@ -12,9 +12,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { LoadingButton } from "../Button/LoadingButton";
 import BackHeader from "../Header/BackHeader";
 import PhotoLayout from "../Post/PhotoLayout";
-import { SharePreview } from "../Post/SharePost/Preview";
 import TextInput from "./Input/TextInput";
 import PostSettingFooterForm from "./PostSettingFooter";
+import { SharePreview } from "../Post/SharePreview";
 
 export default function CreatePostForm(props: { sharePost?: PostTypes }) {
   const { sharePost } = props;

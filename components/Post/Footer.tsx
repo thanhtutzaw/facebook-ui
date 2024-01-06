@@ -1,6 +1,5 @@
 import useLocalStorage from "@/hooks/useLocalStorage";
 import useQueryFn from "@/hooks/useQueryFn";
-import { checkPhotoURL } from "@/lib/firestore/profile";
 import {
   faComment,
   faPen,
@@ -28,7 +27,7 @@ import {
   sendAppNoti,
   sendFCM,
 } from "../../lib/firestore/notifications";
-import { addPost, likePost, unlikePost } from "../../lib/firestore/post";
+import { addPost, reactPost, unReactPost } from "../../lib/firestore/post";
 import { Post, account } from "../../types/interfaces";
 import styles from "./index.module.scss";
 
@@ -37,7 +36,7 @@ function Footer(
     setLikes?: Function;
     likeCount: number;
     post: Post;
-    setlikeCount?: Function;
+    setlikeCount: Function;
   } & StyleHTMLAttributes<HTMLDivElement>
 ) {
   const { post, setlikeCount, setLikes, likeCount, ...rest } = props;
@@ -166,38 +165,23 @@ function Footer(
 
             if (isLiked) {
               setLikes?.([]);
-              await unlikePost(likeCount ?? 0, postRef, likeRef);
-              await updateLikeState();
+              await unReactPost({ likeCount, postRef, likeRef });
+              await updateReactionCount();
             } else {
               playLikeSound();
               setLikes?.([]);
-              await likePost(postRef, likeRef, uid);
-              await updateLikeState();
-              if (uid === authorId) return;
-              await sendAppNoti({
-                uid,
-                receiptId: authorId,
+              await reactPost({
+                post,
                 profile,
-                type: "post_reaction",
-                url: `${authorId}/${id}`,
+                currentUser,
+                postRef,
+                likeRef,
+                uid,
               });
-
-              await sendFCM({
-                // image: post.media?.[0] ? post.media?.[0].url : "",
-                image: post.media?.[0] ? post.media?.[0].url : "",
-                recieptId: authorId.toString(),
-                message: `${
-                  profile?.displayName ?? "Unknown User"
-                } ${getMessage("post_reaction")}`,
-                icon: checkPhotoURL(
-                  currentUser?.photoURL_cropped ?? currentUser?.photoURL
-                ),
-                tag: `Likes-${id}`,
-                link: `/${authorId}/${id}`,
-              });
+              await updateReactionCount();
             }
 
-            async function updateLikeState() {
+            async function updateReactionCount() {
               setLikeLoading(false);
               const updatedLikeCount = (
                 await getCountFromServer(likedUserRef)
