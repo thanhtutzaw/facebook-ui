@@ -25,7 +25,7 @@ export type PostProps = {
   showmore: boolean;
   setShowmore: Function;
   post: PostType;
-  auth: User;
+  auth: User | null;
   children: ReactNode;
   toggleMenu: string;
   settoggleMenu: Dispatch<SetStateAction<string>>;

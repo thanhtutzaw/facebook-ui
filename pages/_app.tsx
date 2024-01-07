@@ -27,9 +27,9 @@ import { app, getProfileByUID } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import "../styles/globals.css";
 config.autoAddCss = false;
-export const getServerSideProps: GetServerSideProps<{expired:boolean}> = async (
-  context
-) => {
+export const getServerSideProps: GetServerSideProps<{
+  expired: boolean;
+}> = async (context) => {
   try {
     const cookies = nookies.get(context);
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
@@ -60,6 +60,9 @@ export default function App({
   const router = useRouter();
   useNprogress();
   const auth = getAuth(app);
+  const [currentUser, setcurrentUser] = useState<
+    (User & { photoURL_cropped?: string }) | null
+  >(null);
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (!user) {
@@ -69,6 +72,7 @@ export default function App({
           router.push("/login");
         }
       } else {
+        setcurrentUser(user);
         if (!expired) return;
         router.push("/");
         console.log("expired in app.tsx and pushed route to /");
@@ -77,14 +81,11 @@ export default function App({
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, expired]);
-  const [currentUser, setcurrentUser] = useState<
-    (User & { photoURL_cropped?: string }) | null
-  >(null);
+
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      setcurrentUser(user);
-    });
-  }, [auth]);
+    console.log({ currentUser });
+  }, [currentUser]);
+
   useEffect(() => {
     const unsubscribe = onIdTokenChanged(auth, async (user) => {
       if (!user) {
@@ -109,7 +110,7 @@ export default function App({
         });
         console.log("cookies updated");
         console.groupEnd();
-        // setcurrentUser(user);
+        setcurrentUser(user);
       } catch (error) {
         console.log("Error refreshing ID token:", error);
       }

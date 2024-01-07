@@ -1,4 +1,3 @@
-import { useAppContext } from "@/context/AppContext";
 import { useNewsFeedContext } from "@/context/NewsFeedContext";
 import { app } from "@/lib/firebase";
 import styles from "@/styles/Home.module.scss";
@@ -7,8 +6,8 @@ import { memo, useEffect, useState } from "react";
 import PostList from "./PostList";
 // type NewfeedProps = InferGetServerSidePropsType<typeof getServerSideProps> & {
 // };
-function Newfeed(props: {tabIndex: number }) {
-  const { tabIndex,  } = props;
+function Newfeed(props: { tabIndex: number }) {
+  const { tabIndex } = props;
   const { posts, newsFeedPost, deletePost, postEnd, hasMore } =
     useNewsFeedContext();
   const [user, setuser] = useState<User | null>(null);
@@ -24,7 +23,7 @@ function Newfeed(props: {tabIndex: number }) {
         deletePost={deletePost}
         postLoading={hasMore}
         postEnd={postEnd}
-        auth={user!}
+        auth={user}
         posts={newsFeedPost.length === 0 ? posts : newsFeedPost}
         tabIndex={tabIndex!}
       />

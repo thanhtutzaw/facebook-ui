@@ -10,7 +10,7 @@ function PostList(props: {
   selectMode?: boolean;
   posts: PostType[];
   tabIndex?: number;
-  auth?: User;
+  auth?: User | null;
   postLoading?: boolean;
   postEnd?: boolean;
 }) {
@@ -45,7 +45,7 @@ function PostList(props: {
             deletePost={deletePost}
             selectMode={selectMode}
             preventNavigate={preventNavigate}
-            auth={auth!}
+            auth={auth}
             tabIndex={tabIndex}
             key={post?.id ?? ""}
             post={post}

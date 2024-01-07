@@ -5,7 +5,7 @@ import {
   memo,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { usePageContext } from "../../context/PageContext";
 import PostProvider from "../../context/PostContext";
@@ -18,7 +18,7 @@ import s from "./index.module.scss";
 interface PostProps {
   deletePost?: Function;
   shareMode?: boolean;
-  auth?: User;
+  auth?: User | null;
   preventNavigate?: boolean;
   selectMode?: boolean;
   post: PostType;

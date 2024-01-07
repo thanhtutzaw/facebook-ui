@@ -18,9 +18,9 @@ import PostFallback from "./Fallback";
 import AdminMenu from "./Menu/AdminMenu";
 import Menu from "./Menu/Menu";
 import PhotoLayout from "./PhotoLayout";
+import { SharePreview } from "./SharePreview";
 import { SocialCount } from "./SocialCount";
 import s from "./index.module.scss";
-import { SharePreview } from "./SharePreview";
 function Content({ post }: { post: Post }) {
   const {
     deletePost,
@@ -87,9 +87,10 @@ function Content({ post }: { post: Post }) {
   const [authUser, setauthUser] = useState<User | null>(null);
   useEffect(() => {
     const auth = getAuth(app);
-    onAuthStateChanged(auth, (user) => {
+    const unsub = onAuthStateChanged(auth, (user) => {
       setauthUser(user);
     });
+    return () => unsub();
   }, []);
   const isAdmin = authUser?.uid === authorId;
   return (

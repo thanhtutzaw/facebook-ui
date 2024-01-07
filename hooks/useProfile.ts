@@ -19,7 +19,7 @@ import {
   useCallback,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { useActiveTab } from "./useActiveTab";
 function useProfile() {
@@ -87,7 +87,7 @@ function useProfile() {
   );
   const { fetchNextPage, isLoading, error, data, hasNextPage } =
     useInfiniteQuery({
-      queryKey: [QueryKey.myPost, sortby, uid, profile?.photoURL],
+      queryKey: [QueryKey.myPost, sortby, uid, auth, profile?.photoURL],
       queryFn: async ({ pageParam }) => await fetchMyPost(pageParam),
       enabled: activeTab === "profile",
       keepPreviousData: true,
