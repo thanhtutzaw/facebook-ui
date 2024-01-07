@@ -173,10 +173,10 @@ export const getServerSideProps: GetServerSideProps<IndexProps> = async (
       : null;
 
     const currentUserData = userToJSON(currentAccount);
-    context.res.setHeader(
-      "Cache-Control",
-      "public, s-maxage=10, stale-while-revalidate=59"
-    );
+    // context.res.setHeader(
+    //   "Cache-Control",
+    //   "public, s-maxage=10, stale-while-revalidate=59"
+    // );
     return {
       props: {
         ...initialProps,
@@ -381,6 +381,7 @@ export default function Index({
           uid={uid}
           posts={posts}
         >
+          {JSON.stringify(token?.email)}
           <Header tabIndex={activeTab === "/" ? 0 : -1} />
           <Tabs />
         </NewsFeedProvider>

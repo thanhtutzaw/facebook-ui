@@ -31,6 +31,7 @@ import s from "@/styles/Home.module.scss";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 // import {PageContext : Page} from '@/context/PageContext'
 import CommentItem from "@/components/Comment/CommentItem";
+import { SharePreview } from "@/components/Post/SharePreview";
 import { usePageContext } from "@/context/PageContext";
 import {
   DocumentData,
@@ -52,7 +53,6 @@ import {
   account,
   likes,
 } from "../../../types/interfaces";
-import { SharePreview } from "@/components/Post/SharePreview";
 export interface CommentProps {
   replyInput?: {
     comment: CommentType | null;
@@ -79,10 +79,6 @@ export interface CommentProps {
   replyInputRef?: RefObject<HTMLInputElement>;
 }
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  // context.res.setHeader(
-  //   "Cache-Control",
-  //   "public, s-maxage=10, stale-while-revalidate=59"
-  // );
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
