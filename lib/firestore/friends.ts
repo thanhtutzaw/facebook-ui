@@ -58,7 +58,7 @@ export async function addFriends(
     await setDoc(senderRef, senderData);
     await setDoc(receiptRef, receiptData);
     const doc = await getDoc(reqCountRef);
-    const reqCountExist= doc.exists() && doc.data().count >= 0
+    const reqCountExist = doc.exists() && doc.data().count >= 0;
     if (reqCountExist) {
       await updateDoc(reqCountRef, {
         count: increment(+1),
@@ -107,15 +107,15 @@ export async function acceptFriends(
 ) {
   if (f.status !== "pending") {
     console.log({ f });
-    alert("Already Accepted! in funciton");
-    throw new Error("Already Accepted!");
+    alert("Already Accepted! in acceptFriends funciton");
+    throw new Error("Already Accepted! in acceptFriends funciton");
   }
 
-  const friendData = {
+  const friendData: friends = {
     id: f.id,
     status: "friend",
     updatedAt: serverTimestamp(),
-  } as friends;
+  };
   try {
     await setDoc(doc(db, `users/${senderData}/friendReqCount/reqCount`), {
       count: increment(-1),
@@ -127,16 +127,18 @@ export async function acceptFriends(
 
   try {
     if (!f.senderId) return;
+    const message = `${currentUser?.displayName ?? "Unknown User"} ${getMessage(
+      "acceptedFriend"
+    )}`;
     await sendFCM({
       recieptId: f.senderId,
-      message: `${currentUser?.displayName ?? "Unknown User"} ${getMessage(
-        "acceptedFriend"
-      )}`,
+      message,
       icon: checkPhotoURL(
         currentUser?.photoURL_cropped ?? currentUser?.photoURL
       ),
       link: `/${senderData}`,
     });
+    return { message };
   } catch (error) {
     console.log(error);
   }
@@ -182,12 +184,12 @@ export async function unFriend(uid: string, f: { id: friends["id"] }) {
 }
 export async function blockFriend(uid: string, f: friends) {
   const { author, ...data } = { ...f };
-  const blockedData = {
+  const blockedData: friends = {
     ...data,
     status: "block",
     updatedAt: serverTimestamp(),
     senderId: uid,
-  } as friends;
+  };
   if (f.status === "pending") {
     try {
       await setDoc(doc(db, `users/${f.id}/friendReqCount/reqCount`), {

@@ -74,7 +74,6 @@ export interface CommentProps {
   uid: string;
   comments?: Post["comments"] | [];
   post: Post;
-
   profile?: account["profile"];
   replyInputRef?: RefObject<HTMLInputElement>;
 }

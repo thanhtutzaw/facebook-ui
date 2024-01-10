@@ -177,11 +177,12 @@ export async function loveComment({
     type: "comment_reaction",
     url: parentId ? replyURL : `${authorId}/${postId}#comment-${commentId}`,
   });
+  const message = `${profile?.displayName ?? "Unknown User"} ${getMessage(
+    "comment_reaction"
+  )}`;
   await sendFCM({
     recieptId: String(commentAuthorId),
-    message: `${profile?.displayName ?? "Unknown User"} ${getMessage(
-      "comment_reaction"
-    )}`,
+    message,
     actionPayload: {
       content,
       uid,
@@ -193,6 +194,7 @@ export async function loveComment({
     tag: `Heart-${commentId}`,
     link: parentId ? replyURL : `/${authorId}/${postId}#comment-${commentId}`,
   });
+  return { message };
 }
 export async function unLoveComment({
   heartRef,

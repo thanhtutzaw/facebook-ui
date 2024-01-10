@@ -15,12 +15,12 @@ import {
   sendAppNoti,
   sendFCM,
 } from "../../lib/firestore/notifications";
-import { Comment } from "../../types/interfaces";
+import { Comment, account } from "../../types/interfaces";
 import Spinner from "../Spinner";
 import s from "./index.module.scss";
 type UnwrapArray<T> = T extends (infer U)[] ? U : T;
 
-export default function CommentInput(props: Partial<CommentProps>) {
+export default function CommentInput(props: CommentProps) {
   const {
     comments,
     setComments,
@@ -90,6 +90,7 @@ export default function CommentInput(props: Partial<CommentProps>) {
         profile: currentUserProfile,
         currentUserProfile,
         replyInput: { ...replyInput, comment: data },
+        parentId: null,
       },
 
       actions: [NotiAction.comment_like, NotiAction.comment_reply],
@@ -117,7 +118,7 @@ export default function CommentInput(props: Partial<CommentProps>) {
               postId,
               text,
               uid,
-              profile,
+              profile: profile!,
               replyInput,
               authorId,
               currentUserProfile,
@@ -215,7 +216,11 @@ export async function handleReply({
     ViewmoreToggle: boolean;
   };
   currentUserProfile: any;
-  profile: any;
+  profile:
+    | (User & {
+        photoURL_cropped?: string | undefined;
+      })
+    | account["profile"];
   setComments?: Function;
   authorId: string;
   postId: string;
@@ -384,12 +389,12 @@ export async function handleReply({
     }#reply-${replyRef.id}`,
     content: replyInput.comment?.text ?? replyInput.text,
   });
+  const message = `${
+    currentUserProfile?.displayName ?? "Unknown User"
+  } ${getMessage("replied_to_comment")}: "${text}" `;
   await sendFCM({
-    
     recieptId: String(replyInput.comment?.authorId) ?? commentAuthorId,
-    message: `${currentUserProfile?.displayName ?? "Unknown User"} ${getMessage(
-      "replied_to_comment"
-    )}: "${text}" `,
+    message,
     icon: checkPhotoURL(
       currentUserProfile?.photoURL_cropped ?? currentUserProfile?.photoURL
     ),
@@ -414,4 +419,5 @@ export async function handleReply({
       replyInput.comment?.id ?? replyInput.id
     }#reply-${replyRef.id}`,
   });
+  return {message}
 }

@@ -4,8 +4,6 @@ export default function AddPost() {
   return <CreatePostForm />;
   // const text = textRef.current?.innerHTML.replaceAll("<div>", "hello");
   // .replace(/<div>/g, "<br>")!
-  // const [replacedStr, setReplacedStr] = useState(originalStr);
-  // const [replacedStr, setReplacedStr] = useState("<h1>u</h1>");
 
   // const replace = str.replaceAll(/<div>/g, "<br>");
 
@@ -18,7 +16,7 @@ export default function AddPost() {
     // );
   };
 
-  const handleContentChange = (e: { currentTarget: { innerHTML: string } }) => {
+  const handleContentChange = (e: unknown) => {
     // const selection = window.getSelection();
     // const range = selection?.getRangeAt(0);
     // if (!range || !selection) return;

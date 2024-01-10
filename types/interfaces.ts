@@ -1,9 +1,7 @@
 import { NotiMessageTypes } from "@/lib/firestore/notifications";
-import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { User } from "firebase/auth";
 import { FieldValue, Timestamp } from "firebase/firestore";
-import { ReactNode, RefObject } from "react";
 export const QueryKey = {
   noti: "notifications",
   myPost: "myPost",
@@ -14,7 +12,7 @@ export interface TAcceptedFriends {
   id: string;
   author: UserRecord;
 }
-type timeStamp =
+export type timeStamp =
   | {
       seconds: number;
       nanoseconds: number;
@@ -29,8 +27,8 @@ export type likes = {
 export type friends = {
   id: string | number;
   status?: "friend" | "block" | "pending";
-  createdAt?: timeStamp;
-  updatedAt?: timeStamp;
+  createdAt?:FieldValue | timeStamp;
+  updatedAt?:FieldValue | timeStamp;
   date?: timeStamp;
   senderId?: string;
   author?: account["profile"] | null;
@@ -139,7 +137,6 @@ export interface RecentPosts {
   authorId: string;
   createdAt: Post["createdAt"];
 }
-
 
 export type Tabs =
   | "home"

@@ -35,7 +35,7 @@ export interface NotiApiRequest extends NextApiRequest {
   };
   // extends NotificationPayload
 }
-export default async function handler(
+export default async function handleFCM(
   req: NotiApiRequest,
   res: NextApiResponse
 ) {
@@ -55,10 +55,12 @@ export default async function handler(
     collapse_key,
     image,
   } = req.body;
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method Not Allowed" });
+    return;
+  }
   try {
     const registrationTokens = await getFCMToken(String(recieptId));
-    // console.log({ actionPayload });
-    // console.log({ NotiRequest: req.body });
     const body = messageBody
       ? `${message} : ${messageBody}`
       : message ?? "New Notification Recieved!";
@@ -118,28 +120,25 @@ export default async function handler(
         const response = await admin
           .messaging()
           .sendEachForMulticast(messageNoti);
-        // console.log("Successfully sent message:", response);
-        // console.log(
-        //   "Error",
-        //   response.responses.forEach((r) => r.error)
-        // );
-        console.log(
-          response.responses.forEach((r) => {
-            return JSON.stringify(r.error);
-          })
-        );
+        console.log("Successfully sent FCM :");
+        res.status(200).json({
+          success: true,
+          body: req.body ? req.body : null,
+          fcmResponse: response,
+        });
       } catch (error) {
         console.error(error);
         res.status(500).end();
         return;
       }
-      res.status(200).json(req.body);
     } else {
-      res.status(500).end();
-      // res.status(500).json({ error: "failed to load data" });
-      return;
+      // res.status(500).end();
+      res.status(500).json({ tokenError: "FCM tokens Empty!" });
     }
   } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Failed to send FCM Notifications :" + error });
     // res.json(error);
   }
 }
