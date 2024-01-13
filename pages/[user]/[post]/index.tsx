@@ -108,7 +108,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     let hasMore = false;
     const comments = await fetchComments(newPost, uid, commentQuery);
-    hasMore = comments.length < Number(newPost.commentCount ?? 0);
+    const currentLength = comments.length;
+    const totalCount = newPost.commentCount ?? 0;
+    hasMore = currentLength < Number(totalCount);
     const withComment = { ...newPost, comments };
     const isPostExists = postDoc.exists();
     const notAdminAndPostOnlyMe =

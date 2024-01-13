@@ -64,12 +64,10 @@ export function NewsFeedProvider(props: Props) {
     } catch (error) {
       console.log("Recent Post Error - ", error);
     }
-    const finalPost = await getNewsFeed(String(uid), recentPosts);
-    setnewsFeedPost(newsFeedPost.concat(finalPost!));
+    const finalPosts = await getNewsFeed(String(uid), recentPosts);
+    setnewsFeedPost(newsFeedPost.concat(finalPosts!));
     setpostLoading(false);
-    // console.log({ end: finalPost?.length! < NewsFeed_LIMIT });
-    setPostEnd(finalPost?.length! < NewsFeed_LIMIT);
-    // console.log({ postEnd });
+    setPostEnd(finalPosts?.length! < NewsFeed_LIMIT);
   }, [newsFeedPost, hasMore, setnewsFeedPost, uid]);
   const deletePost = useCallback(
     (id: string) => {

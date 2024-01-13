@@ -1,3 +1,4 @@
+import { TSavedPost } from "@/pages/saved";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { User } from "firebase/auth";
 import {
@@ -28,6 +29,8 @@ import {
   getPath,
   getPostWithMoreInfo,
   getProfileByUID,
+  postInfo,
+  postToJSON,
 } from "../firebase";
 import { getMessage, sendAppNoti, sendFCM } from "./notifications";
 import { checkPhotoURL } from "./profile";
@@ -183,6 +186,22 @@ export async function fetchMyPosts(
   }
   return { myPost, hasMore };
 }
+export async function getPostBySavedId(data: TSavedPost[], uid: string) {
+  return await Promise.all(
+    data.map(async (savedPost) => {
+      const { authorId, postId } = savedPost;
+      const postDoc = doc(
+        db,
+        `${getCollectionPath.posts({ uid: authorId })}/${postId}`
+      );
+
+      const post = await postToJSON(await getDoc(postDoc));
+      const posts = await postInfo(post, uid);
+      console.log({ posts });
+      return posts;
+    })
+  );
+}
 export async function updatePost(
   uid: string,
   text: string,
@@ -268,7 +287,7 @@ export async function deleteMultiplePost(uid: string, selctedId: selectedId[]) {
       // const sharePostId = chunk[j].share?.post ?? null;
       // const shareauthorId = chunk[j].share?.author ?? null;
       const { postId, authorId, share } = chunk[j];
-
+      //Delete sharePost user
       if (share?.authorId && share.postId) {
         const { authorId: shareAuthorId, postId: sharePostId } = share;
         const sharePostRef = doc(

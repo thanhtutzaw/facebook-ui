@@ -52,7 +52,6 @@ export default async function handleTriggerNotiAction(
   console.log({ trigger_api: { query: req.query, body: req.body } });
   let data: {} | null | void | [] = {};
   const successJSONAll = { action, body: req.body ? req.body : null };
-  console.log({ API_cookies: req.cookies });
   const notFoundBodyError = `Request Body not Found in ${req.method} method ! `;
   const notAllowMethodError = "Method Not Allowed";
   switch (req.method) {
@@ -180,7 +179,7 @@ export default async function handleTriggerNotiAction(
       break;
     default:
       res.status(405).json({ error: notAllowMethodError });
-      throw new Error(notAllowMethodError);
+      break;
   }
 
   function successJSON() {

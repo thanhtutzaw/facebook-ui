@@ -577,8 +577,9 @@
         transition: all 0.02s ease-in-out;
         text-align: left;
         align-items: center;
-        x > svg {
-            width: 20px;
+        // justify-content: space-around;
+        & > svg {
+            width: 25px;
         }
         &:hover {
             background-color: var(--blue-origin) !important;

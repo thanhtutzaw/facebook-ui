@@ -38,45 +38,32 @@ import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { FirebaseError } from "firebase/app";
 import Spinner from "../components/Spinner";
 import { usePageContext } from "../context/PageContext";
-type IndexProps = {
-  expired: boolean;
-  tokenUID: string;
-  queryPageData: unknown;
-  token: DecodedIdToken | null;
-  postError: string;
-  hasMore: boolean;
-  uid: string;
-  acceptedFriends: string[];
-  posts: Post[];
-  fcmToken: string[];
-  profile: account["profile"] | null;
-  account: null;
+const initialProps = {
+  expired: true,
+  uid: "",
+  tokenUID: "",
+  postError: "",
+  queryPageData: null as unknown,
+  token: null as DecodedIdToken | null,
+  acceptedFriends: [""],
+  posts: [] as Post[],
+  fcmToken: [""],
+  profile: null as account["profile"] | null,
+  account: null,
+  hasMore: false,
 };
+type IndexProps = typeof initialProps;
 export const getServerSideProps: GetServerSideProps<IndexProps> = async (
   context
 ) => {
-  const initialProps: IndexProps = {
-    expired: true,
-    uid: "",
-    tokenUID: "",
-    postError: "",
-    queryPageData: null,
-    token: null,
-    acceptedFriends: [],
-    posts: [],
-    fcmToken: [],
-    profile: null,
-    account: null,
-    hasMore: false,
-  };
-  function updateInitialProps(
-    data: Partial<typeof initialProps>
-  ): typeof initialProps {
-    return {
-      ...initialProps,
-      ...(data ? data : {}),
-    };
-  }
+  // function updateInitialProps(
+  //   data: Partial<typeof initialProps>
+  // ): typeof initialProps {
+  //   return {
+  //     ...initialProps,
+  //     ...(data ? data : {}),
+  //   };
+  // }
   let queryPageData = null;
 
   try {
@@ -139,10 +126,7 @@ export const getServerSideProps: GetServerSideProps<IndexProps> = async (
       } else {
         queryPageData = null;
       }
-      console.log(
-        `user query page(I can fetch user data for userQuery Page)`,
-        userQuery
-      );
+      console.log(`user query(secondary Page)`, userQuery);
     }
     const { uid } = token;
     initialProps.tokenUID = uid;

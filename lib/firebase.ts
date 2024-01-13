@@ -199,6 +199,17 @@ export async function postToJSON(
     };
   }
 }
+export async function saveListJSON(
+  doc: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>
+) {
+  const data = doc.data();
+  const createdAt = data?.createdAt as Timestamp;
+
+  return {
+    ...data,
+    createdAt: createdAt?.toJSON() || 0,
+  };
+}
 export async function commentToJSON(
   doc: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>
 ) {

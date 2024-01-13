@@ -11,7 +11,7 @@ import { db, getCollectionPath, postToJSON, userToJSON } from "../../lib/firebas
 import { getUserData, verifyIdToken } from "../../lib/firebaseAdmin";
 import { Post } from "../../types/interfaces";
 import CreatePostForm from "@/components/Form/CreatePost";
-export const getServerSideProps: GetServerSideProps<any> = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
