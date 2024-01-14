@@ -80,25 +80,27 @@ function useFCMNotification({
 
       const getFCMToken = async () => {
         try {
-          const registrationToken = await getToken(messaging, {
+          const FCMToken = await getToken(messaging, {
             vapidKey: process.env.NEXT_PUBLIC_MessageKey,
           });
           // console.log(process.env.NEXT_PUBLIC_MessageKey);
           if (token && token.uid) {
-            console.log("FCM token:", registrationToken);
-
-            // await updateDoc(userDoc, { fcmToken: arrayUnion(token) });
-
-            const isTokenStored = fcmToken?.includes(registrationToken);
+            console.log("FCM token:", FCMToken);
+            const isTokenStored = fcmToken?.includes(FCMToken);
             if (!isTokenStored) {
               const userDoc = doc(
                 db,
                 getCollectionPath.users({ uid: token.uid })
               );
+              if (typeof FCMToken !== "string") {
+                throw new Error("FCMToken Invalid Type! Expected string");
+              }
 
-              await updateDoc(userDoc, { fcmToken: arrayUnion(token) });
+              await updateDoc(userDoc, {
+                fcmToken: arrayUnion(FCMToken),
+              });
 
-              console.log("stored token to db");
+              console.log("Stored FCM token to Database");
             }
           }
         } catch (error) {

@@ -58,5 +58,6 @@ export async function getFCMToken(uid: string) {
     .doc(`${getCollectionPath.users({ uid })}`)
     .get();
   const fcmToken = (user.data()?.fcmToken as string[]) ?? null;
+  console.log({ getFCMToken: fcmToken });
   return fcmToken;
 }

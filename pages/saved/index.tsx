@@ -92,7 +92,7 @@ export default function SavedPostPage(props: TInitialProps) {
     );
     const savedPostsQuery = DescQuery(
       getPath("savedPost", { uid }),
-      SavedPost_LIMIT,
+      SavedPost_LIMIT + 1,
       startAfter(date)
     );
     const saved = await getDocs(savedPostsQuery);

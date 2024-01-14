@@ -90,7 +90,7 @@ export default function CommentInput(props: CommentProps) {
         profile: currentUserProfile,
         currentUserProfile,
         replyInput: { ...replyInput, comment: data },
-        parentId: null,
+        parentId: "",
       },
 
       actions: [NotiAction.comment_like, NotiAction.comment_reply],

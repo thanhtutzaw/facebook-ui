@@ -1,12 +1,8 @@
 import { NotiAction } from "@/lib/NotiAction";
 import admin from "firebase-admin";
-import {
-  BatchResponse,
-  MulticastMessage,
-} from "firebase-admin/lib/messaging/messaging-api";
-import { AuthError, AuthErrorCodes } from "firebase/auth";
+import { MulticastMessage } from "firebase-admin/lib/messaging/messaging-api";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getFCMToken, verifyIdToken } from "../../lib/firebaseAdmin";
+import { getFCMToken } from "../../lib/firebaseAdmin";
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -19,7 +15,6 @@ if (!admin.apps.length) {
 export interface NotiApiRequest extends NextApiRequest {
   body: {
     timestamp?: number;
-    // senderId: string;
     image?: string;
     title?: string;
     recieptId: string | number;
@@ -61,19 +56,15 @@ export default async function handleFCM(
     image,
   } = req.body;
   const notAllowMethodError = "Method Not Allowed";
-  const body = messageBody
-    ? `${message} : ${messageBody}`
-    : message ?? "New Notification Recieved!";
-  const notiBadge = badge ?? "./badge.svg";
-  // let token = req.cookies.token || req.headers.jwtToken || req.query.jwtToken;
-  await checkCookies(req.cookies, res);
   switch (req.method) {
     case "POST":
-      let response: BatchResponse | null = null;
-
+      let response;
       try {
         let registrationTokens: string[];
-
+        const body = messageBody
+          ? `${message} : ${messageBody}`
+          : message ?? "New Notification Recieved!";
+        const notiBadge = badge ?? "./badge.svg";
         try {
           registrationTokens = await getFCMToken(String(recieptId));
           if (registrationTokens) {
@@ -133,76 +124,38 @@ export default async function handleFCM(
               response = await admin
                 .messaging()
                 .sendEachForMulticast(messageNoti);
-              console.log(
-                `Successfully sent FCM - Success: ${response.successCount} , Fail: ${response.failureCount}`
-              );
+              console.log("Successfully sent FCM :");
             } catch (error) {
-              res.status(500).json({
-                success: false,
-                error: `FCM ${error}`,
-                message: `Failed to sent FCM - Success: ${
-                  response ? response.successCount : 0
-                } , Fail: ${response ? response.failureCount : 0}`,
-              });
+              // res.status(500).json({ error: `FCM ${error}` });
+              console.error(error);
+              res.status(500).end();
+              return;
             }
           }
         } catch (error) {
-          res
-            .status(500)
-            .json({ error: `registrationTokens ${error}`, success: false });
+          // res.status(500).json({ error: "tokenError: FCM tokens Empty!" });
+          res.status(500).json({ error: `registrationTokens ${error}` });
         }
       } catch (error) {
-        res.status(500).json({
-          error: "Failed to send FCM Notifications :" + error,
-          success: false,
-        });
+        res
+          .status(500)
+          .json({ error: "Failed to send FCM Notifications :" + error });
       }
       res.status(200).json({
         success: true,
-        data: body,
-        title,
         body: req.body ? req.body : null,
-        fcmResponse: response,
+        fcmResponse: response ?? null,
       });
       break;
     case "GET":
-      res.status(200).json({
+      res.status(405).json({
         success: true,
-        title,
-        data: body,
+        message: `Method '${req.method}' Not Allowed`,
         body: req.body ? req.body : null,
       });
       break;
     default:
-      res.status(405).json({ success: false, error: notAllowMethodError });
+      res.status(405).json({ error: notAllowMethodError });
       break;
-  }
-}
-export async function checkCookies(
-  cookies: NextApiRequest["cookies"],
-  res: NextApiResponse
-) {
-  let token = cookies.token;
-  if (!token) {
-    res.status(401).json({ error: "You are not allowed" });
-    throw new Error("Not Found Cookies Token .You are not allowed");
-  }
-  try {
-    const decodedToken = await verifyIdToken(token);
-    if (decodedToken) {
-      // res.status(200).json({ message: "You are allowed !", decodedToken });
-      console.log(`decodedToken exist in Api `);
-    }
-  } catch (error: unknown) {
-    const FirebaseError = error as AuthError;
-    if (FirebaseError.code === AuthErrorCodes.ARGUMENT_ERROR) {
-      res.status(401).json({
-        error: "Invalid JWT token .You are not allowed",
-        message: FirebaseError.message,
-      });
-      throw new Error("Invalid JWT token .You are not allowed");
-    }
-    res.status(401).json({ FirebaseError });
-    throw new Error(`${FirebaseError.message}`);
   }
 }

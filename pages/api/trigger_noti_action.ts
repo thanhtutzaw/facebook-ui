@@ -5,6 +5,7 @@ import { acceptFriends } from "@/lib/firestore/friends";
 import { Comment, friends } from "@/types/interfaces";
 import { User } from "firebase/auth";
 import { NextApiRequest, NextApiResponse } from "next";
+import { checkCookies } from "./sendFCM";
 type n = keyof typeof NotiAction;
 type TAction = { action: keyof typeof NotiAction };
 type TBody = {
@@ -48,6 +49,7 @@ export default async function handleTriggerNotiAction(
   res: NextApiResponse
 ) {
   const { action } = req.query;
+  await checkCookies(req.cookies, res);
   let success = false;
   console.log({ trigger_api: { query: req.query, body: req.body } });
   let data: {} | null | void | [] = {};
@@ -170,9 +172,8 @@ export default async function handleTriggerNotiAction(
       break;
     case "GET":
       checkAction();
-      res.status(405).json({
+      res.status(200).json({
         success: true,
-        message: `Method '${req.method}' Not Allowed`,
         data,
         ...successJSONAll,
       });

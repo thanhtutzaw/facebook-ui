@@ -50,14 +50,9 @@ export async function sendFCM(data: NotiApiRequest["body"]) {
       },
       body: JSON.stringify(data),
     });
-    if (response.ok) {
-      console.log("Notification Sended successfully.");
-    }
-    // if (!response.ok) {
-    //   throw new Error("Notification response failed!");
-    // }
+    console.log("Notification Sended successfully.");
     const responseData = await response.json();
-    return responseData;
+    return responseData;  
   } catch (error) {
     console.error("Notification response failed!" + error);
   }
