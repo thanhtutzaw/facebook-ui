@@ -10,11 +10,12 @@ import {
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { getMessaging } from "firebase/messaging";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import s from "../../Sections/Menu/menu.module.scss";
 const accounts = [
   {
@@ -44,12 +45,12 @@ export default function SwitchAccount(props: {
   loading: boolean;
 }) {
   const { setLoading, loading } = props;
-  const {auth} = usePageContext();
+  const { auth } = usePageContext();
   const { token } = useAppContext();
   const { email: currentEmail } = { ...token };
 
   const [toggleSwitchAcc, setToggleSwitchAcc] = useState(false);
-  const [checked, setchecked] = useState(currentEmail);
+  const [checkedEmail, setcheckedEmail] = useState(currentEmail);
 
   return (
     <div
@@ -86,8 +87,8 @@ export default function SwitchAccount(props: {
             setLoading={setLoading}
             currentEmail={currentEmail}
             a={a}
-            checked={checked}
-            setchecked={setchecked}
+            checkedEmail={checkedEmail}
+            setcheckedEmail={setcheckedEmail}
             loading={loading}
             auth={auth}
           />
@@ -104,24 +105,31 @@ export default function SwitchAccount(props: {
 
 function AccountItem(props: {
   setLoading: Function;
-  currentEmail: any;
+  currentEmail: DecodedIdToken["email"];
   a: any;
   loading: boolean;
   auth: any;
-  checked: any;
-  setchecked: Function;
+  checkedEmail: string | undefined;
+  setcheckedEmail: Dispatch<SetStateAction<string | undefined>>;
 }) {
-  const { checked, setchecked, setLoading, currentEmail, a, loading, auth } =
-    props;
+  const {
+    checkedEmail,
+    setcheckedEmail,
+    setLoading,
+    currentEmail,
+    a,
+    loading,
+    auth,
+  } = props;
   const router = useRouter();
   return (
     <li
-      className={loading && checked === a.email ? s.disabled : ""}
+      className={loading && checkedEmail === a.email ? s.disabled : ""}
       onClick={async (e) => {
         e.stopPropagation();
         if (currentEmail === a.email) return;
         setLoading(true);
-        setchecked(a.email);
+        setcheckedEmail(a.email);
         try {
           const messaging = getMessaging(app);
           await signout(messaging);
@@ -143,9 +151,9 @@ function AccountItem(props: {
           {a.password} {a.default ? "(Default)" : ""}
         </p>
       </div>
-      {checked === a.email && (
+      {checkedEmail === a.email && (
         <>
-          {loading && checked !== currentEmail ? (
+          {loading && checkedEmail !== currentEmail ? (
             <Spinner style={{ margin: "0" }} />
           ) : (
             <button title="Current Account">

@@ -10,7 +10,7 @@ function BackHeader(props: {
   onClick?: MouseEventHandler<HTMLButtonElement>;
 }) {
   const router = useRouter();
-  const handleClick = (e: any) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (window.history.length > 1) {
       if (props.onClick) {
         props.onClick(e);

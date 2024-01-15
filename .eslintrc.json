@@ -5,7 +5,7 @@
 //   "extends": ["next/core-web-vitals"],
 //   "plugins": ["import"],
 //   "rules": {
-//     // Add any custom ESLint rules here
+//     // Add custom ESLint rules here
 //     "import/no-unresolved": [
 //       "error",
 //       {
@@ -14,4 +14,5 @@
 //       }
 //     ]
 //   }
+
 // }

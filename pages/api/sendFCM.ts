@@ -4,9 +4,9 @@ import {
   BatchResponse,
   MulticastMessage,
 } from "firebase-admin/lib/messaging/messaging-api";
-import { AuthError, AuthErrorCodes } from "firebase/auth";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getFCMToken, verifyIdToken } from "../../lib/firebaseAdmin";
+import { getFCMToken } from "../../lib/firebaseAdmin";
+import { checkCookies, checkParam } from "../../util";
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -38,7 +38,6 @@ export interface NotiApiRequest extends NextApiRequest {
     actions?: Array<(typeof NotiAction)[keyof typeof NotiAction]>;
     requireInteraction?: boolean;
   };
-  // extends NotificationPayload
 }
 export default async function handleFCM(
   req: NotiApiRequest,
@@ -61,22 +60,41 @@ export default async function handleFCM(
     image,
   } = req.body;
   const notAllowMethodError = "Method Not Allowed";
-  const body = messageBody
+  const NotiMessageBody = messageBody
     ? `${message} : ${messageBody}`
     : message ?? "New Notification Recieved!";
   const notiBadge = badge ?? "./badge.svg";
   // let token = req.cookies.token || req.headers.jwtToken || req.query.jwtToken;
-  await checkCookies(req.cookies, res);
+  await checkCookies({ req, res });
+  const params = {
+    timestamp,
+    recieptId,
+    messageBody,
+    message,
+    tag,
+    badge,
+    link,
+    actionPayload,
+    actions,
+    collapse_key,
+    image,
+  };
+  const requireParamLists = Object.keys({
+    ...params,
+  });
+  const { error: paramErrorMessage, paramError } = checkParam({
+    requiredParamLists: requireParamLists,
+    req,
+    res,
+  });
   switch (req.method) {
     case "POST":
       let response: BatchResponse | null = null;
-
+      let registrationTokens: string[];
       try {
-        let registrationTokens: string[];
-
-        try {
-          registrationTokens = await getFCMToken(String(recieptId));
-          if (registrationTokens) {
+        registrationTokens = await getFCMToken(String(recieptId));
+        if (registrationTokens) {
+          if (!paramError) {
             const messageNoti: MulticastMessage = {
               // topic: collapse_key ?? "",
               // collapse_key: collapse_key ?? "",
@@ -84,7 +102,7 @@ export default async function handleFCM(
               tokens: registrationTokens,
               notification: {
                 title,
-                body,
+                body: NotiMessageBody,
                 ...(image !== "" ? { imageUrl: image } : {}),
               },
               webpush: {
@@ -95,7 +113,7 @@ export default async function handleFCM(
                 notification: {
                   title,
                   timestamp,
-                  body,
+                  body: NotiMessageBody,
                   ...(image !== "" ? { image: image } : {}),
                   icon,
                   requireInteraction,
@@ -128,7 +146,6 @@ export default async function handleFCM(
                 },
               },
             };
-
             try {
               response = await admin
                 .messaging()
@@ -146,63 +163,44 @@ export default async function handleFCM(
               });
             }
           }
-        } catch (error) {
-          res
-            .status(500)
-            .json({ error: `registrationTokens ${error}`, success: false });
         }
       } catch (error) {
-        res.status(500).json({
-          error: "Failed to send FCM Notifications :" + error,
-          success: false,
-        });
+        res
+          .status(500)
+          .json({ error: `registrationTokens ${error}`, success: false });
       }
+      // catch (error) {
+      //   res.status(500).json({
+      //     error: "Failed to send FCM Notifications :" + error,
+      //     success: false,
+      //   });
+      // }
       res.status(200).json({
         success: true,
-        data: body,
+        data: NotiMessageBody,
         title,
         body: req.body ? req.body : null,
         fcmResponse: response,
+        ...{ error: paramError ? paramErrorMessage : null },
       });
       break;
     case "GET":
       res.status(200).json({
         success: true,
         title,
-        data: body,
+        data: NotiMessageBody,
         body: req.body ? req.body : null,
+        ...{ error: paramError ? paramErrorMessage : null },
       });
       break;
     default:
-      res.status(405).json({ success: false, error: notAllowMethodError });
-      break;
-  }
-}
-export async function checkCookies(
-  cookies: NextApiRequest["cookies"],
-  res: NextApiResponse
-) {
-  let token = cookies.token;
-  if (!token) {
-    res.status(401).json({ error: "You are not allowed" });
-    throw new Error("Not Found Cookies Token .You are not allowed");
-  }
-  try {
-    const decodedToken = await verifyIdToken(token);
-    if (decodedToken) {
-      // res.status(200).json({ message: "You are allowed !", decodedToken });
-      console.log(`decodedToken exist in Api `);
-    }
-  } catch (error: unknown) {
-    const FirebaseError = error as AuthError;
-    if (FirebaseError.code === AuthErrorCodes.ARGUMENT_ERROR) {
-      res.status(401).json({
-        error: "Invalid JWT token .You are not allowed",
-        message: FirebaseError.message,
+      res.status(405).json({
+        success: false,
+        error: {
+          notAllowMethodError,
+          paramError: paramError ? paramErrorMessage : null,
+        },
       });
-      throw new Error("Invalid JWT token .You are not allowed");
-    }
-    res.status(401).json({ FirebaseError });
-    throw new Error(`${FirebaseError.message}`);
+      break;
   }
 }

@@ -35,6 +35,7 @@ import useFCMNotification from "@/hooks/useFCMNotification";
 import { fetchMyPosts, fetchRecentPosts } from "@/lib/firestore/post";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { FirebaseError } from "firebase/app";
 import Spinner from "../components/Spinner";
 import { usePageContext } from "../context/PageContext";
@@ -49,7 +50,7 @@ const initialProps = {
   posts: [] as Post[],
   fcmToken: [""],
   profile: null as account["profile"] | null,
-  account: null,
+  account: null as UserRecord | null,
   hasMore: false,
 };
 type IndexProps = typeof initialProps;

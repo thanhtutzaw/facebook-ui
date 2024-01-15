@@ -1,5 +1,6 @@
 import Spinner from "@/components/Spinner";
 import { useAppContext } from "@/context/AppContext";
+import { useNewsFeedContext } from "@/context/NewsFeedContext";
 import { Post } from "@/types/interfaces";
 import { faGear, faSort } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,11 +9,10 @@ import { MutableRefObject, RefObject, useState } from "react";
 import PostList from "../Home/PostList";
 import SortDate from "./SortDate";
 import s from "./index.module.scss";
-import { useNewsFeedContext } from "@/context/NewsFeedContext";
 
 export function Content(props: {
   hasNextPage?: boolean;
-  error?: any;
+  error?: unknown;
   infoRef: RefObject<HTMLHeadElement>;
   headerRef: RefObject<HTMLHeadElement>;
   isSticky: MutableRefObject<boolean>;
@@ -35,7 +35,7 @@ export function Content(props: {
     setsortby,
     sortedPost,
   } = props;
-  const {  selectMode } = useAppContext();
+  const { selectMode } = useAppContext();
   const { deletePost } = useNewsFeedContext();
   const [toggleSort, setToggleSort] = useState(false);
   return (
@@ -115,7 +115,9 @@ export function Content(props: {
       {loading ? (
         tab === "profile" && <Spinner />
       ) : error ? (
-        <p className="error">Unexpected Error Occured ! {error.message}</p>
+        <p className="error">
+          Unexpected Error Occured ! {JSON.stringify(error)}
+        </p>
       ) : (
         <>
           <PostList

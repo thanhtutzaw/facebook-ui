@@ -1,3 +1,4 @@
+import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { FirebaseError, initializeApp } from "firebase/app";
 import { AuthErrorCodes } from "firebase/auth";
 import {
@@ -257,21 +258,23 @@ export function commentDateToJSON(data: Comment) {
     createdAt: createdAt?.toJSON() || 0,
   };
 }
-export function userToJSON<T>(obj: T): any {
-  if (Array.isArray(obj)) {
-    return obj.map((item) => userToJSON(item));
-  } else if (typeof obj === "object" && obj !== null) {
-    const modifiedObj = { ...obj };
-    for (const key in modifiedObj) {
-      if (Object.prototype.hasOwnProperty.call(modifiedObj, key)) {
-        modifiedObj[key] = userToJSON(modifiedObj[key]);
-      }
-    }
-    return modifiedObj;
-  } else if (obj === undefined) {
+export function userToJSON(obj: UserRecord | undefined): UserRecord | null {
+  if (!obj) {
     return null;
+  } else {
+    if (Array.isArray(obj)) {
+      // return obj.map((item) => userToJSON(item));
+    } else if (typeof obj === "object" && obj !== null) {
+      const modifiedObj = { ...obj };
+      for (const key in modifiedObj) {
+        if (Object.prototype.hasOwnProperty.call(modifiedObj, key)) {
+          // modifiedObj[key] = userToJSON(modifiedObj[key]);
+        }
+      }
+      // return modifiedObj;
+    }
+    return obj;
   }
-  return obj;
 }
 export async function getProfileByUID(uid: string | undefined) {
   if (!uid) {

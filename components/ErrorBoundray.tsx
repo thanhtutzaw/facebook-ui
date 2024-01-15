@@ -8,7 +8,7 @@ interface State {
   hasError: boolean;
 }
 class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
-  constructor(props: any) {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
 
     // Define a state variable to track whether is an error or not

@@ -5,7 +5,8 @@ import { acceptFriends } from "@/lib/firestore/friends";
 import { Comment, friends } from "@/types/interfaces";
 import { User } from "firebase/auth";
 import { NextApiRequest, NextApiResponse } from "next";
-import { checkCookies } from "./sendFCM";
+// import { checkCookies } from "./sendFCM";
+import { checkCookies, checkParam } from "../../util";
 type n = keyof typeof NotiAction;
 type TAction = { action: keyof typeof NotiAction };
 type TBody = {
@@ -49,7 +50,7 @@ export default async function handleTriggerNotiAction(
   res: NextApiResponse
 ) {
   const { action } = req.query;
-  await checkCookies(req.cookies, res);
+  await checkCookies({req,res});
   let success = false;
   console.log({ trigger_api: { query: req.query, body: req.body } });
   let data: {} | null | void | [] = {};
@@ -101,12 +102,15 @@ export default async function handleTriggerNotiAction(
               replyInput,
               currentUserProfile,
             };
-            const { paramError } = checkParam(
-              Object.keys({
-                ...params,
-                ...extraParams,
-              }) as (keyof TBody)[]
-            );
+            const requireParams = Object.keys({
+              ...params,
+              ...extraParams,
+            }) as (keyof TBody)[];
+            const { paramError } = checkParam({
+              requiredParamLists: requireParams,
+              res,
+              req,
+            });
             if (!paramError) {
               try {
                 data = await loveComment(params);
@@ -117,10 +121,14 @@ export default async function handleTriggerNotiAction(
               }
             }
           } else if (action === "accept_friend") {
+            const requiredParamLists = Object.keys({
+              uid,
+              friends,
+              currentUser,
+            });
+            checkParam({ requiredParamLists: requiredParamLists, req, res });
             if (!uid || !friends || !currentUser) {
-              throw new Error(
-                `Required parameters are missing for '${action}' action`
-              );
+              throw new Error(`Required parameters are missing`);
             } else {
               try {
                 data = await acceptFriends(uid, friends, currentUser);
@@ -142,11 +150,13 @@ export default async function handleTriggerNotiAction(
               currentUserProfile,
               commentId,
             };
-
-            const { paramError } = checkParam(
-              Object.keys(comment_reply_params) as (keyof TBody)[]
-            );
-
+            const { paramError } = checkParam({
+              requiredParamLists: Object.keys(
+                comment_reply_params
+              ) as (keyof TBody)[],
+              req,
+              res,
+            });
             if (!paramError) {
               try {
                 data = await handleReply(comment_reply_params);
@@ -192,27 +202,5 @@ export default async function handleTriggerNotiAction(
   function checkAction() {
     if (!NotiAction[action])
       res.status(400).json({ error: `Invalid Action! '${action}'` });
-  }
-  function checkParam(requireKeys: (keyof TBody)[]) {
-    const paramError = !requireKeys.every((key) =>
-      req.body.hasOwnProperty(key)
-    );
-    const required = requireKeys.filter(
-      (value) => !Object.keys(req.body).includes(value)
-    );
-    if (paramError) {
-      throwParamError(required);
-    }
-    return { paramError };
-  }
-  function throwParamError(required2: string[]) {
-    res.status(400).json({
-      error: `Required parameters (${required2.toString()}) are missing for '${action}' action`,
-    });
-    throw new Error(
-      `Required parameters ${
-        required2.length > 0 ? `(${required2.toString()})` : ""
-      } are missing for '${action}' action`
-    );
   }
 }

@@ -22,6 +22,7 @@ type CustomHookReturnType<Data> = {
   //   options?: FetchNextPageOptions | undefined
   // ) => Promise<InfiniteQueryObserverResult<Data | undefined, unknown>>;
 };
+// CustomHookReturnType<Data>
 function useReactQueryInfiniteScroll<Data>(
   // fetch: (pageParam?: any | null) => Promise<{ data: Data; hasMore: boolean } | any>,
   // fetch: (pageParam?: any | null) => any,
@@ -35,17 +36,17 @@ function useReactQueryInfiniteScroll<Data>(
   key: QueryKey,
   enabled = true,
   scrollParent = false
-): CustomHookReturnType<Data> {
+): Data {
   const { fetchNextPage, hasNextPage, isLoading, error, data } =
-    useInfiniteQuery<Data | any>({
+    useInfiniteQuery<Data | unknown >({
       queryKey: key,
       queryFn: async ({ pageParam }) => await fetch(pageParam),
       enabled: enabled,
       keepPreviousData: true,
-      getNextPageParam: (lastPage) =>
-        lastPage?.hasMore
-          ? lastPage.data![lastPage?.data?.length! - 1]
-          : undefined,
+      // getNextPageParam: (lastPage) =>
+      //   lastPage?.hasMore
+      //     ? lastPage.data![lastPage?.data?.length! - 1]
+      //     : undefined,
     });
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -71,7 +72,7 @@ function useReactQueryInfiniteScroll<Data>(
     isLoading,
     error,
     data,
-  };
+  } as Data;
 }
 
 export default useReactQueryInfiniteScroll;

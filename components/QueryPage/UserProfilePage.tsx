@@ -7,12 +7,12 @@ export default function UserProfilePage({
   queryPageData,
 }: {
   token: DecodedIdToken;
-  queryPageData: any;
+  queryPageData: unknown;
 }) {
   const router = useRouter();
 
   if (!router.query.user) return null;
-  const { profile, myPost, friendStatus, hasMore } = queryPageData;
+  const { profile, myPost, friendStatus, hasMore } = queryPageData as any;
   return (
     <UserProfile
       hasMore={hasMore}
