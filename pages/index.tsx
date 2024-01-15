@@ -154,7 +154,7 @@ export const getServerSideProps: GetServerSideProps<IndexProps> = async (
         }
       : null;
 
-    const currentUserData = userToJSON(currentAccount);
+    const currentUserAccount = userToJSON(currentAccount);
     // context.res.setHeader(
     //   "Cache-Control",
     //   "public, s-maxage=10, stale-while-revalidate=59"
@@ -167,7 +167,7 @@ export const getServerSideProps: GetServerSideProps<IndexProps> = async (
         acceptedFriends,
         fcmToken,
         profile,
-        account: currentUserData,
+        account: currentUserAccount,
       },
     };
   } catch (error: unknown) {

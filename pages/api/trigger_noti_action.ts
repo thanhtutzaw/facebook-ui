@@ -5,8 +5,7 @@ import { acceptFriends } from "@/lib/firestore/friends";
 import { Comment, friends } from "@/types/interfaces";
 import { User } from "firebase/auth";
 import { NextApiRequest, NextApiResponse } from "next";
-// import { checkCookies } from "./sendFCM";
-import { checkCookies, checkParam } from "../../util";
+import { checkCookies, checkParam } from "../../apiHelper";
 type n = keyof typeof NotiAction;
 type TAction = { action: keyof typeof NotiAction };
 type TBody = {
@@ -50,7 +49,7 @@ export default async function handleTriggerNotiAction(
   res: NextApiResponse
 ) {
   const { action } = req.query;
-  await checkCookies({req,res});
+  await checkCookies({ req, res });
   let success = false;
   console.log({ trigger_api: { query: req.query, body: req.body } });
   let data: {} | null | void | [] = {};

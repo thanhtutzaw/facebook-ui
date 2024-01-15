@@ -5,8 +5,8 @@ import {
   MulticastMessage,
 } from "firebase-admin/lib/messaging/messaging-api";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { checkCookies, checkParam } from "../../apiHelper";
 import { getFCMToken } from "../../lib/firebaseAdmin";
-import { checkCookies, checkParam } from "../../util";
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -66,21 +66,21 @@ export default async function handleFCM(
   const notiBadge = badge ?? "./badge.svg";
   // let token = req.cookies.token || req.headers.jwtToken || req.query.jwtToken;
   await checkCookies({ req, res });
-  const params = {
-    timestamp,
+  const requireParam = {
     recieptId,
-    messageBody,
-    message,
-    tag,
-    badge,
-    link,
-    actionPayload,
-    actions,
-    collapse_key,
-    image,
+    // timestamp,
+    // messageBody,
+    // message,
+    // tag,
+    // badge,
+    // link,
+    // actionPayload,
+    // actions,
+    // collapse_key,
+    // image,
   };
   const requireParamLists = Object.keys({
-    ...params,
+    ...requireParam,
   });
   const { error: paramErrorMessage, paramError } = checkParam({
     requiredParamLists: requireParamLists,

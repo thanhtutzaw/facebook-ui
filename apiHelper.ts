@@ -20,7 +20,11 @@ export function checkParam<T>({
   });
   let error = null;
   const throwParamError = (failedLists: (keyof T)[]) => {
-    error = `Required parameters (${failedLists.toString()}) are missing`;
+    error = `Required parameters are missing - ${
+      failedLists.length > 1
+        ? `${failedLists.slice(0, -1).join(" , ")} and ${failedLists.slice(-1)}`
+        : failedLists.join(" , ")
+    }`;
     res.status(400).json({
       error,
     });
@@ -38,22 +42,26 @@ export function checkParam<T>({
 export async function checkCookies({
   req,
   res,
-}: // cookies: NextApiRequest["cookies"],
-{
+}: {
   req: NextApiRequest;
   res: NextApiResponse;
 }) {
-  let token = req.cookies.token;
-
+  const cookies = req.cookies;
+  const token = cookies.token;
+  if (!cookies) {
+    res.status(401).json({ error: "Not Found Cookies .You are not allowed" });
+    throw new Error("Not Found Cookies .You are not allowed");
+  }
+  // console.log({ cookies });
   if (!token) {
-    res.status(401).json({ error: "You are not allowed" });
-    throw new Error("Not Found Cookies Token .You are not allowed");
+    res.status(401).json({ error: "You are not allowed . Token not exist" });
+    throw new Error("Not Found Token .You are not allowed . Token not exist");
   }
   try {
     const decodedToken = await verifyIdToken(token);
     if (decodedToken) {
       // res.status(200).json({ message: "You are allowed !", decodedToken });
-      console.log(`decodedToken exist in Api `);
+      console.log(`DecodedToken exist in API `);
     }
   } catch (error: unknown) {
     const FirebaseError = error as AuthError;
@@ -67,5 +75,4 @@ export async function checkCookies({
     res.status(401).json({ FirebaseError });
     throw new Error(`${FirebaseError.message}`);
   }
-  
 }

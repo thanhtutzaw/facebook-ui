@@ -258,20 +258,20 @@ export function commentDateToJSON(data: Comment) {
     createdAt: createdAt?.toJSON() || 0,
   };
 }
-export function userToJSON(obj: UserRecord | undefined): UserRecord | null {
+export function userToJSON(obj: any): any{
   if (!obj) {
     return null;
   } else {
     if (Array.isArray(obj)) {
-      // return obj.map((item) => userToJSON(item));
+      return obj.map((item) => userToJSON(item));
     } else if (typeof obj === "object" && obj !== null) {
       const modifiedObj = { ...obj };
       for (const key in modifiedObj) {
         if (Object.prototype.hasOwnProperty.call(modifiedObj, key)) {
-          // modifiedObj[key] = userToJSON(modifiedObj[key]);
+          modifiedObj[key] = userToJSON(modifiedObj[key]);
         }
       }
-      // return modifiedObj;
+      return modifiedObj;
     }
     return obj;
   }
