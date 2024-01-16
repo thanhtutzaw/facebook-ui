@@ -2,10 +2,10 @@ import { handleReply } from "@/components/Comment/Input";
 import { NotiAction } from "@/lib/NotiAction";
 import { loveComment } from "@/lib/firestore/comment";
 import { acceptFriends } from "@/lib/firestore/friends";
+import { checkCookies, checkParam } from "@/lib/utils";
 import { Comment, friends } from "@/types/interfaces";
 import { User } from "firebase/auth";
 import { NextApiRequest, NextApiResponse } from "next";
-import { checkCookies, checkParam } from "../../apiHelper";
 type n = keyof typeof NotiAction;
 type TAction = { action: keyof typeof NotiAction };
 type TBody = {

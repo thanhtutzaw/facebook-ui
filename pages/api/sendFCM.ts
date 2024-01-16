@@ -1,11 +1,11 @@
 import { NotiAction } from "@/lib/NotiAction";
+import { checkCookies, checkParam } from "@/lib/utils";
 import admin from "firebase-admin";
 import {
   BatchResponse,
   MulticastMessage,
 } from "firebase-admin/lib/messaging/messaging-api";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { checkCookies, checkParam } from "../../apiHelper";
 import { getFCMToken } from "../../lib/firebaseAdmin";
 if (!admin.apps.length) {
   admin.initializeApp({

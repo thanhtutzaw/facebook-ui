@@ -1,6 +1,7 @@
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { AuthError, AuthErrorCodes } from "firebase/auth";
 import { NextApiRequest, NextApiResponse } from "next";
-import { verifyIdToken } from "./lib/firebaseAdmin";
+import { verifyIdToken } from "./firebaseAdmin";
 
 export function checkParam<T>({
   requiredParamLists: requireKeys,
@@ -41,24 +42,25 @@ export function checkParam<T>({
 }
 export async function checkCookies({
   req,
-  res,
+  res, //   token,
 }: {
   req: NextApiRequest;
   res: NextApiResponse;
+  //   token?: string;
 }) {
   const cookies = req.cookies;
-  const token = cookies.token;
+  const firebaseToken = cookies.token;
   if (!cookies) {
     res.status(401).json({ error: "Not Found Cookies .You are not allowed" });
     throw new Error("Not Found Cookies .You are not allowed");
   }
-  // console.log({ cookies });
-  if (!token) {
-    res.status(401).json({ error: "You are not allowed . Token not exist" });
-    throw new Error("Not Found Token .You are not allowed . Token not exist");
-  }
+  //   if (!firebaseToken) {
+  //     res.status(401).json({ error: "You are not allowed . Token not exist" });
+  //     throw new Error("Not Found Token .You are not allowed . Token not exist");
+  //   }
+  let decodedToken: DecodedIdToken | null = null;
   try {
-    const decodedToken = await verifyIdToken(token);
+    decodedToken = await verifyIdToken(String(firebaseToken));
     if (decodedToken) {
       // res.status(200).json({ message: "You are allowed !", decodedToken });
       console.log(`DecodedToken exist in API `);
@@ -75,4 +77,5 @@ export async function checkCookies({
     res.status(401).json({ FirebaseError });
     throw new Error(`${FirebaseError.message}`);
   }
+  return { token: decodedToken };
 }
