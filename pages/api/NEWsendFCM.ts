@@ -148,14 +148,14 @@ export default async function handleFCM(
       });
       break;
     case "GET":
-      res.status(405).json({
-        success: true,
-        message: `Method '${req.method}' Not Allowed`,
-        body: req.body ? req.body : null,
-      });
+      // res.status(405).json({
+      //   success: true,
+      //   message: `Method '${req.method}' Not Allowed`,
+      //   body: req.body ? req.body : null,
+      // });
       break;
     default:
-      res.status(405).json({ error: notAllowMethodError });
+      // res.status(405).json({ error: notAllowMethodError });
       break;
   }
 }

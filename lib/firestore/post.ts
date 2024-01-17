@@ -4,6 +4,7 @@ import { User } from "firebase/auth";
 import {
   DocumentData,
   DocumentReference,
+  Query,
   Timestamp,
   deleteDoc,
   doc,
@@ -155,30 +156,33 @@ export async function fetchMyPosts(
   isBlocked: boolean,
   token: DecodedIdToken
 ) {
-  let mypostQuery;
-  if (isFriend) {
-    mypostQuery = DescQuery(
-      getPath("posts", { uid: String(uid) }),
-      MYPOST_LIMIT + 1,
+  let mypostQuery: Query<DocumentData> | null = null;
+  const isAdmin = uid === token.uid;
+  const LIMIT = MYPOST_LIMIT + 1;
+  const postPath = getPath("posts", { uid: String(uid) });
+  const visibilityCondition = {
+    isFriend: DescQuery(
+      postPath,
+      LIMIT,
       where("visibility", "in", ["Friend", "Public"])
-    );
-  } else if (uid === token.uid) {
-    mypostQuery = query(
-      getPath("posts", { uid: String(uid) }),
-      orderBy("createdAt", "desc"),
-      limit(MYPOST_LIMIT + 1)
-    );
+    ),
+    block: query(postPath, limit(0)),
+    isAdmin: query(postPath, orderBy("createdAt", "desc"), limit(LIMIT)),
+    fallback: DescQuery(postPath, LIMIT, where("visibility", "==", "Public")),
+  };
+  if (isFriend) {
+    mypostQuery = visibilityCondition["isFriend"];
+  } else if (isAdmin) {
+    mypostQuery = visibilityCondition["isAdmin"];
+  } else if (isBlocked) {
+    mypostQuery = visibilityCondition["block"];
   } else {
-    mypostQuery = DescQuery(
-      getPath("posts", { uid: String(uid) }),
-      MYPOST_LIMIT + 1,
-      where("visibility", "==", "Public")
-    );
+    mypostQuery = visibilityCondition["fallback"];
   }
   let hasMore = false;
-  const myPost = isBlocked
-    ? null
-    : await getPostWithMoreInfo(token.uid, mypostQuery);
+  const myPost = mypostQuery
+    ? await getPostWithMoreInfo(token.uid, mypostQuery)
+    : [];
   // myPost?.shift();
   hasMore = (myPost?.length ?? 0) > MYPOST_LIMIT;
   if (hasMore) {
@@ -238,6 +242,7 @@ export async function updatePost(
     await updateDoc(Ref, data);
   } catch (error: unknown) {
     alert("Updating Post Failed !" + error);
+    throw new Error(`${error}`);
   }
 }
 export async function deletePost(data: {
@@ -344,7 +349,7 @@ export async function reactPost({
   await batch.commit();
   console.log("liked post");
   const { authorId, id } = post;
-  if (uid === authorId) return;
+  // if (uid === authorId) return;
   await sendAppNoti({
     uid,
     receiptId: authorId,

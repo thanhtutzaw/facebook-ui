@@ -59,6 +59,7 @@ export default async function handleFCM(
     collapse_key,
     image,
   } = req.body;
+  console.log({ method: req.method, status: req.statusCode });
   const notAllowMethodError = "Method Not Allowed";
   const NotiMessageBody = messageBody
     ? `${message} : ${messageBody}`
@@ -87,120 +88,115 @@ export default async function handleFCM(
     req,
     res,
   });
-  switch (req.method) {
-    case "POST":
-      let response: BatchResponse | null = null;
-      let registrationTokens: string[];
-      try {
-        registrationTokens = await getFCMToken(String(recieptId));
-        if (registrationTokens) {
-          if (!paramError) {
-            const messageNoti: MulticastMessage = {
-              // topic: collapse_key ?? "",
-              // collapse_key: collapse_key ?? "",
+  if (req.method === "POST") {
+    let response: BatchResponse | null = null;
+    let registrationTokens: string[];
+    try {
+      registrationTokens = await getFCMToken(String(recieptId));
+      if (registrationTokens) {
+        if (!paramError) {
+          const messageNoti: MulticastMessage = {
+            // topic: collapse_key ?? "",
+            // collapse_key: collapse_key ?? "",
 
-              tokens: registrationTokens,
+            tokens: registrationTokens,
+            notification: {
+              title,
+              body: NotiMessageBody,
+              ...(image !== "" ? { imageUrl: image } : {}),
+            },
+            webpush: {
+              headers: {
+                Urgency: "high",
+                image: icon ?? "",
+              },
               notification: {
                 title,
+                timestamp,
                 body: NotiMessageBody,
-                ...(image !== "" ? { imageUrl: image } : {}),
-              },
-              webpush: {
-                headers: {
-                  Urgency: "high",
-                  image: icon ?? "",
-                },
-                notification: {
-                  title,
-                  timestamp,
-                  body: NotiMessageBody,
-                  ...(image !== "" ? { image: image } : {}),
-                  icon,
-                  requireInteraction,
-                  badge: notiBadge,
-                  tag: tag ?? "",
-                  renotify: false,
-                  actions: actions ? actions : [],
-                  data: {
-                    actionPayload:
-                      actions && actionPayload ? actionPayload : {},
-                  },
-                },
-                fcmOptions: {
-                  link,
+                ...(image !== "" ? { image: image } : {}),
+                icon,
+                requireInteraction,
+                badge: notiBadge,
+                tag: tag ?? "",
+                renotify: false,
+                actions: actions ? actions : [],
+                data: {
+                  actionPayload: actions && actionPayload ? actionPayload : {},
                 },
               },
-              android: {
-                collapseKey: collapse_key ?? "",
-                ttl: 3600000,
-                notification: {
-                  bodyLocKey: "STOCK_NOTIFICATION_BODY",
-                  bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+              fcmOptions: {
+                link,
+              },
+            },
+            android: {
+              collapseKey: collapse_key ?? "",
+              ttl: 3600000,
+              notification: {
+                bodyLocKey: "STOCK_NOTIFICATION_BODY",
+                bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+              },
+            },
+            apns: {
+              payload: {
+                aps: {
+                  threadId: collapse_key ?? "",
                 },
               },
-              apns: {
-                payload: {
-                  aps: {
-                    threadId: collapse_key ?? "",
-                  },
-                },
-              },
-            };
-            try {
-              response = await admin
-                .messaging()
-                .sendEachForMulticast(messageNoti);
-              console.log(
-                `Successfully sent FCM - Success: ${response.successCount} , Fail: ${response.failureCount}`
-              );
-            } catch (error) {
-              res.status(500).json({
-                success: false,
-                error: `FCM ${error}`,
-                message: `Failed to sent FCM - Success: ${
-                  response ? response.successCount : 0
-                } , Fail: ${response ? response.failureCount : 0}`,
-              });
-            }
+            },
+          };
+          try {
+            response = await admin
+              .messaging()
+              .sendEachForMulticast(messageNoti);
+            console.log(
+              `Successfully sent FCM - Success: ${response.successCount} , Fail: ${response.failureCount}`
+            );
+          } catch (error) {
+            res.status(500).json({
+              success: false,
+              error: `FCM ${error}`,
+              message: `Failed to sent FCM - Success: ${
+                response ? response.successCount : 0
+              } , Fail: ${response ? response.failureCount : 0}`,
+            });
           }
         }
-      } catch (error) {
-        res
-          .status(500)
-          .json({ error: `registrationTokens ${error}`, success: false });
       }
-      // catch (error) {
-      //   res.status(500).json({
-      //     error: "Failed to send FCM Notifications :" + error,
-      //     success: false,
-      //   });
-      // }
-      res.status(200).json({
-        success: true,
-        data: NotiMessageBody,
-        title,
-        body: req.body ? req.body : null,
-        fcmResponse: response,
-        ...{ error: paramError ? paramErrorMessage : null },
-      });
-      break;
-    case "GET":
-      res.status(200).json({
-        success: true,
-        title,
-        data: NotiMessageBody,
-        body: req.body ? req.body : null,
-        ...{ error: paramError ? paramErrorMessage : null },
-      });
-      break;
-    default:
-      res.status(405).json({
-        success: false,
-        error: {
-          notAllowMethodError,
-          paramError: paramError ? paramErrorMessage : null,
-        },
-      });
-      break;
+    } catch (error) {
+      res
+        .status(500)
+        .json({ error: `registrationTokens ${error}`, success: false });
+    }
+    // catch (error) {
+    //   res.status(500).json({
+    //     error: "Failed to send FCM Notifications :" + error,
+    //     success: false,
+    //   });
+    // }
+    res.status(200).json({
+      success: true,
+      data: NotiMessageBody,
+      title,
+      body: req.body ? req.body : null,
+      fcmResponse: response,
+      ...{ error: paramError ? paramErrorMessage : null },
+    });
+  } else if (req.method === "GET") {
+    res.status(200).json({
+      success: true,
+      title,
+      data: NotiMessageBody,
+      body: req.body ? req.body : null,
+      ...{ error: paramError ? paramErrorMessage : null },
+    });
+  } else {
+    res.status(405).json({
+      success: false,
+      error: {
+        notAllowMethodError,
+        paramError: paramError ? paramErrorMessage : null,
+      },
+    });
   }
 }

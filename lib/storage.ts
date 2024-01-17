@@ -26,9 +26,10 @@ export async function uploadMedia(files: File[]) {
           storageRef,
           type !== "video/mp4" ? `images/${name}` : `videos/${name}`
         );
-        const uploadPromise: Promise<Media | null> = uploadBytes(fileRef, file)
+        let fileData = null;
+        const uploadPromise: Promise<Media> = uploadBytes(fileRef, file)
           .then(async (snapshot) => {
-            const fileData = {
+            fileData = {
               name,
               url: await getDownloadURL(snapshot.ref),
               type,
@@ -36,13 +37,16 @@ export async function uploadMedia(files: File[]) {
             return fileData;
           })
           .catch((error) => {
-            console.log("Error Uploading File:", error);
-            return null;
+            console.error("Error Uploading File:", error);
+            throw new Error(`Error Uploading File: ${error}`);
           });
-        console.log(uploadPromise);
+        // console.log(uploadPromise);
         promises.push(uploadPromise);
       } else {
         alert(
+          `${type} is Invalid Type .\nJPEG , PNG , GIF and MP4 are only Allowed !`
+        );
+        throw new Error(
           `${type} is Invalid Type .\nJPEG , PNG , GIF and MP4 are only Allowed !`
         );
       }
@@ -83,6 +87,7 @@ export async function deleteMedia(deleteFiles: Media[]) {
   } catch (error) {
     console.log(error);
     alert("Uh-oh, Deleting Media Failed !");
+    throw new Error(`${error}`);
   }
 
   // await Promise.all(Deletepromises);

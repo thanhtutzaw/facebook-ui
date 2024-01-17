@@ -1,4 +1,3 @@
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import { FirebaseError, initializeApp } from "firebase/app";
 import { AuthErrorCodes } from "firebase/auth";
 import {
@@ -243,7 +242,6 @@ export async function commentToJSON(
   //   //   createdAt: createdAt?.toJSON() || 0,
   //   // };
   //   commentDateToJSON(data as Comment);
-  // } else {
   //   return {
   //     ...commentDateToJSON(data as Comment),
   //     updatedAt: updatedAt?.toJSON() || 0,
@@ -258,7 +256,7 @@ export function commentDateToJSON(data: Comment) {
     createdAt: createdAt?.toJSON() || 0,
   };
 }
-export function userToJSON(obj: any): any{
+export function userToJSON(obj: any): any {
   if (!obj) {
     return null;
   } else {

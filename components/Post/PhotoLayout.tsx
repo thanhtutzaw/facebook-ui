@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { RefObject, memo } from "react";
 import { usePageContext } from "../../context/PageContext";
-import { Post } from "../../types/interfaces";
+import { Media, Post } from "../../types/interfaces";
 import ImageWithFallback from "../ImageWithFallback";
 import s from "./index.module.scss";
 
@@ -35,25 +35,9 @@ function PhotoLayout(props: {
   } = props;
   const files = form ? form.files : post ? post.media : null;
   const { setsingleImageModal, auth } = usePageContext();
-  
-  // useEffect(() => {
-  //   window.onpopstate = () => {
-  //     // history.pushState(null, document.title, location.href);
-  //   };
-  // }, [viewRef]);
 
-  // useEffect(() => {
   //   window.onpopstate = () => {
   //     history.pushState(null, document.title, location.hash);
-  //     // if (!viewRef.current?.open) return;
-  //     // viewRef.current.close();
-  //     // if (exitWithoutSaving) {
-  //     //   // confirmModalRef.current?.close();
-  //     //   // confirmModalRef?.current.showModal();
-  //     // } else {
-  //     // }
-  //   };
-  // }, [viewRef]);
   const router = useRouter();
   if (!preview) {
     return (
@@ -64,48 +48,52 @@ function PhotoLayout(props: {
           style={{ marginBottom: "initial" }}
         >
           {files &&
-            files.map((file:any, fileIndex: number) => (
-              <div
-                onClick={() => {
-                  if (file.type === "video/mp4") return;
-                  setsingleImageModal({
-                    src: file.url ? file.url : URL.createObjectURL(file),
-                    name: file.name,
-                  });
-                }}
-                key={fileIndex}
-                id={fileIndex.toString()}
-              >
-                {file.type === "video/mp4" ? (
-                  <video controls src={URL.createObjectURL(file)} />
-                ) : (
-                  <Image
-                    id={`${file.url ? `media-${file.name}` : ""}`}
-                    priority={false}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    width={700}
-                    height={394}
-                    alt={file.name}
-                    src={
-                      file.url ? file.url : URL.createObjectURL(file)
-                      // Array.isArray(files) &&
-                      // files.every((file) => file instanceof File)
-                      //   ? URL.createObjectURL(file)
-                      //   : file.url
-                    }
-                    onError={(e) => {
-                      console.log("Image Error in PhotoLayout");
-                    }}
-                    style={{ objectFit: "contain", height: "auto" }}
-                  />
-                )}
-                {edit && post?.authorId == auth?.currentUser?.uid && (
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      if (file.url) {
-                        const media = files as Post["media"];
+            files.map((file: Media | File, fileIndex: number) => {
+              function isMedia(file: Media | File): file is Media {
+                return (file as Media).url !== undefined;
+              }
+              return (
+                <div
+                  onClick={() => {
+                    if (file.type === "video/mp4") return;
+                    setsingleImageModal({
+                      src: isMedia(file) ? file.url : URL.createObjectURL(file),
+                      name: isMedia(file) && file.name,
+                    });
+                  }}
+                  key={fileIndex}
+                  id={fileIndex.toString()}
+                >
+                  {file.type === "video/mp4" ? (
+                    <video
+                      controls
+                      src={!isMedia(file) ? URL.createObjectURL(file) : ""}
+                    />
+                  ) : (
+                    <Image
+                      id={`${isMedia(file) ? `media-${file.name}` : ""}`}
+                      priority={false}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      width={700}
+                      height={394}
+                      alt={file.name}
+                      src={
+                        isMedia(file) ? file.url : URL.createObjectURL(file)
+                        // files.every((file) => file instanceof File)
+                        //   ? URL.createObjectURL(file)
+                        //   : file.url
+                      }
+                      onError={(e) => {
+                        console.log("Image Error in PhotoLayout");
+                      }}
+                      style={{ objectFit: "contain", height: "auto" }}
+                    />
+                  )}
+                  {edit && post?.authorId == auth?.currentUser?.uid && (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         const data = media?.filter(
                           (_, index) => index === fileIndex
                         );
@@ -118,72 +106,78 @@ function PhotoLayout(props: {
                           ...(deleteFile ?? []),
                           ...(data ?? []),
                         ]);
-                      }
-                      updateForm?.({
-                        files: [
-                          ...files.slice(0, fileIndex),
-                          ...files.slice(fileIndex + 1),
-                        ],
-                      });
-                      // setFiles(files.filter((_, index) => index !== i));
-                      // setFiles(files.splice(i, 1));
-                      if (fileRef && fileRef.current) {
-                        fileRef.current.value = "";
-                      }
-                      setsingleImageModal({ src: "", name: "" });
-                    }}
-                    title="Remove media"
-                    aria-label="Remove media"
-                    tabIndex={-1}
-                    className={s.deletePhoto}
-                  >
-                    <FontAwesomeIcon icon={faClose} />
-                  </button>
-                )}
-                {router.pathname === "/addPost" && (
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      if (file.url) {
-                        const media = files as Post["media"];
-                        const data = media?.filter(
-                          (_, index) => index === fileIndex
-                        );
-                        // setdeleteFile([
-                        //   ...deleteFile! ?? [],
-                        //   media?.filter((_, index) => index === i)
-                        // ]);
-                        // setdeleteFile([...deleteFile??[], data]);
-                        setdeleteFile?.([
-                          ...(deleteFile ?? []),
-                          ...(data ?? []),
-                        ]);
-                      }
-                      delete files[fileIndex];
-                      updateForm?.({
-                        files: [
-                          ...files.slice(0, fileIndex),
-                          ...files.slice(fileIndex + 1),
-                        ],
-                      });
-                      // setFiles(files.filter((_, index) => index !== i));
-                      // setFiles(files.splice(i, 1));
-                      if (fileRef && fileRef.current) {
-                        fileRef.current.value = "";
-                      }
-                      setsingleImageModal({ src: "", name: "" });
-                    }}
-                    title="Remove media"
-                    aria-label="Remove media"
-                    tabIndex={-1}
-                    className={s.deletePhoto}
-                  >
-                    <FontAwesomeIcon icon={faClose} />
-                  </button>
-                )}
-              </div>
-            ))}
+                        updateForm?.({
+                          files: [
+                            ...files.slice(0, fileIndex),
+                            ...files.slice(fileIndex + 1),
+                          ],
+                        });
+                        // setFiles(files.filter((_, index) => index !== i));
+                        // setFiles(files.splice(i, 1));
+                        if (fileRef && fileRef.current) {
+                          fileRef.current.value = "";
+                        }
+                        setsingleImageModal({ src: "", name: "" });
+                      }}
+                      title="Remove media"
+                      aria-label="Remove media"
+                      tabIndex={-1}
+                      className={s.deletePhoto}
+                    >
+                      <FontAwesomeIcon icon={faClose} />
+                    </button>
+                  )}
+                  {router.pathname === "/addPost" && (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (isMedia(file) && file.url) {
+                          const media = files as Post["media"];
+                          const data = media?.filter(
+                            (_, index) => index === fileIndex
+                          );
+                          // setdeleteFile([
+                          //   ...deleteFile! ?? [],
+                          //   media?.filter((_, index) => index === i)
+                          // ]);
+                          // setdeleteFile([...deleteFile??[], data]);
+                          setdeleteFile?.([
+                            ...(deleteFile ?? []),
+                            ...(data ?? []),
+                          ]);
+                        }
+                        delete files[fileIndex];
+                        updateForm?.({
+                          files: [
+                            ...files.slice(0, fileIndex),
+                            ...files.slice(fileIndex + 1),
+                          ],
+                        });
+                        // setFiles(files.filter((_, index) => index !== i));
+                        // setFiles(files.splice(i, 1));
+                        if (fileRef && fileRef.current) {
+                          fileRef.current.value = "";
+                        }
+                        setsingleImageModal({ src: "", name: "" });
+                      }}
+                      title="Remove media"
+                      aria-label="Remove media"
+                      tabIndex={-1}
+                      className={s.deletePhoto}
+                    >
+                      <FontAwesomeIcon icon={faClose} />
+                    </button>
+                  )}
+                </div>
+              );
+              // function newFunction(file:File|Media):file is File {
+              //   if (file instanceof File) {
+              //     return file;
+              //   }
+              //   return file;
+              // }
+            })}
         </div>
       </>
     );
