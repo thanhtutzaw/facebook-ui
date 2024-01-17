@@ -1,6 +1,7 @@
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { AuthError, AuthErrorCodes } from "firebase/auth";
 import { NextApiRequest, NextApiResponse } from "next";
+import { ResponseErrorJSON } from "utils";
 import { verifyIdToken } from "./firebaseAdmin";
 
 export function checkParam<T>({
@@ -42,39 +43,36 @@ export function checkParam<T>({
 }
 export async function checkCookies({
   req,
-  res, //   token,
+  res,
 }: {
   req: NextApiRequest;
   res: NextApiResponse;
-  //   token?: string;
 }) {
   const cookies = req.cookies;
   const firebaseToken = cookies.token;
   if (!cookies) {
-    res.status(401).json({ error: "Not Found Cookies .You are not allowed" });
-    throw new Error("Not Found Cookies .You are not allowed");
+    ResponseErrorJSON(res, "Not Found Cookies . You are not allowed");
+    throw new Error("Not Found Cookies . You are not allowed");
   }
-  //   if (!firebaseToken) {
-  //     res.status(401).json({ error: "You are not allowed . Token not exist" });
-  //     throw new Error("Not Found Token .You are not allowed . Token not exist");
-  //   }
   let decodedToken: DecodedIdToken | null = null;
   try {
     decodedToken = await verifyIdToken(String(firebaseToken));
     if (decodedToken) {
-      // res.status(200).json({ message: "You are allowed !", decodedToken });
-      console.log(`DecodedToken exist in API `);
+      console.log(`DecodedToken exist in API`);
     }
-  } catch (error: unknown) {
+  } catch (error) {
     const FirebaseError = error as AuthError;
     if (FirebaseError.code === AuthErrorCodes.ARGUMENT_ERROR) {
-      res.status(401).json({
-        error: "Invalid JWT token .You are not allowed",
-        message: FirebaseError.message,
-      });
-      throw new Error("Invalid JWT token .You are not allowed");
+      const error = {
+        message: "Invalid JWT token . You are not allowed",
+        FirebaseError,
+      };
+      ResponseErrorJSON(res, error);
+      throw new Error(
+        `"Invalid JWT token . You are not allowed" \n FirebaseError: ${FirebaseError.message}`
+      );
     }
-    res.status(401).json({ FirebaseError });
+    ResponseErrorJSON(res, FirebaseError);
     throw new Error(`${FirebaseError.message}`);
   }
   return { token: decodedToken };
