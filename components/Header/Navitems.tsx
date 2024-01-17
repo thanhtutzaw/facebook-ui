@@ -1,93 +1,27 @@
-import useQueryFn from "@/hooks/useQueryFn";
-import { useRouter } from "next/router";
 import React, { HTMLProps, ReactElement } from "react";
-import { useAppContext } from "../../context/AppContext";
 import styles from "../../styles/Home.module.scss";
 import { Tabs } from "../../types/interfaces";
 
-export default function Navitems(props: {
-  currentNav: Tabs;
-  setCurrentNav: Function;
-  active: Tabs;
-  setActiveNav: Function;
-  setActive: Function;
+export default function Navitems({
+  currentNav,
+  name,
+  children,
+  ...rest
+}: {
   name: string;
-  index: number;
-  children: ReactElement[] | ReactElement;
-}) {
-  const {
-    children,
-    currentNav,
-    setCurrentNav,
-    active,
-    setActive,
-    setActiveNav,
-    name,
-    index,
-  } = props;
-  const { queryFn } = useQueryFn();
-  const {  setUnReadNotiCount } = useAppContext();
+  currentNav: Tabs;
+  children: ReactElement[] | ReactElement | Element;
+} & HTMLProps<HTMLDivElement>) {
+  // const { children, currentNav, name, rest } = props;
 
-  const router = useRouter();
-  const changeTab = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    // if (TabName === "home" || TabName === "/") {
-    //   headerContainerRef &&
-    //     headerContainerRef.current?.setAttribute("data-hide", "false");
-    // }
-    const tabs = document.getElementById("tabs")!;
-    const tab = document.getElementById(TabName)!;
-    setCurrentNav?.(TabName);
-    setActive?.(TabName);
-    window.location.hash = TabName === "/" ? "#home" : `#${TabName}`;
-    if (TabName === active) {
-      tab.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-      if (tab.scrollTop >= 60) return;
-      if (active === "/") {
-        // console.log("refreshing new data in Newsfeed");
-        router.replace("/", undefined, { scroll: false });
-      } else if (active === "friends") {
-        router.replace("/#friends", undefined, { scroll: false });
-      } else if (TabName === "notifications") {
-        setUnReadNotiCount(0);
-        console.log("reseting Noti Count");
-        queryFn.invalidate("noti");
-        queryFn.refetchQueries("noti");
-      }
-      return;
-    }
-    tabs.scrollTo({
-      left: index * tabs.clientWidth,
-      behavior: "smooth",
-    });
-  };
   const TabName = name.toLowerCase() as Tabs;
   const activeClass = currentNav === TabName ? styles.active : "";
-  // const title: { [key in Tabs]: string } = {
-  //   home: iconTitle,
-  //   "/": iconTitle,
-  //   friends: iconTitle,
-  //   watch: iconTitle,
-  //   profile: iconTitle,
-  //   menu: iconTitle,
-  //   notifications: `${
-  //     (notiCount ?? 0) > 0 ? `${iconTitle} (${notiCount})` : iconTitle
-  //   }`,
-  // };
-
   return (
-    <div
-      onClick={changeTab}
-      className={`${styles.navItem} relative ${activeClass}  `}
-    >
-      {/* <Y   iconTitle={iconTitle} TabIcon={TabIcon}  /> */}
+    <div {...rest} className={`${styles.navItem} relative ${activeClass}  `}>
       {React.Children.map(children, (child) => {
+        if (!child) return <></>;
         if (React.isValidElement(child)) {
-          const ChildClone = React.cloneElement(child, {
-            // ...childProps,
-          });
+          const ChildClone = React.cloneElement(child, {});
           return ChildClone;
         }
       })}
@@ -125,9 +59,7 @@ export function NavItem({
       >
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
-            const ChildClone = React.cloneElement(child, {
-              // ...childProps,
-            });
+            const ChildClone = React.cloneElement(child, {});
             return ChildClone;
           }
         })}
@@ -153,7 +85,7 @@ function BadgeItem({ count }: { count: number | string | undefined }) {
     </span>
   );
 }
-Navitems.Container = NavItem;
+Navitems.Item = NavItem;
 Navitems.Icon = NavIcon;
 Navitems.Badge = NavBadge;
 Navitems.BadgeItem = BadgeItem;

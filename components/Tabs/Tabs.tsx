@@ -1,12 +1,5 @@
-import { useAppContext } from "@/context/AppContext";
 import { useActiveTab } from "@/hooks/useActiveTab";
-import {
-  ElementType,
-  MouseEvent,
-  memo,
-  useEffect,
-  useState
-} from "react";
+import { ElementType, MouseEvent, memo, useEffect, useState } from "react";
 import { usePageContext } from "../../context/PageContext";
 import styles from "../../styles/Home.module.scss";
 import Friends from "./Sections/Friends/Friends";
@@ -16,8 +9,6 @@ import Notifications from "./Sections/Notifications/Notifications";
 import Profile from "./Sections/Profile";
 import Watch from "./Sections/Watch";
 import { TabHeader } from "./TabHeader";
-import { Post } from "@/types/interfaces";
-import { useNewsFeedContext } from "@/context/NewsFeedContext";
 // const Friends = dynamic(() => import("./Sections/Friends/Friends"));
 // const Profile = dynamic(() => import("./Sections/Profile/index"), {
 //   ssr: false,
@@ -31,9 +22,9 @@ import { useNewsFeedContext } from "@/context/NewsFeedContext";
 function Tabs() {
   const [canDrag, setcanDrag] = useState(false);
   // const { newsFeedPost, deletePost } = useNewsFeedContext();
+  // const { headerContainerRef } = useAppContext();
   const [pos, setpos] = useState({ top: 0, left: 0, x: 0, y: 0 });
   const { indicatorRef, setpreventClick } = usePageContext();
-  const { headerContainerRef } = useAppContext();
   const { active } = useActiveTab();
   useEffect(() => {
     if (active) {
@@ -109,19 +100,13 @@ function Tabs() {
       setpreventClick?.(false);
     }
   }
-  const headerContainer = headerContainerRef && headerContainerRef?.current;
-  const hideHeader = () => {
-    if (!headerContainer) return;
-    headerContainer.setAttribute("data-hide", "true");
-  };
-  const showHeader = () => {
-    if (!headerContainer) return;
-    headerContainer.setAttribute("data-hide", "false");
-  };
   return (
     <div
       id="tabs"
-      className={styles.content}
+      className={`${styles.content}`}
+      //  ${
+      //   !canDrag ? styles.snap : styles.disablesnap
+      // }
       onMouseDown={dragStart}
       onMouseUp={dragStop}
       onMouseMove={dragging}
@@ -130,24 +115,6 @@ function Tabs() {
         const scroll = target.scrollLeft;
         const indicator = indicatorRef?.current!;
         indicator.style.transform = `translateX(${scroll / 6}px)`;
-        // console.log(target.scrollLeft >= target.clientWidth / 2);
-        // const isHide = headerContainer?.getAttribute("data-hide");
-        // const homeVisible = target.scrollLeft <= target.clientWidth / 2;
-        // const otherTab = target.scrollLeft >= target.clientWidth;
-        // const scrollToOtherTab = target.scrollLeft >= target.clientWidth / 2;
-        // let fromOtherTab = false;
-        // console.log({ homeVisible });
-
-        // if hide or notHide hideHeader and do not run showHeader
-        // if (homeVisible) {
-        //   // if (isHide) return;
-        //   showHeader(); // how to write if hide just do nothing but if not hide show it .
-        // } else if (scrollToOtherTab) {
-        //   if (otherTab && isHide) return;
-        //   console.error("header hided");
-        //   fromOtherTab = true;
-        //   hideHeader();
-        // }
       }}
     >
       <Home tabIndex={active === "/" ? 0 : -1} />

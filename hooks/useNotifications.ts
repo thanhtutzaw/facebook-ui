@@ -17,7 +17,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
 import { useActiveTab } from "./useActiveTab";
 import useQueryFn from "./useQueryFn";
 export default function useNotifications({
@@ -138,19 +138,23 @@ export default function useNotifications({
       if (unsubscribeNotifications) unsubscribeNotifications();
     };
   }, [UnReadNotiCount, currentUid, setUnReadNotiCount]);
-  function updateReadNoti(noti: Noti) {
-    const ref = doc(
-      db,
-      `${getCollectionPath.notifications({ uid: currentUid })}/${noti.id}`
-    );
-    const { message, ...rest } = noti;
-    const readedData = {
-      ...rest,
-      hasRead: true,
-    };
-    queryFn.invalidate("noti");
-    updateDoc(ref, readedData);
-  }
+  const updateReadNoti = useCallback(
+    (noti: Noti) => {
+      const ref = doc(
+        db,
+        `${getCollectionPath.notifications({ uid: currentUid })}/${noti.id}`
+      );
+      const { message, ...rest } = noti;
+      const readedData = {
+        ...rest,
+        hasRead: true,
+      };
+      queryFn.invalidate("noti");
+      updateDoc(ref, readedData);
+    },
+    [currentUid, queryFn]
+  );
+  
   return {
     isLoading,
     hasNextPage,

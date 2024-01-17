@@ -1,4 +1,12 @@
 @import "../styles/mixins";
+// .snap {
+//   scroll-snap-type: x mandatory !important;
+//   scroll-behavior: smooth !important;
+// }
+// .disablesnap {
+//   scroll-snap-type: unset !important;
+//   scroll-behavior: unset !important;
+// }
 .headerContainer {
   transform: translateY(0px);
   // height: 120px;
@@ -23,12 +31,10 @@
   }
   &[data-hide="false"] {
     transform: translateY(0px);
-    & + .content > div:first-child {
-      // margin-top: 60px;
-      // margin-top: 0px;
-      // transform: translateY(0);
-      // transition: margin 0.18s ease;
-    }
+    // & + .content > div:first-child {
+    // transform: translateY(0);
+    // transition: margin 0.18s ease;
+    // }
   }
   header {
     max-width: var(--main-width);
@@ -68,18 +74,11 @@
   align-items: center;
   height: 60px;
   background-color: white;
-  // .logo {
-  //   color: var(--blue-origin);
-  //   font-weight: bold;
-
-  //   margin-left: 0.7rem;
-  // }
 }
 
 .nav {
   -webkit-tap-highlight-color: transparent;
   scroll-snap-align: start;
-  // overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -283,10 +282,12 @@
   background-color: #dadada;
   display: flex;
   scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
   height: calc(100dvh - 60px);
   overflow-x: scroll;
-  scroll-behavior: smooth;
   transition: height 0s;
+  border: 0;
+
   & > div:first-child {
     transition: padding 0.18s ease;
     padding-top: 60px;
@@ -317,7 +318,7 @@
     // }
   }
 }
-// .headerContainer[data-hide="false"] main.content {
+// .headerContainer[data-hide="false"] main {
 //   background-color: red;
 // }
 .acitveTab {

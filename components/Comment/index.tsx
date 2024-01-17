@@ -14,7 +14,7 @@ export default function Comment(
   const {
     parentId,
     nested = false,
-    hasMore,
+    hasMoreComment: hasMore,
     commentEnd,
     comments,
     children,

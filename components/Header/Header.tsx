@@ -1,4 +1,6 @@
+import { useNewsFeedContext } from "@/context/NewsFeedContext";
 import { useActiveTab } from "@/hooks/useActiveTab";
+import useQueryFn from "@/hooks/useQueryFn";
 import {
   faBars,
   faBell,
@@ -14,11 +16,12 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import router from "next/router";
 import {
+  MouseEventHandler,
   memo,
   useCallback,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { useAppContext } from "../../context/AppContext";
 import { usePageContext } from "../../context/PageContext";
@@ -26,7 +29,6 @@ import s from "../../styles/Home.module.scss";
 import { Tabs } from "../../types/interfaces";
 import Navitems from "./Navitems";
 import SelectModal from "./SelectModal";
-import { useNewsFeedContext } from "@/context/NewsFeedContext";
 const Logo = () => {
   return (
     <div className={`snap-center flex flex-1 items-center h-[60px] bg-white`}>
@@ -50,14 +52,20 @@ const navLists = [
   { name: "Menu", icon: <FontAwesomeIcon icon={faBars} /> },
 ];
 
-function Header(props: { tabIndex: number;}) {
+function Header(props: { tabIndex: number }) {
   const { tabIndex } = props;
-  const {deletePost} = useNewsFeedContext();
+  const { deletePost } = useNewsFeedContext();
   const { active, setActive } = useActiveTab();
   const navRef = useRef<HTMLElement>(null);
   const [width, setwidth] = useState<number>();
-  const { UnReadNotiCount, selectMode, setselectMode, headerContainerRef } =
-    useAppContext();
+  const {
+    setUnReadNotiCount,
+    UnReadNotiCount,
+    selectMode,
+    setselectMode,
+    headerContainerRef,
+  } = useAppContext();
+  const { queryFn } = useQueryFn();
   const { indicatorRef, setSelectedId, friendReqCount } = usePageContext();
   const [currentNav, setCurrentNav] = useState<Tabs>("/");
   const [activeNav, setActiveNav] = useState<Tabs>("/");
@@ -120,6 +128,7 @@ function Header(props: { tabIndex: number;}) {
     if (!navRef.current) return;
     setwidth(navRef.current.clientWidth);
   }, [navRef]);
+
   useEffect(() => {
     handleResize();
   }, [handleResize]);
@@ -145,9 +154,7 @@ function Header(props: { tabIndex: number;}) {
       <Navitems.BadgeItem count={notiCount} />
     ),
   };
-  // useEffect(() => {
-  //   setNotiCount(UnReadNotiCount);
-  // }, [UnReadNotiCount]);
+
   return (
     <div
       data-hide={hide}
@@ -218,24 +225,53 @@ function Header(props: { tabIndex: number;}) {
                     : iconTitle
                 }`,
               };
+              const changeTab: MouseEventHandler<HTMLDivElement> = () => {
+                const tabs = document.getElementById("tabs")!;
+                const tab = document.getElementById(TabName)!;
+                setCurrentNav?.(TabName);
+                setActive?.(TabName);
+                window.location.hash =
+                  TabName === "/" ? "#home" : `#${TabName}`;
+                if (TabName === active) {
+                  tab.scrollTo({
+                    top: 0,
+                    behavior: "smooth",
+                  });
+                  if (tab.scrollTop >= 60) return;
+                  if (active === "/") {
+                    // console.log("refreshing new data in Newsfeed");
+                    router.replace("/", undefined, { scroll: false });
+                  } else if (active === "friends") {
+                    router.replace("/#friends", undefined, { scroll: false });
+                  } else if (TabName === "notifications") {
+                    setUnReadNotiCount(0);
+                    console.log("reseting Noti Count");
+                    queryFn.invalidate("noti");
+                    queryFn.refetchQueries("noti");
+                  }
+                  return;
+                }
+                tabs.scrollTo({
+                  left: index * tabs.clientWidth,
+                  behavior: "smooth",
+                });
+              };
+
               return (
                 <Navitems
-                  key={`${name} ${UnReadNotiCount}`}
+                  onClick={changeTab}
+                  key={
+                    UnReadNotiCount > 0
+                      ? `${name} ${UnReadNotiCount}`
+                      : `${name}`
+                  }
                   currentNav={activeNav}
-                  setCurrentNav={setCurrentNav}
-                  setActiveNav={setActiveNav}
-                  setActive={setActive}
-                  active={active}
-                  index={index}
                   name={name}
                 >
-                  <Navitems.Container
-                    aria-label={iconTitle}
-                    title={title[TabName]}
-                  >
+                  <Navitems.Item aria-label={iconTitle} title={title[TabName]}>
                     <Navitems.Icon>{icon}</Navitems.Icon>
                     <Navitems.Badge>{badge[TabName]}</Navitems.Badge>
-                  </Navitems.Container>
+                  </Navitems.Item>
                   {currentNav === TabName && !width ? (
                     <Navitems.Indicator />
                   ) : (

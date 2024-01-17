@@ -69,7 +69,7 @@ export interface CommentProps {
   setComments?: Function;
   parentId?: string;
   nested?: boolean;
-  hasMore?: boolean;
+  hasMoreComment?: boolean;
   commentEnd?: boolean;
   uid: string;
   comments?: Post["comments"] | [];
@@ -90,14 +90,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     );
     const postDoc = await getDoc(postRef);
     const p = await postToJSON(postDoc as DocumentSnapshot<DocumentData>);
-    const newPost = (await postInfo(p, uid)) as Post;
-    const profileData = await getProfileByUID(uid);
+    // const newPost = (await postInfo(p, uid)) as Post;
+    const postPromise = postInfo(p, uid);
+    const profilePromise = getProfileByUID(uid);
+
+    const [newPost, profileData] = await Promise.all([
+      postPromise,
+      profilePromise,
+    ]);
     const profile = profileData
       ? {
           ...profileData,
           photoURL: checkPhotoURL(profileData.photoURL),
         }
       : null;
+    let hasMoreComment = false;
     const commentQuery = DescQuery(
       getPath("comments", {
         authorId: String(newPost?.authorId),
@@ -105,12 +112,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       }),
       Comment_LIMIT
     );
-
-    let hasMore = false;
     const comments = await fetchComments(newPost, uid, commentQuery);
+
     const currentLength = comments.length;
     const totalCount = newPost.commentCount ?? 0;
-    hasMore = currentLength < Number(totalCount);
+    hasMoreComment = currentLength < Number(totalCount);
     const withComment = { ...newPost, comments };
     const isPostExists = postDoc.exists();
     const notAdminAndPostOnlyMe =
@@ -122,7 +128,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
     return {
       props: {
-        hasMore,
+        hasMoreComment,
         profile,
         expired,
         uid,
@@ -133,7 +139,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     console.log("SSR Error in user/post " + error);
     return {
       props: {
-        hasMore: false,
+        hasMoreComment: false,
         profile: null,
         expired: true,
         uid: "",
@@ -143,13 +149,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 export default function Page(props: {
-  hasMore: boolean;
+  hasMoreComment: boolean;
   expired: boolean;
   uid: string;
   post: PostType;
   profile: account["profile"];
 }) {
-  const { hasMore, expired, uid, post, profile } = props;
+  const { hasMoreComment, expired, uid, post, profile } = props;
   const [replyInput, setreplyInput] = useState<CommentProps["replyInput"]>({
     comment: null,
     authorFirstReplyId: "",
@@ -350,7 +356,7 @@ export default function Page(props: {
   );
   const [Likes, setLikes] = useState<likes | []>([]);
   const { scrollRef } = useInfiniteScroll({
-    hasMore,
+    hasMore: hasMoreComment,
     scrollParent: true,
     fetchMoreData: fetchMoreComment,
     postEnd: commentEnd,
@@ -622,7 +628,7 @@ export default function Page(props: {
               post={post}
             />
             <Comment
-              hasMore={hasMore}
+              hasMoreComment={hasMoreComment}
               commentEnd={commentEnd}
               comments={limitedComments}
               commentNotFoundLoading={commentNotFoundLoading}
