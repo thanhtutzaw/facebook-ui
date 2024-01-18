@@ -22,10 +22,10 @@ import "nprogress/nprogress.css";
 import { useEffect, useState } from "react";
 import { ImageLargeView } from "../components/Post/ImageLargeView";
 import { Welcome } from "../components/Welcome";
-import { PageProvider } from "../context/PageContext";
 import { app, getProfileByUID } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import "../styles/globals.css";
+import { PageProvider } from "@/context/PageContext";
 config.autoAddCss = false;
 export const getServerSideProps: GetServerSideProps<{
   expired: boolean;

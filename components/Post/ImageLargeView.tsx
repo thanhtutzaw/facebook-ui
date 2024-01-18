@@ -5,7 +5,8 @@ import { animated, useSpring } from "@react-spring/web";
 import { UserGestureConfig, useGesture } from "@use-gesture/react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { setTimeout } from "timers";
 import Spinner from "../Spinner";
 import s from "./index.module.scss";
@@ -15,7 +16,7 @@ export function ImageLargeView() {
     singleImageModal,
     setsingleImageModal,
   } = usePageContext();
-  const { src: imageURL, name: imageName } = { ...singleImageModal };
+  // const { src: imageURL, name: imageName } = { ...singleImageModal };
   const [loading, setLoading] = useState(true);
   const imgRef = useRef<HTMLImageElement>(null);
   const [drag, setdrag] = useState(false);
@@ -28,6 +29,20 @@ export function ImageLargeView() {
   // const imageBound = imgRef.current?.getBoundingClientRect()!;
   // const container = imgRef.current?.parentElement?.getBoundingClientRect()!;
   // const newWidth = (imageBound?.width - imgRef.current?.clientWidth!) / 2;
+  const router = useRouter();
+
+  useLayoutEffect(() => {
+    console.log(history.length);
+    router.beforePopState(() => {
+      console.log(history.length);
+      setsingleImageModal(null);
+      return true;
+    });
+    return () => {
+      router.beforePopState(() => true);
+    };
+  }, [router, setsingleImageModal]);
+
   const gestureConfig: UserGestureConfig = {
     wheel: {
       from: () => [x.get(), y.get()],
@@ -237,13 +252,17 @@ export function ImageLargeView() {
     setdrag(false);
   }, [scale, x, y]);
   useEffect(() => {
-    if (imageURL) {
+    if (singleImageModal && singleImageModal.src) {
+      // window.location.hash = "&viewImage=" + singleImageModal.src;
       modalRef?.current?.showModal();
     } else {
       modalRef?.current?.close();
-      setsingleImageModal({});
+      // router.back();
+      setsingleImageModal(null);
     }
-  }, [imageURL, imageName, modalRef, setsingleImageModal]);
+  }, [modalRef, setsingleImageModal, singleImageModal]);
+  const imageURL = singleImageModal && singleImageModal.src;
+  const imageName = singleImageModal && singleImageModal.name;
   return (
     <motion.dialog
       onPointerDown={(e) => {
@@ -266,7 +285,12 @@ export function ImageLargeView() {
         e.currentTarget.style.opacity = "0";
         api.set({ x: 0, y: 0, scale: 1 });
         setVisible(false);
-        setsingleImageModal({ src: "", name: "" });
+        if (!singleImageModal) return;
+        router.back();
+        // router.replace(router);
+        // delete router.query.viewImage;
+        // delete router.query.imageName;
+        setsingleImageModal(null);
         setLoading(true);
       }}
       className={s.imageDialog}
@@ -317,6 +341,7 @@ export function ImageLargeView() {
                   onLoad={() => {
                     setLoading(false);
                   }}
+                  className="!w-[auto] !h-[auto] !m-auto "
                   loading="eager"
                   style={{ touchAction: "none" }}
                   priority={false}

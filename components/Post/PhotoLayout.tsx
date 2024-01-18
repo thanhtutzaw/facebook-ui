@@ -117,7 +117,7 @@ function PhotoLayout(props: {
                         if (fileRef && fileRef.current) {
                           fileRef.current.value = "";
                         }
-                        setsingleImageModal({ src: "", name: "" });
+                        setsingleImageModal(null);
                       }}
                       title="Remove media"
                       aria-label="Remove media"
@@ -159,7 +159,7 @@ function PhotoLayout(props: {
                         if (fileRef && fileRef.current) {
                           fileRef.current.value = "";
                         }
-                        setsingleImageModal({ src: "", name: "" });
+                        setsingleImageModal(null);
                       }}
                       title="Remove media"
                       aria-label="Remove media"

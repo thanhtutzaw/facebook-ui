@@ -41,15 +41,11 @@ import { Timestamp, doc, getDoc, startAfter, where } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import confirm from "public/assets/confirm-beep.mp3";
-import {
-  ReactElement,
-  ReactNode,
-  useCallback,
-  useState
-} from "react";
+import { ReactElement, ReactNode, useCallback, useState } from "react";
 import useSound from "use-sound";
 import { AcceptFriend } from "../../components/Button/AcceptFriend";
 
@@ -158,7 +154,12 @@ export default function UserProfile({
   const friendId = router.query.user;
   const [friendMenuToggle, setFriendMenuToggle] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { setsingleImageModal, currentUser, setcurrentUser } = usePageContext();
+  const {
+    setsingleImageModal,
+    singleImageModalRef,
+    currentUser,
+    setcurrentUser,
+  } = usePageContext();
 
   const statusComponents = {
     canAccept: (
@@ -369,7 +370,7 @@ export default function UserProfile({
         description={`${userName}'s Profile | Facebook-Mobile-UI with Next.js`}
       />
       <div ref={scrollRef} className="user">
-        <BackHeader style={{ zIndex: "200000" }}></BackHeader>
+        <BackHeader style={{ zIndex: "200000" }} />
         <div
           style={{
             marginTop: "65px",
@@ -379,20 +380,33 @@ export default function UserProfile({
           className={s.container}
         >
           <div className={`${s.info}`}>
-            <Image
-              onClick={() => {
-                setsingleImageModal({
-                  src: checkPhotoURL(profile?.photoURL),
-                  name: `${userName}'s profile`,
-                });
+            <Link
+              // as={encodeURIComponent(userName).replaceAll("%20", "-")}
+              // as={String(router.query.user)+"/"+}
+              shallow
+              href={{
+                pathname: String(router.query.user),
+                query: {
+                  viewImage: checkPhotoURL(profile?.photoURL),
+                  imageName: userName,
+                },
               }}
-              className={`bg-avatarBg  ${s.profile}`}
-              width={500}
-              height={170}
-              style={{ objectFit: "cover", width: "120px", height: "120px" }}
-              alt={`${userName}'s profile`}
-              src={checkPhotoURL(profile?.photoURL)}
-            />
+            >
+              <Image
+                // onClick={() => {
+                //   setsingleImageModal({
+                //     src: checkPhotoURL(profile?.photoURL),
+                //     name: `${userName}'s profile`,
+                //   });
+                // }}
+                className={`bg-avatarBg  ${s.profile}`}
+                width={500}
+                height={170}
+                style={{ objectFit: "cover", width: "120px", height: "120px" }}
+                alt={`${userName}'s profile`}
+                src={checkPhotoURL(profile?.photoURL)}
+              />
+            </Link>
             <h3 className="font-semibold text-base">{userName}</h3>
             <p
               style={{
@@ -475,12 +489,25 @@ export default function UserProfile({
               )
             )}
           </div>
+          {/* <button
+            onClick={() => {
+              singleImageModalRef.current &&
+                singleImageModalRef.current.showModal();
+              setsingleImageModal({
+                src: checkPhotoURL(profile?.photoURL),
+                name: "test",
+              });
+            }}
+          >
+            Open Modal
+          </button> */}
           <PostList
             postLoading={hasMore}
             postEnd={postEnd}
             tabIndex={1}
             posts={limitedPosts}
           />
+          b
         </div>
       </div>
     </>

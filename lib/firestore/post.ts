@@ -166,7 +166,6 @@ export async function fetchMyPosts(
       LIMIT,
       where("visibility", "in", ["Friend", "Public"])
     ),
-    block: query(postPath, limit(0)),
     isAdmin: query(postPath, orderBy("createdAt", "desc"), limit(LIMIT)),
     fallback: DescQuery(postPath, LIMIT, where("visibility", "==", "Public")),
   };
@@ -174,13 +173,11 @@ export async function fetchMyPosts(
     mypostQuery = visibilityCondition["isFriend"];
   } else if (isAdmin) {
     mypostQuery = visibilityCondition["isAdmin"];
-  } else if (isBlocked) {
-    mypostQuery = visibilityCondition["block"];
   } else {
     mypostQuery = visibilityCondition["fallback"];
   }
   let hasMore = false;
-  const myPost = mypostQuery
+  const myPost = !isBlocked
     ? await getPostWithMoreInfo(token.uid, mypostQuery)
     : [];
   // myPost?.shift();

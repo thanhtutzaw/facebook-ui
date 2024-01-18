@@ -1,5 +1,6 @@
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { Auth, User } from "firebase/auth";
+import { useRouter } from "next/router";
 import {
   Dispatch,
   ReactNode,
@@ -7,6 +8,7 @@ import {
   SetStateAction,
   createContext,
   useContext,
+  useEffect,
   useRef,
   useState,
 } from "react";
@@ -36,7 +38,7 @@ export interface PageProps {
   selectedId: selectedId[];
   setSelectedId: Dispatch<SetStateAction<selectedId[]>>;
   singleImageModalRef: RefObject<HTMLDialogElement>;
-  singleImageModal: TsingleImageModal;
+  singleImageModal: TsingleImageModal | null;
   setsingleImageModal: Function;
   // preventClick: MutableRefObject<boolean>;
   preventClick: boolean;
@@ -60,15 +62,31 @@ export function PageProvider(props: Props) {
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<selectedId[]>([]);
   const [preventClick, setpreventClick] = useState(false);
-  const [singleImageModal, setsingleImageModal] = useState<TsingleImageModal>({
-    src: "",
-    name: "",
-  });
+  const [singleImageModal, setsingleImageModal] =
+    useState<TsingleImageModal | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const singleImageModalRef = useRef<HTMLDialogElement>(null);
   const [uploadButtonClicked, setuploadButtonClicked] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  useEffect(() => {
+    console.log({ query: router.query.viewImage });
+    console.log({ query: router.query.imageName });
+    if (!router.query.viewImage) return;
+    const { viewImage, imageName } = router.query;
+    console.log(String(viewImage));
+    console.log(String(imageName));
+    setsingleImageModal({ src: String(viewImage), name: String(imageName) });
+    // window.onpopstate = () => {
+    //   // window.history.pushState(null, document.title, currentPath);
+    //   if (singleImageModal) {
+    //     console.log("close modal");
+    //     setsingleImageModal(null);
+    //   }
+    // };
+  }, [router]);
+  //  window.history.pushState(null, document.title, currentPath);
   return (
     <PageContext.Provider
       value={{

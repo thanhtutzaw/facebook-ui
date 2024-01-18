@@ -79,9 +79,9 @@ export default function useNotifications({
   };
   const { active: tab } = useActiveTab();
   useEffect(() => {
-    if (UnReadNotiCount ?? 0 > 0) {
+    if ((UnReadNotiCount ?? 0) > 0) {
       queryFn.invalidate("noti");
-      console.log("updaing in useNoti hooks");
+      console.log("updating in useNoti hooks");
     }
   }, [UnReadNotiCount, queryFn]);
 
@@ -121,7 +121,6 @@ export default function useNotifications({
           setUnReadNotiCount(latestNoti.size); // getting unRead noti count
           if ("setAppBadge" in navigator) {
             (navigator as any).setAppBadge(latestNoti.size);
-            console.log("nav:Badge:updated:useEffect");
             console.log("Foreground: The setAppBadge is supported, use it.");
           } else {
             console.log(
@@ -154,7 +153,7 @@ export default function useNotifications({
     },
     [currentUid, queryFn]
   );
-  
+
   return {
     isLoading,
     hasNextPage,

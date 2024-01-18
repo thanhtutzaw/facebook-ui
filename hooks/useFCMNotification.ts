@@ -37,15 +37,12 @@ function useFCMNotification({
         new Notification(title, options);
         if (navigator && "setAppBadge" in navigator) {
           (navigator as any).setAppBadge(++badgeCount);
-          console.log("nav:Badge:updated:useEffect");
           console.log("Foreground: The setAppBadge is supported, use it.");
         } else {
           console.log(
             `Foreground: The setAppBadge is not supported, don't use it`
           );
         }
-        // this line only work in Desktop but actions are not allowed
-
         return () => {
           if (unsubscribe) unsubscribe();
         };
@@ -58,18 +55,18 @@ function useFCMNotification({
       try {
         const permission = await Notification.requestPermission();
         if (permission === "granted") {
-          setnotiPermission?.(true);
-          console.log("Notification permission granted.");
+          setnotiPermission(true);
+          console.info("Notification status: granted");
         } else {
-          setnotiPermission?.(false);
-          console.log("Notification permission denied.");
+          setnotiPermission(false);
+          console.info("Notification status: denied");
         }
       } catch (error) {
         console.error("Error requesting notification permission:", error);
       }
     };
     requestNotificationPermission();
-  }, [setnotiPermission, token]);
+  }, [token]);
   useEffect(() => {
     if (
       "Notification" in window &&
