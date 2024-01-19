@@ -21,13 +21,7 @@ import {
   query,
   startAfter,
 } from "firebase/firestore";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useEscape from "./useEscape";
 
 function useComment(props: CommentItemProps) {
@@ -48,7 +42,7 @@ function useComment(props: CommentItemProps) {
   } = props;
   const inputRef = useRef<HTMLParagraphElement>(null);
   const { text, createdAt, id } = comment;
-  const { authorId, id: postId } = post;
+  const { authorId, id: postId } = post!;
   const { currentUser: profile } = usePageContext();
   const replyCount = comment.replyCount ?? 0;
   const replies = useMemo(() => comment?.replies ?? [], [comment?.replies]);
@@ -88,15 +82,15 @@ function useComment(props: CommentItemProps) {
   const heartRef = doc(
     db,
     `${getCollectionPath.comments({
-      authorId: String(post.authorId),
-      postId: String(post.id),
+      authorId: String(authorId),
+      postId: String(postId),
     })}/${comment.id}/hearts/${auth.currentUser?.uid}`
   );
   const likedUserRef = collection(
     db,
     `${getCollectionPath.comments({
-      authorId: String(post.authorId),
-      postId: String(post.id),
+      authorId: String(authorId),
+      postId: String(postId),
     })}/${comment.id}/hearts`
   );
   const handleLike = async () => {
@@ -110,14 +104,13 @@ function useComment(props: CommentItemProps) {
       await unLoveComment({ heartRef });
       await updateHeartState();
     } else {
-      
       await loveComment({
         parentId: nested ? parentId : undefined,
         content: comment.text,
         profile,
-        postId: post.id!,
+        postId: postId!,
         commentId: comment.id!,
-        authorId: post.authorId,
+        authorId: authorId,
         uid: String(auth.currentUser?.uid),
         commentAuthorId: String(comment.authorId),
       });
@@ -155,16 +148,16 @@ function useComment(props: CommentItemProps) {
       ? doc(
           db,
           `${getCollectionPath.commentReplies({
-            authorId: String(post.authorId),
-            postId: String(post.id),
+            authorId: String(authorId),
+            postId: String(postId),
             commentId: String(parentId),
           })}/${comment.id}`
         )
       : doc(
           db,
           `${getCollectionPath.comments({
-            authorId: String(post.authorId),
-            postId: String(post.id),
+            authorId: String(authorId),
+            postId: String(postId),
           })}/${comment.id}`
         );
     const data = { ...comment, text: editedComment! };
@@ -206,14 +199,15 @@ function useComment(props: CommentItemProps) {
     }
     let replyCommentQuery = query(
       getPath("commentReplies", {
-        authorId: String(post.authorId),
-        postId: String(post.id),
+        authorId: String(authorId),
+        postId: String(postId),
         commentId: String(comment.id),
       }),
       orderBy("createdAt", "asc"),
       limit(Comment_Reply_LIMIT)
     );
     const fetchMoreReplies = async () => {
+      if (!post) return;
       const newReplies = await fetchComments(post, uid, replyCommentQuery);
       setComments?.(
         (prev: Comment[]) =>
@@ -260,8 +254,8 @@ function useComment(props: CommentItemProps) {
       hasMore && ViewmoreToggle
         ? query(
             getPath("commentReplies", {
-              authorId: String(post.authorId),
-              postId: String(post.id),
+              authorId: String(authorId),
+              postId: String(postId),
               commentId: String(comment.id),
             }),
             orderBy("createdAt", "asc"),
@@ -281,16 +275,17 @@ function useComment(props: CommentItemProps) {
     }
   }, [
     ViewmoreToggle,
+    authorId,
     comment,
     hasMore,
     post,
+    postId,
     replies,
     replyCount,
     setComments,
     setreplyInput,
     uid,
   ]);
-
   function handleReplyInput() {
     replyInputRef && replyInputRef.current?.focus();
     const commentProfile = comment.author as account["profile"];

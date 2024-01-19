@@ -3,31 +3,19 @@ import { usePageContext } from "@/context/PageContext";
 import { checkPhotoURL, getFullName } from "@/lib/firestore/profile";
 import { account } from "@/types/interfaces";
 import Image from "next/image";
-import {
-  ChangeEventHandler,
-  ReactNode,
-  RefObject,
-  useRef
-} from "react";
+import { ChangeEventHandler, ReactNode, RefObject, useRef } from "react";
 import s from "./index.module.scss";
 export const bioFallback = "No Bio Yet";
 function ProfileInfo(props: {
-  src:string;
+  src: string;
   handleChange: ChangeEventHandler<HTMLInputElement>;
   infoRef?: RefObject<HTMLDivElement>;
   children?: ReactNode;
   editToggle?: boolean;
   newProfile?: account["profile"] | null;
 }) {
-  const {
-    src,
-    handleChange,
-    infoRef,
-    
-    children,
-    editToggle,
-    newProfile,
-  } = props;
+  const { src, handleChange, infoRef, children, editToggle, newProfile } =
+    props;
   const { setsingleImageModal, currentUser } = usePageContext();
   const { profile, selectMode } = useAppContext();
   const imgFileRef = useRef<HTMLInputElement>(null);

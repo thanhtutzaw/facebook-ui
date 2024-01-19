@@ -13,7 +13,7 @@ if (!admin.apps.length) {
 export async function verifyIdToken(token: string) {
   try {
     const decodedToken = await auth().verifyIdToken(token);
-    // await auth().revokeRefreshTokens(decodedToken.uid);
+    //  auth().revokeRefreshTokens(decodedToken.uid);
     // console.log("🎉running try in firebase admin");
     // const convertSecondsToTime = (seconds: number) => {
     //   const days = Math.floor(seconds / (3600 * 24));
@@ -35,7 +35,7 @@ export async function verifyIdToken(token: string) {
     }
     return decodedToken;
   } catch (error) {
-    //  await auth.verify
+    //   auth.verify
     // const decodedToken = console.log({ token, decodedToken });
     //  if (decodedToken.exp <= nowInSeconds) {
     //    console.log(yes);

@@ -7,7 +7,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { usePageContext } from "../../context/PageContext";
 import PostProvider from "../../context/PostContext";
 import { Post as PostType, likes } from "../../types/interfaces";
 import Comment from "../Comment";
@@ -40,8 +39,8 @@ function Post({
   const [checked, setChecked] = useState(false);
   const checkRef = useRef<HTMLButtonElement>(null);
   const uncheckRef = useRef<HTMLButtonElement>(null);
-  const { currentUser } = usePageContext();
   const [client, setclient] = useState(false);
+  // const { currentUser } = usePageContext();
 
   useEffect(() => {
     if (selectMode) {
@@ -98,26 +97,27 @@ function Post({
             post={post}
           />
         )}
-        <div className="border-[#e4e4e4] border-t">
-          <Comment preview={true} comments={post.latestCommet}>
-            {post.latestCommet?.map((comment) => (
-              <CommentItem
-                preview={true}
-                key={String(comment.id)}
-                setisDropDownOpenInNestedComment={
-                  setisDropDownOpenInNestedComment
-                }
-                isDropDownOpenInNestedComment={isDropDownOpenInNestedComment}
-                post={post}
-                client={client}
-                uid={auth?.uid!}
-                comment={comment}
-                comments={post.latestCommet}
-                // setComments={setlimitedComments}
-              />
-            ))}
-          </Comment>
-        </div>
+        {post && (
+          <div className="border-[#e4e4e4] border-t">
+            <Comment preview={true} comments={post.latestCommet}>
+              {post.latestCommet?.map((comment) => (
+                <CommentItem
+                  preview={true}
+                  key={String(comment.id)}
+                  setisDropDownOpenInNestedComment={
+                    setisDropDownOpenInNestedComment
+                  }
+                  isDropDownOpenInNestedComment={isDropDownOpenInNestedComment}
+                  post={post}
+                  client={client}
+                  uid={auth?.uid!}
+                  comment={comment}
+                  comments={post.latestCommet}
+                />
+              ))}
+            </Comment>
+          </div>
+        )}
       </div>
     </PostProvider>
   );

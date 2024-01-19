@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 
 import Metatag from "@/components/Metatag";
+import { PageProvider } from "@/context/PageContext";
 import { useActiveTab } from "@/hooks/useActiveTab";
 import useFriendRequest from "@/hooks/useFriendRequest";
 import useNprogress from "@/hooks/useNprogress";
@@ -25,7 +26,6 @@ import { Welcome } from "../components/Welcome";
 import { app, getProfileByUID } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
 import "../styles/globals.css";
-import { PageProvider } from "@/context/PageContext";
 config.autoAddCss = false;
 export const getServerSideProps: GetServerSideProps<{
   expired: boolean;
@@ -126,7 +126,7 @@ export default function App({
   //       const user = auth.currentUser;
   //       if (user) {
   //         console.log("force refreshed with interval");
-  //         await user.getIdToken(true);
+  //          user.getIdToken(true);
   //       }
   //     },
   //     10 * 60 * 1000 //10min force refresh
@@ -150,7 +150,6 @@ export default function App({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser?.uid]);
-
   const { friendReqCount, soundRef } = useFriendRequest(
     String(currentUser?.uid)
   );

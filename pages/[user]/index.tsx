@@ -45,11 +45,26 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import nookies from "nookies";
 import confirm from "public/assets/confirm-beep.mp3";
-import { ReactElement, ReactNode, useCallback, useState } from "react";
+import {
+  ButtonHTMLAttributes,
+  DetailedHTMLProps,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import useSound from "use-sound";
 import { AcceptFriend } from "../../components/Button/AcceptFriend";
 
 export type statusDataType = "canAccept" | "pending" | "friend" | "notFriend";
+// type status =
+//   | "isFriend"
+//   | "isBlocked"
+//   | "isPending"
+//   | "canAccept"
+//   | "canUnBlock";
+// type d =
 export const getServerSideProps: GetServerSideProps = async (context) => {
   let isFriend = false,
     isBlocked = false,
@@ -58,31 +73,32 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     canUnBlock = false;
   try {
     const uid = context.query.user!;
+    console.log({ userQuery: context.query });
     const cookies = nookies.get(context);
     const token = (await verifyIdToken(cookies.token)) as DecodedIdToken;
     const user = await fethUserDoc(uid);
     const userExist = user.exists();
-    const isFriendsQuery = doc(
-      db,
-      `${getCollectionPath.friends({ uid: token.uid })}/${uid}`
-    );
-    const friendDoc = await getDoc(isFriendsQuery);
-
-    if (friendDoc.exists()) {
-      const relation = friendDoc.data() as friends;
-      isFriend = relation.status === "friend";
-      isPending = relation.status === "pending";
-      isBlocked = relation.status === "block";
-      canAccept = relation.senderId !== token.uid && !isFriend;
-      canUnBlock = relation.senderId === token.uid;
-    }
-    const { myPost, hasMore } = await fetchMyPosts(
-      uid,
-      isFriend,
-      isBlocked,
-      token
-    );
     if (userExist) {
+      const isFriendsQuery = doc(
+        db,
+        `${getCollectionPath.friends({ uid: token.uid })}/${uid}`
+      );
+      const friendDoc = await getDoc(isFriendsQuery);
+
+      if (friendDoc.exists()) {
+        const relation = friendDoc.data() as friends;
+        isFriend = relation.status === "friend";
+        isPending = relation.status === "pending";
+        isBlocked = relation.status === "block";
+        canAccept = relation.senderId !== token.uid && !isFriend;
+        canUnBlock = relation.senderId === token.uid;
+      }
+      const { myPost, hasMore } = await fetchMyPosts(
+        uid,
+        isFriend,
+        isBlocked,
+        token
+      );
       const profile = user?.data().profile as account["profile"];
       return {
         props: {
@@ -137,16 +153,14 @@ export default function UserProfile({
   token: DecodedIdToken;
   profile: account["profile"];
   myPost: PostType[];
-  friendStatus: {
-    isFriend: Boolean;
-    isBlocked: Boolean;
-    isPending: Boolean;
-    canAccept: Boolean;
-    canUnBlock: Boolean;
-  };
+  friendStatus: any;
 }) {
   const { queryFn } = useQueryFn();
   const router = useRouter();
+  useEffect(() => {
+    console.log(router);
+  }, [router]);
+
   const [playAcceptSound] = useSound(confirm);
   const { isFriend, isBlocked, isPending, canAccept, canUnBlock } =
     friendStatus;
@@ -160,8 +174,11 @@ export default function UserProfile({
     currentUser,
     setcurrentUser,
   } = usePageContext();
+  useEffect(() => {
+    console.log(router);
+  }, [router]);
 
-  const statusComponents = {
+  const friendStatusButton = {
     canAccept: (
       <AcceptFriend
         onClick={async () => {
@@ -361,6 +378,8 @@ export default function UserProfile({
     : isFriend
     ? "friend"
     : "notFriend";
+
+  // router.push({},_,{shallow:true})
   const [status, setstatus] = useState(statusData);
   return (
     <>
@@ -384,6 +403,7 @@ export default function UserProfile({
               // as={encodeURIComponent(userName).replaceAll("%20", "-")}
               // as={String(router.query.user)+"/"+}
               shallow
+              // as={checkPhotoURL(profile?.photoURL)}
               href={{
                 pathname: String(router.query.user),
                 query: {
@@ -445,37 +465,38 @@ export default function UserProfile({
               otherUser && (
                 <div className={s.actions}>
                   {status === "notFriend" ? (
-                    <NotFriendBtn>
-                      <button
-                        disabled={loading}
-                        key={loading ? "true" : "false"}
-                        onClick={async () => {
-                          if (!currentUser) return;
-                          setLoading(true);
-                          const data = {
-                            id: String(router.query.user),
-                            author: profile,
-                          };
-                          await addFriends(token.uid, data, currentUser);
-                          router.replace(router.asPath, undefined, {
-                            scroll: false,
-                          });
-                          queryFn.invalidate("pendingFriends");
-                          setLoading(false);
-                          setstatus("pending");
-                        }}
-                        className={`${s.editToggle} ${s.secondary}`}
-                      >
+                    <NotFriendBtn
+                      type="button"
+                      disabled={loading}
+                      key={loading ? "true" : "false"}
+                      onClick={async () => {
+                        if (!currentUser) return;
+                        setLoading(true);
+                        const data = {
+                          id: String(router.query.user),
+                          author: profile,
+                        };
+                        await addFriends(token.uid, data, currentUser);
+                        router.replace(router.asPath, undefined, {
+                          scroll: false,
+                        });
+                        queryFn.invalidate("pendingFriends");
+                        setLoading(false);
+                        setstatus("pending");
+                      }}
+                      className={`${s.editToggle} ${s.secondary}`}
+                    >
+                      <>
                         {!loading ? (
                           <FontAwesomeIcon icon={faPlus} />
                         ) : (
                           <Spin />
                         )}
                         {!loading ? "Add Friend" : "Adding..."}
-                      </button>
+                      </>
                     </NotFriendBtn>
                   ) : (
-                    statusComponents[status]
+                    friendStatusButton[status]
                   )}
                   <button
                     onClick={() => {
@@ -552,16 +573,6 @@ export function Menu({
     </AnimatePresence>
   );
 }
-
-// function Toggler(
-//   children: ReactNode,
-//   ...rest: DetailedHTMLProps<
-//     ButtonHTMLAttributes<HTMLButtonElement>,
-//     HTMLButtonElement
-//   >
-// ) {
-//   return <button {...rest}>{children}</button>;
-// }
 function Spin() {
   return (
     //   size={18}
@@ -590,7 +601,12 @@ function Spin() {
   );
 }
 
-function NotFriendBtn(props: { children: ReactElement }) {
-  const { children } = props;
-  return <>{children}</>;
+function NotFriendBtn({
+  children,
+  ...rest
+}: { children: ReactElement } & DetailedHTMLProps<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+>) {
+  return <button {...rest}>{children}</button>;
 }

@@ -66,7 +66,7 @@ export const getServerSideProps: GetServerSideProps<IndexProps> = async (
   //   };
   // }
   let queryPageData = null;
-
+  console.log({ indexUserQueryCheck: context.query });
   try {
     const cookies = nookies.get(context);
     console.log({ "cookiesCheck(old)": cookies });

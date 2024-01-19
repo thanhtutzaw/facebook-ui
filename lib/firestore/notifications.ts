@@ -72,9 +72,9 @@ export const getMessage = (type: NotiMessageTypes) => {
   return messages[type] || "sended a new notification.";
 };
 // export async function getCurrentPushSubscription() {
-//   const sw = await getReadyServiceWorker();
+//   const sw =  getReadyServiceWorker();
 //   return sw.pushManager.getSubscription();
 // }
 // async function getReadyServiceWorker() {
-//   return await navigator.serviceWorker.ready;
+//   return  navigator.serviceWorker.ready;
 // }

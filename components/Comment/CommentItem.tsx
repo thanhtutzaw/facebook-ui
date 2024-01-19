@@ -2,7 +2,7 @@ import useComment from "@/hooks/useComment";
 import { JSONTimestampToDate, db, getCollectionPath } from "@/lib/firebase";
 import { getFullName } from "@/lib/firestore/profile";
 import { CommentProps } from "@/pages/[user]/[post]";
-import { Comment as CommentType, account } from "@/types/interfaces";
+import { Comment as CommentType, Post, account } from "@/types/interfaces";
 import { faAngleDown, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { doc } from "firebase/firestore";
@@ -27,7 +27,7 @@ export interface CommentItemProps extends CommentProps {
   isDropDownOpenInNestedComment?: boolean;
   setisDropDownOpenInNestedComment?: Function;
 }
-function CommentItem(props: CommentItemProps) {
+function CommentItem(props: CommentItemProps & {post:Post}) {
   const {
     replyInputRef,
     replyInput,
@@ -65,9 +65,10 @@ function CommentItem(props: CommentItemProps) {
     replyCount,
     replies,
   } = useComment(props);
+    const router = useRouter();
+
   const { text, createdAt, id } = comment;
   const { authorId, id: postId } = post;
-  const router = useRouter();
   const postRef = useMemo(
     () => doc(db, `${getCollectionPath.posts({ uid })}/${postId}`),
     [postId, uid]
@@ -334,6 +335,7 @@ function CommentItem(props: CommentItemProps) {
           <Spinner style={{ margin: "0" }} size={16} />
         </span>
       )}
+      
       {comment.recentReplies && !props.preview && (
         <Comment
           parentId={String(comment.id)}
@@ -363,7 +365,7 @@ function CommentItem(props: CommentItemProps) {
             />
           ))}
         </Comment>
-      )}
+     )}
       <div
         style={{
           padding: "0 !important",
@@ -373,7 +375,7 @@ function CommentItem(props: CommentItemProps) {
         className={` grid transition-all duration-300 ease-in-out ${s.replyContainer}`}
       >
         <AnimatePresence>
-          {replies && (
+          {replies && post && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

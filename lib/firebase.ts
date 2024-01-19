@@ -286,16 +286,7 @@ export async function getProfileByUID(uid: string | undefined) {
 export async function postInfo(p: Post, uid: string): Promise<Post> {
   if (p.authorId) {
     const { authorId, id } = p;
-    const shareRef = collection(
-      db,
-      `${getCollectionPath.shares({
-        authorId: String(authorId),
-        postId: String(id),
-      })}`
-    );
-    const shareDoc = await getDocs(shareRef);
-    const shareCount = shareDoc.size ?? 0;
-    const likedByUserRef = doc(
+    const isLikedRef = doc(
       db,
       `${getCollectionPath.likes({
         authorId: String(authorId),
@@ -309,7 +300,7 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
         postId: String(p.id),
       })}`
     );
-    const likeCount = (await getCountFromServer(likesRef)).data().count;
+    const likeCountPromise = getCountFromServer(likesRef);
     const commentsRef = collection(
       db,
       `${getCollectionPath.comments({
@@ -317,30 +308,47 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
         postId: String(p.id),
       })}`
     );
-    const commentCount = (await getCountFromServer(commentsRef)).data().count;
-    // getting total like count from collection Vs likeCount: 2
+    const commentCountPromise = getCountFromServer(commentsRef);
+    const shareRef = collection(
+      db,
+      `${getCollectionPath.shares({
+        authorId: String(authorId),
+        postId: String(id),
+      })}`
+    );
+    const shareCountPromise = getDocs(shareRef);
     const savedByUserRef = doc(
       db,
       `${getCollectionPath.savedPost({ uid })}/${p.id}`
     );
-
-    const [isLiked, isSaved, postProfile] = await Promise.all([
-      getDoc(likedByUserRef),
+    const [
+      likeCountDoc,
+      commentCountDoc,
+      shareDoc,
+      isLikedDoc,
+      isSaved,
+      postProfile,
+    ] = await Promise.all([
+      likeCountPromise,
+      commentCountPromise,
+      shareCountPromise,
+      getDoc(isLikedRef),
       getDoc(savedByUserRef),
       getProfileByUID(authorId.toString()),
     ]);
 
-    const isUserLikeThisPost = (await getDoc(likedByUserRef)).exists();
+    const likeCount = likeCountDoc.data().count;
+    const commentCount = commentCountDoc.data().count;
+    const shareCount = shareDoc.size ?? 0;
 
     const originalPost = {
       ...p,
-      // likeCount: p.likeCount ?? 0,
       commentCount,
       likeCount: likeCount,
       author: { ...postProfile },
       shareCount,
       sharePost: { ...p.sharePost, post: null },
-      isLiked: isUserLikeThisPost,
+      isLiked: isLikedDoc.exists() ? true : false,
       isSaved: isSaved.exists() ? true : false,
     } as Post;
     if (p.sharePost) {
@@ -387,14 +395,14 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
           ...originalPost,
           shareCount: shareCount,
           author: { ...postProfile },
-          isLiked: isLiked.exists() ? true : false,
+          isLiked: isLikedDoc.exists() ? true : false,
           sharePost: { ...p.sharePost, post: { ...sharePost } },
         };
       } else {
         return {
           ...p,
           shareCount: shareCount,
-          isLiked: isLiked.exists() ? true : false,
+          isLiked: isLikedDoc.exists() ? true : false,
           author: { ...postProfile },
           sharePost: { ...p.sharePost, post: null },
         };
@@ -421,23 +429,20 @@ export async function getNewsFeed(
         const postDoc = await getDoc(postRef);
         if (postDoc.exists()) {
           const postData = await postToJSON(postDoc);
-          const postData2 = {
+          const post = {
             ...postData,
             id: recentPost.id,
             recentId: recentPost.recentId,
           };
-          const postwithInfo = await postInfo(postData2, uid);
-          // const withRecentPostDate = {
-          //   ...postwithInfo,
-          //   // createdAt:JSONTimestampToDate(createdAt).toJSON()
-          //   // createdAt:new Timestamp(createdAt.seconds,createdAt.nanoseconds),
-          // };
           const lastCommentQuery = query(
             collection(db, `users/${authorId}/posts/${id}/comments`),
             orderBy("createdAt", "desc"),
             limit(1)
           );
-          const lastCommentDocs = await getDocs(lastCommentQuery);
+          const [postwithInfo, lastCommentDocs] = await Promise.all([
+            postInfo(post, uid),
+            getDocs(lastCommentQuery),
+          ]);
           const lastComment = await Promise.all(
             lastCommentDocs.docs.map(
               async (doc) => await fetchSingleComment(doc, recentPost, uid)
@@ -457,17 +462,15 @@ export async function getNewsFeed(
           //   // return { ...postwithInfo };
           // });
 
-          // const data = await commentToJSON(doc);
           // return { ...c };
 
-          const withLatestComment = {
-            ...postwithInfo,
-            // createdAt:JSONTimestampToDate(createdAt).toJSON()
-            // createdAt:new Timestamp(createdAt.seconds,createdAt.nanoseconds),
-          };
+          // const withLatestComment = {
+          //   ...postwithInfo,
+          //   // createdAt:JSONTimestampToDate(createdAt).toJSON()
+          //   // createdAt:new Timestamp(createdAt.seconds,createdAt.nanoseconds),
+          // };
           return postwithInfo;
         } else {
-          // const postwithInfo = await postInfo(recentPost, uid);
           const postProfile = await getProfileByUID(authorId.toString());
           return {
             ...recentPost,
@@ -494,7 +497,6 @@ export async function getPostWithMoreInfo(
     const postJSON = await Promise.all(
       postSnap.docs.map(async (doc) => await postToJSON(doc))
     );
-
     try {
       const posts = (await Promise.all(
         postJSON.map(async (p) => await postInfo(p, uid))

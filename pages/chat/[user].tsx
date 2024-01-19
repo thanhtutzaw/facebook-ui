@@ -3,7 +3,6 @@ import { GetServerSideProps } from "next";
 import { ChatHeader } from "../../components/Chat/Header";
 import ChatInput from "../../components/Chat/Input";
 import BackHeader from "../../components/Header/BackHeader";
-import { usePageContext } from "../../context/PageContext";
 import { fethUserDoc, userToJSON } from "../../lib/firebase";
 import { getUserData } from "../../lib/firebaseAdmin";
 import s from "../../styles/Home.module.scss";
@@ -12,13 +11,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const uid = context.query.user!;
 
     const user = await fethUserDoc(uid);
-    // const user = await getDoc(userQuery);
-    const account = (await getUserData(uid as string))! as UserRecord;
-    const accountJSON = userToJSON(account);
     if (user.exists()) {
+      const account = (await getUserData(String(uid)))! as UserRecord;
+      const accountJSON: UserRecord = userToJSON(account);
       return {
         props: {
-          account: accountJSON ?? null,
+          account: accountJSON ,
         },
       };
     } else {
@@ -37,7 +35,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 export default function FriendChat(props: { account: UserRecord }) {
   const { account } = props;
-  
 
   return (
     <div className="user">
@@ -56,7 +53,6 @@ export default function FriendChat(props: { account: UserRecord }) {
           }}
         >
           Coming Soon
-          
         </div>
         <ChatInput />
       </div>

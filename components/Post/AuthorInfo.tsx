@@ -55,7 +55,6 @@ function AuthorInfo(props: {
   if (post) {
     const { author, createdAt, visibility } = post;
     const profile = author as account["profile"];
-    // function navigateToProfile() {
     //   if (router.pathname === "/") {
     //     router.push(
     //       { query: { user: String(post?.authorId) } },
@@ -64,7 +63,6 @@ function AuthorInfo(props: {
     //   } else {
     //     router.push(`/${String(post?.authorId)}`);
     //   }
-    // }
     const textEnd = post?.sharePost?.id && <>&nbsp; shared a Post</>;
     return (
       <div className={styles.header}>

@@ -103,7 +103,7 @@ function Tabs() {
   return (
     <div
       id="tabs"
-      className={`${styles.content}`}
+      className={`${styles.content} active:cursor-grabbing`}
       //  ${
       //   !canDrag ? styles.snap : styles.disablesnap
       // }

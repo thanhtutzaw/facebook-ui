@@ -21,7 +21,7 @@ export async function addSavedPost(authorId: string, postId: string) {
     db,
     `${getCollectionPath.posts({ uid: authorId })}/${postId}`
   );
-  const Ref = doc(db, `${getCollectionPath.savedPost({uid})}/${postId}`);
+  const Ref = doc(db, `${getCollectionPath.savedPost({ uid })}/${postId}`);
   const data = {
     authorId,
     postId,
@@ -51,7 +51,7 @@ export async function unSavePost(ref: DocumentReference<DocumentData>) {
   }
   try {
     await deleteDoc(ref);
-    // await updateDoc(doc(db, `/users/${uid}`), {
+    // updateDoc(doc(db, `/users/${uid}`), {
     //   savedPosts: newData,
     // });
   } catch (error: unknown) {

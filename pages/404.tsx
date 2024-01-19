@@ -3,7 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Head from "next/head";
 import Link from "next/link";
 import s from "../styles/Home.module.scss";
-function ErrorPage() {
+function ErrorPage(props: { title?: string }) {
+  const { title } = props;
   return (
     <>
       <Head>
@@ -23,7 +24,7 @@ function ErrorPage() {
           <FontAwesomeIcon icon={faExclamationCircle} />
         </p>
         <h1 className="mb-0 font-medium [font-size:_clamp(25px,9vw,40px)]">
-          404 - Couldn&apos;t find this Account
+          404 - {title ?? `Couldn't find this Account`}
         </h1>
         <p className={`[font-size:_clamp(16px,1vw,20px)]`}>
           We can&apos;t find the page you are looking for

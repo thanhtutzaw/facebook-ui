@@ -68,9 +68,6 @@ export default function ChatInput() {
         "
         onClick={async (e) => {
           e.preventDefault();
-          // if (!uid) {
-          //   alert("User not Found ! Sign in and Try again !");
-          // }
           // if (text === "") return;
           // try {
           //   batch.set(commentRef, {
@@ -82,10 +79,7 @@ export default function ChatInput() {
           //   batch.update(postRef, {
           //     commentCount: previousCommentCount + 1,
           //   });
-          //   await batch.commit();
           //   router.replace(router.asPath, undefined, { scroll: false });
-          //   settext("");
-          //   setaddLoading(false);
         }}
         aria-label="Send Message"
         tabIndex={1}

@@ -55,10 +55,12 @@ export async function addFriends(
     `users/${senderData.id}/friends/${receiptData.id}`
   );
   try {
-    await setDoc(senderRef, senderData);
-    await setDoc(receiptRef, receiptData);
-    const doc = await getDoc(reqCountRef);
-    const reqCountExist = doc.exists() && doc.data().count >= 0;
+    const [reqCountDoc] = await Promise.all([
+      getDoc(reqCountRef),
+      setDoc(senderRef, senderData),
+      setDoc(receiptRef, receiptData),
+    ]);
+    const reqCountExist = reqCountDoc.exists() && reqCountDoc.data().count >= 0;
     if (reqCountExist) {
       await updateDoc(reqCountRef, {
         count: increment(+1),
@@ -110,7 +112,6 @@ export async function acceptFriends(
     alert("Already Accepted! in acceptFriends funciton");
     throw new Error("Already Accepted! in acceptFriends funciton");
   }
-
   const friendData: friends = {
     id: f.id,
     status: "friend",

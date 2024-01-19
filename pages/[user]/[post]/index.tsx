@@ -33,6 +33,7 @@ import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import CommentItem from "@/components/Comment/CommentItem";
 import { SharePreview } from "@/components/Post/SharePreview";
 import { usePageContext } from "@/context/PageContext";
+import ErrorPage from "@/pages/404";
 import {
   DocumentData,
   DocumentSnapshot,
@@ -73,30 +74,83 @@ export interface CommentProps {
   commentEnd?: boolean;
   uid: string;
   comments?: Post["comments"] | [];
-  post: Post;
+  post: Post | null;
   profile?: account["profile"];
   replyInputRef?: RefObject<HTMLInputElement>;
 }
+type TinitialProps = {
+  hasMoreComment: boolean;
+  expired: boolean;
+  uid: string;
+  post: PostType | null;
+  profile: account["profile"] | null;
+  notFoundType: string | null;
+};
+const initial: TinitialProps = {
+  notFoundType: null,
+  hasMoreComment: false,
+  profile: null,
+  expired: false,
+  uid: "",
+  post: null,
+};
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
     const { uid } = token as DecodedIdToken;
     const { user: authorId, post: postId } = context.query;
+    console.log({ postQuery: context.query });
     let expired = false;
     const postRef = doc(
       db,
       `${getCollectionPath.posts({ uid: String(authorId) })}/${postId}`
     );
     const postDoc = await getDoc(postRef);
+    const isPostExists = postDoc.exists();
+    if (!isPostExists) {
+      return {
+        props: {
+          notFoundType: "post",
+          hasMoreComment: false,
+          profile: null,
+          expired: true,
+          uid: "",
+          post: {},
+        },
+        // notFound: true,
+      };
+      // return {
+      //   //  notFound: true,
+      //   props: {
+      //     // notFoundType: "post",
+      //     hasMoreComment,
+      //     profile,
+      //     expired,
+      //     uid,
+      //     post: withComment,
+      //   },
+      // };
+    }
     const p = await postToJSON(postDoc as DocumentSnapshot<DocumentData>);
-    // const newPost = (await postInfo(p, uid)) as Post;
-    const postPromise = postInfo(p, uid);
-    const profilePromise = getProfileByUID(uid);
 
+    const notAdminAndPostOnlyMe =
+      uid !== p.authorId && p.visibility === "Onlyme";
+    if (notAdminAndPostOnlyMe) {
+      return {
+        props: {
+          notFoundType: "post",
+          hasMoreComment: false,
+          profile: null,
+          expired: true,
+          uid: "",
+          post: null,
+        },
+      };
+    }
     const [newPost, profileData] = await Promise.all([
-      postPromise,
-      profilePromise,
+      postInfo(p, uid),
+      getProfileByUID(uid),
     ]);
     const profile = profileData
       ? {
@@ -118,14 +172,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const totalCount = newPost.commentCount ?? 0;
     hasMoreComment = currentLength < Number(totalCount);
     const withComment = { ...newPost, comments };
-    const isPostExists = postDoc.exists();
-    const notAdminAndPostOnlyMe =
-      uid !== p.authorId && p.visibility === "Onlyme";
-    if (!isPostExists || notAdminAndPostOnlyMe) {
-      return {
-        notFound: true,
-      };
-    }
+
     return {
       props: {
         hasMoreComment,
@@ -136,26 +183,27 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   } catch (error) {
-    console.log("SSR Error in user/post " + error);
+    console.log("SSR Error in authorId/post " + error);
     return {
       props: {
         hasMoreComment: false,
         profile: null,
         expired: true,
         uid: "",
-        post: {},
+        post: null,
       },
     };
   }
 };
-export default function Page(props: {
-  hasMoreComment: boolean;
-  expired: boolean;
-  uid: string;
-  post: PostType;
-  profile: account["profile"];
-}) {
-  const { hasMoreComment, expired, uid, post, profile } = props;
+export default function Page({
+  hasMoreComment,
+  expired,
+  uid,
+  post,
+  profile,
+  notFoundType,
+}: TinitialProps) {
+  // const { hasMoreComment, expired, uid, post, profile } = props;
   const [replyInput, setreplyInput] = useState<CommentProps["replyInput"]>({
     comment: null,
     authorFirstReplyId: "",
@@ -173,12 +221,14 @@ export default function Page(props: {
   const replyInputRef = useRef<HTMLInputElement>(null);
   const [isDropDownOpenInNestedComment, setisDropDownOpenInNestedComment] =
     useState(false);
+  // const post2 = post;
+  // if(!post)return;
   const [form, setForm] = useState<{
     files: File[] | PostType["media"];
-    visibility: string;
+    visibility: PostType["visibility"];
   }>({
     files: [...(post?.media ?? [])],
-    visibility: post?.visibility,
+    visibility: post?.visibility ?? "Public",
   });
   const { files, visibility } = form;
   const updateForm = useCallback((newForm: Partial<typeof form>) => {
@@ -186,23 +236,20 @@ export default function Page(props: {
   }, []);
   const [deleteFile, setdeleteFile] = useState<PostType["media"]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
-  const text = post.text
-    ? post.text
-        .replaceAll("</div>", "")
-        .replace("<div>", "<br>")
-        .replaceAll("<div><br><div>", "<br>")
-        .replaceAll("<br><div>", "<br>")
-    : "";
+  const media = post && post.media;
   useEffect(() => {
     InputRef.current?.focus();
-    updateForm({ files: post.media });
-  }, [post.media, updateForm]);
-  const [input, setInput] = useState(post.text);
+    updateForm({ files: media });
+  }, [media, updateForm]);
+
+  const [input, setInput] = useState((post && post.text) ?? "");
   const dirtyForm =
-    input !== post.text ||
-    visibility?.toLowerCase() !== post.visibility?.toLowerCase() ||
-    files?.length !== post.media?.length ||
-    deleteFile?.length !== 0;
+    post && !notFoundType
+      ? input !== post.text ||
+        visibility?.toLowerCase() !== post.visibility?.toLowerCase() ||
+        files?.length !== post.media?.length ||
+        deleteFile?.length !== 0
+      : false;
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -240,6 +287,7 @@ export default function Page(props: {
   let newMedia: PostType["media"] = [];
   const isPostOwner = post?.authorId === uid;
   const canEdit = router.query.edit && isPostOwner;
+
   useEffect(() => {
     if (canEdit === false && router.query.edit) {
       delete router.query.edit;
@@ -316,13 +364,25 @@ export default function Page(props: {
       alert(error);
     }
   };
+  const text =
+    post && post.text
+      ? post.text
+          .replaceAll("</div>", "")
+          .replace("<div>", "<br>")
+          .replaceAll("<div><br><div>", "<br>")
+          .replaceAll("<br><div>", "<br>")
+      : "";
   const [likeCount, setlikeCount] = useState(
-    parseInt(post.likeCount?.toString()!)
+    parseInt(post && post.likeCount ? post.likeCount.toString() : "0") ?? 0
   );
-  const [limitedComments, setlimitedComments] = useState(post.comments);
+  const [limitedComments, setlimitedComments] = useState(
+    (post && post.comments) ?? []
+  );
+
   const [commentEnd, setcommentEnd] = useState(false);
   const fetchMoreComment = useCallback(
     async function () {
+      if (!post) return;
       if (!limitedComments) return;
       const comment = limitedComments?.[limitedComments?.length - 1];
 
@@ -341,13 +401,13 @@ export default function Page(props: {
       const comments = await fetchComments(post, uid, commentQuery);
       // setlimitedComments(limitedComments.concat(comments ?? []));
       setlimitedComments((prev: CommentType[]) => [...prev, ...comments]);
-      console.log({
-        jjj2222: {
-          l: comments.length,
-          totoal: limitedComments.length,
-          count: post.commentCount,
-        },
-      });
+      // console.log({
+      //   jjj2222: {
+      //     l: comments.length,
+      //     totoal: limitedComments.length,
+      //     count: post.commentCount,
+      //   },
+      // });
       if (limitedComments.length >= Number(post.commentCount)) {
         setcommentEnd(true);
       }
@@ -355,6 +415,7 @@ export default function Page(props: {
     [limitedComments, post, uid]
   );
   const [Likes, setLikes] = useState<likes | []>([]);
+  const { user: authorId, post: postId } = router.query;
   const { scrollRef } = useInfiniteScroll({
     hasMore: hasMoreComment,
     scrollParent: true,
@@ -364,14 +425,13 @@ export default function Page(props: {
   const updateBtnRef = useRef<HTMLButtonElement>(null);
   useEnterSave(InputRef, updateBtnRef);
   const [commentNotFoundLoading, setCommentNotFoundLoading] = useState(false);
-
   useEffect(
     () => {
       // handleNotFoundReply
       const commentId = router.query.comment;
       const replyCommentPath = router.asPath.split("#")[1]?.split("-")[0];
       const replyId = router.asPath.split("#")[1]?.split("-")[1];
-      if (replyCommentPath === "reply" && commentId && replyId) {
+      if (post && replyCommentPath === "reply" && commentId && replyId) {
         const isCommentFound = limitedComments?.find((l) => l.id === commentId);
         if ((Number(post.commentCount) ?? 0) <= 0) return;
         if (!isCommentFound) {
@@ -396,12 +456,11 @@ export default function Page(props: {
             data.recentRepliesLoading = true;
             let replyData: CommentType[] = data.recentReplies ?? [];
 
-            const { user, post: postId } = router.query;
             const replyDoc = await getDoc(
               doc(
                 db,
                 `${getCollectionPath.commentReplies({
-                  authorId: String(user),
+                  authorId: String(authorId),
                   postId: String(postId),
                   commentId: String(commentId),
                 })}/${replyId}`
@@ -412,7 +471,7 @@ export default function Page(props: {
             });
             const reply = await fetchSingleComment(
               replyDoc,
-              { id: String(postId), authorId: String(user) },
+              { id: String(postId), authorId: String(authorId) },
               String(uid)
             );
             if (replyData.some((recent) => recent.id == replyId)) {
@@ -448,14 +507,14 @@ export default function Page(props: {
               return { ...c };
             })
           );
-          const { user, post: postId } = router.query;
+
           (async function fetchNotFoundReply() {
             try {
               const replyDoc = await getDoc(
                 doc(
                   db,
                   `${getCollectionPath.commentReplies({
-                    authorId: String(user),
+                    authorId: String(authorId),
                     postId: String(postId),
                     commentId: String(commentId),
                   })}/${replyId}`
@@ -477,7 +536,7 @@ export default function Page(props: {
               }
               const data = await fetchSingleComment(
                 replyDoc,
-                { id: String(postId), authorId: String(user) },
+                { id: String(postId), authorId: String(authorId) },
                 String(uid)
               );
               setlimitedComments(
@@ -518,10 +577,10 @@ export default function Page(props: {
     () => {
       // handleNotFoundComment
       if (router.query.comment) return;
-      if ((Number(post.commentCount) ?? 0) <= 0) return;
+      if ((Number(post && post.commentCount) ?? 0) <= 0) return;
       const commentId = router.asPath.split("#")[1]?.split("-")[1];
       const isCommentFound = limitedComments?.find((l) => l.id === commentId);
-      if (commentId && !isCommentFound) {
+      if (post && commentId && !isCommentFound) {
         console.log("we can't find comment - Fetching ..." + commentId);
         const commentRef = doc(
           db,
@@ -546,10 +605,11 @@ export default function Page(props: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [router.asPath, router.query, uid]
   );
-
+  if (notFoundType) return <ErrorPage title="Couldn't find this Post" />;
   if (expired) return <Welcome expired={expired} />;
+  if (!post) return;
   return (
-    <div className="user" ref={scrollRef}>
+    <div className="authorId" ref={scrollRef}>
       <BackHeader
         onClick={() => {
           InputRef.current?.focus();
@@ -657,7 +717,7 @@ export default function Page(props: {
               replyInputRef={replyInputRef}
               replyInput={replyInput}
               comments={limitedComments}
-              profile={profile}
+              profile={profile!}
               setComments={setlimitedComments}
               post={post}
               uid={uid}

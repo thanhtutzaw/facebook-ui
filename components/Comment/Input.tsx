@@ -4,6 +4,7 @@ import { checkPhotoURL } from "@/lib/firestore/profile";
 import { CommentProps } from "@/pages/[user]/[post]";
 import { faArrowAltCircleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { User } from "firebase/auth";
 import { collection, doc, getDoc } from "firebase/firestore";
 import Image from "next/image";
@@ -46,10 +47,7 @@ export default function CommentInput(props: CommentProps) {
 
   async function handleComment() {
     if (!post) return;
-    if (!uid) {
-      alert("User not Found ! Sign in and Try again !");
-      throw Error;
-    }
+    throwUserNotFound(uid);
 
     await addComment({
       commentRef,
@@ -105,8 +103,7 @@ export default function CommentInput(props: CommentProps) {
       onSubmit={async (e) => {
         e.preventDefault();
         if (!uid) {
-          alert("User not Found ! Sign in and Try again !");
-          throw Error;
+          throw new Error("User not Found ! Sign in and Try again !");
         }
         if (text === "") return;
 
@@ -139,7 +136,6 @@ export default function CommentInput(props: CommentProps) {
           });
         } catch (error: unknown) {
           console.log(error);
-          alert(error);
         } finally {
           setaddLoading(false);
         }
@@ -227,10 +223,8 @@ export async function handleReply({
   commentAuthorId?: string;
   commentId?: string;
 }) {
-  if (!uid) {
-    alert("User not Found ! Sign in and Try again !");
-    throw Error;
-  }
+  throwUserNotFound(uid);
+
   // console.log({ JJJJJJJJJJJJJ: replyInput });
   const updateRecentReplies = (
     newData: UnwrapArray<Comment["recentReplies"]>
@@ -286,8 +280,7 @@ export async function handleReply({
         );
   async function addReplyToReplyToDB() {
     if (!uid) {
-      alert("User not Found ! Sign in and Try again !");
-      throw Error;
+      throw new Error("User not Found ! Sign in and Try again !");
     }
     if (!replyInput) return;
     const recipient = {
@@ -377,7 +370,10 @@ export async function handleReply({
         })
       : updateRecentReplies(data);
   }
-
+  if (!uid) {
+    alert("User not Found ! Sign in and Try again !");
+    throw Error;
+  }
   await sendAppNoti({
     messageBody: text,
     uid,
@@ -419,5 +415,11 @@ export async function handleReply({
       replyInput.comment?.id ?? replyInput.id
     }#reply-${replyRef.id}`,
   });
-  return {message}
+  return { message };
+}
+function throwUserNotFound(uid: DecodedIdToken["uid"] | undefined) {
+  if (!uid) {
+    throw new Error("User not Found ! Sign in and Try again !");
+  }
+  return true;
 }

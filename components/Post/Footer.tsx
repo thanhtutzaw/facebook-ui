@@ -74,10 +74,16 @@ function Footer(
     const likedUserRef = collection(db, likedUserURL);
     async function getLikeCount() {
       const likeRef = doc(db, `${likedUserURL}/${uid}`);
-      const isUserLikeThisPost = uid ? (await getDoc(likeRef)).exists() : false;
-      const likeCount = (await getCountFromServer(likedUserRef)).data().count;
+      const isLikedPostPromise = getDoc(likeRef);
+      const likeCountPromise = getCountFromServer(likedUserRef);
+      const [isLikedPostDoc, likeCountDoc] = await Promise.all([
+        isLikedPostPromise,
+        likeCountPromise,
+      ]);
+      const isLikedPost = isLikedPostDoc.exists();
+      const likeCount = likeCountDoc.data().count;
       setlikeCount?.(likeCount);
-      setisLiked(isUserLikeThisPost);
+      setisLiked(isLikedPost);
     }
     try {
       getLikeCount();

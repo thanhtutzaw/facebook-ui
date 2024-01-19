@@ -58,26 +58,14 @@ export async function fetchSingleComment(
   post: Partial<Post>,
   uid: string
 ) {
-  const comment = await commentToJSON(commentDoc);
   if (commentDoc.exists()) {
+    const comment = await commentToJSON(commentDoc);
     if (comment && comment.authorId) {
-      const author = await getProfileByUID(String(comment.authorId));
-      // let recentReplies: Comment["recentReplies"] = [
-      //   ...(comment.recentReplies ?? []),
-      // ];
       let recentReplies: Comment["recentReplies"] = [];
-      if (comment.authorFirstReplyId) {
-        recentReplies = [
-          ...(await fetchUserFirstReply(comment, recentReplies, post, uid)),
-          ...(comment.recentReplies ?? []),
-        ];
-      }
-      const recipient = {
-        ...comment.recipient,
-        author: comment.recipient?.id
-          ? await getProfileByUID(String(comment.recipient?.id))
-          : null,
-      } as Comment["recipient"];
+      const commentAuthor = await getProfileByUID(String(comment.authorId));
+      const recipientProfilePromise = getProfileByUID(
+        String(comment.recipient?.id)
+      );
       const heartsRef = collection(
         db,
         `${getCollectionPath.comments({
@@ -85,7 +73,6 @@ export async function fetchSingleComment(
           postId: String(post.id),
         })}/${comment.id}/hearts`
       );
-      const heartCount = (await getCountFromServer(heartsRef)).data().count;
       const replyRef = collection(
         db,
         getCollectionPath.commentReplies({
@@ -94,7 +81,6 @@ export async function fetchSingleComment(
           commentId: String(comment.id),
         })
       );
-      const replyCount = (await getCountFromServer(replyRef)).data().count;
       const likedByUserRef = doc(
         db,
         `${getCollectionPath.comments({
@@ -102,14 +88,44 @@ export async function fetchSingleComment(
           postId: String(post.id),
         })}/${comment.id}/hearts/${uid}`
       );
-      const isUserLikeThisPost = (await getDoc(likedByUserRef)).exists();
-
+      const firstReplyPromise = fetchUserFirstReply(
+        comment,
+        recentReplies,
+        post,
+        uid
+      );
+      const isLikedPromise = getDoc(likedByUserRef);
+      const replyCountPromise = getCountFromServer(replyRef);
+      const heartCountPromise = getCountFromServer(heartsRef);
+      const [
+        profileDoc,
+        firstReplyDoc,
+        isLikedDoc,
+        replyCountDoc,
+        heartCountDoc,
+      ] = await Promise.all([
+        recipientProfilePromise,
+        firstReplyPromise,
+        isLikedPromise,
+        replyCountPromise,
+        heartCountPromise,
+      ]);
+      const recipient = {
+        ...comment.recipient,
+        author: comment.recipient?.id ? profileDoc : null,
+      } as Comment["recipient"];
+      if (comment.authorFirstReplyId) {
+        recentReplies = [...firstReplyDoc, ...(comment.recentReplies ?? [])];
+      }
+      const heartCount = heartCountDoc.data().count;
+      const replyCount = replyCountDoc.data().count;
+      const isLiked = isLikedDoc.exists();
       const updatedComment = {
         ...comment,
-        author,
+        author: commentAuthor,
         heartCount,
         replyCount,
-        isLiked: isUserLikeThisPost,
+        isLiked: isLiked,
       };
       if (comment.recipient) {
         updatedComment.recipient = recipient;

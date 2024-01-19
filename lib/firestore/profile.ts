@@ -1,9 +1,9 @@
 import { User, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import fallback from "public/assets/avatar_placeholder.png";
 import { account } from "../../types/interfaces";
 import { db, getCollectionPath, storage } from "../firebase";
-import fallback from 'public/assets/avatar_placeholder.png'
 export function getFullName(
   profile: account["profile"] | undefined | null
 ): string {
@@ -29,8 +29,10 @@ export async function addProfile(user: User, profile: account["profile"]) {
   };
   console.log({ initialProfile });
   try {
-    await setDoc(Ref, initialProfile);
-    await updateName(user, firstName, lastName);
+    await Promise.all([
+      setDoc(Ref, initialProfile),
+      updateName(user, firstName, lastName),
+    ]);
   } catch (error) {
     console.error(error);
   }
@@ -103,8 +105,8 @@ export async function changeProfile(
             );
           }
           await updateProfilePicture(user, uploadedUrl ?? "");
-          return { uploadedUrl };
           console.log(" profile picture Updated ");
+          return { uploadedUrl };
         } catch (error) {
           console.log(error);
         }
@@ -203,4 +205,4 @@ export function checkPhotoURL(
   return url.toString();
 }
 export const photoURLFallback: string = fallback.src;
-  // "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+// "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";

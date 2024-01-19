@@ -17,7 +17,7 @@ export default function AdminMenu() {
   const [loading, setLoading] = useState(false);
   const { queryFn } = useQueryFn();
   // const deletePostMutation = useMutation({
-  //   mutationFn: async (data: unknown) => await deletePost(data),
+  //   mutationFn: async (data: unknown) =>  deletePost(data),
   //   onSuccess: (data) => {
   //     console.log("Delete Mutate Success " + data);
   //   },

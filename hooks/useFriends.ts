@@ -29,7 +29,7 @@ function useFriends() {
     //       where("__name__", "not-in", [uid, ...batch])
     //       // if not friends , pending , blocked or thisAccount , display all users as suggestedAccount
     //     );
-    //     return (await getDocs(suggestedFriendsQuery2)).docs.map(
+    //     return ( getDocs(suggestedFriendsQuery2)).docs.map(
     //       (doc) => doc.id
     //     );
     //   });

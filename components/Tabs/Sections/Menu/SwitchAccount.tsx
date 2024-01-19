@@ -134,7 +134,6 @@ function AccountItem(props: {
           const messaging = getMessaging(app);
           await signout(messaging);
           await signInWithEmailAndPassword(auth, a.email, a.password);
-          // router.replace("/");
           router.reload();
           setLoading(false);
         } catch (error: unknown) {
