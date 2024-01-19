@@ -14,11 +14,8 @@ function useFriends() {
   const fetchSuggestedFriends = async () => {
     if (!uid) return;
     const myFriendsQuery = query(getPath("friends", { uid }));
-    const myFriends = (await getDocs(myFriendsQuery)).docs.map((doc) => doc.id);
-    // .slice(0, 9);
     // including friends , pending , blocked (users) string[]
-    // const batchLists = [];
-    // let queryPromises: Promise<string[]>[] = [];
+    const myFriends = (await getDocs(myFriendsQuery)).docs.map((doc) => doc.id);
     // for (let i = 0; i < myFriends.length; i += 9) {
     //   const friends = myFriends.slice(i, i + 9);
     //   batchLists.push(friends);

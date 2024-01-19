@@ -33,7 +33,7 @@ import styles from "./index.module.scss";
 
 function Footer(
   props: {
-    setLikes?: Function;
+    setLikes: Function;
     likeCount: number;
     post: Post;
     setlikeCount: Function;
@@ -170,12 +170,12 @@ function Footer(
             queryFn.invalidate("myPost");
 
             if (isLiked) {
-              setLikes?.([]);
+              setLikes([]);
               await unReactPost({ likeCount, postRef, likeRef });
               await updateReactionCount();
             } else {
               playLikeSound();
-              setLikes?.([]);
+              setLikes([]);
               await reactPost({
                 post,
                 profile,

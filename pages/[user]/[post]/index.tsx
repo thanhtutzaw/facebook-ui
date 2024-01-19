@@ -72,8 +72,8 @@ export interface CommentProps {
   nested?: boolean;
   hasMoreComment?: boolean;
   commentEnd?: boolean;
-  uid: string;
-  comments?: Post["comments"] | [];
+  uid: DecodedIdToken["uid"];
+  comments?: Post["comments"] ;
   post: Post | null;
   profile?: account["profile"];
   replyInputRef?: RefObject<HTMLInputElement>;
@@ -86,15 +86,15 @@ type TinitialProps = {
   profile: account["profile"] | null;
   notFoundType: string | null;
 };
-const initial: TinitialProps = {
-  notFoundType: null,
-  hasMoreComment: false,
-  profile: null,
-  expired: false,
-  uid: "",
-  post: null,
-};
-export const getServerSideProps: GetServerSideProps = async (context) => {
+// const initial: TinitialProps = {
+//   notFoundType: null,
+//   hasMoreComment: false,
+//   profile: null,
+//   expired: false,
+//   uid: "",
+//   post: null,
+// };
+export const getServerSideProps: GetServerSideProps = async (context) => {  
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
@@ -414,7 +414,7 @@ export default function Page({
     },
     [limitedComments, post, uid]
   );
-  const [Likes, setLikes] = useState<likes | []>([]);
+  const [Likes, setLikes] = useState<likes[]>([]);
   const { user: authorId, post: postId } = router.query;
   const { scrollRef } = useInfiniteScroll({
     hasMore: hasMoreComment,
@@ -680,8 +680,9 @@ export default function Page({
               setLikes={setLikes}
               likeCount={likeCount}
               post={post}
-            />
+              />
             <Footer
+              setLikes={setLikes}
               likeCount={likeCount}
               setlikeCount={setlikeCount}
               style={{ borderBottom: "1px solid rgb(235, 235, 235)" }}

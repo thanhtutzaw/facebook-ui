@@ -28,16 +28,19 @@ export async function addSavedPost(authorId: string, postId: string) {
     createdAt: serverTimestamp(),
   };
   try {
-    const authorSnapShot = await getDoc(authorRef);
-    const postSnapshot = await getDoc(postRef);
+    const [authorDoc, postDoc] = await Promise.all([
+      getDoc(authorRef),
+      getDoc(postRef),
+    ]);
 
-    if (!authorSnapShot.exists()) {
+    if (!authorDoc.exists()) {
       alert("Author does not exist.");
-    } else if (!postSnapshot.exists()) {
+      throw new Error("Author does not exist.");
+    } else if (!postDoc.exists()) {
       alert("Post does not exist.");
-    } else {
-      await setDoc(Ref, data);
+      throw new Error("Post does not exist.");
     }
+    await setDoc(Ref, data);
   } catch (error: unknown) {
     alert("Adding Saved Post Failed !" + error);
     throw Error;

@@ -28,7 +28,7 @@ export function LikedUsers({
   post: Post;
   loading: boolean;
   setLikes: Function;
-  Likes: likes;
+  Likes: likes[];
   settogglereactionList: Function;
   togglereactionList: boolean;
 }) {
@@ -42,7 +42,7 @@ export function LikedUsers({
     );
     let unsubscribe: Unsubscribe;
     unsubscribe = onSnapshot(likeRef, async (snapshot) => {
-      const likes = snapshot.docs.map((doc) => doc.data()) as likes;
+      const likes = snapshot.docs.map((doc) => doc.data()) as likes[];
       const withAuthor = await Promise.all(
         likes.map(async (l) => {
           if (l.uid) {

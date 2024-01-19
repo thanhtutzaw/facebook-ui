@@ -9,7 +9,7 @@ import {
 } from "react";
 import { Post as PostType, likes } from "../types/interfaces";
 export type PostProps = {
-  Likes: likes;
+  Likes: likes[];
   deletePost: Function;
   setLikes: Function;
   tabIndex?: number;

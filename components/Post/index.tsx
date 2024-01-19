@@ -56,7 +56,7 @@ function Post({
   const [likeCount, setlikeCount] = useState(
     parseInt(post?.likeCount?.toString()! ?? "")
   );
-  const [Likes, setLikes] = useState<likes | []>([]);
+  const [Likes, setLikes] = useState<likes[]>([]);
   const [isDropDownOpenInNestedComment, setisDropDownOpenInNestedComment] =
     useState(false);
   if (!post) return <></>;

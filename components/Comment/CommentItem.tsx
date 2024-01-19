@@ -27,7 +27,7 @@ export interface CommentItemProps extends CommentProps {
   isDropDownOpenInNestedComment?: boolean;
   setisDropDownOpenInNestedComment?: Function;
 }
-function CommentItem(props: CommentItemProps & {post:Post}) {
+function CommentItem(props: CommentItemProps & { post: Post }) {
   const {
     replyInputRef,
     replyInput,
@@ -65,7 +65,7 @@ function CommentItem(props: CommentItemProps & {post:Post}) {
     replyCount,
     replies,
   } = useComment(props);
-    const router = useRouter();
+  const router = useRouter();
 
   const { text, createdAt, id } = comment;
   const { authorId, id: postId } = post;
@@ -335,15 +335,15 @@ function CommentItem(props: CommentItemProps & {post:Post}) {
           <Spinner style={{ margin: "0" }} size={16} />
         </span>
       )}
-      
+
       {comment.recentReplies && !props.preview && (
         <Comment
           parentId={String(comment.id)}
           nested={true}
-          comments={comment.recentReplies ?? []}
+          comments={comment.recentReplies}
           setComments={setComments}
         >
-          {comment.recentReplies?.map((recent) => (
+          {comment.recentReplies.map((recent) => (
             <CommentItem
               preview={props.preview}
               replyInputRef={replyInputRef}
@@ -360,12 +360,12 @@ function CommentItem(props: CommentItemProps & {post:Post}) {
               parentId={String(comment.id)}
               nested={true}
               comment={recent}
-              comments={comment.recentReplies ?? []}
+              comments={comment.recentReplies}
               setComments={setComments}
             />
           ))}
         </Comment>
-     )}
+      )}
       <div
         style={{
           padding: "0 !important",
@@ -412,7 +412,6 @@ function CommentItem(props: CommentItemProps & {post:Post}) {
                     parentId={String(comment.id)}
                     nested={true}
                     comment={comment}
-                    // comments={comment.recentReplies ?? []}
                     setComments={setComments}
                   />
                 ))}

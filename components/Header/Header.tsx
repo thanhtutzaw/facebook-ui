@@ -69,12 +69,10 @@ function Header(props: { tabIndex: number }) {
   const { indicatorRef, setSelectedId, friendReqCount } = usePageContext();
   const [currentNav, setCurrentNav] = useState<Tabs>("/");
   const [activeNav, setActiveNav] = useState<Tabs>("/");
-  // useEffect(() => {
   //   if (window.location.pathname !== "/") return;
   //   // window.location.hash = currentNav === "/" ? "home" : currentNav;
   //   setCurrentNav(window.location.hash.replace("#", "") as Tabs);
   //   setActiveNav(window.location.hash.replace("#", "") as Tabs);
-  // }, []);
 
   useEffect(() => {
     window.onpopstate = () => {

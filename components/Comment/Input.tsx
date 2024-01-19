@@ -106,7 +106,7 @@ export default function CommentInput(props: CommentProps) {
           throw new Error("User not Found ! Sign in and Try again !");
         }
         if (text === "") return;
-
+        
         try {
           setaddLoading(true);
           const isReplyingComment = replyInput?.authorName;

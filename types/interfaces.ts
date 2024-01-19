@@ -22,7 +22,7 @@ export type likes = {
   uid: string | number;
   createdAt: timeStamp;
   author?: UserRecord | User | account["profile"];
-}[];
+};
 
 export type friends = {
   id: string | number;

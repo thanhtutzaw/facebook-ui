@@ -6,7 +6,7 @@ import { LikedUsers } from "./LikedUsers";
 import s from "./index.module.scss";
 export function SocialCount(props: {
   post: Post;
-  Likes: likes;
+  Likes: likes[];
   setLikes: Function;
   likeCount: number;
 }) {
@@ -53,7 +53,7 @@ export function SocialCount(props: {
                 e.preventDefault();
                 e.stopPropagation();
                 settogglereactionList?.(true);
-                if (Likes?.length ?? 0 > 0) return;
+                if (Likes.length > 0) return;
                 setSocialUserListLoading(true);
                 setLikes(await fetchLikedUsers(post));
                 setSocialUserListLoading(false);

@@ -81,10 +81,9 @@ export default function Page(props: {
   //       orderBy(status === "pending" ? "createdAt" : "updatedAt", "desc")
   //     );
 
-  //     const myFriendsSnap = await getDocs(myFriendsQuery);
-  //     const acceptedFriends = await Promise.all(
+  //     const myFriendsSnap =  getDocs(myFriendsQuery);
+  //     const acceptedFriends =  Promise.all(
   //       myFriendsSnap.docs.map(async (doc) => {
-  //         const account = await getProfileByUID(doc.id);
   //         return {
   //           date:
   //             status === "pending"

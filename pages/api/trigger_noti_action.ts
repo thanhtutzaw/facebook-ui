@@ -50,9 +50,7 @@ export default async function handleTriggerNotiAction(
 ) {
   const { action } = req.query;
   await checkCookies({ req, res });
-  let success = false;
-  console.log({ trigger_api: { query: req.query, body: req.body } });
-  let data: {} | null | void | [] = {};
+  let data: unknown;
   const successJSONAll = { action, body: req.body ? req.body : null };
   const notFoundBodyError = `Request Body not Found in ${req.method} method ! `;
   const notAllowMethodError = "Method Not Allowed";
@@ -131,7 +129,7 @@ export default async function handleTriggerNotiAction(
             } else {
               try {
                 data = await acceptFriends(uid, friends, currentUser);
-                res.status(200).json({ success: true, ...data });
+                res.status(200).json({ success: true, data });
               } catch (error) {
                 res.status(500).json({ error });
                 throw new Error(`${error}`);
@@ -160,7 +158,7 @@ export default async function handleTriggerNotiAction(
               try {
                 data = await handleReply(comment_reply_params);
                 console.log({ you_are_replying_to_comment: req.body });
-                res.status(200).json({ success: true, ...data });
+                res.status(200).json({ success: true, data });
               } catch (error) {
                 res.status(500).json({ error });
                 throw new Error(`${error}`);
@@ -175,7 +173,6 @@ export default async function handleTriggerNotiAction(
         } else {
           badRequestJSON("Not Found Action");
         }
-        success = true;
         res.status(200).json({ success: true, data, ...successJSONAll });
       }
       break;
@@ -193,7 +190,7 @@ export default async function handleTriggerNotiAction(
   }
 
   function successJSON() {
-    res.status(200).json({ success: true, ...data });
+    res.status(200).json({ success: true, data });
   }
   function badRequestJSON(message: string) {
     res.status(400).json({ message: message ?? "Bad Request" });

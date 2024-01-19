@@ -336,11 +336,9 @@ export async function postInfo(p: Post, uid: string): Promise<Post> {
       getDoc(savedByUserRef),
       getProfileByUID(authorId.toString()),
     ]);
-
     const likeCount = likeCountDoc.data().count;
     const commentCount = commentCountDoc.data().count;
     const shareCount = shareDoc.size ?? 0;
-
     const originalPost = {
       ...p,
       commentCount,
@@ -498,9 +496,9 @@ export async function getPostWithMoreInfo(
       postSnap.docs.map(async (doc) => await postToJSON(doc))
     );
     try {
-      const posts = (await Promise.all(
+      const posts = await Promise.all(
         postJSON.map(async (p) => await postInfo(p, uid))
-      )) as Post[];
+      );
       return posts;
     } catch (error: unknown) {
       if (error === AuthErrorCodes.QUOTA_EXCEEDED) {

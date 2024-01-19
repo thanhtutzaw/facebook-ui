@@ -394,10 +394,10 @@ export async function fetchLikedUsers(post: Post) {
   );
   try {
     const likeDoc = await getDocs(likeRef);
-    const likes = likeDoc.docs.map((doc) => doc.data()) as likes;
+    const likes = likeDoc.docs.map((doc) => doc.data()) as likes[];
     const withAuthor = await Promise.all(
       likes.map(async (like) => {
-        const author = await getProfileByUID(like.uid?.toString());
+        const author = await getProfileByUID(String(like.uid));
         return { ...like, author };
       })
     );
