@@ -73,7 +73,7 @@ export interface CommentProps {
   hasMoreComment?: boolean;
   commentEnd?: boolean;
   uid: DecodedIdToken["uid"];
-  comments?: Post["comments"] ;
+  comments?: Post["comments"];
   post: Post | null;
   profile?: account["profile"];
   replyInputRef?: RefObject<HTMLInputElement>;
@@ -94,7 +94,7 @@ type TinitialProps = {
 //   uid: "",
 //   post: null,
 // };
-export const getServerSideProps: GetServerSideProps = async (context) => {  
+export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
     const token = await verifyIdToken(cookies.token);
@@ -431,6 +431,7 @@ export default function Page({
       const commentId = router.query.comment;
       const replyCommentPath = router.asPath.split("#")[1]?.split("-")[0];
       const replyId = router.asPath.split("#")[1]?.split("-")[1];
+
       if (post && replyCommentPath === "reply" && commentId && replyId) {
         const isCommentFound = limitedComments?.find((l) => l.id === commentId);
         if ((Number(post.commentCount) ?? 0) <= 0) return;
@@ -578,7 +579,10 @@ export default function Page({
       // handleNotFoundComment
       if (router.query.comment) return;
       if ((Number(post && post.commentCount) ?? 0) <= 0) return;
-      const commentId = router.asPath.split("#")[1]?.split("-")[1];
+      // console.log(router.asPath.split("#")[1]?.split("-")[0]);
+      const commentId =
+        router.asPath.split("#")[1]?.split("-")[0] === "comment" &&
+        router.asPath.split("#")[1]?.split("-")[1];
       const isCommentFound = limitedComments?.find((l) => l.id === commentId);
       if (post && commentId && !isCommentFound) {
         console.log("we can't find comment - Fetching ..." + commentId);
@@ -680,7 +684,7 @@ export default function Page({
               setLikes={setLikes}
               likeCount={likeCount}
               post={post}
-              />
+            />
             <Footer
               setLikes={setLikes}
               likeCount={likeCount}
