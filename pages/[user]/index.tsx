@@ -400,13 +400,13 @@ export default function UserProfile({
         >
           <div className={`${s.info}`}>
             <Link
-              // as={encodeURIComponent(userName).replaceAll("%20", "-")}
-              // as={String(router.query.user)+"/"+}
               shallow
-              // as={checkPhotoURL(profile?.photoURL)}
+              // as={`${router.query.user}/?viewImage=${checkPhotoURL(
+              //   profile?.photoURL
+              // )}&imageName=${userName}`}
               href={{
-                pathname: String(router.query.user),
                 query: {
+                  ...router.query,
                   viewImage: checkPhotoURL(profile?.photoURL),
                   imageName: userName,
                 },

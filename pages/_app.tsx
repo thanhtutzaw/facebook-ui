@@ -83,8 +83,8 @@ export default function App({
   }, [auth, expired]);
 
   useEffect(() => {
-    console.log({ currentUser });
-  }, [currentUser]);
+    console.log(router);
+  }, [router]);
 
   useEffect(() => {
     const unsubscribe = onIdTokenChanged(auth, async (user) => {
@@ -120,8 +120,6 @@ export default function App({
       unsubscribe();
     };
   }, [auth]);
-  // useEffect(() => {
-  //   const Interval = setInterval(
   //     async () => {
   //       const user = auth.currentUser;
   //       if (user) {
@@ -130,23 +128,13 @@ export default function App({
   //       }
   //     },
   //     10 * 60 * 1000 //10min force refresh
-  //   );
-  //   return () => {
-  //     clearInterval(Interval);
-  //   };
-  // }, []);
   useEffect(() => {
-    if (currentUser?.uid) {
-      const getProfile = async () => {
+    if (currentUser && currentUser.uid) {
+      (async function getCroppedProfileFromDB() {
         const profileData = await getProfileByUID(String(currentUser?.uid));
-        // const profile = {
-        //   ...profileData,
-        //   photoURL: checkPhotoURL(profileData.photoURL),
-        // };
         const croppedURL = profileData?.photoURL_cropped;
         setcurrentUser({ ...currentUser, photoURL_cropped: croppedURL });
-      };
-      getProfile();
+      })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser?.uid]);

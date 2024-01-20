@@ -253,11 +253,9 @@ export function ImageLargeView() {
   }, [scale, x, y]);
   useEffect(() => {
     if (singleImageModal && singleImageModal.src) {
-      // window.location.hash = "&viewImage=" + singleImageModal.src;
       modalRef?.current?.showModal();
     } else {
       modalRef?.current?.close();
-      // router.back();
       setsingleImageModal(null);
     }
   }, [modalRef, setsingleImageModal, singleImageModal]);
@@ -287,9 +285,6 @@ export function ImageLargeView() {
         setVisible(false);
         if (!singleImageModal) return;
         router.back();
-        // router.replace(router);
-        // delete router.query.viewImage;
-        // delete router.query.imageName;
         setsingleImageModal(null);
         setLoading(true);
       }}
