@@ -76,6 +76,9 @@ main {
   /* scroll-padding-bottom: 500px; */
 }
 
+#nprogress {
+  z-index: 100000000000 !important;
+}
 
 #nprogress .bar {
   background-color: #0070f3 !important;

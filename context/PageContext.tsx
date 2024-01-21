@@ -1,6 +1,5 @@
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { Auth, User } from "firebase/auth";
-import { useRouter } from "next/router";
 import {
   Dispatch,
   ReactNode,
@@ -8,13 +7,12 @@ import {
   SetStateAction,
   createContext,
   useContext,
-  useEffect,
   useRef,
   useState,
 } from "react";
 import { Tabs, friends } from "../types/interfaces";
 
-export type selectedId = {
+export type selectedPosts = {
   postId: string;
   authorId: string;
   share: {
@@ -22,25 +20,21 @@ export type selectedId = {
     authorId: string | null;
   } | null;
 };
-interface TsingleImageModal {
+export interface TsingleImageModal {
   src: string;
   name: string;
 }
 export interface PageProps {
-  // newsFeedData: Post[];
-  // setnewsFeedData: Function;
   queryClient: QueryClient;
   dropdownRef: RefObject<HTMLDivElement>;
   uploadButtonClicked: boolean;
   setuploadButtonClicked: Dispatch<SetStateAction<boolean>>;
   indicatorRef: RefObject<HTMLDivElement>;
   fileRef: RefObject<HTMLInputElement>;
-  selectedId: selectedId[];
-  setSelectedId: Dispatch<SetStateAction<selectedId[]>>;
+  selectedPosts: selectedPosts[];
+  setSelectedId: Dispatch<SetStateAction<selectedPosts[]>>;
   singleImageModalRef: RefObject<HTMLDialogElement>;
-  singleImageModal: TsingleImageModal | null;
-  setsingleImageModal: Function;
-  // preventClick: MutableRefObject<boolean>;
+  // preventClick2: MutableRefObject<boolean>;
   preventClick: boolean;
   friends: friends[];
   setpreventClick: Function;
@@ -60,33 +54,13 @@ export const PageContext = createContext<(PageProps & Props) | null>(null);
 export function PageProvider(props: Props) {
   const [friends, setfriends] = useState<friends[]>([]);
   const queryClient = useQueryClient();
-  const [selectedId, setSelectedId] = useState<selectedId[]>([]);
+  const [selectedPosts, setSelectedId] = useState<selectedPosts[]>([]);
   const [preventClick, setpreventClick] = useState(false);
-  const [singleImageModal, setsingleImageModal] =
-    useState<TsingleImageModal | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const singleImageModalRef = useRef<HTMLDialogElement>(null);
   const [uploadButtonClicked, setuploadButtonClicked] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
-  useEffect(() => {
-    console.log({ query: router.query.viewImage });
-    console.log({ query: router.query.imageName });
-    if (!router.query.viewImage) return;
-    const { viewImage, imageName } = router.query;
-    console.log(String(viewImage));
-    console.log(String(imageName));
-    setsingleImageModal({ src: String(viewImage), name: String(imageName) });
-    // window.onpopstate = () => {
-    //   // window.history.pushState(null, document.title, currentPath);
-    //   if (singleImageModal) {
-    //     console.log("close modal");
-    //     setsingleImageModal(null);
-    //   }
-    // };
-  }, [router]);
-  //  window.history.pushState(null, document.title, currentPath);
   return (
     <PageContext.Provider
       value={{
@@ -97,9 +71,7 @@ export function PageProvider(props: Props) {
         dropdownRef,
         preventClick,
         setpreventClick,
-        singleImageModal,
-        setsingleImageModal,
-        selectedId,
+        selectedPosts,
         setSelectedId,
         uploadButtonClicked,
         setuploadButtonClicked,

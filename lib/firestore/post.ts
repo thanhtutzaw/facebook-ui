@@ -20,7 +20,7 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
-import { selectedId } from "../../context/PageContext";
+import { selectedPosts } from "../../context/PageContext";
 import { Post, RecentPosts, friends, likes } from "../../types/interfaces";
 import { MYPOST_LIMIT, NewsFeed_LIMIT } from "../QUERY_LIMIT";
 import {
@@ -277,7 +277,10 @@ export async function deletePost(data: {
     alert("Delete Failed !" + error);
   }
 }
-export async function deleteMultiplePost(uid: string, selctedId: selectedId[]) {
+export async function deleteMultiplePost(
+  uid: string,
+  selctedId: selectedPosts[]
+) {
   const chunkSize = 10;
   const batch = writeBatch(db);
   for (let i = 0; i < selctedId.length; i += chunkSize) {

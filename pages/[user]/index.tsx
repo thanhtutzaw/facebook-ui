@@ -168,12 +168,7 @@ export default function UserProfile({
   const friendId = router.query.user;
   const [friendMenuToggle, setFriendMenuToggle] = useState(false);
   const [loading, setLoading] = useState(false);
-  const {
-    setsingleImageModal,
-    singleImageModalRef,
-    currentUser,
-    setcurrentUser,
-  } = usePageContext();
+  const { currentUser } = usePageContext();
   useEffect(() => {
     console.log(router);
   }, [router]);
@@ -413,12 +408,6 @@ export default function UserProfile({
               }}
             >
               <Image
-                // onClick={() => {
-                //   setsingleImageModal({
-                //     src: checkPhotoURL(profile?.photoURL),
-                //     name: `${userName}'s profile`,
-                //   });
-                // }}
                 className={`bg-avatarBg  ${s.profile}`}
                 width={500}
                 height={170}
@@ -510,18 +499,6 @@ export default function UserProfile({
               )
             )}
           </div>
-          {/* <button
-            onClick={() => {
-              singleImageModalRef.current &&
-                singleImageModalRef.current.showModal();
-              setsingleImageModal({
-                src: checkPhotoURL(profile?.photoURL),
-                name: "test",
-              });
-            }}
-          >
-            Open Modal
-          </button> */}
           <PostList
             postLoading={hasMore}
             postEnd={postEnd}

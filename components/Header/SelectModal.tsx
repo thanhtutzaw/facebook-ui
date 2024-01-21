@@ -9,7 +9,7 @@ import s from "../../styles/Home.module.scss";
 import BackHeader from "./BackHeader";
 function SelectModal({ deletePost }: { deletePost: Function }) {
   const { uid, selectMode, setselectMode } = useAppContext();
-  const { selectedId, setSelectedId } = usePageContext();
+  const { selectedPosts, setSelectedId } = usePageContext();
 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -46,23 +46,23 @@ function SelectModal({ deletePost }: { deletePost: Function }) {
       }}
     >
       <h2 className={s.title}>
-        <span>{selectedId.length}</span> Selected
+        <span>{selectedPosts.length}</span> Selected
       </h2>
       <button
         draggable="false"
-        disabled={loading || selectedId?.length === 0}
+        disabled={loading || selectedPosts?.length === 0}
         onClick={async () => {
-          if (!uid || selectedId.length === 0 || !selectedId) return;
+          if (!uid || selectedPosts.length === 0 || !selectedPosts) return;
           setLoading(true);
           try {
-            await deleteMultiplePost(uid, selectedId);
+            await deleteMultiplePost(uid, selectedPosts);
             queryFn.refetchQueries("myPost");
             queryFn.invalidate("myPost");
 
             setLoading(false);
             setSelectedId([]);
             setselectMode(false);
-            selectedId.map((selected) => {
+            selectedPosts.map((selected) => {
               deletePost(selected.postId);
             });
           } catch (error: unknown) {

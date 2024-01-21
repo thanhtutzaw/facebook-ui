@@ -21,7 +21,7 @@ import { useRouter } from "next/router";
 import nookies from "nookies";
 import "nprogress/nprogress.css";
 import { useEffect, useState } from "react";
-import { ImageLargeView } from "../components/Post/ImageLargeView";
+import { SingleImageViewModal } from "../components/Post/SingleImageViewModal";
 import { Welcome } from "../components/Welcome";
 import { app, getProfileByUID } from "../lib/firebase";
 import { verifyIdToken } from "../lib/firebaseAdmin";
@@ -168,7 +168,7 @@ export default function App({
         >
           <main style={{ scrollPadding: "65px" }}>
             <Component {...pageProps} />
-            {currentUser?.uid && <ImageLargeView />}
+            {currentUser?.uid && <SingleImageViewModal />}
             <audio
               style={{ visibility: "hidden", display: "none" }}
               ref={soundRef}

@@ -34,7 +34,7 @@ function PhotoLayout(props: {
     fileRef,
   } = props;
   const files = form ? form.files : post ? post.media : null;
-  const { setsingleImageModal, auth } = usePageContext();
+  const { auth } = usePageContext();
 
   //   window.onpopstate = () => {
   //     history.pushState(null, document.title, location.hash);
@@ -56,9 +56,24 @@ function PhotoLayout(props: {
                 <div
                   onClick={() => {
                     if (file.type === "video/mp4") return;
-                    setsingleImageModal({
-                      src: isMedia(file) ? file.url : URL.createObjectURL(file),
-                      name: isMedia(file) && file.name,
+                    router.replace({
+                      pathname: router.pathname,
+                      query: {
+                        ...router.query,
+                        // viewImage: isMedia(file)
+                        //   ? file.url
+                        //   : URL.createObjectURL(file),
+                        // imageName: isMedia(file) && file.name,
+                      },
+                    });
+                    router.push({
+                      query: {
+                        ...router.query,
+                        viewImage: isMedia(file)
+                          ? file.url
+                          : URL.createObjectURL(file),
+                        imageName: isMedia(file) && file.name,
+                      },
                     });
                   }}
                   key={fileIndex}
@@ -97,11 +112,6 @@ function PhotoLayout(props: {
                         const data = media?.filter(
                           (_, index) => index === fileIndex
                         );
-                        // setdeleteFile([
-                        //   ...deleteFile! ?? [],
-                        //   media?.filter((_, index) => index === i)
-                        // ]);
-                        // setdeleteFile([...deleteFile??[], data]);
                         setdeleteFile?.([
                           ...(deleteFile ?? []),
                           ...(data ?? []),
@@ -112,15 +122,13 @@ function PhotoLayout(props: {
                             ...files.slice(fileIndex + 1),
                           ],
                         });
-                        // setFiles(files.filter((_, index) => index !== i));
                         // setFiles(files.splice(i, 1));
                         if (fileRef && fileRef.current) {
                           fileRef.current.value = "";
                         }
-                        setsingleImageModal(null);
                       }}
-                      title="Remove media"
-                      aria-label="Remove media"
+                      title="Delete Media"
+                      aria-label="Delete Media"
                       tabIndex={-1}
                       className={s.deletePhoto}
                     >
@@ -137,11 +145,6 @@ function PhotoLayout(props: {
                           const data = media?.filter(
                             (_, index) => index === fileIndex
                           );
-                          // setdeleteFile([
-                          //   ...deleteFile! ?? [],
-                          //   media?.filter((_, index) => index === i)
-                          // ]);
-                          // setdeleteFile([...deleteFile??[], data]);
                           setdeleteFile?.([
                             ...(deleteFile ?? []),
                             ...(data ?? []),
@@ -159,10 +162,9 @@ function PhotoLayout(props: {
                         if (fileRef && fileRef.current) {
                           fileRef.current.value = "";
                         }
-                        setsingleImageModal(null);
                       }}
-                      title="Remove media"
-                      aria-label="Remove media"
+                      title="Remove media from Form"
+                      aria-label="Remove media from Form"
                       tabIndex={-1}
                       className={s.deletePhoto}
                     >
@@ -171,12 +173,6 @@ function PhotoLayout(props: {
                   )}
                 </div>
               );
-              // function newFunction(file:File|Media):file is File {
-              //   if (file instanceof File) {
-              //     return file;
-              //   }
-              //   return file;
-              // }
             })}
         </div>
       </>
@@ -199,9 +195,12 @@ function PhotoLayout(props: {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `${post?.authorId?.toString()}/${post?.id?.toString()}#media-${
-                  media[0].name ?? ""
-                }`
+                {
+                  pathname: `${String(post?.authorId)}/${String(post?.id)}`,
+                  hash: `media-${media[0].name ?? ""}`,
+                }
+                // `${post?.authorId?.toString()}/${post?.id?.toString()}#media-${
+                // }`
               );
             }}
             media={media}

@@ -1,8 +1,9 @@
 import { useAppContext } from "@/context/AppContext";
-import { usePageContext } from "@/context/PageContext";
 import { checkPhotoURL, getFullName } from "@/lib/firestore/profile";
 import { account } from "@/types/interfaces";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { ChangeEventHandler, ReactNode, RefObject, useRef } from "react";
 import s from "./index.module.scss";
 export const bioFallback = "No Bio Yet";
@@ -16,7 +17,6 @@ function ProfileInfo(props: {
 }) {
   const { src, handleChange, infoRef, children, editToggle, newProfile } =
     props;
-  const { setsingleImageModal, currentUser } = usePageContext();
   const { profile, selectMode } = useAppContext();
   const imgFileRef = useRef<HTMLInputElement>(null);
 
@@ -31,23 +31,32 @@ function ProfileInfo(props: {
     ? URL.createObjectURL(file)!
     : (newProfile?.photoURL! as string);
   const userName = getFullName(profile);
+  const router = useRouter();
   return (
     <div ref={infoRef} className={`${s.info} ${selectMode ? s.active : ""}`}>
-      <Image
-        onClick={() => {
-          setsingleImageModal({
-            src: checkPhotoURL(profile?.photoURL),
-            name: `${userName}'s profile picture`,
-          });
+      <Link
+        shallow
+        // as={`${router.query.user}/?viewImage=${checkPhotoURL(
+        //   profile?.photoURL
+        // )}&imageName=${userName}`}
+        href={{
+          query: {
+            ...router.query,
+            viewImage: checkPhotoURL(profile?.photoURL),
+            imageName: `${userName}'s profile picture`,
+          },
         }}
-        priority={false}
-        className={`bg-avatarBg ${s.profile}`}
-        width={500}
-        height={170}
-        style={{ objectFit: "cover", width: "120px", height: "120px" }}
-        alt={`${userName}'s profile`}
-        src={editToggle ? imageFile : src}
-      />
+      >
+        <Image
+          priority={false}
+          className={`bg-avatarBg ${s.profile}`}
+          width={500}
+          height={170}
+          style={{ objectFit: "cover", width: "120px", height: "120px" }}
+          alt={`${userName}'s profile`}
+          src={editToggle ? imageFile : src}
+        />
+      </Link>
       {editToggle && (
         <>
           <input

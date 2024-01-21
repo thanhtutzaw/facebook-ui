@@ -42,7 +42,7 @@ function Content({ post }: { post: Post }) {
     settoggleMenu,
   } = usePostContext();
   const { authorId, id, text, sharePost: share } = post;
-  const { preventClick, selectedId, setSelectedId } = usePageContext();
+  const { preventClick, selectedPosts, setSelectedId } = usePageContext();
   useEscape(() => {
     if (toggleMenu) settoggleMenu("");
   });
@@ -149,8 +149,8 @@ function Content({ post }: { post: Post }) {
                         e.stopPropagation();
                         setChecked(false);
                         setSelectedId(
-                          selectedId?.filter(
-                            (selectedId) => selectedId.postId !== id
+                          selectedPosts?.filter(
+                            (selectedPosts) => selectedPosts.postId !== id
                           )
                         );
                       }}
@@ -168,7 +168,7 @@ function Content({ post }: { post: Post }) {
                         e.preventDefault();
                         e.stopPropagation();
                         setSelectedId([
-                          ...selectedId!,
+                          ...selectedPosts!,
                           {
                             postId: id?.toString()!,
                             authorId: post.authorId.toString(),
