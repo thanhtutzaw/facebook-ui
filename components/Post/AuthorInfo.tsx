@@ -1,16 +1,8 @@
 import { checkPhotoURL, getFullName } from "@/lib/firestore/profile";
-import {
-  faEarth,
-  faLock,
-  faUserGroup,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DocumentData, DocumentReference } from "firebase/firestore";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { CSSProperties, MouseEventHandler, ReactNode, memo } from "react";
-import { JSONTimestampToDate } from "../../lib/firebase";
-import { Post, account } from "../../types/interfaces";
+import { account } from "../../types/interfaces";
 import styles from "./index.module.scss";
 type layoutTypes = "row" | "column";
 
@@ -21,128 +13,112 @@ function AuthorInfo(props: {
   parentId?: string;
   setComments?: Function;
   handleEditComment?: Function;
-  navigateToProfile?: MouseEventHandler;
   profile?: account["profile"];
   isAdmin?: boolean;
   commentRef?: DocumentReference<DocumentData>;
   postRef?: DocumentReference<DocumentData>;
-  comment?: boolean;
+  // comment?: boolean;
   style?: CSSProperties;
   children?: ReactNode;
   layout?: layoutTypes;
-  post?: Post;
+  // post?: Post;
 }) {
   const {
-    // parentId,
-    // setisDropDownOpenInNestedComment,
     size,
-    // setComments,
-    // handleEditComment,
-    post,
+    // post,
     layout,
     profile,
     style,
-    // postRef,
-    // commentRef,
-    // isAdmin,
-    comment,
+    // comment,
     children,
-    // nested,
-    navigateToProfile,
   } = props;
-  const router = useRouter();
-
-  if (post) {
-    const { author, createdAt, visibility } = post;
-    const profile = author as account["profile"];
-    //   if (router.pathname === "/") {
-    //     router.push(
-    //       { query: { user: String(post?.authorId) } },
-    //       String(post?.authorId)
-    //     );
-    //   } else {
-    //     router.push(`/${String(post?.authorId)}`);
-    //   }
-    const textEnd = post?.sharePost?.id && <>&nbsp; shared a Post</>;
-    return (
-      <div className={styles.header}>
-        <User
-          size={size!}
-          navigateToProfile={navigateToProfile}
-          profile={profile}
-        >
-          <UserName
-            hasChildren={true}
-            profile={profile}
-            textEnd={textEnd}
-            navigateToProfile={navigateToProfile}
-          />
-          <div className={styles.moreInfo}>
-            {typeof createdAt !== "number" && (
-              <p className={styles.date} suppressHydrationWarning>
-                {JSONTimestampToDate(createdAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
-              </p>
-            )}
-            {visibility?.toLowerCase() === "public" && (
-              <span title="Everyone can see this Post">
-                <FontAwesomeIcon icon={faEarth} />
-              </span>
-            )}
-            {visibility?.toLowerCase() === "friend" && (
-              <span title="Friends can see this Post">
-                <FontAwesomeIcon icon={faUserGroup} />
-              </span>
-            )}
-            {visibility?.toLowerCase() === "onlyme" && (
-              <span title="Only you can see this Post">
-                <FontAwesomeIcon icon={faLock} />
-              </span>
-            )}
-          </div>
-        </User>
-        {children}
-      </div>
-    );
-  }
-  if (comment) {
-    // const isRepliedBySameAuthor =
-    //   comment && comment.authorId !== comment.recipient?.id;
-    return (
-      <div style={style} className={`relative ${styles.header} `}>
-        {children}
-      </div>
-    );
-  }
+  // if (post) {
+  //   const { author, createdAt, visibility } = post;
+  //   const profile = author as account["profile"];
+  //   //   if (router.pathname === "/") {
+  //   //     router.push(
+  //   //       { query: { user: String(post?.authorId) } },
+  //   //       String(post?.authorId)
+  //   //     );
+  //   //   } else {
+  //   //     router.push(`/${String(post?.authorId)}`);
+  //   //   }
+  //   const textEnd = post?.sharePost?.id && <>&nbsp; shared a Post</>;
+  //   return (
+  //     <div className={styles.header}>
+  //       <User2
+  //         size={size!}
+  //         profile={profile}
+  //       >
+  //         <UserName
+  //           hasChildren={true}
+  //           profile={profile}
+  //           textEnd={textEnd}
+  //         />
+  //         <div className={styles.moreInfo}>
+  //           {typeof createdAt !== "number" && (
+  //             <p className={styles.date} suppressHydrationWarning>
+  //               {JSONTimestampToDate(createdAt).toLocaleDateString("en-US", {
+  //                 year: "numeric",
+  //                 month: "short",
+  //                 day: "numeric",
+  //               })}
+  //             </p>
+  //           )}
+  //           {visibility?.toLowerCase() === "public" && (
+  //             <span title="Everyone can see this Post">
+  //               <FontAwesomeIcon icon={faEarth} />
+  //             </span>
+  //           )}
+  //           {visibility?.toLowerCase() === "friend" && (
+  //             <span title="Friends can see this Post">
+  //               <FontAwesomeIcon icon={faUserGroup} />
+  //             </span>
+  //           )}
+  //           {visibility?.toLowerCase() === "onlyme" && (
+  //             <span title="Only you can see this Post">
+  //               <FontAwesomeIcon icon={faLock} />
+  //             </span>
+  //           )}
+  //         </div>
+  //       </User2>
+  //       {children}
+  //     </div>
+  //   );
+  // }
+  // if (comment) {
+  // const isRepliedBySameAuthor =
+  //   comment && comment.authorId !== comment.recipient?.id;
   return (
-    <div style={style} className={` ${styles.header} `}>
-      <User
-        style={{ userSelect: "initial" }}
-        size={size!}
-        layout={layout}
-        profile={profile}
-        navigateToProfile={navigateToProfile}
-      >
-        <UserName
-          hasChildren={!!children}
-          profile={profile!}
-          navigateToProfile={navigateToProfile}
-        />
-        {children}
-      </User>
+    <div style={style} className={`relative ${styles.header} `}>
+      {children}
     </div>
   );
+  // }
+  // return (
+  //   <div style={style} className={` ${styles.header} `}>
+  //     <User2
+  //       style={{ userSelect: "initial" }}
+  //       size={size!}
+  //       layout={layout}
+  //       profile={profile}
+  //     >
+  //       <UserName
+  //         hasChildren={!!children}
+  //         profile={profile!}
+  //       />
+  //       {children}
+  //     </User2>
+  //   </div>
+  // );
 }
 
 function User(props: {
-  navigateToProfile?: MouseEventHandler<HTMLSpanElement>;
+  navigateToProfile: MouseEventHandler<HTMLSpanElement>;
   profile?: account["profile"];
   layout?: layoutTypes;
   children?: ReactNode;
-  size: number;
+  size?: number;
   style?: CSSProperties;
 }) {
   const {
@@ -178,13 +154,13 @@ function User(props: {
 }
 function UserName(props: {
   profile: account["profile"];
-  navigateToProfile?: MouseEventHandler<HTMLSpanElement>;
+  navigateToProfile: MouseEventHandler<HTMLSpanElement>;
   textEnd?: ReactNode;
-  hasChildren: boolean;
+  hasChildren?: boolean;
   comment?: boolean;
 }) {
   const {
-    hasChildren: children,
+    hasChildren = false,
     profile,
     textEnd,
     navigateToProfile,
@@ -196,19 +172,19 @@ function UserName(props: {
         flex: "1",
         flexWrap: "wrap",
         userSelect: "none",
-        marginBottom: children ? "2px" : "initial",
+        marginBottom: hasChildren ? "2px" : "initial",
       }}
       className={styles.name}
     >
       <span
         style={{
           color: comment ? "rgb(46 46 46)" : "initial",
-          fontSize: !children ? "18px" : "inherit",
-          fontWeight: children ? "500" : "initial",
+          fontSize: !hasChildren ? "18px" : "inherit",
+          fontWeight: hasChildren ? "500" : "initial",
         }}
         onClick={(e) => {
           e.stopPropagation();
-          navigateToProfile?.(e);
+          navigateToProfile(e);
         }}
       >
         {getFullName(profile)}
@@ -222,9 +198,9 @@ function UserAvatarPicture({
   profile,
   size = 45,
 }: {
-  navigateToProfile?: MouseEventHandler<HTMLImageElement>;
+  navigateToProfile: MouseEventHandler<HTMLImageElement>;
   profile?: account["profile"];
-  size: number;
+  size?: number;
 }) {
   const profilePicture = checkPhotoURL(profile?.photoURL);
   return (

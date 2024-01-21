@@ -2,7 +2,7 @@ import { usePageContext } from "@/context/PageContext";
 import { usePostContext } from "@/context/PostContext";
 import useEscape from "@/hooks/useEscape";
 import { app, getCollectionPath } from "@/lib/firebase";
-import { Post } from "@/types/interfaces";
+import { Post, account } from "@/types/interfaces";
 import {
   faCircleCheck,
   faDotCircle,
@@ -13,7 +13,7 @@ import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
 import { memo, useCallback, useEffect, useState } from "react";
 import TextInput from "../Form/Input/TextInput";
-import AuthorInfo from "./AuthorInfo";
+import AuthorInfo, { User as UserComponent, UserName } from "./AuthorInfo";
 import PostFallback from "./Fallback";
 import AdminMenu from "./Menu/AdminMenu";
 import Menu from "./Menu/Menu";
@@ -101,6 +101,8 @@ function Content({ post }: { post: Post }) {
     return () => unsub();
   }, []);
   const isAdmin = authUser?.uid === authorId;
+  const textEnd = post?.sharePost?.id && <>&nbsp; shared a Post</>;
+
   return (
     <>
       <span
@@ -116,7 +118,15 @@ function Content({ post }: { post: Post }) {
           }
         }}
       >
-        <AuthorInfo post={post} navigateToProfile={navigateToProfile}>
+        <AuthorInfo>
+          <UserComponent navigateToProfile={navigateToProfile}>
+            <UserName
+              profile={post.author as account["profile"]}
+              hasChildren={true}
+              textEnd={textEnd}
+              navigateToProfile={navigateToProfile}
+            />
+          </UserComponent>
           {!shareMode && (
             <>
               {!selectMode ? (

@@ -13,7 +13,7 @@ import {
 } from "../../lib/firebase";
 import { Post, account, likes } from "../../types/interfaces";
 import Spinner from "../Spinner";
-import AuthorInfo from "./AuthorInfo";
+import AuthorInfo, { User, UserName } from "./AuthorInfo";
 
 export function LikedUsers({
   count,
@@ -59,6 +59,7 @@ export function LikedUsers({
   }, [Likes.length, post.authorId, post.id, setLikes, togglereactionList]);
 
   const router = useRouter();
+  
   return (
     <>
       <header>
@@ -84,24 +85,41 @@ export function LikedUsers({
           <ul>
             {Likes.map((like) => (
               <Link href={"/" + String(like.uid)} key={String(like.uid)}>
-                <AuthorInfo
-                  layout="row"
-                  navigateToProfile={() => {
-                    if (router.pathname === "/") {
-                      router.push(
-                        {
-                          query: {
-                            user: String(like.uid),
+                <AuthorInfo layout="row">
+                  <User
+                    navigateToProfile={() => {
+                      if (router.pathname === "/") {
+                        router.push(
+                          {
+                            query: {
+                              user: String(like.uid),
+                            },
                           },
-                        },
-                        String(like.uid)
-                      );
-                    } else {
-                      router.push(`/${String(like.uid)}`);
-                    }
-                  }}
-                  profile={like.author as account["profile"]}
-                >
+                          String(like.uid)
+                        );
+                      } else {
+                        router.push(`/${String(like.uid)}`);
+                      }
+                    }}
+                  >
+                    <UserName
+                      profile={like.author as account["profile"]}
+                      navigateToProfile={() => {
+                        if (router.pathname === "/") {
+                          router.push(
+                            {
+                              query: {
+                                user: String(like.uid),
+                              },
+                            },
+                            String(like.uid)
+                          );
+                        } else {
+                          router.push(`/${String(like.uid)}`);
+                        }
+                      }}
+                    />
+                  </User>
                   <p>
                     {JSONTimestampToDate(like.createdAt).toLocaleDateString(
                       "en-US",

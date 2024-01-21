@@ -4,7 +4,7 @@ import CommentInput from "@/components/Comment/Input";
 import TextInput from "@/components/Form/Input/TextInput";
 import PostSettingFooterForm from "@/components/Form/PostSettingFooter";
 import BackHeader from "@/components/Header/BackHeader";
-import AuthorInfo from "@/components/Post/AuthorInfo";
+import AuthorInfo, { User, UserName } from "@/components/Post/AuthorInfo";
 import Footer from "@/components/Post/Footer";
 import PhotoLayout from "@/components/Post/PhotoLayout";
 import { SocialCount } from "@/components/Post/SocialCount";
@@ -86,17 +86,15 @@ type TinitialProps = {
   profile: account["profile"] | null;
   notFoundType: string | null;
 };
-// const initial: TinitialProps = {
-//   notFoundType: null,
-//   hasMoreComment: false,
-//   profile: null,
-//   expired: false,
-//   uid: "",
-//   post: null,
-// };
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
+    // console.log({ contextParam: context });
+    if (context.query.user === "api") {
+      return {
+        notFound: true,
+      };
+    }
     const token = await verifyIdToken(cookies.token);
     const { uid } = token as DecodedIdToken;
     const { user: authorId, post: postId } = context.query;
@@ -643,7 +641,14 @@ export default function Page({
         }}
         className={s.container}
       >
-        <AuthorInfo navigateToProfile={navigateToProfile} post={post} />
+        <AuthorInfo>
+          <User navigateToProfile={navigateToProfile}>
+            <UserName
+              navigateToProfile={navigateToProfile}
+              profile={post.author as account["profile"]}
+            />
+          </User>
+        </AuthorInfo>
         <TextInput
           onInput={(e) => {
             setInput(
