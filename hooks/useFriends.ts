@@ -2,7 +2,7 @@ import { useAppContext } from "@/context/AppContext";
 import { usePageContext } from "@/context/PageContext";
 import { collectionBasePath, getPath, getProfileByUID } from "@/lib/firebase";
 import { checkPhotoURL } from "@/lib/firestore/profile";
-import { QueryKey, friends } from "@/types/interfaces";
+import { QueryKey, friend } from "@/types/interfaces";
 import { useQueries } from "@tanstack/react-query";
 import { getDocs, orderBy, query, where } from "firebase/firestore";
 import { useActiveTab } from "./useActiveTab";
@@ -47,7 +47,7 @@ function useFriends() {
             author: {
               ...doc.data().profile,
             },
-          } as friends;
+          } as friend;
         })
         .filter((doc) => !myFriends.includes(String(doc.id)));
       console.log({ data });
@@ -79,12 +79,12 @@ function useFriends() {
                 ...profile,
                 photoURL: profile ? checkPhotoURL(profile.photoURL) : null,
               },
-            } as friends;
+            } as friend;
           } else {
             return [];
           }
         })
-      )) as friends[];
+      )) as friend[];
     } catch (error) {
       console.log(error);
       throw new Error("Failed to fetch users");

@@ -24,7 +24,7 @@ export type likes = {
   author?: UserRecord | User | account["profile"];
 };
 
-export type friends = {
+export type friend = {
   id: string | number;
   status?: "friend" | "block" | "pending";
   createdAt?:FieldValue | timeStamp;

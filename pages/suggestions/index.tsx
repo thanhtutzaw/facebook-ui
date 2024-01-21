@@ -4,7 +4,7 @@ import useQueryFn from "@/hooks/useQueryFn";
 import { collectionBasePath, getPath } from "@/lib/firebase";
 import { verifyIdToken } from "@/lib/firebaseAdmin";
 import { checkPhotoURL } from "@/lib/firestore/profile";
-import { friends } from "@/types/interfaces";
+import { friend } from "@/types/interfaces";
 import { faBan, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
@@ -65,12 +65,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function Page(props: {
-  acceptedFriends: friends[];
+  acceptedFriends: friend[];
   uid: string;
 }) {
   const { acceptedFriends, uid } = props;
   const [friends, setFriends] = useState(acceptedFriends);
-  const [status, setstatus] = useState<friends["status"]>("friend");
+  const [status, setstatus] = useState<friend["status"]>("friend");
   const [firendLoading, setFirendLoading] = useState(false);
   const { queryFn } = useQueryFn();
   // useEffect(() => {
@@ -129,7 +129,7 @@ export default function Page(props: {
   );
 }
 
-function FriendList({ friends }: { friends: friends[] }) {
+function FriendList({ friends }: { friends: friend[] }) {
   return (
     <ul>
       <p className={`text-dimgray text-[15px] p-[.5rem_1rem_0] m-0 `}>
@@ -188,7 +188,7 @@ function Menu({
   handleBlock,
 }: {
   toggleFriendMenu: string;
-  friend: friends;
+  friend: friend;
   handleBlock: () => Promise<void>;
 }) {
   return (

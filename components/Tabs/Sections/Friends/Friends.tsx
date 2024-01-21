@@ -53,8 +53,8 @@ function Friend(props: FriendProps) {
               <span className="text-red">{pending.length}</span>
             </p>
           </h2>
-          {pending.map((f) => (
-            <Request key={f.id.toString()} f={f} tabIndex={tabIndex} />
+          {pending.map((friend) => (
+            <Request key={friend.id.toString()} friend={friend} tabIndex={tabIndex} />
           ))}
         </div>
       )}
@@ -77,8 +77,8 @@ function Friend(props: FriendProps) {
           </div>
         ) : (
           <>
-            {suggested.map((f) => (
-              <SuggestFriend key={f.id} f={f} tabIndex={tabIndex} />
+            {suggested.map((friend) => (
+              <SuggestFriend key={friend.id} friend={friend} tabIndex={tabIndex} />
             ))}
           </>
         )}

@@ -2,18 +2,17 @@ import { useAppContext } from "@/context/AppContext";
 import { usePageContext } from "@/context/PageContext";
 import useQueryFn from "@/hooks/useQueryFn";
 import { acceptFriends, rejectFriendRequest } from "@/lib/firestore/friends";
-import { friends } from "@/types/interfaces";
+import { friend } from "@/types/interfaces";
 import confirm from "public/assets/confirm-beep.mp3";
 import { useState } from "react";
 import useSound from "use-sound";
 import Card from "./Card";
 import s from "./Friends.module.scss";
 interface RequestProps {
-  f: friends;
+  friend: friend;
   tabIndex: number;
 }
-export function Request(props: RequestProps) {
-  const { f, tabIndex } = props;
+export function Request({ friend, tabIndex }: RequestProps) {
   const { currentUser } = usePageContext();
   const { queryFn } = useQueryFn();
   const [accept, setaccept] = useState(false);
@@ -25,14 +24,14 @@ export function Request(props: RequestProps) {
     if (!uid) return;
     setConfirmLoaing(true);
     try {
-      if (f.status !== "pending") {
+      if (friend.status !== "pending") {
         alert("Already Accepted!");
         setaccept(true);
         queryFn.invalidate("pendingFriends");
         queryFn.invalidate("suggestedFriends");
         return;
       }
-      await acceptFriends(uid, f, currentUser);
+      await acceptFriends(uid, friend, currentUser);
       playAcceptSound();
       setConfirmLoaing(false);
       setaccept(true);
@@ -46,7 +45,7 @@ export function Request(props: RequestProps) {
   async function handleRejectFriendRequest() {
     if (!uid) return;
     try {
-      await rejectFriendRequest(uid, f);
+      await rejectFriendRequest(uid, friend);
       setreject(true);
       queryFn.invalidate("pendingFriends");
     } catch (error) {
@@ -54,7 +53,7 @@ export function Request(props: RequestProps) {
     }
   }
   return (
-    <Card f={f}>
+    <Card friend={friend}>
       <div className={s.action}>
         {accept ? (
           "You're now friends"

@@ -2,16 +2,15 @@ import { useAppContext } from "@/context/AppContext";
 import { usePageContext } from "@/context/PageContext";
 import useQueryFn from "@/hooks/useQueryFn";
 import { addFriends } from "@/lib/firestore/friends";
-import { friends } from "@/types/interfaces";
+import { friend} from "@/types/interfaces";
 import { useState } from "react";
 import Card from "./Card";
 import s from "./Friends.module.scss";
 interface RequestProps {
-  f: friends;
+  friend: friend;
   tabIndex: number;
 }
-export function SuggestFriend(props: RequestProps) {
-  const { f, tabIndex } = props;
+export function SuggestFriend({ friend, tabIndex }: RequestProps) {
   const { currentUser } = usePageContext();
   const { uid } = useAppContext();
   const [accept, setaccept] = useState(false);
@@ -20,14 +19,14 @@ export function SuggestFriend(props: RequestProps) {
   async function handleAddSuggestedFriend() {
     setaccept(true);
     if (!uid) return;
-    await addFriends(uid, f, currentUser);
+    await addFriends(uid, friend, currentUser);
     queryFn.invalidate("suggestedFriends");
   }
   function handleSuggestDelete() {
     setreject(true);
   }
   return (
-    <Card f={f}>
+    <Card friend={friend}>
       <div className={s.action}>
         {accept ? (
           "Request Sended"

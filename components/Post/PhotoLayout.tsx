@@ -60,10 +60,6 @@ function PhotoLayout(props: {
                       pathname: router.pathname,
                       query: {
                         ...router.query,
-                        // viewImage: isMedia(file)
-                        //   ? file.url
-                        //   : URL.createObjectURL(file),
-                        // imageName: isMedia(file) && file.name,
                       },
                     });
                     router.push({
@@ -194,14 +190,10 @@ function PhotoLayout(props: {
           <ImageWithFallback
             onClick={(e) => {
               e.stopPropagation();
-              router.push(
-                {
-                  pathname: `${String(post?.authorId)}/${String(post?.id)}`,
-                  hash: `media-${media[0].name ?? ""}`,
-                }
-                // `${post?.authorId?.toString()}/${post?.id?.toString()}#media-${
-                // }`
-              );
+              router.push({
+                pathname: `${String(post?.authorId)}/${String(post?.id)}`,
+                hash: `media-${media[0].name ?? ""}`,
+              });
             }}
             media={media}
             width={700}
@@ -223,11 +215,10 @@ function PhotoLayout(props: {
             <ImageWithFallback
               onClick={(e) => {
                 e.stopPropagation();
-                router.push(
-                  `${post?.authorId?.toString()}/${post?.id?.toString()}#media-${
-                    media[1].name ?? ""
-                  }`
-                );
+                router.push({
+                  pathname: `${String(post?.authorId)}/${String(post?.id)}`,
+                  hash: `media-${media[1].name ?? ""}`,
+                });
               }}
               media={media}
               width={700}
@@ -253,11 +244,10 @@ function PhotoLayout(props: {
               <ImageWithFallback
                 onClick={(e) => {
                   e.stopPropagation();
-                  router.push(
-                    `${post?.authorId?.toString()}/${post?.id?.toString()}#media-${
-                      media[2].name ?? ""
-                    }`
-                  );
+                  router.push({
+                    pathname: `${String(post?.authorId)}/${String(post?.id)}`,
+                    hash: `media-${media[2].name ?? ""}`,
+                  });
                 }}
                 media={media}
                 width={700}

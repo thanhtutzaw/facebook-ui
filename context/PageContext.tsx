@@ -10,7 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Tabs, friends } from "../types/interfaces";
+import { Tabs, friend } from "../types/interfaces";
 
 export type selectedPosts = {
   postId: string;
@@ -36,7 +36,7 @@ export interface PageProps {
   singleImageModalRef: RefObject<HTMLDialogElement>;
   // preventClick2: MutableRefObject<boolean>;
   preventClick: boolean;
-  friends: friends[];
+  friends: friend[];
   setpreventClick: Function;
   setfriends: Function;
 }
@@ -52,7 +52,7 @@ interface Props {
 export const PageContext = createContext<(PageProps & Props) | null>(null);
 
 export function PageProvider(props: Props) {
-  const [friends, setfriends] = useState<friends[]>([]);
+  const [friends, setfriends] = useState<friend[]>([]);
   const queryClient = useQueryClient();
   const [selectedPosts, setSelectedId] = useState<selectedPosts[]>([]);
   const [preventClick, setpreventClick] = useState(false);

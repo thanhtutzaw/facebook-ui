@@ -3,18 +3,16 @@ import { NotiAction } from "@/lib/NotiAction";
 import { loveComment } from "@/lib/firestore/comment";
 import { acceptFriends } from "@/lib/firestore/friends";
 import { checkCookies, checkParam } from "@/lib/utils";
-import { Comment, friends } from "@/types/interfaces";
+import { Comment, friend } from "@/types/interfaces";
 import { User } from "firebase/auth";
 import { NextApiRequest, NextApiResponse } from "next";
-type n = keyof typeof NotiAction;
-type TAction = { action: keyof typeof NotiAction };
 type TBody = {
   text: string;
   content: string;
   parentId: string;
   uid: string;
   profile: User & { photoURL_cropped?: string | undefined };
-  f: friends;
+  friend: friend;
   currentUser:
     | (User & { photoURL_cropped?: string | undefined })
     | null
@@ -42,7 +40,7 @@ type TBody = {
 };
 interface triggerApiRequest extends NextApiRequest {
   body: TBody;
-  query: TAction;
+  query: { action: keyof typeof NotiAction };
 }
 export default async function handleTriggerNotiAction(
   req: triggerApiRequest,
@@ -75,7 +73,7 @@ export default async function handleTriggerNotiAction(
           authorId,
           currentUserProfile,
           parentId,
-          f: friends,
+          friend,
           currentUser,
         } = req.body;
 
@@ -120,15 +118,15 @@ export default async function handleTriggerNotiAction(
           } else if (action === "accept_friend") {
             const requiredParamLists = Object.keys({
               uid,
-              friends,
+              friend,
               currentUser,
             });
             checkParam({ requiredParamLists: requiredParamLists, req, res });
-            if (!uid || !friends || !currentUser) {
+            if (!uid || !friend || !currentUser) {
               throw new Error(`Required parameters are missing`);
             } else {
               try {
-                data = await acceptFriends(uid, friends, currentUser);
+                data = await acceptFriends(uid, friend, currentUser);
                 res.status(200).json({ success: true, data });
               } catch (error) {
                 res.status(500).json({ error });

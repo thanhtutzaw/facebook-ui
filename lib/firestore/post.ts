@@ -21,7 +21,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { selectedPosts } from "../../context/PageContext";
-import { Post, RecentPosts, friends, likes } from "../../types/interfaces";
+import { Post, RecentPosts, friend, likes } from "../../types/interfaces";
 import { MYPOST_LIMIT, NewsFeed_LIMIT } from "../QUERY_LIMIT";
 import {
   DescQuery,
@@ -43,7 +43,7 @@ type TAddPost = {
     media?: Post["media"];
   };
   sharePost?: { refId: string; author: string; id: string } | null;
-  friends: friends[];
+  friends: friend[];
 };
 export async function addPost({ uid, post, sharePost, friends }: TAddPost) {
   const Ref = !sharePost

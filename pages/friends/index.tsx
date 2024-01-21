@@ -14,7 +14,7 @@ import {
   unFriend,
 } from "@/lib/firestore/friends";
 import { checkPhotoURL } from "@/lib/firestore/profile";
-import { friends } from "@/types/interfaces";
+import { friend } from "@/types/interfaces";
 import { faBan, faEllipsisV, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
@@ -74,12 +74,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function Page(props: {
-  acceptedFriends: friends[];
+  acceptedFriends: friend[];
   uid: string;
 }) {
   const { acceptedFriends, uid } = props;
   const [friends, setFriends] = useState(acceptedFriends);
-  const [status, setstatus] = useState<friends["status"]>("friend");
+  const [status, setstatus] = useState<friend["status"]>("friend");
   const [firendLoading, setFirendLoading] = useState(false);
   const { queryFn } = useQueryFn();
   useEffect(() => {
@@ -206,7 +206,7 @@ function FriendList({
   queryFn: TqueryFn;
   setstatus: Function;
   setFriends: Function;
-  friends: friends[];
+  friends: friend[];
   uid: string;
 }) {
   const [playAcceptSound] = useSound(confirm);
@@ -214,9 +214,9 @@ function FriendList({
   const [toggleFriendMenu, settoggleFriendMenu] = useState("");
   const { currentUser } = usePageContext();
   function updateFriendList(id: string) {
-    return setFriends(friends.filter((f) => f.id !== id));
+    return setFriends(friends.filter((friend) => friend.id !== id));
   }
-  async function handleBlock(friend: friends) {
+  async function handleBlock(friend: friend) {
     try {
       await blockFriend(uid, friend);
       router.replace(router.asPath, undefined, {
@@ -302,7 +302,7 @@ function FriendList({
                               e.preventDefault();
                               const data = {
                                 id: friend.id,
-                              } as friends;
+                              } as friend;
                               try {
                                 await cancelFriendRequest(uid, data);
                                 router.replace(router.asPath, undefined, {
@@ -346,7 +346,7 @@ function FriendList({
                               e.preventDefault();
                               const data = {
                                 id: friend.id,
-                              } as friends;
+                              } as friend;
                               await rejectFriendRequest(uid, data);
                               router.replace(router.asPath, undefined, {
                                 scroll: false,
@@ -420,7 +420,7 @@ function Menu({
   handleBlock,
 }: {
   toggleFriendMenu: string;
-  friend: friends;
+  friend: friend;
   handleBlock: () => Promise<void>;
 }) {
   return (

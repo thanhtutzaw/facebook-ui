@@ -8,47 +8,47 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { friends } from "../../types/interfaces";
+import { friend } from "../../types/interfaces";
 import { NotiAction } from "../NotiAction";
 import { db } from "../firebase";
 import { getMessage, sendFCM } from "./notifications";
 import { checkPhotoURL } from "./profile";
 type FriendsWithAuthor<T> = T extends { author: any }
   ? T
-  : T & { author: friends["author"] };
-type FriendsWithNonNullableAuthor = friends & {
-  author: friends["author"];
+  : T & { author: friend["author"] };
+type FriendsWithNonNullableAuthor = friend & {
+  author: friend["author"];
 };
-type NonNullableFriendsAuthor = Omit<friends, "author"> & {
-  author: NonNullable<friends["author"]>;
+type NonNullableFriendsAuthor = Omit<friend, "author"> & {
+  author: NonNullable<friend["author"]>;
 };
 
 export async function addFriends(
   uid: string,
-  f: friends,
-  // f: FriendsWithAuthor<friends>,
-  // f: friends & {author:friends["author"]},
+  friend: friend,
+  // friend: FriendsWithAuthor<friend>,
+  // friend: friend & {author:friend["author"]},
   currentUser?: (User & { photoURL_cropped?: string }) | null
 ) {
-  const isFriendsQuery = doc(db, `users/${uid}/friends/${f.id}`);
+  const isFriendsQuery = doc(db, `users/${uid}/friends/${friend.id}`);
   const friendDoc = await getDoc(isFriendsQuery);
   if (friendDoc.exists()) {
     alert("Fail to Add . User already added , blocked or pending state .");
     window.location.reload();
     return;
   }
-  const { author, ...data } = { ...f };
-  const reqCountRef = doc(db, `users/${f.id}/friendReqCount/reqCount`);
+  const { author, ...data } = { ...friend };
+  const reqCountRef = doc(db, `users/${friend.id}/friendReqCount/reqCount`);
   const senderData = {
     ...data,
     status: "pending",
     createdAt: serverTimestamp(),
     senderId: uid,
-  } as friends & { senderId: string };
+  } as friend & { senderId: string };
   const receiptData = {
     ...senderData,
     id: uid,
-  } as friends & { senderId: string };
+  } as friend & { senderId: string };
   const senderRef = doc(db, `users/${receiptData.id}/friends/${senderData.id}`);
   const receiptRef = doc(
     db,
@@ -81,7 +81,7 @@ export async function addFriends(
         link: `/${receiptData.id}`,
         actionPayload: JSON.stringify({
           uid: senderData.id,
-          f: receiptData,
+          friend: receiptData,
           currentUser: {
             displayName:
               !author?.firstName || !author.lastName
@@ -104,16 +104,15 @@ export async function addFriends(
 }
 export async function acceptFriends(
   senderData: string,
-  f: friends,
+  friend: friend,
   currentUser?: (User & { photoURL_cropped?: string }) | null
 ) {
-  if (f.status !== "pending") {
-    console.log({ f });
+  if (friend.status !== "pending") {
     alert("Already Accepted! in acceptFriends funciton");
     throw new Error("Already Accepted! in acceptFriends funciton");
   }
-  const friendData: friends = {
-    id: f.id,
+  const friendData: friend = {
+    id: friend.id,
     status: "friend",
     updatedAt: serverTimestamp(),
   };
@@ -127,12 +126,12 @@ export async function acceptFriends(
   await updateFriendStatus(senderData, friendData);
 
   try {
-    if (!f.senderId) return;
+    if (!friend.senderId) return;
     const message = `${currentUser?.displayName ?? "Unknown User"} ${getMessage(
       "acceptedFriend"
     )}`;
     await sendFCM({
-      recieptId: f.senderId,
+      recieptId: friend.senderId,
       message,
       icon: checkPhotoURL(
         currentUser?.photoURL_cropped ?? currentUser?.photoURL
@@ -144,19 +143,19 @@ export async function acceptFriends(
     console.log(error);
   }
 }
-export async function rejectFriendRequest(uid: string, f: friends) {
+export async function rejectFriendRequest(uid: string, friend: friend) {
   try {
-    await unFriend(uid, f);
+    await unFriend(uid, friend);
     const reqCountRef = doc(db, `users/${uid}/friendReqCount/reqCount`);
     await updateDoc(reqCountRef, { count: increment(-1) });
   } catch (error) {
     console.log(error);
   }
 }
-export async function cancelFriendRequest(uid: string, f: friends) {
+export async function cancelFriendRequest(uid: string, friend: friend) {
   try {
-    await unFriend(uid, f);
-    const reqCountRef = doc(db, `users/${f.id}/friendReqCount/reqCount`);
+    await unFriend(uid, friend);
+    const reqCountRef = doc(db, `users/${friend.id}/friendReqCount/reqCount`);
     await updateDoc(reqCountRef, { count: increment(-1) });
   } catch (error) {
     console.log(error);
@@ -164,36 +163,36 @@ export async function cancelFriendRequest(uid: string, f: friends) {
 }
 export async function unBlockFriend(
   uid: string,
-  f: { id: string; senderId: string } | friends
+  friend: { id: string; senderId: string } | friend
 ) {
-  console.log(uid, f.senderId);
+  console.log(uid, friend.senderId);
   try {
-    if (uid !== f.senderId) {
+    if (uid !== friend.senderId) {
       alert(
         "Unblocking not allowed ! \n Only authorized user can unblock friend ."
       );
       return;
     }
-    await unFriend(uid, f);
+    await unFriend(uid, friend);
   } catch (error) {
     console.log(error);
   }
 }
-export async function unFriend(uid: string, f: { id: friends["id"] }) {
-  await deleteDoc(doc(db, `users/${uid}/friends/${String(f.id)}`));
-  await deleteDoc(doc(db, `users/${String(f.id)}/friends/${uid}`));
+export async function unFriend(uid: string, friend: { id: friend["id"] }) {
+  await deleteDoc(doc(db, `users/${uid}/friends/${String(friend.id)}`));
+  await deleteDoc(doc(db, `users/${String(friend.id)}/friends/${uid}`));
 }
-export async function blockFriend(uid: string, f: friends) {
-  const { author, ...data } = { ...f };
-  const blockedData: friends = {
+export async function blockFriend(uid: string, friend: friend) {
+  const { author, ...data } = { ...friend };
+  const blockedData: friend = {
     ...data,
     status: "block",
     updatedAt: serverTimestamp(),
     senderId: uid,
   };
-  if (f.status === "pending") {
+  if (friend.status === "pending") {
     try {
-      await setDoc(doc(db, `users/${f.id}/friendReqCount/reqCount`), {
+      await setDoc(doc(db, `users/${friend.id}/friendReqCount/reqCount`), {
         count: increment(-1),
       });
     } catch (error) {
@@ -203,7 +202,7 @@ export async function blockFriend(uid: string, f: friends) {
   await updateFriendStatus(uid, blockedData);
 }
 
-async function updateFriendStatus(senderId: string, receipt: friends) {
+async function updateFriendStatus(senderId: string, receipt: friend) {
   const adminData = { ...receipt, id: senderId };
   const { id: friendId } = receipt;
   const adminRef = doc(db, `users/${senderId}/friends/${friendId}`);

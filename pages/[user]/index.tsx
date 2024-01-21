@@ -27,7 +27,7 @@ import {
 } from "@/lib/firestore/friends";
 import { fetchMyPosts } from "@/lib/firestore/post";
 import { checkPhotoURL, getFullName } from "@/lib/firestore/profile";
-import { Post as PostType, account, friends } from "@/types/interfaces";
+import { Post as PostType, account, friend } from "@/types/interfaces";
 import {
   faBan,
   faClock,
@@ -86,7 +86,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       const friendDoc = await getDoc(isFriendsQuery);
 
       if (friendDoc.exists()) {
-        const relation = friendDoc.data() as friends;
+        const relation = friendDoc.data() as friend;
         isFriend = relation.status === "friend";
         isPending = relation.status === "pending";
         isBlocked = relation.status === "block";

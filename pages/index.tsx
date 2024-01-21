@@ -26,7 +26,7 @@ import {
   userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import { Post, account, friends } from "../types/interfaces";
+import { Post, account, friend} from "../types/interfaces";
 
 import SecondaryPage from "@/components/QueryPage";
 import { NewsFeedProvider } from "@/context/NewsFeedContext";
@@ -95,7 +95,7 @@ export const getServerSideProps: GetServerSideProps<IndexProps> = async (
         canAccept = false,
         canUnBlock = false;
       if (friendDoc.exists()) {
-        const relation = friendDoc.data() as friends;
+        const relation = friendDoc.data() as friend;
         isFriend = relation.status === "friend";
         isPending = relation.status === "pending";
         isBlocked = relation.status === "block";

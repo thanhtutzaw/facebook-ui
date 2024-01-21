@@ -77,7 +77,7 @@ main {
 }
 
 #nprogress {
-  z-index: 100000000000 !important;
+  z-index: 100000000000 !important; 
 }
 
 #nprogress .bar {

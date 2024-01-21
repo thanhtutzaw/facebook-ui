@@ -1,23 +1,29 @@
 import { usePageContext } from "@/context/PageContext";
 import { JSONTimestampToDate } from "@/lib/firebase";
 import { checkPhotoURL } from "@/lib/firestore/profile";
-import { account, friends } from "@/types/interfaces";
+import { account, friend } from "@/types/interfaces";
 import { Timestamp } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import { ReactNode } from "react";
 import s from "./Friends.module.scss";
-export default function Card(props: { children: ReactNode; f: friends }) {
-  const { f } = props;
+export default function Card({
+  friend,
+  children,
+}: {
+  friend: friend;
+  children: ReactNode;
+}) {
   const { preventClick } = usePageContext();
-  const date = f.createdAt as Timestamp;
-  const author = f.author as account["profile"];
-  const userName = `${author?.firstName ?? f.id} ${author?.lastName ?? ""}`;
+  const date = friend.createdAt as Timestamp;
+  const author = friend.author as account["profile"];
+  const userName = `${author?.firstName ?? friend.id} ${author?.lastName ?? ""}`;
+  const friendId = String(friend.id);
   return (
     <Link
       scroll={false}
-      as={String(f.id)}
-      href={{ query: { user: String(f.id) } }}
+      as={friendId}
+      href={{ query: { user: friendId } }}
       style={{ pointerEvents: preventClick ? "none" : "initial" }}
     >
       <div className={s.card}>
@@ -34,8 +40,8 @@ export default function Card(props: { children: ReactNode; f: friends }) {
             fill
             className={`w-[80px] h-[80px] rounded-full object-cover outline-[1px solid #8080802b] bg-avatarBg
             `}
-            alt={f.id.toString()}
-            src={checkPhotoURL(f.author?.photoURL as string)}
+            alt={String(friend.id)}
+            src={checkPhotoURL(friend.author?.photoURL as string)}
           />
         </div>
         <div className={s.right}>
@@ -51,7 +57,7 @@ export default function Card(props: { children: ReactNode; f: friends }) {
               </p>
             )}
           </div>
-          {props.children}
+          {children}
         </div>
       </div>
     </Link>
