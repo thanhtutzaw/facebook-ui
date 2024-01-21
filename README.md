@@ -5,7 +5,7 @@
 <p align="center">
 <a href="https://facebook-ui-zee.vercel.app">Demo</a>
 .
-<a href="[/](https://www.youtube.com/playlist?list=PL7OpFd3agQxb3jOqAVm4msHNlH34uai3i)">Youtube Playlist</a>
+<a href="https://www.youtube.com/playlist?list=PL7OpFd3agQxb3jOqAVm4msHNlH34uai3i">Youtube Playlist</a>
 </p>
 <br />
 
