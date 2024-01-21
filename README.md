@@ -37,7 +37,7 @@ Project is created with:
 :ballot_box_with_check: Store the id_token in cookies with [nookies](https://www.npmjs.com/package/nookies) to fetch SSR data with the stored uid \
 :ballot_box_with_check: Friends Request , acceptable and blockable \
 :ballot_box_with_check: Friends Request Sound play in App Mode (Add to HomeScreen due to Browser Autoplay ploicy) \
-:ballot_box_with_check: Users will receive Inbox notifications when their posts and comments are liked,commented and shared by other users \
+:ballot_box_with_check: Users will receive notifications when their posts and comments are liked,commented and shared by other users \
 :ballot_box_with_check: Crop the profile picture to 256x256 pixels to ensure it displays with the correct aspect ratio in the notification icon \
 :ballot_box_with_check: Notification actions are also enabled to enhance the user experience without the need to open a web page. \
    Available actions are "accept-FriendRequest" , "like-comment" , "reply-comment" \
