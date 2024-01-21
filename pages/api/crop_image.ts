@@ -10,11 +10,9 @@ export default async function handler(
   const { imageUrl, width, height } = req.query;
   if (req.method !== "GET") {
     res.status(405).json({ message: "Method Not Allowed" });
-    return;
   }
   if (!imageUrl) {
     res.status(422).json({ message: "ImageURL is Required!" });
-    return;
   }
   try {
     console.log("Fetch the image from the provided URL");
