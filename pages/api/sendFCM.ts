@@ -64,8 +64,7 @@ export default async function handleFCM(
     ? `${message} : ${messageBody}`
     : message ?? "New Notification Recieved!";
   const notiBadge = badge ?? "./badge.svg";
-  console.log({ checkCOokiesInSendFCM: req.cookies });
-  // let token = req.cookies.token || req.headers.jwtToken || req.query.jwtToken;
+  // let token = req.cookies.token || req.headers.token || req.query.token;
 
   const requireParam = {
     recieptId,

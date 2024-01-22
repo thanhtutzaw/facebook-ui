@@ -389,6 +389,7 @@ export async function handleReply({
     currentUserProfile?.displayName ?? "Unknown User"
   } ${getMessage("replied_to_comment")}: "${text}" `;
   await sendFCM({
+    req:'fdf',
     recieptId: String(replyInput.comment?.authorId) ?? commentAuthorId,
     message,
     icon: checkPhotoURL(

@@ -50,7 +50,7 @@ export default async function handleTriggerNotiAction(
   await checkCookies({ req, res });
   let data: unknown;
   const payload = { action, body: req.body ? req.body : null };
-  const notFoundBodyError = `Request Body not Found in ${req.method} method ! `;
+  const notFoundBodyError = `Request Body not found in ${req.method} method ! `;
   const notAllowMethodError = "Method Not Allowed";
   switch (req.method) {
     case "POST":

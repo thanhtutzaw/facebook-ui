@@ -17,9 +17,10 @@ export function Welcome({
   useEffect(() => {
     console.log(router);
     if (expired) {
-      router.push(router);
-      // router.reload();
-
+      router.push({
+        pathname: router.asPath,
+        query: router.query,
+      });
       console.log("expired and pushed(in Welcome.tsx)");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

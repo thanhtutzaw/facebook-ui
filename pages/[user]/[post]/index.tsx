@@ -15,6 +15,7 @@ import useQueryFn from "@/hooks/useQueryFn";
 import { Comment_LIMIT } from "@/lib/QUERY_LIMIT";
 import {
   DescQuery,
+  JSONTimestampToDate,
   db,
   getCollectionPath,
   getPath,
@@ -22,6 +23,7 @@ import {
   postInfo,
   postToJSON,
 } from "@/lib/firebase";
+import poststyles from '@/components/Post/index.module.scss'
 import { verifyIdToken } from "@/lib/firebaseAdmin";
 import { fetchComments, fetchSingleComment } from "@/lib/firestore/comment";
 import { updatePost } from "@/lib/firestore/post";
@@ -34,6 +36,12 @@ import CommentItem from "@/components/Comment/CommentItem";
 import { SharePreview } from "@/components/Post/SharePreview";
 import { usePageContext } from "@/context/PageContext";
 import ErrorPage from "@/pages/404";
+import {
+  faEarth,
+  faLock,
+  faUserGroup,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   DocumentData,
   DocumentSnapshot,
@@ -646,9 +654,39 @@ export default function Page({
             navigateToProfile={navigateToProfile}
           >
             <UserName
+              hasChildren={true}
               navigateToProfile={navigateToProfile}
               profile={post.author as account["profile"]}
             />
+            <div className={poststyles.moreInfo}>
+              {typeof post.createdAt !== "number" && (
+                <p className={s.date} suppressHydrationWarning>
+                  {JSONTimestampToDate(post.createdAt).toLocaleDateString(
+                    "en-US",
+                    {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    }
+                  )}
+                </p>
+              )}
+              {post.visibility?.toLowerCase() === "public" && (
+                <span title="Everyone can see this Post">
+                  <FontAwesomeIcon icon={faEarth} />
+                </span>
+              )}
+              {post.visibility?.toLowerCase() === "friend" && (
+                <span title="Friends can see this Post">
+                  <FontAwesomeIcon icon={faUserGroup} />
+                </span>
+              )}
+              {post.visibility?.toLowerCase() === "onlyme" && (
+                <span title="Only you can see this Post">
+                  <FontAwesomeIcon icon={faLock} />
+                </span>
+              )}
+            </div>
           </User>
         </AuthorInfo>
         <TextInput
