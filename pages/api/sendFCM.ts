@@ -1,5 +1,5 @@
 import { NotiAction } from "@/lib/NotiAction";
-import { checkCookies, checkParam } from "@/lib/utils";
+import { checkParam } from "@/lib/utils";
 import admin from "firebase-admin";
 import {
   BatchResponse,
@@ -16,10 +16,9 @@ if (!admin.apps.length) {
     }),
   });
 }
-export interface NotiApiRequest extends NextApiRequest {
+export type NotiApiRequest = NextApiRequest & {
   body: {
     timestamp?: number;
-    // senderId: string;
     image?: string;
     title?: string;
     recieptId: string | number;
@@ -38,7 +37,7 @@ export interface NotiApiRequest extends NextApiRequest {
     actions?: Array<(typeof NotiAction)[keyof typeof NotiAction]>;
     requireInteraction?: boolean;
   };
-}
+};
 export default async function handleFCM(
   req: NotiApiRequest,
   res: NextApiResponse
@@ -65,8 +64,9 @@ export default async function handleFCM(
     ? `${message} : ${messageBody}`
     : message ?? "New Notification Recieved!";
   const notiBadge = badge ?? "./badge.svg";
+  console.log({ checkCOokiesInSendFCM: req.cookies });
   // let token = req.cookies.token || req.headers.jwtToken || req.query.jwtToken;
-  await checkCookies({ req, res });
+
   const requireParam = {
     recieptId,
     // timestamp,
@@ -98,7 +98,6 @@ export default async function handleFCM(
           const messageNoti: MulticastMessage = {
             // topic: collapse_key ?? "",
             // collapse_key: collapse_key ?? "",
-
             tokens: registrationTokens,
             notification: {
               title,

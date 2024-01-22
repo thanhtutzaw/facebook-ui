@@ -1,12 +1,15 @@
 import { usePageContext } from "@/context/PageContext";
 import { usePostContext } from "@/context/PostContext";
 import useEscape from "@/hooks/useEscape";
-import { app, getCollectionPath } from "@/lib/firebase";
+import { JSONTimestampToDate, app, getCollectionPath } from "@/lib/firebase";
 import { Post, account } from "@/types/interfaces";
 import {
   faCircleCheck,
   faDotCircle,
+  faEarth,
   faEllipsisH,
+  faLock,
+  faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { User, getAuth, onAuthStateChanged } from "firebase/auth";
@@ -119,13 +122,45 @@ function Content({ post }: { post: Post }) {
         }}
       >
         <AuthorInfo>
-          <UserComponent navigateToProfile={navigateToProfile}>
+          <UserComponent
+            profile={post.author as account["profile"]}
+            navigateToProfile={navigateToProfile}
+          >
             <UserName
               profile={post.author as account["profile"]}
               hasChildren={true}
               textEnd={textEnd}
               navigateToProfile={navigateToProfile}
             />
+            <div className={s.moreInfo}>
+              {typeof post.createdAt !== "number" && (
+                <p className={s.date} suppressHydrationWarning>
+                  {JSONTimestampToDate(post.createdAt).toLocaleDateString(
+                    "en-US",
+                    {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    }
+                  )}
+                </p>
+              )}
+              {post.visibility?.toLowerCase() === "public" && (
+                <span title="Everyone can see this Post">
+                  <FontAwesomeIcon icon={faEarth} />
+                </span>
+              )}
+              {post.visibility?.toLowerCase() === "friend" && (
+                <span title="Friends can see this Post">
+                  <FontAwesomeIcon icon={faUserGroup} />
+                </span>
+              )}
+              {post.visibility?.toLowerCase() === "onlyme" && (
+                <span title="Only you can see this Post">
+                  <FontAwesomeIcon icon={faLock} />
+                </span>
+              )}
+            </div>
           </UserComponent>
           {!shareMode && (
             <>

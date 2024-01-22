@@ -20,18 +20,9 @@ function AuthorInfo(props: {
   // comment?: boolean;
   style?: CSSProperties;
   children?: ReactNode;
-  layout?: layoutTypes;
   // post?: Post;
 }) {
-  const {
-    size,
-    // post,
-    layout,
-    profile,
-    style,
-    // comment,
-    children,
-  } = props;
+  const { size, profile, style, children } = props;
   // if (post) {
   //   const { author, createdAt, visibility } = post;
   //   const profile = author as account["profile"];
@@ -115,7 +106,7 @@ function AuthorInfo(props: {
 
 function User(props: {
   navigateToProfile: MouseEventHandler<HTMLSpanElement>;
-  profile?: account["profile"];
+  profile: account["profile"];
   layout?: layoutTypes;
   children?: ReactNode;
   size?: number;

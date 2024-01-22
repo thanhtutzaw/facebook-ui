@@ -3,16 +3,16 @@ import { AuthError, AuthErrorCodes } from "firebase/auth";
 import { NextApiRequest, NextApiResponse } from "next";
 import { ResponseErrorJSON } from "utils";
 import { verifyIdToken } from "./firebaseAdmin";
-
+type TCheckParam<T> = {
+  requiredParamLists: (keyof T)[];
+  req: NextApiRequest;
+  res: NextApiResponse;
+};
 export function checkParam<T>({
   requiredParamLists: requireKeys,
   req,
   res,
-}: {
-  requiredParamLists: (keyof T)[];
-  req: NextApiRequest;
-  res: NextApiResponse;
-}) {
+}: TCheckParam<T>) {
   const isParamMissing = !requireKeys.every((key) =>
     req.body.hasOwnProperty(key)
   );
@@ -42,14 +42,17 @@ export function checkParam<T>({
   };
 }
 export async function checkCookies({
+  // cookies,
   req,
   res,
 }: {
+  cookies?: any;
   req: NextApiRequest;
   res: NextApiResponse;
 }) {
   const cookies = req.cookies;
   const firebaseToken = cookies.token;
+  // console.log({ reqCookiesInCheckCook: req.cookies });
   if (!cookies) {
     ResponseErrorJSON(res, "Not Found Cookies . You are not allowed");
     throw new Error("Not Found Cookies . You are not allowed");

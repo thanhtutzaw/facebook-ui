@@ -89,7 +89,6 @@ type TinitialProps = {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = nookies.get(context);
-    // console.log({ contextParam: context });
     if (context.query.user === "api") {
       return {
         notFound: true,
@@ -130,10 +129,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       //   },
       // };
     }
-    const p = await postToJSON(postDoc as DocumentSnapshot<DocumentData>);
+    const post = await postToJSON(postDoc as DocumentSnapshot<DocumentData>);
 
     const notAdminAndPostOnlyMe =
-      uid !== p.authorId && p.visibility === "Onlyme";
+      uid !== post.authorId && post.visibility === "Onlyme";
     if (notAdminAndPostOnlyMe) {
       return {
         props: {
@@ -147,7 +146,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       };
     }
     const [newPost, profileData] = await Promise.all([
-      postInfo(p, uid),
+      postInfo(post, uid),
       getProfileByUID(uid),
     ]);
     const profile = profileData
@@ -642,7 +641,10 @@ export default function Page({
         className={s.container}
       >
         <AuthorInfo>
-          <User navigateToProfile={navigateToProfile}>
+          <User
+            profile={post.author as account["profile"]}
+            navigateToProfile={navigateToProfile}
+          >
             <UserName
               navigateToProfile={navigateToProfile}
               profile={post.author as account["profile"]}

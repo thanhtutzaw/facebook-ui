@@ -59,7 +59,7 @@ export function LikedUsers({
   }, [Likes.length, post.authorId, post.id, setLikes, togglereactionList]);
 
   const router = useRouter();
-  
+
   return (
     <>
       <header>
@@ -85,8 +85,10 @@ export function LikedUsers({
           <ul>
             {Likes.map((like) => (
               <Link href={"/" + String(like.uid)} key={String(like.uid)}>
-                <AuthorInfo layout="row">
+                <AuthorInfo>
                   <User
+                    layout="row"
+                    profile={like.author as account["profile"]}
                     navigateToProfile={() => {
                       if (router.pathname === "/") {
                         router.push(

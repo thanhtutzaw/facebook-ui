@@ -344,7 +344,6 @@ export async function reactPost({
   batch.set(likeRef, { uid, createdAt: serverTimestamp() });
   batch.update(postRef, {
     likeCount: increment(1),
-    // likeCount: likeCount,
   });
   await batch.commit();
   console.log("liked post");
@@ -359,7 +358,7 @@ export async function reactPost({
   });
 
   await sendFCM({
-    // image: post.media?.[0] ? post.media?.[0].url : "",
+    timestamp: Date.now(),
     image: post.media?.[0] ? post.media?.[0].url : "",
     recieptId: authorId.toString(),
     message: `${profile?.displayName ?? "Unknown User"} ${getMessage(

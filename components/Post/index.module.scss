@@ -479,12 +479,16 @@
         background-color: #ededed;
     }
     .authorInfo {
+        user-select: none;
+        display: flex;
+        flex: 1;
+        align-items: center;
+        gap: 8px;
         // .subInfo {
         //     display: flex;
         //     margin: auto 0;
         //     flex: 1;
         //     word-break: break-word;
-        //     gap: 2px;
         // }
         .moreInfo {
             display: flex;
@@ -517,10 +521,7 @@
                 }
             }
         }
-        user-select: none;
-        display: flex;
-        flex: 1;
-        gap: 8px;
+
         p,
         span {
             margin: 0;
