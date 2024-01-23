@@ -1,10 +1,10 @@
+import LoginForm from "@/components/Form/Login";
 import { AuthErrorCodes, getAuth, onAuthStateChanged } from "firebase/auth";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import BackHeader from "../../components/Header/BackHeader";
-import NewAccount from "../../components/Signup/NewAccount";
 import s from "../../components/Signup/index.module.scss";
 import { app } from "../../lib/firebase";
 import { signin } from "../../lib/signin";
@@ -85,15 +85,8 @@ export default function Email() {
             </motion.div>
           )}
 
-          <NewAccount title="Login with Email" />
-          <button
-            disabled={loading}
-            type="submit"
-            className={`w-full uppercase ${s.nextForm}`}
-            aria-label="login"
-          >
-            {!loading ? "Login" : "Logging in"}
-          </button>
+          <LoginForm loading={loading} />
+          
         </div>
       </motion.form>
     </div>

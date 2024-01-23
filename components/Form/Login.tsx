@@ -1,20 +1,15 @@
+import signUpStyle from "@/components/Signup/index.module.scss";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChangeEventHandler, useState } from "react";
+import { useState } from "react";
 import styles from "./index.module.scss";
-function NewAccount(props: {
-  handleChange?: ChangeEventHandler<HTMLInputElement>;
-  Account?: { email: string; password: string };
-  title?: string;
-  setAccount?: Function;
-}) {
+export default function LoginForm({ loading }: { loading: boolean }) {
   const [showPassword, setshowPassword] = useState(false);
-  // const accountRef = useRef({ email: "", password: "" });
-  const { handleChange, title, Account, setAccount } = props;
   function togglePassword() {
     setshowPassword(!showPassword);
   }
+  const title = "Login with Email";
   return (
     <>
       <h2
@@ -27,15 +22,14 @@ function NewAccount(props: {
         font-medium
         mb-2`}
         style={{
-          // textAlign: title ? "center" : "initial",
-          marginTop: title ? "0" : "revert",
+          marginTop: "0",
         }}
       >
-        {title ?? "Create New Account"}
+        {title}
       </h2>
       <input
+        enterKeyHint="next"
         required
-        onChange={handleChange}
         placeholder="Email"
         aria-invalid="false"
         autoComplete="username"
@@ -53,8 +47,8 @@ function NewAccount(props: {
       />
       <div className={styles.password}>
         <input
+          enterKeyHint="next"
           required
-          onChange={handleChange}
           placeholder="Password"
           autoComplete="current-password"
           id="password"
@@ -109,8 +103,14 @@ function NewAccount(props: {
           </AnimatePresence>
         </label>
       </div>
+      <button
+        disabled={loading}
+        type="submit"
+        className={`w-full uppercase ${signUpStyle.nextForm}`}
+        aria-label="login"
+      >
+        {!loading ? "Login" : "Logging in"}
+      </button>
     </>
   );
 }
-
-export default NewAccount;

@@ -21,12 +21,11 @@ export default function Login() {
     settoggleSignUp,
     error,
     signupLoading,
-    handleSubmit,
+    onSignUp,
     handleChange,
     Account,
     setAccount,
     emailLoading,
-    emailRef,
   } = useLogin();
   const auth = getAuth(app);
   const uid = auth.currentUser?.uid;
@@ -168,7 +167,7 @@ export default function Login() {
                           className={signupStyles.error}
                         >
                           <h4
-                            className={`m-[2_0_0] text-red`}
+                            className={`my-0 text-red`}
                           >{`Error (${error})`}</h4>
                           {/* {error === AuthErrorCodes.USER_DELETED && (
                         )} */}
@@ -178,7 +177,7 @@ export default function Login() {
                     <Signup
                       signupLoading={signupLoading}
                       emailLoading={emailLoading}
-                      handleSubmit={handleSubmit}
+                      onSignUp={onSignUp}
                       handleChange={handleChange}
                       toggleSignUp={toggleSignUp}
                       Account={Account}
@@ -195,7 +194,7 @@ export default function Login() {
               }
             >
               Log in using Email
-            </Link>{" "}
+            </Link>
           </>
         )}
         <DevelopedByThanHtutZaw toggleSignUp={toggleSignUp} />

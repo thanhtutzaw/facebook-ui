@@ -106,7 +106,7 @@ export default function CommentInput(props: CommentProps) {
           throw new Error("User not Found ! Sign in and Try again !");
         }
         if (text === "") return;
-        
+
         try {
           setaddLoading(true);
           const isReplyingComment = replyInput?.authorName;
@@ -154,6 +154,9 @@ export default function CommentInput(props: CommentProps) {
         )}
       />
       <input
+        required
+        enterKeyHint="done"
+        spellCheck="true"
         ref={replyInputRef}
         onChange={(e) => {
           settext(e.target.value);
@@ -389,7 +392,6 @@ export async function handleReply({
     currentUserProfile?.displayName ?? "Unknown User"
   } ${getMessage("replied_to_comment")}: "${text}" `;
   await sendFCM({
-    req:'fdf',
     recieptId: String(replyInput.comment?.authorId) ?? commentAuthorId,
     message,
     icon: checkPhotoURL(

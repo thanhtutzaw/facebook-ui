@@ -85,7 +85,7 @@
         background-color: var(--blue-origin);
         /* background: #eaeaea; */
         border: 0;
-        height:41px;
+        height: 41px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -186,15 +186,15 @@
     }
 }
 .error {
-    margin: 0px;
+    margin: 32px;
     color: red;
     background: #fbfbfb;
-    background: rgb(255 255 255);
+    background: #ffeeee;
     position: absolute;
     padding: 1rem;
     top: -35%;
     width: 100%;
-    left: 0;
+    margin-inline: auto;
     border-radius: 1rem;
     max-height: 102px;
     overflow: scroll;

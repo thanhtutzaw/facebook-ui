@@ -1,21 +1,22 @@
 import { motion } from "framer-motion";
-import { ChangeEventHandler, FormEventHandler, RefObject } from "react";
+import { ChangeEventHandler, FormEventHandler } from "react";
 import Info from "./Info";
-import NewAccount from "./NewAccount";
+import SignupForm from "./SignupForm";
 import styles from "./index.module.scss";
+import { account } from "@/types/interfaces";
 export default function Signup(props: {
   signupLoading: boolean;
-  handleSubmit: FormEventHandler<HTMLFormElement>;
+  onSignUp: FormEventHandler<HTMLFormElement>;
   handleChange: ChangeEventHandler<HTMLInputElement>;
   toggleSignUp: boolean;
-  Account: any;
+  Account: account;
   setAccount: Function;
   emailLoading: boolean;
 }) {
   const {
     signupLoading,
     emailLoading,
-    handleSubmit,
+    onSignUp,
     handleChange,
     toggleSignUp,
     Account,
@@ -26,7 +27,7 @@ export default function Signup(props: {
       onClick={(e) => {
         e.stopPropagation();
       }}
-      onSubmit={handleSubmit}
+      onSubmit={onSignUp}
       key="label2"
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{
@@ -37,25 +38,7 @@ export default function Signup(props: {
       className={`
         ${styles.emailForm}`}
     >
-      <div className={styles.newAccount}>
-        <NewAccount
-          handleChange={handleChange}
-          Account={Account}
-          setAccount={setAccount}
-        />
-        <button
-          onClick={(e) => {
-            // const nextElement =
-            //   e.currentTarget.parentElement?.nextElementSibling;
-            // nextElement?.scrollIntoView({ block: "center" });
-          }}
-          type="submit"
-          className={styles.nextForm}
-          aria-label="next step"
-        >
-          {emailLoading ? "Signing in..." : "Next"}
-        </button>
-      </div>
+      <SignupForm loading={emailLoading} handleChange={handleChange} />
       <div className={styles.userInfo}>
         <Info
           signupLoading={signupLoading}

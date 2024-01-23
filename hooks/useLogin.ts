@@ -91,7 +91,7 @@ function useLogin() {
     // }
   };
   const [emailLoading, setemailLoading] = useState(false);
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const onSignUp = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { email, password } = Account;
     const { firstName, lastName } = Account.profile;
@@ -153,7 +153,7 @@ function useLogin() {
     settoggleSignUp,
     error,
     signupLoading,
-    handleSubmit,
+    onSignUp,
     handleChange,
     Account,
     setAccount,

@@ -1,3 +1,4 @@
+import AddPost from "@/pages/addPost";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { useRouter } from "next/router";
 import UserProfilePage from "./UserProfilePage";
@@ -14,12 +15,18 @@ function SecondaryPage({
   queryPageData: unknown;
 }) {
   const router = useRouter();
-  const isVisible = router.pathname !== "/" || !queryPageData;
+  const toggleAddPost = router.asPath.includes("addPost");
+  const isVisible = queryPageData || toggleAddPost;
+  // console.log({asPathInQPage:router.asPath});
+  // const hash = router.asPath.split("#")[1];
+  // const parsedHash = new URLSearchParams(hash);
+  // const toggleAddPost = parsedHash.has("addPost");
+  console.log(toggleAddPost);
   if (!token) return null;
   return (
     <div
       style={{
-        display: isVisible ? "none" : "initial",
+        display: isVisible ? "initial" : "none",
         position: "fixed",
         background: "rgba(0, 0, 0, 0.5)",
         inset: 0,
@@ -27,14 +34,10 @@ function SecondaryPage({
         margin: "0 auto",
         backgroundColor: "#e7e7e7",
         overflowY: "scroll",
-        // display: "grid",
-        // alignContent: "center",
-        // placeItems: "center",
         zIndex: "300000",
-        // backdropFilter: "blur(2px)",
-        // textTransform: "capitalize",
       }}
     >
+      {toggleAddPost && <AddPost />}
       <UserProfilePage queryPageData={queryPageData} token={token} />
     </div>
   );

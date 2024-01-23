@@ -17,11 +17,7 @@ export default function Home(props: { tabIndex: number }) {
   const { ...rest } = props;
   const { deletePost, newsFeedPost, getMorePosts } = useNewsFeedContext();
   const router = useRouter();
-  const {
-    profileSrc,
-    profile,
-    headerContainerRef,
-  } = useAppContext();
+  const { profileSrc, profile, headerContainerRef } = useAppContext();
   const { postEnd, hasMore } = useNewsFeedContext();
   const { setuploadButtonClicked } = usePageContext();
   const previousScrollRef = useRef(0);
@@ -98,7 +94,7 @@ export default function Home(props: { tabIndex: number }) {
             });
           }}
           onClick={() => {
-            router.push("addPost");
+            router.push({ hash:"addPost" },"addPost", { shallow: true });
           }}
           type="text"
           placeholder="What is on your mind ?"

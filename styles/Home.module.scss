@@ -695,6 +695,7 @@
   padding-top: 1rem;
 }
 .addPostForm {
+  height: calc(100dvh - 130px);
   margin-block: 65px;
   video,
   img {
@@ -713,6 +714,9 @@
   }
 
   .input {
+    background-color: white;
+    padding-bottom: 65px;
+    min-height: calc(100dvh - 130px);
     cursor: text;
     > div {
       outline: 0;
