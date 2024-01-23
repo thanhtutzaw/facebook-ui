@@ -8,6 +8,7 @@ import AuthorInfo, { User, UserName } from "@/components/Post/AuthorInfo";
 import Footer from "@/components/Post/Footer";
 import PhotoLayout from "@/components/Post/PhotoLayout";
 import { SocialCount } from "@/components/Post/SocialCount";
+import poststyles from '@/components/Post/index.module.scss';
 import { Welcome } from "@/components/Welcome";
 import useEnterSave from "@/hooks/useEnterSave";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
@@ -23,7 +24,6 @@ import {
   postInfo,
   postToJSON,
 } from "@/lib/firebase";
-import poststyles from '@/components/Post/index.module.scss'
 import { verifyIdToken } from "@/lib/firebaseAdmin";
 import { fetchComments, fetchSingleComment } from "@/lib/firestore/comment";
 import { updatePost } from "@/lib/firestore/post";
@@ -105,7 +105,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const token = await verifyIdToken(cookies.token);
     const { uid } = token as DecodedIdToken;
     const { user: authorId, post: postId } = context.query;
-    console.log({ postQuery: context.query });
     let expired = false;
     const postRef = doc(
       db,

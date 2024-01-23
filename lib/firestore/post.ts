@@ -150,8 +150,12 @@ export async function fetchRecentPosts(uid: string) {
   }
   return { recentPosts, hasMore };
 }
-export async function fetchMyPosts(
-  uid: string | string[],
+export const myPostFilterQuery = {
+  isFriend: where("visibility", "in", ["Friend", "Public"]),
+  isPublic: where("visibility", "==", "Public"),
+};
+export async function getPostsByUser(
+  uid: string,
   isFriend: boolean,
   isBlocked: boolean,
   token: DecodedIdToken
@@ -159,15 +163,11 @@ export async function fetchMyPosts(
   let mypostQuery: Query<DocumentData> | null = null;
   const isAdmin = uid === token.uid;
   const LIMIT = MYPOST_LIMIT + 1;
-  const postPath = getPath("posts", { uid: String(uid) });
+  const postPath = getPath("posts", { uid });
   const visibilityCondition = {
-    isFriend: DescQuery(
-      postPath,
-      LIMIT,
-      where("visibility", "in", ["Friend", "Public"])
-    ),
+    isFriend: DescQuery(postPath, LIMIT, myPostFilterQuery["isFriend"]),
     isAdmin: query(postPath, orderBy("createdAt", "desc"), limit(LIMIT)),
-    fallback: DescQuery(postPath, LIMIT, where("visibility", "==", "Public")),
+    fallback: DescQuery(postPath, LIMIT, myPostFilterQuery["isPublic"]),
   };
   if (isFriend) {
     mypostQuery = visibilityCondition["isFriend"];

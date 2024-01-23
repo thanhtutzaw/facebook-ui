@@ -26,13 +26,13 @@ import {
   userToJSON,
 } from "../lib/firebase";
 import { getUserData, verifyIdToken } from "../lib/firebaseAdmin";
-import { Post, account, friend} from "../types/interfaces";
+import { Post, account, friend } from "../types/interfaces";
 
 import SecondaryPage from "@/components/QueryPage";
 import { NewsFeedProvider } from "@/context/NewsFeedContext";
 import { useActiveTab } from "@/hooks/useActiveTab";
 import useFCMNotification from "@/hooks/useFCMNotification";
-import { fetchMyPosts, fetchRecentPosts } from "@/lib/firestore/post";
+import { fetchRecentPosts, getPostsByUser } from "@/lib/firestore/post";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
@@ -106,7 +106,7 @@ export const getServerSideProps: GetServerSideProps<IndexProps> = async (
       if (user.exists() && !initialProps.expired) {
         const profile = user?.data().profile as account["profile"];
 
-        const { myPost, hasMore } = await fetchMyPosts(
+        const { myPost, hasMore } = await getPostsByUser(
           String(userQuery),
           isFriend,
           isBlocked,

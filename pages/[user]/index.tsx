@@ -25,7 +25,7 @@ import {
   unBlockFriend,
   unFriend,
 } from "@/lib/firestore/friends";
-import { fetchMyPosts } from "@/lib/firestore/post";
+import { getPostsByUser, myPostFilterQuery } from "@/lib/firestore/post";
 import { checkPhotoURL, getFullName } from "@/lib/firestore/profile";
 import { Post as PostType, account, friend } from "@/types/interfaces";
 import {
@@ -37,7 +37,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-import { Timestamp, doc, getDoc, startAfter, where } from "firebase/firestore";
+import { Timestamp, doc, getDoc, startAfter } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
@@ -93,8 +93,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         canAccept = relation.senderId !== token.uid && !isFriend;
         canUnBlock = relation.senderId === token.uid;
       }
-      const { myPost, hasMore } = await fetchMyPosts(
-        uid,
+      const { myPost, hasMore } = await getPostsByUser(
+        String(uid),
         isFriend,
         isBlocked,
         token
@@ -315,6 +315,7 @@ export default function UserProfile({
   const [limitedPosts, setlimitedPosts] = useState(myPost);
   const [postLoading, setpostLoading] = useState(false);
   const [postEnd, setPostEnd] = useState(false);
+  const userId = router.query.user;
   const fetchMorePosts = useCallback(
     async function () {
       setpostLoading(limitedPosts.length > MYPOST_LIMIT);
@@ -326,24 +327,25 @@ export default function UserProfile({
       );
       console.log(post);
       let mypostQuery;
+      const isAdmin = userId === token.uid;
       if (isFriend) {
         mypostQuery = DescQuery(
-          getPath("posts", { uid: String(router.query.user) }),
+          getPath("posts", { uid: String(userId) }),
           MYPOST_LIMIT + 1,
-          where("visibility", "in", ["Friend", "Public"]),
+          myPostFilterQuery["isFriend"],
           startAfter(date)
         );
-      } else if (router.query.user === token.uid) {
+      } else if (isAdmin) {
         mypostQuery = DescQuery(
-          getPath("posts", { uid: String(router.query.user) }),
+          getPath("posts", { uid: String(userId) }),
           MYPOST_LIMIT + 1,
           startAfter(date)
         );
       } else {
         mypostQuery = DescQuery(
-          getPath("posts", { uid: String(router.query.user) }),
+          getPath("posts", { uid: String(userId) }),
           MYPOST_LIMIT + 1,
-          where("visibility", "==", "Public"),
+          myPostFilterQuery["isPublic"],
           startAfter(date)
         );
       }
@@ -356,7 +358,7 @@ export default function UserProfile({
       // if (finalPost?.length! < MYPOST_LIMIT) {
       // }
     },
-    [isFriend, limitedPosts, router.query.user, token.uid]
+    [isFriend, limitedPosts, userId, token.uid]
   );
   const { scrollRef } = useInfiniteScroll({
     hasMore,
@@ -373,8 +375,6 @@ export default function UserProfile({
     : isFriend
     ? "friend"
     : "notFriend";
-
-  // router.push({},_,{shallow:true})
   const [status, setstatus] = useState(statusData);
   return (
     <>
