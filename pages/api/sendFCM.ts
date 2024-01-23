@@ -93,8 +93,6 @@ export default async function handleFCM(
       if (registrationTokens) {
         if (!paramError) {
           const messageNoti: MulticastMessage = {
-            // topic: collapse_key ?? "",
-            // collapse_key: collapse_key ?? "",
             tokens: registrationTokens,
             notification: {
               title,
@@ -103,7 +101,7 @@ export default async function handleFCM(
             },
             webpush: {
               headers: {
-                ...(tag ? { collapse_key: tag } : {}),
+                // ...(tag ? { collapse_key: tag } : {}),
                 Urgency: "high",
                 image: icon ?? "",
               },
@@ -127,7 +125,7 @@ export default async function handleFCM(
               },
             },
             android: {
-              collapseKey: collapse_key ?? "",
+              collapseKey: tag ?? "",
               ttl: 3600000,
               notification: {
                 bodyLocKey: "STOCK_NOTIFICATION_BODY",
@@ -137,7 +135,7 @@ export default async function handleFCM(
             apns: {
               payload: {
                 aps: {
-                  threadId: collapse_key ?? "",
+                  threadId: tag ?? "",
                 },
               },
             },
