@@ -103,6 +103,7 @@ export default async function handleFCM(
             },
             webpush: {
               headers: {
+                ...(tag ? { collapse_key: tag } : {}),
                 Urgency: "high",
                 image: icon ?? "",
               },
