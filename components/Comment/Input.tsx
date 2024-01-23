@@ -68,7 +68,7 @@ export default function CommentInput(props: CommentProps) {
       content: post.text,
     });
     await sendFCM({
-      timestamp: Math.floor(Date.now()),
+      timestamp: Date.now(),
       image: post.media?.[0] ? post.media?.[0].url : "",
       recieptId: post?.authorId.toString()!,
       message: `${
@@ -93,7 +93,7 @@ export default function CommentInput(props: CommentProps) {
 
       actions: [NotiAction.comment_like, NotiAction.comment_reply],
       // collapse_key: `post-${post.id}`,
-      tag: `comment`,
+      tag: `commentAuthor_${uid}_post_${post.id}`,
       // tag: `CommentAuthor-${uid}-post-${post.id}-comment`,
       // tag: `CommentAuthor-${uid}-post-${post.id}-comment`,
       link: `/${authorId}/${post?.id}/#comment-${commentRef.id}`,
