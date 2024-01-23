@@ -93,7 +93,9 @@ export default function CommentInput(props: CommentProps) {
 
       actions: [NotiAction.comment_like, NotiAction.comment_reply],
       // collapse_key: `post-${post.id}`,
-      tag: `CommentAuthor-${uid}-post-${post.id}-comment`,
+      tag: `comment`,
+      // tag: `CommentAuthor-${uid}-post-${post.id}-comment`,
+      // tag: `CommentAuthor-${uid}-post-${post.id}-comment`,
       link: `/${authorId}/${post?.id}/#comment-${commentRef.id}`,
     });
   }
@@ -392,6 +394,7 @@ export async function handleReply({
     currentUserProfile?.displayName ?? "Unknown User"
   } ${getMessage("replied_to_comment")}: "${text}" `;
   await sendFCM({
+    timeStamp: Date.now(),
     recieptId: String(replyInput.comment?.authorId) ?? commentAuthorId,
     message,
     icon: checkPhotoURL(

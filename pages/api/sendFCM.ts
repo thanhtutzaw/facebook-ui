@@ -69,7 +69,6 @@ export default async function handleFCM(
     // timestamp,
     // messageBody,
     // message,
-    // tag,
     // badge,
     // link,
     // actionPayload,
@@ -88,6 +87,7 @@ export default async function handleFCM(
   if (req.method === "POST") {
     let response: BatchResponse | null = null;
     let registrationTokens: string[];
+    console.log({ tagExist: !!tag });
     try {
       registrationTokens = await getFCMToken(String(recieptId));
       if (registrationTokens) {
@@ -115,7 +115,7 @@ export default async function handleFCM(
                 requireInteraction,
                 badge: notiBadge,
                 tag: tag ?? "",
-                renotify: false,
+                renotify: tag ? !!tag : false,
                 actions: actions ? actions : [],
                 data: {
                   actionPayload: actions && actionPayload ? actionPayload : {},
