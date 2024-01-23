@@ -6,7 +6,6 @@ import {
   MulticastMessage,
 } from "firebase-admin/lib/messaging/messaging-api";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { NextResponse } from "next/server";
 import { getFCMToken } from "../../lib/firebaseAdmin";
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -65,8 +64,6 @@ export default async function handleFCM(
     : message ?? "New Notification Recieved!";
   const notiBadge = badge ?? "./badge.svg";
   // let token = req.cookies.token || req.headers.token || req.query.token;
-  const r = req as unknown as NextResponse;
-  console.log(r.cookies.get("token"));
   const requireParam = {
     recieptId,
     // timestamp,

@@ -187,7 +187,7 @@ function CommentItem(props: CommentItemProps & { post: Post }) {
         }}
       >
         <User
-          style={{ userSelect: "initial" }}
+          style={{ userSelect: "initial", alignItems: "initial" }}
           size={nested ? 25 : 45}
           navigateToProfile={navigateCommentAuthor}
           profile={profile}

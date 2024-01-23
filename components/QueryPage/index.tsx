@@ -21,7 +21,6 @@ function SecondaryPage({
   // const hash = router.asPath.split("#")[1];
   // const parsedHash = new URLSearchParams(hash);
   // const toggleAddPost = parsedHash.has("addPost");
-  console.log(toggleAddPost);
   if (!token) return null;
   return (
     <div
