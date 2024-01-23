@@ -1,9 +1,8 @@
-import signUpStyle from "@/components/Signup/index.module.scss";
+import s from "@/components/Signup/index.module.scss";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import styles from "./index.module.scss";
 export default function LoginForm({ loading }: { loading: boolean }) {
   const [showPassword, setshowPassword] = useState(false);
   function togglePassword() {
@@ -45,7 +44,7 @@ export default function LoginForm({ loading }: { loading: boolean }) {
         autoCapitalize="none"
         spellCheck="false"
       />
-      <div className={styles.password}>
+      <div className={s.password}>
         <input
           enterKeyHint="next"
           required
@@ -63,7 +62,7 @@ export default function LoginForm({ loading }: { loading: boolean }) {
           aria-invalid="true"
           aria-describedby="password-helper-text"
         />
-        <label htmlFor="password" className={styles.passwordEye}>
+        <label htmlFor="password" className={s.passwordEye}>
           <AnimatePresence mode="wait">
             {showPassword ? (
               <motion.div
@@ -106,7 +105,7 @@ export default function LoginForm({ loading }: { loading: boolean }) {
       <button
         disabled={loading}
         type="submit"
-        className={`w-full uppercase ${signUpStyle.nextForm}`}
+        className={`w-full uppercase ${s.nextForm}`}
         aria-label="login"
       >
         {!loading ? "Login" : "Logging in"}
