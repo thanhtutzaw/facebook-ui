@@ -141,20 +141,20 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 };
-
+export type UserPageProps = {
+  hasMore: boolean;
+  token: DecodedIdToken;
+  profile: account["profile"];
+  myPost: PostType[];
+  friendStatus: any;
+};
 export default function UserProfile({
   hasMore,
   token,
   profile,
   myPost,
   friendStatus,
-}: {
-  hasMore: boolean;
-  token: DecodedIdToken;
-  profile: account["profile"];
-  myPost: PostType[];
-  friendStatus: any;
-}) {
+}:UserPageProps) {
   const { queryFn } = useQueryFn();
   const router = useRouter();
   useEffect(() => {

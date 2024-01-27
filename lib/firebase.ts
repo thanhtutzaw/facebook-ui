@@ -98,7 +98,6 @@ export function getPath<T extends keyof typeof getCollectionPath>(
   // Now use the 'collection' function with the generated path
   return collection(db, pathGenerator(params));
 }
-// getPath("commentReplies",{""})
 export function DescQuery<T>(
   customQuery: Query<T>,
   queryLimit?: number,
@@ -233,20 +232,6 @@ export async function commentToJSON(
       updatedAt: updatedAt?.toJSON() || 0,
     };
   }
-
-  // if (typeof data?.updatedAt === "string") {
-  //   // return {
-  //   //   ...data,
-  //   //   id: doc.id,
-  //   //   text: data?.text,
-  //   //   createdAt: createdAt?.toJSON() || 0,
-  //   // };
-  //   commentDateToJSON(data as Comment);
-  //   return {
-  //     ...commentDateToJSON(data as Comment),
-  //     updatedAt: updatedAt?.toJSON() || 0,
-  //   };
-  // }
 }
 export function commentDateToJSON(data: Comment) {
   const createdAt = data?.createdAt as Timestamp;

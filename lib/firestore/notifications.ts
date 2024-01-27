@@ -1,11 +1,11 @@
 import { NotiApiRequest } from "@/pages/api/sendFCM";
 import { User } from "firebase/auth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { apiEndPoint } from "../apiEndPoint";
 import { getPath } from "../firebase";
 export type NotiMessageTypes = keyof typeof messages;
-export interface AppNoti {
+type AppNoti = {
   messageBody?: string;
-
   uid: string;
   receiptId: string | number;
   profile:
@@ -15,12 +15,11 @@ export interface AppNoti {
   type: NotiMessageTypes;
   url: string;
   content?: string;
-}
+};
 export async function sendAppNoti(data: AppNoti) {
-  // const { uid, type, receiptId, profile, messageBody, ...rest } = data;
   const { uid, receiptId, profile, ...rest } = data;
   const { displayName: userName, photoURL } = profile!;
-  const isAdmin = receiptId.toString() === uid;
+  // const isAdmin = receiptId.toString() === uid;
   const notifRef = doc(getPath("notifications", { uid: String(receiptId) }));
   const notiData = {
     userName,
@@ -31,18 +30,17 @@ export async function sendAppNoti(data: AppNoti) {
   };
   await setDoc(notifRef, notiData);
 }
-export async function sendFCM(data: NotiApiRequest["body"]) {
+export async function sendFCM<T>(data: NotiApiRequest["body"]) {
   const productionURL = "https://facebook-ui-zee.vercel.app";
   const localURL = "http://localhost:3000";
   const isProduction = process.env.NODE_ENV === "production";
   const hostName = isProduction ? productionURL : localURL;
-  const apiEndpoint = "/api/sendFCM";
-  const url = `${hostName ?? productionURL}${apiEndpoint}`;
-  // const url = `${origin ? origin : hostName ?? productionURL}${apiEndpoint}`;
+  const endPoint = apiEndPoint.sendFCM;
+  const sendFCM_API = `${hostName ?? productionURL}/${endPoint}` as const;
   console.log("Sending Notification (" + data.message + ")");
   console.log({ Sending_Notification: data });
   try {
-    const response = await fetch(url, {
+    const response = await fetch(sendFCM_API, {
       method: "POST",
       headers: {
         // "Access-Control-Allow-Origin": "*",
@@ -52,12 +50,15 @@ export async function sendFCM(data: NotiApiRequest["body"]) {
     });
     console.log({ responseOk: response.ok });
     console.log("Notification Sended successfully.");
-    const responseData = await response.json();
-    return responseData;
+    const responseData: unknown = await response.json();
+    if (!response.ok) {
+      throw new Error("SendFCM Response Failed !");
+    }
+    return responseData as T;
   } catch (error) {
     console.error("Notification response failed!" + error);
+    throw new Error("Notification response failed!");
   }
-  // return response.json() as unknown as T;
 }
 export const messages = {
   comment_reaction: `loved to your comment.`,

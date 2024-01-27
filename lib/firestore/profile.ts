@@ -4,6 +4,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import fallback from "public/assets/avatar_placeholder.png";
 import { account } from "../../types/interfaces";
 import { db, getCollectionPath, storage } from "../firebase";
+import { apiEndPoint } from "../apiEndPoint";
 export function getFullName(
   profile: account["profile"] | undefined | null
 ): string {
@@ -89,10 +90,11 @@ export async function changeProfile(
             },
           });
           if (uploadedUrl) {
+            const cropApiEndPoint = `/${apiEndPoint.crop_image}?imageUrl=${encodeURIComponent(
+              uploadedUrl
+            )}&width=${width}&height=${height}` as const;
             const cropResponse = await fetch(
-              `/api/crop_image?imageUrl=${encodeURIComponent(
-                uploadedUrl
-              )}&width=${width}&height=${height}`
+              cropApiEndPoint
             );
             console.log(`cropped_image : ${cropResponse}`);
             await uploadCroppedImage(
@@ -118,7 +120,6 @@ export async function changeProfile(
         );
       }
     }
-    // const url = photoURL as string;
 
     if (
       (originalProfile?.firstName ?? "") === firstName &&

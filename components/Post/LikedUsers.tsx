@@ -12,8 +12,8 @@ import {
   getProfileByUID,
 } from "../../lib/firebase";
 import { Post, account, likes } from "../../types/interfaces";
+import AuthorInfo from "../AuthorInfo";
 import Spinner from "../Spinner";
-import AuthorInfo, { User, UserName } from "./AuthorInfo";
 
 export function LikedUsers({
   count,
@@ -86,7 +86,7 @@ export function LikedUsers({
             {Likes.map((like) => (
               <Link href={"/" + String(like.uid)} key={String(like.uid)}>
                 <AuthorInfo>
-                  <User
+                  <AuthorInfo.User
                     layout="row"
                     profile={like.author as account["profile"]}
                     navigateToProfile={() => {
@@ -104,7 +104,7 @@ export function LikedUsers({
                       }
                     }}
                   >
-                    <UserName
+                    <AuthorInfo.UserName
                       profile={like.author as account["profile"]}
                       navigateToProfile={() => {
                         if (router.pathname === "/") {
@@ -121,7 +121,7 @@ export function LikedUsers({
                         }
                       }}
                     />
-                  </User>
+                  </AuthorInfo.User>
                   <p>
                     {JSONTimestampToDate(like.createdAt).toLocaleDateString(
                       "en-US",

@@ -1,31 +1,14 @@
+import styles from "@/components/Post/index.module.scss";
 import { checkPhotoURL, getFullName } from "@/lib/firestore/profile";
-import { DocumentData, DocumentReference } from "firebase/firestore";
+import { account } from "@/types/interfaces";
 import Image from "next/image";
-import { CSSProperties, MouseEventHandler, ReactNode, memo } from "react";
-import { account } from "../../types/interfaces";
-import styles from "./index.module.scss";
+import { HTMLAttributes, MouseEventHandler, ReactNode } from "react";
 type layoutTypes = "row" | "column";
-
-function AuthorInfo(props: {
-  nested?: boolean;
-  setisDropDownOpenInNestedComment?: Function;
-  size?: number;
-  parentId?: string;
-  setComments?: Function;
-  handleEditComment?: Function;
-  profile?: account["profile"];
-  isAdmin?: boolean;
-  commentRef?: DocumentReference<DocumentData>;
-  postRef?: DocumentReference<DocumentData>;
-  // comment?: boolean;
-  style?: CSSProperties;
-  children?: ReactNode;
-  // post?: Post;
-}) {
-  const { size, profile, style, children } = props;
+const AuthorInfo = ({
+  children,
+  ...rest
+}: { children: ReactNode } & HTMLAttributes<HTMLDivElement>) => {
   // if (post) {
-  //   const { author, createdAt, visibility } = post;
-  //   const profile = author as account["profile"];
   //   //   if (router.pathname === "/") {
   //   //     router.push(
   //   //       { query: { user: String(post?.authorId) } },
@@ -56,24 +39,9 @@ function AuthorInfo(props: {
   //               })}
   //             </p>
   //           )}
-  //           {visibility?.toLowerCase() === "public" && (
-  //             <span title="Everyone can see this Post">
-  //               <FontAwesomeIcon icon={faEarth} />
-  //             </span>
-  //           )}
-  //           {visibility?.toLowerCase() === "friend" && (
-  //             <span title="Friends can see this Post">
-  //               <FontAwesomeIcon icon={faUserGroup} />
-  //             </span>
-  //           )}
-  //           {visibility?.toLowerCase() === "onlyme" && (
-  //             <span title="Only you can see this Post">
-  //               <FontAwesomeIcon icon={faLock} />
-  //             </span>
   //           )}
   //         </div>
   //       </User2>
-  //       {children}
   //     </div>
   //   );
   // }
@@ -81,13 +49,11 @@ function AuthorInfo(props: {
   // const isRepliedBySameAuthor =
   //   comment && comment.authorId !== comment.recipient?.id;
   return (
-    <div style={style} className={`relative ${styles.header} `}>
+    <div {...rest} className={`relative ${styles.header} `}>
       {children}
     </div>
   );
-  // }
-  // return (
-  //   <div style={style} className={` ${styles.header} `}>
+  //   <div className={`${styles.header} `}>
   //     <User2
   //       style={{ userSelect: "initial" }}
   //       size={size!}
@@ -98,31 +64,25 @@ function AuthorInfo(props: {
   //         hasChildren={!!children}
   //         profile={profile!}
   //       />
-  //       {children}
   //     </User2>
   //   </div>
-  // );
-}
-
-function User(props: {
+};
+function User({
+  size,
+  layout = "column",
+  navigateToProfile,
+  profile,
+  children,
+  ...rest
+}: {
   navigateToProfile: MouseEventHandler<HTMLSpanElement>;
   profile: account["profile"];
   layout?: layoutTypes;
-  children?: ReactNode;
+  children: ReactNode;
   size?: number;
-  style?: CSSProperties;
-}) {
-  const {
-    style,
-    size,
-    layout = "column",
-    navigateToProfile,
-    profile,
-    children,
-  } = props;
-
+} & HTMLAttributes<HTMLDivElement>) {
   return (
-    <div style={style} className={`${styles.authorInfo}`}>
+    <div {...rest} className={`${styles.authorInfo}`}>
       <UserAvatarPicture
         size={size}
         navigateToProfile={navigateToProfile}
@@ -190,7 +150,7 @@ function UserAvatarPicture({
   size = 45,
 }: {
   navigateToProfile: MouseEventHandler<HTMLImageElement>;
-  profile?: account["profile"];
+  profile: account["profile"];
   size?: number;
 }) {
   const profilePicture = checkPhotoURL(profile?.photoURL);
@@ -210,6 +170,6 @@ function UserAvatarPicture({
     />
   );
 }
-
-export default memo(AuthorInfo);
-export { User, UserName };
+export default AuthorInfo
+AuthorInfo.User = User;
+AuthorInfo.UserName = UserName;

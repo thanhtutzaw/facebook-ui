@@ -1,4 +1,4 @@
-import UserProfile from "@/pages/[user]";
+import UserProfile, { UserPageProps } from "@/pages/[user]";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { useRouter } from "next/router";
 
@@ -12,7 +12,8 @@ export default function UserProfilePage({
   const router = useRouter();
 
   if (!router.query.user) return null;
-  const { profile, myPost, friendStatus, hasMore } = queryPageData as any;
+  const { profile, myPost, friendStatus, hasMore } =
+    queryPageData as UserPageProps;
   return (
     <UserProfile
       hasMore={hasMore}

@@ -11,7 +11,7 @@ export default function MediaInput(props: {
     <input
       multiple
       accept="image/*,video/mp4"
-      onChange={(e) => {        
+      onChange={(e) => {
         const fileArray = Array.from(e.target.files ?? []);
         let valid = true;
         fileArray.map((file) => {
@@ -46,8 +46,8 @@ export default function MediaInput(props: {
           updateForm({ files: [...files, ...fileArray] });
         }
         if (files.length === fileArray.length) return;
-        const lastFile = document.getElementsByTagName("main")[0]
-          .lastChild as HTMLDivElement;
+        const lastElement = document.getElementsByTagName("main")[0]
+        const lastFile = lastElement.lastChild as HTMLDivElement;
         setTimeout(() => {
           lastFile.scrollIntoView({ behavior: "smooth", block: "end" });
         }, 300);

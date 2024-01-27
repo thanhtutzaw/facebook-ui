@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { RefObject, memo, useCallback, useMemo, useState } from "react";
 import Comment from ".";
-import AuthorInfo, { User, UserName } from "../Post/AuthorInfo";
+import AuthorInfo from "../AuthorInfo";
 import Spinner from "../Spinner";
 import CommentAction from "./Action";
 import s from "./index.module.scss";
@@ -149,21 +149,16 @@ function CommentItem(props: CommentItemProps & { post: Post }) {
     : client && !router.query.comment && router.asPath.match(String(id))
     ? "#e9f3ff"
     : "initial";
-  function toggleScrollPadding(isTrue?: boolean) {
-    // const element = document.getElementsByTagName("main")[0];
-    // if (isTrue) {
-    //   element && (element.style.scrollPadding = "65px");
-    // } else {
-    //   element && (element.style.scrollPadding = "initial");
-    // }
-  }
+  // function toggleScrollPadding(isTrue?: boolean) {
+  //   // const element = document.getElementsByTagName("main")[0];
+  //   // if (isTrue) {
+  //   //   element && (element.style.scrollPadding = "65px");
+  //   // } else {
+  //   //   element && (element.style.scrollPadding = "initial");
+  //   // }
+  // }
 
   const [storedScroll, setStoredScroll] = useState(0);
-  // const storedScrollRef = useRef(0);
-  // const storedScroll = storedScrollRef.current;
-  // const setStoredScroll = (number: number) => {
-  //   storedScrollRef.current = number;
-  // };
   return (
     <li
       className={`${nested ? "!pl-[calc(45px+8px)]" : ""} ${s.item}`}
@@ -186,13 +181,13 @@ function CommentItem(props: CommentItemProps & { post: Post }) {
           borderRadius: "0.5rem 0 0 0.5rem",
         }}
       >
-        <User
+        <AuthorInfo.User
           style={{ userSelect: "initial", alignItems: "initial" }}
           size={nested ? 25 : 45}
           navigateToProfile={navigateCommentAuthor}
           profile={profile}
         >
-          <UserName
+          <AuthorInfo.UserName
             comment={true}
             hasChildren={true}
             profile={profile}
@@ -294,7 +289,7 @@ function CommentItem(props: CommentItemProps & { post: Post }) {
               )}
             </AnimatePresence>
           </div>
-        </User>
+        </AuthorInfo.User>
         {!props.preview && (
           <CommentAction
             parentId={parentId ?? ""}
@@ -443,7 +438,6 @@ function CommentItem(props: CommentItemProps & { post: Post }) {
                 onClick={async () => {
                   const main =
                     document.getElementsByTagName("main")[0].scrollTop;
-                  toggleScrollPadding(true);
                   setStoredScroll(main);
                   await handleViewMore();
                 }}
@@ -457,7 +451,6 @@ function CommentItem(props: CommentItemProps & { post: Post }) {
                   onClick={() => {
                     const element = document.getElementsByTagName("main")[0];
                     element?.scrollTo({ top: storedScroll });
-                    toggleScrollPadding();
                     handleHide();
                   }}
                   className={`ml-auto flex items-center gap-1 bg-transparent text-[16px] text-gray ${

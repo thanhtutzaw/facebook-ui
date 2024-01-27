@@ -1,3 +1,4 @@
+// import 
 self.addEventListener("notificationclick", (event) => {
     console.log('notification click event', event);
     const { reply: inputText } = event;

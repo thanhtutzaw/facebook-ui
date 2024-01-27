@@ -1,15 +1,18 @@
+import AuthorInfo from "@/components/AuthorInfo";
 import { LoadingButton } from "@/components/Button/LoadingButton";
 import Comment from "@/components/Comment";
+import CommentItem from "@/components/Comment/CommentItem";
 import CommentInput from "@/components/Comment/Input";
 import TextInput from "@/components/Form/Input/TextInput";
 import PostSettingFooterForm from "@/components/Form/PostSettingFooter";
 import BackHeader from "@/components/Header/BackHeader";
-import AuthorInfo, { User, UserName } from "@/components/Post/AuthorInfo";
 import Footer from "@/components/Post/Footer";
 import PhotoLayout from "@/components/Post/PhotoLayout";
+import { SharePreview } from "@/components/Post/SharePreview";
 import { SocialCount } from "@/components/Post/SocialCount";
-import poststyles from '@/components/Post/index.module.scss';
+import poststyles from "@/components/Post/index.module.scss";
 import { Welcome } from "@/components/Welcome";
+import { usePageContext } from "@/context/PageContext";
 import useEnterSave from "@/hooks/useEnterSave";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import useQueryFn from "@/hooks/useQueryFn";
@@ -29,19 +32,15 @@ import { fetchComments, fetchSingleComment } from "@/lib/firestore/comment";
 import { updatePost } from "@/lib/firestore/post";
 import { checkPhotoURL } from "@/lib/firestore/profile";
 import { deleteMedia, uploadMedia } from "@/lib/storage";
-import s from "@/styles/Home.module.scss";
-import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
-// import {PageContext : Page} from '@/context/PageContext'
-import CommentItem from "@/components/Comment/CommentItem";
-import { SharePreview } from "@/components/Post/SharePreview";
-import { usePageContext } from "@/context/PageContext";
 import ErrorPage from "@/pages/404";
+import s from "@/styles/Home.module.scss";
 import {
   faEarth,
   faLock,
   faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import {
   DocumentData,
   DocumentSnapshot,
@@ -219,14 +218,12 @@ export default function Page({
     nested: false,
     parentId: "",
   });
-  const { currentUser, auth } = usePageContext();
+  const { auth } = usePageContext();
   const router = useRouter();
   const InputRef = useRef<HTMLDivElement>(null);
   const replyInputRef = useRef<HTMLInputElement>(null);
   const [isDropDownOpenInNestedComment, setisDropDownOpenInNestedComment] =
     useState(false);
-  // const post2 = post;
-  // if(!post)return;
   const [form, setForm] = useState<{
     files: File[] | PostType["media"];
     visibility: PostType["visibility"];
@@ -648,11 +645,11 @@ export default function Page({
         className={s.container}
       >
         <AuthorInfo>
-          <User
+          <AuthorInfo.User
             profile={post.author as account["profile"]}
             navigateToProfile={navigateToProfile}
           >
-            <UserName
+            <AuthorInfo.UserName
               hasChildren={true}
               navigateToProfile={navigateToProfile}
               profile={post.author as account["profile"]}
@@ -686,7 +683,7 @@ export default function Page({
                 </span>
               )}
             </div>
-          </User>
+          </AuthorInfo.User>
         </AuthorInfo>
         <TextInput
           onInput={(e) => {
@@ -764,7 +761,7 @@ export default function Page({
             <CommentInput
               setreplyInput={setreplyInput}
               replyInputRef={replyInputRef}
-              replyInput={replyInput}
+              replyInput={replyInput!}
               comments={limitedComments}
               profile={profile!}
               setComments={setlimitedComments}

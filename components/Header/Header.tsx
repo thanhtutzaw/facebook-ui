@@ -71,8 +71,8 @@ function Header(props: { tabIndex: number }) {
   const [activeNav, setActiveNav] = useState<Tabs>("/");
   //   if (window.location.pathname !== "/") return;
   //   // window.location.hash = currentNav === "/" ? "home" : currentNav;
-  //   setCurrentNav(window.location.hash.replace("#", "") as Tabs);
-  //   setActiveNav(window.location.hash.replace("#", "") as Tabs);
+  //   setCurrentNav(window.location.hash.replace("#", ""));
+  //   setActiveNav(window.location.hash.replace("#", ""));
 
   useEffect(() => {
     window.onpopstate = () => {

@@ -1,14 +1,13 @@
 import { usePageContext } from "@/context/PageContext";
 import { NotiAction } from "@/lib/NotiAction";
 import { checkPhotoURL } from "@/lib/firestore/profile";
-import { CommentProps } from "@/pages/[user]/[post]";
 import { faArrowAltCircleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { User } from "firebase/auth";
 import { collection, doc, getDoc } from "firebase/firestore";
 import Image from "next/image";
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import { db, getCollectionPath, getPath } from "../../lib/firebase";
 import { addComment, updateComment } from "../../lib/firestore/comment";
 import {
@@ -16,21 +15,40 @@ import {
   sendAppNoti,
   sendFCM,
 } from "../../lib/firestore/notifications";
-import { Comment, account } from "../../types/interfaces";
+import { Comment, Post, account } from "../../types/interfaces";
 import Spinner from "../Spinner";
 import s from "./index.module.scss";
 type UnwrapArray<T> = T extends (infer U)[] ? U : T;
-
-export default function CommentInput(props: CommentProps) {
-  const {
-    comments,
-    setComments,
-    post,
-    uid,
-    profile,
-    replyInput,
-    replyInputRef,
-  } = props;
+export interface Props {
+  replyInput: {
+    comment: Comment | null;
+    authorFirstReplyId: string;
+    text: string;
+    id: string;
+    authorId: string;
+    authorName: string;
+    parentId: string;
+    nested: boolean;
+    ViewmoreToggle: boolean;
+  };
+  uid: DecodedIdToken["uid"];
+  comments: Post["comments"];
+  setComments: Function;
+  setreplyInput: Function;
+  post: Post | null;
+  profile: account["profile"];
+  replyInputRef: RefObject<HTMLInputElement>;
+}
+export default function CommentInput({
+  comments,
+  setComments,
+  post,
+  uid,
+  profile,
+  replyInput,
+  replyInputRef,
+  setreplyInput,
+}: Props) {
   const { currentUser } = usePageContext();
 
   const [text, settext] = useState("");
@@ -57,11 +75,11 @@ export default function CommentInput(props: CommentProps) {
     const addedCommentDoc = await getDoc(commentRef);
     const data = { ...addedCommentDoc.data() } as Comment;
     data["author"] = { ...profile } as Comment["author"];
-    setComments?.([data, ...(comments ?? [])]);
+    setComments([data, ...(comments ?? [])]);
     await sendAppNoti({
       messageBody: text,
       uid,
-      receiptId: post?.authorId.toString()!,
+      receiptId: post?.authorId!,
       profile: currentUserProfile,
       type: "commented_on_post",
       url: `${authorId}/${post?.id}/#comment-${commentRef.id}`,
@@ -90,9 +108,7 @@ export default function CommentInput(props: CommentProps) {
         replyInput: { ...replyInput, comment: data },
         parentId: "",
       },
-
       actions: [NotiAction.comment_like, NotiAction.comment_reply],
-      // collapse_key: `post-${post.id}`,
       tag: `commentAuthor_${uid}_post_${post.id}`,
       // tag: `CommentAuthor-${uid}-post-${post.id}-comment`,
       // tag: `CommentAuthor-${uid}-post-${post.id}-comment`,
@@ -128,7 +144,7 @@ export default function CommentInput(props: CommentProps) {
           }
           settext("");
           setaddLoading(false);
-          props.setreplyInput?.({
+          setreplyInput?.({
             id: "",
             text: "",
             authorId: "",

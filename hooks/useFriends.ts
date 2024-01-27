@@ -24,7 +24,7 @@ function useFriends() {
     //     let suggestedFriendsQuery2 = query(
     //       collectionBasePath,
     //       where("__name__", "not-in", [uid, ...batch])
-    //       // if not friends , pending , blocked or thisAccount , display all users as suggestedAccount
+    //       // if not friends , pending , blocked or thisAccount , display all users suggestedAccount
     //     );
     //     return ( getDocs(suggestedFriendsQuery2)).docs.map(
     //       (doc) => doc.id

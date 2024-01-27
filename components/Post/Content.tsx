@@ -16,7 +16,6 @@ import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
 import { memo, useCallback, useEffect, useState } from "react";
 import TextInput from "../Form/Input/TextInput";
-import AuthorInfo, { User as UserComponent, UserName } from "./AuthorInfo";
 import PostFallback from "./Fallback";
 import AdminMenu from "./Menu/AdminMenu";
 import Menu from "./Menu/Menu";
@@ -24,6 +23,7 @@ import PhotoLayout from "./PhotoLayout";
 import { SharePreview } from "./SharePreview";
 import { SocialCount } from "./SocialCount";
 import s from "./index.module.scss";
+import AuthorInfo from "../AuthorInfo";
 function Content({ post }: { post: Post }) {
   const {
     deletePost,
@@ -122,11 +122,11 @@ function Content({ post }: { post: Post }) {
         }}
       >
         <AuthorInfo>
-          <UserComponent
+          <AuthorInfo.User
             profile={post.author as account["profile"]}
             navigateToProfile={navigateToProfile}
           >
-            <UserName
+            <AuthorInfo.UserName
               profile={post.author as account["profile"]}
               hasChildren={true}
               textEnd={textEnd}
@@ -161,7 +161,7 @@ function Content({ post }: { post: Post }) {
                 </span>
               )}
             </div>
-          </UserComponent>
+          </AuthorInfo.User>
           {!shareMode && (
             <>
               {!selectMode ? (
